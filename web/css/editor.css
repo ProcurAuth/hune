@@ -1,0 +1,566 @@
+/* Edit mode, panel editor, JSON tabs, history, diff and conflict screen (9.2, section 10). Loaded on demand.
+   Every rule names tokens of tokens.css. The sizes of the panel editor layout are local
+   properties of .peditor. */
+@import url("vendor/chdash/sql.css");
+
+.editor-host:empty { display: none; }
+
+/* --- Edit bar -------------------------------------------------------------------------------------------------------- */
+
+/* "Add", "Save" and "Revert" of the edit mode are the group .editbar of the header (edit_mode.js, 10.2). It comes before the time control in
+   edit mode only, so no button of the view moves. The other actions of the edit mode are in the menu "More actions". The header sticks to the top. */
+.editbar { display: flex; flex-wrap: nowrap; align-items: center; gap: var(--space-8); }
+.editbar .btn--tb[disabled] { opacity: 0.5; }
+/* The state of the draft has no visible text: the Save button shows it (active or inactive). The element .editbar__state stays as a live region for assistive technology (class visually-hidden). */
+.section__head .btn--ghost { color: var(--muted); }
+/* The actions of a section show on hover and when the focus is inside; they stay reachable with the keyboard (opacity only). */
+.editmode .section__head .btn--ghost { margin-block: -1px; opacity: 0; transition: opacity var(--motion-quick) var(--ease), background-color var(--motion-quick) var(--ease); }
+.editmode .section__head:hover .btn--ghost, .editmode .section__head:focus-within .btn--ghost, .editmode .section__head .btn--ghost[aria-expanded="true"] { opacity: 1; }
+@media (hover: none) { .editmode .section__head .btn--ghost { opacity: 1; } }
+.section__head .btn--ghost:hover, .section__head .btn--ghost:focus-visible { color: var(--text); background: var(--hover-tint); }
+.section__hint { color: var(--muted); font-size: var(--fs-xs); }
+.section__empty { grid-column: 1 / -1; margin: 0; padding: var(--space-16); border: 1px dashed var(--border-strong); border-radius: var(--r-md); color: var(--muted); text-align: center; }
+.section__head .input { min-width: 240px; }
+
+/* A bar at the top of an editor view: back button, title, actions. */
+.ebar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); margin-bottom: var(--space-12); }
+.ebar__title { font-size: var(--fs-lg); font-weight: var(--fw-semibold); }
+.ebar__status { flex: 1 1 auto; margin: 0; color: var(--muted); font-size: var(--fs-sm); text-align: right; }
+
+/* --- Panel editor: preview on top, query area below it, options pane on the right ------------------------------------- */
+
+/* The layout follows the panel editor of Grafana: the row of the variables of the page under the header, the preview, and the options pane
+   in the right column from the top of that row down to the window edge, with no gap at the right and at the bottom. The editor has no
+   top bar: the way back is the crumb of the dashboard in the header (ID-K178). The time range and the refresh are in the header (9.6).
+   The editor reaches the header (the negative margin cancels the padding of #app-main) and has its own top padding of --page-pad, the gap
+   that every view has under the header (ID-K302). The preview, the row of the variables and the top of the options pane start there. */
+.peditor {
+  --peditor-options-w: 330px;
+  display: flex; flex-direction: column; min-height: 0;
+  margin: calc(-1 * var(--page-pad)) 0; padding-top: var(--page-pad);
+  height: max(520px, 100dvh - var(--header-h));
+}
+/* The row of the variables, docked here by panel_editor.js: the right padding leaves the column of the options pane free. Its top is the top
+   padding of the editor, so it has none of its own. */
+.peditor > .dash-toolbar { margin: 0 calc(-1 * var(--page-pad)); padding: 0 calc(var(--peditor-options-w) + var(--space-24)) var(--space-16) var(--page-pad); }
+.peditor > .dash-toolbar { position: static; z-index: auto; }
+.peditor[data-tab="json"] > .dash-toolbar { padding-right: var(--page-pad); }
+.peditor__main { display: grid; grid-template-columns: minmax(0, 1fr) calc(var(--peditor-options-w) - var(--page-pad)); grid-template-rows: minmax(0, 1fr); gap: var(--space-16); flex: 1 1 auto; min-height: 0; }
+.peditor__stage { display: flex; flex-direction: column; gap: var(--space-16); min-width: 0; min-height: 0; }
+/* The preview and the query area share the height (50 / 50). The preview is a panel frame: it has the fill and the edge of the theme, and none of them when the panel is transparent (the rules of `.panel[data-transparent]`, 9.8). */
+.peditor__top { position: relative; flex: 1 1 0; min-height: 200px; }
+.peditor__top .panel.panel--editing { position: absolute; inset: 0; height: auto; }
+.peditor__lower { display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; }
+.peditor__lbody { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.peditor__lbody[hidden] { display: none; }
+.peditor__errors { flex: 0 0 auto; max-height: 160px; margin: var(--space-8) 0 0; overflow: auto; }
+
+/* The tab strip: one row under the preview, 38 px high, 14 px text; the inactive tabs are at the muted colour. The blue line stays. */
+.peditor__tabs { flex: 0 0 auto; margin: 0; padding: 0; }
+.peditor__tabs .tab { height: 38px; padding: var(--space-8) var(--space-12); font-weight: var(--fw-regular); }
+.peditor__tabs .tab:focus-visible { outline-offset: -2px; }
+.peditor[data-tab="panel"] .peditor__tabs { border-bottom-color: transparent; }
+
+/* Tab "Panel": the preview takes the whole left column. */
+.peditor[data-tab="panel"] .peditor__top { flex: 1 1 0; }
+.peditor[data-tab="panel"] .peditor__lower { flex: 0 0 auto; }
+/* Tab "JSON": the JSON area is large and the options pane is gone (it would not follow the text). */
+.peditor[data-tab="json"] .peditor__main { grid-template-columns: minmax(0, 1fr); }
+.peditor[data-tab="json"] .peditor__options { display: none; }
+.peditor[data-tab="json"] .peditor__top { flex: 0 0 max(34%, 240px); }
+.peditor[data-tab="json"] .peditor__lower { flex: 1 1 0; }
+
+/* The query area. */
+.qarea { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16) 0 0; }
+/* The row of the tab "Query" (10.3): every control is 32 px high, the items have a fixed width, and the row wraps only when it must. */
+.qbar { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-8) var(--space-6); }
+.qbar__item { flex: 0 1 auto; min-width: 0; max-width: 100%; }
+.qbar__item--source { flex: 1 1 150px; max-width: 280px; }
+.qbar__item--name, .qbar__item--num { flex: 0 0 auto; }
+.qbar__item--name .input { width: 48px; }
+.qbar__item--num .input { width: 52px; }
+.qbar .qbar__item--fixed .seg__item { padding: 0 var(--space-8); }
+.qbar__item--grow { flex: 1 1 240px; max-width: none; }
+.qbar__item--end { flex: 0 0 auto; margin-left: auto; }
+.qbar__item--check { flex: 0 0 auto; display: flex; align-items: center; min-height: var(--control-h); }
+/* A field of the row is a label chip with its control, as the variables of the bar (components.css): no label above, so the row has one height. */
+.qbar__item .field { position: relative; flex-direction: row; align-items: stretch; gap: 0; min-width: 0; }
+.qbar__item .field > .field__label:not(.visually-hidden) { display: flex; flex: none; align-items: center; height: var(--control-h); padding: 0 var(--space-6); border: 1px solid var(--control-border); border-right: 0; border-radius: var(--r-md) 0 0 var(--r-md); background: var(--surface-raised); color: var(--muted); font-size: var(--fs-sm); font-weight: var(--fw-semibold); white-space: nowrap; }
+.qbar__item .field > .input { flex: 1 1 auto; min-width: 0; }
+.qbar__item--source .input { width: 100%; }
+.qbar__item .field > .field__label:not(.visually-hidden) + .input { border-radius: 0 var(--r-md) var(--r-md) 0; }
+/* An error does not push the row: it floats under its field. */
+.qbar__item .field > .field-error { position: absolute; top: calc(100% + var(--space-2)); left: 0; z-index: 2; width: max-content; max-width: 280px; margin: 0; padding: var(--space-4) var(--space-8); border: 1px solid var(--danger); border-radius: var(--r-md); background: var(--surface-menu); box-shadow: var(--shadow-menu); }
+.qbar__item .field > .field-error[hidden] { display: none; }
+/* The popover "Query options": a button with a dot, and a panel that opens under it (the panel follows the button in the DOM). */
+.qopt { flex: 0 0 auto; }
+.qopt__button { gap: var(--space-6); }
+.qopt__dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-fill); }
+.qopt__dot[hidden] { display: none; }
+.qopt__pop { display: flex; flex-direction: column; gap: var(--space-12); width: 300px; max-width: calc(100vw - 2 * var(--space-8)); padding: var(--space-12); overflow: auto; border: 1px solid var(--border-strong); border-radius: var(--r-md); background: var(--surface-menu); box-shadow: var(--shadow-menu); }
+.qopt__pop[hidden] { display: none; }
+.qopt__pop .input { width: 100%; }
+.qopt__pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-8); }
+.qhint { margin: 0; color: var(--muted); }
+.qstatus { display: flex; align-items: center; gap: var(--space-6); margin: 0; color: var(--muted); font-size: var(--fs-sm); }
+.qstatus[data-tone="ok"] .icon { color: var(--success); }
+.qstatus[data-tone="error"] { color: var(--danger); }
+.qstatus[data-tone="error"] .icon { color: var(--danger); }
+.qstatus__text { min-width: 0; overflow-wrap: anywhere; }
+
+/* The JSON area of the panel. */
+.jarea { display: flex; flex-direction: column; gap: var(--space-8); height: 100%; min-height: 0; padding: var(--space-16) 0 0; }
+.jarea__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-8); }
+.jarea__title { font-weight: var(--fw-semibold); }
+.jarea .jframe { flex: 1 1 auto; min-height: 120px; height: auto; }
+.jframe { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); height: clamp(220px, 40dvh, 480px); overflow: hidden; border: 1px solid var(--control-border); border-radius: var(--r-md); background: var(--editor-solid-bg); font-family: var(--font-mono); font-size: var(--fs-md); line-height: 18px; }
+.jframe--tall { height: max(420px, calc(100dvh - var(--header-h) - var(--space-80) - var(--space-64))); }
+.jframe:focus-within { border-color: var(--accent-fill); outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+.jarea__gutter { box-sizing: border-box; min-width: 56px; overflow: hidden; border-right: 1px solid var(--border); color: var(--muted); text-align: right; letter-spacing: 0; user-select: none; }
+.jarea__nums { margin: 0; padding: var(--space-8) var(--space-8) var(--space-8) var(--space-10); font: inherit; line-height: inherit; letter-spacing: inherit; will-change: transform; }
+.jarea__input { min-width: 0; margin: 0; padding: var(--space-8) var(--space-10); border: 0; background: transparent; color: var(--text); font: inherit; line-height: inherit; outline: none; overflow: auto; resize: none; tab-size: 2; white-space: pre; }
+.psummary { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16) 0 0; }
+.psummary__hint { margin: 0; color: var(--muted); }
+.psummary__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-8) var(--space-16); margin: 0; }
+.psummary__row dt { color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--ls-eyebrow); text-transform: uppercase; }
+.psummary__row dd { margin: 0; overflow-wrap: anywhere; }
+.jarea .field-error, .jarea .errors { margin: 0; }
+
+/* --- Options pane ---------------------------------------------------------------------------------------------------- */
+
+
+.peditor__options { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-panel); }
+/* From 901 px up the pane is fixed: it runs from the top of the toolbar row to the window edge (right and bottom), as in Grafana. The
+   grid column of the pane stays empty and keeps the room. */
+@media (min-width: 901px) {
+  .peditor__options { position: fixed; top: calc(var(--header-h) + var(--page-pad)); right: 0; bottom: 0; z-index: 1; width: var(--peditor-options-w); }
+}
+/* The header: the picture and the name of the visualisation, and the link "Change" (it opens the group "Visualisation"). */
+.peditor__ohead { display: flex; align-items: center; gap: var(--space-8); flex: 0 0 auto; height: 48px; padding: var(--space-8) var(--space-16); font-size: var(--fs-md); font-weight: var(--fw-medium); }
+.peditor__ohead > .icon { color: var(--muted); }
+.peditor__ohead .tglyph { width: var(--space-32); height: var(--space-24); border-radius: var(--r-sm); }
+.peditor__ohead .tglyph--stat b { font-size: var(--fs-sm); }
+.peditor__otype { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.peditor__change {
+  height: var(--control-h-sm); padding: 0 var(--space-6); border: 0; border-radius: var(--r-md); background: none; color: var(--accent-text);
+  font: inherit; font-size: var(--fs-sm); font-weight: var(--fw-medium); cursor: pointer;
+}
+.peditor__change:hover { background: var(--hover-tint); }
+/* The legend of a fieldset is hidden with clip; the pane is its containing block, so that it cannot scroll the page (E1). */
+.peditor__obody { position: relative; flex: 1 1 auto; min-height: 0; overflow: auto; border-top: 1px solid var(--border); }
+
+.ogroup { border-bottom: 1px solid var(--border); }
+.ogroup:last-child { border-bottom: 0; }
+.ogroup__head {
+  display: flex; align-items: center; gap: var(--space-8); width: 100%; min-height: var(--space-40); padding: var(--space-4) var(--space-16);
+  border: 0; background: none; color: var(--text); font-size: var(--fs-md); font-weight: var(--fw-medium); text-align: left; cursor: pointer;
+}
+.ogroup__head:hover { background: var(--hover-tint); }
+.ogroup__head:focus-visible { outline-offset: -2px; }
+/* The chevron is at the end of the row: it points down when the group is closed and up when it is open. */
+.ogroup__head .icon { order: 3; width: var(--icon-md); height: var(--icon-md); color: var(--muted); transform: rotate(90deg); }
+.ogroup__head[aria-expanded="true"] .icon { transform: rotate(-90deg); }
+.ogroup__title { flex: 1 1 auto; }
+.ogroup__head .badge { order: 2; }
+.ogroup__body { display: flex; flex-direction: column; gap: var(--space-16); padding: var(--space-8) var(--space-16); }
+.ogroup__body[hidden] { display: none; }
+.ogroup__actions { display: flex; }
+.ogroup__note { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-8); }
+.ogroup__note p { margin: 0; }
+.ogroup .field .input { width: 100%; }
+/* Labels of the fields: 12 px, weight 500, the text colour. */
+.peditor .field__label { color: var(--text); font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.peditor .field { gap: var(--space-4); }
+.field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-16) var(--space-12); }
+.field-grid__fill { display: block; }
+.input--num { font-variant-numeric: tabular-nums; }
+
+/* The type list: a picture and a name for each type, three tiles in a row. The one-line description is for assistive technology. */
+.typelist { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6); }
+.typelist .field-error { grid-column: 1 / -1; margin: 0; }
+.typelist__item {
+  display: flex; flex-direction: column; align-items: stretch; gap: var(--space-6); min-width: 0; padding: var(--space-6);
+  border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-raised); color: var(--text); text-align: center; cursor: pointer;
+  transition: background-color var(--motion-quick) var(--ease), border-color var(--motion-quick) var(--ease);
+}
+.typelist__item:hover { border-color: var(--button-border-hover); background: var(--button-bg-hover); }
+.typelist__item[aria-pressed="true"] { border-color: var(--selected-edge); background: var(--selected-bg); }
+.typelist__text { display: flex; flex-direction: column; min-width: 0; }
+.typelist__name { overflow: hidden; font-size: var(--fs-sm); font-weight: var(--fw-semibold); text-overflow: ellipsis; white-space: nowrap; }
+.typelist__desc { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Pictures of the types, drawn with CSS only. */
+.tglyph { position: relative; display: flex; flex: 0 0 auto; width: 100%; height: var(--space-40); overflow: hidden; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--surface-page); color: var(--muted); }
+.typelist__item[aria-pressed="true"] .tglyph { color: var(--accent-text); }
+.tglyph i { display: block; }
+.tglyph--table { background-image: repeating-linear-gradient(to bottom, transparent 0 6px, var(--border-strong) 6px 7px), repeating-linear-gradient(to right, transparent 0 12px, var(--border-strong) 12px 13px); }
+.tglyph--timeseries::before { content: ""; position: absolute; inset: var(--space-4) var(--space-4) var(--space-4); background: currentColor; opacity: 0.55; clip-path: polygon(0 75%, 20% 45%, 40% 62%, 65% 18%, 100% 40%, 100% 100%, 0 100%); }
+.tglyph--stat { align-items: center; justify-content: center; }
+.tglyph--stat b { font-family: var(--font-mono); font-size: var(--fs-lg); font-weight: var(--fw-semibold); color: var(--text); }
+.tglyph--barchart { align-items: flex-end; gap: var(--space-4); padding: var(--space-4) var(--space-6) 0; }
+.tglyph--barchart i { flex: 1 1 0; background: currentColor; opacity: 0.75; }
+.tglyph--barchart i:nth-child(1) { height: 40%; }
+.tglyph--barchart i:nth-child(2) { height: 80%; }
+.tglyph--barchart i:nth-child(3) { height: 55%; }
+.tglyph--barchart i:nth-child(4) { height: 92%; }
+.tglyph--piechart::before { content: ""; position: absolute; top: var(--space-4); bottom: var(--space-4); left: 50%; aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; background: conic-gradient(currentColor 0 38%, var(--border-strong) 0); }
+.tglyph--xychart i { position: absolute; width: var(--space-4); height: var(--space-4); border-radius: 50%; background: currentColor; }
+.tglyph--xychart i:nth-child(1) { left: 22%; top: 62%; }
+.tglyph--xychart i:nth-child(2) { left: 40%; top: 36%; }
+.tglyph--xychart i:nth-child(3) { left: 60%; top: 50%; }
+.tglyph--xychart i:nth-child(4) { left: 78%; top: 22%; }
+.tglyph--bargauge { flex-direction: column; justify-content: center; gap: var(--space-4); padding: 0 var(--space-6); }
+.tglyph--bargauge i { height: var(--space-4); border-radius: var(--r-xs); background: linear-gradient(to right, currentColor var(--w), var(--border-strong) 0); }
+.tglyph--bargauge i:nth-child(1) { --w: 85%; }
+.tglyph--bargauge i:nth-child(2) { --w: 55%; }
+.tglyph--bargauge i:nth-child(3) { --w: 95%; }
+.tglyph--bargauge i:nth-child(4) { --w: 30%; }
+.tglyph--bargauge i:nth-child(n + 4) { display: none; }
+/* A gauge: the arc of 216 degrees from the lower left, the first half filled (9.19g). */
+.tglyph--gauge::before { content: ""; position: absolute; top: var(--space-4); left: 50%; height: 90%; aspect-ratio: 1; transform: translateX(-50%); border-radius: 50%; background: conic-gradient(from 252deg, currentColor 0 30%, var(--border-strong) 0 60%, transparent 0); mask: radial-gradient(farthest-side, transparent 62%, currentColor 63%); }
+
+/* Colours: a swatch grid (five shades by six hues), a step dot, a mono text field for the value. */
+.swatches { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.swatches--grid { display: grid; grid-template-columns: repeat(5, var(--space-24)); }
+.swatch { position: relative; width: var(--space-24); height: var(--space-20); padding: 0; border: 1px solid var(--border-strong); border-radius: var(--r-sm); background: var(--swatch-color); cursor: pointer; }
+.swatch:hover { border-color: var(--text); }
+.swatch[aria-pressed="true"] { border-color: var(--text); box-shadow: inset 0 0 0 2px var(--surface-panel); }
+.colorfield { gap: var(--space-6); }
+
+/* Thresholds. */
+.steps { display: flex; flex-direction: column; gap: var(--space-6); }
+.step { display: grid; grid-template-columns: var(--space-16) minmax(0, 1fr) minmax(0, 1.3fr) var(--control-h-sm); gap: var(--space-8); align-items: center; }
+.step__dot { width: var(--space-12); height: var(--space-12); border-radius: 50%; background: var(--swatch-color); box-shadow: inset 0 0 0 1px var(--border-strong); }
+.step__spacer { display: block; }
+.step .input { width: 100%; }
+
+/* Position: x, y, w and h in one row. The fieldset keeps its name for the tests and for assistive technology. */
+fieldset.position { margin: 0; padding: 0; border: 0; }
+.position__grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-8); }
+.position .field__label { text-transform: uppercase; letter-spacing: var(--ls-eyebrow); }
+.position .field-error { margin-top: var(--space-6); }
+
+/* --- SQL text area and JSON text area ----------------------------------------------------------------------------- */
+
+.sql { --sql-scrollbar: 24px; position: relative; display: grid; grid-template-columns: var(--sql-gutter-w, 80px) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); flex: 0 0 auto; height: clamp(140px, 24dvh, 320px); overflow: hidden; border: 1px solid var(--control-border); border-radius: var(--r-md); background: var(--editor-solid-bg); font-family: var(--font-mono); font-size: var(--fs-md); line-height: 20px; }
+/* F42: the gutter is out of the grid flow (position absolute) and has the width of the custom property that the script sets (it grows with the digits of the line numbers). A change in the gutter
+   then does not make the browser lay out the text area and the colour layer again (about 280 ms for 262,144 bytes). */
+.sql__gutter { position: absolute; top: 0; bottom: 0; left: 0; width: var(--sql-gutter-w, 80px); display: flex; box-sizing: border-box; min-width: 80px; overflow: hidden; border-right: 1px solid var(--border); color: var(--muted); text-align: right; letter-spacing: 0; user-select: none; }
+.sql__nums { flex: 1 1 auto; min-width: 0; padding: var(--space-8) var(--space-8) var(--space-8) 0; will-change: transform; }
+.sql__no { display: block; height: 20px; }
+.sql__no--error { margin-right: calc(-1 * var(--space-8)); padding-right: var(--space-8); background: var(--danger-bg); color: var(--danger); font-weight: var(--fw-semibold); }
+.sql__body { position: relative; grid-column: 2; min-width: 0; overflow: hidden; }
+/* The two layers of the SQL area (10.3) share one set of text metrics: the text area and the coloured layer must draw each glyph at the same place.
+   The text area does not inherit letter-spacing and text-rendering from the page, and the coloured layer does, so each property is explicit here.
+   The coloured layer does not scroll by itself: the script sets its scroll position from the text area. It has room at its end for the scroll bars of the text area. */
+.sql__hl, .sql__input { position: absolute; inset: 0; box-sizing: border-box; margin: 0; padding: var(--space-8) var(--space-10); border: 0; font: inherit; line-height: inherit; letter-spacing: 0; word-spacing: 0; text-indent: 0; text-transform: none; text-align: left; direction: ltr; unicode-bidi: normal; text-rendering: auto; font-kerning: none; font-variant-ligatures: none; font-feature-settings: normal; font-variation-settings: normal; font-synthesis: none; -webkit-text-size-adjust: 100%; tab-size: 2; white-space: pre; word-break: normal; overflow-wrap: normal; hyphens: none; }
+.sql__hl { overflow: hidden; padding-right: calc(var(--space-10) + var(--sql-scrollbar)); padding-bottom: calc(var(--space-8) + var(--sql-scrollbar)); pointer-events: none; color: var(--text); }
+.sql__hl code { font: inherit; letter-spacing: inherit; }
+.sql__input { overflow: auto; resize: none; background: transparent; color: transparent; caret-color: var(--text); outline: none; }
+.sql__input::selection { background: var(--selected-bg); }
+/* F42 (10.3e, 10.3f). The folded view is a layer over the colour layer. It has the classes sql__hl and sql__folded, so it has the same metrics (the rule above). It is after the text area
+   in the page order, so it covers the text area, the colour layer and the scroll bar of the text area: the text area keeps the focus and the text while a fold shows, and its caret and its
+   selection are not visible. No style of the text area or of the colour layer changes for a fold: a style change of these two elements makes the browser lay out the whole text again
+   (about 100 ms for 262,144 bytes). The folded view paints the selection with CSS.highlights and scrolls by itself. The band of the current block is under the colour layer: 4 % of the
+   text colour, with a bar of 2 px. The mark of a bracket is an outline with a negative offset: it moves no glyph. There is no animation. */
+.sql__folded { overflow: auto; pointer-events: auto; padding-right: calc(var(--space-10) + var(--sql-scrollbar)); padding-bottom: calc(var(--space-8) + var(--sql-scrollbar)); color: var(--text); background: var(--editor-solid-bg); cursor: text; user-select: none; }
+.sql__folded[hidden] { display: none; }
+::highlight(sql-selection) { background-color: var(--selected-bg); color: var(--text); }
+.sql__chip { padding: 0 var(--space-4); border-radius: var(--r-sm); background: var(--selected-bg); color: var(--text); cursor: pointer; }
+.sql__band { position: absolute; top: var(--space-8); left: 0; right: 0; pointer-events: none; background: color-mix(in srgb, var(--text) 4%, transparent); box-shadow: inset 2px 0 0 var(--accent-fill); }
+.sql__band[hidden] { display: none; }
+.sql__pair { outline: 1px solid var(--accent-fill); outline-offset: -1px; }
+.sql__pair--lone { outline-color: var(--danger); }
+.sql__marks { position: relative; flex: 0 0 24px; width: 24px; overflow: hidden; }
+.sql__marks-in { position: absolute; top: var(--space-8); left: 0; width: 24px; will-change: transform; }
+.sql__fold { position: absolute; left: 0; width: 24px; height: 20px; margin: 0; padding: 0; border: 0; background: transparent; color: var(--muted); font: inherit; font-size: var(--fs-sm); line-height: 20px; text-align: center; cursor: pointer; }
+.sql__fold:hover, .sql__fold--folded { color: var(--text); }
+.sql__fold:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+.sqlbox { display: flex; flex: 0 0 auto; flex-direction: column; gap: var(--space-4); min-width: 0; }
+/* The tool row has the buttons. The status line and the text of the block are in `.sql__live`: an absolute box with a fixed size at the bottom of the row, so a change of their text
+   makes the browser lay out this box only. A change of text in the flow of the page makes it lay out the text area again (about 140 ms for 262,144 bytes). The row has room for the box. */
+.sql__tools { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); padding-bottom: 38px; }
+.sql__live { position: absolute; left: 0; bottom: 0; width: 100%; height: 38px; overflow: hidden; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 0 var(--space-8); }
+.sql__status, .sql__info { margin: 0; color: var(--muted); font-size: var(--fs-sm); overflow-wrap: anywhere; }
+.sql__keys { margin: 0; color: var(--muted); font-size: var(--fs-xs); }
+.sql:focus-within { border-color: var(--accent-fill); outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+
+.jsontext { width: 100%; min-height: 220px; padding: var(--space-8) var(--space-10); border: 1px solid var(--control-border); border-radius: var(--r-md); background: var(--editor-solid-bg); color: var(--text); font-family: var(--font-mono); font-size: var(--fs-md); line-height: 18px; white-space: pre; tab-size: 2; }
+.jsontext:focus-visible { border-color: var(--accent-fill); outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+.jsontext--tall { min-height: 60vh; }
+.jsontext--panel { min-height: 240px; margin-top: var(--space-8); }
+.jeditor .errors { max-height: 220px; overflow: auto; }
+.errors__warning { margin: var(--space-4) 0 0; color: var(--warning); font-size: var(--fs-sm); }
+
+/* --- History -------------------------------------------------------------------------------------------------------- */
+
+.history__card { overflow-x: auto; }
+.history__table td, .history__table th { white-space: nowrap; }
+.history__table td.history__message { max-width: 360px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history__table td.history__pick, .history__table th:first-child { width: var(--space-32); padding-right: 0; }
+.history__version-cell { font-variant-numeric: tabular-nums; }
+.history__version-cell .badge { margin-left: var(--space-6); }
+.history__actions .btn + .btn { margin-left: var(--space-4); }
+.history__foot { display: flex; align-items: center; gap: var(--space-8); margin-top: var(--space-12); }
+.history__size::after { content: ""; }
+td.history__size::after { content: " B"; color: var(--muted); }
+.history__status { margin: var(--space-12) 0 0; }
+.history .banner { gap: var(--space-8); }
+.history .banner > span { flex: 1 1 auto; min-width: 0; }
+.banner__actions { display: flex; flex-wrap: wrap; gap: var(--space-6); margin-left: auto; }
+
+/* --- Diff: gutters, tinted lines, hunk headers --------------------------------------------------------------------- */
+
+.diff__head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); margin-bottom: var(--space-8); }
+.diff__title { margin: 0; font-size: var(--fs-lg); }
+.diff__empty { color: var(--muted); }
+.diff__hunk { margin-bottom: var(--space-12); overflow: auto; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-panel); }
+.diff__header { padding: var(--space-4) var(--space-8); border-bottom: 1px solid var(--border); background: var(--surface-raised); color: var(--muted); font-family: var(--font-mono); font-size: var(--fs-sm); }
+.diff__table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: var(--fs-sm); line-height: var(--lh-code); }
+.diff__no { width: 3.5em; min-width: 3.5em; padding: 0 var(--space-6); border-right: 1px solid var(--border); background: var(--surface-inset); color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; user-select: none; }
+.diff__sign { width: var(--space-24); background: var(--surface-inset); color: var(--text); font-weight: var(--fw-semibold); text-align: center; user-select: none; }
+.diff__text { color: var(--text); }
+.diff__text pre { margin: 0; padding: 0 var(--space-8); white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+.diff__line--add .diff__text { background: color-mix(in srgb, var(--success) 20%, transparent); }
+.diff__line--del .diff__text { background: color-mix(in srgb, var(--danger) 20%, transparent); }
+.diff__line--add .diff__sign { box-shadow: inset 3px 0 0 var(--success); }
+.diff__line--del .diff__sign { box-shadow: inset 3px 0 0 var(--danger); }
+.diff__downloads { display: flex; gap: var(--space-8); }
+
+/* --- Conflict, draft panel, dialogs ------------------------------------------------------------------------------------ */
+
+.conflict__head { align-items: flex-start; margin-bottom: var(--space-12); }
+.conflict__lead { margin: 0; font-size: var(--fs-lg); font-weight: var(--fw-semibold); }
+.conflict__head .muted { margin: var(--space-2) 0 0; }
+.conflict__actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-8); margin-top: var(--space-12); }
+.conflict__choice { display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-10); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-raised); }
+.conflict__choice .btn { width: 100%; white-space: normal; }
+.conflict__hint { color: var(--muted); font-size: var(--fs-sm); }
+.draft-panel { position: fixed; right: var(--space-16); top: calc(var(--header-h) + var(--space-16)); z-index: var(--z-drawer); width: min(440px, calc(100vw - 32px)); padding: var(--space-8); border: 1px solid var(--border-strong); border-radius: var(--r-md); background: var(--panel); box-shadow: var(--shadow-overlay); }
+.draft-panel__head { display: flex; align-items: center; gap: var(--space-8); }
+.draft-panel__head h2 { flex: 1; font-size: var(--fs-lg); }
+
+.dialog__body .field + .field, .dialog__body .field + .errors, .dialog__body .field + .errors-slot { margin-top: var(--space-12); }
+.dialog__body .field__label { margin: 0; }
+.dialog__body .field__hint { margin: 0; }
+.dialog__body textarea.input { width: 100%; }
+.save-status { margin-top: var(--space-8); color: var(--muted); font-size: var(--fs-sm); }
+.save-status:empty { display: none; }
+.import__choices { display: inline-flex; flex-wrap: wrap; gap: var(--space-8); }
+.dialog__body .filepick, .filepick { position: relative; display: flex; margin: 0; color: var(--text); font-size: var(--fs-md); font-weight: var(--fw-regular); align-items: center; gap: var(--space-8); min-width: 0; cursor: pointer; }
+.filepick--drop { flex-direction: column; justify-content: center; gap: var(--space-4); padding: var(--space-16); border: 1px dashed var(--border-strong); border-radius: var(--r-md); text-align: center; }
+.filepick--drop.is-over, .filepick--drop:hover { background: var(--hover-tint); }
+.filepick--drop > .icon { color: var(--muted); }
+.filepick__title { font-weight: var(--fw-medium); }
+.filepick__hint { color: var(--muted); font-size: var(--fs-xs); }
+.filepick__row { display: flex; align-items: center; justify-content: center; gap: var(--space-8); max-width: 100%; margin-top: var(--space-4); }
+.dialog[data-testid="import-dialog"] { width: min(var(--dialog-w), 100%); } /* 10.12: a dialog of 520 px */
+.filepick__input { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); opacity: 0; }
+.filepick:hover .btn { border-color: var(--button-border-hover); background: var(--button-bg-hover); }
+.filepick:focus-within .btn { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+.filepick__name { min-width: 0; overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
+input[type="file"] { max-width: 100%; color: var(--muted); font-size: var(--fs-md); }
+input[type="file"]::file-selector-button { min-height: var(--control-h); margin-right: var(--space-8); padding: 0 var(--space-10); border: 1px solid var(--button-border); border-radius: var(--r-md); background: var(--button-bg); color: var(--text); font: inherit; font-weight: var(--fw-medium); cursor: pointer; }
+input[type="file"]::file-selector-button:hover { border-color: var(--button-border-hover); background: var(--button-bg-hover); }
+
+/* --- Narrow windows: the panel editor becomes one column ------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .peditor { height: auto; }
+  .peditor > .dash-toolbar { padding-right: var(--page-pad); }
+  .peditor__main { display: flex; flex-direction: column; }
+  .peditor__stage { flex: none; }
+  .peditor__top, .peditor[data-tab="panel"] .peditor__top, .peditor[data-tab="json"] .peditor__top { flex: none; height: 280px; }
+  .peditor__lower, .peditor[data-tab="panel"] .peditor__lower, .peditor[data-tab="json"] .peditor__lower { flex: none; max-height: none; }
+  .peditor__lbody { overflow: visible; }
+  .peditor__options { overflow: visible; }
+  .peditor__obody { overflow: visible; }
+  .jarea .jsontext { min-height: 320px; }
+  .sql { height: 220px; }
+}
+@media (max-width: 600px) {
+  .qbar__item--source, .qbar__item--grow { flex: 1 1 100%; max-width: none; }
+  .qbar__item--name, .qbar__item--num { flex: 1 1 130px; }
+  .qbar__item--name .input, .qbar__item--num .input { width: 100%; }
+  .qopt { flex: 1 1 140px; }
+  .qopt__button { width: 100%; }
+  .qbar__item--end { flex: 1 1 90px; margin-left: 0; }
+  .qbar__item--end .btn { width: 100%; }
+  .position__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .diff__no { width: 2.5em; min-width: 2.5em; }
+}
+
+/* Edit mode: the frame of a panel gets a neutral edge on hover and on focus inside; the menu button shows then (dashboard.css). */
+.edit-grid .panel:hover, .edit-grid .panel:focus-within { border-color: var(--border-strong); }
+
+/* Drag and resize (10.16). Values measured on Grafana 12.4.2 in edit mode: the title bar shows the cursor "move", the corner is a 28 px
+   target with a 16 px hatch icon (30 % of the text colour) and the cursor "se-resize". A dragged panel is at 80 % opacity, lifted by a
+   fill and edged by a dashed line, and it floats above the others (z 3, a resized one z 1). The placeholder is the primary colour at 15 %
+   with a 4 px glow, with square corners. A panel that gives way slides in 200 ms (drag.js). */
+.dash { --drag-lift: 5.5%; --drag-edge: 30%; }
+@media (prefers-color-scheme: light) { html:not([data-theme="dark"]) .dash { --drag-lift: 11.7%; --drag-edge: 40%; } }
+html[data-theme="light"] .dash { --drag-lift: 11.7%; --drag-edge: 40%; }
+.edit-grid .panel__head { cursor: move; touch-action: none; user-select: none; -webkit-user-select: none; }
+.edit-grid .panel__head :is(button, a, [tabindex]) { cursor: pointer; }
+.edit-grid .panel__head .panel__info { cursor: help; }
+.panel__resize {
+  position: absolute; right: -1px; bottom: -1px; z-index: 2; width: 28px; height: 28px;
+  cursor: se-resize; touch-action: none; color: color-mix(in srgb, var(--text) 30%, transparent);
+}
+.panel__resize::after {
+  content: ""; position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; background: currentColor;
+  -webkit-mask: var(--resize-icon) center / contain no-repeat; mask: var(--resize-icon) center / contain no-repeat;
+  --resize-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M21 15L15 21M21 8L8 21'/%3E%3C/svg%3E");
+}
+.panel__resize:hover { color: var(--text); }
+.panel[data-drag] { transition: none; }
+.panel[data-drag="move"] {
+  z-index: 3; opacity: 0.8; border-color: var(--border); outline: 1px dashed color-mix(in srgb, var(--text) var(--drag-edge), transparent);
+  background: color-mix(in srgb, var(--text) var(--drag-lift), var(--surface-panel));
+}
+.panel[data-drag="resize"] { z-index: 1; border-color: var(--border); }
+.panel[data-drag] .panel__menu { opacity: 0; }
+.dash[data-drag] .dash__grid { isolation: isolate; }
+.drag-placeholder {
+  z-index: -1; pointer-events: none; background: color-mix(in srgb, var(--primary) 15%, transparent); box-shadow: 0 0 4px var(--accent-text);
+}
+@media (max-width: 768px) {
+  .panel__resize { display: none; }
+  .edit-grid .panel__head { cursor: auto; touch-action: auto; user-select: auto; -webkit-user-select: auto; }
+}
+@media print { .panel__resize, .drag-placeholder { display: none; } }
+.dialog__footer:empty { display: none; }
+.conflict__content { margin-top: var(--space-12); }
+.error-link code { font-family: var(--font-mono); font-size: var(--fs-sm); }
+.errors .error-list { margin: 0; padding: 0; list-style: none; }
+.errors .error-list li { margin: var(--space-4) 0; }
+
+/* Segmented controls in the editor: the same edge as the fields next to them (Hune keeps its stronger edge, WCAG 1.4.11), items
+   of 26 px with 14 px text and a radius of 3, and a neutral fill for the chosen item (no accent ring). */
+.peditor .seg, .qbar .seg { gap: 0; padding: 2px; border-color: var(--control-border); background: transparent; }
+.peditor .seg__item, .qbar .seg__item { min-height: 26px; padding: 0 var(--space-16); border-radius: 3px; font-size: var(--fs-md); font-weight: var(--fw-regular); }
+.qbar .seg__item { padding: 0 var(--space-12); }
+.peditor .seg__item[aria-pressed="true"], .qbar .seg__item[aria-pressed="true"] { background: var(--hover-tint); box-shadow: none; color: var(--text); font-weight: var(--fw-medium); }
+.peditor .seg__item:hover, .qbar .seg__item:hover { color: var(--text); background: var(--hover-tint); }
+
+@media (max-width: 900px) {
+  .history__kind, .history__by, .history__size { display: none; }
+  .history__table td, .history__table th { padding-inline: var(--space-8); }
+  .history__table td.history__message { max-width: 120px; }
+}
+
+/* --- Forms of the panel editor and of the settings view (10.3a, 10.3b) ----------------------------------------------------------- */
+
+/* A list of items: each item has a head (title and the buttons Move up, Move down, Remove) and a body. */
+.flist { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
+.flist__items { display: flex; flex-direction: column; gap: var(--space-8); margin: 0; padding: 0; list-style: none; }
+.flist__empty { margin: 0; font-size: var(--fs-sm); }
+.flist__add { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+.flist__add .field { flex: 1 1 120px; }
+.flist__add .input { width: auto; min-width: 0; max-width: 100%; }
+.flist__pager { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); font-size: var(--fs-sm); }
+.flist--nested { padding-left: var(--space-8); border-left: 2px solid var(--border); }
+.btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; }
+.fitem { min-width: 0; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-raised); }
+.fitem__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-2) var(--space-4) var(--space-2) var(--space-8); border-bottom: 1px solid var(--border); }
+.fitem__title { min-width: 0; overflow: hidden; font-size: var(--fs-sm); font-weight: var(--fw-medium); text-overflow: ellipsis; white-space: nowrap; }
+.fitem__actions { display: flex; flex: 0 0 auto; gap: 0; }
+.fitem__body { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-8); }
+.fitem .field .input { width: 100%; }
+.fitem .field-grid { gap: var(--space-8); }
+.fitem__head .btn--icon { color: var(--muted); }
+.fitem__head .btn--icon:hover:not(:disabled) { color: var(--text); }
+.fitem__head .btn--icon:disabled { opacity: 0.35; }
+
+/* The properties of an override. */
+.omatch { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; margin: 0; padding: 0; border: 0; }
+.props { display: flex; flex-direction: column; gap: var(--space-8); }
+.prop { min-width: 0; padding: var(--space-6) var(--space-8); border: 1px solid var(--border); border-radius: var(--r-md); background: var(--surface-panel); }
+.prop__head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-4); }
+.prop__label { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.prop__body { display: flex; flex-direction: column; gap: var(--space-8); min-width: 0; }
+.prop__body .input { width: 100%; }
+.prop .field--switch { padding: 0; }
+
+.colorchoice { display: flex; flex-direction: column; gap: var(--space-6); }
+.colorchoice__row { display: flex; align-items: center; gap: var(--space-8); }
+.colorchoice__row .input { flex: 1 1 auto; min-width: 0; }
+.colormode { display: flex; flex-direction: column; gap: var(--space-8); }
+.checklist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4) var(--space-8); font-size: var(--fs-sm); }
+
+/* Tags as chips. */
+.tags__list { display: flex; flex-wrap: wrap; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
+.tags__list:empty { display: none; }
+.tags__chip { display: inline-flex; align-items: center; gap: 0; max-width: 100%; padding: 0 0 0 var(--space-8); border: 1px solid var(--border-strong); border-radius: var(--r-md); font-size: var(--fs-sm); }
+.tags__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tags__add { display: flex; gap: var(--space-8); }
+.tags__add .input { flex: 1 1 auto; min-width: 0; }
+
+/* The settings view. */
+.settings { display: flex; flex-direction: column; gap: var(--space-8); max-width: 860px; }
+.settings__tabs { margin-bottom: 0; max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+/* The row of the tabs of the settings view scrolls on its own when it is wider than the window (390 px), so the page has no horizontal scroll (ID-K302). */
+.settings__body { padding-top: var(--space-8); }
+.settings__form { display: flex; flex-direction: column; gap: var(--space-16); max-width: 640px; }
+.settings__form .input { width: 100%; }
+.settings__warning { color: var(--warning); }
+.settings[data-tab="json"] { max-width: none; }
+.vrow { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
+.vform { display: flex; flex-direction: column; gap: var(--space-16); }
+.vform__title { margin: 0; font-size: var(--fs-lg); }
+.vform .sql { height: clamp(120px, 20dvh, 240px); }
+.vform > .btn { align-self: flex-start; }
+.annot-panels { display: grid; gap: var(--space-4); padding-left: var(--space-24); }
+
+/* The SQL examples and the preview of the options of a variable (10.3b, ID-K210). */
+.menu__text { display: flex; flex-direction: column; min-width: 0; }
+.menu__hint { color: var(--muted); font-size: var(--fs-xs); white-space: normal; }
+.vpreview { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-8); }
+.vpreview[hidden] { display: none; }
+.vpreview__status { margin: 0; color: var(--muted); font-size: var(--fs-sm); overflow-wrap: anywhere; }
+.vpreview__status:empty { display: none; }
+.vpreview__status.field-error { color: var(--danger); }
+.vpreview__list { align-self: stretch; margin: 0; padding: 0; max-height: 240px; overflow: auto; list-style: none; border: 1px solid var(--border); border-radius: var(--r-md); }
+.vpreview__list[hidden] { display: none; }
+.vpreview__row, .vpreview__more { padding: var(--space-4) var(--space-8); font-size: var(--fs-sm); overflow-wrap: anywhere; }
+.vpreview__row + .vpreview__row, .vpreview__row + .vpreview__more { border-top: 1px solid var(--border); }
+
+/* The strip of the chips of the queries of a panel (10.3): a chip is the name, the eye and "Delete" in one box. */
+.qchips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); }
+.qchip { display: inline-flex; align-items: center; min-height: var(--control-h-sm); border: 1px solid var(--control-border); border-radius: var(--r-md); background: transparent; }
+.qchip[data-selected="true"] { border-color: var(--primary); background: var(--accent-tint); }
+.qchip[data-hidden="true"] .qchip__name { color: var(--muted); text-decoration: line-through; }
+.qchip button { display: inline-flex; align-items: center; justify-content: center; min-width: var(--control-h-sm); min-height: calc(var(--control-h-sm) - 2px); padding: 0 var(--space-8); border: 0; background: transparent; color: var(--text); font: inherit; font-size: var(--fs-sm); cursor: pointer; }
+.qchip button:hover { background: var(--hover-tint); }
+.qchip button:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+.qchip__name { font-family: var(--font-mono); font-weight: var(--fw-medium); }
+.qchip__eye, .qchip__delete { color: var(--muted); }
+.qchip__eye[aria-pressed="true"] { color: var(--text); }
+.input--ref { max-width: 8em; }
+
+/* The option forms of the data types (10.3h, F43). A row is a wrapper with data-option; a row that a rule hides has [hidden]. */
+.orow { display: flex; flex-direction: column; min-width: 0; }
+.orow[hidden] { display: none; }
+.orow > .field, .orow > fieldset { width: 100%; }
+.orow .check { min-height: 24px; }
+fieldset.field { padding: 0; border: 0; border-radius: 0; }
+fieldset.field > legend { float: left; width: 100%; padding: 0; margin: 0 0 var(--space-4); }
+fieldset.field > legend + * { clear: both; }
+/* A choice: native radio inputs in the segmented look of the editor. The input is hidden and keeps the focus; the segment shows the state. */
+.seg--radio { display: inline-flex; flex-wrap: wrap; max-width: 100%; }
+.seg--radio .seg__item { position: relative; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; }
+.seg--radio .seg__input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; border: 0; }
+.seg--radio .seg__item:has(.seg__input:checked) { background: var(--hover-tint); color: var(--text); font-weight: var(--fw-medium); }
+.seg--radio .seg__item:has(.seg__input:focus-visible) { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+.seg--radio .seg__item:hover { color: var(--text); background: var(--hover-tint); }
+.choice[aria-invalid="true"] .seg { border-color: var(--danger); }
+/* A slider with its number field: the number field is 69 px wide. */
+.sfield__row { display: flex; align-items: center; gap: var(--space-8); min-width: 0; }
+.sfield__row input[type="range"] { flex: 1 1 auto; min-width: 0; min-height: 24px; margin: 0; }
+.sfield__row .field { flex: 0 0 69px; width: 69px; }
+.sfield__row .input { width: 69px; text-align: right; }
+.timeline-slider > .sfield { flex: 1 1 auto; }
+/* Check boxes: a list that scrolls at 12 rem. */
+.checks__list { display: flex; flex-direction: column; gap: var(--space-4); max-height: 12rem; overflow-y: auto; padding: var(--space-2); }
+.checks__list .check { min-height: 24px; font-size: var(--fs-md); }
+.checks__list:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
