@@ -1,0 +1,16 @@
+[package]
+name = "hune-grafana"
+description = "Hune importer: Grafana v1 and v2 dashboard JSON to format 1, with the loss report. Pure functions."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+hune-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
