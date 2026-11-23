@@ -1,0 +1,7 @@
+/dist/
+/parity-out/
+/private/
+*.pyc
+__pycache__/
+/target/
+/docs/working-papers/

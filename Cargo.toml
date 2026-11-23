@@ -1,0 +1,101 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/hune-core",
+    "crates/hclconf",
+    "crates/hune-store",
+    "crates/hune-source",
+    "crates/hune-grafana",
+    "crates/hune",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+repository = "https://github.com/SCcagg5/hune"
+rust-version = "1.89"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+dbg_macro = "deny"
+
+# Each direct dependency has an exact pin, default-features = false where the crate permits it,
+# and one line with its reason (17.9).
+[workspace.dependencies]
+# Workspace crates.
+hune-core = { path = "crates/hune-core" }
+hclconf = { path = "crates/hclconf" }
+hune-store = { path = "crates/hune-store" }
+hune-source = { path = "crates/hune-source" }
+hune-grafana = { path = "crates/hune-grafana" }
+
+# Serialisation of API bodies and frames.
+serde = { version = "=1.0.229", default-features = false, features = ["std", "derive"] }
+# JSON values for API bodies, the importer input and the tests.
+serde_json = { version = "=1.0.154", default-features = false, features = ["std"] }
+# SHA-256 for the etag (4.39) and the static file hashes (9.3).
+sha2 = { version = "=0.11.1", default-features = false }
+# Shortest double text for the canonical number form (4.38, rule 9).
+ryu = { version = "=1.0.23", default-features = false }
+# Pattern check of the common regex subset (4.24).
+regex = { version = "=1.13.1", default-features = false, features = ["std", "unicode-perl"] }
+# Parse tree of a pattern for the subset check (4.24).
+regex-syntax = { version = "=0.8.11", default-features = false, features = ["std"] }
+# Async runtime of the server, the store and the source clients (3.6).
+tokio = { version = "=1.54.1", default-features = false, features = ["rt-multi-thread", "net", "time", "sync", "macros", "signal", "io-util"] }
+# HTTP/1.1 server and client (3.8, 8.3).
+hyper = { version = "=1.12.0", default-features = false, features = ["http1", "server", "client"] }
+# Tokio glue for hyper.
+hyper-util = { version = "=0.1.21", default-features = false, features = ["tokio"] }
+# Body helpers for hyper.
+http-body-util = { version = "=0.1.5", default-features = false }
+# HTTP types shared with hyper.
+http = { version = "=1.5.0", default-features = false, features = ["std"] }
+# Byte buffers shared with hyper.
+bytes = { version = "=1.12.1", default-features = false, features = ["std"] }
+# The one TLS stack, with the ring provider (R6).
+rustls = { version = "=0.23.46", default-features = false, features = ["ring", "std", "tls12"] }
+# Tokio glue for rustls.
+tokio-rustls = { version = "=0.26.6", default-features = false, features = ["ring", "tls12"] }
+# PEM parse of the CA files (13.13).
+rustls-pki-types = { version = "=1.15.1", default-features = false, features = ["std"] }
+# flock, openat, O_NOFOLLOW and fsync of directories for the volume backend (5.12 to 5.16).
+rustix = { version = "=1.1.6", default-features = false, features = ["std", "fs"] }
+# Random bytes for the temporary file names and the UUID v7 query ids.
+getrandom = { version = "=0.4.3", default-features = false, features = ["std"] }
+# PostgreSQL client of the PostgreSQL backend (5.23).
+tokio-postgres = { version = "=0.7.18", default-features = false, features = ["runtime"] }
+# Connection pool of the PostgreSQL backend (5.23).
+deadpool-postgres = { version = "=0.14.2", default-features = false, features = ["rt_tokio_1"] }
+# rustls for tokio-postgres (5.23, R6).
+tokio-postgres-rustls = { version = "=0.14.0", default-features = false }
+# The Stream trait: the PostgreSQL source reads the rows of a portal one at a time (8a.5, 8a.6). Already in the graph.
+futures-core = { version = "=0.3.34", default-features = false }
+# The MongoDB driver (8b.2, ID-MG2, granted by the owner on 2026-11-11). Only `hune-source` uses it, behind its
+# feature `mongo-driver`. No default feature: `compat-3-3-0` and `bson-3` select the API, `rustls-tls` gives
+# rustls with ring. No SRV resolver, compression, AWS auth, OpenSSL, encryption or sync API.
+mongodb = { version = "=3.10.0", default-features = false, features = ["compat-3-3-0", "bson-3", "rustls-tls"] }
+# The BSON types of the driver (the same major version as `bson-3` of the driver).
+bson = { version = "=3.1.0", default-features = false }
+# ProcurAuth PEP library (D28, 11.10): git dependency at one full commit, no default features.
+procurauth-pep = { git = "https://github.com/SCcagg5/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
+# ProcurAuth core: identity token, keys, strict JSON (D28, 11.10).
+procurauth-core = { git = "https://github.com/SCcagg5/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
+# Test only: temporary directories for the volume tests.
+tempfile = { version = "=3.27.0", default-features = false }
+
+# The MongoDB driver is a local copy with no environment read (ID-MG25, 8b.15). `vendor/mongodb.lock` holds the
+# hash of each file, `vendor/mongodb.patch` holds the edits and `tools/check-vendor-lock.sh --mongodb` checks both.
+[patch.crates-io]
+mongodb = { path = "vendor/mongodb" }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+debug = false
+incremental = false

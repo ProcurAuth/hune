@@ -1,0 +1,34 @@
+Provenance of the crate hclconf
+
+Source: written in Hune from section 13 of the specification (docs/06-configuration-operation.md).
+The engine is not a copy of another engine or repository. Decision ID-01 records this choice.
+
+Comparison with the HCL engine that the format was compared with, 2026-11-22 (another strict HCL
+engine of the maintainer, at two commits: the commit of the first comparison and its last commit):
+
+1. The files and the modules are different. Hune has syntax.rs, kinds.rs, fsio.rs and secret.rs. The
+   other crate has document.rs, gate.rs, effective.rs, path.rs and testing.rs.
+2. The comparison counts the code lines of 30 characters or more, with no comment lines. 37 of the
+   1,015 code lines of src/ have the same text as a line of the src/ of the other crate. Most of them
+   are derive attributes, use lines and function signatures. 1 of the 330 code lines of tests/ has
+   the same text.
+3. Some names, constants and messages are the same. The specification gives three of them:
+   `CapturedEnvironment::capture_and_clear`, the value `<not read>` and the error text for a secret in
+   clear text (13.14). The others are `Schema`, `Attr`, `Secret`, `MAX_ERRORS_PER_KEY = 10` and
+   `MAX_NESTING = 32`.
+
+The crate has its own parser of the HCL subset of 13.3. It does not depend on hcl-rs, url or ipnet.
+The crate has no dependency. Its licence is the licence of the workspace (Apache-2.0).
+
+Edition: 2021. The crate stays on the edition 2021 because src/env.rs calls std::env::remove_var.
+This function is unsafe from the edition 2024, and each crate of the workspace forbids unsafe code
+(3.4, rule R5; 17.1).
+
+The three behaviours of 13.1 are built in. They are part of the first version of this crate:
+
+1. A duration has exactly one integer and one unit (ms, s, m or h). The text "1m 30s", the unit
+   us and the unit ns are not valid.
+2. A block can depend on a mode key, as an attribute can.
+3. A boolean key can be a mode key.
+
+Only src/env.rs reads the environment (3.4, rule R2). The tests of the crate are in src/ and in tests/.

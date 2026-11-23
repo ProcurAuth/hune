@@ -1,0 +1,32 @@
+[package]
+name = "hune-store"
+description = "Hune Store trait, volume backend, PostgreSQL backend, catalog and conformance suite."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[features]
+# The conformance suite of 5.33 to 5.36 as a public test module.
+conformance = []
+
+[dependencies]
+hune-core.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rustix.workspace = true
+getrandom.workspace = true
+rustls.workspace = true
+rustls-pki-types.workspace = true
+tokio-postgres.workspace = true
+deadpool-postgres.workspace = true
+tokio-postgres-rustls.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+
+[lints]
+workspace = true
