@@ -1,0 +1,516 @@
+{
+ "id": 4501022714433536,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "blue",
+         "text": "X3"
+        },
+        "4": {
+         "color": "purple",
+         "text": "X4"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime64('2026-11-13 00:00:00',3,'UTC') + toIntervalMillisecond(toInt64(number*18000000/1000)) AS time, number%2 AS a FROM numbers(1000)",
+     "refId": "A"
+    }
+   ],
+   "title": "1k alternate",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "blue",
+         "text": "X3"
+        },
+        "4": {
+         "color": "purple",
+         "text": "X4"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime64('2026-11-13 00:00:00',3,'UTC') + toIntervalMillisecond(toInt64(number*18000000/10000)) AS time, number%2 AS a FROM numbers(10000)",
+     "refId": "A"
+    }
+   ],
+   "title": "10k alternate",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "blue",
+         "text": "X3"
+        },
+        "4": {
+         "color": "purple",
+         "text": "X4"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime64('2026-11-13 00:00:00',3,'UTC') + toIntervalMillisecond(toInt64(number*18000000/100000)) AS time, number%2 AS a FROM numbers(100000)",
+     "refId": "A"
+    }
+   ],
+   "title": "100k alternate",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "blue",
+         "text": "X3"
+        },
+        "4": {
+         "color": "purple",
+         "text": "X4"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "id": 4,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime64('2026-11-13 00:00:00',3,'UTC') + toIntervalMillisecond(toInt64(number*18000000/1000000)) AS time, number%2 AS a FROM numbers(1000000)",
+     "refId": "A"
+    }
+   ],
+   "title": "1M alternate",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "blue",
+         "text": "X3"
+        },
+        "4": {
+         "color": "purple",
+         "text": "X4"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 32
+   },
+   "id": 5,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime64('2026-11-13 00:00:00',3,'UTC') + toIntervalMillisecond(toInt64(number*18000000/100000)) AS time, cityHash64(number)%5 AS a FROM numbers(100000)",
+     "refId": "A"
+    }
+   ],
+   "title": "100k random 5",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "blue",
+         "text": "X3"
+        },
+        "4": {
+         "color": "purple",
+         "text": "X4"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 40
+   },
+   "id": 6,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime64('2026-11-13 00:00:00',3,'UTC') + toIntervalMillisecond(toInt64(number*18000000/100000)) AS time, toUInt8(1) AS a FROM numbers(100000)",
+     "refId": "A"
+    }
+   ],
+   "title": "100k constant",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 48
+   },
+   "id": 7,
+   "options": {
+    "mergeValues": false,
+    "showValue": "always"
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toIntervalSecond(arraySum(arrayMap(i -> i * 40, range(number)))) AS time, 'abcdefghijklmnopqrstuvwxyz0123456789' AS s FROM numbers(14)",
+     "refId": "A"
+    }
+   ],
+   "title": "text capacity",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 56
+   },
+   "id": 8,
+   "options": {
+    "mergeValues": false,
+    "showValue": "auto"
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toIntervalSecond(arraySum(arrayMap(i -> i * 40, range(number)))) AS time, 'abcdefghijklmnopqrstuvwxyz0123456789' AS s FROM numbers(14)",
+     "refId": "A"
+    }
+   ],
+   "title": "text capacity auto",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "blue",
+         "text": "X3"
+        },
+        "4": {
+         "color": "purple",
+         "text": "X4"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 64
+   },
+   "id": 9,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime64('2026-11-13 00:00:00',3,'UTC') + toIntervalMillisecond(toInt64(number*18000000/10000)) AS time, number%2 AS a, cityHash64(number)%3 AS b, intDiv(number,7)%2 AS c FROM numbers(10000)",
+     "refId": "A"
+    }
+   ],
+   "title": "10k rows 3 fields",
+   "type": "state-timeline"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f30 g",
+ "uid": "timelines_g",
+ "version": 1
+}

@@ -1,0 +1,38 @@
+{
+  "id": "var-custom-single-in-backtick-name",
+  "tags": [
+    "var:custom-single"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT `$env` FROM t",
+  "variables": [
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "a",
+        "b"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "env": {
+      "all": false,
+      "values": [
+        "a"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT `a` FROM t",
+  "sent_sql": "SELECT `a` FROM t"
+}

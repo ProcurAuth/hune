@@ -1,0 +1,31 @@
+{
+  "id": "pg-macro-unixEpochGroup-fill-value",
+  "tags": [
+    "macro:$__unixEpochGroup"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__unixEpochGroup(n, '5m', 0) FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT floor((n)/300)*300 FROM t",
+  "sent_sql": "SELECT $__unixEpochGroup(n, '5m', 0) FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana reads a third argument, the fill value, and ignores it in this text. Hune refuses a third argument.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

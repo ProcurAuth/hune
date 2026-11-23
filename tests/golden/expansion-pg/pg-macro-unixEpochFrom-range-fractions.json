@@ -1,0 +1,21 @@
+{
+  "id": "pg-macro-unixEpochFrom-range-fractions",
+  "tags": [
+    "macro:$__unixEpochFrom",
+    "time:ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__unixEpochFrom() AS f, $__unixEpochTo() AS t2",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200999,
+  "to_ms": 1794232800001,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1794211200 AS f, 1794232800 AS t2",
+  "sent_sql": "SELECT $__unixEpochFrom() AS f, $__unixEpochTo() AS t2"
+}

@@ -1,0 +1,2104 @@
+{
+ "id": "FE-81",
+ "source": "Grafana 12.4.2, the served bundle: LogLevel and the syslog table (module 67770), getLogLevel and getLogLevelFromKey of the logs model, the level text of the new logs panel",
+ "rule": "row: a level value that is a non-empty text or a number other than 0 and NaN gives levelOfValue; else levelOfBody of the body",
+ "rows": [
+  {
+   "value": "emerg",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "emerg",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "EMERG",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "EMERG",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "Emerg",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "Emerg",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "eMeRg",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "eMeRg",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "fatal",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "fatal",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "FATAL",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "FATAL",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "Fatal",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "Fatal",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "fAtAl",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "fAtAl",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "alert",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "alert",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "ALERT",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "ALERT",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "Alert",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "Alert",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "aLeRt",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "aLeRt",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "crit",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "crit",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "CRIT",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "CRIT",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "Crit",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "Crit",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "cRiT",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "cRiT",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "critical",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "critical",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "CRITICAL",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "CRITICAL",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "Critical",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "Critical",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "cRiTiCaL",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "cRiTiCaL",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "warn",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "warn",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "WARN",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "WARN",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "Warn",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "Warn",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "wArN",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "wArN",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "warning",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "warning",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "WARNING",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "WARNING",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "Warning",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "Warning",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "wArNiNg",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "wArNiNg",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "err",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "err",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "ERR",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "ERR",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "Err",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "Err",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "eRr",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "eRr",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "eror",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "eror",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "EROR",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "EROR",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "Eror",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "Eror",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "eRoR",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "eRoR",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "error",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "error",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "ERROR",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "ERROR",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "Error",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "Error",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "eRrOr",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "eRrOr",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "info",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "info",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "INFO",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "INFO",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "Info",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "Info",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "iNfO",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "iNfO",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "information",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "information",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "INFORMATION",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "INFORMATION",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "Information",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "Information",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "iNfOrMaTiOn",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "iNfOrMaTiOn",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "informational",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "informational",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "INFORMATIONAL",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "INFORMATIONAL",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "Informational",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "Informational",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "iNfOrMaTiOnAl",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "iNfOrMaTiOnAl",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "notice",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "notice",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "NOTICE",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "NOTICE",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "Notice",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "Notice",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "nOtIcE",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "nOtIcE",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "dbug",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "dbug",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "DBUG",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "DBUG",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "Dbug",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "Dbug",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "dBuG",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "dBuG",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "debug",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "debug",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "DEBUG",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "DEBUG",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "Debug",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "Debug",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "dEbUg",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "dEbUg",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "trace",
+   "body": "",
+   "level": "trace"
+  },
+  {
+   "value": "trace",
+   "body": "an error",
+   "level": "trace"
+  },
+  {
+   "value": "TRACE",
+   "body": "",
+   "level": "trace"
+  },
+  {
+   "value": "TRACE",
+   "body": "an error",
+   "level": "trace"
+  },
+  {
+   "value": "Trace",
+   "body": "",
+   "level": "trace"
+  },
+  {
+   "value": "Trace",
+   "body": "an error",
+   "level": "trace"
+  },
+  {
+   "value": "tRaCe",
+   "body": "",
+   "level": "trace"
+  },
+  {
+   "value": "tRaCe",
+   "body": "an error",
+   "level": "trace"
+  },
+  {
+   "value": "unknown",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "unknown",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "UNKNOWN",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "UNKNOWN",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "Unknown",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "Unknown",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "uNkNoWn",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "uNkNoWn",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "0",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "0",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "1",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "1",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "2",
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": "2",
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": "3",
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": "3",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "4",
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": "4",
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": "5",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "5",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "6",
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": "6",
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": "7",
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": "7",
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": "8",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "8",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "9",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "9",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "03",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "03",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "-1",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "-1",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "1.0",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "1.0",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": " 3",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": " 3",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "3 ",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "3 ",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "10",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "10",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "7x",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "7x",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "x7",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "x7",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "",
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": "garbage",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "garbage",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "ERR!",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "ERR!",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "warn ",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "warn ",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "info\n",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "info\n",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "İNFO",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "İNFO",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "ınfo",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "ınfo",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "inf",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "inf",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "informations",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "informations",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "notice!",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "notice!",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "severe",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "severe",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "CRITICAL ",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "CRITICAL ",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": "fatal error",
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": "fatal error",
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": 0,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": 0,
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": 1,
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": 1,
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": 2,
+   "body": "",
+   "level": "critical"
+  },
+  {
+   "value": 2,
+   "body": "an error",
+   "level": "critical"
+  },
+  {
+   "value": 3,
+   "body": "",
+   "level": "error"
+  },
+  {
+   "value": 3,
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": 4,
+   "body": "",
+   "level": "warning"
+  },
+  {
+   "value": 4,
+   "body": "an error",
+   "level": "warning"
+  },
+  {
+   "value": 5,
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": 5,
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": 6,
+   "body": "",
+   "level": "info"
+  },
+  {
+   "value": 6,
+   "body": "an error",
+   "level": "info"
+  },
+  {
+   "value": 7,
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": 7,
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": 8,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": 8,
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": 3.5,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": 3.5,
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": -1,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": -1,
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": 0,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": 0,
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": {
+    "number": "NaN"
+   },
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": {
+    "number": "NaN"
+   },
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": 7,
+   "body": "",
+   "level": "debug"
+  },
+  {
+   "value": 7,
+   "body": "an error",
+   "level": "debug"
+  },
+  {
+   "value": 1e+21,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": 1e+21,
+   "body": "an error",
+   "level": "unknown"
+  },
+  {
+   "value": null,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": null,
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": true,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": true,
+   "body": "an error",
+   "level": "error"
+  },
+  {
+   "value": false,
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "value": false,
+   "body": "an error",
+   "level": "error"
+  }
+ ],
+ "bodies": [
+  {
+   "body": "emerg",
+   "level": "critical"
+  },
+  {
+   "body": "[EMERG] message",
+   "level": "critical"
+  },
+  {
+   "body": "xemerg",
+   "level": "unknown"
+  },
+  {
+   "body": "emergx",
+   "level": "unknown"
+  },
+  {
+   "body": "emerg_x",
+   "level": "unknown"
+  },
+  {
+   "body": "emerg-x",
+   "level": "critical"
+  },
+  {
+   "body": "level=emerg",
+   "level": "critical"
+  },
+  {
+   "body": "éemerg",
+   "level": "critical"
+  },
+  {
+   "body": "emerg2",
+   "level": "unknown"
+  },
+  {
+   "body": "2emerg",
+   "level": "unknown"
+  },
+  {
+   "body": "a.emerg.b",
+   "level": "critical"
+  },
+  {
+   "body": "fatal",
+   "level": "critical"
+  },
+  {
+   "body": "[FATAL] message",
+   "level": "critical"
+  },
+  {
+   "body": "xfatal",
+   "level": "unknown"
+  },
+  {
+   "body": "fatalx",
+   "level": "unknown"
+  },
+  {
+   "body": "fatal_x",
+   "level": "unknown"
+  },
+  {
+   "body": "fatal-x",
+   "level": "critical"
+  },
+  {
+   "body": "level=fatal",
+   "level": "critical"
+  },
+  {
+   "body": "éfatal",
+   "level": "critical"
+  },
+  {
+   "body": "fatal2",
+   "level": "unknown"
+  },
+  {
+   "body": "2fatal",
+   "level": "unknown"
+  },
+  {
+   "body": "a.fatal.b",
+   "level": "critical"
+  },
+  {
+   "body": "alert",
+   "level": "critical"
+  },
+  {
+   "body": "[ALERT] message",
+   "level": "critical"
+  },
+  {
+   "body": "xalert",
+   "level": "unknown"
+  },
+  {
+   "body": "alertx",
+   "level": "unknown"
+  },
+  {
+   "body": "alert_x",
+   "level": "unknown"
+  },
+  {
+   "body": "alert-x",
+   "level": "critical"
+  },
+  {
+   "body": "level=alert",
+   "level": "critical"
+  },
+  {
+   "body": "éalert",
+   "level": "critical"
+  },
+  {
+   "body": "alert2",
+   "level": "unknown"
+  },
+  {
+   "body": "2alert",
+   "level": "unknown"
+  },
+  {
+   "body": "a.alert.b",
+   "level": "critical"
+  },
+  {
+   "body": "crit",
+   "level": "critical"
+  },
+  {
+   "body": "[CRIT] message",
+   "level": "critical"
+  },
+  {
+   "body": "xcrit",
+   "level": "unknown"
+  },
+  {
+   "body": "critx",
+   "level": "unknown"
+  },
+  {
+   "body": "crit_x",
+   "level": "unknown"
+  },
+  {
+   "body": "crit-x",
+   "level": "critical"
+  },
+  {
+   "body": "level=crit",
+   "level": "critical"
+  },
+  {
+   "body": "écrit",
+   "level": "critical"
+  },
+  {
+   "body": "crit2",
+   "level": "unknown"
+  },
+  {
+   "body": "2crit",
+   "level": "unknown"
+  },
+  {
+   "body": "a.crit.b",
+   "level": "critical"
+  },
+  {
+   "body": "critical",
+   "level": "critical"
+  },
+  {
+   "body": "[CRITICAL] message",
+   "level": "critical"
+  },
+  {
+   "body": "xcritical",
+   "level": "unknown"
+  },
+  {
+   "body": "criticalx",
+   "level": "unknown"
+  },
+  {
+   "body": "critical_x",
+   "level": "unknown"
+  },
+  {
+   "body": "critical-x",
+   "level": "critical"
+  },
+  {
+   "body": "level=critical",
+   "level": "critical"
+  },
+  {
+   "body": "écritical",
+   "level": "critical"
+  },
+  {
+   "body": "critical2",
+   "level": "unknown"
+  },
+  {
+   "body": "2critical",
+   "level": "unknown"
+  },
+  {
+   "body": "a.critical.b",
+   "level": "critical"
+  },
+  {
+   "body": "warn",
+   "level": "warning"
+  },
+  {
+   "body": "[WARN] message",
+   "level": "warning"
+  },
+  {
+   "body": "xwarn",
+   "level": "unknown"
+  },
+  {
+   "body": "warnx",
+   "level": "unknown"
+  },
+  {
+   "body": "warn_x",
+   "level": "unknown"
+  },
+  {
+   "body": "warn-x",
+   "level": "warning"
+  },
+  {
+   "body": "level=warn",
+   "level": "warning"
+  },
+  {
+   "body": "éwarn",
+   "level": "warning"
+  },
+  {
+   "body": "warn2",
+   "level": "unknown"
+  },
+  {
+   "body": "2warn",
+   "level": "unknown"
+  },
+  {
+   "body": "a.warn.b",
+   "level": "warning"
+  },
+  {
+   "body": "warning",
+   "level": "warning"
+  },
+  {
+   "body": "[WARNING] message",
+   "level": "warning"
+  },
+  {
+   "body": "xwarning",
+   "level": "unknown"
+  },
+  {
+   "body": "warningx",
+   "level": "unknown"
+  },
+  {
+   "body": "warning_x",
+   "level": "unknown"
+  },
+  {
+   "body": "warning-x",
+   "level": "warning"
+  },
+  {
+   "body": "level=warning",
+   "level": "warning"
+  },
+  {
+   "body": "éwarning",
+   "level": "warning"
+  },
+  {
+   "body": "warning2",
+   "level": "unknown"
+  },
+  {
+   "body": "2warning",
+   "level": "unknown"
+  },
+  {
+   "body": "a.warning.b",
+   "level": "warning"
+  },
+  {
+   "body": "err",
+   "level": "error"
+  },
+  {
+   "body": "[ERR] message",
+   "level": "error"
+  },
+  {
+   "body": "xerr",
+   "level": "unknown"
+  },
+  {
+   "body": "errx",
+   "level": "unknown"
+  },
+  {
+   "body": "err_x",
+   "level": "unknown"
+  },
+  {
+   "body": "err-x",
+   "level": "error"
+  },
+  {
+   "body": "level=err",
+   "level": "error"
+  },
+  {
+   "body": "éerr",
+   "level": "error"
+  },
+  {
+   "body": "err2",
+   "level": "unknown"
+  },
+  {
+   "body": "2err",
+   "level": "unknown"
+  },
+  {
+   "body": "a.err.b",
+   "level": "error"
+  },
+  {
+   "body": "eror",
+   "level": "error"
+  },
+  {
+   "body": "[EROR] message",
+   "level": "error"
+  },
+  {
+   "body": "xeror",
+   "level": "unknown"
+  },
+  {
+   "body": "erorx",
+   "level": "unknown"
+  },
+  {
+   "body": "eror_x",
+   "level": "unknown"
+  },
+  {
+   "body": "eror-x",
+   "level": "error"
+  },
+  {
+   "body": "level=eror",
+   "level": "error"
+  },
+  {
+   "body": "éeror",
+   "level": "error"
+  },
+  {
+   "body": "eror2",
+   "level": "unknown"
+  },
+  {
+   "body": "2eror",
+   "level": "unknown"
+  },
+  {
+   "body": "a.eror.b",
+   "level": "error"
+  },
+  {
+   "body": "error",
+   "level": "error"
+  },
+  {
+   "body": "[ERROR] message",
+   "level": "error"
+  },
+  {
+   "body": "xerror",
+   "level": "unknown"
+  },
+  {
+   "body": "errorx",
+   "level": "unknown"
+  },
+  {
+   "body": "error_x",
+   "level": "unknown"
+  },
+  {
+   "body": "error-x",
+   "level": "error"
+  },
+  {
+   "body": "level=error",
+   "level": "error"
+  },
+  {
+   "body": "éerror",
+   "level": "error"
+  },
+  {
+   "body": "error2",
+   "level": "unknown"
+  },
+  {
+   "body": "2error",
+   "level": "unknown"
+  },
+  {
+   "body": "a.error.b",
+   "level": "error"
+  },
+  {
+   "body": "info",
+   "level": "info"
+  },
+  {
+   "body": "[INFO] message",
+   "level": "info"
+  },
+  {
+   "body": "xinfo",
+   "level": "unknown"
+  },
+  {
+   "body": "infox",
+   "level": "unknown"
+  },
+  {
+   "body": "info_x",
+   "level": "unknown"
+  },
+  {
+   "body": "info-x",
+   "level": "info"
+  },
+  {
+   "body": "level=info",
+   "level": "info"
+  },
+  {
+   "body": "éinfo",
+   "level": "info"
+  },
+  {
+   "body": "info2",
+   "level": "unknown"
+  },
+  {
+   "body": "2info",
+   "level": "unknown"
+  },
+  {
+   "body": "a.info.b",
+   "level": "info"
+  },
+  {
+   "body": "information",
+   "level": "info"
+  },
+  {
+   "body": "[INFORMATION] message",
+   "level": "info"
+  },
+  {
+   "body": "xinformation",
+   "level": "unknown"
+  },
+  {
+   "body": "informationx",
+   "level": "unknown"
+  },
+  {
+   "body": "information_x",
+   "level": "unknown"
+  },
+  {
+   "body": "information-x",
+   "level": "info"
+  },
+  {
+   "body": "level=information",
+   "level": "info"
+  },
+  {
+   "body": "éinformation",
+   "level": "info"
+  },
+  {
+   "body": "information2",
+   "level": "unknown"
+  },
+  {
+   "body": "2information",
+   "level": "unknown"
+  },
+  {
+   "body": "a.information.b",
+   "level": "info"
+  },
+  {
+   "body": "informational",
+   "level": "info"
+  },
+  {
+   "body": "[INFORMATIONAL] message",
+   "level": "info"
+  },
+  {
+   "body": "xinformational",
+   "level": "unknown"
+  },
+  {
+   "body": "informationalx",
+   "level": "unknown"
+  },
+  {
+   "body": "informational_x",
+   "level": "unknown"
+  },
+  {
+   "body": "informational-x",
+   "level": "info"
+  },
+  {
+   "body": "level=informational",
+   "level": "info"
+  },
+  {
+   "body": "éinformational",
+   "level": "info"
+  },
+  {
+   "body": "informational2",
+   "level": "unknown"
+  },
+  {
+   "body": "2informational",
+   "level": "unknown"
+  },
+  {
+   "body": "a.informational.b",
+   "level": "info"
+  },
+  {
+   "body": "notice",
+   "level": "info"
+  },
+  {
+   "body": "[NOTICE] message",
+   "level": "info"
+  },
+  {
+   "body": "xnotice",
+   "level": "unknown"
+  },
+  {
+   "body": "noticex",
+   "level": "unknown"
+  },
+  {
+   "body": "notice_x",
+   "level": "unknown"
+  },
+  {
+   "body": "notice-x",
+   "level": "info"
+  },
+  {
+   "body": "level=notice",
+   "level": "info"
+  },
+  {
+   "body": "énotice",
+   "level": "info"
+  },
+  {
+   "body": "notice2",
+   "level": "unknown"
+  },
+  {
+   "body": "2notice",
+   "level": "unknown"
+  },
+  {
+   "body": "a.notice.b",
+   "level": "info"
+  },
+  {
+   "body": "dbug",
+   "level": "debug"
+  },
+  {
+   "body": "[DBUG] message",
+   "level": "debug"
+  },
+  {
+   "body": "xdbug",
+   "level": "unknown"
+  },
+  {
+   "body": "dbugx",
+   "level": "unknown"
+  },
+  {
+   "body": "dbug_x",
+   "level": "unknown"
+  },
+  {
+   "body": "dbug-x",
+   "level": "debug"
+  },
+  {
+   "body": "level=dbug",
+   "level": "debug"
+  },
+  {
+   "body": "édbug",
+   "level": "debug"
+  },
+  {
+   "body": "dbug2",
+   "level": "unknown"
+  },
+  {
+   "body": "2dbug",
+   "level": "unknown"
+  },
+  {
+   "body": "a.dbug.b",
+   "level": "debug"
+  },
+  {
+   "body": "debug",
+   "level": "debug"
+  },
+  {
+   "body": "[DEBUG] message",
+   "level": "debug"
+  },
+  {
+   "body": "xdebug",
+   "level": "unknown"
+  },
+  {
+   "body": "debugx",
+   "level": "unknown"
+  },
+  {
+   "body": "debug_x",
+   "level": "unknown"
+  },
+  {
+   "body": "debug-x",
+   "level": "debug"
+  },
+  {
+   "body": "level=debug",
+   "level": "debug"
+  },
+  {
+   "body": "édebug",
+   "level": "debug"
+  },
+  {
+   "body": "debug2",
+   "level": "unknown"
+  },
+  {
+   "body": "2debug",
+   "level": "unknown"
+  },
+  {
+   "body": "a.debug.b",
+   "level": "debug"
+  },
+  {
+   "body": "trace",
+   "level": "trace"
+  },
+  {
+   "body": "[TRACE] message",
+   "level": "trace"
+  },
+  {
+   "body": "xtrace",
+   "level": "unknown"
+  },
+  {
+   "body": "tracex",
+   "level": "unknown"
+  },
+  {
+   "body": "trace_x",
+   "level": "unknown"
+  },
+  {
+   "body": "trace-x",
+   "level": "trace"
+  },
+  {
+   "body": "level=trace",
+   "level": "trace"
+  },
+  {
+   "body": "étrace",
+   "level": "trace"
+  },
+  {
+   "body": "trace2",
+   "level": "unknown"
+  },
+  {
+   "body": "2trace",
+   "level": "unknown"
+  },
+  {
+   "body": "a.trace.b",
+   "level": "trace"
+  },
+  {
+   "body": "unknown",
+   "level": "unknown"
+  },
+  {
+   "body": "[UNKNOWN] message",
+   "level": "unknown"
+  },
+  {
+   "body": "xunknown",
+   "level": "unknown"
+  },
+  {
+   "body": "unknownx",
+   "level": "unknown"
+  },
+  {
+   "body": "unknown_x",
+   "level": "unknown"
+  },
+  {
+   "body": "unknown-x",
+   "level": "unknown"
+  },
+  {
+   "body": "level=unknown",
+   "level": "unknown"
+  },
+  {
+   "body": "éunknown",
+   "level": "unknown"
+  },
+  {
+   "body": "unknown2",
+   "level": "unknown"
+  },
+  {
+   "body": "2unknown",
+   "level": "unknown"
+  },
+  {
+   "body": "a.unknown.b",
+   "level": "unknown"
+  },
+  {
+   "body": "",
+   "level": "unknown"
+  },
+  {
+   "body": "all good",
+   "level": "unknown"
+  },
+  {
+   "body": "an unknown error",
+   "level": "unknown"
+  },
+  {
+   "body": "info: error",
+   "level": "info"
+  },
+  {
+   "body": "errors and warnings",
+   "level": "unknown"
+  },
+  {
+   "body": "ERR! npm",
+   "level": "error"
+  },
+  {
+   "body": "critical crit",
+   "level": "critical"
+  },
+  {
+   "body": "warning warn",
+   "level": "warning"
+  },
+  {
+   "body": "error warn",
+   "level": "error"
+  },
+  {
+   "body": "the <b>error</b>",
+   "level": "error"
+  },
+  {
+   "body": "<img src=x onerror=alert(1)>",
+   "level": "critical"
+  },
+  {
+   "body": "a\nb error",
+   "level": "error"
+  },
+  {
+   "body": "tab\terror",
+   "level": "error"
+  },
+  {
+   "body": "‮error",
+   "level": "error"
+  },
+  {
+   "body": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx error",
+   "level": "error"
+  },
+  {
+   "body": "Error: disk",
+   "level": "error"
+  },
+  {
+   "body": "WARN: disk",
+   "level": "warning"
+  },
+  {
+   "body": "level=debug x",
+   "level": "debug"
+  },
+  {
+   "body": "notice-board",
+   "level": "info"
+  },
+  {
+   "body": "information technology",
+   "level": "info"
+  }
+ ],
+ "text": {
+  "critical": "CRIT",
+  "error": "ERROR",
+  "warning": "WARN",
+  "info": "INFO",
+  "debug": "DEBUG",
+  "trace": "TRACE",
+  "unknown": ""
+ }
+}

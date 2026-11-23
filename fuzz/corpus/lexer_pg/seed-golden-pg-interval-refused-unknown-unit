@@ -1,0 +1,1 @@
+SELECT $__timeGroup(ts, '10x') FROM t

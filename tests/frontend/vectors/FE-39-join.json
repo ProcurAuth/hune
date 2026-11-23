@@ -1,0 +1,3888 @@
+{
+ "vectors": [
+  {
+   "name": "two frames, equal times",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        300,
+        600
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        300,
+        600
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        10,
+        20,
+        30
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      300000,
+      600000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      10,
+      20,
+      30
+     ]
+    }
+   ]
+  },
+  {
+   "name": "two frames, shifted times (worked example of 9.22a)",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        300,
+        600
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        150,
+        300,
+        750
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        10,
+        20,
+        30
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      150000,
+      300000,
+      600000,
+      750000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      null,
+      2,
+      3,
+      null
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      10,
+      20,
+      null,
+      30
+     ]
+    }
+   ]
+  },
+  {
+   "name": "three frames",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        30,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        90
+       ]
+      },
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        5,
+        6
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      30000,
+      60000,
+      90000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      null,
+      2,
+      null
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      3,
+      4,
+      null
+     ]
+    },
+    {
+     "name": "c",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      5,
+      null,
+      null,
+      6
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a frame with one row",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60,
+        120
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        9
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000,
+      120000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      9,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a frame with no row",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": []
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": []
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "both frames with no row",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": []
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": []
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": []
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": []
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": []
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": []
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": []
+    }
+   ]
+  },
+  {
+   "name": "an unsorted frame",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        120,
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        3,
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60,
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        8,
+        7
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000,
+      120000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      7,
+      8,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "NULL times leave",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        null,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        null,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        4,
+        5
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      3
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      5
+     ]
+    }
+   ]
+  },
+  {
+   "name": "equal times in one frame: the last row wins",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60,
+        60,
+        120
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        5,
+        6
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000,
+      120000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      3,
+      4
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      6,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "equal times in one frame, unsorted: the last row in the input order wins",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60,
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        0
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      2,
+      3
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      0,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a frame with no time column",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    }
+   ],
+   "error": "The frame of query B has no time column."
+  },
+  {
+   "name": "the first frame has no time column",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "x",
+       "kind": "text",
+       "values": [
+        "u"
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    }
+   ],
+   "error": "The frame of query A has no time column."
+  },
+  {
+   "name": "the time field takes the name of the first frame",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "ts",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "t2",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "ts",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      3,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "name": "null values stay null",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        null,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        null
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      null,
+      2
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      3,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "kind text",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "s",
+       "kind": "text",
+       "values": [
+        "x",
+        "y"
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        30,
+        60
+       ]
+      },
+      {
+       "name": "s",
+       "kind": "text",
+       "values": [
+        "p",
+        null
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      30000,
+      60000
+     ]
+    },
+    {
+     "name": "s",
+     "ref": "A",
+     "kind": "text",
+     "values": [
+      "x",
+      null,
+      "y"
+     ]
+    },
+    {
+     "name": "s",
+     "ref": "B",
+     "kind": "text",
+     "values": [
+      null,
+      "p",
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "kind bool",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "ok",
+       "kind": "bool",
+       "values": [
+        true,
+        false
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60,
+        120
+       ]
+      },
+      {
+       "name": "up",
+       "kind": "bool",
+       "values": [
+        true,
+        true
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000,
+      120000
+     ]
+    },
+    {
+     "name": "ok",
+     "ref": "A",
+     "kind": "bool",
+     "values": [
+      true,
+      false,
+      null
+     ]
+    },
+    {
+     "name": "up",
+     "ref": "B",
+     "kind": "bool",
+     "values": [
+      null,
+      true,
+      true
+     ]
+    }
+   ]
+  },
+  {
+   "name": "kind number_text",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "d",
+       "kind": "number_text",
+       "values": [
+        "1.5",
+        "2.5"
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60
+       ]
+      },
+      {
+       "name": "d",
+       "kind": "number_text",
+       "values": [
+        "9"
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "d",
+     "ref": "A",
+     "kind": "number_text",
+     "values": [
+      "1.5",
+      "2.5"
+     ]
+    },
+    {
+     "name": "d",
+     "ref": "B",
+     "kind": "number_text",
+     "values": [
+      null,
+      "9"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a frame with two value fields",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      },
+      {
+       "name": "a2",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        5
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2
+     ]
+    },
+    {
+     "name": "a2",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      3,
+      4
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      5
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a second time field is a value field",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "end",
+       "kind": "time",
+       "values": [
+        5,
+        6
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000
+     ]
+    },
+    {
+     "name": "end",
+     "ref": "A",
+     "kind": "time",
+     "values": [
+      5000,
+      6000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      3,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a text field next to a number field",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      },
+      {
+       "name": "label",
+       "kind": "text",
+       "values": [
+        "x"
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1
+     ]
+    },
+    {
+     "name": "label",
+     "ref": "A",
+     "kind": "text",
+     "values": [
+      "x"
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "name": "far apart times",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        86400
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      86400000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      null
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "name": "negative times",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        -60,
+        0
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        -30
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      -60000,
+      -30000,
+      0
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      null,
+      2
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      3,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "four frames",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        100
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        0,
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        10,
+        100
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        20,
+        100
+       ]
+      },
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "D",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        30,
+        100
+       ]
+      },
+      {
+       "name": "d",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      10000,
+      20000,
+      30000,
+      100000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      0,
+      null,
+      null,
+      null,
+      1
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      1,
+      null,
+      null,
+      2
+     ]
+    },
+    {
+     "name": "c",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      2,
+      null,
+      3
+     ]
+    },
+    {
+     "name": "d",
+     "ref": "D",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      3,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "name": "refs out of alphabetical order",
+   "frames": [
+    {
+     "ref": "Z",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "M",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0
+     ]
+    },
+    {
+     "name": "c",
+     "ref": "Z",
+     "kind": "number",
+     "values": [
+      1
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      2
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "M",
+     "kind": "number",
+     "values": [
+      3
+     ]
+    }
+   ]
+  },
+  {
+   "name": "fractional seconds",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0.5,
+        1.5
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        1.5
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      500.0,
+      1500.0
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      3
+     ]
+    }
+   ]
+  },
+  {
+   "name": "five frames on one row each",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        0
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        1
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        2
+       ]
+      },
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "D",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        3
+       ]
+      },
+      {
+       "name": "d",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "E",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        4
+       ]
+      },
+      {
+       "name": "e",
+       "kind": "number",
+       "values": [
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      1000,
+      2000,
+      3000,
+      4000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      0,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      1,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "c",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      2,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "d",
+     "ref": "D",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      3,
+      null
+     ]
+    },
+    {
+     "name": "e",
+     "ref": "E",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      null,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "name": "three frames, all the same times",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60,
+        120
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60,
+        120
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60,
+        120
+       ]
+      },
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000,
+      120000
+     ]
+    },
+    {
+     "name": "a",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "name": "b",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      1,
+      2,
+      3
+     ]
+    },
+    {
+     "name": "c",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      1,
+      2,
+      3
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 1",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60,
+        60,
+        300,
+        60,
+        120,
+        0
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        92,
+        14,
+        null,
+        62,
+        56,
+        63
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        120
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        20
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        30,
+        150,
+        0,
+        150,
+        30
+       ]
+      },
+      {
+       "name": "v2",
+       "kind": "number",
+       "values": [
+        31,
+        19,
+        62,
+        34,
+        35
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "D",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        6,
+        300,
+        210
+       ]
+      },
+      {
+       "name": "v3",
+       "kind": "number",
+       "values": [
+        77,
+        16,
+        33
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      6000,
+      30000,
+      60000,
+      120000,
+      150000,
+      210000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      63,
+      null,
+      null,
+      62,
+      56,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      null,
+      20,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v2",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      62,
+      null,
+      35,
+      null,
+      null,
+      34,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v3",
+     "ref": "D",
+     "kind": "number",
+     "values": [
+      null,
+      77,
+      null,
+      null,
+      null,
+      null,
+      33,
+      16
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 2",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        90,
+        1,
+        300
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        29,
+        39,
+        60
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        120,
+        270,
+        150,
+        90,
+        0
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        null,
+        40,
+        97,
+        null,
+        null
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        180,
+        270,
+        180,
+        120,
+        120
+       ]
+      },
+      {
+       "name": "v2",
+       "kind": "number",
+       "values": [
+        null,
+        8,
+        82,
+        33,
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "D",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        180,
+        120,
+        300,
+        150,
+        0,
+        0
+       ]
+      },
+      {
+       "name": "v3",
+       "kind": "number",
+       "values": [
+        8,
+        29,
+        67,
+        75,
+        57,
+        null
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      1000,
+      90000,
+      120000,
+      150000,
+      180000,
+      270000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      null,
+      39,
+      29,
+      null,
+      null,
+      null,
+      null,
+      60
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      null,
+      97,
+      null,
+      40,
+      null
+     ]
+    },
+    {
+     "name": "v2",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      1,
+      null,
+      82,
+      8,
+      null
+     ]
+    },
+    {
+     "name": "v3",
+     "ref": "D",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      29,
+      75,
+      8,
+      null,
+      67
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 3",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        210,
+        4,
+        30,
+        30,
+        240,
+        270,
+        210,
+        120
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        83,
+        58,
+        52,
+        84,
+        19,
+        24,
+        23,
+        null
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      4000,
+      30000,
+      120000,
+      210000,
+      240000,
+      270000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      3,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      58,
+      84,
+      null,
+      23,
+      19,
+      24
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 4",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        90,
+        60,
+        120,
+        300
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        30,
+        59,
+        null,
+        79
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        210,
+        60,
+        60,
+        90,
+        90,
+        3,
+        300
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        74,
+        42,
+        37,
+        70,
+        3,
+        80,
+        37
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        90,
+        240,
+        30
+       ]
+      },
+      {
+       "name": "v2",
+       "kind": "number",
+       "values": [
+        null,
+        57,
+        57
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      3000,
+      30000,
+      60000,
+      90000,
+      120000,
+      210000,
+      240000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      59,
+      30,
+      null,
+      null,
+      null,
+      79
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      80,
+      null,
+      37,
+      3,
+      null,
+      74,
+      null,
+      37
+     ]
+    },
+    {
+     "name": "v2",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      null,
+      57,
+      null,
+      null,
+      null,
+      null,
+      57,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 5",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        30,
+        0,
+        120,
+        240,
+        270,
+        90
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        97,
+        27,
+        14,
+        66,
+        66,
+        80
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        240,
+        120,
+        60,
+        270,
+        270
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        null,
+        30,
+        0,
+        98,
+        98
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        240,
+        270,
+        30,
+        300,
+        300,
+        300,
+        90
+       ]
+      },
+      {
+       "name": "v2",
+       "kind": "number",
+       "values": [
+        25,
+        76,
+        96,
+        60,
+        71,
+        null,
+        39
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      30000,
+      60000,
+      90000,
+      120000,
+      240000,
+      270000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      27,
+      97,
+      null,
+      80,
+      14,
+      66,
+      66,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      0,
+      null,
+      30,
+      null,
+      98,
+      null
+     ]
+    },
+    {
+     "name": "v2",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      null,
+      96,
+      null,
+      39,
+      null,
+      25,
+      76,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 6",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        300,
+        300,
+        0,
+        300,
+        30,
+        240,
+        90
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        57,
+        40,
+        21,
+        null,
+        98,
+        5,
+        null
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        120,
+        90
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        15,
+        79
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      30000,
+      90000,
+      120000,
+      240000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      21,
+      98,
+      null,
+      null,
+      5,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      79,
+      15,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 7",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        90,
+        180,
+        270
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        77,
+        66,
+        null
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        73
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        300,
+        240,
+        300,
+        120,
+        90
+       ]
+      },
+      {
+       "name": "v2",
+       "kind": "number",
+       "values": [
+        98,
+        38,
+        null,
+        12,
+        29,
+        30
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      60000,
+      90000,
+      120000,
+      180000,
+      240000,
+      270000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      77,
+      null,
+      66,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      73,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v2",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      98,
+      null,
+      30,
+      29,
+      null,
+      null,
+      null,
+      12
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 8",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        3,
+        180,
+        210,
+        120,
+        270,
+        180
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        20,
+        38,
+        12,
+        1,
+        18,
+        null,
+        98
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        30,
+        270,
+        180,
+        30,
+        270,
+        300
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        65,
+        32,
+        82,
+        68,
+        42,
+        18,
+        71
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      3000,
+      30000,
+      120000,
+      180000,
+      210000,
+      270000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      20,
+      38,
+      null,
+      18,
+      98,
+      1,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      65,
+      null,
+      42,
+      null,
+      68,
+      null,
+      18,
+      71
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 9",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        90,
+        180
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        73,
+        null
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        180,
+        180,
+        120
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        null,
+        80,
+        98,
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      90000,
+      120000,
+      180000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      null,
+      73,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      3,
+      98
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 10",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        300,
+        1
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        null,
+        97
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        90,
+        240,
+        90
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        97,
+        61,
+        37
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      1000,
+      90000,
+      240000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      97,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      37,
+      61,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 11",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        240,
+        180,
+        0
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        41,
+        null,
+        51
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        30,
+        150
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        32,
+        16
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        6,
+        210,
+        150,
+        60,
+        60
+       ]
+      },
+      {
+       "name": "v2",
+       "kind": "number",
+       "values": [
+        5,
+        50,
+        49,
+        20,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "D",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        60,
+        60,
+        60,
+        90
+       ]
+      },
+      {
+       "name": "v3",
+       "kind": "number",
+       "values": [
+        null,
+        80,
+        95,
+        52
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      0,
+      6000,
+      30000,
+      60000,
+      90000,
+      150000,
+      180000,
+      210000,
+      240000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      51,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      41
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      32,
+      null,
+      null,
+      16,
+      null,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v2",
+     "ref": "C",
+     "kind": "number",
+     "values": [
+      null,
+      5,
+      null,
+      3,
+      null,
+      49,
+      null,
+      50,
+      null
+     ]
+    },
+    {
+     "name": "v3",
+     "ref": "D",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      95,
+      52,
+      null,
+      null,
+      null,
+      null
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 12",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        150,
+        30,
+        9,
+        60
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        85,
+        null,
+        47,
+        42
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        210,
+        270
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        12,
+        1
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      9000,
+      30000,
+      60000,
+      150000,
+      210000,
+      270000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      47,
+      null,
+      42,
+      85,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      null,
+      null,
+      12,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "name": "random set 13",
+   "frames": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        6,
+        60,
+        90,
+        30
+       ]
+      },
+      {
+       "name": "v0",
+       "kind": "number",
+       "values": [
+        17,
+        null,
+        2,
+        11
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        270,
+        1,
+        300,
+        270,
+        5
+       ]
+      },
+      {
+       "name": "v1",
+       "kind": "number",
+       "values": [
+        46,
+        14,
+        53,
+        13,
+        54
+       ]
+      }
+     ]
+    }
+   ],
+   "fields": [
+    {
+     "name": "time",
+     "values": [
+      1000,
+      5000,
+      6000,
+      30000,
+      60000,
+      90000,
+      270000,
+      300000
+     ]
+    },
+    {
+     "name": "v0",
+     "ref": "A",
+     "kind": "number",
+     "values": [
+      null,
+      null,
+      17,
+      11,
+      null,
+      2,
+      null,
+      null
+     ]
+    },
+    {
+     "name": "v1",
+     "ref": "B",
+     "kind": "number",
+     "values": [
+      14,
+      54,
+      null,
+      null,
+      null,
+      null,
+      13,
+      53
+     ]
+    }
+   ]
+  }
+ ]
+}

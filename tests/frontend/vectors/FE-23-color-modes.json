@@ -1,0 +1,310 @@
+{
+ "id": "FE-23",
+ "comment": "Colour modes (9.16, paper 10.8 V5). The series palette is the one palette of ClickHouse Dash with a hex for each theme (ID-K70, ID-K74): series i has slot `i mod 18`. The gradients are measured on Grafana 12.4.2. The keys of `measured` are the percent of the scale; -10 and 110 are outside it.",
+ "palette_dark": [
+  "#4296fb",
+  "#e86a34",
+  "#29ae81",
+  "#d28f09",
+  "#de669a",
+  "#4ba435",
+  "#9e8cf4",
+  "#49c1ea",
+  "#febad9",
+  "#ddd674",
+  "#7572ae",
+  "#a86751",
+  "#9fb83c",
+  "#0695b5",
+  "#cf95c1",
+  "#bdbcfd",
+  "#8e8945",
+  "#85e2ed"
+ ],
+ "palette_light": [
+  "#1a73d5",
+  "#c14802",
+  "#088963",
+  "#9c6900",
+  "#b84379",
+  "#227702",
+  "#644fb1",
+  "#046480",
+  "#700048",
+  "#433f01",
+  "#39346a",
+  "#7c3f2a",
+  "#768c02",
+  "#078ead",
+  "#7c4972",
+  "#7b78b4",
+  "#656019",
+  "#03464c"
+ ],
+ "palette_other": {
+  "dark": "#898781",
+  "light": "#6f6d68"
+ },
+ "gradients": [
+  {
+   "mode": "continuous_gr_yl_rd",
+   "theme": "dark",
+   "measured": {
+    "-10": "#73BF69",
+    "0": "#73BF69",
+    "25": "#B4CB4C",
+    "50": "#E2C03D",
+    "75": "#F39045",
+    "100": "#F2495C",
+    "110": "#F2495C"
+   }
+  },
+  {
+   "mode": "continuous_rd_yl_gr",
+   "theme": "dark",
+   "measured": {
+    "-10": "#F2495C",
+    "0": "#F2495C",
+    "25": "#F39045",
+    "50": "#E2C03D",
+    "75": "#B4CB4C",
+    "100": "#73BF69",
+    "110": "#73BF69"
+   }
+  },
+  {
+   "mode": "continuous_bl_yl_rd",
+   "theme": "dark",
+   "measured": {
+    "-10": "#1F60C4",
+    "0": "#1F60C4",
+    "25": "#89A4AD",
+    "50": "#D0B98E",
+    "75": "#DC7F60",
+    "100": "#C4162A",
+    "110": "#C4162A"
+   }
+  },
+  {
+   "mode": "continuous_yl_rd",
+   "theme": "dark",
+   "measured": {
+    "-10": "#FFF899",
+    "0": "#FFF899",
+    "25": "#F0C07D",
+    "50": "#E28762",
+    "75": "#D34F46",
+    "100": "#C4162A",
+    "110": "#C4162A"
+   }
+  },
+  {
+   "mode": "continuous_bl_pu",
+   "theme": "dark",
+   "measured": {
+    "-10": "#5794F2",
+    "0": "#5794F2",
+    "25": "#6F8DEC",
+    "50": "#8886E6",
+    "75": "#A07EDF",
+    "100": "#B877D9",
+    "110": "#B877D9"
+   }
+  },
+  {
+   "mode": "continuous_gr_yl_rd",
+   "theme": "light",
+   "measured": {
+    "-10": "#56A64B",
+    "0": "#56A64B",
+    "25": "#A0B52E",
+    "50": "#D5AC20",
+    "75": "#E5792A",
+    "100": "#E02F44",
+    "110": "#E02F44"
+   }
+  },
+  {
+   "mode": "continuous_rd_yl_gr",
+   "theme": "light",
+   "measured": {
+    "-10": "#E02F44",
+    "0": "#E02F44",
+    "25": "#E5792A",
+    "50": "#D5AC20",
+    "75": "#A0B52E",
+    "100": "#56A64B",
+    "110": "#56A64B"
+   }
+  },
+  {
+   "mode": "continuous_bl_yl_rd",
+   "theme": "light",
+   "measured": {
+    "-10": "#1250B0",
+    "0": "#1250B0",
+    "25": "#829782",
+    "50": "#CAAD58",
+    "75": "#CF7035",
+    "100": "#AD0317",
+    "110": "#AD0317"
+   }
+  },
+  {
+   "mode": "continuous_yl_rd",
+   "theme": "light",
+   "measured": {
+    "-10": "#FFEE52",
+    "0": "#FFEE52",
+    "25": "#EBB343",
+    "50": "#D67935",
+    "75": "#C23E26",
+    "100": "#AD0317",
+    "110": "#AD0317"
+   }
+  },
+  {
+   "mode": "continuous_bl_pu",
+   "theme": "light",
+   "measured": {
+    "-10": "#3274D9",
+    "0": "#3274D9",
+    "25": "#4E6CD6",
+    "50": "#6B63D3",
+    "75": "#875BCF",
+    "100": "#A352CC",
+    "110": "#A352CC"
+   }
+  },
+  {
+   "mode": "continuous_yl_bl",
+   "theme": "dark",
+   "measured": {
+    "-10": "#FFF899",
+    "0": "#FFF899",
+    "25": "#C7D2A4",
+    "50": "#8FACAF",
+    "75": "#5786B9",
+    "100": "#1F60C4",
+    "110": "#1F60C4"
+   }
+  },
+  {
+   "mode": "continuous_blues",
+   "theme": "dark",
+   "measured": {
+    "-10": "#181B1F",
+    "0": "#181B1F",
+    "25": "#1A2C48",
+    "50": "#1C3E72",
+    "75": "#1D4F9B",
+    "100": "#1F60C4",
+    "110": "#1F60C4"
+   }
+  },
+  {
+   "mode": "continuous_reds",
+   "theme": "dark",
+   "measured": {
+    "-10": "#181B1F",
+    "0": "#181B1F",
+    "25": "#431A22",
+    "50": "#6E1925",
+    "75": "#991727",
+    "100": "#C4162A",
+    "110": "#C4162A"
+   }
+  },
+  {
+   "mode": "continuous_greens",
+   "theme": "dark",
+   "measured": {
+    "-10": "#181B1F",
+    "0": "#181B1F",
+    "25": "#203623",
+    "50": "#285126",
+    "75": "#2F6C2A",
+    "100": "#37872D",
+    "110": "#37872D"
+   }
+  },
+  {
+   "mode": "continuous_purples",
+   "theme": "dark",
+   "measured": {
+    "-10": "#181B1F",
+    "0": "#181B1F",
+    "25": "#362345",
+    "50": "#542B6C",
+    "75": "#713392",
+    "100": "#8F3BB8",
+    "110": "#8F3BB8"
+   }
+  },
+  {
+   "mode": "continuous_yl_bl",
+   "theme": "light",
+   "measured": {
+    "-10": "#FFEE52",
+    "0": "#FFEE52",
+    "25": "#C4C76A",
+    "50": "#899F81",
+    "75": "#4D7899",
+    "100": "#1250B0",
+    "110": "#1250B0"
+   }
+  },
+  {
+   "mode": "continuous_blues",
+   "theme": "light",
+   "measured": {
+    "-10": "#FFFFFF",
+    "0": "#FFFFFF",
+    "25": "#C4D3EB",
+    "50": "#89A8D8",
+    "75": "#4D7CC4",
+    "100": "#1250B0",
+    "110": "#1250B0"
+   }
+  },
+  {
+   "mode": "continuous_reds",
+   "theme": "light",
+   "measured": {
+    "-10": "#FFFFFF",
+    "0": "#FFFFFF",
+    "25": "#EBC0C5",
+    "50": "#D6818B",
+    "75": "#C24251",
+    "100": "#AD0317",
+    "110": "#AD0317"
+   }
+  },
+  {
+   "mode": "continuous_greens",
+   "theme": "light",
+   "measured": {
+    "-10": "#FFFFFF",
+    "0": "#FFFFFF",
+    "25": "#C6DCC3",
+    "50": "#8CB987",
+    "75": "#53964A",
+    "100": "#19730E",
+    "110": "#19730E"
+   }
+  },
+  {
+   "mode": "continuous_purples",
+   "theme": "light",
+   "measured": {
+    "-10": "#FFFFFF",
+    "0": "#FFFFFF",
+    "25": "#DECBE8",
+    "50": "#BE97D1",
+    "75": "#9D62BA",
+    "100": "#7C2EA3",
+    "110": "#7C2EA3"
+   }
+  }
+ ]
+}

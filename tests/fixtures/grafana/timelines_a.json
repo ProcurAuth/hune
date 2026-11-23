@@ -1,0 +1,172 @@
+{
+ "id": 4498279295684608,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "index": 0,
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "index": 1,
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "index": 2,
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "dark-red",
+         "index": 3,
+         "text": "DOWN"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, multiIf(number<5,0, number<9,1, number<14,2, number<15,1, number<22,0, 3) AS state FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "st num + value map, defaults",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, multiIf(number<5,0, number<9,1, number<14,2, number<15,1, number<22,0, 3) AS state FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "st num no map, defaults",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "index": 0,
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "index": 1,
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "index": 2,
+         "text": "FAIL"
+        },
+        "3": {
+         "color": "dark-red",
+         "index": 3,
+         "text": "DOWN"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, multiIf(number<5,0, number<9,1, number<14,2, number<15,1, number<22,0, 3) AS state FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "sh num + value map, defaults",
+   "type": "status-history"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f30 a",
+ "uid": "timelines_a",
+ "version": 1
+}

@@ -1,0 +1,201 @@
+{
+  "cursor_sync": "off",
+  "description": "The shape of the example dashboards of the ClickHouse plugin 4.5.1 (15.9).",
+  "format_version": 3,
+  "links": [],
+  "sections": [
+    {
+      "collapsed": false,
+      "panels": [
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT count() AS c FROM system.tables WHERE database IN (${database})"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 1,
+          "links": [],
+          "options": {
+            "color_mode": "value",
+            "graph_mode": "area",
+            "orientation": "auto",
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "text_mode": "auto"
+          },
+          "title": "A panel and a target that name the variable",
+          "transforms": [],
+          "transparent": false,
+          "type": "stat"
+        },
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT name FROM system.tables LIMIT 10"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 12,
+            "y": 0
+          },
+          "id": 2,
+          "links": [],
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "title": "A target with no data source takes the data source of the panel",
+          "transforms": [],
+          "transparent": false,
+          "type": "table"
+        },
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT 1 AS one"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 0,
+            "y": 4
+          },
+          "id": 3,
+          "links": [],
+          "options": {
+            "color_mode": "value",
+            "graph_mode": "area",
+            "orientation": "auto",
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "text_mode": "auto"
+          },
+          "title": "An old text reference with no type",
+          "transforms": [],
+          "transparent": false,
+          "type": "stat"
+        },
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT 2 AS two"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 12,
+            "y": 4
+          },
+          "id": 4,
+          "links": [],
+          "options": {
+            "color_mode": "value",
+            "graph_mode": "area",
+            "orientation": "auto",
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "text_mode": "auto"
+          },
+          "title": "A reference to the item of __inputs",
+          "transforms": [],
+          "transparent": false,
+          "type": "stat"
+        }
+      ],
+      "title": null
+    }
+  ],
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "refresh": null,
+    "timezone": "browser",
+    "to": "now"
+  },
+  "title": "Data source variable",
+  "uid": "ds-variable",
+  "variables": [
+    {
+      "all_value": null,
+      "default": [],
+      "hide": "none",
+      "include_all": true,
+      "kind": "query",
+      "label": "Database",
+      "multi": true,
+      "name": "database",
+      "refresh": "load",
+      "regex": null,
+      "sort": "none",
+      "source": "prod",
+      "sql": [
+        "SELECT name FROM system.databases"
+      ]
+    }
+  ]
+}
+ds-variable:/__inputs/0 [changed] the input leaves the document: each reference gets the source prod of the source map (15.9) | -
+ds-variable:/templating/list/0 [changed] the data source variable leaves the document: each reference gets the source prod of the source map (15.9); regex "", multi false, includeAll false | -

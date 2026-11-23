@@ -1,0 +1,1 @@
+SELECT floor(extract(epoch from ts)/60)*60 FROM t

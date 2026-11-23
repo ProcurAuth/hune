@@ -1,0 +1,1 @@
+SELECT $__unixEpochNanoFrom() AS f, $__unixEpochNanoTo() AS t2

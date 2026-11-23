@@ -1,0 +1,19 @@
+{
+  "id": "macro-interval_s-basic",
+  "tags": [
+    "macro:$__interval_s"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__interval_s AS s",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 20 AS s",
+  "sent_sql": "SELECT $__interval_s AS s"
+}

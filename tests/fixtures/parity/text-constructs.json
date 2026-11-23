@@ -1,0 +1,77 @@
+{
+  "format_version": 3,
+  "uid": "parity-text-constructs",
+  "title": "Parity: text constructs",
+  "description": "Parity fixture of the text panel: each construct of 9.19b, no variable (15.14c).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "text",
+          "title": "Constructs",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 24
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "# Heading 1",
+              "## Heading 2",
+              "### Heading 3",
+              "#### Heading 4",
+              "##### Heading 5",
+              "###### Heading 6",
+              "",
+              "A paragraph with *emphasis*, _emphasis_, **strong**, __strong__ and `inline code`.",
+              "A soft break joins the next line.",
+              "A hard break with two spaces  ",
+              "and a hard break with a backslash\\",
+              "end. An escape: \\*not emphasis\\*.",
+              "",
+              "> A block quote.",
+              "> It has two lines.",
+              "",
+              "- A bullet",
+              "- Another bullet",
+              "  - A nested bullet",
+              "",
+              "1. A first item",
+              "2. A second item",
+              "",
+              "---",
+              "",
+              "```",
+              "a code block",
+              "  with two lines",
+              "```",
+              "",
+              "| Name | Value |",
+              "|:--|--:|",
+              "| left | right |",
+              "| a | 1 |"
+            ]
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

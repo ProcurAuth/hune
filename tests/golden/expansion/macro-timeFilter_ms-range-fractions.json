@@ -1,0 +1,19 @@
+{
+  "id": "macro-timeFilter_ms-range-fractions",
+  "tags": [
+    "macro:$__timeFilter_ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT count() FROM analytics.events WHERE $__timeFilter_ms(timestamp)",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200123,
+  "to_ms": 1794232800987,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT count() FROM analytics.events WHERE timestamp >= fromUnixTimestamp64Milli(1794211200123) AND timestamp <= fromUnixTimestamp64Milli(1794232800987)",
+  "sent_sql": "SELECT count() FROM analytics.events WHERE $__timeFilter_ms(timestamp)"
+}

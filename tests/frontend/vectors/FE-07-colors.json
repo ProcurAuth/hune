@@ -1,0 +1,402 @@
+{
+ "id": "FE-07",
+ "named": {
+  "red": "#F2495C",
+  "super-light-red": "#FFA6B0",
+  "dark-purple": "#8F3BB8",
+  "semi-dark-orange": "#FF780A",
+  "light-blue": "#8AB8FF",
+  "green": "#73BF69",
+  "yellow": "#FADE2A"
+ },
+ "resolve": {
+  "text": "var(--text)",
+  "transparent": "transparent",
+  "#abc": "#abc",
+  "rgb(1, 2, 3)": "rgb(1, 2, 3)",
+  "green": "#73BF69"
+ },
+ "palette": {
+  "0": "#73BF69",
+  "1": "#F2CC0C",
+  "2": "#5794F2",
+  "3": "#FF9830",
+  "4": "#F2495C",
+  "5": "#B877D9",
+  "6": "#37872D",
+  "7": "#E0B400",
+  "8": "#1F60C4",
+  "9": "#FA6400",
+  "10": "#C4162A",
+  "11": "#8F3BB8",
+  "12": "#C8F2C2",
+  "13": "#FFF899",
+  "14": "#C0D8FF",
+  "15": "#FFCB7D",
+  "16": "#FFA6B0",
+  "17": "#DEB6F2",
+  "18": "#447EBC",
+  "31": "#AEA2E0",
+  "32": "#629E51",
+  "63": "#DEDAF7",
+  "64": "#73BF69",
+  "65": "#F2CC0C"
+ },
+ "thresholds": [
+  {
+   "t": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 80,
+      "color": "red"
+     }
+    ]
+   },
+   "v": 79.9,
+   "expect": "green"
+  },
+  {
+   "t": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 80,
+      "color": "red"
+     }
+    ]
+   },
+   "v": 80,
+   "expect": "red"
+  },
+  {
+   "t": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 80,
+      "color": "red"
+     }
+    ]
+   },
+   "v": -1000,
+   "expect": "green"
+  },
+  {
+   "t": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 10,
+      "color": "orange"
+     },
+     {
+      "value": 20,
+      "color": "red"
+     }
+    ]
+   },
+   "v": 15,
+   "expect": "orange"
+  },
+  {
+   "t": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 80,
+      "color": "red"
+     }
+    ]
+   },
+   "v": null,
+   "expect": null
+  },
+  {
+   "t": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 80,
+      "color": "red"
+     }
+    ]
+   },
+   "v": "NaN",
+   "expect": null
+  },
+  {
+   "t": {
+    "mode": "percentage",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 50,
+      "color": "red"
+     }
+    ]
+   },
+   "v": 15,
+   "min": 10,
+   "max": 20,
+   "expect": "red"
+  },
+  {
+   "t": {
+    "mode": "percentage",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 50,
+      "color": "red"
+     }
+    ]
+   },
+   "v": 14.9,
+   "min": 10,
+   "max": 20,
+   "expect": "green"
+  },
+  {
+   "t": {
+    "mode": "percentage",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     },
+     {
+      "value": 50,
+      "color": "red"
+     }
+    ]
+   },
+   "v": 15,
+   "min": 10,
+   "max": 10,
+   "expect": "green"
+  }
+ ],
+ "modes": [
+  {
+   "config": {
+    "color": {
+     "mode": "fixed",
+     "fixed": "blue"
+    }
+   },
+   "v": 5,
+   "ctx": {},
+   "expect": "#5794F2"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": 2
+   },
+   "expect": "#29ae81"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {},
+   "expect": "#4296fb"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": 2,
+    "dark": false
+   },
+   "expect": "#088963"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": 17
+   },
+   "expect": "#85e2ed"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": 18
+   },
+   "expect": "#4296fb"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": 19,
+    "dark": false
+   },
+   "expect": "#c14802"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": -1
+   },
+   "expect": "#898781"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "palette",
+     "fixed": null
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": -1,
+    "dark": false
+   },
+   "expect": "#6f6d68"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "fixed",
+     "fixed": "green"
+    }
+   },
+   "v": 5,
+   "ctx": {
+    "seriesIndex": 2
+   },
+   "expect": "#73BF69"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "thresholds",
+     "fixed": null
+    },
+    "thresholds": {
+     "mode": "absolute",
+     "steps": [
+      {
+       "value": null,
+       "color": "green"
+      },
+      {
+       "value": 3,
+       "color": "red"
+      }
+     ]
+    }
+   },
+   "v": 5,
+   "ctx": {},
+   "expect": "#F2495C"
+  },
+  {
+   "config": {
+    "color": {
+     "mode": "thresholds",
+     "fixed": null
+    },
+    "thresholds": {
+     "mode": "absolute",
+     "steps": [
+      {
+       "value": null,
+       "color": "green"
+      },
+      {
+       "value": 3,
+       "color": "red"
+      }
+     ]
+    }
+   },
+   "v": null,
+   "ctx": {},
+   "expect": null
+  }
+ ],
+ "text_on": {
+  "#FADE2A": "#000000",
+  "#1F60C4": "#ffffff",
+  "#73BF69": "#000000",
+  "#000000": "#ffffff",
+  "#ffffff": "#000000",
+  "#F2495C": "#000000",
+  "#C4162A": "#ffffff"
+ },
+ "gradient": {
+  "#73BF69": "linear-gradient(120deg, rgb(77, 172, 73), #73BF69)"
+ },
+ "palette_note": "`palette` is the classic palette of Grafana 12.4.2 (reference of the difference, 19.20a). The mode `palette` draws the one series palette of ClickHouse Dash (ID-K70, ID-K74): see `modes` and FE-23."
+}

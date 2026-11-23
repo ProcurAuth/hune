@@ -1,0 +1,8 @@
+[
+  {
+    "id": 1,
+    "uid": "pg-main",
+    "title": "PostgreSQL panels",
+    "type": "dash-db"
+  }
+]

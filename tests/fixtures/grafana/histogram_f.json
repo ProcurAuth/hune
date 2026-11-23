@@ -1,0 +1,382 @@
+{
+ "id": 232230987567104,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, round(60*((cityHash64(number+1) % 1000000 + 0.5)/1000000-0.5),3) AS v FROM numbers(2000)",
+     "refId": "A"
+    }
+   ],
+   "title": "negative values",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, if(number%2=0, round(10*(cityHash64(number+1) % 1000000 + 0.5)/1000000,2), round(90+10*(cityHash64(number+2) % 1000000 + 0.5)/1000000,2)) AS v FROM numbers(2000)",
+     "refId": "A"
+    }
+   ],
+   "title": "two clusters (gap)",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, toFloat64(5) AS v FROM numbers(100)",
+     "refId": "A"
+    }
+   ],
+   "title": "all equal",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "id": 4,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, toFloat64(5) AS v FROM numbers(1)",
+     "refId": "A"
+    }
+   ],
+   "title": "single value",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 32
+   },
+   "id": 5,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, if(number%5=0, NULL, round(100*(cityHash64(number+1) % 1000000 + 0.5)/1000000,2)) AS v FROM numbers(2000)",
+     "refId": "A"
+    }
+   ],
+   "title": "nullable values",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 40
+   },
+   "id": 6,
+   "options": {
+    "bucketSize": 0.01
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, round(100*(cityHash64(number+1) % 1000000 + 0.5)/1000000,3) AS v FROM numbers(5000)",
+     "refId": "A"
+    }
+   ],
+   "title": "bucketSize 0.01 (many buckets)",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "fillOpacity": 30,
+      "lineWidth": 3,
+      "stacking": {
+       "group": "A",
+       "mode": "normal"
+      }
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 48
+   },
+   "id": 7,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, round(40*-log(1-(cityHash64(number+0) % 1000000 + 0.5)/1000000),3) AS a, round(25*-log(1-(cityHash64(number+7) % 1000000 + 0.5)/1000000)+10,3) AS b FROM numbers(3000)",
+     "refId": "A"
+    }
+   ],
+   "title": "stacking normal, fill 30, line 3",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "gradientMode": "opacity"
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 56
+   },
+   "id": 8,
+   "options": {
+    "legend": {
+     "calcs": [],
+     "displayMode": "list",
+     "placement": "right",
+     "showLegend": true
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "none"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, round(40*-log(1-(cityHash64(number+0) % 1000000 + 0.5)/1000000),3) AS v FROM numbers(3000)",
+     "refId": "A"
+    }
+   ],
+   "title": "gradient opacity, legend right, tooltip multi",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 64
+   },
+   "id": 9,
+   "options": {
+    "bucketCount": 1
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, round(40*-log(1-(cityHash64(number+0) % 1000000 + 0.5)/1000000),3) AS v FROM numbers(3000)",
+     "refId": "A"
+    }
+   ],
+   "title": "bucketCount 0",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "stacking": {
+       "group": "A",
+       "mode": "percent"
+      }
+     }
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 72
+   },
+   "id": 10,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number AS time, round(40*-log(1-(cityHash64(number+0) % 1000000 + 0.5)/1000000),3) AS a, round(25*-log(1-(cityHash64(number+7) % 1000000 + 0.5)/1000000)+10,3) AS b FROM numbers(3000)",
+     "refId": "A"
+    }
+   ],
+   "title": "stacking percent",
+   "type": "histogram"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f31 f",
+ "uid": "histogram_f",
+ "version": 1
+}

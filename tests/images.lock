@@ -1,0 +1,24 @@
+# Pins of every image, tool version and archive that the tests and the build use (16.1).
+# One line: <name> <reference>@sha256:<digest>.
+# Each image line holds the multi-architecture index digest of `docker buildx imagetools inspect <tag>` (2026-11-22).
+# A new image line needs its digest before a release: the release workflow refuses a line that has none.
+# The test scripts export each line as IMAGE_<NAME> (upper case, "-" and "." become "_").
+rust rust:1.99.1-trixie@sha256:8a4e90c7946b74626488b1446f712c0fe0ed1a596cbd3d871684bc9c5433ae07
+cargo-deny-version 0.22.0
+postgres-15 postgres:15-trixie@sha256:8cf673eb99f8b9042c9078ee4ca0e775428c77097e9d999bfc9ba4b4347f5733
+postgres-18 postgres:18.4-trixie@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636
+mongo-7.0 mongo:7.0@sha256:41e8195b2791692695e1dc9bd21cd51d0a3af05fff8ace9304a5c1acf94f1ae1
+mongo-8.0 mongo:8.0@sha256:479e85ced54ffb8a40dade1dcde2da2a9ae858515b9415e9cc54bfb8f0575d01
+nginx nginx:1.28-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
+clickhouse-lts clickhouse/clickhouse-server:26.8.34.13@sha256:8b28eb09479c36c4533eec7a6268917d04ba3a6fd90e3f4205f70e761b6d7779
+node node:22-trixie-slim@sha256:68c76cfad89921b927eae28ba21407475e29d0ce450afcdbe70c1532db042b64
+kubeconform ghcr.io/yannh/kubeconform:v0.7.0@sha256:85dbef6b4b312b99133decc9c6fc9495e9fc5f92293d4ff3b7e1b30f5611823c
+# Copied lexer vectors (16.3): file, SHA-256 and the ClickHouse Dash commit of the chart engine copy.
+sql-lex-vectors tests/fixtures/sql-lex-vectors.json@sha256:886336189f3b113b7c0f03b2e37c9c5748b0cbf9289b2e56dd1462e3d49c32be clickhouse-dash:e970694e5e0b17b07cf187f3128af93fa1a82b76
+# Lexer vectors of the dialect postgres (7.20): written for Hune from scan.l of PostgreSQL 15 to 18, not copied.
+sql-lex-vectors-pg tests/fixtures/sql-lex-vectors-pg.json@sha256:b28c50b1f123faf2a1ccebd344fc879107f346dd0fcc66c27e3216a171524f12 hune:own
+# Grafana of the expansion vectors and of the parity capture (16.13). The plugin line holds the download URL of the
+# linux/amd64 archive (grafana.com refuses a download with no os and arch) and its SHA-256: the service plugin-fetch
+# refuses an archive without it. The job `import` runs on amd64 only.
+grafana grafana/grafana-oss:12.4.2@sha256:83749231c3835e390a3144e5e940203e42b9589761f20ef3169c716e734ad505
+grafana-clickhouse-plugin https://grafana.com/api/plugins/grafana-clickhouse-datasource/versions/4.5.1/download?os=linux&arch=amd64@sha256:234cb01b654ec3ba4e55ecda7cc38b4e8791fedf7c6075daa9ba15a3c38c308c

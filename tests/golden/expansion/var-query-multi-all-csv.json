@@ -1,0 +1,53 @@
+{
+  "id": "var-query-multi-all-csv",
+  "tags": [
+    "var:query-all",
+    "format:csv"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE h IN (${host:csv})",
+  "variables": [
+    {
+      "name": "host",
+      "kind": "query",
+      "options": [
+        "a1",
+        "b2",
+        "c3"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "host": {
+      "all": true,
+      "values": [
+        "a1",
+        "b2",
+        "c3"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE h IN (a1,b2,c3)",
+  "sent_sql": "SELECT 1 WHERE h IN (a1,b2,c3)",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  }
+}

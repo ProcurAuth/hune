@@ -1,0 +1,38 @@
+{
+  "id": "var-in-macro-argument-braces",
+  "tags": [
+    "var:custom-single",
+    "macro:$__timeInterval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__timeInterval(${col}) AS t FROM analytics.events GROUP BY t",
+  "variables": [
+    {
+      "name": "col",
+      "kind": "custom",
+      "options": [
+        "timestamp"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "col": {
+      "all": false,
+      "values": [
+        "timestamp"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT toStartOfInterval(toDateTime(timestamp), INTERVAL 20 second) AS t FROM analytics.events GROUP BY t",
+  "sent_sql": "SELECT $__timeInterval(timestamp) AS t FROM analytics.events GROUP BY t"
+}

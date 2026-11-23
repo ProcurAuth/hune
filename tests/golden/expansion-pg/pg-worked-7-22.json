@@ -1,0 +1,65 @@
+{
+  "id": "pg-worked-7-22",
+  "tags": [
+    "worked:7.22",
+    "macro:$__timeGroupAlias",
+    "macro:$__timeFilter",
+    "builtin:$__interval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeGroupAlias(created_at, $__interval), host, avg(load) AS load\nFROM metrics.node_load\nWHERE $__timeFilter(created_at) AND host IN ($host) AND env = '$env'\nGROUP BY 1, host\nORDER BY 1",
+  "variables": [
+    {
+      "name": "host",
+      "kind": "query",
+      "options": [
+        "a1",
+        "b'2"
+      ],
+      "multi": true,
+      "include_all": false,
+      "all_value": null
+    },
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "prod",
+        "dev"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "host": {
+      "all": false,
+      "values": [
+        "a1",
+        "b'2"
+      ]
+    },
+    "env": {
+      "all": false,
+      "values": [
+        "prod"
+      ]
+    }
+  },
+  "values_sql": {
+    "host": "'a1','b''2'",
+    "env": "prod"
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT floor(extract(epoch from created_at)/20)*20 AS \"time\", host, avg(load) AS load\nFROM metrics.node_load\nWHERE created_at BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z' AND host IN ('a1','b''2') AND env = 'prod'\nGROUP BY 1, host\nORDER BY 1",
+  "grafana_error": "db query error: ERROR: column \"env\" does not exist (SQLSTATE 42703)",
+  "sent_sql": "SELECT $__timeGroupAlias(created_at, $__interval), host, avg(load) AS load\nFROM metrics.node_load\nWHERE $__timeFilter(created_at) AND host IN ('a1','b''2') AND env = 'prod'\nGROUP BY 1, host\nORDER BY 1"
+}

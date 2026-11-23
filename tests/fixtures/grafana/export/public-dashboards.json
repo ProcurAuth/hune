@@ -1,0 +1,10 @@
+{
+  "publicDashboards": [
+    {
+      "uid": "pub1",
+      "dashboardUid": "monitor",
+      "accessToken": "tok-synthetic"
+    }
+  ],
+  "totalCount": 1
+}

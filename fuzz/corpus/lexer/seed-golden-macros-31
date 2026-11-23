@@ -1,0 +1,1 @@
+SELECT $__timeInterval_ms(ts) AS t FROM t GROUP BY t

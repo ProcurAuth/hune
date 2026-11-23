@@ -1,0 +1,1 @@
+SELECT $__timeTo() AS t2

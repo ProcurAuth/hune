@@ -1,0 +1,267 @@
+{
+ "id": "FE-11",
+ "cols": [
+  {
+   "name": "name",
+   "kind": "text",
+   "values": [
+    "b",
+    "a",
+    "c",
+    "A",
+    null,
+    "a"
+   ]
+  },
+  {
+   "name": "n",
+   "kind": "number",
+   "values": [
+    3,
+    null,
+    1,
+    2,
+    "nan",
+    2
+   ]
+  },
+  {
+   "name": "dec",
+   "kind": "number_text",
+   "values": [
+    "9007199254740993",
+    "9007199254740992",
+    "0.10",
+    null,
+    "-5",
+    "0.1"
+   ]
+  },
+  {
+   "name": "t",
+   "kind": "time",
+   "values": [
+    300,
+    200,
+    null,
+    100,
+    400,
+    500
+   ]
+  }
+ ],
+ "cases": [
+  {
+   "name": "text asc, nulls last, case folded then case, stable",
+   "sort": [
+    {
+     "index": 0,
+     "desc": false
+    }
+   ],
+   "expect": [
+    3,
+    1,
+    5,
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "name": "text desc, nulls still last",
+   "sort": [
+    {
+     "index": 0,
+     "desc": true
+    }
+   ],
+   "expect": [
+    2,
+    0,
+    1,
+    5,
+    3,
+    4
+   ]
+  },
+  {
+   "name": "number asc, null and NaN last",
+   "sort": [
+    {
+     "index": 1,
+     "desc": false
+    }
+   ],
+   "expect": [
+    2,
+    3,
+    5,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "name": "number desc, null and NaN last",
+   "sort": [
+    {
+     "index": 1,
+     "desc": true
+    }
+   ],
+   "expect": [
+    0,
+    3,
+    5,
+    2,
+    1,
+    4
+   ]
+  },
+  {
+   "name": "second key breaks ties",
+   "sort": [
+    {
+     "index": 1,
+     "desc": false
+    },
+    {
+     "index": 0,
+     "desc": true
+    }
+   ],
+   "expect": [
+    2,
+    5,
+    3,
+    0,
+    1,
+    4
+   ]
+  },
+  {
+   "name": "exact decimals compare exactly",
+   "sort": [
+    {
+     "index": 2,
+     "desc": false
+    }
+   ],
+   "expect": [
+    4,
+    2,
+    5,
+    1,
+    0,
+    3
+   ]
+  },
+  {
+   "name": "exact decimals desc, null last",
+   "sort": [
+    {
+     "index": 2,
+     "desc": true
+    }
+   ],
+   "expect": [
+    0,
+    1,
+    2,
+    5,
+    4,
+    3
+   ]
+  },
+  {
+   "name": "time asc, null last",
+   "sort": [
+    {
+     "index": 3,
+     "desc": false
+    }
+   ],
+   "expect": [
+    3,
+    1,
+    0,
+    4,
+    5,
+    2
+   ]
+  },
+  {
+   "name": "no sort keeps the order",
+   "sort": [],
+   "expect": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  {
+   "name": "filter keeps the allowed display texts",
+   "sort": [],
+   "filters": [
+    {
+     "index": 0,
+     "allowed": [
+      "a",
+      "A"
+     ]
+    }
+   ],
+   "expect": [
+    1,
+    3,
+    5
+   ]
+  },
+  {
+   "name": "two filters and a sort",
+   "sort": [
+    {
+     "index": 1,
+     "desc": true
+    }
+   ],
+   "filters": [
+    {
+     "index": 0,
+     "allowed": [
+      "a",
+      "b",
+      "A"
+     ]
+    },
+    {
+     "index": 1,
+     "allowed": [
+      "2",
+      "3"
+     ]
+    }
+   ],
+   "expect": [
+    0,
+    3,
+    5
+   ]
+  },
+  {
+   "name": "filter with an empty set keeps nothing",
+   "sort": [],
+   "filters": [
+    {
+     "index": 0,
+     "allowed": []
+    }
+   ],
+   "expect": []
+  }
+ ]
+}

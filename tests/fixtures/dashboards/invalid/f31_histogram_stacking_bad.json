@@ -1,0 +1,137 @@
+{
+  "format_version": 3,
+  "uid": "f31-invalid",
+  "title": "F31 invalid",
+  "description": "",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "heatmap",
+          "title": "Heatmap",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT now() AS time, 1 AS value"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "calculate": true,
+            "x_buckets": {
+              "mode": "count",
+              "value": null
+            },
+            "y_buckets": {
+              "mode": "count",
+              "value": null,
+              "scale": "linear"
+            },
+            "y_axis": "left",
+            "y_reverse": false,
+            "y_min": null,
+            "y_max": null,
+            "color": {
+              "mode": "scheme",
+              "scheme": "oranges",
+              "fill": "dark-orange",
+              "scale": "exponential",
+              "exponent": 0.5,
+              "steps": 64,
+              "reverse": false,
+              "min": null,
+              "max": null
+            },
+            "cell_gap": 1,
+            "hide_le": 0,
+            "hide_ge": null,
+            "show_legend": true,
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "histogram",
+          "title": "Histogram",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT now() AS time, 1 AS value"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "bucket_count": 30,
+            "bucket_size": null,
+            "bucket_offset": 0,
+            "combine": false,
+            "stacking": "group",
+            "line_width": 1,
+            "fill_opacity": 80,
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

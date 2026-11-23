@@ -1,0 +1,556 @@
+{
+  "format_version": 3,
+  "uid": "annotations",
+  "title": "Annotations",
+  "description": "Eight annotations: a point, a region, every colour form, a filter of panels and a switch off.",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "custom",
+      "name": "env",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "Prod",
+          "value": "prod"
+        },
+        {
+          "text": "Stage",
+          "value": "stage"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "prod"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "name": "",
+      "source": "prod",
+      "sql": [
+        "SELECT deployed_at AS time, concat('v', version) AS text, 'prod,deploy' AS tags",
+        "FROM ops.deploys",
+        "WHERE $__timeFilter(deployed_at)"
+      ],
+      "color": "red",
+      "panels": [
+        20,
+        21
+      ]
+    },
+    {
+      "name": "Maintenance",
+      "source": "prod",
+      "sql": [
+        "SELECT start AS time, finish AS timeEnd, 'Maintenance' AS title, reason AS text",
+        "FROM ops.windows",
+        "WHERE $__timeFilter(start) AND env = ${env}"
+      ],
+      "color": "#1f78c1"
+    },
+    {
+      "name": "Incidents",
+      "source": "prod",
+      "sql": [
+        "SELECT at AS time, title, details AS text",
+        "FROM ops.incidents",
+        "WHERE at >= $__fromTime AND at <= $__toTime"
+      ],
+      "color": "rgb(255, 120, 0)",
+      "enabled": false
+    },
+    {
+      "name": "Alerts",
+      "source": "prod",
+      "sql": [
+        "SELECT at AS time FROM ops.alerts WHERE $__timeFilter(at)"
+      ],
+      "color": "semi-dark-blue",
+      "panels": [
+        21
+      ]
+    },
+    {
+      "name": "Releases",
+      "source": "prod",
+      "sql": [
+        "SELECT released AS time, name AS title FROM ops.releases WHERE $__timeFilter(released)"
+      ],
+      "color": "green"
+    },
+    {
+      "name": "Notes",
+      "source": "prod",
+      "sql": [
+        "SELECT noted AS time, note AS text FROM ops.notes WHERE $__timeFilter(noted)"
+      ],
+      "color": "transparent"
+    },
+    {
+      "name": "NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN",
+      "source": "prod",
+      "sql": [
+        "SELECT 1 AS time"
+      ],
+      "color": "text",
+      "panels": [
+        20,
+        30,
+        10,
+        21
+      ]
+    },
+    {
+      "name": "Last",
+      "source": "prod",
+      "sql": [
+        "SELECT 2 AS time"
+      ],
+      "color": "rgba(10, 20, 30, 0.5)"
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 20,
+          "type": "timeseries",
+          "title": "Series",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(t) AS t, v",
+                "FROM s",
+                "WHERE $__timeFilter(t)"
+              ],
+              "min_interval": "1ms",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "options": {
+            "draw": "bars",
+            "interpolation": "step_after",
+            "line_width": 0,
+            "fill_opacity": 100,
+            "show_points": "never",
+            "point_size": 40,
+            "span_nulls": true,
+            "stacking": "percent",
+            "y_scale": "log",
+            "legend": {
+              "show": true,
+              "placement": "right",
+              "mode": "table",
+              "values": [
+                "total",
+                "min",
+                "max",
+                "mean",
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "hidden"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 30,
+          "type": "stat",
+          "title": "Stat",
+          "description": "Reuses the table.",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "reuse": {
+              "panel": 10,
+              "with_transforms": false
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 21,
+          "type": "timeseries",
+          "title": "Second series",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(t) AS t, v",
+                "FROM s",
+                "WHERE $__timeFilter(t)"
+              ],
+              "min_interval": "1ms",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "options": {
+            "draw": "bars",
+            "interpolation": "step_after",
+            "line_width": 0,
+            "fill_opacity": 100,
+            "show_points": "never",
+            "point_size": 40,
+            "span_nulls": true,
+            "stacking": "percent",
+            "y_scale": "log",
+            "legend": {
+              "show": true,
+              "placement": "right",
+              "mode": "table",
+              "values": [
+                "total",
+                "min",
+                "max",
+                "mean",
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "hidden"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 10,
+          "type": "table",
+          "title": "Table",
+          "description": "All table members.",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 1",
+                "\tFROM t -- tab above"
+              ],
+              "min_interval": "90s",
+              "max_data_points": 500
+            }
+          },
+          "transforms": [
+            {
+              "kind": "filter_by_value",
+              "mode": "include",
+              "match": "all",
+              "filters": [
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "equal",
+                    "value": 1.5
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "equal",
+                    "value": "text"
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "not_equal",
+                    "value": 1000
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "greater",
+                    "value": 0
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "greater_or_equal",
+                    "value": 2
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "lower",
+                    "value": 3
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "lower_or_equal",
+                    "value": 4
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "range",
+                    "from": 1,
+                    "to": 25
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "regex",
+                    "pattern": "^a|b$"
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "is_null"
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "is_not_null"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "grouping_to_matrix",
+              "column_field": "c",
+              "row_field": "r",
+              "value_field": "v",
+              "empty_value": "false"
+            }
+          ],
+          "fields": {
+            "defaults": {
+              "unit": "prefix:$",
+              "decimals": 3,
+              "min": 0,
+              "max": 1000,
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "super-light-red"
+                  },
+                  {
+                    "value": 1e-07,
+                    "color": "light-orange"
+                  },
+                  {
+                    "value": 1e-06,
+                    "color": "yellow"
+                  },
+                  {
+                    "value": 1.5,
+                    "color": "semi-dark-green"
+                  },
+                  {
+                    "value": 1000,
+                    "color": "dark-blue"
+                  },
+                  {
+                    "value": 1e+21,
+                    "color": "purple"
+                  },
+                  {
+                    "value": 1.2345678901234568e+29,
+                    "color": "text"
+                  }
+                ]
+              },
+              "mappings": [
+                {
+                  "kind": "value",
+                  "value": "1",
+                  "text": "One",
+                  "color": null
+                },
+                {
+                  "kind": "range",
+                  "from": null,
+                  "to": 5,
+                  "text": null,
+                  "color": "transparent"
+                },
+                {
+                  "kind": "range",
+                  "from": 1,
+                  "to": null,
+                  "text": "big",
+                  "color": "#aabbccdd"
+                },
+                {
+                  "kind": "regex",
+                  "pattern": "/^(a)b/i",
+                  "text": "$1",
+                  "color": "rgb(1, 2, 3)"
+                },
+                {
+                  "kind": "special",
+                  "match": "null_nan",
+                  "text": "n/a",
+                  "color": "rgba(1, 2, 3, 0.5)"
+                }
+              ],
+              "links": [
+                {
+                  "title": "Data",
+                  "url": "/d/other?x=${__value.raw}",
+                  "target_blank": false
+                }
+              ],
+              "display_name": "Name",
+              "no_value": "-",
+              "width": 100,
+              "align": "right",
+              "cell": {
+                "type": "color_text",
+                "mode": null
+              },
+              "filterable": true,
+              "hidden": false
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "regex",
+                  "value": "/^a/"
+                },
+                "set": {
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "#ABC"
+                  },
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "gradient"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "b"
+                },
+                "set": {
+                  "unit": "percentunit",
+                  "min": 0,
+                  "max": 1,
+                  "hidden": true
+                }
+              }
+            ]
+          },
+          "options": {
+            "show_header": true,
+            "sort": [
+              {
+                "field": "a",
+                "desc": false
+              },
+              {
+                "field": "b",
+                "desc": true
+              }
+            ]
+          },
+          "links": [
+            {
+              "title": "Docs",
+              "url": "https://example.org/${__url_time_range}",
+              "target_blank": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

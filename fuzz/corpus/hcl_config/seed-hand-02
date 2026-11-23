@@ -1,0 +1,6 @@
+storage {
+  backend = "volume"
+}
+storage.volume {
+  path = "/data"
+}

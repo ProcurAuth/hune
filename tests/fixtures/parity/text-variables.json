@@ -1,0 +1,107 @@
+{
+  "format_version": 3,
+  "uid": "parity-text-variables",
+  "title": "Parity: text variables",
+  "description": "Parity fixture of the text panel: placeholders with plain values (15.14c).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "custom",
+      "name": "region",
+      "label": "Region",
+      "hide": "none",
+      "options": [
+        {
+          "text": "Europe",
+          "value": "eu"
+        },
+        {
+          "text": "Asia",
+          "value": "as"
+        },
+        {
+          "text": "Africa",
+          "value": "af"
+        }
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "default": [
+        "eu",
+        "af"
+      ]
+    },
+    {
+      "kind": "custom",
+      "name": "tier",
+      "label": "Tier",
+      "hide": "none",
+      "options": [
+        {
+          "text": "Gold",
+          "value": "gold"
+        },
+        {
+          "text": "Silver",
+          "value": "silver"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "gold"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "text",
+          "title": "Variables",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 12
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "Values: $region",
+              "Braces: ${region}",
+              "Text: ${region:text}",
+              "Csv: ${region:csv}",
+              "Pipe: ${region:pipe}",
+              "Single value: $tier and ${tier}",
+              "",
+              "Unknown names stay: $nothing and ${nothing}.",
+              "An escape: \\$region.",
+              "`Code: $region`",
+              "",
+              "```",
+              "Block: $region",
+              "```"
+            ]
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

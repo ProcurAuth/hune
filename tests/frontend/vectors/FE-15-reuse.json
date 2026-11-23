@@ -1,0 +1,66 @@
+{
+ "id": "FE-15",
+ "document": "tests/fixtures/dashboards/nodes.json",
+ "tableFrame": [
+  {
+   "name": "node",
+   "kind": "text",
+   "values": [
+    "v1",
+    "v2",
+    "v3"
+   ]
+  },
+  {
+   "name": "name",
+   "kind": "text",
+   "values": [
+    "One",
+    "Two",
+    "Three"
+   ]
+  },
+  {
+   "name": "weight",
+   "kind": "number_text",
+   "values": [
+    "1000000.000000000",
+    "2500000.500000000",
+    "300"
+   ]
+  },
+  {
+   "name": "ratio",
+   "kind": "number",
+   "values": [
+    5,
+    12,
+    1
+   ]
+  },
+  {
+   "name": "status",
+   "kind": "number",
+   "values": [
+    1,
+    0,
+    null
+   ]
+  }
+ ],
+ "expect": {
+  "withTransforms": [
+   "v1",
+   "v2"
+  ],
+  "withoutTransforms": [
+   "v1",
+   "v2",
+   "v3"
+  ],
+  "reuseFilter": [
+   "v2"
+  ],
+  "reuseTotalWeight": 2500000.5
+ }
+}

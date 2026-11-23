@@ -1,0 +1,2 @@
+select 'é;😀'; select "é😀" -- é
+x

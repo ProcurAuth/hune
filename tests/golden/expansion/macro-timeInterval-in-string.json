@@ -1,0 +1,27 @@
+{
+  "id": "macro-timeInterval-in-string",
+  "tags": [
+    "macro:$__timeInterval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT '$__timeInterval(t)' AS s",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 'toStartOfInterval(toDateTime(t), INTERVAL 20 second)' AS s",
+  "sent_sql": "SELECT '$__timeInterval(t)' AS s",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT '$__timeInterval(t)' AS s"
+    }
+  }
+}

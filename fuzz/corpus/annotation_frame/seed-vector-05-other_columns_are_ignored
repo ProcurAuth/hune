@@ -1,0 +1,3 @@
+["time", "color", "id", "value"]
+["DateTime64(3)", "String", "UInt64", "Float64"]
+["1794211800.000", "red", "7", 1.5]

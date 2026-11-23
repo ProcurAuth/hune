@@ -1,0 +1,1 @@
+SELECT $__timeGroup(ts, '365d') FROM t

@@ -1,0 +1,1242 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2alpha1",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "mongo-v2a",
+    "namespace": "default",
+    "uid": "mg0",
+    "resourceVersion": "1731100000000",
+    "generation": 1,
+    "creationTimestamp": "2026-10-01T10:00:00Z",
+    "labels": {},
+    "annotations": {}
+  },
+  "spec": {
+    "title": "MongoDB panels",
+    "description": "Synthetic dashboard of the importer tests: one panel for each MongoDB row of 15.6.",
+    "tags": [
+      "synthetic",
+      "mongodb"
+    ],
+    "timeSettings": {
+      "from": "now-6h",
+      "to": "now",
+      "timezone": "browser",
+      "autoRefresh": "",
+      "autoRefreshIntervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0,
+      "weekStart": "",
+      "nowDelay": ""
+    },
+    "cursorSync": "Off",
+    "editable": true,
+    "liveNow": false,
+    "preload": false,
+    "links": [],
+    "annotations": [],
+    "variables": [
+      {
+        "kind": "CustomVariable",
+        "spec": {
+          "name": "node",
+          "label": "Node",
+          "description": "",
+          "hide": "dontHide",
+          "skipUrlSync": false,
+          "query": "node-a,node-b,node-c",
+          "multi": true,
+          "includeAll": true,
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "options": [
+            {
+              "text": "node-a",
+              "value": "node-a"
+            },
+            {
+              "text": "node-b",
+              "value": "node-b"
+            },
+            {
+              "text": "node-c",
+              "value": "node-c"
+            }
+          ]
+        }
+      },
+      {
+        "kind": "CustomVariable",
+        "spec": {
+          "name": "region",
+          "label": "Region",
+          "description": "",
+          "hide": "dontHide",
+          "skipUrlSync": false,
+          "query": "eu,us",
+          "multi": false,
+          "includeAll": false,
+          "current": {
+            "selected": true,
+            "text": "eu",
+            "value": "eu"
+          },
+          "options": [
+            {
+              "text": "eu",
+              "value": "eu"
+            },
+            {
+              "text": "us",
+              "value": "us"
+            }
+          ]
+        }
+      }
+    ],
+    "elements": {
+      "panel-1": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1,
+          "title": "Orders table",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[\n  {\n    \"$match\": {\n      \"ts\": {\n        \"$gte\": \"$__timeFrom\",\n        \"$lte\": \"$__timeTo\"\n      },\n      \"host\": {\n        \"$in\": \"${node:json}\"\n      }\n    }\n  },\n  {\n    \"$project\": {\n      \"_id\": 0,\n      \"host\": 1,\n      \"load\": 1\n    }\n  },\n  {\n    \"$sort\": {\n      \"host\": 1\n    }\n  }\n]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "Load by host",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"ts\": {\"$gte\": \"$__timeFrom\", \"$lte\": \"$__timeTo\"}, \"host\": {\"$in\": \"${node:json}\"}}}, {\"$group\": {\"_id\": {\"t\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}, \"host\": \"$host\"}, \"load\": {\"$avg\": \"$load\"}}}, {\"$project\": {\"_id\": 0, \"time\": \"$_id.t\", \"host\": \"$_id.host\", \"load\": 1}}, {\"$sort\": {\"time\": 1}}]",
+                        "collection": "node_load",
+                        "queryType": "timeseries",
+                        "database": "analytics"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "timeseries",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-3": {
+        "kind": "Panel",
+        "spec": {
+          "id": 3,
+          "title": "Epoch macros",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"epoch_ms\": {\"$gte\": \"$__from\", \"$lte\": \"$__to\"}}}, {\"$limit\": \"$__interval_ms\"}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-4": {
+        "kind": "Panel",
+        "spec": {
+          "id": 4,
+          "title": "No query type",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {}}]",
+                        "collection": "orders"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-5": {
+        "kind": "Panel",
+        "spec": {
+          "id": 5,
+          "title": "Wrapper",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"ts\": {\"$gte\": {\"$date\": {\"$numberLong\": \"$__from\"}}, \"$lte\": {\"$date\": {\"$numberLong\": \"$__to\"}}}}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-6": {
+        "kind": "Panel",
+        "spec": {
+          "id": 6,
+          "title": "Bare token",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"epoch_ms\": {\"$gte\": $__from, \"$lte\": $__to}}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-7": {
+        "kind": "Panel",
+        "spec": {
+          "id": 7,
+          "title": "Refused stage",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {}}, {\"$out\": \"stolen\"}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-8": {
+        "kind": "Panel",
+        "spec": {
+          "id": 8,
+          "title": "Lookup outside the list",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$lookup\": {\"from\": \"secrets\", \"localField\": \"a\", \"foreignField\": \"b\", \"as\": \"c\"}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-9": {
+        "kind": "Panel",
+        "spec": {
+          "id": 9,
+          "title": "Shell syntax",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "db.orders.aggregate([{$match: {ts: {$gte: ISODate(\"2026-01-01\")}}}])",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-10": {
+        "kind": "Panel",
+        "spec": {
+          "id": 10,
+          "title": "Binary form",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"b\": {\"$binary\": {\"base64\": \"AA==\", \"subType\": \"00\"}}}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-11": {
+        "kind": "Panel",
+        "spec": {
+          "id": 11,
+          "title": "Placeholder in a key",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"${node}\": 1}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-12": {
+        "kind": "Panel",
+        "spec": {
+          "id": 12,
+          "title": "Another query type",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {}}]",
+                        "collection": "orders",
+                        "queryType": "query"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-13": {
+        "kind": "Panel",
+        "spec": {
+          "id": 13,
+          "title": "Old form",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"host\": \"[[region]]\"}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-14": {
+        "kind": "Panel",
+        "spec": {
+          "id": 14,
+          "title": "Macro in a string",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {\"note\": \"from $__timeFrom\"}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-15": {
+        "kind": "Panel",
+        "spec": {
+          "id": 15,
+          "title": "Unmapped data source",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {}}]",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "unmapped-mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-16": {
+        "kind": "Panel",
+        "spec": {
+          "id": 16,
+          "title": "Find object",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "{\"filter\": {\"host\": \"a\"}}",
+                        "collection": "orders",
+                        "queryType": "table"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-17": {
+        "kind": "Panel",
+        "spec": {
+          "id": 17,
+          "title": "SQL member",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "haohanyang-mongodb-datasource",
+                      "spec": {
+                        "queryText": "[{\"$match\": {}}]",
+                        "collection": "orders",
+                        "queryType": "table",
+                        "rawSql": "SELECT 1"
+                      }
+                    },
+                    "datasource": {
+                      "type": "haohanyang-mongodb-datasource",
+                      "uid": "mongo"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-18": {
+        "kind": "Panel",
+        "spec": {
+          "id": 18,
+          "title": "ClickHouse panel",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "grafana-clickhouse-datasource",
+                      "spec": {
+                        "editorType": "sql",
+                        "format": 1,
+                        "rawSql": "SELECT 1 AS a",
+                        "queryType": "table",
+                        "pluginVersion": "4.5.1"
+                      }
+                    },
+                    "datasource": {
+                      "type": "grafana-clickhouse-datasource",
+                      "uid": "clickhouse"
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "table",
+            "spec": {
+              "pluginVersion": "12.2.1",
+              "options": {},
+              "fieldConfig": {
+                "defaults": {},
+                "overrides": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "RowsLayout",
+      "spec": {
+        "rows": [
+          {
+            "kind": "RowsLayoutRow",
+            "spec": {
+              "title": "",
+              "collapse": false,
+              "hideHeader": true,
+              "layout": {
+                "kind": "GridLayout",
+                "spec": {
+                  "items": [
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 0,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-1"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 0,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-2"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 8,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-3"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 8,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-4"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 16,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-5"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 16,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-6"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 24,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-7"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 24,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-8"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 32,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-9"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 32,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-10"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 40,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-11"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 40,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-12"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 48,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-13"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 48,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-14"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 56,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-15"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 56,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-16"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 0,
+                        "y": 64,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-17"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "GridLayoutItem",
+                      "spec": {
+                        "x": 12,
+                        "y": 64,
+                        "width": 12,
+                        "height": 8,
+                        "element": {
+                          "kind": "ElementReference",
+                          "name": "panel-18"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "status": {}
+}

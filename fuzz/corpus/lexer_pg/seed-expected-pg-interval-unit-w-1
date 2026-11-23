@@ -1,0 +1,1 @@
+SELECT floor(extract(epoch from ts)/604800)*604800 FROM t

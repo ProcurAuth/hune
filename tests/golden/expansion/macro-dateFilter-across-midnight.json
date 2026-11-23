@@ -1,0 +1,19 @@
+{
+  "id": "macro-dateFilter-across-midnight",
+  "tags": [
+    "macro:$__dateFilter"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT count() FROM analytics.events WHERE $__dateFilter(timestamp)",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794265200000,
+  "to_ms": 1794272400000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 5000,
+  "expected": "SELECT count() FROM analytics.events WHERE timestamp >= toDate('2026-11-09') AND timestamp <= toDate('2026-11-10')",
+  "sent_sql": "SELECT count() FROM analytics.events WHERE $__dateFilter(timestamp)"
+}

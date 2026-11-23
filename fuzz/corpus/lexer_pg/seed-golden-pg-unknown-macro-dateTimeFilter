@@ -1,0 +1,1 @@
+SELECT $__dateTimeFilter(ts, ts) FROM t

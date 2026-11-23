@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "uid": "monitor",
+    "title": "Node monitor",
+    "type": "dash-db",
+    "folderUid": "fe1x0abc2kq9",
+    "folderTitle": "Transit desk"
+  },
+  {
+    "id": 2,
+    "uid": "plain-raw",
+    "title": "Plain raw dashboard",
+    "type": "dash-db"
+  }
+]

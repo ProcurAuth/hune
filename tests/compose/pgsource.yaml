@@ -1,0 +1,54 @@
+# Compose project of the job `pgsource` (16.9a, 16.17): two disposable PostgreSQL servers with synthetic data.
+# The service pg15 runs PostgreSQL 15. The service pg18 runs PostgreSQL 18.
+#
+# Use: tests/ci/pgsource.sh (it makes the passwords and the certificates, exports IMAGE_<NAME> from
+# tests/images.lock, and starts one service at a time with `docker compose up -d --wait`).
+# The variables below are mandatory. The script sets them: PGS_PORT_15, PGS_PORT_18, PGS_TLS_DIR,
+# PGS_ADMIN_PASSWORD, PGS_RO_PASSWORD, PGS_RW_PASSWORD, PGS_BAD_PASSWORD, PGS_LEGACY_PASSWORD.
+#
+# Each port is bound to 127.0.0.1 only. The data is in a tmpfs, so the container leaves nothing on the disk.
+# The images come from tests/images.lock only. At its first start, a service runs
+# tests/fixtures/postgres-source/init.sql through apply.sh. Each password comes from the environment:
+# no file of the repository holds a password.
+
+x-pg: &pg
+  entrypoint:
+    - sh
+    - -c
+    - >-
+      mkdir -p /var/tls && cp /tls/server.crt /tls/server.key /var/tls/ &&
+      chown postgres:postgres /var/tls/* && chmod 600 /var/tls/server.key &&
+      exec docker-entrypoint.sh postgres -c ssl=on -c ssl_cert_file=/var/tls/server.crt
+      -c ssl_key_file=/var/tls/server.key -c fsync=off -c full_page_writes=off -c max_connections=100
+  environment:
+    POSTGRES_PASSWORD: ${PGS_ADMIN_PASSWORD:?run tests/ci/pgsource.sh}
+    PGS_RO_PASSWORD: ${PGS_RO_PASSWORD:?run tests/ci/pgsource.sh}
+    PGS_RW_PASSWORD: ${PGS_RW_PASSWORD:?run tests/ci/pgsource.sh}
+    PGS_BAD_PASSWORD: ${PGS_BAD_PASSWORD:?run tests/ci/pgsource.sh}
+    PGS_LEGACY_PASSWORD: ${PGS_LEGACY_PASSWORD:?run tests/ci/pgsource.sh}
+  volumes:
+    - ${PGS_TLS_DIR:?run tests/ci/pgsource.sh}:/tls:ro
+    - ../fixtures/postgres-source:/fixtures:ro
+    - ../fixtures/postgres-source/apply.sh:/docker-entrypoint-initdb.d/10-hune-apply.sh:ro
+  tmpfs:
+    - /var/lib/postgresql:size=2g
+  healthcheck:
+    # The marker table is the last object of init.sql. The temporary server of the init does not listen on TCP.
+    test: ["CMD-SHELL", "psql -h 127.0.0.1 -U postgres -d analytics -tAc 'SELECT count(*) FROM metrics.fixture_marker' | grep -qx 1"]
+    interval: 2s
+    timeout: 5s
+    retries: 120
+  restart: "no"
+
+services:
+  pg15:
+    <<: *pg
+    image: ${IMAGE_POSTGRES_15:?run tests/ci/pgsource.sh}
+    ports:
+      - "127.0.0.1:${PGS_PORT_15:?run tests/ci/pgsource.sh}:5432"
+
+  pg18:
+    <<: *pg
+    image: ${IMAGE_POSTGRES_18:?run tests/ci/pgsource.sh}
+    ports:
+      - "127.0.0.1:${PGS_PORT_18:?run tests/ci/pgsource.sh}:5432"

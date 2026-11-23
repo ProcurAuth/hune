@@ -1,0 +1,21 @@
+{
+  "id": "interval-bound-16200000-below",
+  "tags": [
+    "interval:bound",
+    "macro:$__interval_s",
+    "macro:$__timeInterval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__timeInterval(timestamp) AS t, $__interval_s AS s FROM analytics.events WHERE $__timeFilter(timestamp) GROUP BY t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1795831199999,
+  "max_data_points": 100,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 10800000,
+  "expected": "SELECT toStartOfInterval(toDateTime(timestamp), INTERVAL 10800 second) AS t, 10800 AS s FROM analytics.events WHERE timestamp >= toDateTime(1794211200) AND timestamp <= toDateTime(1795831199) GROUP BY t",
+  "sent_sql": "SELECT $__timeInterval(timestamp) AS t, $__interval_s AS s FROM analytics.events WHERE $__timeFilter(timestamp) GROUP BY t"
+}

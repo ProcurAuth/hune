@@ -1,0 +1,252 @@
+{
+ "id": "FE-85",
+ "about": "The map panel (9.19i, 4.33g, decision ID-K328): the grammar of geomap.tile_url (13.13) that the server and the page share, Web Mercator and the tiles of a view. The Rust test of the configuration reads the same list of texts.",
+ "constants": {
+  "TILE": 256,
+  "MAX_LAT": 85.0511,
+  "MAX_GEO_POINTS": 50000,
+  "MAX_GEO_TILES_VIEW": 256,
+  "MAX_GEO_TILES_IN_FLIGHT": 6,
+  "GEO_TILE_DELAY_MS": 200,
+  "MAX_GEO_TILE_CACHE": 256,
+  "MAX_GEO_ZOOM": 22
+ },
+ "tile_url": {
+  "valid": [
+   [
+    "https://tiles.example.org/osm/{z}/{x}/{y}.png",
+    "https://tiles.example.org/osm/"
+   ],
+   [
+    "https://a.example:8443/{z}/{x}/{y}",
+    "https://a.example:8443/"
+   ],
+   [
+    "https://a.example/t/z{z}/x{x}/y{y}.png",
+    "https://a.example/t/"
+   ],
+   [
+    "https://a.example/v1.0/{y}/{x}/{z}.jpg?key=abc&s=1",
+    "https://a.example/v1.0/"
+   ],
+   [
+    "https://xn--bcher-kva.example/a/b/{z}-{x}-{y}.png",
+    "https://xn--bcher-kva.example/a/b/"
+   ],
+   [
+    "https://a.example/a{z}b/{x}/{y}",
+    "https://a.example/"
+   ],
+   [
+    "https://t-1.a-b.example/..../{z}/{x}/{y}",
+    "https://t-1.a-b.example/..../"
+   ],
+   [
+    "https://a.e/{z}{x}{y}",
+    "https://a.e/"
+   ],
+   [
+    "https://tiles.hune.test:65535/t/{z}/{x}/{y}.png?k=v_1~2.3-4",
+    "https://tiles.hune.test:65535/t/"
+   ],
+   [
+    "https://a.example/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/{z}/{x}/{y}",
+    "https://a.example/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/"
+   ]
+  ],
+  "invalid": [
+   "",
+   "https://a.b/{z}",
+   "https://a.example/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/{z}/{x}/{y}",
+   "http://tiles.example.org/{z}/{x}/{y}.png",
+   "HTTPS://tiles.example.org/{z}/{x}/{y}.png",
+   "//tiles.example.org/{z}/{x}/{y}.png",
+   "https://tiles.example.org",
+   "https://tiles.example.org?{z}{x}{y}",
+   "https://user@tiles.example.org/{z}/{x}/{y}.png",
+   "https://user:pw@tiles.example.org/{z}/{x}/{y}.png",
+   "https://192.168.1.10/{z}/{x}/{y}.png",
+   "https://127.0.0.1:8443/{z}/{x}/{y}.png",
+   "https://[::1]/{z}/{x}/{y}.png",
+   "https://[2001:db8::1]:443/{z}/{x}/{y}.png",
+   "https://localhost/{z}/{x}/{y}.png",
+   "https://Tiles.Example.org/{z}/{x}/{y}.png",
+   "https://tiles.example.org./{z}/{x}/{y}.png",
+   "https://-a.example.org/{z}/{x}/{y}.png",
+   "https://a-.example.org/{z}/{x}/{y}.png",
+   "https://a..example.org/{z}/{x}/{y}.png",
+   "https://a_b.example.org/{z}/{x}/{y}.png",
+   "https://a.example.123/{z}/{x}/{y}.png",
+   "https://tiles.example.org:0/{z}/{x}/{y}.png",
+   "https://tiles.example.org:08443/{z}/{x}/{y}.png",
+   "https://tiles.example.org:65536/{z}/{x}/{y}.png",
+   "https://tiles.example.org:/{z}/{x}/{y}.png",
+   "https://tiles.example.org:a/{z}/{x}/{y}.png",
+   "https://{s}.tiles.example.org/{z}/{x}/{y}.png",
+   "https://tiles.example.org/{s}/{z}/{x}/{y}.png",
+   "https://tiles.example.org/{z}/{x}/{-y}.png",
+   "https://tiles.example.org/{z}/{x}/{y}{r}.png",
+   "https://tiles.example.org/{z}/{x}/{y}/{z}.png",
+   "https://tiles.example.org/{z}/{x}.png",
+   "https://tiles.example.org/{Z}/{x}/{y}.png",
+   "https://tiles.example.org/{z}/{x}/{y}}.png",
+   "https://tiles.example.org/{{z}/{x}/{y}.png",
+   "https://tiles.example.org/a%20b/{z}/{x}/{y}.png",
+   "https://tiles.example.org//{z}/{x}/{y}.png",
+   "https://tiles.example.org/./{z}/{x}/{y}.png",
+   "https://tiles.example.org/../{z}/{x}/{y}.png",
+   "https://tiles.example.org/{z}/{x}/{y}/",
+   "https://tiles.example.org/{z}/{x}/{y}.png#frag",
+   "https://tiles.example.org/{z}/{x}/{y}.png?",
+   "https://tiles.example.org/{z}/{x}/{y}.png?k={z}",
+   "https://tiles.example.org/{z}/{x}/{y}.png?a=b c",
+   "https://tiles.example.org/{z}/{x}/{y}.png?a=b;c",
+   "https://tiles.example.org/{z}/{x}/{y}.png?a=b,c",
+   "https://tiles.example.org/{z}/{x}/{y}.png?a='b'",
+   "https://tiles.example.org/{z}/{x}/{y}.png?a=\"b\"",
+   "https://tiles.example.org/{z}/{x}/{y}.png?a=%41",
+   "https://tiles.example.org/{z}/{x}/{y}.png?a=b?c",
+   "https://tiles.example.org/{z};/{x}/{y}.png",
+   "https://tiles.example.org/{z},/{x}/{y}.png",
+   "https://tiles.example.org/a b/{z}/{x}/{y}.png",
+   "https://tiles.example.org/'self'/{z}/{x}/{y}.png",
+   "https://tiles.example.org/\"/{z}/{x}/{y}.png",
+   "https://tiles.example.org/a\\b/{z}/{x}/{y}.png",
+   "https://tiles.example.org/é/{z}/{x}/{y}.png",
+   "https://téles.example.org/{z}/{x}/{y}.png",
+   "https://tiles.example.org/a\nb/{z}/{x}/{y}.png",
+   "https://tiles.example.org /{z}/{x}/{y}.png",
+   "https://tiles.example.org;script-src */{z}/{x}/{y}",
+   "https://tiles.example.org,https://evil.example/{z}/{x}/{y}",
+   "https://*.example.org/{z}/{x}/{y}.png",
+   "https://tiles.example.org/*/{z}/{x}/{y}.png",
+   "javascript://tiles.example.org/{z}/{x}/{y}",
+   "data:text/html,{z}{x}{y}aaaaaaaaaaaaaaaaaa"
+  ]
+ },
+ "project": [
+  {
+   "lat": 0,
+   "lon": 0,
+   "z": 0,
+   "x": 128,
+   "y": 128
+  },
+  {
+   "lat": 0,
+   "lon": -180,
+   "z": 1,
+   "x": 0,
+   "y": 256
+  },
+  {
+   "lat": 0,
+   "lon": 180,
+   "z": 1,
+   "x": 512,
+   "y": 256
+  },
+  {
+   "lat": 85.0511,
+   "lon": 0,
+   "z": 0,
+   "x": 128,
+   "y": 0
+  },
+  {
+   "lat": -85.0511,
+   "lon": 0,
+   "z": 0,
+   "x": 128,
+   "y": 256
+  },
+  {
+   "lat": 90,
+   "lon": 0,
+   "z": 0,
+   "x": 128,
+   "y": 0
+  },
+  {
+   "lat": -90,
+   "lon": 0,
+   "z": 0,
+   "x": 128,
+   "y": 256
+  },
+  {
+   "lat": 48.8566,
+   "lon": 2.3522,
+   "z": 10,
+   "x": 132784.82,
+   "y": 90184.98
+  }
+ ],
+ "tiles": [
+  {
+   "cx": 128,
+   "cy": 128,
+   "z": 0,
+   "w": 256,
+   "h": 256,
+   "x0": 0,
+   "x1": 0,
+   "y0": 0,
+   "y1": 0,
+   "count": 1,
+   "over": false
+  },
+  {
+   "cx": 256,
+   "cy": 256,
+   "z": 1,
+   "w": 800,
+   "h": 400,
+   "x0": 0,
+   "x1": 1,
+   "y0": 0,
+   "y1": 1,
+   "count": 4,
+   "over": false
+  },
+  {
+   "cx": 2048,
+   "cy": 2048,
+   "z": 4,
+   "w": 1000,
+   "h": 600,
+   "x0": 6,
+   "x1": 9,
+   "y0": 6,
+   "y1": 9,
+   "count": 16,
+   "over": false
+  },
+  {
+   "cx": 131072,
+   "cy": 131072,
+   "z": 10,
+   "w": 4096,
+   "h": 4096,
+   "x0": 504,
+   "x1": 519,
+   "y0": 504,
+   "y1": 519,
+   "count": 256,
+   "over": false
+  },
+  {
+   "cx": 131072,
+   "cy": 131072,
+   "z": 10,
+   "w": 4097,
+   "h": 4096,
+   "x0": 503,
+   "x1": 519,
+   "y0": 504,
+   "y1": 519,
+   "count": 272,
+   "over": true
+  }
+ ]
+}

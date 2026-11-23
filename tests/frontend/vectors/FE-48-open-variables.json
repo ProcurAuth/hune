@@ -1,0 +1,2745 @@
+{
+ "selection": [
+  {
+   "name": "closed single: url option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single: url typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single: url option and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single: current option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single: current typed and option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "zz",
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single: default typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "zz"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single: url all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all"
+   ]
+  },
+  {
+   "name": "closed single: url control character with default",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "x\u0001y"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "x\u0001y"
+   ]
+  },
+  {
+   "name": "closed single: empty list of options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": []
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single: url all and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all",
+    "zz"
+   ]
+  },
+  {
+   "name": "closed multi: url option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed multi: url typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed multi: url option and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed multi: current option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed multi: current typed and option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "zz",
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed multi: default typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "zz"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed multi: url all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all"
+   ]
+  },
+  {
+   "name": "closed multi: url control character with default",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "x\u0001y"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "x\u0001y"
+   ]
+  },
+  {
+   "name": "closed multi: empty list of options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": []
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed multi: url all and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all",
+    "zz"
+   ]
+  },
+  {
+   "name": "open single: url option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open single: url typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open single: url option and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open single: current option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open single: current typed and option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "zz",
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open single: default typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "zz"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open single: url all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all"
+   ]
+  },
+  {
+   "name": "open single: url control character with default",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "x\u0001y"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "x\u0001y"
+   ]
+  },
+  {
+   "name": "open single: empty list of options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "open single: url all and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": false,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all"
+   ]
+  },
+  {
+   "name": "open multi: url option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi: url typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi: url option and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a",
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi: current option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi: current typed and option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "zz",
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "zz",
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi: default typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "zz"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi: url all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all"
+   ]
+  },
+  {
+   "name": "open multi: url control character with default",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "x\u0001y"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "x\u0001y"
+   ]
+  },
+  {
+   "name": "open multi: empty list of options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi: url all and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": false,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "$__all"
+   ]
+  },
+  {
+   "name": "open multi all: url option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: url typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: url option and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a",
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: current option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: current typed and option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "zz",
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "zz",
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: default typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [
+     "zz"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "zz"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: url all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all"
+   ],
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: url control character with default",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "x\u0001y"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "x\u0001y"
+   ]
+  },
+  {
+   "name": "open multi all: empty list of options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [],
+    "allow_custom_value": true
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "open multi all: url all and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": true,
+    "include_all": true,
+    "default": [
+     "a"
+    ],
+    "allow_custom_value": true
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single all: url option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single all: url typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single all: url option and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "a",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single all: current option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single all: current typed and option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": [
+    "zz",
+    "b"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single all: default typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": [
+     "zz"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": [
+    "zz"
+   ]
+  },
+  {
+   "name": "closed single all: url all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all"
+   ],
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single all: url control character with default",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "x\u0001y"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "dropped": [
+    "x\u0001y"
+   ]
+  },
+  {
+   "name": "closed single all: empty list of options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": []
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": []
+  },
+  {
+   "name": "closed single all: url all and typed",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "label": null,
+    "multi": false,
+    "include_all": true,
+    "default": [
+     "a"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "url": [
+    "$__all",
+    "zz"
+   ],
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   },
+   "dropped": [
+    "zz"
+   ]
+  }
+ ],
+ "typed": [
+  {
+   "name": "empty",
+   "text": "",
+   "error": "A value has 1 to 1024 bytes."
+  },
+  {
+   "name": "1 byte",
+   "text": "a",
+   "error": ""
+  },
+  {
+   "name": "1,024 bytes",
+   "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "error": ""
+  },
+  {
+   "name": "1,025 bytes",
+   "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "error": "A value has 1 to 1024 bytes."
+  },
+  {
+   "name": "512 two-byte characters",
+   "text": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+   "error": ""
+  },
+  {
+   "name": "513 two-byte characters",
+   "text": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+   "error": "A value has 1 to 1024 bytes."
+  },
+  {
+   "name": "341 three-byte characters",
+   "text": "€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€",
+   "error": ""
+  },
+  {
+   "name": "342 three-byte characters",
+   "text": "€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€€",
+   "error": "A value has 1 to 1024 bytes."
+  },
+  {
+   "name": "256 four-byte characters",
+   "text": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+   "error": ""
+  },
+  {
+   "name": "257 four-byte characters",
+   "text": "😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀",
+   "error": "A value has 1 to 1024 bytes."
+  },
+  {
+   "name": "U+0000",
+   "text": "a\u0000b",
+   "error": "A value has no control character."
+  },
+  {
+   "name": "U+001F",
+   "text": "a\u001fb",
+   "error": "A value has no control character."
+  },
+  {
+   "name": "U+007F",
+   "text": "ab",
+   "error": "A value has no control character."
+  },
+  {
+   "name": "line feed",
+   "text": "a\nb",
+   "error": "A value has no control character."
+  },
+  {
+   "name": "tab",
+   "text": "a\tb",
+   "error": "A value has no control character."
+  },
+  {
+   "name": "space only",
+   "text": " ",
+   "error": ""
+  },
+  {
+   "name": "U+0080",
+   "text": "ab",
+   "error": ""
+  },
+  {
+   "name": "reserved",
+   "text": "$__all",
+   "error": "This value is reserved."
+  },
+  {
+   "name": "almost reserved",
+   "text": "$__al",
+   "error": ""
+  },
+  {
+   "name": "reserved with text",
+   "text": "$__allx",
+   "error": ""
+  }
+ ],
+ "notice": [
+  {
+   "name": "one value",
+   "label": "Host",
+   "dropped": [
+    "zzz"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "text": "This value is not an option of Host: \"zzz\". The page used \"Alpha\"."
+  },
+  {
+   "name": "one value, two options used",
+   "label": "Host",
+   "dropped": [
+    "zzz"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a",
+     "b"
+    ]
+   },
+   "text": "This value is not an option of Host: \"zzz\". The page used \"Alpha + Beta\"."
+  },
+  {
+   "name": "three values",
+   "label": "Host",
+   "dropped": [
+    "x",
+    "y",
+    "z"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   },
+   "text": "These values are not an option of Host: \"x\", \"y\", \"z\". The page used \"Beta\"."
+  },
+  {
+   "name": "five values",
+   "label": "Host",
+   "dropped": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "c"
+    ]
+   },
+   "text": "These values are not an option of Host: \"1\", \"2\", \"3\" and 2 more. The page used \"Gamma\"."
+  },
+  {
+   "name": "four values",
+   "label": "Host",
+   "dropped": [
+    "1",
+    "2",
+    "3",
+    "4"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "c"
+    ]
+   },
+   "text": "These values are not an option of Host: \"1\", \"2\", \"3\" and 1 more. The page used \"Gamma\"."
+  },
+  {
+   "name": "a value of 41 characters",
+   "label": "Host",
+   "dropped": [
+    "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "text": "This value is not an option of Host: \"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq...\". The page used \"Alpha\"."
+  },
+  {
+   "name": "a value of 40 characters",
+   "label": "Host",
+   "dropped": [
+    "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "text": "This value is not an option of Host: \"qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq\". The page used \"Alpha\"."
+  },
+  {
+   "name": "All",
+   "label": "Host",
+   "dropped": [
+    "zzz"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": true,
+    "values": []
+   },
+   "text": "This value is not an option of Host: \"zzz\". The page used \"All\"."
+  },
+  {
+   "name": "no value",
+   "label": "Host",
+   "dropped": [
+    "zzz"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": []
+   },
+   "text": "This value is not an option of Host: \"zzz\". The page used \"no value\"."
+  },
+  {
+   "name": "more than three options used",
+   "label": "Host",
+   "dropped": [
+    "zzz"
+   ],
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a",
+     "b",
+     "c",
+     "zz"
+    ]
+   },
+   "text": "This value is not an option of Host: \"zzz\". The page used \"Alpha + Beta + Gamma\"."
+  }
+ ],
+ "runtime": [
+  {
+   "name": "closed query variable, URL value that is not an option",
+   "variable": {
+    "kind": "query"
+   },
+   "url": [
+    "zzz"
+   ],
+   "options": [
+    "a",
+    "b"
+   ],
+   "expect": [
+    "This value is not an option of v: \"zzz\". The page used \"a\"."
+   ]
+  },
+  {
+   "name": "closed query variable, value of default that is not an option",
+   "variable": {
+    "kind": "query",
+    "default": [
+     "gone"
+    ]
+   },
+   "url": null,
+   "options": [
+    "a",
+    "b"
+   ],
+   "expect": [
+    "This value is not an option of v: \"gone\". The page used \"a\"."
+   ]
+  },
+  {
+   "name": "closed custom variable, URL value that is not an option, notice at the constructor",
+   "variable": {
+    "kind": "custom"
+   },
+   "url": [
+    "zzz"
+   ],
+   "options": null,
+   "expect": [
+    "This value is not an option of v: \"zzz\". The page used \"One\"."
+   ]
+  },
+  {
+   "name": "a reload that removes the selected option",
+   "variable": {
+    "kind": "query",
+    "refresh": "time_change"
+   },
+   "url": [
+    "b"
+   ],
+   "options": [
+    "a",
+    "b"
+   ],
+   "reload": [
+    "a"
+   ],
+   "expect": [],
+   "expectAfter": [
+    "This value is not an option of v: \"b\". The page used \"a\"."
+   ]
+  },
+  {
+   "name": "open query variable keeps a typed value, also after a reload",
+   "variable": {
+    "kind": "query",
+    "allow_custom_value": true,
+    "refresh": "time_change"
+   },
+   "url": [
+    "zzz"
+   ],
+   "options": [
+    "a",
+    "b"
+   ],
+   "reload": [
+    "a"
+   ],
+   "expect": [],
+   "expectAfter": []
+  },
+  {
+   "name": "open query variable drops a text that is not a typed value",
+   "variable": {
+    "kind": "query",
+    "allow_custom_value": true
+   },
+   "url": [
+    "$__all"
+   ],
+   "options": [
+    "a",
+    "b"
+   ],
+   "expect": [
+    "This value is not an option of v: \"$__all\". The page used \"a\"."
+   ]
+  },
+  {
+   "name": "an options error gives no notice",
+   "variable": {
+    "kind": "query"
+   },
+   "url": [
+    "zzz"
+   ],
+   "options": "error",
+   "expect": []
+  },
+  {
+   "name": "an empty list of options gives no notice",
+   "variable": {
+    "kind": "query"
+   },
+   "url": [
+    "zzz"
+   ],
+   "options": [],
+   "expect": []
+  },
+  {
+   "name": "an open custom variable keeps a value that is not an option",
+   "variable": {
+    "kind": "custom",
+    "allow_custom_value": true
+   },
+   "url": [
+    "zzz"
+   ],
+   "options": null,
+   "expect": []
+  },
+  {
+   "name": "a multi variable with one wrong value: one notice, the other value stays",
+   "variable": {
+    "kind": "query",
+    "multi": true
+   },
+   "url": [
+    "a",
+    "zzz"
+   ],
+   "options": [
+    "a",
+    "b"
+   ],
+   "expect": [
+    "This value is not an option of v: \"zzz\". The page used \"a\"."
+   ]
+  }
+ ]
+}

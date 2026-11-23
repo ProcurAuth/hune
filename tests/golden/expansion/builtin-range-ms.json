@@ -1,0 +1,30 @@
+{
+  "id": "builtin-range-ms",
+  "tags": [
+    "macro:$__range_ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__range_ms AS r",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT $__range_ms AS r",
+  "sent_sql": "SELECT $__range_ms AS r",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana replaces its built-in variable in the browser, or leaves the text. Hune reads each other $__name in code as a document error.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

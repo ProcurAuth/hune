@@ -1,0 +1,21 @@
+{
+  "id": "interval-min-2s",
+  "tags": [
+    "interval:min_interval",
+    "macro:$__interval_s",
+    "macro:$__timeInterval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__timeInterval(timestamp) AS t, $__interval_s AS s FROM analytics.events WHERE $__timeFilter(timestamp) GROUP BY t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794214800000,
+  "max_data_points": 1200,
+  "min_interval": "2s",
+  "min_interval_ms": 2000,
+  "interval_ms": 2000,
+  "expected": "SELECT toStartOfInterval(toDateTime(timestamp), INTERVAL 2 second) AS t, 2 AS s FROM analytics.events WHERE timestamp >= toDateTime(1794211200) AND timestamp <= toDateTime(1794214800) GROUP BY t",
+  "sent_sql": "SELECT $__timeInterval(timestamp) AS t, $__interval_s AS s FROM analytics.events WHERE $__timeFilter(timestamp) GROUP BY t"
+}

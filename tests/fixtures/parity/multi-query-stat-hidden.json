@@ -1,0 +1,76 @@
+{
+  "format_version": 3,
+  "uid": "multi-query-stat-hidden",
+  "title": "Multi query stat-hidden",
+  "description": "Parity case of several queries.",
+  "tags": [],
+  "time": {
+    "from": "1794528000000",
+    "to": "1794546000000",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "stat hidden B",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*300 AS time, sin(number/6) * 10 + 20 AS a FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "B",
+                "source": "prod",
+                "format": "time_series",
+                "sql": [
+                  "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*300 AS time, cos(number/6) * 10 + 20 AS b FROM numbers(61)"
+                ],
+                "hide": true
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

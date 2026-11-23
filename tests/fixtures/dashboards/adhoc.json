@@ -1,0 +1,141 @@
+{
+  "format_version": 3,
+  "uid": "adhoc",
+  "title": "Ad hoc filters",
+  "description": "",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "adhoc",
+      "name": "filters",
+      "label": "Filters",
+      "hide": "none",
+      "source": "prod",
+      "keys": [
+        "service",
+        "host",
+        "env"
+      ]
+    },
+    {
+      "kind": "custom",
+      "name": "env",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "prod",
+          "value": "prod"
+        },
+        {
+          "text": "dev",
+          "value": "dev"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "prod"
+      ]
+    },
+    {
+      "kind": "adhoc",
+      "name": "other",
+      "label": null,
+      "hide": "label",
+      "source": "ch2",
+      "keys": [
+        "region"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Events",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT service, host, count() AS n",
+                "FROM analytics.events",
+                "WHERE $__timeFilter(ts) AND env = '${env}'",
+                "  AND $__adhocFilters",
+                "GROUP BY service, host"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "table",
+          "title": "All events",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS n FROM analytics.events WHERE $__timeFilter(ts)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

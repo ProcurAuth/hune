@@ -1,0 +1,344 @@
+{
+ "id": 229736823721984,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {
+    "calculate": true,
+    "tooltip": {
+     "mode": "single",
+     "showColorScale": true,
+     "yHistogram": true
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "tooltip single + yHistogram + colorscale",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {
+    "calculate": true,
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "tooltip multi (all)",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {
+    "calculate": true,
+    "legend": {
+     "show": false
+    },
+    "tooltip": {
+     "mode": "none"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "tooltip hidden, legend off",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "id": 4,
+   "options": {
+    "calculate": true,
+    "calculation": {
+     "yBuckets": {
+      "mode": "size",
+      "scale": {
+       "log": 2,
+       "type": "log"
+      },
+      "value": "1"
+     }
+    },
+    "cellValues": {
+     "decimals": 1,
+     "unit": "short"
+    },
+    "yAxis": {
+     "unit": "ms"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "log2 + unit ms + cellValues unit",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 32
+   },
+   "id": 5,
+   "options": {
+    "calculate": true,
+    "filterValues": {
+     "ge": 400,
+     "le": 100
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "filterValues le 100 ge 400",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 40
+   },
+   "id": 6,
+   "options": {
+    "calculate": true,
+    "yAxis": {
+     "max": 300,
+     "min": 50
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "yAxis min 50 max 300",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 48
+   },
+   "id": 7,
+   "options": {
+    "calculate": true,
+    "yAxis": {
+     "axisLabel": "ms",
+     "axisPlacement": "right",
+     "axisWidth": 80
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "right axis + label + width",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 56
+   },
+   "id": 8,
+   "options": {
+    "calculate": true,
+    "yAxis": {
+     "axisPlacement": "hidden"
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "hidden axis",
+   "type": "heatmap"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f31 c",
+ "uid": "heatmap_c",
+ "version": 1
+}

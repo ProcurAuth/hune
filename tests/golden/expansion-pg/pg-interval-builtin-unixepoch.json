@@ -1,0 +1,21 @@
+{
+  "id": "pg-interval-builtin-unixepoch",
+  "tags": [
+    "macro:$__unixEpochGroup",
+    "builtin:$__interval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "explore",
+  "template": "SELECT $__unixEpochGroup(n, $__interval) FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1000,
+  "min_interval": "1m",
+  "min_interval_ms": 60000,
+  "interval_ms": 60000,
+  "expected": "SELECT floor((n)/60)*60 FROM t",
+  "sent_sql": "SELECT $__unixEpochGroup(n, 1m) FROM t"
+}

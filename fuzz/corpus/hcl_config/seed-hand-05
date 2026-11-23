@@ -1,0 +1,4 @@
+clickhouse "prod" {
+  url = "https://ch:8443"
+  password_file = "relative"
+}

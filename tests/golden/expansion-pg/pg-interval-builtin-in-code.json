@@ -1,0 +1,32 @@
+{
+  "id": "pg-interval-builtin-in-code",
+  "tags": [
+    "builtin:$__interval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "explore",
+  "template": "SELECT $__interval AS i FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1000,
+  "min_interval": "1m",
+  "min_interval_ms": 60000,
+  "interval_ms": 60000,
+  "expected": "SELECT 1m AS i FROM t",
+  "grafana_error": "db query error: ERROR: trailing junk after numeric literal at or near \"1m\" (SQLSTATE 42601)",
+  "sent_sql": "SELECT 1m AS i FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.23",
+    "reason": "Grafana replaces $__interval in any place. Hune accepts it in code only as the interval argument of a group macro.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

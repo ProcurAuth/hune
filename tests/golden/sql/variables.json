@@ -1,0 +1,950 @@
+[
+  {
+    "name": "single custom value",
+    "sql": [
+      "SELECT 1 FROM t WHERE e = '$e'"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "e": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 FROM t WHERE e = 'dev'"
+  },
+  {
+    "name": "custom value with a quote mark in a string",
+    "sql": [
+      "SELECT '$e'"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "custom",
+        "options": [
+          "a'b"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "e": {
+        "all": false,
+        "values": [
+          "a'b"
+        ]
+      }
+    },
+    "expected": "SELECT 'a\\'b'"
+  },
+  {
+    "name": "custom value with a backslash in a string",
+    "sql": [
+      "SELECT '$e'"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "custom",
+        "options": [
+          "a\\"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "e": {
+        "all": false,
+        "values": [
+          "a\\"
+        ]
+      }
+    },
+    "expected": "SELECT 'a\\\\'"
+  },
+  {
+    "name": "query multi list, default format",
+    "sql": [
+      "SELECT 1 WHERE x IN ($m)"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "a",
+          "b",
+          "c"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN ('a','b','c')"
+  },
+  {
+    "name": "query multi list, singlequote",
+    "sql": [
+      "SELECT 1 WHERE x IN (${m:singlequote})"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "a'b",
+          "c"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN ('a\\'b','c')"
+  },
+  {
+    "name": "query multi list, sqlstring",
+    "sql": [
+      "SELECT 1 WHERE x IN (${m:sqlstring})"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "a'b",
+          "c\\d"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN ('a''b','c\\\\d')"
+  },
+  {
+    "name": "query multi list, csv of numbers",
+    "sql": [
+      "SELECT 1 WHERE x IN (${m:csv})"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "1",
+          "2.5",
+          "-3"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN (1,2.5,-3)"
+  },
+  {
+    "name": "query multi list, raw of numbers",
+    "sql": [
+      "SELECT 1 WHERE x IN (${m:raw})"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "1",
+          "2"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN (1,2)"
+  },
+  {
+    "name": "query multi list, csv of a non-number",
+    "sql": [
+      "SELECT 1 WHERE x IN (${m:csv})"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "1",
+          "a"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "m"
+    }
+  },
+  {
+    "name": "csv list in a string",
+    "sql": [
+      "SELECT '${m:csv}'"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "a",
+          "b'c"
+        ]
+      }
+    },
+    "expected": "SELECT 'a,b\\'c'"
+  },
+  {
+    "name": "list in a string without csv",
+    "sql": [
+      "SELECT '$m'"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "a"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "empty multi list",
+    "sql": [
+      "SELECT 1 WHERE x IN ($m)"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN ('')"
+  },
+  {
+    "name": "empty multi list, csv",
+    "sql": [
+      "SELECT 1 WHERE x IN (${m:csv})"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN ()"
+  },
+  {
+    "name": "query variable without a value",
+    "sql": [
+      "SELECT 1 WHERE x = $q"
+    ],
+    "variables": [
+      {
+        "name": "q",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "q": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE x = ''"
+  },
+  {
+    "name": "query variable without a value in a string",
+    "sql": [
+      "SELECT '[$q]'"
+    ],
+    "variables": [
+      {
+        "name": "q",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "q": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT '[]'"
+  },
+  {
+    "name": "All with an all_value, custom",
+    "sql": [
+      "SELECT 1 WHERE e IN ($e)"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "custom",
+        "options": [
+          "a",
+          "b",
+          "c"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": "'a','b'"
+      }
+    ],
+    "request": {
+      "e": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE e IN ('a','b')"
+  },
+  {
+    "name": "All with an all_value in a string",
+    "sql": [
+      "SELECT '$e'"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "custom",
+        "options": [
+          "a"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": "x'y"
+      }
+    ],
+    "request": {
+      "e": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 'x\\'y'"
+  },
+  {
+    "name": "All without all_value, custom: all options in order",
+    "sql": [
+      "SELECT 1 WHERE e IN ($e)"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "custom",
+        "options": [
+          "z",
+          "a",
+          "m"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "e": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE e IN ('z','a','m')"
+  },
+  {
+    "name": "All without all_value, query: the values of the page",
+    "sql": [
+      "SELECT 1 WHERE e IN ($e)"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "e": {
+        "all": true,
+        "values": [
+          "p",
+          "q"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE e IN ('p','q')"
+  },
+  {
+    "name": "All with an all_value and values",
+    "sql": [
+      "SELECT 1 WHERE e IN ($e)"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": "1"
+      }
+    ],
+    "request": {
+      "e": {
+        "all": true,
+        "values": [
+          "p"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "e"
+    }
+  },
+  {
+    "name": "All without include_all",
+    "sql": [
+      "SELECT 1 WHERE e IN ($e)"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "e": {
+        "all": true,
+        "values": []
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "e"
+    }
+  },
+  {
+    "name": "text variable in a string",
+    "sql": [
+      "SELECT 1 FROM t WHERE name = '$n'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "it's"
+        ]
+      }
+    },
+    "expected": "SELECT 1 FROM t WHERE name = 'it\\'s'"
+  },
+  {
+    "name": "text variable in a string, empty",
+    "sql": [
+      "SELECT '$n'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          ""
+        ]
+      }
+    },
+    "expected": "SELECT ''"
+  },
+  {
+    "name": "text variable in code, a number text",
+    "sql": [
+      "SELECT 1 FROM t WHERE x > $n"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "12.5"
+        ]
+      }
+    },
+    "expected": "SELECT 1 FROM t WHERE x > 12.5"
+  },
+  {
+    "name": "text variable in code, free text",
+    "sql": [
+      "SELECT 1 FROM t WHERE x > $n"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "1 OR 1=1"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "n"
+    }
+  },
+  {
+    "name": "number variable in code",
+    "sql": [
+      "SELECT 1 FROM t WHERE x > $n"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "number"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "-3"
+        ]
+      }
+    },
+    "expected": "SELECT 1 FROM t WHERE x > -3"
+  },
+  {
+    "name": "number variable that is no number",
+    "sql": [
+      "SELECT 1"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "number"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "1e3"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "n"
+    }
+  },
+  {
+    "name": "custom value that is no option",
+    "sql": [
+      "SELECT 1"
+    ],
+    "variables": [
+      {
+        "name": "e",
+        "kind": "custom",
+        "options": [
+          "a"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "e": {
+        "all": false,
+        "values": [
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "e"
+    }
+  },
+  {
+    "name": "a value with a line feed",
+    "sql": [
+      "SELECT '$n'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "a\nb"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "n"
+    }
+  },
+  {
+    "name": "a value with NUL",
+    "sql": [
+      "SELECT '$n'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "a\u0000b"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "n"
+    }
+  },
+  {
+    "name": "a value of 1025 bytes",
+    "sql": [
+      "SELECT '$n'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "n"
+    }
+  },
+  {
+    "name": "a missing member",
+    "sql": [
+      "SELECT $n"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      },
+      {
+        "name": "m",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "1"
+        ]
+      }
+    },
+    "error": {
+      "code": "bad_request",
+      "variable": "n"
+    }
+  },
+  {
+    "name": "a name that is no variable stays text",
+    "sql": [
+      "SELECT $other, ${other}, ${other:csv}, '$other'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "1"
+        ]
+      }
+    },
+    "expected": "SELECT $other, ${other}, ${other:csv}, '$other'"
+  },
+  {
+    "name": "the longest run names the variable",
+    "sql": [
+      "SELECT $env_name, ${env}_name"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      },
+      {
+        "name": "env_name",
+        "kind": "custom",
+        "options": [
+          "N"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      },
+      "env_name": {
+        "all": false,
+        "values": [
+          "N"
+        ]
+      }
+    },
+    "expected": "SELECT N, prod_name"
+  },
+  {
+    "name": "an inserted value is not read again",
+    "sql": [
+      "SELECT '$a', '$b'"
+    ],
+    "variables": [
+      {
+        "name": "a",
+        "kind": "text",
+        "value_type": "text"
+      },
+      {
+        "name": "b",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "a": {
+        "all": false,
+        "values": [
+          "$b"
+        ]
+      },
+      "b": {
+        "all": false,
+        "values": [
+          "$a"
+        ]
+      }
+    },
+    "expected": "SELECT '$b', '$a'"
+  },
+  {
+    "name": "a reference in a comment stays",
+    "sql": [
+      "SELECT 1 -- $n ${n:csv}\n/* $n */"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT 1 -- $n ${n:csv}\n/* $n */"
+  },
+  {
+    "name": "[[name]] stays text",
+    "sql": [
+      "SELECT '[[n]]', [[n]]"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT '[[n]]', [[n]]"
+  }
+]

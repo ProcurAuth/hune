@@ -1,0 +1,4891 @@
+{
+ "source": "Grafana 12.4.2, classic gauge (flag newGauge off), dark theme, measured 2026-11-22 (hB-gauge, dashboard hpar-hB-gauge-1, deleted)",
+ "vectors": [
+  {
+   "name": "big",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "decimals": 1
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    123456.789
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": null
+      }
+     ],
+     "text": "123456.8",
+     "w14": [
+      61.0244140625,
+      14,
+      3
+     ],
+     "valueSize": 38.3096,
+     "valueTop": 160.022,
+     "valueCenterX": 248.99,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "contin",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": 0,
+    "max": 100
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "continuous-GrYlRd",
+   "data": [
+    10.0,
+    55.0,
+    90.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      25.86,
+      161,
+      161
+     ],
+     "cx": 80.5,
+     "cy": 103.1258,
+     "radius": 75.5,
+     "arcW": 29.2727,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 75.5,
+       "r2": 46.2273,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#8ec55d",
+       "r": 74.5,
+       "r2": 47.2273,
+       "a1": 0.9,
+       "a2": 1.02
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 49.7636,
+     "valueTop": 78.2439,
+     "valueCenterX": 79.99,
+     "color": "rgb(142, 197, 93)"
+    },
+    {
+     "canvas": [
+      169,
+      25.86,
+      161,
+      161
+     ],
+     "cx": 80.5,
+     "cy": 103.6717,
+     "radius": 75.5,
+     "arcW": 29.2727,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 75.5,
+       "r2": 46.2273,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#e8b93d",
+       "r": 74.5,
+       "r2": 47.2273,
+       "a1": 0.9,
+       "a2": 1.56
+      }
+     ],
+     "text": "55",
+     "w14": [
+      17.021484375,
+      14,
+      3
+     ],
+     "valueSize": 47.5797,
+     "valueTop": 79.8819,
+     "valueCenterX": 79.99,
+     "color": "rgb(232, 185, 61)"
+    },
+    {
+     "canvas": [
+      338,
+      25.86,
+      161,
+      161
+     ],
+     "cx": 80.5,
+     "cy": 103.9718,
+     "radius": 75.5,
+     "arcW": 29.2727,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 75.5,
+       "r2": 46.2273,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f36752",
+       "r": 74.5,
+       "r2": 47.2273,
+       "a1": 0.9,
+       "a2": 1.98
+      }
+     ],
+     "text": "90",
+     "w14": [
+      17.513671875,
+      14,
+      3
+     ],
+     "valueSize": 46.3796,
+     "valueTop": 80.782,
+     "valueCenterX": 79.99,
+     "color": "rgb(243, 103, 82)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 16.1,
+     "y": 182.86,
+     "h": 25.28,
+     "x": 0,
+     "w": 161
+    },
+    {
+     "text": "b",
+     "size": 16.1,
+     "y": 182.86,
+     "h": 25.28,
+     "x": 169,
+     "w": 161
+    },
+    {
+     "text": "c",
+     "size": 16.1,
+     "y": 182.86,
+     "h": 25.28,
+     "x": 338,
+     "w": 161
+    }
+   ]
+  },
+  {
+   "name": "d-l",
+   "box": [
+    762,
+    390
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      762,
+      390
+     ],
+     "cx": 381,
+     "cy": 295.2942,
+     "radius": 282.2942,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 282.2942,
+       "r2": 242.2942,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 281.2942,
+       "r2": 243.2942,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 290.2942,
+       "r2": 284.2942,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 290.2942,
+       "r2": 284.2942,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 290.2942,
+       "r2": 284.2942,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 261.294,
+     "valueCenterX": 380.99,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "d-m",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 165.1765,
+       "r2": 127.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 145.177,
+     "valueCenterX": 248.99,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "d-s",
+   "box": [
+    237,
+    124
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      237,
+      124
+     ],
+     "cx": 118.5,
+     "cy": 91.9364,
+     "radius": 82.4273,
+     "arcW": 22.5455,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 82.4273,
+       "r2": 59.8818,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 81.4273,
+       "r2": 60.8818,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 86.9364,
+       "r2": 84.4273,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 86.9364,
+       "r2": 84.4273,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 86.9364,
+       "r2": 84.4273,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 38.3273,
+     "valueTop": 72.7727,
+     "valueCenterX": 117.99,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "d-tall",
+   "box": [
+    237,
+    466
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      114.5,
+      237,
+      237
+     ],
+     "cx": 118.5,
+     "cy": 154.3,
+     "radius": 105.5,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 105.5,
+       "r2": 65.5,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 104.5,
+       "r2": 66.5,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 113.5,
+       "r2": 107.5,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 113.5,
+       "r2": 107.5,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 113.5,
+       "r2": 107.5,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 120.3,
+     "valueCenterX": 117.99,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "d-wide",
+   "box": [
+    1025,
+    162
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      1025,
+      162
+     ],
+     "cx": 512.5,
+     "cy": 97.797,
+     "radius": 86.9061,
+     "arcW": 29.4546,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 86.9061,
+       "r2": 57.4515,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 85.9061,
+       "r2": 58.4515,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 92.797,
+       "r2": 88.9061,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 92.797,
+       "r2": 88.9061,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 92.797,
+       "r2": 88.9061,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 50.0727,
+     "valueTop": 72.7606,
+     "valueCenterX": 511.995,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "fixed",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "fixed",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 174.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 174.1765,
+       "r2": 134.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#8f3bb8",
+       "r": 173.1765,
+       "r2": 135.1765,
+       "a1": 0.9,
+       "a2": null
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 145.177,
+     "valueCenterX": 248.99,
+     "color": "rgb(143, 59, 184)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "global2",
+   "box": [
+    762,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    20.0,
+    80.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      377,
+      206.77
+     ],
+     "cx": 188.5,
+     "cy": 155.3158,
+     "radius": 142.7522,
+     "arcW": 37.8182,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 142.7522,
+       "r2": 104.934,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 150.3158,
+       "r2": 144.7522,
+       "a1": 0.9,
+       "a2": 2.1
+      }
+     ],
+     "text": "20",
+     "w14": [
+      17.3701171875,
+      14,
+      3
+     ],
+     "valueSize": 64.2909,
+     "valueTop": 123.17,
+     "valueCenterX": 188.0,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      385,
+      0,
+      377,
+      206.77
+     ],
+     "cx": 188.5,
+     "cy": 155.3158,
+     "radius": 142.7522,
+     "arcW": 37.8182,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 142.7522,
+       "r2": 104.934,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 141.7522,
+       "r2": 105.934,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 150.3158,
+       "r2": 144.7522,
+       "a1": 0.9,
+       "a2": 2.1
+      }
+     ],
+     "text": "80",
+     "w14": [
+      17.4931640625,
+      14,
+      3
+     ],
+     "valueSize": 64.2909,
+     "valueTop": 123.17,
+     "valueCenterX": 188.005,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 20.0,
+     "y": 202.77,
+     "h": 31.23,
+     "x": 0,
+     "w": 377
+    },
+    {
+     "text": "b",
+     "size": 20.0,
+     "y": 202.77,
+     "h": 31.23,
+     "x": 385,
+     "w": 377
+    }
+   ]
+  },
+  {
+   "name": "grid5",
+   "box": [
+    762,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0,
+    35.0,
+    60.0,
+    85.0,
+    99.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      34.53,
+      146,
+      146
+     ],
+     "cx": 73,
+     "cy": 93.2848,
+     "radius": 62.6909,
+     "arcW": 26.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 62.6909,
+       "r2": 36.1455,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 0.9,
+       "a2": 1.8438
+      },
+      {
+       "color": "#f2495c",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 1.8438,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 45.1273,
+     "valueTop": 70.7212,
+     "valueCenterX": 72.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      154,
+      34.53,
+      146,
+      146
+     ],
+     "cx": 73,
+     "cy": 94.0272,
+     "radius": 62.6909,
+     "arcW": 26.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 62.6909,
+       "r2": 36.1455,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 61.6909,
+       "r2": 37.1455,
+       "a1": 0.9,
+       "a2": 1.2371
+      },
+      {
+       "color": "#73bf69",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 0.9,
+       "a2": 1.8438
+      },
+      {
+       "color": "#f2495c",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 1.8438,
+       "a2": 2.1
+      }
+     ],
+     "text": "35",
+     "w14": [
+      17.158203125,
+      14,
+      3
+     ],
+     "valueSize": 42.1581,
+     "valueTop": 72.9481,
+     "valueCenterX": 72.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      308,
+      34.53,
+      146,
+      146
+     ],
+     "cx": 73,
+     "cy": 94.2191,
+     "radius": 62.6909,
+     "arcW": 26.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 62.6909,
+       "r2": 36.1455,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 61.6909,
+       "r2": 37.1455,
+       "a1": 0.9,
+       "a2": 1.5742
+      },
+      {
+       "color": "#73bf69",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 0.9,
+       "a2": 1.8438
+      },
+      {
+       "color": "#f2495c",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 1.8438,
+       "a2": 2.1
+      }
+     ],
+     "text": "60",
+     "w14": [
+      17.513671875,
+      14,
+      3
+     ],
+     "valueSize": 41.3901,
+     "valueTop": 73.5241,
+     "valueCenterX": 73.0,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      462,
+      34.53,
+      146,
+      146
+     ],
+     "cx": 73,
+     "cy": 94.0347,
+     "radius": 62.6909,
+     "arcW": 26.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 62.6909,
+       "r2": 36.1455,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 61.6909,
+       "r2": 37.1455,
+       "a1": 0.9,
+       "a2": 1.9112
+      },
+      {
+       "color": "#73bf69",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 0.9,
+       "a2": 1.8438
+      },
+      {
+       "color": "#f2495c",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 1.8438,
+       "a2": 2.1
+      }
+     ],
+     "text": "85",
+     "w14": [
+      17.171875,
+      14,
+      3
+     ],
+     "valueSize": 42.128,
+     "valueTop": 72.9707,
+     "valueCenterX": 72.995,
+     "color": "rgb(242, 73, 92)"
+    },
+    {
+     "canvas": [
+      616,
+      34.53,
+      146,
+      146
+     ],
+     "cx": 73,
+     "cy": 94.1388,
+     "radius": 62.6909,
+     "arcW": 26.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 62.6909,
+       "r2": 36.1455,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 61.6909,
+       "r2": 37.1455,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 0.9,
+       "a2": 1.8438
+      },
+      {
+       "color": "#f2495c",
+       "r": 68,
+       "r2": 64.6909,
+       "a1": 1.8438,
+       "a2": 2.1
+      }
+     ],
+     "text": "99",
+     "w14": [
+      17.36328125,
+      14,
+      3
+     ],
+     "valueSize": 41.7116,
+     "valueTop": 73.283,
+     "valueCenterX": 72.995,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 14.6,
+     "y": 176.53,
+     "h": 22.92,
+     "x": 0,
+     "w": 146
+    },
+    {
+     "text": "b",
+     "size": 14.6,
+     "y": 176.53,
+     "h": 22.92,
+     "x": 154,
+     "w": 146
+    },
+    {
+     "text": "c",
+     "size": 14.6,
+     "y": 176.53,
+     "h": 22.92,
+     "x": 308,
+     "w": 146
+    },
+    {
+     "text": "d",
+     "size": 14.6,
+     "y": 176.53,
+     "h": 22.92,
+     "x": 462,
+     "w": 146
+    },
+    {
+     "text": "e",
+     "size": 14.6,
+     "y": 176.53,
+     "h": 22.92,
+     "x": 616,
+     "w": 146
+    }
+   ]
+  },
+  {
+   "name": "horiz3",
+   "box": [
+    368,
+    390
+   ],
+   "options": {
+    "orientation": "horizontal",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0,
+    55.0,
+    90.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      368,
+      93.59
+     ],
+     "cx": 184,
+     "cy": 61.6968,
+     "radius": 53.2544,
+     "arcW": 17.2121,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 53.2544,
+       "r2": 36.0423,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 56.6968,
+       "r2": 55.2544,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 56.6968,
+       "r2": 55.2544,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 29.2606,
+     "valueTop": 47.0665,
+     "valueCenterX": 184.0,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      132.66,
+      368,
+      93.59
+     ],
+     "cx": 184,
+     "cy": 61.6968,
+     "radius": 53.2544,
+     "arcW": 17.2121,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 53.2544,
+       "r2": 36.0423,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 52.2544,
+       "r2": 37.0423,
+       "a1": 0.9,
+       "a2": 1.575
+      },
+      {
+       "color": "#73bf69",
+       "r": 56.6968,
+       "r2": 55.2544,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 56.6968,
+       "r2": 55.2544,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "55",
+     "w14": [
+      17.021484375,
+      14,
+      3
+     ],
+     "valueSize": 29.2606,
+     "valueTop": 47.0665,
+     "valueCenterX": 184.0,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      265.31,
+      368,
+      93.59
+     ],
+     "cx": 184,
+     "cy": 61.6968,
+     "radius": 53.2544,
+     "arcW": 17.2121,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 53.2544,
+       "r2": 36.0423,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 52.2544,
+       "r2": 37.0423,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 56.6968,
+       "r2": 55.2544,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 56.6968,
+       "r2": 55.2544,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "90",
+     "w14": [
+      17.513671875,
+      14,
+      3
+     ],
+     "valueSize": 29.2606,
+     "valueTop": 47.0665,
+     "valueCenterX": 184.005,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 20.0,
+     "y": 89.59,
+     "h": 31.06,
+     "x": 0,
+     "w": 368
+    },
+    {
+     "text": "b",
+     "size": 20.0,
+     "y": 222.25,
+     "h": 31.06,
+     "x": 0,
+     "w": 368
+    },
+    {
+     "text": "c",
+     "size": 20.0,
+     "y": 354.91,
+     "h": 31.06,
+     "x": 0,
+     "w": 368
+    }
+   ]
+  },
+  {
+   "name": "horiz6",
+   "box": [
+    368,
+    238
+   ],
+   "options": {
+    "orientation": "horizontal",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0,
+    25.0,
+    40.0,
+    55.0,
+    70.0,
+    95.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      368,
+      44.14
+     ],
+     "cx": 184,
+     "cy": 19.935,
+     "radius": 13.2986,
+     "arcW": 8.1818,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 13.2986,
+       "r2": 5.1168,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 0.9,
+       "a2": 1.8882
+      },
+      {
+       "color": "#f2495c",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 1.8882,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 13.9091,
+     "valueTop": 12.9804,
+     "valueCenterX": 183.99,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      83,
+      368,
+      44.14
+     ],
+     "cx": 184,
+     "cy": 19.935,
+     "radius": 13.2986,
+     "arcW": 8.1818,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 13.2986,
+       "r2": 5.1168,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 12.2986,
+       "r2": 6.1168,
+       "a1": 0.9,
+       "a2": 1.1118
+      },
+      {
+       "color": "#73bf69",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 0.9,
+       "a2": 1.8882
+      },
+      {
+       "color": "#f2495c",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 1.8882,
+       "a2": 2.1
+      }
+     ],
+     "text": "25",
+     "w14": [
+      17.048828125,
+      14,
+      3
+     ],
+     "valueSize": 13.9091,
+     "valueTop": 12.9804,
+     "valueCenterX": 183.99,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      166,
+      368,
+      44.14
+     ],
+     "cx": 184,
+     "cy": 19.935,
+     "radius": 13.2986,
+     "arcW": 8.1818,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 13.2986,
+       "r2": 5.1168,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 12.2986,
+       "r2": 6.1168,
+       "a1": 0.9,
+       "a2": 1.3235
+      },
+      {
+       "color": "#73bf69",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 0.9,
+       "a2": 1.8882
+      },
+      {
+       "color": "#f2495c",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 1.8882,
+       "a2": 2.1
+      }
+     ],
+     "text": "40",
+     "w14": [
+      17.8759765625,
+      14,
+      3
+     ],
+     "valueSize": 13.9091,
+     "valueTop": 12.9804,
+     "valueCenterX": 183.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      249,
+      368,
+      44.14
+     ],
+     "cx": 184,
+     "cy": 19.935,
+     "radius": 13.2986,
+     "arcW": 8.1818,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 13.2986,
+       "r2": 5.1168,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 12.2986,
+       "r2": 6.1168,
+       "a1": 0.9,
+       "a2": 1.5353
+      },
+      {
+       "color": "#73bf69",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 0.9,
+       "a2": 1.8882
+      },
+      {
+       "color": "#f2495c",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 1.8882,
+       "a2": 2.1
+      }
+     ],
+     "text": "55",
+     "w14": [
+      17.021484375,
+      14,
+      3
+     ],
+     "valueSize": 13.9091,
+     "valueTop": 12.9804,
+     "valueCenterX": 183.99,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      332,
+      368,
+      44.14
+     ],
+     "cx": 184,
+     "cy": 19.935,
+     "radius": 13.2986,
+     "arcW": 8.1818,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 13.2986,
+       "r2": 5.1168,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 12.2986,
+       "r2": 6.1168,
+       "a1": 0.9,
+       "a2": 1.747
+      },
+      {
+       "color": "#73bf69",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 0.9,
+       "a2": 1.8882
+      },
+      {
+       "color": "#f2495c",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 1.8882,
+       "a2": 2.1
+      }
+     ],
+     "text": "70",
+     "w14": [
+      16.5361328125,
+      14,
+      3
+     ],
+     "valueSize": 13.9091,
+     "valueTop": 12.9804,
+     "valueCenterX": 183.99,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      415,
+      368,
+      44.14
+     ],
+     "cx": 184,
+     "cy": 19.935,
+     "radius": 13.2986,
+     "arcW": 8.1818,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 13.2986,
+       "r2": 5.1168,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 12.2986,
+       "r2": 6.1168,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 0.9,
+       "a2": 1.8882
+      },
+      {
+       "color": "#f2495c",
+       "r": 14.935,
+       "r2": 15.2986,
+       "a1": 1.8882,
+       "a2": 2.1
+      }
+     ],
+     "text": "95",
+     "w14": [
+      17.1923828125,
+      14,
+      3
+     ],
+     "valueSize": 13.9091,
+     "valueTop": 12.9804,
+     "valueCenterX": 183.99,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 20.0,
+     "y": 40.16,
+     "h": 30.84,
+     "x": 0,
+     "w": 368
+    },
+    {
+     "text": "b",
+     "size": 20.0,
+     "y": 123.16,
+     "h": 30.84,
+     "x": 0,
+     "w": 368
+    },
+    {
+     "text": "c",
+     "size": 20.0,
+     "y": 206.16,
+     "h": 30.84,
+     "x": 0,
+     "w": 368
+    },
+    {
+     "text": "d",
+     "size": 20.0,
+     "y": 289.16,
+     "h": 30.84,
+     "x": 0,
+     "w": 368
+    },
+    {
+     "text": "e",
+     "size": 20.0,
+     "y": 372.16,
+     "h": 30.84,
+     "x": 0,
+     "w": 368
+    },
+    {
+     "text": "f",
+     "size": 20.0,
+     "y": 455.16,
+     "h": 30.84,
+     "x": 0,
+     "w": 368
+    }
+   ]
+  },
+  {
+   "name": "lab-l",
+   "box": [
+    762,
+    390
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "decimals": 1
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "orange",
+      "value": 50
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    63.25
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      762,
+      390
+     ],
+     "cx": 381,
+     "cy": 295.2942,
+     "radius": 254.1608,
+     "arcW": 26.6666,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 254.1608,
+       "r2": 227.4942,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#ff9830",
+       "r": 259.4942,
+       "r2": 256.1608,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#ff9830",
+       "r": 259.4942,
+       "r2": 256.1608,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#ff9830",
+       "r": 259.4942,
+       "r2": 256.1608,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "63.3",
+     "w14": [
+      29.3193359375,
+      14,
+      3
+     ],
+     "valueSize": 45.3333,
+     "valueTop": 272.628,
+     "valueCenterX": 380.995,
+     "color": "rgb(255, 152, 48)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "63.3",
+     "size": 18.1333,
+     "center": [
+      124.0,
+      378.0
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "63.3",
+     "size": 18.1333,
+     "center": [
+      637.0,
+      378.0
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "lab-m",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "orange",
+      "value": 50
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 138.0432,
+     "arcW": 26.6667,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 138.0432,
+       "r2": 111.3765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 137.0432,
+       "r2": 112.3765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 45.3333,
+     "valueTop": 156.51,
+     "valueCenterX": 248.995,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "42",
+     "size": 18.1333,
+     "center": [
+      102.995,
+      226.0
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "42",
+     "size": 18.1333,
+     "center": [
+      394.995,
+      226.0
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "lab-s",
+   "box": [
+    237,
+    162
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "orange",
+      "value": 50
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      237,
+      162
+     ],
+     "cx": 118.5,
+     "cy": 120.2133,
+     "radius": 86.3655,
+     "arcW": 19.6364,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 86.3655,
+       "r2": 66.7291,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 85.3655,
+       "r2": 67.7291,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 90.2927,
+       "r2": 88.3655,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 90.2927,
+       "r2": 88.3655,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 90.2927,
+       "r2": 88.3655,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 33.3818,
+     "valueTop": 103.522,
+     "valueCenterX": 117.99,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "42",
+     "size": 13.3527,
+     "center": [
+      25.005,
+      149.995
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "42",
+     "size": 13.3527,
+     "center": [
+      211.005,
+      149.995
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "lab-xs",
+   "box": [
+    171,
+    86
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "orange",
+      "value": 50
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      171,
+      86
+     ],
+     "cx": 85.5,
+     "cy": 63.0588,
+     "radius": 37.8043,
+     "arcW": 10.4243,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 37.8043,
+       "r2": 27.38,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 36.8043,
+       "r2": 28.38,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 39.8891,
+       "r2": 39.8043,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 39.8891,
+       "r2": 39.8043,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 39.8891,
+       "r2": 39.8043,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 17.7212,
+     "valueTop": 54.1982,
+     "valueCenterX": 85.0,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "42",
+     "size": 12.0,
+     "center": [
+      39.995,
+      76.985
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "42",
+     "size": 12.0,
+     "center": [
+      129.995,
+      76.985
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "manual-h",
+   "box": [
+    499,
+    314
+   ],
+   "options": {
+    "orientation": "horizontal",
+    "labels": false,
+    "markers": true,
+    "sizing": "manual",
+    "minW": 75,
+    "minH": 150,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0,
+    55.0,
+    90.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      118.88
+     ],
+     "cx": 249.5,
+     "cy": 78.6962,
+     "radius": 69.3326,
+     "arcW": 21.8182,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 69.3326,
+       "r2": 47.5144,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 73.6962,
+       "r2": 71.3326,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 73.6962,
+       "r2": 71.3326,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 37.0909,
+     "valueTop": 60.1508,
+     "valueCenterX": 249.0,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      158,
+      499,
+      118.88
+     ],
+     "cx": 249.5,
+     "cy": 78.6962,
+     "radius": 69.3326,
+     "arcW": 21.8182,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 69.3326,
+       "r2": 47.5144,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 68.3326,
+       "r2": 48.5144,
+       "a1": 0.9,
+       "a2": 1.575
+      },
+      {
+       "color": "#73bf69",
+       "r": 73.6962,
+       "r2": 71.3326,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 73.6962,
+       "r2": 71.3326,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "55",
+     "w14": [
+      17.021484375,
+      14,
+      3
+     ],
+     "valueSize": 37.0909,
+     "valueTop": 60.1508,
+     "valueCenterX": 248.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      0,
+      316,
+      499,
+      118.88
+     ],
+     "cx": 249.5,
+     "cy": 78.6962,
+     "radius": 69.3326,
+     "arcW": 21.8182,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 69.3326,
+       "r2": 47.5144,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 68.3326,
+       "r2": 48.5144,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 73.6962,
+       "r2": 71.3326,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 73.6962,
+       "r2": 71.3326,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "90",
+     "w14": [
+      17.513671875,
+      14,
+      3
+     ],
+     "valueSize": 37.0909,
+     "valueTop": 60.1508,
+     "valueCenterX": 249.005,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 20.0,
+     "y": 114.88,
+     "h": 31.13,
+     "x": 0,
+     "w": 499
+    },
+    {
+     "text": "b",
+     "size": 20.0,
+     "y": 272.88,
+     "h": 31.13,
+     "x": 0,
+     "w": 499
+    },
+    {
+     "text": "c",
+     "size": 20.0,
+     "y": 430.88,
+     "h": 31.13,
+     "x": 0,
+     "w": 499
+    }
+   ]
+  },
+  {
+   "name": "manual-v",
+   "box": [
+    762,
+    162
+   ],
+   "options": {
+    "orientation": "vertical",
+    "labels": false,
+    "markers": true,
+    "sizing": "manual",
+    "minW": 200,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0,
+    55.0,
+    90.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      137.69,
+      136.72
+     ],
+     "cx": 68.844,
+     "cy": 87.7867,
+     "radius": 59.044,
+     "arcW": 24.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 59.044,
+       "r2": 35.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 40.8,
+     "valueTop": 67.3867,
+     "valueCenterX": 67.99,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      256.67,
+      0,
+      137.69,
+      136.72
+     ],
+     "cx": 68.844,
+     "cy": 88.5658,
+     "radius": 59.044,
+     "arcW": 24.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 59.044,
+       "r2": 35.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 58.044,
+       "r2": 36.044,
+       "a1": 0.9,
+       "a2": 1.575
+      },
+      {
+       "color": "#73bf69",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "55",
+     "w14": [
+      17.021484375,
+      14,
+      3
+     ],
+     "valueSize": 37.6837,
+     "valueTop": 69.7239,
+     "valueCenterX": 67.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      513.34,
+      0,
+      137.69,
+      136.72
+     ],
+     "cx": 68.844,
+     "cy": 88.8034,
+     "radius": 59.044,
+     "arcW": 24.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 59.044,
+       "r2": 35.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 58.044,
+       "r2": 36.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "90",
+     "w14": [
+      17.513671875,
+      14,
+      3
+     ],
+     "valueSize": 36.7332,
+     "valueTop": 70.4368,
+     "valueCenterX": 67.995,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 16.2,
+     "y": 132.72,
+     "h": 25.28,
+     "x": 0,
+     "w": 137.69
+    },
+    {
+     "text": "b",
+     "size": 16.2,
+     "y": 132.72,
+     "h": 25.28,
+     "x": 256.67,
+     "w": 137.69
+    },
+    {
+     "text": "c",
+     "size": 16.2,
+     "y": 132.72,
+     "h": 25.28,
+     "x": 513.34,
+     "w": 137.69
+    }
+   ]
+  },
+  {
+   "name": "mapping",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 165.1765,
+       "r2": 127.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "OK",
+     "w14": [
+      20.111328125,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 145.177,
+     "valueCenterX": 248.99,
+     "color": "rgb(184, 119, 217)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "mark-off",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": false,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "orange",
+      "value": 50
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 174.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 174.1765,
+       "r2": 134.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 173.1765,
+       "r2": 135.1765,
+       "a1": 0.9,
+       "a2": null
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 145.177,
+     "valueCenterX": 248.99,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "minmax",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": 10,
+    "max": 210
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "#EAB839",
+      "value": 100
+     },
+     {
+      "color": "red",
+      "value": 180
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    150.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 138.0432,
+     "arcW": 26.6667,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 138.0432,
+       "r2": 111.3765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#eab839",
+       "r": 137.0432,
+       "r2": 112.3765,
+       "a1": 0.9,
+       "a2": 1.74
+      },
+      {
+       "color": "#73bf69",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 0.9,
+       "a2": 1.44
+      },
+      {
+       "color": "#eab839",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 1.44,
+       "a2": 1.92
+      },
+      {
+       "color": "#f2495c",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 1.92,
+       "a2": 2.1
+      }
+     ],
+     "text": "150",
+     "w14": [
+      23.037109375,
+      14,
+      3
+     ],
+     "valueSize": 45.3333,
+     "valueTop": 156.51,
+     "valueCenterX": 248.995,
+     "color": "rgb(234, 184, 57)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "10",
+     "size": 18.1333,
+     "center": [
+      102.995,
+      226.0
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "210",
+     "size": 18.1333,
+     "center": [
+      394.995,
+      226.0
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValue0_1",
+     "text": "100",
+     "size": 18.1333,
+     "center": [
+      219.99,
+      28.005
+     ],
+     "transform": "matrix(0.982287, -0.187381, 0.187381, 0.982287, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValue0_2",
+     "text": "180",
+     "size": 18.1333,
+     "center": [
+      397.995,
+      140.995
+     ],
+     "transform": "matrix(0.24869, 0.968583, -0.968583, 0.24869, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "neutral",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": -50,
+    "max": 100,
+    "neutral": 30
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 138.0432,
+     "arcW": 26.6667,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 138.0432,
+       "r2": 111.3765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 137.0432,
+       "r2": 112.3765,
+       "a1": 1.38,
+       "a2": 1.54
+      },
+      {
+       "color": "#22252b",
+       "r": 136.0432,
+       "r2": 113.3765,
+       "a1": 1.538,
+       "a2": 1.542
+      },
+      {
+       "color": "#73bf69",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 0.9,
+       "a2": 1.94
+      },
+      {
+       "color": "#f2495c",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 1.94,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 45.3333,
+     "valueTop": 156.51,
+     "valueCenterX": 248.98,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "-50",
+     "size": 18.1333,
+     "center": [
+      103.0,
+      226.005
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "100",
+     "size": 18.1333,
+     "center": [
+      394.995,
+      226.005
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValue0_1",
+     "text": "80",
+     "size": 18.1333,
+     "center": [
+      399.99,
+      150.005
+     ],
+     "transform": "matrix(0.187381, 0.982287, -0.982287, 0.187381, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueNeutral0",
+     "text": "30",
+     "size": 18.1333,
+     "center": [
+      268.005,
+      25.995
+     ],
+     "transform": "matrix(0.992115, 0.125333, -0.125333, 0.992115, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "neutral-hi",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": -50,
+    "max": 100,
+    "neutral": 30
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    70.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 165.1765,
+       "r2": 127.1765,
+       "a1": 1.54,
+       "a2": 1.86
+      },
+      {
+       "color": "#22252b",
+       "r": 164.1765,
+       "r2": 128.1765,
+       "a1": 1.538,
+       "a2": 1.542
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": 1.94
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 1.94,
+       "a2": 2.1
+      }
+     ],
+     "text": "70",
+     "w14": [
+      16.5361328125,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 145.177,
+     "valueCenterX": 249.005,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "nodata",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 165.1765,
+       "r2": 127.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "No data",
+     "w14": [
+      51.8232421875,
+      14,
+      3
+     ],
+     "valueSize": 44.8587,
+     "valueTop": 156.747,
+     "valueCenterX": 248.995,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "over",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": 0,
+    "max": 100
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    150.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 138.0432,
+     "arcW": 26.6667,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 138.0432,
+       "r2": 111.3765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 137.0432,
+       "r2": 112.3765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 0.9,
+       "a2": 1.86
+      },
+      {
+       "color": "#f2495c",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 1.86,
+       "a2": 2.1
+      }
+     ],
+     "text": "150",
+     "w14": [
+      23.037109375,
+      14,
+      3
+     ],
+     "valueSize": 45.3333,
+     "valueTop": 156.51,
+     "valueCenterX": 248.995,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "0",
+     "size": 18.1333,
+     "center": [
+      102.985,
+      225.995
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "100",
+     "size": 18.1333,
+     "center": [
+      394.995,
+      226.005
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValue0_1",
+     "text": "80",
+     "size": 18.1333,
+     "center": [
+      387.99,
+      113.0
+     ],
+     "transform": "matrix(0.425779, 0.904827, -0.904827, 0.425779, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "pct",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "unit": "percent"
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    63.5
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 165.1765,
+       "r2": 127.1765,
+       "a1": 0.9,
+       "a2": 1.662
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": 1.86
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 1.86,
+       "a2": 2.1
+      }
+     ],
+     "text": "63.5%",
+     "w14": [
+      43.107421875,
+      14,
+      3
+     ],
+     "valueSize": 53.5264,
+     "valueTop": 152.413,
+     "valueCenterX": 248.995,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "rows4",
+   "box": [
+    762,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    20.0,
+    45.0,
+    70.0,
+    95.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      12.25,
+      184.5,
+      184.5
+     ],
+     "cx": 92.25,
+     "cy": 119.1505,
+     "radius": 80.5409,
+     "arcW": 33.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 80.5409,
+       "r2": 46.9955,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 0.9,
+       "a2": 1.86
+      },
+      {
+       "color": "#f2495c",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 1.86,
+       "a2": 2.1
+      }
+     ],
+     "text": "20",
+     "w14": [
+      17.3701171875,
+      14,
+      3
+     ],
+     "valueSize": 54.5982,
+     "valueTop": 91.8514,
+     "valueCenterX": 91.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      192.5,
+      12.25,
+      184.5,
+      184.5
+     ],
+     "cx": 92.25,
+     "cy": 119.2793,
+     "radius": 80.5409,
+     "arcW": 33.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 80.5409,
+       "r2": 46.9955,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 79.5409,
+       "r2": 47.9955,
+       "a1": 0.9,
+       "a2": 1.3
+      },
+      {
+       "color": "#73bf69",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 0.9,
+       "a2": 1.86
+      },
+      {
+       "color": "#f2495c",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 1.86,
+       "a2": 2.1
+      }
+     ],
+     "text": "45",
+     "w14": [
+      17.5546875,
+      14,
+      3
+     ],
+     "valueSize": 54.0828,
+     "valueTop": 92.2379,
+     "valueCenterX": 91.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      385,
+      12.25,
+      184.5,
+      184.5
+     ],
+     "cx": 92.25,
+     "cy": 119.0241,
+     "radius": 80.5409,
+     "arcW": 33.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 80.5409,
+       "r2": 46.9955,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 79.5409,
+       "r2": 47.9955,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 0.9,
+       "a2": 1.86
+      },
+      {
+       "color": "#f2495c",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 1.86,
+       "a2": 2.1
+      }
+     ],
+     "text": "95",
+     "w14": [
+      17.1923828125,
+      14,
+      3
+     ],
+     "valueSize": 55.1038,
+     "valueTop": 91.4722,
+     "valueCenterX": 91.985,
+     "color": "rgb(242, 73, 92)"
+    },
+    {
+     "canvas": [
+      577.5,
+      12.25,
+      184.5,
+      184.5
+     ],
+     "cx": 92.25,
+     "cy": 118.5432,
+     "radius": 80.5409,
+     "arcW": 33.5454,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 80.5409,
+       "r2": 46.9955,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 79.5409,
+       "r2": 47.9955,
+       "a1": 0.9,
+       "a2": 1.7
+      },
+      {
+       "color": "#73bf69",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 0.9,
+       "a2": 1.86
+      },
+      {
+       "color": "#f2495c",
+       "r": 87.25,
+       "r2": 82.5409,
+       "a1": 1.86,
+       "a2": 2.1
+      }
+     ],
+     "text": "70",
+     "w14": [
+      16.5361328125,
+      14,
+      3
+     ],
+     "valueSize": 57.0273,
+     "valueTop": 90.0295,
+     "valueCenterX": 92.0,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "alpha",
+     "size": 18.45,
+     "y": 192.75,
+     "h": 28.98,
+     "x": 0,
+     "w": 184.5
+    },
+    {
+     "text": "beta",
+     "size": 18.45,
+     "y": 192.75,
+     "h": 28.98,
+     "x": 192.5,
+     "w": 184.5
+    },
+    {
+     "text": "delta",
+     "size": 18.45,
+     "y": 192.75,
+     "h": 28.98,
+     "x": 385,
+     "w": 184.5
+    },
+    {
+     "text": "gamma",
+     "size": 18.45,
+     "y": 192.75,
+     "h": 28.98,
+     "x": 577.5,
+     "w": 184.5
+    }
+   ]
+  },
+  {
+   "name": "single-250",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    250.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 165.1765,
+       "r2": 127.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": null,
+       "a2": null
+      }
+     ],
+     "text": "250",
+     "w14": [
+      25.880859375,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 145.177,
+     "valueCenterX": 248.995,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "textsize",
+   "box": [
+    762,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": 30,
+    "valueSize": 50
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0,
+    55.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      377,
+      194.02
+     ],
+     "cx": 188.5,
+     "cy": 145.5872,
+     "radius": 133.0235,
+     "arcW": 37.8181,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 133.0235,
+       "r2": 95.2054,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 140.5872,
+       "r2": 135.0235,
+       "a1": 0.9,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 50.0,
+     "valueTop": 120.587,
+     "valueCenterX": 188.005,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      385,
+      0,
+      377,
+      194.02
+     ],
+     "cx": 188.5,
+     "cy": 145.5872,
+     "radius": 133.0235,
+     "arcW": 37.8181,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 133.0235,
+       "r2": 95.2054,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 132.0235,
+       "r2": 96.2054,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 140.5872,
+       "r2": 135.0235,
+       "a1": 0.9,
+       "a2": 2.1
+      }
+     ],
+     "text": "55",
+     "w14": [
+      17.021484375,
+      14,
+      3
+     ],
+     "valueSize": 50.0,
+     "valueTop": 120.587,
+     "valueCenterX": 187.985,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 30.0,
+     "y": 190.03,
+     "h": 43.97,
+     "x": 0,
+     "w": 377
+    },
+    {
+     "text": "b",
+     "size": 30.0,
+     "y": 190.03,
+     "h": 43.97,
+     "x": 385,
+     "w": 377
+    }
+   ]
+  },
+  {
+   "name": "thr-pct",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": true,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": 0,
+    "max": 200
+   },
+   "thresholds": {
+    "mode": "percentage",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "orange",
+      "value": 50
+     },
+     {
+      "color": "red",
+      "value": 90
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    130.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 138.0432,
+     "arcW": 26.6667,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 138.0432,
+       "r2": 111.3765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#ff9830",
+       "r": 137.0432,
+       "r2": 112.3765,
+       "a1": 0.9,
+       "a2": 1.68
+      },
+      {
+       "color": "#73bf69",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 0.9,
+       "a2": 1.5
+      },
+      {
+       "color": "#ff9830",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 1.5,
+       "a2": 1.98
+      },
+      {
+       "color": "#f2495c",
+       "r": 143.3765,
+       "r2": 140.0432,
+       "a1": 1.98,
+       "a2": 2.1
+      }
+     ],
+     "text": "130",
+     "w14": [
+      23.173828125,
+      14,
+      3
+     ],
+     "valueSize": 45.3333,
+     "valueTop": 156.51,
+     "valueCenterX": 248.99,
+     "color": "rgb(255, 152, 48)"
+    }
+   ],
+   "labels": [
+    {
+     "id": "flotGaugeThresholdValueMin0",
+     "text": "0",
+     "size": 18.1333,
+     "center": [
+      102.985,
+      225.995
+     ],
+     "transform": "matrix(-0.309017, -0.951057, 0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValueMax0",
+     "text": "100",
+     "size": 18.1333,
+     "center": [
+      394.995,
+      226.005
+     ],
+     "transform": "matrix(-0.309017, 0.951057, -0.951057, -0.309017, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValue0_1",
+     "text": "50",
+     "size": 18.1333,
+     "center": [
+      248.995,
+      25.0
+     ],
+     "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    {
+     "id": "flotGaugeThresholdValue0_2",
+     "text": "90",
+     "size": 18.1333,
+     "center": [
+      401.995,
+      169.005
+     ],
+     "transform": "matrix(0.0627905, 0.998027, -0.998027, 0.0627905, 0, 0)"
+    }
+   ],
+   "titles": []
+  },
+  {
+   "name": "title1",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "displayName": "Load"
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    42.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      206.77
+     ],
+     "cx": 249.5,
+     "cy": 152.9872,
+     "radius": 140.4236,
+     "arcW": 37.8182,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 140.4236,
+       "r2": 102.6054,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 139.4236,
+       "r2": 103.6054,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 147.9872,
+       "r2": 142.4236,
+       "a1": 0.9,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 147.9872,
+       "r2": 142.4236,
+       "a1": null,
+       "a2": null
+      },
+      {
+       "color": "#73bf69",
+       "r": 147.9872,
+       "r2": 142.4236,
+       "a1": null,
+       "a2": 2.1
+      }
+     ],
+     "text": "42",
+     "w14": [
+      17.58203125,
+      14,
+      3
+     ],
+     "valueSize": 64.2909,
+     "valueTop": 120.842,
+     "valueCenterX": 248.995,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "Load",
+     "size": 20.0,
+     "y": 202.77,
+     "h": 31.23,
+     "x": 0,
+     "w": 499
+    }
+   ]
+  },
+  {
+   "name": "under",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": 0,
+    "max": 100
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    -20.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": 1.86
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 1.86,
+       "a2": 2.1
+      }
+     ],
+     "text": "-20",
+     "w14": [
+      23.337890625,
+      14,
+      3
+     ],
+     "valueSize": 68.0,
+     "valueTop": 145.177,
+     "valueCenterX": 248.995,
+     "color": "rgb(115, 191, 105)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "unit-ms",
+   "box": [
+    499,
+    238
+   ],
+   "options": {
+    "orientation": "auto",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {
+    "min": 0,
+    "max": 5000,
+    "unit": "ms"
+   },
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    1234.5
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      499,
+      238
+     ],
+     "cx": 249.5,
+     "cy": 179.1765,
+     "radius": 166.1765,
+     "arcW": 40.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 166.1765,
+       "r2": 126.1765,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 165.1765,
+       "r2": 127.1765,
+       "a1": 0.9,
+       "a2": 1.1963
+      },
+      {
+       "color": "#73bf69",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9,
+       "a2": 0.9192
+      },
+      {
+       "color": "#f2495c",
+       "r": 174.1765,
+       "r2": 168.1765,
+       "a1": 0.9192,
+       "a2": 2.1
+      }
+     ],
+     "text": "1.23 s",
+     "w14": [
+      38.240234375,
+      14,
+      3
+     ],
+     "valueSize": 60.0006,
+     "valueTop": 149.176,
+     "valueCenterX": 248.99,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": []
+  },
+  {
+   "name": "vert3",
+   "box": [
+    762,
+    162
+   ],
+   "options": {
+    "orientation": "vertical",
+    "labels": false,
+    "markers": true,
+    "sizing": "auto",
+    "minW": 75,
+    "minH": 75,
+    "titleSize": null,
+    "valueSize": null
+   },
+   "defaults": {},
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "color": "green",
+      "value": null
+     },
+     {
+      "color": "red",
+      "value": 80
+     }
+    ]
+   },
+   "colorMode": "thresholds",
+   "data": [
+    10.0,
+    55.0,
+    90.0
+   ],
+   "gauges": [
+    {
+     "canvas": [
+      0,
+      0,
+      137.69,
+      136.72
+     ],
+     "cx": 68.844,
+     "cy": 87.7867,
+     "radius": 59.044,
+     "arcW": 24.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 59.044,
+       "r2": 35.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "10",
+     "w14": [
+      14.5263671875,
+      14,
+      3
+     ],
+     "valueSize": 40.8,
+     "valueTop": 67.3867,
+     "valueCenterX": 67.99,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      256.67,
+      0,
+      137.69,
+      136.72
+     ],
+     "cx": 68.844,
+     "cy": 88.5658,
+     "radius": 59.044,
+     "arcW": 24.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 59.044,
+       "r2": 35.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 58.044,
+       "r2": 36.044,
+       "a1": 0.9,
+       "a2": 1.575
+      },
+      {
+       "color": "#73bf69",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "55",
+     "w14": [
+      17.021484375,
+      14,
+      3
+     ],
+     "valueSize": 37.6837,
+     "valueTop": 69.7239,
+     "valueCenterX": 67.995,
+     "color": "rgb(115, 191, 105)"
+    },
+    {
+     "canvas": [
+      513.34,
+      0,
+      137.69,
+      136.72
+     ],
+     "cx": 68.844,
+     "cy": 88.8034,
+     "radius": 59.044,
+     "arcW": 24.0,
+     "fills": [
+      {
+       "color": "#22252b",
+       "r": 59.044,
+       "r2": 35.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#f2495c",
+       "r": 58.044,
+       "r2": 36.044,
+       "a1": 0.9,
+       "a2": 2.1
+      },
+      {
+       "color": "#73bf69",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 0.9,
+       "a2": 1.95
+      },
+      {
+       "color": "#f2495c",
+       "r": 63.844,
+       "r2": 61.044,
+       "a1": 1.95,
+       "a2": 2.1
+      }
+     ],
+     "text": "90",
+     "w14": [
+      17.513671875,
+      14,
+      3
+     ],
+     "valueSize": 36.7332,
+     "valueTop": 70.4368,
+     "valueCenterX": 67.995,
+     "color": "rgb(242, 73, 92)"
+    }
+   ],
+   "labels": [],
+   "titles": [
+    {
+     "text": "a",
+     "size": 16.2,
+     "y": 132.72,
+     "h": 25.28,
+     "x": 0,
+     "w": 137.69
+    },
+    {
+     "text": "b",
+     "size": 16.2,
+     "y": 132.72,
+     "h": 25.28,
+     "x": 256.67,
+     "w": 137.69
+    },
+    {
+     "text": "c",
+     "size": 16.2,
+     "y": 132.72,
+     "h": 25.28,
+     "x": 513.34,
+     "w": 137.69
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+{
+ "_note": "PostgreSQL rules that sql_tree.js does not have yet (F42, worker f42-pg). Each vector gives the members of a tree summary that the right tree has. The test runs them as todo: it does not fail, and it shows a pass as soon as the rule exists.",
+ "vectors": [
+  { "name": "data_modifying_cte_is_a_subquery", "reason": "the body of a CTE that starts with DELETE, INSERT or UPDATE is a plain paren, not a subquery with a query", "text": "WITH d AS (DELETE FROM t RETURNING *) SELECT * FROM d", "expect": { "ctes": ["d"], "subqueries": 1, "queries": [["DELETE", "FROM", "RETURNING"], ["SELECT", "FROM"]] } },
+  { "name": "rows_from_is_not_a_clause", "reason": "the FROM of ROWS FROM (...) opens a second FROM clause", "text": "SELECT * FROM ROWS FROM (f(1), g(2)) AS r(a,b)", "expect": { "queries": [["SELECT", "FROM"]] } },
+  { "name": "update_has_set_and_returning", "reason": "UPDATE has the clause WHERE only: SET and RETURNING are not clause words of the dialect table", "text": "UPDATE t SET a = 1 WHERE b = 2 RETURNING a", "expect": { "queries": [["UPDATE", "SET", "WHERE", "RETURNING"]] } },
+  { "name": "insert_has_values_and_returning", "reason": "INSERT has no clause: VALUES, ON CONFLICT and RETURNING are not clause words of the dialect table", "text": "INSERT INTO t (a) VALUES (1) ON CONFLICT (a) DO NOTHING RETURNING a", "expect": { "queries": [["INSERT", "VALUES", "ON CONFLICT", "RETURNING"]] } }
+ ]
+}

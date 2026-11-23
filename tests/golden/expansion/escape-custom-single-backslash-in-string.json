@@ -1,0 +1,46 @@
+{
+  "id": "escape-custom-single-backslash-in-string",
+  "tags": [
+    "escape:backslash"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE e = '$env'",
+  "variables": [
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "a\\b",
+        "c"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "env": {
+      "all": false,
+      "values": [
+        "a\\b"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE e = 'a\\b'",
+  "sent_sql": "SELECT 1 WHERE e = 'a\\b'",
+  "difference": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE e = 'a\\\\b'"
+    }
+  }
+}

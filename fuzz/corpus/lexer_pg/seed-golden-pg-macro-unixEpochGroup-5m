@@ -1,0 +1,1 @@
+SELECT $__unixEpochGroup(n, '5m') AS t FROM t

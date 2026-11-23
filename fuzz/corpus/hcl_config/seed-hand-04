@@ -1,0 +1,4 @@
+clickhouse "prod" {
+  url = "http://ch:8123"
+  password_env = "HUNE_TOKEN"
+}

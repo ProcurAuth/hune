@@ -1,0 +1,1 @@
+SELECT floor(extract(epoch from ts)/300)*300 FROM t

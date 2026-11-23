@@ -1,0 +1,25 @@
+[
+  {
+    "id": 3,
+    "uid": "fe1x0abc2kq9",
+    "title": "Transit desk",
+    "url": "/grafana/dashboards/f/fe1x0abc2kq9/transit-desk"
+  },
+  {
+    "id": 4,
+    "uid": "ae7r4kd0pq1z",
+    "title": "Nodes",
+    "url": "/grafana/dashboards/f/ae7r4kd0pq1z/nodes"
+  },
+  {
+    "id": 5,
+    "uid": "kid0nested",
+    "title": "Nested",
+    "parentUid": "fe1x0abc2kq9"
+  },
+  {
+    "id": 6,
+    "uid": "Bad_Folder_Uid",
+    "title": "Bad folder"
+  }
+]

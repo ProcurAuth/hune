@@ -1,0 +1,32 @@
+{
+  "id": "pg-macro-timeGroup-one-argument",
+  "tags": [
+    "macro:$__timeGroup"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeGroup(ts) FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": null,
+  "grafana_error": "interpolation failed: macro __timeGroup needs time column and interval and optional fill value",
+  "sent_sql": "SELECT $__timeGroup(ts) FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse a call with one argument. Grafana gives an error and no SQL.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

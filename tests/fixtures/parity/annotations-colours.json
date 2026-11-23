@@ -1,0 +1,156 @@
+{
+  "format_version": 3,
+  "uid": "parity-annotations-colours",
+  "title": "Parity: annotation colours",
+  "description": "Points and regions in three colours on two time series (15.14c).",
+  "tags": [],
+  "time": {
+    "from": "1794528000000",
+    "to": "1794546000000",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "annotations": [
+    {
+      "name": "Deploys",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 2700 AS time, concat('Deploy ', toString(number)) AS text",
+        "FROM numbers(6)"
+      ],
+      "color": "red"
+    },
+    {
+      "name": "Maintenance",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 7200 - 3600 AS time, toDateTime('2026-11-13 00:00:00', 'UTC') + number * 7200 + 1800 AS timeEnd, 'Window' AS title",
+        "FROM numbers(3)"
+      ],
+      "color": "blue"
+    },
+    {
+      "name": "Region before and after",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') - 3600 AS time, toDateTime('2026-11-13 00:00:00', 'UTC') + 1800 AS timeEnd, 'Starts before the range' AS title",
+        "UNION ALL",
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 17100 AS time, toDateTime('2026-11-13 00:00:00', 'UTC') + 21600 AS timeEnd, 'Ends after the range' AS title"
+      ],
+      "color": "#73bf69"
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Series one",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 0) * 10 + 20 AS v",
+                "FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "timeseries",
+          "title": "Series two",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 2) * 10 + 20 AS v",
+                "FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

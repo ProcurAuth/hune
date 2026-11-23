@@ -1,0 +1,315 @@
+{
+  "format_version": 3,
+  "uid": "parity-repeat-v",
+  "title": "Parity: repeat v",
+  "description": "Parity fixture of the repeat (15.14c).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "custom",
+      "name": "host",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "Alpha",
+          "value": "a"
+        },
+        {
+          "text": "Bravo",
+          "value": "b"
+        },
+        {
+          "text": "Charlie",
+          "value": "c"
+        },
+        {
+          "text": "Delta",
+          "value": "d"
+        },
+        {
+          "text": "Echo",
+          "value": "e"
+        }
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "default": [
+        "$__all"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Left",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 8,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toDateTime(1) AS t, 1 AS n",
+                "WHERE 'a' IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Host ${host}",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 8,
+            "y": 0,
+            "w": 8,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toDateTime(1) AS t, 1 AS n",
+                "WHERE 'a' IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": [],
+          "repeat": {
+            "variable": "host",
+            "direction": "v"
+          }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Right",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 16,
+            "y": 0,
+            "w": 8,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toDateTime(1) AS t, 1 AS n",
+                "WHERE 'a' IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Below the copies",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 8,
+            "y": 4,
+            "w": 8,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toDateTime(1) AS t, 1 AS n",
+                "WHERE 'a' IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "Other columns",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 4,
+            "w": 8,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toDateTime(1) AS t, 1 AS n",
+                "WHERE 'a' IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 6,
+          "type": "stat",
+          "title": "Full width",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 24,
+            "h": 3
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toDateTime(1) AS t, 1 AS n",
+                "WHERE 'a' IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

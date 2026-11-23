@@ -1,0 +1,21 @@
+{
+  "id": "pg-interval-builtin-braces",
+  "tags": [
+    "macro:$__timeGroup",
+    "builtin:$__interval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "explore",
+  "template": "SELECT $__timeGroup(ts, ${__interval}) FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1000,
+  "min_interval": "1m",
+  "min_interval_ms": 60000,
+  "interval_ms": 60000,
+  "expected": "SELECT floor(extract(epoch from ts)/60)*60 FROM t",
+  "sent_sql": "SELECT $__timeGroup(ts, 1m) FROM t"
+}

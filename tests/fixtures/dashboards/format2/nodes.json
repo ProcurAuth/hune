@@ -1,0 +1,339 @@
+{
+  "format_version": 2,
+  "uid": "nodes",
+  "title": "Nodes",
+  "description": "Weight and status of the nodes.",
+  "tags": [
+    "chain"
+  ],
+  "time": {
+    "from": "now-24h",
+    "to": "now",
+    "timezone": "browser",
+    "refresh": "1m"
+  },
+  "cursor_sync": "crosshair",
+  "variables": [
+    {
+      "kind": "query",
+      "name": "node",
+      "label": "Node",
+      "hide": "none",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT node",
+        "FROM analytics.nodes",
+        "ORDER BY node"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ]
+    },
+    {
+      "kind": "text",
+      "name": "account",
+      "label": "Account",
+      "hide": "none",
+      "value_type": "text",
+      "default": ""
+    },
+    {
+      "kind": "custom",
+      "name": "env",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "Production",
+          "value": "prod"
+        },
+        {
+          "text": "Preproduction",
+          "value": "preprod"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "prod"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Weight over time",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 16,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT",
+                "  $__timeInterval(ts) AS t,",
+                "  node,",
+                "  sum(weight) AS weight",
+                "FROM analytics.node_weight",
+                "WHERE $__timeFilter(ts)",
+                "  AND node IN (${node})",
+                "GROUP BY t, node",
+                "ORDER BY t"
+              ],
+              "min_interval": "1m",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts",
+              "decimals": 2
+            },
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 10,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "table",
+              "values": [
+                "mean",
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Total weight",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 16,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "data": {
+            "reuse": {
+              "panel": 2,
+              "with_transforms": true
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "red"
+                  },
+                  {
+                    "value": 1000000,
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "total",
+              "fields": "/^weight$/",
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    },
+    {
+      "title": "Details",
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 2,
+          "type": "table",
+          "title": "Nodes",
+          "description": "One row for each node.",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 10
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT node, name, weight, ratio, status",
+                "FROM analytics.nodes",
+                "WHERE ('${account}' = '' OR account = '${account}')",
+                "  AND env = '${env}'",
+                "  AND node IN (${node})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [
+            {
+              "kind": "filter_by_value",
+              "mode": "exclude",
+              "match": "any",
+              "filters": [
+                {
+                  "field": "status",
+                  "matcher": {
+                    "kind": "is_null"
+                  }
+                }
+              ]
+            }
+          ],
+          "fields": {
+            "defaults": {
+              "align": "auto",
+              "filterable": false
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "weight"
+                },
+                "set": {
+                  "unit": "suffix: pts",
+                  "decimals": 2,
+                  "width": 140
+                }
+              },
+              {
+                "match": {
+                  "by": "regex",
+                  "value": "/^ratio/"
+                },
+                "set": {
+                  "unit": "percent",
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 10,
+                        "color": "orange"
+                      }
+                    ]
+                  },
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "basic"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "status"
+                },
+                "set": {
+                  "mappings": [
+                    {
+                      "kind": "value",
+                      "value": "1",
+                      "text": "Active",
+                      "color": "green"
+                    },
+                    {
+                      "kind": "value",
+                      "value": "0",
+                      "text": "Offline",
+                      "color": "red"
+                    }
+                  ]
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "node"
+                },
+                "set": {
+                  "links": [
+                    {
+                      "title": "Open in the explorer",
+                      "url": "https://nodes.example.org/id/${__value.raw}",
+                      "target_blank": true
+                    }
+                  ],
+                  "filterable": true
+                }
+              }
+            ]
+          },
+          "options": {
+            "show_header": true,
+            "sort": [
+              {
+                "field": "weight",
+                "desc": true
+              }
+            ]
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

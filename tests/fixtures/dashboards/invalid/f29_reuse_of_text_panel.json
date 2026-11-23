@@ -1,0 +1,75 @@
+{
+  "format_version": 3,
+  "uid": "text-panel",
+  "title": "Text panel",
+  "description": "",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Reuse",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "reuse": {
+              "panel": 2,
+              "with_transforms": false
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "text",
+          "title": "Notes",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "# Title",
+              "",
+              "Text"
+            ]
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+["time", "title", "text"]
+["DateTime64(3)", "Nullable(String)", "Nullable(String)"]
+["1794211800.000", null, null]

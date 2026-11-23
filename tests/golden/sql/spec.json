@@ -1,0 +1,95 @@
+[
+  {
+    "name": "worked example of 7.10",
+    "sql": [
+      "SELECT $__timeInterval(event_time) AS t, node, sum(weight) AS weight",
+      "FROM chain.weights",
+      "WHERE $__timeFilter(event_time) AND node IN ($node) AND env = '$env'",
+      "GROUP BY t, node",
+      "ORDER BY t"
+    ],
+    "variables": [
+      {
+        "name": "node",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      },
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "node": {
+        "all": false,
+        "values": [
+          "a1",
+          "b'2"
+        ]
+      },
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT toStartOfInterval(toDateTime(event_time), INTERVAL 20 second) AS t, node, sum(weight) AS weight\nFROM chain.weights\nWHERE event_time >= toDateTime(1794211200) AND event_time <= toDateTime(1794232800) AND node IN ('a1','b\\'2') AND env = 'prod'\nGROUP BY t, node\nORDER BY t"
+  },
+  {
+    "name": "property P example of 7.11, accepted form",
+    "sql": [
+      "SELECT 1 FROM t WHERE amount > 0 - $min AND tenant = 'a'"
+    ],
+    "variables": [
+      {
+        "name": "min",
+        "kind": "text",
+        "value_type": "number"
+      }
+    ],
+    "request": {
+      "min": {
+        "all": false,
+        "values": [
+          "-5"
+        ]
+      }
+    },
+    "expected": "SELECT 1 FROM t WHERE amount > 0 - -5 AND tenant = 'a'"
+  },
+  {
+    "name": "property P example of 7.11, refused form",
+    "sql": [
+      "SELECT 1 FROM t WHERE amount > 0-$min AND tenant = 'a'"
+    ],
+    "variables": [
+      {
+        "name": "min",
+        "kind": "text",
+        "value_type": "number"
+      }
+    ],
+    "request": {
+      "min": {
+        "all": false,
+        "values": [
+          "-5"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "min"
+    }
+  }
+]

@@ -1,0 +1,483 @@
+{
+  "format_version": 3,
+  "uid": "repeats",
+  "title": "Repeats",
+  "description": "A panel with h, a panel with v and a section repeat a variable.",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "custom",
+      "name": "host",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "Alpha",
+          "value": "a"
+        },
+        {
+          "text": "Bravo",
+          "value": "b"
+        },
+        {
+          "text": "Charlie",
+          "value": "c"
+        }
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "default": [
+        "$__all"
+      ]
+    },
+    {
+      "kind": "query",
+      "name": "region",
+      "label": "Region",
+      "hide": "none",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT region",
+        "FROM analytics.nodes",
+        "ORDER BY region"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "load",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ]
+    },
+    {
+      "kind": "custom",
+      "name": "env",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "Production",
+          "value": "prod"
+        },
+        {
+          "text": "Preproduction",
+          "value": "preprod"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "prod"
+      ]
+    },
+    {
+      "kind": "text",
+      "name": "account",
+      "label": "Account",
+      "hide": "none",
+      "value_type": "text",
+      "default": ""
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Host ${host}",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE host IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": [],
+          "repeat": {
+            "variable": "host",
+            "direction": "h",
+            "max_per_row": 25
+          }
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Region ${region}",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 4,
+            "w": 8,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE region IN (${region})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": [],
+          "repeat": {
+            "variable": "region",
+            "direction": "v"
+          }
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Beside the copies",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 8,
+            "y": 4,
+            "w": 8,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE host IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Below the copies",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 24,
+            "h": 3
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE host IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    },
+    {
+      "title": "Host ${host}",
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 5,
+          "type": "stat",
+          "title": "Weight of ${host}",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE host IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ],
+      "repeat": {
+        "variable": "host"
+      }
+    },
+    {
+      "title": "Other",
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 6,
+          "type": "stat",
+          "title": "Weight of ${host}",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE host IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": [],
+          "repeat": {
+            "variable": "host",
+            "direction": "h"
+          }
+        },
+        {
+          "id": 8,
+          "type": "stat",
+          "title": "Plain panel",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 4,
+            "w": 12,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE host IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 7,
+          "type": "stat",
+          "title": "Reuse of the panel 8",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 4
+          },
+          "data": {
+            "reuse": {
+              "panel": 8,
+              "with_transforms": true
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

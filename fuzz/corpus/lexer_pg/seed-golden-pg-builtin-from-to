@@ -1,0 +1,1 @@
+SELECT $__from AS f, $__to AS t2 FROM t

@@ -1,0 +1,639 @@
+{
+  "format_version": 1,
+  "uid": "all-types",
+  "title": "All types",
+  "description": "Every member of format 1 at least once.",
+  "tags": [
+    "a",
+    "b"
+  ],
+  "time": {
+    "from": "now-1d/d",
+    "to": "1731100000000",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "variables": [
+    {
+      "kind": "query",
+      "name": "q",
+      "label": null,
+      "hide": "variable",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT a FROM t WHERE b = '${t}'"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": "1,2",
+      "refresh": "load",
+      "sort": "natural_desc",
+      "regex": "/^a.*/i",
+      "default": [
+        "$__all"
+      ]
+    },
+    {
+      "kind": "custom",
+      "name": "c",
+      "label": "C",
+      "hide": "label",
+      "options": [
+        {
+          "text": "A",
+          "value": "a"
+        },
+        {
+          "text": "B",
+          "value": "b"
+        }
+      ],
+      "multi": false,
+      "include_all": true,
+      "all_value": "x",
+      "default": [
+        "a"
+      ]
+    },
+    {
+      "kind": "text",
+      "name": "t",
+      "label": "T",
+      "hide": "none",
+      "value_type": "number",
+      "default": "-1.5"
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 10,
+          "type": "table",
+          "title": "Table",
+          "description": "All table members.",
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 10
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 1",
+                "\tFROM t -- tab above"
+              ],
+              "min_interval": "90s",
+              "max_data_points": 500
+            }
+          },
+          "transforms": [
+            {
+              "kind": "filter_by_value",
+              "mode": "include",
+              "match": "all",
+              "filters": [
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "equal",
+                    "value": 1.5
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "equal",
+                    "value": "text"
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "not_equal",
+                    "value": 1000
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "greater",
+                    "value": 0
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "greater_or_equal",
+                    "value": 2
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "lower",
+                    "value": 3
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "lower_or_equal",
+                    "value": 4
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "range",
+                    "from": 1,
+                    "to": 25
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "regex",
+                    "pattern": "^a|b$"
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "is_null"
+                  }
+                },
+                {
+                  "field": "a",
+                  "matcher": {
+                    "kind": "is_not_null"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "grouping_to_matrix",
+              "column_field": "c",
+              "row_field": "r",
+              "value_field": "v",
+              "empty_value": "false"
+            }
+          ],
+          "fields": {
+            "defaults": {
+              "unit": "prefix:$",
+              "decimals": 3,
+              "min": 0,
+              "max": 1000,
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "percentage",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "super-light-red"
+                  },
+                  {
+                    "value": 1e-7,
+                    "color": "light-orange"
+                  },
+                  {
+                    "value": 0.000001,
+                    "color": "yellow"
+                  },
+                  {
+                    "value": 1.5,
+                    "color": "semi-dark-green"
+                  },
+                  {
+                    "value": 1000,
+                    "color": "dark-blue"
+                  },
+                  {
+                    "value": 1e+21,
+                    "color": "purple"
+                  },
+                  {
+                    "value": 1.2345678901234568e+29,
+                    "color": "text"
+                  }
+                ]
+              },
+              "mappings": [
+                {
+                  "kind": "value",
+                  "value": "1",
+                  "text": "One",
+                  "color": null
+                },
+                {
+                  "kind": "range",
+                  "from": null,
+                  "to": 5,
+                  "text": null,
+                  "color": "transparent"
+                },
+                {
+                  "kind": "range",
+                  "from": 1,
+                  "to": null,
+                  "text": "big",
+                  "color": "#aabbccdd"
+                },
+                {
+                  "kind": "regex",
+                  "pattern": "/^(a)b/i",
+                  "text": "$1",
+                  "color": "rgb(1, 2, 3)"
+                },
+                {
+                  "kind": "special",
+                  "match": "null_nan",
+                  "text": "n/a",
+                  "color": "rgba(1, 2, 3, 0.5)"
+                }
+              ],
+              "links": [
+                {
+                  "title": "Data",
+                  "url": "/d/other?x=${__value.raw}",
+                  "target_blank": false
+                }
+              ],
+              "display_name": "Name",
+              "no_value": "-",
+              "width": 100,
+              "align": "right",
+              "cell": {
+                "type": "color_text",
+                "mode": null
+              },
+              "filterable": true,
+              "hidden": false
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "regex",
+                  "value": "/^a/"
+                },
+                "set": {
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "#ABC"
+                  },
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "gradient"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "b"
+                },
+                "set": {
+                  "unit": "percentunit",
+                  "min": 0,
+                  "max": 1,
+                  "hidden": true
+                }
+              }
+            ]
+          },
+          "options": {
+            "show_header": true,
+            "sort": [
+              {
+                "field": "a",
+                "desc": false
+              },
+              {
+                "field": "b",
+                "desc": true
+              }
+            ]
+          },
+          "links": [
+            {
+              "title": "Docs",
+              "url": "https://example.org/${__url_time_range}",
+              "target_blank": true
+            }
+          ]
+        },
+        {
+          "id": 20,
+          "type": "timeseries",
+          "title": "Series",
+          "description": "",
+          "grid": {
+            "x": 0,
+            "y": 10,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(t) AS t, v",
+                "FROM s",
+                "WHERE $__timeFilter(t)"
+              ],
+              "min_interval": "1ms",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "options": {
+            "draw": "bars",
+            "interpolation": "step_after",
+            "line_width": 0,
+            "fill_opacity": 100,
+            "show_points": "never",
+            "point_size": 40,
+            "span_nulls": true,
+            "stacking": "percent",
+            "y_scale": "log",
+            "legend": {
+              "show": true,
+              "placement": "right",
+              "mode": "table",
+              "values": [
+                "total",
+                "min",
+                "max",
+                "mean",
+                "last"
+              ]
+            },
+            "tooltip": {
+              "mode": "hidden"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 30,
+          "type": "stat",
+          "title": "Stat",
+          "description": "Reuses the table.",
+          "grid": {
+            "x": 12,
+            "y": 10,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "reuse": {
+              "panel": 10,
+              "with_transforms": false
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        }
+      ]
+    },
+    {
+      "title": "Second",
+      "collapsed": true,
+      "panels": [
+        {
+          "id": 40,
+          "type": "barchart",
+          "title": "Bars",
+          "description": "",
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT c, v FROM b"
+              ],
+              "min_interval": null,
+              "max_data_points": 1
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "horizontal",
+            "x_field": "c",
+            "stacking": "normal",
+            "show_values": "always",
+            "bar_width": 10,
+            "group_width": 100,
+            "x_tick_rotation": -90,
+            "legend": {
+              "show": false,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 50,
+          "type": "piechart",
+          "title": "Pie",
+          "description": "",
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 6,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT n, v FROM p"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "decbytes"
+            },
+            "overrides": []
+          },
+          "options": {
+            "pie_type": "donut",
+            "reduce": {
+              "calc": "count",
+              "fields": "name",
+              "values": false
+            },
+            "labels": [
+              "name",
+              "value",
+              "percent"
+            ],
+            "legend": {
+              "show": true,
+              "placement": "right",
+              "mode": "table",
+              "values": [
+                "value",
+                "percent"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 60,
+          "type": "xychart",
+          "title": "XY",
+          "description": "",
+          "grid": {
+            "x": 18,
+            "y": 0,
+            "w": 6,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT x, y1, y2 FROM xy"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "options": {
+            "x_field": "x",
+            "y_fields": [
+              "y1",
+              "y2"
+            ],
+            "draw": "points_and_lines",
+            "point_size": 1,
+            "line_width": 10,
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 70,
+          "type": "bargauge",
+          "title": "Gauge",
+          "description": "",
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 24,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT g FROM g"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "min": 0,
+              "max": 100
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "mean",
+              "fields": "/^g/",
+              "values": false
+            },
+            "orientation": "vertical",
+            "display_mode": "lcd",
+            "show_unfilled": false
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "id": "pg-macro-in-line-comment",
+  "tags": [
+    "macro:$__unixEpochFrom"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT v FROM t -- $__unixEpochFrom()\nWHERE $__timeFilter(ts)",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT v FROM t \nWHERE ts BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'",
+  "sent_sql": "SELECT v FROM t -- $__unixEpochFrom()\nWHERE $__timeFilter(ts)",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana removes a comment and expands a macro in it. Hune keeps a comment as it is and expands a macro only in code.",
+    "hune": {
+      "sql": "SELECT v FROM t -- $__unixEpochFrom()\nWHERE ts BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+    }
+  }
+}

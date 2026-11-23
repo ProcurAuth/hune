@@ -1,0 +1,21 @@
+{
+  "id": "pg-macro-unixEpochNanoFrom-range-fractions",
+  "tags": [
+    "macro:$__unixEpochNanoFrom",
+    "time:ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__unixEpochNanoFrom() AS f, $__unixEpochNanoTo() AS t2",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200123,
+  "to_ms": 1794232800987,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1794211200123000000 AS f, 1794232800987000000 AS t2",
+  "sent_sql": "SELECT $__unixEpochNanoFrom() AS f, $__unixEpochNanoTo() AS t2"
+}

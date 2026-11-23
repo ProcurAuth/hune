@@ -1,0 +1,239 @@
+{
+ "id": "FE-14",
+ "worked": {
+  "cols": [
+   {
+    "name": "t",
+    "kind": "time",
+    "values": [
+     100,
+     100,
+     200
+    ]
+   },
+   {
+    "name": "node",
+    "kind": "text",
+    "values": [
+     "a1",
+     "b2",
+     "a1"
+    ]
+   },
+   {
+    "name": "weight",
+    "kind": "number",
+    "values": [
+     10,
+     20,
+     11
+    ]
+   }
+  ],
+  "expect": [
+   {
+    "name": "t",
+    "labels": null,
+    "values": [
+     100000,
+     200000
+    ]
+   },
+   {
+    "name": "weight",
+    "labels": {
+     "node": "a1"
+    },
+    "values": [
+     10,
+     11
+    ]
+   },
+   {
+    "name": "weight",
+    "labels": {
+     "node": "b2"
+    },
+    "values": [
+     20,
+     null
+    ]
+   }
+  ],
+  "names": [
+   "t",
+   "weight a1",
+   "weight b2"
+  ]
+ },
+ "unsorted_null_time_duplicates": {
+  "cols": [
+   {
+    "name": "t",
+    "kind": "time",
+    "values": [
+     300,
+     null,
+     100,
+     100,
+     300
+    ]
+   },
+   {
+    "name": "k",
+    "kind": "text",
+    "values": [
+     "x",
+     "x",
+     "x",
+     "x",
+     null
+    ]
+   },
+   {
+    "name": "v",
+    "kind": "number",
+    "values": [
+     3,
+     9,
+     1,
+     2,
+     4
+    ]
+   }
+  ],
+  "expect": [
+   {
+    "name": "t",
+    "labels": null,
+    "values": [
+     100000,
+     300000
+    ]
+   },
+   {
+    "name": "v",
+    "labels": {
+     "k": ""
+    },
+    "values": [
+     null,
+     4
+    ]
+   },
+   {
+    "name": "v",
+    "labels": {
+     "k": "x"
+    },
+    "values": [
+     2,
+     3
+    ]
+   }
+  ]
+ },
+ "two_values": {
+  "cols": [
+   {
+    "name": "t",
+    "kind": "time",
+    "values": [
+     1,
+     2
+    ]
+   },
+   {
+    "name": "host",
+    "kind": "text",
+    "values": [
+     "h",
+     "h"
+    ]
+   },
+   {
+    "name": "a",
+    "kind": "number",
+    "values": [
+     1,
+     2
+    ]
+   },
+   {
+    "name": "b",
+    "kind": "number",
+    "values": [
+     3,
+     4
+    ]
+   }
+  ],
+  "expect": [
+   {
+    "name": "t",
+    "labels": null,
+    "values": [
+     1000,
+     2000
+    ]
+   },
+   {
+    "name": "a",
+    "labels": {
+     "host": "h"
+    },
+    "values": [
+     1,
+     2
+    ]
+   },
+   {
+    "name": "b",
+    "labels": {
+     "host": "h"
+    },
+    "values": [
+     3,
+     4
+    ]
+   }
+  ]
+ },
+ "no_value_field": {
+  "cols": [
+   {
+    "name": "t",
+    "kind": "time",
+    "values": [
+     1
+    ]
+   },
+   {
+    "name": "k",
+    "kind": "text",
+    "values": [
+     "x"
+    ]
+   }
+  ]
+ },
+ "no_time": {
+  "cols": [
+   {
+    "name": "k",
+    "kind": "text",
+    "values": [
+     "x"
+    ]
+   },
+   {
+    "name": "v",
+    "kind": "number",
+    "values": [
+     1
+    ]
+   }
+  ],
+  "error": "A time series query needs a time column."
+ }
+}

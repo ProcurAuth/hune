@@ -1,0 +1,2 @@
+SELECT 1 WHERE $__dateTimeFilter( f(a, b) ,
+  ts )

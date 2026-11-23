@@ -1,0 +1,1 @@
+SELECT $__interval_s AS s FROM t

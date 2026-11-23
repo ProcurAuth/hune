@@ -1,0 +1,169 @@
+{
+  "format_version": 3,
+  "uid": "open-variables",
+  "title": "Open variables",
+  "description": "An open and a closed variable of each kind (4.7 to 4.10).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "query",
+      "name": "region_open",
+      "label": "Region (open)",
+      "hide": "none",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT region",
+        "FROM analytics.nodes",
+        "ORDER BY region"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ],
+      "allow_custom_value": true
+    },
+    {
+      "kind": "query",
+      "name": "region_closed",
+      "label": "Region (closed)",
+      "hide": "none",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT region",
+        "FROM analytics.nodes",
+        "ORDER BY region"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "refresh": "load",
+      "sort": "none",
+      "regex": null,
+      "default": []
+    },
+    {
+      "kind": "custom",
+      "name": "env_open",
+      "label": "Environment (open)",
+      "hide": "none",
+      "options": [
+        {
+          "text": "Production",
+          "value": "prod"
+        },
+        {
+          "text": "Staging",
+          "value": "staging"
+        }
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "default": [
+        "prod",
+        "a typed value"
+      ],
+      "allow_custom_value": true
+    },
+    {
+      "kind": "custom",
+      "name": "env_closed",
+      "label": "Environment (closed)",
+      "hide": "none",
+      "options": [
+        {
+          "text": "Production",
+          "value": "prod"
+        },
+        {
+          "text": "Staging",
+          "value": "staging"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "prod"
+      ]
+    },
+    {
+      "kind": "text",
+      "name": "note",
+      "label": null,
+      "hide": "none",
+      "value_type": "text",
+      "default": "free",
+      "allow_custom_value": true
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Counts",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS n",
+                "FROM analytics.`${env_closed}`",
+                "WHERE region IN (${region_open:singlequote})",
+                "  AND env IN (${env_open:singlequote})",
+                "  AND name = '${note}'",
+                "  AND zone = ${region_closed:singlequote}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

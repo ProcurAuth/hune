@@ -1,0 +1,472 @@
+{
+ "id": "FE-12",
+ "cols": [
+  {
+   "name": "name",
+   "kind": "text",
+   "values": [
+    "a",
+    "b",
+    "c",
+    "d"
+   ]
+  },
+  {
+   "name": "status",
+   "kind": "number",
+   "values": [
+    1,
+    0,
+    null,
+    2
+   ]
+  }
+ ],
+ "cases": [
+  {
+   "name": "exclude any is_null",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "exclude",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "is_null"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a",
+    "b",
+    "d"
+   ]
+  },
+  {
+   "name": "include any is_not_null",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "is_not_null"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a",
+    "b",
+    "d"
+   ]
+  },
+  {
+   "name": "equal number",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "equal",
+       "value": 1
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a"
+   ]
+  },
+  {
+   "name": "equal loose text",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "equal",
+       "value": "1"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a"
+   ]
+  },
+  {
+   "name": "equal 0 does not match null",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "equal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "expect": [
+    "b"
+   ]
+  },
+  {
+   "name": "not_equal",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "not_equal",
+       "value": 1
+      }
+     }
+    ]
+   },
+   "expect": [
+    "b",
+    "c",
+    "d"
+   ]
+  },
+  {
+   "name": "greater",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "greater",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a",
+    "d"
+   ]
+  },
+  {
+   "name": "greater_or_equal",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "greater_or_equal",
+       "value": 1
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a",
+    "d"
+   ]
+  },
+  {
+   "name": "lower counts null as 0",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "lower",
+       "value": 1
+      }
+     }
+    ]
+   },
+   "expect": [
+    "b",
+    "c"
+   ]
+  },
+  {
+   "name": "lower_or_equal",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "lower_or_equal",
+       "value": 0
+      }
+     }
+    ]
+   },
+   "expect": [
+    "b",
+    "c"
+   ]
+  },
+  {
+   "name": "range excludes both bounds",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "range",
+       "from": 0,
+       "to": 2
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a"
+   ]
+  },
+  {
+   "name": "regex on the text form",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "name",
+      "matcher": {
+       "kind": "regex",
+       "pattern": "^[ab]$"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a",
+    "b"
+   ]
+  },
+  {
+   "name": "regex on a number",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "regex",
+       "pattern": "^1$"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a"
+   ]
+  },
+  {
+   "name": "match all",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "all",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "greater",
+       "value": 0
+      }
+     },
+     {
+      "field": "name",
+      "matcher": {
+       "kind": "regex",
+       "pattern": "d"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "d"
+   ]
+  },
+  {
+   "name": "match any with two filters",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "equal",
+       "value": 0
+      }
+     },
+     {
+      "field": "name",
+      "matcher": {
+       "kind": "equal",
+       "value": "d"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "b",
+    "d"
+   ]
+  },
+  {
+   "name": "exclude all",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "exclude",
+    "match": "all",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "greater",
+       "value": 0
+      }
+     },
+     {
+      "field": "name",
+      "matcher": {
+       "kind": "equal",
+       "value": "a"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "b",
+    "c",
+    "d"
+   ]
+  },
+  {
+   "name": "unknown field never passes, include",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "any",
+    "filters": [
+     {
+      "field": "zz",
+      "matcher": {
+       "kind": "is_null"
+      }
+     }
+    ]
+   },
+   "expect": []
+  },
+  {
+   "name": "unknown field never passes, exclude",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "exclude",
+    "match": "any",
+    "filters": [
+     {
+      "field": "zz",
+      "matcher": {
+       "kind": "is_null"
+      }
+     }
+    ]
+   },
+   "expect": [
+    "a",
+    "b",
+    "c",
+    "d"
+   ]
+  },
+  {
+   "name": "unknown field with match all",
+   "spec": {
+    "kind": "filter_by_value",
+    "mode": "include",
+    "match": "all",
+    "filters": [
+     {
+      "field": "status",
+      "matcher": {
+       "kind": "is_not_null"
+      }
+     },
+     {
+      "field": "zz",
+      "matcher": {
+       "kind": "is_null"
+      }
+     }
+    ]
+   },
+   "expect": []
+  }
+ ],
+ "nan": {
+  "cols": [
+   {
+    "name": "x",
+    "kind": "number",
+    "values": [
+     "nan",
+     1
+    ]
+   }
+  ],
+  "spec": {
+   "kind": "filter_by_value",
+   "mode": "include",
+   "match": "any",
+   "filters": [
+    {
+     "field": "x",
+     "matcher": {
+      "kind": "greater",
+      "value": 0
+     }
+    }
+   ]
+  },
+  "expect": [
+   1
+  ]
+ }
+}

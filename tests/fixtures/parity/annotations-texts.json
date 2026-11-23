@@ -1,0 +1,152 @@
+{
+  "format_version": 3,
+  "uid": "parity-annotations-texts",
+  "title": "Parity: annotation texts",
+  "description": "A tag, a long text and a text with a line end (15.14c).",
+  "tags": [],
+  "time": {
+    "from": "1794528000000",
+    "to": "1794546000000",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "annotations": [
+    {
+      "name": "With tags",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 3600 AS time, 'Release' AS title, 'Version 1.2' AS text, 'prod,release' AS tags"
+      ],
+      "color": "red"
+    },
+    {
+      "name": "Long text",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 7200 AS time, 'Long' AS title, repeat('long text ', 150) AS text"
+      ],
+      "color": "blue"
+    },
+    {
+      "name": "Line end",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 10800 AS time, 'Two lines' AS title, concat('first line', char(10), 'second line') AS text"
+      ],
+      "color": "green"
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Series one",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 0) * 10 + 20 AS v",
+                "FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "timeseries",
+          "title": "Series two",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 2) * 10 + 20 AS v",
+                "FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

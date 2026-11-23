@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "grafana_uid": "fe1x0abc2kq9",
+      "id": "transit",
+      "title": "Transit desk"
+    },
+    {
+      "grafana_uid": "ae7r4kd0pq1z",
+      "id": "nodes"
+    }
+  ]
+}

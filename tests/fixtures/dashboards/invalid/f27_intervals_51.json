@@ -1,0 +1,217 @@
+{
+  "format_version": 3,
+  "uid": "variable-kinds",
+  "title": "Variable kinds interval and constant",
+  "description": "Two interval variables and two constant variables (4.10a, 4.10b).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "interval",
+      "name": "bucket",
+      "label": "Bucket",
+      "hide": "none",
+      "intervals": [
+        "1m",
+        "2m",
+        "3m",
+        "4m",
+        "5m",
+        "6m",
+        "7m",
+        "8m",
+        "9m",
+        "10m",
+        "11m",
+        "12m",
+        "13m",
+        "14m",
+        "15m",
+        "16m",
+        "17m",
+        "18m",
+        "19m",
+        "20m",
+        "21m",
+        "22m",
+        "23m",
+        "24m",
+        "25m",
+        "26m",
+        "27m",
+        "28m",
+        "29m",
+        "30m",
+        "31m",
+        "32m",
+        "33m",
+        "34m",
+        "35m",
+        "36m",
+        "37m",
+        "38m",
+        "39m",
+        "40m",
+        "41m",
+        "42m",
+        "43m",
+        "44m",
+        "45m",
+        "46m",
+        "47m",
+        "48m",
+        "49m",
+        "50m",
+        "51m"
+      ],
+      "auto": true,
+      "auto_count": 30,
+      "auto_min": "10s",
+      "default": "$__auto",
+      "placement": {
+        "section": 0,
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 2
+      }
+    },
+    {
+      "kind": "interval",
+      "name": "window",
+      "label": null,
+      "hide": "label",
+      "intervals": [
+        "1m",
+        "2m",
+        "3m",
+        "4m",
+        "5m",
+        "6m",
+        "7m",
+        "8m",
+        "9m",
+        "10m",
+        "11m",
+        "12m",
+        "13m",
+        "14m",
+        "15m",
+        "16m",
+        "17m",
+        "18m",
+        "19m",
+        "20m",
+        "21m",
+        "22m",
+        "23m",
+        "24m",
+        "25m",
+        "26m",
+        "27m",
+        "28m",
+        "29m",
+        "30m",
+        "31m",
+        "32m",
+        "33m",
+        "34m",
+        "35m",
+        "36m",
+        "37m",
+        "38m",
+        "39m",
+        "40m",
+        "41m",
+        "42m",
+        "43m",
+        "44m",
+        "45m",
+        "46m",
+        "47m",
+        "48m",
+        "999999999ms",
+        "365d"
+      ],
+      "auto": false,
+      "auto_count": 1000,
+      "auto_min": "1y",
+      "default": null
+    },
+    {
+      "kind": "constant",
+      "name": "empty_note",
+      "label": "A note for the editor",
+      "hide": "variable",
+      "value": ""
+    },
+    {
+      "kind": "constant",
+      "name": "long_note",
+      "label": null,
+      "hide": "variable",
+      "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Rows by bucket",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toStartOfInterval(ts, toIntervalSecond(parseTimeDelta('${bucket}'))) AS t, count() AS n",
+                "FROM analytics.events",
+                "WHERE note = '${empty_note}' AND span = '${window}'",
+                "GROUP BY t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

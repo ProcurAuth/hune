@@ -1,0 +1,43 @@
+{
+  "id": "escape-text-quote-in-quoted-name",
+  "tags": [
+    "escape:quote"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT \"$t\" FROM x",
+  "variables": [
+    {
+      "name": "t",
+      "kind": "text",
+      "value_type": "text"
+    }
+  ],
+  "values": {
+    "t": {
+      "all": false,
+      "values": [
+        "a'b"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT \"a'b\" FROM x",
+  "sent_sql": "SELECT \"a'b\" FROM x",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana writes the value raw into the quoted name. Hune gives a document error for a text variable in a quoted name.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  }
+}

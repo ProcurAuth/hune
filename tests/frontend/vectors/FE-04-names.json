@@ -1,0 +1,598 @@
+{
+ "id": "FE-04",
+ "cases": [
+  {
+   "name": "time and number",
+   "fields": [
+    {
+     "name": "t",
+     "kind": "time",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "cpu",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    }
+   ],
+   "expect": [
+    "t",
+    "cpu"
+   ]
+  },
+  {
+   "name": "equal names get a counter",
+   "fields": [
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    }
+   ],
+   "expect": [
+    "a 1",
+    "a 2"
+   ]
+  },
+  {
+   "name": "three equal names and one other",
+   "fields": [
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "b",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    }
+   ],
+   "expect": [
+    "a 1",
+    "b",
+    "a 2",
+    "a 3"
+   ]
+  },
+  {
+   "name": "after long-to-wide one common key",
+   "fields": [
+    {
+     "name": "t",
+     "kind": "time",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "weight",
+     "kind": "number",
+     "labels": {
+      "node": "a1"
+     },
+     "config": {}
+    },
+    {
+     "name": "weight",
+     "kind": "number",
+     "labels": {
+      "node": "b2"
+     },
+     "config": {}
+    }
+   ],
+   "expect": [
+    "t",
+    "weight a1",
+    "weight b2"
+   ]
+  },
+  {
+   "name": "two label keys",
+   "fields": [
+    {
+     "name": "weight",
+     "kind": "number",
+     "labels": {
+      "node": "a1",
+      "region": "eu"
+     },
+     "config": {}
+    }
+   ],
+   "expect": [
+    "weight {node=\"a1\", region=\"eu\"}"
+   ]
+  },
+  {
+   "name": "Value with one label gives the label",
+   "fields": [
+    {
+     "name": "Value",
+     "kind": "number",
+     "labels": {
+      "host": "x"
+     },
+     "config": {}
+    }
+   ],
+   "expect": [
+    "x"
+   ]
+  },
+  {
+   "name": "empty label value is left out",
+   "fields": [
+    {
+     "name": "weight",
+     "kind": "number",
+     "labels": {
+      "node": ""
+     },
+     "config": {}
+    }
+   ],
+   "expect": [
+    "weight"
+   ]
+  },
+  {
+   "name": "label keys differ between fields",
+   "fields": [
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": {
+      "k": "1"
+     },
+     "config": {}
+    },
+    {
+     "name": "b",
+     "kind": "number",
+     "labels": {
+      "j": "2"
+     },
+     "config": {}
+    }
+   ],
+   "expect": [
+    "a {k=\"1\"}",
+    "b {j=\"2\"}"
+   ]
+  },
+  {
+   "name": "empty time name",
+   "fields": [
+    {
+     "name": "",
+     "kind": "time",
+     "labels": null,
+     "config": {}
+    }
+   ],
+   "expect": [
+    "Time"
+   ]
+  },
+  {
+   "name": "empty value name",
+   "fields": [
+    {
+     "name": "",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    }
+   ],
+   "expect": [
+    "Value"
+   ]
+  },
+  {
+   "name": "display_name wins",
+   "fields": [
+    {
+     "name": "score",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "Score (pts)"
+     }
+    },
+    {
+     "name": "x",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    }
+   ],
+   "expect": [
+    "Score (pts)",
+    "x"
+   ],
+   "base": [
+    "score",
+    "x"
+   ]
+  },
+  {
+   "name": "template labels key",
+   "fields": [
+    {
+     "name": "time",
+     "kind": "time",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "value",
+     "kind": "number",
+     "labels": {
+      "metric": "eu p50"
+     },
+     "config": {
+      "display_name": "${__field.labels.metric}"
+     }
+    },
+    {
+     "name": "value",
+     "kind": "number",
+     "labels": {
+      "metric": "us p99"
+     },
+     "config": {
+      "display_name": "${__field.labels.metric}"
+     }
+    }
+   ],
+   "expect": [
+    "time",
+    "eu p50",
+    "us p99"
+   ],
+   "base": [
+    "time",
+    "value eu p50",
+    "value us p99"
+   ]
+  },
+  {
+   "name": "template labels key with text around it",
+   "fields": [
+    {
+     "name": "value",
+     "kind": "number",
+     "labels": {
+      "metric": "eu",
+      "region": "x"
+     },
+     "config": {
+      "display_name": "R: ${__field.labels.metric} (${__field.labels.region})"
+     }
+    }
+   ],
+   "expect": [
+    "R: eu (x)"
+   ],
+   "base": [
+    "value {metric=\"eu\", region=\"x\"}"
+   ]
+  },
+  {
+   "name": "template unknown label gives empty text",
+   "fields": [
+    {
+     "name": "value",
+     "kind": "number",
+     "labels": {
+      "metric": "eu"
+     },
+     "config": {
+      "display_name": "a${__field.labels.zz}b"
+     }
+    }
+   ],
+   "expect": [
+    "ab"
+   ],
+   "base": [
+    "value eu"
+   ]
+  },
+  {
+   "name": "template label of a field with no labels gives empty text",
+   "fields": [
+    {
+     "name": "value",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "a${__field.labels.metric}b"
+     }
+    }
+   ],
+   "expect": [
+    "ab"
+   ],
+   "base": [
+    "value"
+   ]
+  },
+  {
+   "name": "template that gives only empty text falls back to the base name",
+   "fields": [
+    {
+     "name": "value",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "${__field.labels.metric}"
+     }
+    }
+   ],
+   "expect": [
+    "value"
+   ],
+   "base": [
+    "value"
+   ]
+  },
+  {
+   "name": "template field name",
+   "fields": [
+    {
+     "name": "cpu",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "<${__field.name}>"
+     }
+    }
+   ],
+   "expect": [
+    "<cpu>"
+   ],
+   "base": [
+    "cpu"
+   ]
+  },
+  {
+   "name": "template field displayName is the base display name",
+   "fields": [
+    {
+     "name": "weight",
+     "kind": "number",
+     "labels": {
+      "node": "a1"
+     },
+     "config": {
+      "display_name": "[${__field.displayName}]"
+     }
+    }
+   ],
+   "expect": [
+    "[weight a1]"
+   ],
+   "base": [
+    "weight a1"
+   ]
+  },
+  {
+   "name": "template labels as a whole",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": {
+      "b": "2",
+      "a": "1"
+     },
+     "config": {
+      "display_name": "${__field.labels}"
+     }
+    }
+   ],
+   "expect": [
+    "{a=\"1\", b=\"2\"}"
+   ],
+   "base": [
+    "v {a=\"1\", b=\"2\"}"
+   ]
+  },
+  {
+   "name": "template series name from the option",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "${__series.name}/${__field.name}"
+     }
+    }
+   ],
+   "expect": [
+    "frame1/v"
+   ],
+   "base": [
+    "v"
+   ],
+   "options": {
+    "seriesName": "frame1"
+   }
+  },
+  {
+   "name": "template series name without the option is empty",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "x${__series.name}"
+     }
+    }
+   ],
+   "expect": [
+    "x"
+   ],
+   "base": [
+    "v"
+   ]
+  },
+  {
+   "name": "template with a format suffix",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": {
+      "metric": "m"
+     },
+     "config": {
+      "display_name": "${__field.labels.metric:text}"
+     }
+    }
+   ],
+   "expect": [
+    "m"
+   ],
+   "base": [
+    "v m"
+   ]
+  },
+  {
+   "name": "template old bracket form",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": {
+      "metric": "m"
+     },
+     "config": {
+      "display_name": "[[__field.labels.metric]]"
+     }
+    }
+   ],
+   "expect": [
+    "m"
+   ],
+   "base": [
+    "v m"
+   ]
+  },
+  {
+   "name": "template unknown variable stays as written",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "${region} $other"
+     }
+    }
+   ],
+   "expect": [
+    "${region} $other"
+   ],
+   "base": [
+    "v"
+   ]
+  },
+  {
+   "name": "template result is text, not HTML",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": {
+      "metric": "<b>x</b>"
+     },
+     "config": {
+      "display_name": "${__field.labels.metric}"
+     }
+    }
+   ],
+   "expect": [
+    "<b>x</b>"
+   ],
+   "base": [
+    "v <b>x</b>"
+   ]
+  },
+  {
+   "name": "template label value is not interpolated again",
+   "fields": [
+    {
+     "name": "v",
+     "kind": "number",
+     "labels": {
+      "metric": "${__field.name}"
+     },
+     "config": {
+      "display_name": "${__field.labels.metric}"
+     }
+    }
+   ],
+   "expect": [
+    "${__field.name}"
+   ],
+   "base": [
+    "v ${__field.name}"
+   ]
+  },
+  {
+   "name": "template does not rename the equal names counter",
+   "fields": [
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": null,
+     "config": {}
+    },
+    {
+     "name": "a",
+     "kind": "number",
+     "labels": null,
+     "config": {
+      "display_name": "x${__field.name}"
+     }
+    }
+   ],
+   "expect": [
+    "a 1",
+    "xa"
+   ],
+   "base": [
+    "a 1",
+    "a 2"
+   ]
+  }
+ ]
+}

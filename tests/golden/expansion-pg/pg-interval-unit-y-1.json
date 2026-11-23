@@ -1,0 +1,29 @@
+{
+  "id": "pg-interval-unit-y-1",
+  "tags": [
+    "macro:$__timeGroup",
+    "interval:1y"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeGroup(ts, '1y') FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT floor(extract(epoch from ts)/3.1536e+07)*3.1536e+07 FROM t",
+  "sent_sql": "SELECT $__timeGroup(ts, '1y') FROM t",
+  "difference": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana prints 31536000 as 3.1536e+07. Hune never prints an exponent.",
+    "hune": {
+      "sql": "SELECT floor(extract(epoch from ts)/31536000)*31536000 FROM t"
+    }
+  }
+}

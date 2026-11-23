@@ -1,0 +1,3352 @@
+{
+ "description": "The hostile cases of the syntax tree tests. A part is [text, times]. Built by build_corpus.mjs.",
+ "cases": [
+  {
+   "name": "empty",
+   "parts": [
+    [
+     "",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "blank",
+   "parts": [
+    [
+     " ",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "newline",
+   "parts": [
+    [
+     "\n",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "crlf_only",
+   "parts": [
+    [
+     "\r\n",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "tabs",
+   "parts": [
+    [
+     "\t\t\t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u40",
+   "parts": [
+    [
+     "(",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u41",
+   "parts": [
+    [
+     ")",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u91",
+   "parts": [
+    [
+     "[",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u93",
+   "parts": [
+    [
+     "]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u123",
+   "parts": [
+    [
+     "{",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u125",
+   "parts": [
+    [
+     "}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u41u40",
+   "parts": [
+    [
+     ")(",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u93u91",
+   "parts": [
+    [
+     "][",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u125u123",
+   "parts": [
+    [
+     "}{",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u40u41",
+   "parts": [
+    [
+     "()",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u91u93",
+   "parts": [
+    [
+     "[]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u123u125",
+   "parts": [
+    [
+     "{}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u41u41u41",
+   "parts": [
+    [
+     ")))",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u40u40u40",
+   "parts": [
+    [
+     "(((",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u93u93u93",
+   "parts": [
+    [
+     "]]]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u91u91u91",
+   "parts": [
+    [
+     "[[[",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u125u125u125",
+   "parts": [
+    [
+     "}}}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_u123u123u123",
+   "parts": [
+    [
+     "{{{",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_23",
+   "parts": [
+    [
+     "(]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_24",
+   "parts": [
+    [
+     "[)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_25",
+   "parts": [
+    [
+     "{)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_26",
+   "parts": [
+    [
+     "([)]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_27",
+   "parts": [
+    [
+     "(((]]]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_28",
+   "parts": [
+    [
+     "{[(}])",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_29",
+   "parts": [
+    [
+     "(}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_30",
+   "parts": [
+    [
+     "[}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_31",
+   "parts": [
+    [
+     ")(][}{",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_32",
+   "parts": [
+    [
+     "([{)]}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_33",
+   "parts": [
+    [
+     "SELECT (1]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_34",
+   "parts": [
+    [
+     "SELECT [1)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_35",
+   "parts": [
+    [
+     "SELECT {1)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_36",
+   "parts": [
+    [
+     "SELECT ((1) + [2)]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_37",
+   "parts": [
+    [
+     "[{(}])",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_paren_1",
+   "parts": [
+    [
+     "(",
+     1
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     ")",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_array_1",
+   "parts": [
+    [
+     "[",
+     1
+    ],
+    [
+     "]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_brace_1",
+   "parts": [
+    [
+     "{",
+     1
+    ],
+    [
+     "}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_mixed_1",
+   "parts": [
+    [
+     "([{",
+     1
+    ],
+    [
+     "}])",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_unclosed_paren_1",
+   "parts": [
+    [
+     "(",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_select_1",
+   "parts": [
+    [
+     "SELECT * FROM (",
+     1
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_array_1",
+   "parts": [
+    [
+     "[",
+     1
+    ],
+    [
+     "]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_object_1",
+   "parts": [
+    [
+     "{\"a\":",
+     1
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     "}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_with_1",
+   "parts": [
+    [
+     "WITH a AS (",
+     1
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_call_1",
+   "parts": [
+    [
+     "f(",
+     1
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_macro_1",
+   "parts": [
+    [
+     "$__timeFilter(",
+     1
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "deep_paren_127",
+   "parts": [
+    [
+     "(",
+     127
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     ")",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_array_127",
+   "parts": [
+    [
+     "[",
+     127
+    ],
+    [
+     "]",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_brace_127",
+   "parts": [
+    [
+     "{",
+     127
+    ],
+    [
+     "}",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_mixed_127",
+   "parts": [
+    [
+     "([{",
+     127
+    ],
+    [
+     "}])",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_unclosed_paren_127",
+   "parts": [
+    [
+     "(",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_select_127",
+   "parts": [
+    [
+     "SELECT * FROM (",
+     127
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_array_127",
+   "parts": [
+    [
+     "[",
+     127
+    ],
+    [
+     "]",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_object_127",
+   "parts": [
+    [
+     "{\"a\":",
+     127
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     "}",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_with_127",
+   "parts": [
+    [
+     "WITH a AS (",
+     127
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_call_127",
+   "parts": [
+    [
+     "f(",
+     127
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_macro_127",
+   "parts": [
+    [
+     "$__timeFilter(",
+     127
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     127
+    ]
+   ]
+  },
+  {
+   "name": "deep_paren_128",
+   "parts": [
+    [
+     "(",
+     128
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     ")",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_array_128",
+   "parts": [
+    [
+     "[",
+     128
+    ],
+    [
+     "]",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_brace_128",
+   "parts": [
+    [
+     "{",
+     128
+    ],
+    [
+     "}",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_mixed_128",
+   "parts": [
+    [
+     "([{",
+     128
+    ],
+    [
+     "}])",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_unclosed_paren_128",
+   "parts": [
+    [
+     "(",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_select_128",
+   "parts": [
+    [
+     "SELECT * FROM (",
+     128
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_array_128",
+   "parts": [
+    [
+     "[",
+     128
+    ],
+    [
+     "]",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_object_128",
+   "parts": [
+    [
+     "{\"a\":",
+     128
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     "}",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_with_128",
+   "parts": [
+    [
+     "WITH a AS (",
+     128
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_call_128",
+   "parts": [
+    [
+     "f(",
+     128
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_macro_128",
+   "parts": [
+    [
+     "$__timeFilter(",
+     128
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     128
+    ]
+   ]
+  },
+  {
+   "name": "deep_paren_129",
+   "parts": [
+    [
+     "(",
+     129
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     ")",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_array_129",
+   "parts": [
+    [
+     "[",
+     129
+    ],
+    [
+     "]",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_brace_129",
+   "parts": [
+    [
+     "{",
+     129
+    ],
+    [
+     "}",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_mixed_129",
+   "parts": [
+    [
+     "([{",
+     129
+    ],
+    [
+     "}])",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_unclosed_paren_129",
+   "parts": [
+    [
+     "(",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_select_129",
+   "parts": [
+    [
+     "SELECT * FROM (",
+     129
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_array_129",
+   "parts": [
+    [
+     "[",
+     129
+    ],
+    [
+     "]",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_object_129",
+   "parts": [
+    [
+     "{\"a\":",
+     129
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     "}",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_with_129",
+   "parts": [
+    [
+     "WITH a AS (",
+     129
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_call_129",
+   "parts": [
+    [
+     "f(",
+     129
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_macro_129",
+   "parts": [
+    [
+     "$__timeFilter(",
+     129
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     129
+    ]
+   ]
+  },
+  {
+   "name": "deep_paren_200",
+   "parts": [
+    [
+     "(",
+     200
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     ")",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_array_200",
+   "parts": [
+    [
+     "[",
+     200
+    ],
+    [
+     "]",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_brace_200",
+   "parts": [
+    [
+     "{",
+     200
+    ],
+    [
+     "}",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_mixed_200",
+   "parts": [
+    [
+     "([{",
+     200
+    ],
+    [
+     "}])",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_unclosed_paren_200",
+   "parts": [
+    [
+     "(",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_select_200",
+   "parts": [
+    [
+     "SELECT * FROM (",
+     200
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_array_200",
+   "parts": [
+    [
+     "[",
+     200
+    ],
+    [
+     "]",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_object_200",
+   "parts": [
+    [
+     "{\"a\":",
+     200
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     "}",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_with_200",
+   "parts": [
+    [
+     "WITH a AS (",
+     200
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_call_200",
+   "parts": [
+    [
+     "f(",
+     200
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_macro_200",
+   "parts": [
+    [
+     "$__timeFilter(",
+     200
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     200
+    ]
+   ]
+  },
+  {
+   "name": "deep_paren_1000",
+   "parts": [
+    [
+     "(",
+     1000
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     ")",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_array_1000",
+   "parts": [
+    [
+     "[",
+     1000
+    ],
+    [
+     "]",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_brace_1000",
+   "parts": [
+    [
+     "{",
+     1000
+    ],
+    [
+     "}",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_mixed_1000",
+   "parts": [
+    [
+     "([{",
+     1000
+    ],
+    [
+     "}])",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_unclosed_paren_1000",
+   "parts": [
+    [
+     "(",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_select_1000",
+   "parts": [
+    [
+     "SELECT * FROM (",
+     1000
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_array_1000",
+   "parts": [
+    [
+     "[",
+     1000
+    ],
+    [
+     "]",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_json_object_1000",
+   "parts": [
+    [
+     "{\"a\":",
+     1000
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     "}",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_with_1000",
+   "parts": [
+    [
+     "WITH a AS (",
+     1000
+    ],
+    [
+     "SELECT 1",
+     1
+    ],
+    [
+     ")",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_call_1000",
+   "parts": [
+    [
+     "f(",
+     1000
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "deep_macro_1000",
+   "parts": [
+    [
+     "$__timeFilter(",
+     1000
+    ],
+    [
+     "x",
+     1
+    ],
+    [
+     ")",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_104",
+   "parts": [
+    [
+     "'",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_105",
+   "parts": [
+    [
+     "'abc",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_106",
+   "parts": [
+    [
+     "\"",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_107",
+   "parts": [
+    [
+     "\"abc",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_108",
+   "parts": [
+    [
+     "`",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_109",
+   "parts": [
+    [
+     "`abc",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_110",
+   "parts": [
+    [
+     "$$",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_111",
+   "parts": [
+    [
+     "$$abc",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_112",
+   "parts": [
+    [
+     "$a$ abc",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_113",
+   "parts": [
+    [
+     "'a\\",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_114",
+   "parts": [
+    [
+     "E'\\",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_115",
+   "parts": [
+    [
+     "'a''",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_116",
+   "parts": [
+    [
+     "'\\'",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_117",
+   "parts": [
+    [
+     "/*",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_118",
+   "parts": [
+    [
+     "/* /* */",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_119",
+   "parts": [
+    [
+     "/* /*",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_120",
+   "parts": [
+    [
+     "--",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_121",
+   "parts": [
+    [
+     "-- x\r",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_122",
+   "parts": [
+    [
+     "-- x",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_123",
+   "parts": [
+    [
+     "#",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_124",
+   "parts": [
+    [
+     "# x",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_125",
+   "parts": [
+    [
+     "#!",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_126",
+   "parts": [
+    [
+     "$1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_127",
+   "parts": [
+    [
+     "$$$$",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_128",
+   "parts": [
+    [
+     "$$ $$ $$",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_129",
+   "parts": [
+    [
+     "'a' 'b",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_130",
+   "parts": [
+    [
+     "'; DROP",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_131",
+   "parts": [
+    [
+     "\"; --",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_in_call",
+   "parts": [
+    [
+     "SELECT f('abc, (1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "unclosed_comment_in_paren",
+   "parts": [
+    [
+     "SELECT (1 /* x",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "line_comment_before_close",
+   "parts": [
+    [
+     "SELECT (1 -- x\n)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "line_comment_at_end_of_paren",
+   "parts": [
+    [
+     "SELECT (1 -- x)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "comment_between_clauses",
+   "parts": [
+    [
+     "SELECT 1 /* a */ FROM /* b */ t -- c\nWHERE /* d */ 1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "nul",
+   "parts": [
+    [
+     "\u0000",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "nul_in_select",
+   "parts": [
+    [
+     "SELECT\u0000 1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "controls",
+   "parts": [
+    [
+     "\u0001\u0002\u0003\u001b[31m",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "controls_in_string",
+   "parts": [
+    [
+     "SELECT '\u0000\u0001'",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "separators",
+   "parts": [
+    [
+     "SELECT  1  FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "nel_and_nbsp",
+   "parts": [
+    [
+     "SELECT 1 FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "bom",
+   "parts": [
+    [
+     "﻿SELECT 1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "zero_width",
+   "parts": [
+    [
+     "SEL​ECT 1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "bidi",
+   "parts": [
+    [
+     "SELECT '‮ abc ‬'",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "astral_literal",
+   "parts": [
+    [
+     "SELECT '😀' AS \"𝒳\", `😀`",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "astral_word",
+   "parts": [
+    [
+     "SELECT 😀 FROM 𝒳",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "astral_comment",
+   "parts": [
+    [
+     "/* 😀 */ SELECT 1 -- 😀",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_high",
+   "parts": [
+    [
+     "\ud800",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_low",
+   "parts": [
+    [
+     "\udc00",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_high_paren",
+   "parts": [
+    [
+     "SELECT (\ud800)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_low_in_string",
+   "parts": [
+    [
+     "SELECT '\udc00'",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "pair_cut_by_quote",
+   "parts": [
+    [
+     "'\ud800'\udc00",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "astral_json",
+   "parts": [
+    [
+     "{\"a\": \"😀\", \"😀\": [1, 2]}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "lone_in_json_string",
+   "parts": [
+    [
+     "{\"a\": \"\ud800\"}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "astral_many",
+   "parts": [
+    [
+     "😀",
+     1000
+    ]
+   ]
+  },
+  {
+   "name": "crlf_query",
+   "parts": [
+    [
+     "SELECT 1\r\nFROM t\r\n-- c\r\nWHERE a = 1\r\n",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "crlf_subquery",
+   "parts": [
+    [
+     "SELECT (\r\nSELECT 1\r\n)\r\n",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "bare_cr",
+   "parts": [
+    [
+     "SELECT 1\rFROM t\r-- c\rWHERE a",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "mixed_eol",
+   "parts": [
+    [
+     "a\r\n\r\r\n\nb",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "crlf_json",
+   "parts": [
+    [
+     "{\r\n \"a\": [\r\n  1,\r\n  2\r\n ]\r\n}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "crlf_line_comment",
+   "parts": [
+    [
+     "SELECT 1 -- c\r\n, 2",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_163",
+   "parts": [
+    [
+     "SELECT $ FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_164",
+   "parts": [
+    [
+     "SELECT $$$ FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_165",
+   "parts": [
+    [
+     "SELECT ${ FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_166",
+   "parts": [
+    [
+     "SELECT ${a FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_167",
+   "parts": [
+    [
+     "SELECT ${a: FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_168",
+   "parts": [
+    [
+     "SELECT ${a:csv FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_169",
+   "parts": [
+    [
+     "SELECT ${a:csv} FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_170",
+   "parts": [
+    [
+     "SELECT ${} FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_171",
+   "parts": [
+    [
+     "SELECT ${:} FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_172",
+   "parts": [
+    [
+     "SELECT $__ FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_173",
+   "parts": [
+    [
+     "SELECT $__( FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_174",
+   "parts": [
+    [
+     "SELECT $__a( FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_175",
+   "parts": [
+    [
+     "SELECT $__timeFilter( FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_176",
+   "parts": [
+    [
+     "SELECT $__timeFilter(ts FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_177",
+   "parts": [
+    [
+     "SELECT $__timeFilter(ts)) FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_178",
+   "parts": [
+    [
+     "SELECT ${__interval} FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_179",
+   "parts": [
+    [
+     "SELECT $__interval_ms FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_180",
+   "parts": [
+    [
+     "SELECT $a$b FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_181",
+   "parts": [
+    [
+     "SELECT $1 FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_182",
+   "parts": [
+    [
+     "SELECT ${1} FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_183",
+   "parts": [
+    [
+     "SELECT $ a FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_184",
+   "parts": [
+    [
+     "SELECT ${a b} FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_185",
+   "parts": [
+    [
+     "SELECT ${a:b:c} FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_186",
+   "parts": [
+    [
+     "SELECT $__timeFilter(\"x\") FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_187",
+   "parts": [
+    [
+     "SELECT $__timeFilter('a)') FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_188",
+   "parts": [
+    [
+     "SELECT $__timeFilter(/* ) */ x) FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_189",
+   "parts": [
+    [
+     "SELECT $__timeFilter(-- )\nx) FROM t",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_in_string",
+   "parts": [
+    [
+     "SELECT '$__timeFilter(a)', \"${v}\"",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_in_comment",
+   "parts": [
+    [
+     "SELECT 1 /* $__timeFilter(a) */ -- ${v}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_json_value",
+   "parts": [
+    [
+     "{\"a\": \"$__timeFrom\", \"b\": \"${v:json}\", \"c\": \"$v\"}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_json_bare",
+   "parts": [
+    [
+     "{\"a\": $__timeFrom, \"b\": ${v}, \"c\": $v}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "macro_json_key",
+   "parts": [
+    [
+     "{\"$v\": 1, \"${v}\": 2}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_195",
+   "parts": [
+    [
+     ";",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_196",
+   "parts": [
+    [
+     ";;;",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_197",
+   "parts": [
+    [
+     "; ;",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_198",
+   "parts": [
+    [
+     "SELECT 1;;SELECT 2",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_199",
+   "parts": [
+    [
+     "SELECT",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_200",
+   "parts": [
+    [
+     "SELECT FROM",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_201",
+   "parts": [
+    [
+     "FROM",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_202",
+   "parts": [
+    [
+     "WITH",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_203",
+   "parts": [
+    [
+     "WITH a",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_204",
+   "parts": [
+    [
+     "WITH a AS",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_205",
+   "parts": [
+    [
+     "WITH a AS (",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_206",
+   "parts": [
+    [
+     "WITH a AS ()",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_207",
+   "parts": [
+    [
+     "WITH RECURSIVE a AS (SELECT 1) SELECT * FROM a",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_208",
+   "parts": [
+    [
+     "SELECT * FROM (",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_209",
+   "parts": [
+    [
+     "SELECT * FROM ()",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_210",
+   "parts": [
+    [
+     "SELECT * FROM (SELECT",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_211",
+   "parts": [
+    [
+     "UNION ALL",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_212",
+   "parts": [
+    [
+     "SELECT 1 UNION ALL",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_213",
+   "parts": [
+    [
+     "ORDER BY",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_214",
+   "parts": [
+    [
+     "GROUP BY GROUP BY",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_215",
+   "parts": [
+    [
+     "ARRAY JOIN",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_216",
+   "parts": [
+    [
+     "SELECT x -> y",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_217",
+   "parts": [
+    [
+     "SELECT (x, y) -> x",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_218",
+   "parts": [
+    [
+     "SELECT a::int::text",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_219",
+   "parts": [
+    [
+     "SELECT a::",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_220",
+   "parts": [
+    [
+     "SELECT 'a'::",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_221",
+   "parts": [
+    [
+     "SELECT a->>'b'",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_222",
+   "parts": [
+    [
+     "SELECT a#>>'{b}'",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_223",
+   "parts": [
+    [
+     "SELECT $$a$$",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_224",
+   "parts": [
+    [
+     "SELECT $t$a$$b$t$",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_225",
+   "parts": [
+    [
+     "SELECT ARRAY[1,2][1]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_226",
+   "parts": [
+    [
+     "SELECT x FORMAT JSON",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_227",
+   "parts": [
+    [
+     "SETTINGS a=1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_228",
+   "parts": [
+    [
+     "SELECT 1 SETTINGS",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_229",
+   "parts": [
+    [
+     "SELECT 1 FORMAT",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_230",
+   "parts": [
+    [
+     "SELECT a FROM t PREWHERE",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_231",
+   "parts": [
+    [
+     "SELECT a FROM t LEFT ASOF JOIN",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "odd_232",
+   "parts": [
+    [
+     "SELECT 1 WINDOW w AS (PARTITION BY a)",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_233",
+   "parts": [
+    [
+     "{\"a\":",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_234",
+   "parts": [
+    [
+     "{\"a\" 1}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_235",
+   "parts": [
+    [
+     "[1,]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_236",
+   "parts": [
+    [
+     "{,}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_237",
+   "parts": [
+    [
+     "[,,]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_238",
+   "parts": [
+    [
+     "{\"a\":1,,}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_239",
+   "parts": [
+    [
+     "\"\\u12",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_240",
+   "parts": [
+    [
+     "\"\\ud800\"",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_241",
+   "parts": [
+    [
+     "nul",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_242",
+   "parts": [
+    [
+     "tru",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_243",
+   "parts": [
+    [
+     "1e",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_244",
+   "parts": [
+    [
+     "-",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_245",
+   "parts": [
+    [
+     "0123",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_246",
+   "parts": [
+    [
+     "01",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_247",
+   "parts": [
+    [
+     "1.",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_248",
+   "parts": [
+    [
+     ".5",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_249",
+   "parts": [
+    [
+     "+1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_250",
+   "parts": [
+    [
+     "NaN",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_251",
+   "parts": [
+    [
+     "Infinity",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_252",
+   "parts": [
+    [
+     "-Infinity",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_253",
+   "parts": [
+    [
+     "/* c */ {}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_254",
+   "parts": [
+    [
+     "// c\n{}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_255",
+   "parts": [
+    [
+     "{\"a\":1} {\"b\":2}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_256",
+   "parts": [
+    [
+     "{\"a\":\"\n\"}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_257",
+   "parts": [
+    [
+     "{\"a\":\"\t\"}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_258",
+   "parts": [
+    [
+     "{\"a\":\"\\x\"}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_259",
+   "parts": [
+    [
+     "{\"a\":}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_260",
+   "parts": [
+    [
+     "{:1}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_261",
+   "parts": [
+    [
+     "{\"a\":1:}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_262",
+   "parts": [
+    [
+     "{1:1}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_263",
+   "parts": [
+    [
+     "{'a':1}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_264",
+   "parts": [
+    [
+     "[1 2]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_265",
+   "parts": [
+    [
+     "[\"a\" \"b\"]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_266",
+   "parts": [
+    [
+     "[}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_267",
+   "parts": [
+    [
+     "{]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_268",
+   "parts": [
+    [
+     "}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_269",
+   "parts": [
+    [
+     "]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_270",
+   "parts": [
+    [
+     ",",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_271",
+   "parts": [
+    [
+     ":",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_272",
+   "parts": [
+    [
+     "{\"a\":{\"b\":{\"c\":",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_273",
+   "parts": [
+    [
+     "{\"a\":[{\"b\":[{\"c\":[",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_274",
+   "parts": [
+    [
+     "\"",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_275",
+   "parts": [
+    [
+     "\"abc",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_276",
+   "parts": [
+    [
+     "[[[",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_277",
+   "parts": [
+    [
+     "]]]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_278",
+   "parts": [
+    [
+     "{\"a\":1}}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_279",
+   "parts": [
+    [
+     "[1]]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_280",
+   "parts": [
+    [
+     "{\"$match\":{\"a\":{\"$in\":[1,2,3]}}}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_long_string",
+   "parts": [
+    [
+     "{\"a\": \"",
+     1
+    ],
+    [
+     "x",
+     50000
+    ],
+    [
+     "\"}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_many_members",
+   "parts": [
+    [
+     "{\"a\":1,",
+     1
+    ],
+    [
+     "\"b\":2,",
+     5000
+    ],
+    [
+     "\"c\":3}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_many_keys",
+   "parts": [
+    [
+     "{",
+     1
+    ],
+    [
+     "\"k\": 1, ",
+     1000
+    ],
+    [
+     "\"z\": 2}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "json_pipeline_text",
+   "parts": [
+    [
+     "{\"collection\":\"c\",\"aggregate\":[{\"$match\":{\"$expr\":{\"$and\":[{\"$gte\":[\"$ts\",\"$__timeFrom\"]},{\"$lt\":[\"$ts\",\"$__timeTo\"]}]}}},{\"$group\":{\"_id\":\"$h\",\"n\":{\"$sum\":1}}}]}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_a_exact",
+   "parts": [
+    [
+     "a",
+     262144
+    ]
+   ]
+  },
+  {
+   "name": "cap_a_over",
+   "parts": [
+    [
+     "a",
+     262145
+    ]
+   ]
+  },
+  {
+   "name": "cap_numbers_exact",
+   "parts": [
+    [
+     "1,",
+     131072
+    ]
+   ]
+  },
+  {
+   "name": "cap_numbers_over",
+   "parts": [
+    [
+     "1,",
+     131072
+    ],
+    [
+     "1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_open_paren",
+   "parts": [
+    [
+     "(",
+     262144
+    ]
+   ]
+  },
+  {
+   "name": "cap_close_paren",
+   "parts": [
+    [
+     ")",
+     262144
+    ]
+   ]
+  },
+  {
+   "name": "cap_open_brace",
+   "parts": [
+    [
+     "{",
+     262144
+    ]
+   ]
+  },
+  {
+   "name": "cap_open_bracket",
+   "parts": [
+    [
+     "[",
+     262144
+    ]
+   ]
+  },
+  {
+   "name": "cap_quote",
+   "parts": [
+    [
+     "'",
+     262144
+    ]
+   ]
+  },
+  {
+   "name": "cap_comment_open",
+   "parts": [
+    [
+     "/*",
+     131072
+    ]
+   ]
+  },
+  {
+   "name": "cap_comment_pairs",
+   "parts": [
+    [
+     "/**/",
+     65536
+    ]
+   ]
+  },
+  {
+   "name": "cap_line_comments",
+   "parts": [
+    [
+     "--\n",
+     87381
+    ]
+   ]
+  },
+  {
+   "name": "cap_union",
+   "parts": [
+    [
+     "SELECT 1 UNION ALL ",
+     13797
+    ],
+    [
+     "SELECT 1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_select_columns",
+   "parts": [
+    [
+     "SELECT ",
+     1
+    ],
+    [
+     "a, ",
+     87000
+    ],
+    [
+     "b",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_calls",
+   "parts": [
+    [
+     "f(",
+     32768
+    ],
+    [
+     "1",
+     1
+    ],
+    [
+     ")",
+     32768
+    ]
+   ]
+  },
+  {
+   "name": "cap_flat_calls",
+   "parts": [
+    [
+     "f(1),",
+     52428
+    ]
+   ]
+  },
+  {
+   "name": "cap_macros",
+   "parts": [
+    [
+     "$__timeFilter(a)+",
+     15420
+    ]
+   ]
+  },
+  {
+   "name": "cap_variables",
+   "parts": [
+    [
+     "${v:csv},",
+     29127
+    ]
+   ]
+  },
+  {
+   "name": "cap_cte_list",
+   "parts": [
+    [
+     "WITH a AS (SELECT 1),",
+     1
+    ],
+    [
+     "b AS (SELECT 1),",
+     16000
+    ],
+    [
+     "c AS (SELECT 1) SELECT 1",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_subqueries",
+   "parts": [
+    [
+     "SELECT (SELECT 1),",
+     14563
+    ]
+   ]
+  },
+  {
+   "name": "cap_two_byte_exact",
+   "parts": [
+    [
+     "é",
+     131072
+    ]
+   ]
+  },
+  {
+   "name": "cap_two_byte_over",
+   "parts": [
+    [
+     "é",
+     131073
+    ]
+   ]
+  },
+  {
+   "name": "cap_three_byte_in",
+   "parts": [
+    [
+     "€",
+     87381
+    ]
+   ]
+  },
+  {
+   "name": "cap_three_byte_over",
+   "parts": [
+    [
+     "€",
+     87382
+    ]
+   ]
+  },
+  {
+   "name": "cap_four_byte_exact",
+   "parts": [
+    [
+     "😀",
+     65536
+    ]
+   ]
+  },
+  {
+   "name": "cap_four_byte_over",
+   "parts": [
+    [
+     "😀",
+     65537
+    ]
+   ]
+  },
+  {
+   "name": "cap_lone_high",
+   "parts": [
+    [
+     "\ud800",
+     87382
+    ]
+   ]
+  },
+  {
+   "name": "cap_control",
+   "parts": [
+    [
+     "\u0001",
+     262144
+    ]
+   ]
+  },
+  {
+   "name": "cap_crlf",
+   "parts": [
+    [
+     "a\r\n",
+     87381
+    ]
+   ]
+  },
+  {
+   "name": "cap_json_array",
+   "parts": [
+    [
+     "[",
+     1
+    ],
+    [
+     "1,",
+     131070
+    ],
+    [
+     "1]",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_json_nested",
+   "parts": [
+    [
+     "[",
+     100000
+    ],
+    [
+     "]",
+     100000
+    ]
+   ]
+  },
+  {
+   "name": "cap_json_members",
+   "parts": [
+    [
+     "{",
+     1
+    ],
+    [
+     "\"a\":1,",
+     43690
+    ],
+    [
+     "\"b\":2}",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_json_string",
+   "parts": [
+    [
+     "\"",
+     1
+    ],
+    [
+     "x",
+     262142
+    ],
+    [
+     "\"",
+     1
+    ]
+   ]
+  },
+  {
+   "name": "cap_json_nulls",
+   "parts": [
+    [
+     "[",
+     1
+    ],
+    [
+     "null,",
+     52000
+    ],
+    [
+     "null]",
+     1
+    ]
+   ]
+  }
+ ]
+}

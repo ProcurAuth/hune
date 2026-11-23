@@ -1,0 +1,6864 @@
+[
+ {
+  "kind": "write",
+  "name": "table: header off",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "show-header",
+  "value": false,
+  "options_after": {
+   "show_header": false,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: wrap on",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "wrap",
+  "value": true,
+  "options_after": {
+   "show_header": true,
+   "sort": [],
+   "wrap": true
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: wrap off removes the member",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": [],
+   "wrap": true
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "wrap",
+  "value": false,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: one sort key",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "sort",
+  "value": [
+   {
+    "field": "Time",
+    "desc": true
+   }
+  ],
+  "options_after": {
+   "show_header": true,
+   "sort": [
+    {
+     "field": "Time",
+     "desc": true
+    }
+   ]
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: eight sort keys",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "sort",
+  "value": [
+   {
+    "field": "c0",
+    "desc": false
+   },
+   {
+    "field": "c1",
+    "desc": true
+   },
+   {
+    "field": "c2",
+    "desc": false
+   },
+   {
+    "field": "c3",
+    "desc": true
+   },
+   {
+    "field": "c4",
+    "desc": false
+   },
+   {
+    "field": "c5",
+    "desc": true
+   },
+   {
+    "field": "c6",
+    "desc": false
+   },
+   {
+    "field": "c7",
+    "desc": true
+   }
+  ],
+  "options_after": {
+   "show_header": true,
+   "sort": [
+    {
+     "field": "c0",
+     "desc": false
+    },
+    {
+     "field": "c1",
+     "desc": true
+    },
+    {
+     "field": "c2",
+     "desc": false
+    },
+    {
+     "field": "c3",
+     "desc": true
+    },
+    {
+     "field": "c4",
+     "desc": false
+    },
+    {
+     "field": "c5",
+     "desc": true
+    },
+    {
+     "field": "c6",
+     "desc": false
+    },
+    {
+     "field": "c7",
+     "desc": true
+    }
+   ]
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: empty sort keeps the member",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": [
+    {
+     "field": "a",
+     "desc": false
+    }
+   ]
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "sort",
+  "value": [],
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: width 10",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "col-width",
+  "value": 10,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "width": 10
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: width 4000",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "col-width",
+  "value": 4000,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "width": 4000
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: empty width removes the member",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "width": 120
+  },
+  "row": "col-width",
+  "value": null,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: align right",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "col-align",
+  "value": "right",
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "align": "right"
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: filter on",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "filterable",
+  "value": true,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "filterable": true
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: filter off removes the member",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "filterable": true
+  },
+  "row": "filterable",
+  "value": false,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: inspect on keeps the order of 4.18",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "filterable": true,
+   "hide_from": {
+    "legend": false,
+    "tooltip": false,
+    "viz": false
+   }
+  },
+  "row": "inspect",
+  "value": true,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "filterable": true,
+   "inspect": true,
+   "hide_from": {
+    "legend": false,
+    "tooltip": false,
+    "viz": false
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: inspect off removes the member",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "inspect": true
+  },
+  "row": "inspect",
+  "value": false,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: footer with two calculations",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "footer",
+  "value": [
+   "min",
+   "max"
+  ],
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "footer": {
+    "reducers": [
+     "min",
+     "max"
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: footer with eight calculations",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "footer",
+  "value": [
+   "min",
+   "max",
+   "mean",
+   "total",
+   "count",
+   "median",
+   "first",
+   "last"
+  ],
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "footer": {
+    "reducers": [
+     "min",
+     "max",
+     "mean",
+     "total",
+     "count",
+     "median",
+     "first",
+     "last"
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: empty footer removes the member",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "footer": {
+    "reducers": [
+     "min"
+    ]
+   }
+  },
+  "row": "footer",
+  "value": [],
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: cell type gauge",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "cell-type",
+  "value": {
+   "type": "gauge",
+   "mode": "basic"
+  },
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "cell": {
+    "type": "gauge",
+    "mode": "basic"
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: cell type auto",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "cell": {
+    "type": "json",
+    "mode": null
+   }
+  },
+  "row": "cell-type",
+  "value": {
+   "type": "auto",
+   "mode": null
+  },
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "cell": {
+    "type": "auto",
+    "mode": null
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: display name",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "row": "display-name",
+  "value": "Host",
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "display_name": "Host"
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: empty display name removes the member",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "display_name": "Host"
+  },
+  "row": "display-name",
+  "value": null,
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   }
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "table: members keep the order of 4.18",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "display_name": "x",
+   "width": 50
+  },
+  "row": "col-align",
+  "value": "left",
+  "options_after": {
+   "show_header": true,
+   "sort": []
+  },
+  "defaults_after": {
+   "thresholds": {
+    "mode": "absolute",
+    "steps": [
+     {
+      "value": null,
+      "color": "green"
+     }
+    ]
+   },
+   "display_name": "x",
+   "width": 50,
+   "align": "left"
+  },
+  "shown_before": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ],
+  "shown_after": [
+   "show-header",
+   "sort",
+   "col-width",
+   "col-align",
+   "wrap",
+   "filterable",
+   "footer",
+   "cell-type",
+   "inspect",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: calculate on shows the buckets",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "calculate",
+  "value": true,
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: X mode size writes 10m",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "x-mode",
+  "value": "size",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": 600000
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: X mode count clears the value",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": 3600000
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "x-mode",
+  "value": "count",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: Y mode size from count with no value",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-mode",
+  "value": "size",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": 1,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: Y mode size keeps a number above 0",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": 20,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-mode",
+  "value": "size",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": 20,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: Y mode count drops a fraction",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": 2.5,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-mode",
+  "value": "count",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: log2 writes the mode size",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-scale",
+  "value": "log2",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log2"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: log10 keeps a split of 1 to 16",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": 4,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-scale",
+  "value": "log10",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": 4,
+    "scale": "log10"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: log2 drops a value above 16",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": 100,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-scale",
+  "value": "log2",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log2"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: linear after log writes 1 for the size",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log2"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-scale",
+  "value": "linear",
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": 1,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: scale mode opacity shows the colour rows",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "color-mode",
+  "value": "opacity",
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "opacity",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-fill",
+   "color-scale",
+   "color-exponent",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: scale linear hides the exponent",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "opacity",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "color-scale",
+  "value": "linear",
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "opacity",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "linear",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-fill",
+   "color-scale",
+   "color-exponent",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-fill",
+   "color-scale",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: scheme viridis",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "color-scheme",
+  "value": "viridis",
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "viridis",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: steps 2",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "color-steps",
+  "value": 2,
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 2,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: steps 128",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "color-steps",
+  "value": 128,
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 128,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: gap 25",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "cell-gap",
+  "value": 25,
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 25,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: hide cells at or below null",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "hide-le",
+  "value": null,
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": null,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: y axis hidden",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-axis",
+  "value": "hidden",
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "hidden",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: Y min",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "y-min",
+  "value": 0.5,
+  "options_after": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": 0.5,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "x-mode",
+   "x-value",
+   "y-mode",
+   "y-scale",
+   "y-value",
+   "y-axis",
+   "y-reverse",
+   "y-min",
+   "y-max",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: tooltip all",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "tooltip-mode",
+  "value": "multi",
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "multi"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: legend off",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "show-legend",
+  "value": false,
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": false,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "heatmap: display name",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "display-name",
+  "value": "Count",
+  "options_after": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {
+   "display_name": "Count"
+  },
+  "shown_before": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ],
+  "shown_after": [
+   "calculate",
+   "y-axis",
+   "y-reverse",
+   "color-mode",
+   "color-scheme",
+   "color-steps",
+   "color-reverse",
+   "color-min",
+   "color-max",
+   "cell-gap",
+   "hide-le",
+   "hide-ge",
+   "tooltip-mode",
+   "show-legend",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: size 25 hides the count",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "bucket-size",
+  "value": 25,
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": 25,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: empty size shows the count",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": 25,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "bucket-size",
+  "value": null,
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: offset negative",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "bucket-offset",
+  "value": -12.5,
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": -12.5,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: combine hides the stacking",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "combine",
+  "value": true,
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": true,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: stacking normal",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "stacking",
+  "value": "normal",
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "normal",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: count 1000",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "bucket-count",
+  "value": 1000,
+  "options_after": {
+   "bucket_count": 1000,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: line width 10",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "line-width",
+  "value": 10,
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 10,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: fill opacity 0",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "fill-opacity",
+  "value": 0,
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 0,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: tooltip all shows the sort and the zeros",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "tooltip-mode",
+  "value": "multi",
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "multi"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "tooltip-sort",
+   "tooltip-hide-zeros",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: tooltip sort desc",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "multi"
+   }
+  },
+  "defaults": {},
+  "row": "tooltip-sort",
+  "value": "desc",
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "multi",
+    "sort": "desc"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "tooltip-sort",
+   "tooltip-hide-zeros",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "tooltip-sort",
+   "tooltip-hide-zeros",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: legend as a table shows the values",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "legend-mode",
+  "value": "table",
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "table",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "legend-values",
+   "legend-sort-by",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "write",
+  "name": "histogram: sort by None removes sort_desc",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "table",
+    "values": [],
+    "sort_by": "max",
+    "sort_desc": true
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults": {},
+  "row": "legend-sort-by",
+  "value": {
+   "unset": true
+  },
+  "options_after": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "table",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "defaults_after": {},
+  "shown_before": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "legend-values",
+   "legend-sort-by",
+   "legend-sort-desc",
+   "display-name"
+  ],
+  "shown_after": [
+   "bucket-count",
+   "bucket-size",
+   "bucket-offset",
+   "combine",
+   "stacking",
+   "line-width",
+   "fill-opacity",
+   "tooltip-mode",
+   "legend-show",
+   "legend-mode",
+   "legend-placement",
+   "legend-values",
+   "legend-sort-by",
+   "display-name"
+  ]
+ },
+ {
+  "kind": "parse",
+  "name": "x count 1",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "1",
+  "value": 1
+ },
+ {
+  "kind": "parse",
+  "name": "x count 1000",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "1000",
+  "value": 1000
+ },
+ {
+  "kind": "parse",
+  "name": "x count 0",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "0",
+  "error": "Use a whole number from 1 to 1000, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "x count 1001",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "1001",
+  "error": "Use a whole number from 1 to 1000, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "x count empty",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "",
+  "value": null
+ },
+ {
+  "kind": "parse",
+  "name": "x count text",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "10m",
+  "error": "Use a whole number from 1 to 1000, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "x size 10m",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "10m",
+  "value": 600000
+ },
+ {
+  "kind": "parse",
+  "name": "x size 1ms",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "1ms",
+  "value": 1
+ },
+ {
+  "kind": "parse",
+  "name": "x size 365d",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "365d",
+  "value": 31536000000
+ },
+ {
+  "kind": "parse",
+  "name": "x size 366d",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "366d",
+  "error": "Use a duration from 1ms to 365d, such as 10m."
+ },
+ {
+  "kind": "parse",
+  "name": "x size 1m30s",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "1m30s",
+  "error": "Use a duration from 1ms to 365d, such as 10m."
+ },
+ {
+  "kind": "parse",
+  "name": "x size 0s",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "0s",
+  "error": "Use a duration from 1ms to 365d, such as 10m."
+ },
+ {
+  "kind": "parse",
+  "name": "x size number",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "600000",
+  "error": "Use a duration from 1ms to 365d, such as 10m."
+ },
+ {
+  "kind": "parse",
+  "name": "x size empty",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "size",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "x-value",
+  "text": "",
+  "error": "Use a duration from 1ms to 365d, such as 10m."
+ },
+ {
+  "kind": "parse",
+  "name": "y count 1000",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "1000",
+  "value": 1000
+ },
+ {
+  "kind": "parse",
+  "name": "y count 2.5",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "2.5",
+  "error": "Use a whole number from 1 to 1000, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "y count empty",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "",
+  "value": null
+ },
+ {
+  "kind": "parse",
+  "name": "y size 0.0001",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "0.0001",
+  "value": 0.0001
+ },
+ {
+  "kind": "parse",
+  "name": "y size 0",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "0",
+  "error": "Use a number above 0."
+ },
+ {
+  "kind": "parse",
+  "name": "y size empty",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "",
+  "error": "Use a number above 0."
+ },
+ {
+  "kind": "parse",
+  "name": "y log 16",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log2"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "16",
+  "value": 16
+ },
+ {
+  "kind": "parse",
+  "name": "y log 17",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log2"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "17",
+  "error": "Use a whole number from 1 to 16, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "y log empty",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log10"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-value",
+  "text": "",
+  "value": null
+ },
+ {
+  "kind": "parse",
+  "name": "y min log 0",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log10"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-min",
+  "text": "0",
+  "error": "A log scale needs a value above 0."
+ },
+ {
+  "kind": "parse",
+  "name": "y min log 0.5",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "size",
+    "value": null,
+    "scale": "log10"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-min",
+  "text": "0.5",
+  "value": 0.5
+ },
+ {
+  "kind": "parse",
+  "name": "y min linear -5",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-min",
+  "text": "-5",
+  "value": -5
+ },
+ {
+  "kind": "parse",
+  "name": "y min text",
+  "type": "heatmap",
+  "options": {
+   "calculate": true,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "y-min",
+  "text": "abc",
+  "error": "Use a number, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "exponent 0.1",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-exponent",
+  "text": "0.1",
+  "value": 0.1
+ },
+ {
+  "kind": "parse",
+  "name": "exponent 2",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-exponent",
+  "text": "2",
+  "value": 2
+ },
+ {
+  "kind": "parse",
+  "name": "exponent 0.05",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-exponent",
+  "text": "0.05",
+  "error": "Use a number from 0.1 to 2 with one decimal."
+ },
+ {
+  "kind": "parse",
+  "name": "exponent 2.1",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-exponent",
+  "text": "2.1",
+  "error": "Use a number from 0.1 to 2 with one decimal."
+ },
+ {
+  "kind": "parse",
+  "name": "exponent 0.25",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-exponent",
+  "text": "0.25",
+  "error": "Use a number from 0.1 to 2 with one decimal."
+ },
+ {
+  "kind": "parse",
+  "name": "color min below max",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": 10
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-min",
+  "text": "5",
+  "value": 5
+ },
+ {
+  "kind": "parse",
+  "name": "color min at max",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": 10
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-min",
+  "text": "10",
+  "error": "Start must be lower than end."
+ },
+ {
+  "kind": "parse",
+  "name": "color max at min",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": 10,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-max",
+  "text": "10",
+  "error": "End must be higher than start."
+ },
+ {
+  "kind": "parse",
+  "name": "color max empty",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": 10,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "color-max",
+  "text": "",
+  "value": null
+ },
+ {
+  "kind": "parse",
+  "name": "hide ge text",
+  "type": "heatmap",
+  "options": {
+   "calculate": false,
+   "x_buckets": {
+    "mode": "count",
+    "value": null
+   },
+   "y_buckets": {
+    "mode": "count",
+    "value": null,
+    "scale": "linear"
+   },
+   "y_axis": "left",
+   "y_reverse": false,
+   "y_min": null,
+   "y_max": null,
+   "color": {
+    "mode": "scheme",
+    "scheme": "oranges",
+    "fill": "dark-orange",
+    "scale": "exponential",
+    "exponent": 0.5,
+    "steps": 64,
+    "reverse": false,
+    "min": null,
+    "max": null
+   },
+   "cell_gap": 1,
+   "hide_le": 0,
+   "hide_ge": null,
+   "show_legend": true,
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "hide-ge",
+  "text": "x",
+  "error": "Use a number, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "bucket size 0",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-size",
+  "text": "0",
+  "error": "Use a number above 0, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "bucket size 0.5",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-size",
+  "text": "0.5",
+  "value": 0.5
+ },
+ {
+  "kind": "parse",
+  "name": "bucket size empty",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-size",
+  "text": "",
+  "value": null
+ },
+ {
+  "kind": "parse",
+  "name": "bucket size negative",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-size",
+  "text": "-1",
+  "error": "Use a number above 0, or leave it empty."
+ },
+ {
+  "kind": "parse",
+  "name": "bucket offset negative",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-offset",
+  "text": "-12.5",
+  "value": -12.5
+ },
+ {
+  "kind": "parse",
+  "name": "bucket offset empty",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-offset",
+  "text": "",
+  "error": "Use a number."
+ },
+ {
+  "kind": "parse",
+  "name": "bucket count 0",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-count",
+  "text": "0",
+  "error": "Use a number from 1 to 1000."
+ },
+ {
+  "kind": "parse",
+  "name": "bucket count 1000",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-count",
+  "text": "1000",
+  "value": 1000
+ },
+ {
+  "kind": "parse",
+  "name": "bucket count 1001",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-count",
+  "text": "1001",
+  "error": "Use a number from 1 to 1000."
+ },
+ {
+  "kind": "parse",
+  "name": "bucket count 2.5",
+  "type": "histogram",
+  "options": {
+   "bucket_count": 30,
+   "bucket_size": null,
+   "bucket_offset": 0,
+   "combine": false,
+   "stacking": "none",
+   "line_width": 1,
+   "fill_opacity": 80,
+   "legend": {
+    "show": true,
+    "placement": "bottom",
+    "mode": "list",
+    "values": []
+   },
+   "tooltip": {
+    "mode": "single"
+   }
+  },
+  "row": "bucket-count",
+  "text": "2.5",
+  "error": "Use a whole number."
+ },
+ {
+  "kind": "parse",
+  "name": "width 9",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "row": "col-width",
+  "text": "9",
+  "error": "Use a number from 10 to 4000."
+ },
+ {
+  "kind": "parse",
+  "name": "width 10",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "row": "col-width",
+  "text": "10",
+  "value": 10
+ },
+ {
+  "kind": "parse",
+  "name": "width 4001",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "row": "col-width",
+  "text": "4001",
+  "error": "Use a number from 10 to 4000."
+ },
+ {
+  "kind": "parse",
+  "name": "width empty",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "row": "col-width",
+  "text": "",
+  "value": null
+ },
+ {
+  "kind": "parse",
+  "name": "display name empty",
+  "type": "table",
+  "options": {
+   "show_header": true,
+   "sort": []
+  },
+  "row": "display-name",
+  "text": "",
+  "value": null
+ }
+]

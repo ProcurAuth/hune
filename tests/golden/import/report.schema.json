@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Report of hune import-grafana, report_version 1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "report_version", "hune_version", "created_at", "mode", "input", "options", "totals",
+    "not_imported", "folders", "dashboards", "other_items", "redirects", "exit_code"
+  ],
+  "properties": {
+    "report_version": { "const": 1 },
+    "hune_version": { "type": "string" },
+    "created_at": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$" },
+    "mode": { "enum": ["dry_run", "write"] },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dir", "grafana_version", "clickhouse_plugin_version", "files", "ignored_files"],
+      "properties": {
+        "dir": { "type": "string" },
+        "grafana_version": { "type": ["string", "null"] },
+        "clickhouse_plugin_version": { "type": ["string", "null"] },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "sha256", "form"],
+            "properties": {
+              "name": { "type": "string" },
+              "sha256": { "type": ["string", "null"] },
+              "form": { "enum": ["v1", "v2alpha1", "v2beta1"] }
+            }
+          }
+        },
+        "ignored_files": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "options": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_map", "link_prefix", "folders_file", "accept_file", "write", "replace"],
+      "properties": {
+        "source_map": { "type": "object", "additionalProperties": { "type": "string" } },
+        "link_prefix": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "required": ["old", "new"],
+          "properties": { "old": { "type": "string" }, "new": { "type": "string" } }
+        },
+        "folders_file": { "type": ["string", "null"] },
+        "accept_file": { "type": ["string", "null"] },
+        "write": { "type": "boolean" },
+        "replace": { "type": "boolean" }
+      }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dashboards", "panels", "mapped", "changed", "dropped", "unsupported", "metadata",
+        "accepted", "unaccepted", "stale_accept_lines"
+      ],
+      "properties": {
+        "dashboards": { "type": "integer", "minimum": 0 },
+        "panels": { "type": "integer", "minimum": 0 },
+        "mapped": { "type": "integer", "minimum": 0 },
+        "changed": { "type": "integer", "minimum": 0 },
+        "dropped": { "type": "integer", "minimum": 0 },
+        "unsupported": { "type": "integer", "minimum": 0 },
+        "metadata": { "type": "integer", "minimum": 0 },
+        "accepted": { "type": "integer", "minimum": 0 },
+        "unaccepted": { "type": "integer", "minimum": 0 },
+        "stale_accept_lines": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "not_imported": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["history", "public_dashboards", "short_links"],
+      "properties": {
+        "history": { "type": "string" },
+        "public_dashboards": { "type": "integer", "minimum": 0 },
+        "short_links": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "folders": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["grafana_uid", "id", "title", "result"],
+        "properties": {
+          "grafana_uid": { "type": ["string", "null"] },
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "result": { "enum": ["exists", "would_create", "created", "would_rename", "renamed", "refused_title"] }
+        }
+      }
+    },
+    "dashboards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["grafana_uid", "uid", "folder", "title", "panels", "metadata", "result", "etag", "items"],
+        "properties": {
+          "grafana_uid": { "type": "string" },
+          "uid": { "type": "string" },
+          "folder": { "type": "string" },
+          "title": { "type": "string" },
+          "panels": { "type": "integer", "minimum": 0 },
+          "metadata": { "type": "integer", "minimum": 0 },
+          "result": {
+            "enum": [
+              "would_write", "would_refuse", "unchanged", "written", "replaced", "moved",
+              "moved_replaced", "refused_exists", "blocked", "not_imported", "store_error"
+            ]
+          },
+          "etag": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+          "items": { "type": "array", "items": { "$ref": "#/$defs/item" } }
+        }
+      }
+    },
+    "other_items": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+    "redirects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["from", "to"],
+        "properties": { "from": { "type": "string" }, "to": { "type": "string" } }
+      }
+    },
+    "exit_code": { "enum": [0, 1, 3] }
+  },
+  "$defs": {
+    "item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "class", "panel_id", "panel_title", "member", "reason", "fallback", "value", "truncated", "accepted"],
+      "properties": {
+        "id": { "type": "string" },
+        "class": { "enum": ["changed", "dropped", "unsupported"] },
+        "panel_id": { "type": ["integer", "null"] },
+        "panel_title": { "type": ["string", "null"] },
+        "member": { "type": "string" },
+        "reason": { "type": "string" },
+        "fallback": { "type": ["string", "null"] },
+        "value": { "type": ["string", "null"] },
+        "truncated": { "type": "boolean" },
+        "accepted": { "type": "boolean" }
+      }
+    }
+  }
+}

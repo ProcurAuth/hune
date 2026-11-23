@@ -1,0 +1,1 @@
+SELECT floor(extract(epoch from ts)/3.1536e+07)*3.1536e+07 FROM t

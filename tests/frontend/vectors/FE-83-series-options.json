@@ -1,0 +1,96 @@
+{
+ "id": "FE-83",
+ "about": "The gradient modes (P10) and the cosmetic series options (P14) of a time series and a bar chart (4.18, 4.28, 4.30, 9.19). The values are those of Grafana 12.4.2, measured on 2026-11-22 with probes of the canvas calls in temporary dashboards of the folder hune-parity (dpr 1 and 2, both themes). Colours are [r, g, b, alpha]. A plot is 8 to 179 px high in a canvas of 499 x 200 px (a bar chart: 8 to 169 px).",
+ "hue": [
+  { "color": "#73BF69", "dark": ["#9af3ae", "#719a42"], "light": ["#9af3ae", "#8ab757"] },
+  { "color": "#F2495C", "dark": ["#ffa688", "#df107d"], "light": ["#ffa688", "#f03196"] },
+  { "color": "#56A64B", "dark": ["#76e08c", "#557133"], "light": ["#76e08c", "#6f9443"] }
+ ],
+ "gradients": [
+  { "name": "opacity, fill 50", "mode": "opacity", "part": "fill", "color": "#73BF69", "alpha": 0.5, "dark": true, "ends": [8, 179], "scale": [2, 98], "from": 8, "to": 179, "stops": [[0, [115, 191, 105, 0.5]], [1, [115, 191, 105, 0]]] },
+  { "name": "opacity, the line keeps the plain colour", "mode": "opacity", "part": "line", "color": "#73BF69", "alpha": 1, "dark": true, "ends": [8, 179], "scale": [2, 98], "plain": true },
+  { "name": "hue, fill 50, dark", "mode": "hue", "part": "fill", "color": "#73BF69", "alpha": 0.5, "dark": true, "ends": [8, 179], "scale": [2, 98], "from": 8, "to": 179, "stops": [[0, [154, 243, 174, 0.5]], [1, [113, 154, 66, 0.5]]] },
+  { "name": "hue, the line, light", "mode": "hue", "part": "line", "color": "#73BF69", "alpha": 1, "dark": false, "ends": [8, 179], "scale": [2, 98], "from": 8, "to": 179, "stops": [[0, [154, 243, 174, 1]], [1, [138, 183, 87, 1]]] },
+  { "name": "hue, fill 40, red, dark", "mode": "hue", "part": "fill", "color": "#F2495C", "alpha": 0.4, "dark": true, "ends": [8, 179], "scale": [2, 98], "from": 8, "to": 179, "stops": [[0, [255, 166, 136, 0.4]], [1, [223, 16, 125, 0.4]]] },
+  { "name": "hue, bar chart fill 61", "mode": "hue", "part": "fill", "color": "#73BF69", "alpha": 0.61, "dark": true, "ends": [8, 169], "scale": [0, 43], "from": 8, "to": 169, "stops": [[0, [154, 243, 174, 0.61]], [1, [113, 154, 66, 0.61]]] },
+  { "name": "scheme, Green-Yellow-Red, fill 30, dark", "mode": "scheme", "part": "fill", "color": "#73BF69", "alpha": 0.3, "dark": true, "config": { "color": { "mode": "continuous_gr_yl_rd", "fixed": null }, "set": {} }, "raw": [0, 100], "ends": [8, 179], "scale": [0, 110], "from": 179, "to": 24, "stops": [[0, [115, 191, 105, 0.3]], [0.5, [250, 222, 42, 0.3]], [1, [242, 73, 92, 0.3]]] },
+  { "name": "scheme, Green-Yellow-Red, the line, light", "mode": "scheme", "part": "line", "color": "#56A64B", "alpha": 1, "dark": false, "config": { "color": { "mode": "continuous_gr_yl_rd", "fixed": null }, "set": {} }, "raw": [0, 100], "ends": [8, 179], "scale": [0, 110], "from": 179, "to": 24, "stops": [[0, [86, 166, 75, 1]], [0.5, [242, 204, 12, 1]], [1, [224, 47, 68, 1]]] },
+  { "name": "scheme, absolute thresholds", "mode": "scheme", "part": "fill", "color": "#73BF69", "alpha": 0.3, "dark": true, "config": { "color": { "mode": "thresholds", "fixed": null }, "thresholds": { "mode": "absolute", "steps": [{ "value": null, "color": "green" }, { "value": 40, "color": "#EAB839" }, { "value": 70, "color": "red" }] }, "set": {} }, "raw": [0, 100], "ends": [8, 179], "scale": [0, 110], "from": 179, "to": 70, "stops": [[0, [115, 191, 105, 0.3]], [0.57, [115, 191, 105, 0.3]], [0.57, [234, 184, 57, 0.3]], [1, [234, 184, 57, 0.3]], [1, [242, 73, 92, 0.3]]] },
+  { "name": "scheme, percentage thresholds, light", "mode": "scheme", "part": "line", "color": "#56A64B", "alpha": 1, "dark": false, "config": { "color": { "mode": "thresholds", "fixed": null }, "thresholds": { "mode": "percentage", "steps": [{ "value": null, "color": "green" }, { "value": 50, "color": "#EAB839" }, { "value": 80, "color": "red" }] }, "set": {} }, "raw": [0, 100], "ends": [8, 179], "scale": [0, 110], "from": 179, "to": 55, "stops": [[0, [86, 166, 75, 1]], [0.63, [86, 166, 75, 1]], [0.63, [234, 184, 57, 1]], [1, [234, 184, 57, 1]], [1, [224, 47, 68, 1]]] },
+  { "name": "scheme, Blue-Purple with min 20 and max 60", "mode": "scheme", "part": "fill", "color": "#5794F2", "alpha": 0.3, "dark": true, "config": { "color": { "mode": "continuous_bl_pu", "fixed": null }, "set": { "min": 20, "max": 60 } }, "raw": [10, 90], "ends": [8, 179], "scale": [20, 60], "from": 179, "to": 8, "stops": [[0, [87, 148, 242, 0.3]], [1, [184, 119, 217, 0.3]]] },
+  { "name": "scheme, Blue-Purple with min 20 and max 60, light", "mode": "scheme", "part": "line", "color": "#3274D9", "alpha": 1, "dark": false, "config": { "color": { "mode": "continuous_bl_pu", "fixed": null }, "set": { "min": 20, "max": 60 } }, "raw": [10, 90], "ends": [8, 179], "scale": [20, 60], "from": 179, "to": 8, "stops": [[0, [50, 116, 217, 1]], [1, [163, 82, 204, 1]]] },
+  { "name": "scheme, soft ends 0 and 200", "mode": "scheme", "part": "fill", "color": "#73BF69", "alpha": 0.3, "dark": true, "config": { "color": { "mode": "continuous_gr_yl_rd", "fixed": null }, "set": { "soft_min": 0, "soft_max": 200 } }, "raw": [10, 90], "ends": [8, 179], "scale": [0, 200], "from": 179, "to": 8, "stops": [[0, [115, 191, 105, 0.3]], [0.5, [250, 222, 42, 0.3]], [1, [242, 73, 92, 0.3]]] },
+  { "name": "scheme, bar chart, Green-Yellow-Red, fill 80", "mode": "scheme", "part": "fill", "color": "#73BF69", "alpha": 0.8, "dark": true, "config": { "color": { "mode": "continuous_gr_yl_rd", "fixed": null }, "set": {} }, "raw": [10, 40], "ends": [8, 169], "scale": [0, 43], "from": 132, "to": 19, "stops": [[0, [115, 191, 105, 0.8]], [0.5, [250, 222, 42, 0.8]], [1, [242, 73, 92, 0.8]]] },
+  { "name": "scheme, the fixed mode keeps the plain colour", "mode": "scheme", "part": "fill", "color": "#73BF69", "alpha": 0.3, "dark": true, "config": { "color": { "mode": "fixed", "fixed": "#73BF69" }, "set": {} }, "raw": [10, 90], "ends": [8, 179], "scale": [2, 98], "plain": true },
+  { "name": "scheme, fill 0: the stops have the alpha 0", "mode": "scheme", "part": "fill", "color": "#73BF69", "alpha": 0, "dark": true, "config": { "color": { "mode": "thresholds", "fixed": null }, "thresholds": { "mode": "absolute", "steps": [{ "value": null, "color": "green" }, { "value": 40, "color": "#EAB839" }, { "value": 70, "color": "red" }] }, "set": {} }, "raw": [0, 100], "ends": [8, 179], "scale": [0, 110], "from": 179, "to": 70, "stops": [[0, [115, 191, 105, 0]], [0.57, [115, 191, 105, 0]], [0.57, [234, 184, 57, 0]], [1, [234, 184, 57, 0]], [1, [242, 73, 92, 0]]] }
+ ],
+ "horizontal": [
+  { "name": "opacity, horizontal bars: from the right edge to the left edge", "mode": "opacity", "color": "#73BF69", "alpha": 0.8, "ends": [491, 27], "css": "linear-gradient(90deg, rgba(115, 191, 105, 0) 27.00px, rgba(115, 191, 105, 0.8) 491.00px)" },
+  { "name": "hue, horizontal bars, dark", "mode": "hue", "color": "#73BF69", "alpha": 0.61, "ends": [491, 27], "css": "linear-gradient(90deg, rgba(113, 154, 66, 0.61) 27.00px, rgba(154, 243, 174, 0.61) 491.00px)" }
+ ],
+ "log2": [
+  { "name": "1 to 910 (60 points of 2^(n/6))", "lo": 1, "hi": 910, "plotH": 171, "min": 1, "max": 1024, "grid": 11, "labels": ["1", "4", "16", "64", "256", "1024"] },
+  { "name": "2 to 1000", "lo": 2, "hi": 1000, "plotH": 171, "min": 2, "max": 1024, "grid": 10, "labels": ["4", "16", "64", "256", "1024"] },
+  { "name": "3 to 32.5", "lo": 3, "hi": 32.5, "plotH": 171, "min": 2, "max": 64, "grid": 6, "labels": ["2", "4", "8", "16", "32", "64"] },
+  { "name": "1 to 2^20", "lo": 1, "hi": 1048576, "plotH": 171, "min": 1, "max": 1048576, "grid": 21, "labels": ["1", "16", "256", "4096", "65536", "1048576"] },
+  { "name": "hard ends 3 and 500 round to powers of 2", "lo": 2, "hi": 1000, "ends": { "min": 3, "max": 500 }, "plotH": 171, "min": 2, "max": 512, "grid": 9, "labels": ["2", "8", "32", "128", "512"] },
+  { "name": "one value 8 gives 4 to 16", "lo": 8, "hi": 8, "plotH": 171, "min": 4, "max": 16, "grid": 3, "labels": ["4", "8", "16"] },
+  { "name": "0.1 to 0.69: the decimals of the linear step", "lo": 0.1, "hi": 0.69, "plotH": 171, "min": 0.0625, "max": 1, "grid": 5, "labels": ["0.1", "0.1", "0.3", "0.5", "1"] },
+  { "name": "the unit bytes", "lo": 1, "hi": 1048576, "plotH": 171, "unit": "bytes", "min": 1, "max": 1048576, "grid": 21, "labels": ["1 B", "16 B", "256 B", "4 KiB", "64 KiB", "1 MiB"] }
+ ],
+ "nullThreshold": {
+  "about": "40 values at a step of 1 minute; nulls at the indexes 10, 20 and 21, 30 to 32 (gaps of 2, 3 and 4 minutes between the values around them). Grafana joins a run when the gap is less than the threshold (strict).",
+  "step": 60000,
+  "n": 40,
+  "nulls": [10, 20, 21, 30, 31, 32],
+  "cases": [
+   { "ms": 150000, "joined": [10] },
+   { "ms": 120000, "joined": [] },
+   { "ms": 60000, "joined": [] },
+   { "ms": 180001, "joined": [10, 20, 21] }
+  ]
+ },
+ "barAlignment": {
+  "about": "Grafana 12.4.2 (uPlot bars, 6 bars at a step of 10 minutes on a plot from x = 25): the bar of the time x is [x - w/2, x + w/2] (center), ends at x - lw/2 (before) or starts at x + lw/2 (after). Measured left edges for the bar of x = 25: center 2 (w 46, lw 1), before -21 (w 46, lw 1; w 45, lw 2), after 26 (lw 1), 25 (lw 0), 27 (lw 3); Grafana rounds the edge to the pixel.",
+  "cases": [
+   { "align": "center", "x": 25, "w": 46, "lw": 1, "left": 2 },
+   { "align": "before", "x": 25, "w": 46, "lw": 1, "left": -21.5 },
+   { "align": "before", "x": 25, "w": 45, "lw": 2, "left": -21 },
+   { "align": "after", "x": 25, "w": 46, "lw": 1, "left": 25.5 },
+   { "align": "after", "x": 25, "w": 47, "lw": 0, "left": 25 },
+   { "align": "after", "x": 25, "w": 44, "lw": 3, "left": 26.5 }
+  ]
+ },
+ "centredZero": [
+  { "name": "data 10 to 50", "lo": 10, "hi": 50, "range": [-60, 60] },
+  { "name": "data -20 to 50", "lo": -20, "hi": 50, "range": [-60, 60] },
+  { "name": "soft max 100", "lo": 10, "hi": 50, "ends": { "softMax": 100 }, "range": [-60, 100] },
+  { "name": "all values 0", "lo": 0, "hi": 0, "range": [-100, 100] },
+  { "name": "max 70", "lo": 10, "hi": 50, "ends": { "max": 70 }, "range": [-70, 70] },
+  { "name": "stack tops 10 to 60", "lo": 10, "hi": 60, "range": [-80, 80] },
+  { "name": "bar chart 10 to 40 (soft end 0 on each side with no end)", "lo": 10, "hi": 40, "bar": true, "range": [-48, 48] }
+ ],
+ "dash": [
+  { "set": { "line_dash": "dash", "line_dash_array": [10, 20] }, "dash": [10, 20], "cap": "butt" },
+  { "set": { "line_dash": "dot", "line_dash_array": [0, 20] }, "dash": [0, 20], "cap": "round" },
+  { "set": { "line_dash": "dash", "line_dash_array": [30, 3, 3] }, "dash": [30, 3, 3], "cap": "butt" },
+  { "set": { "line_dash": "dot", "line_dash_array": [10, 10] }, "dash": [10, 10], "cap": "round" },
+  { "set": { "line_dash": "dash" }, "dash": [10, 10], "cap": "butt" },
+  { "set": { "line_dash": "dot" }, "dash": [0, 10], "cap": "round" },
+  { "set": { "line_dash_array": [20, 10] }, "dash": [20, 10], "cap": "butt" },
+  { "set": { "line_dash": "solid", "line_dash_array": [20, 10] }, "dash": null, "cap": null },
+  { "set": {}, "dash": null, "cap": null }
+ ],
+ "axes": {
+  "about": "Grafana 12.4.2: axisWidth W makes the gutter W px (W + 20 with a label); the labels stay 5 px before the plot. axisBorderShow draws a line on the edge of the plot from its top to its bottom and a tick of 4 px outside at each tick, in the colour of the axis; the labels are then 9 px from the plot and the gutter does not change. axisColorMode series gives the labels, the ticks and the line the colour of the first series of the scale.",
+  "width": [
+   { "side": "left", "width": 80, "title": false, "plotEdge": 80 },
+   { "side": "left", "width": 3, "title": true, "plotEdge": 23 },
+   { "side": "left", "width": 40, "title": true, "plotEdge": 60 },
+   { "side": "right", "width": 60, "title": false, "plotEdge": 60 }
+  ],
+  "tick": 4,
+  "labelGapBorder": 9,
+  "labelGap": 5
+ }
+}

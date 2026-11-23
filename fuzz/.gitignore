@@ -1,0 +1,6 @@
+target
+artifacts
+coverage
+# The corpus directories keep the seeds only (fuzz/seed_corpus.py). The inputs that a run finds stay local.
+corpus/*/*
+!corpus/*/seed-*

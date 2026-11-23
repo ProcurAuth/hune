@@ -1,0 +1,1410 @@
+{
+ "vectors": [
+  {
+   "name": "load: three queries start in the order of the queries",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "C",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B",
+       "1:C"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "C",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      },
+      "failed": ""
+     }
+    }
+   ]
+  },
+  {
+   "name": "a hidden query never starts",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": true
+     },
+     {
+      "ref": "C",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:C"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "C",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "all queries hidden: no request, the state empty",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": true
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": true
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "empty"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a hidden first query: the next one runs",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": true
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a failed query gives a partial result",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "C",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B",
+       "1:C"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "B",
+     "status": 422,
+     "code": "sql_invalid",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "C",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      },
+      "failed": "B"
+     }
+    }
+   ]
+  },
+  {
+   "name": "all queries fail: the state error",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "A",
+     "status": 503,
+     "code": "source_busy",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      },
+      "failed": "A"
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "B",
+     "status": 422,
+     "code": "sql_invalid",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "error"
+      },
+      "failed": "A,B"
+     }
+    }
+   ]
+  },
+  {
+   "name": "an error of the request goes to all the queries (403)",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "C",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B",
+       "1:C"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "A",
+     "status": 403,
+     "code": "forbidden",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "error"
+      },
+      "failed": "A,B,C"
+     }
+    }
+   ]
+  },
+  {
+   "name": "at most 6 requests at the same time, in the order of the document",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "C",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "D",
+      "uses": [],
+      "hide": false
+     }
+    ],
+    "2": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "C",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "D",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1,
+      2
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B",
+       "1:C",
+       "1:D",
+       "2:A",
+       "2:B"
+      ],
+      "states": {
+       "1": "loading",
+       "2": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [
+       "2:C"
+      ],
+      "states": {}
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [
+       "2:D"
+      ],
+      "states": {}
+     }
+    }
+   ]
+  },
+  {
+   "name": "a new range runs each visible query once",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    },
+    {
+     "do": "range",
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a refresh aborts the requests in flight and runs each query again",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "refresh",
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a variable that one SQL names runs one query",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [
+       "a"
+      ],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [
+       "b"
+      ],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    },
+    {
+     "do": "select",
+     "name": "a",
+     "value": "b",
+     "expect": {
+      "started": [
+       "1:A"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a variable that two SQL name runs both queries",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [
+       "a"
+      ],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [
+       "a"
+      ],
+      "hide": false
+     },
+     {
+      "ref": "C",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B",
+       "1:C"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "C",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    },
+    {
+     "do": "select",
+     "name": "a",
+     "value": "c",
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a variable change aborts only the query that names it",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [
+       "a"
+      ],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "select",
+     "name": "a",
+     "value": "b",
+     "expect": {
+      "started": [
+       "1:A"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a variable that no SQL names starts nothing",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [
+       "a"
+      ],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    },
+    {
+     "do": "select",
+     "name": "b",
+     "value": "y",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a retry runs all the visible queries",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "A",
+     "status": 422,
+     "code": "sql_invalid",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "B",
+     "status": 422,
+     "code": "sql_invalid",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "error"
+      },
+      "failed": "A,B"
+     }
+    },
+    {
+     "do": "retry",
+     "id": 1,
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a failed query runs again at the next trigger, not before",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [
+       "a"
+      ],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [
+       "b"
+      ],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "B",
+     "status": 422,
+     "code": "sql_invalid",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      },
+      "failed": "B"
+     }
+    },
+    {
+     "do": "select",
+     "name": "a",
+     "value": "b",
+     "expect": {
+      "started": [
+       "1:A"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "ready"
+      },
+      "failed": "B"
+     }
+    },
+    {
+     "do": "range",
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "the view of one panel runs the visible queries of that panel only",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ],
+    "2": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": true
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "view",
+     "id": 2,
+     "expect": {
+      "started": [
+       "2:A"
+      ],
+      "states": {
+       "2": "loading",
+       "1": "idle"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "a panel out of view starts no request",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ],
+    "2": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      2
+     ],
+     "expect": {
+      "started": [
+       "2:A",
+       "2:B"
+      ],
+      "states": {
+       "2": "loading",
+       "1": "idle"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "name": "the queue keeps the order of the document across panels",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ],
+    "2": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ],
+    "3": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ],
+    "4": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ],
+    "5": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B",
+       "2:A",
+       "2:B",
+       "3:A",
+       "3:B"
+      ],
+      "states": {
+       "4": "queued",
+       "5": "queued"
+      }
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "A",
+     "expect": {
+      "started": [
+       "4:A"
+      ],
+      "states": {}
+     }
+    },
+    {
+     "do": "answer",
+     "id": 1,
+     "ref": "B",
+     "expect": {
+      "started": [
+       "4:B"
+      ],
+      "states": {}
+     }
+    },
+    {
+     "do": "answer",
+     "id": 2,
+     "ref": "A",
+     "expect": {
+      "started": [
+       "5:A"
+      ],
+      "states": {}
+     }
+    },
+    {
+     "do": "answer",
+     "id": 2,
+     "ref": "B",
+     "expect": {
+      "started": [
+       "5:B"
+      ],
+      "states": {}
+     }
+    }
+   ]
+  },
+  {
+   "name": "409 dashboard_changed stops the page: no more request and the stale event",
+   "panels": {
+    "1": [
+     {
+      "ref": "A",
+      "uses": [],
+      "hide": false
+     },
+     {
+      "ref": "B",
+      "uses": [],
+      "hide": false
+     }
+    ]
+   },
+   "events": [
+    {
+     "do": "show",
+     "ids": [
+      1
+     ],
+     "expect": {
+      "started": [
+       "1:A",
+       "1:B"
+      ],
+      "states": {
+       "1": "loading"
+      }
+     }
+    },
+    {
+     "do": "fail",
+     "id": 1,
+     "ref": "A",
+     "status": 409,
+     "code": "dashboard_changed",
+     "expect": {
+      "started": [],
+      "states": {
+       "1": "idle"
+      },
+      "stale": true
+     }
+    }
+   ]
+  }
+ ]
+}

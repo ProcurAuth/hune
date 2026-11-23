@@ -1,0 +1,45 @@
+{
+  "id": "var-query-multi-empty-selection-string",
+  "tags": [
+    "var:query-multi",
+    "edge:empty-selection"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE h = '$host'",
+  "variables": [
+    {
+      "name": "host",
+      "kind": "query",
+      "options": [],
+      "multi": true,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "host": {
+      "all": false,
+      "values": []
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE h = ''''",
+  "sent_sql": "SELECT 1 WHERE h = ''''",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana writes the list with its own quote marks inside the string, so the SQL text breaks. Hune gives a document error for a list in a string with no format csv.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  }
+}

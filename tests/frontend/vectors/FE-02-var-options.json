@@ -1,0 +1,1432 @@
+{
+ "id": "FE-02",
+ "build": [
+  {
+   "name": "named groups value and text",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": "/^(?<value>\\d+)-(?<text>[a-z]+)$/",
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "10-abc",
+     "text": "10-abc"
+    },
+    {
+     "value": "x",
+     "text": "nomatch"
+    }
+   ],
+   "expect": [
+    {
+     "value": "10",
+     "text": "abc"
+    }
+   ]
+  },
+  {
+   "name": "plain regex is an exact match",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": "a.*",
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "abc",
+     "text": "abc"
+    },
+    {
+     "value": "xabc",
+     "text": "xabc"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    }
+   ],
+   "expect": [
+    {
+     "value": "abc",
+     "text": "abc"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    }
+   ]
+  },
+  {
+   "name": "first group sets both",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": "/^v(\\d+)$/",
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "v1",
+     "text": "v1"
+    },
+    {
+     "value": "v22",
+     "text": "v22"
+    },
+    {
+     "value": "w3",
+     "text": "w3"
+    }
+   ],
+   "expect": [
+    {
+     "value": "1",
+     "text": "1"
+    },
+    {
+     "value": "22",
+     "text": "22"
+    }
+   ]
+  },
+  {
+   "name": "flag g gives one option for each match",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": "/(\\d)/g",
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "a1b2",
+     "text": "a1b2"
+    },
+    {
+     "value": "zz",
+     "text": "zz"
+    }
+   ],
+   "expect": [
+    {
+     "value": "1",
+     "text": "1"
+    },
+    {
+     "value": "2",
+     "text": "2"
+    }
+   ]
+  },
+  {
+   "name": "duplicates keep the first",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "a",
+     "text": "first"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "a",
+     "text": "second"
+    }
+   ],
+   "expect": [
+    {
+     "value": "a",
+     "text": "first"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ]
+  },
+  {
+   "name": "regex then duplicates",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": "/^(\\w)\\d$/",
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "a1",
+     "text": "a1"
+    },
+    {
+     "value": "a2",
+     "text": "a2"
+    },
+    {
+     "value": "b1",
+     "text": "b1"
+    }
+   ],
+   "expect": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ]
+  },
+  {
+   "name": "alpha_asc code unit order",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "alpha_asc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "B",
+     "text": "B"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "A",
+     "text": "A"
+    }
+   ],
+   "expect": [
+    {
+     "value": "A",
+     "text": "A"
+    },
+    {
+     "value": "B",
+     "text": "B"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ]
+  },
+  {
+   "name": "alpha_desc",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "alpha_desc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "B",
+     "text": "B"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "A",
+     "text": "A"
+    }
+   ],
+   "expect": [
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "B",
+     "text": "B"
+    },
+    {
+     "value": "A",
+     "text": "A"
+    }
+   ]
+  },
+  {
+   "name": "alpha_ci_asc is stable",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "alpha_ci_asc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "B",
+     "text": "B"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "A",
+     "text": "A"
+    }
+   ],
+   "expect": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "A",
+     "text": "A"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "B",
+     "text": "B"
+    }
+   ]
+  },
+  {
+   "name": "alpha_ci_desc",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "alpha_ci_desc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "B",
+     "text": "B"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "A",
+     "text": "A"
+    }
+   ],
+   "expect": [
+    {
+     "value": "B",
+     "text": "B"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "A",
+     "text": "A"
+    }
+   ]
+  },
+  {
+   "name": "num_asc, no number last",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "num_asc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "x10",
+     "text": "x10"
+    },
+    {
+     "value": "x9",
+     "text": "x9"
+    },
+    {
+     "value": "none",
+     "text": "none"
+    },
+    {
+     "value": "x-2.5",
+     "text": "x-2.5"
+    }
+   ],
+   "expect": [
+    {
+     "value": "x-2.5",
+     "text": "x-2.5"
+    },
+    {
+     "value": "x9",
+     "text": "x9"
+    },
+    {
+     "value": "x10",
+     "text": "x10"
+    },
+    {
+     "value": "none",
+     "text": "none"
+    }
+   ]
+  },
+  {
+   "name": "num_desc, no number last",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "num_desc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "x10",
+     "text": "x10"
+    },
+    {
+     "value": "none",
+     "text": "none"
+    },
+    {
+     "value": "x9",
+     "text": "x9"
+    },
+    {
+     "value": "x-2.5",
+     "text": "x-2.5"
+    }
+   ],
+   "expect": [
+    {
+     "value": "x10",
+     "text": "x10"
+    },
+    {
+     "value": "x9",
+     "text": "x9"
+    },
+    {
+     "value": "x-2.5",
+     "text": "x-2.5"
+    },
+    {
+     "value": "none",
+     "text": "none"
+    }
+   ]
+  },
+  {
+   "name": "natural_asc",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "natural_asc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "a10",
+     "text": "a10"
+    },
+    {
+     "value": "a2",
+     "text": "a2"
+    },
+    {
+     "value": "a1",
+     "text": "a1"
+    }
+   ],
+   "expect": [
+    {
+     "value": "a1",
+     "text": "a1"
+    },
+    {
+     "value": "a2",
+     "text": "a2"
+    },
+    {
+     "value": "a10",
+     "text": "a10"
+    }
+   ]
+  },
+  {
+   "name": "natural_desc",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "natural_desc",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "a1",
+     "text": "a1"
+    },
+    {
+     "value": "a10",
+     "text": "a10"
+    },
+    {
+     "value": "a2",
+     "text": "a2"
+    }
+   ],
+   "expect": [
+    {
+     "value": "a10",
+     "text": "a10"
+    },
+    {
+     "value": "a2",
+     "text": "a2"
+    },
+    {
+     "value": "a1",
+     "text": "a1"
+    }
+   ]
+  },
+  {
+   "name": "none keeps the order",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "raw": [
+    {
+     "value": "c",
+     "text": "c"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "expect": [
+    {
+     "value": "c",
+     "text": "c"
+    },
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ]
+  }
+ ],
+ "selection": [
+  {
+   "name": "default All",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": true,
+    "include_all": true,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": [
+     "$__all"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   }
+  },
+  {
+   "name": "URL values drop the non options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": true,
+    "include_all": true,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": [
+     "$__all"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": [
+    "a",
+    "zzz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   }
+  },
+  {
+   "name": "URL with no valid value takes the default",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": true,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": [
+     "b"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": [
+    "zzz"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   }
+  },
+  {
+   "name": "default not an option, first option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": [
+     "zzz"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   }
+  },
+  {
+   "name": "default not an option, All first when include_all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": true,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": [
+     "zzz"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": true,
+    "values": []
+   }
+  },
+  {
+   "name": "empty default means the first option",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   }
+  },
+  {
+   "name": "not multi keeps one value",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": [
+    "b",
+    "a"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   }
+  },
+  {
+   "name": "All in the URL without include_all",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": [
+     "b"
+    ]
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "url": [
+    "$__all"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "b"
+    ]
+   }
+  },
+  {
+   "name": "new options drop the current value",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": true,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "c",
+     "text": "c"
+    },
+    {
+     "value": "d",
+     "text": "d"
+    }
+   ],
+   "url": null,
+   "current": [
+    "a",
+    "c"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "c"
+    ]
+   }
+  },
+  {
+   "name": "query variable with no option has the empty selection",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": []
+   }
+  },
+  {
+   "name": "custom variable",
+   "variable": {
+    "kind": "custom",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": [
+     "prod"
+    ]
+   },
+   "options": [
+    {
+     "value": "prod",
+     "text": "prod"
+    },
+    {
+     "value": "preprod",
+     "text": "preprod"
+    }
+   ],
+   "url": [
+    "preprod"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "preprod"
+    ]
+   }
+  },
+  {
+   "name": "text variable default",
+   "variable": {
+    "kind": "text",
+    "name": "w",
+    "value_type": "text",
+    "default": "x"
+   },
+   "options": [],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "x"
+    ]
+   }
+  },
+  {
+   "name": "text variable URL",
+   "variable": {
+    "kind": "text",
+    "name": "w",
+    "value_type": "text",
+    "default": "x"
+   },
+   "options": [],
+   "url": [
+    "y"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "y"
+    ]
+   }
+  },
+  {
+   "name": "interval, no value: Auto is the first option",
+   "variable": {
+    "kind": "interval",
+    "name": "b",
+    "intervals": [
+     "1m",
+     "1h",
+     "7d"
+    ],
+    "auto": true,
+    "auto_count": 30,
+    "auto_min": "10s",
+    "default": null
+   },
+   "options": [
+    {
+     "value": "$__auto",
+     "text": "Auto"
+    },
+    {
+     "value": "1m",
+     "text": "1m"
+    },
+    {
+     "value": "1h",
+     "text": "1h"
+    },
+    {
+     "value": "7d",
+     "text": "7d"
+    }
+   ],
+   "url": null,
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "$__auto"
+    ]
+   }
+  },
+  {
+   "name": "interval, a URL item",
+   "variable": {
+    "kind": "interval",
+    "name": "b",
+    "intervals": [
+     "1m",
+     "1h",
+     "7d"
+    ],
+    "auto": true,
+    "auto_count": 30,
+    "auto_min": "10s",
+    "default": null
+   },
+   "options": [
+    {
+     "value": "$__auto",
+     "text": "Auto"
+    },
+    {
+     "value": "1m",
+     "text": "1m"
+    },
+    {
+     "value": "1h",
+     "text": "1h"
+    },
+    {
+     "value": "7d",
+     "text": "7d"
+    }
+   ],
+   "url": [
+    "1h"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "1h"
+    ]
+   }
+  },
+  {
+   "name": "interval, a URL value that is not an item is dropped",
+   "variable": {
+    "kind": "interval",
+    "name": "b",
+    "intervals": [
+     "1m",
+     "1h",
+     "7d"
+    ],
+    "auto": true,
+    "auto_count": 30,
+    "auto_min": "10s",
+    "default": "7d"
+   },
+   "options": [
+    {
+     "value": "$__auto",
+     "text": "Auto"
+    },
+    {
+     "value": "1m",
+     "text": "1m"
+    },
+    {
+     "value": "1h",
+     "text": "1h"
+    },
+    {
+     "value": "7d",
+     "text": "7d"
+    }
+   ],
+   "url": [
+    "7m"
+   ],
+   "current": null,
+   "expect": {
+    "all": false,
+    "values": [
+     "7d"
+    ]
+   }
+  },
+  {
+   "name": "constant, the URL value is ignored",
+   "variable": {
+    "kind": "constant",
+    "name": "k",
+    "value": "abc",
+    "hide": "variable"
+   },
+   "options": [],
+   "url": [
+    "zzz"
+   ],
+   "current": [
+    "x"
+   ],
+   "expect": {
+    "all": false,
+    "values": [
+     "abc"
+    ]
+   }
+  }
+ ],
+ "request": [
+  {
+   "name": "custom All",
+   "variable": {
+    "kind": "custom",
+    "name": "v",
+    "multi": false,
+    "include_all": true,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "selection": {
+    "all": true,
+    "values": []
+   },
+   "expect": {
+    "all": true,
+    "values": []
+   }
+  },
+  {
+   "name": "query All without all_value holds the options",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": true,
+    "include_all": true,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "selection": {
+    "all": true,
+    "values": []
+   },
+   "expect": {
+    "all": true,
+    "values": [
+     "a",
+     "b"
+    ]
+   }
+  },
+  {
+   "name": "query All with all_value",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": true,
+    "include_all": true,
+    "all_value": "1=1",
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "selection": {
+    "all": true,
+    "values": []
+   },
+   "expect": {
+    "all": true,
+    "values": []
+   }
+  },
+  {
+   "name": "query values",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": true,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [
+    {
+     "value": "a",
+     "text": "a"
+    },
+    {
+     "value": "b",
+     "text": "b"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   },
+   "expect": {
+    "all": false,
+    "values": [
+     "a"
+    ]
+   }
+  },
+  {
+   "name": "query empty selection",
+   "variable": {
+    "kind": "query",
+    "name": "v",
+    "multi": false,
+    "include_all": false,
+    "all_value": null,
+    "sort": "none",
+    "regex": null,
+    "default": []
+   },
+   "options": [],
+   "selection": {
+    "all": false,
+    "values": []
+   },
+   "expect": {
+    "all": false,
+    "values": []
+   }
+  },
+  {
+   "name": "text",
+   "variable": {
+    "kind": "text",
+    "name": "w",
+    "value_type": "text",
+    "default": ""
+   },
+   "options": [],
+   "selection": {
+    "all": false,
+    "values": [
+     "abc"
+    ]
+   },
+   "expect": {
+    "all": false,
+    "values": [
+     "abc"
+    ]
+   }
+  },
+  {
+   "name": "interval, Auto",
+   "variable": {
+    "kind": "interval",
+    "name": "b",
+    "intervals": [
+     "1m",
+     "1h",
+     "7d"
+    ],
+    "auto": true,
+    "auto_count": 30,
+    "auto_min": "10s",
+    "default": null
+   },
+   "options": [
+    {
+     "value": "$__auto",
+     "text": "Auto"
+    },
+    {
+     "value": "1m",
+     "text": "1m"
+    },
+    {
+     "value": "1h",
+     "text": "1h"
+    },
+    {
+     "value": "7d",
+     "text": "7d"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "$__auto"
+    ]
+   },
+   "expect": {
+    "all": false,
+    "values": [
+     "$__auto"
+    ]
+   }
+  },
+  {
+   "name": "constant, the value of the document",
+   "variable": {
+    "kind": "constant",
+    "name": "k",
+    "value": "abc",
+    "hide": "variable"
+   },
+   "options": [],
+   "selection": {
+    "all": false,
+    "values": [
+     "abc"
+    ]
+   },
+   "expect": {
+    "all": false,
+    "values": [
+     "abc"
+    ]
+   }
+  }
+ ],
+ "numberText": {
+  "1": true,
+  "-1.5": true,
+  "1.": false,
+  "": false,
+  "1e3": false,
+  "0.25": true
+ }
+}

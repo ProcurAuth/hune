@@ -1,0 +1,240 @@
+{
+ "id": "FE-13",
+ "cols": [
+  {
+   "name": "host",
+   "kind": "text",
+   "values": [
+    "a",
+    "a",
+    "b"
+   ]
+  },
+  {
+   "name": "metric",
+   "kind": "text",
+   "values": [
+    "cpu",
+    "mem",
+    "cpu"
+   ]
+  },
+  {
+   "name": "value",
+   "kind": "number",
+   "values": [
+    10,
+    20,
+    30
+   ]
+  }
+ ],
+ "cases": [
+  {
+   "name": "worked example of 9.21",
+   "spec": {
+    "kind": "grouping_to_matrix",
+    "column_field": "metric",
+    "row_field": "host",
+    "value_field": "value",
+    "empty_value": "empty"
+   },
+   "expect": {
+    "host\\metric": [
+     "a",
+     "b"
+    ],
+    "cpu": [
+     10,
+     30
+    ],
+    "mem": [
+     20,
+     ""
+    ]
+   }
+  },
+  {
+   "name": "empty_value null",
+   "spec": {
+    "kind": "grouping_to_matrix",
+    "column_field": "metric",
+    "row_field": "host",
+    "value_field": "value",
+    "empty_value": "null"
+   },
+   "expect": {
+    "host\\metric": [
+     "a",
+     "b"
+    ],
+    "cpu": [
+     10,
+     30
+    ],
+    "mem": [
+     20,
+     null
+    ]
+   }
+  },
+  {
+   "name": "empty_value true",
+   "spec": {
+    "kind": "grouping_to_matrix",
+    "column_field": "metric",
+    "row_field": "host",
+    "value_field": "value",
+    "empty_value": "true"
+   },
+   "expect": {
+    "host\\metric": [
+     "a",
+     "b"
+    ],
+    "cpu": [
+     10,
+     30
+    ],
+    "mem": [
+     20,
+     true
+    ]
+   }
+  },
+  {
+   "name": "empty_value false",
+   "spec": {
+    "kind": "grouping_to_matrix",
+    "column_field": "metric",
+    "row_field": "host",
+    "value_field": "value",
+    "empty_value": "false"
+   },
+   "expect": {
+    "host\\metric": [
+     "a",
+     "b"
+    ],
+    "cpu": [
+     10,
+     30
+    ],
+    "mem": [
+     20,
+     false
+    ]
+   }
+  },
+  {
+   "name": "a missing field leaves the fields as they are",
+   "spec": {
+    "kind": "grouping_to_matrix",
+    "column_field": "nope",
+    "row_field": "host",
+    "value_field": "value",
+    "empty_value": "empty"
+   },
+   "unchanged": true
+  }
+ ],
+ "last": {
+  "cols": [
+   {
+    "name": "r",
+    "kind": "text",
+    "values": [
+     "x",
+     "x",
+     "y"
+    ]
+   },
+   {
+    "name": "c",
+    "kind": "text",
+    "values": [
+     "k",
+     "k",
+     "k"
+    ]
+   },
+   {
+    "name": "v",
+    "kind": "number",
+    "values": [
+     1,
+     2,
+     3
+    ]
+   }
+  ],
+  "spec": {
+   "kind": "grouping_to_matrix",
+   "column_field": "c",
+   "row_field": "r",
+   "value_field": "v",
+   "empty_value": "empty"
+  },
+  "expect": {
+   "r\\c": [
+    "x",
+    "y"
+   ],
+   "k": [
+    2,
+    3
+   ]
+  }
+ },
+ "numeric": {
+  "cols": [
+   {
+    "name": "r",
+    "kind": "number",
+    "values": [
+     1,
+     1,
+     "nan",
+     "nan"
+    ]
+   },
+   {
+    "name": "c",
+    "kind": "number",
+    "values": [
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   {
+    "name": "v",
+    "kind": "text",
+    "values": [
+     "p",
+     "q",
+     "r",
+     "s"
+    ]
+   }
+  ],
+  "spec": {
+   "kind": "grouping_to_matrix",
+   "column_field": "c",
+   "row_field": "r",
+   "value_field": "v",
+   "empty_value": "null"
+  },
+  "expect": {
+   "r\\c": [
+    1,
+    "NaN"
+   ],
+   "0": [
+    "q",
+    "s"
+   ]
+  }
+ }
+}

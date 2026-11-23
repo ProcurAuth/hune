@@ -1,0 +1,5 @@
+SELECT $__timeGroupAlias(created_at, $__interval), host, avg(load) AS load
+FROM metrics.node_load
+WHERE $__timeFilter(created_at) AND host IN ($host) AND env = '$env'
+GROUP BY 1, host
+ORDER BY 1

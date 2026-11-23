@@ -1,0 +1,2 @@
+SELECT v FROM t -- $__unixEpochFrom()
+WHERE $__timeFilter(ts)

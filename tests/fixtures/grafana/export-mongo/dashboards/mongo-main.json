@@ -1,0 +1,676 @@
+{
+  "uid": "mongo-main",
+  "title": "MongoDB panels",
+  "description": "Synthetic dashboard of the importer tests: one panel for each MongoDB row of 15.6.",
+  "tags": [
+    "synthetic",
+    "mongodb"
+  ],
+  "schemaVersion": 41,
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "refresh": "",
+  "timezone": "browser",
+  "editable": true,
+  "graphTooltip": 0,
+  "links": [],
+  "annotations": {
+    "list": []
+  },
+  "templating": {
+    "list": [
+      {
+        "type": "custom",
+        "name": "node",
+        "label": "Node",
+        "hide": 0,
+        "query": "node-a,node-b,node-c",
+        "multi": true,
+        "includeAll": true,
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "node-a",
+            "value": "node-a"
+          },
+          {
+            "selected": false,
+            "text": "node-b",
+            "value": "node-b"
+          },
+          {
+            "selected": false,
+            "text": "node-c",
+            "value": "node-c"
+          }
+        ],
+        "skipUrlSync": false
+      },
+      {
+        "type": "custom",
+        "name": "region",
+        "label": "Region",
+        "hide": 0,
+        "query": "eu,us",
+        "multi": false,
+        "includeAll": false,
+        "current": {
+          "selected": true,
+          "text": "eu",
+          "value": "eu"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "eu",
+            "value": "eu"
+          },
+          {
+            "selected": false,
+            "text": "us",
+            "value": "us"
+          }
+        ],
+        "skipUrlSync": false
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "table",
+      "title": "Orders table",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "targets": [
+        {
+          "queryText": "[\n  {\n    \"$match\": {\n      \"ts\": {\n        \"$gte\": \"$__timeFrom\",\n        \"$lte\": \"$__timeTo\"\n      },\n      \"host\": {\n        \"$in\": \"${node:json}\"\n      }\n    }\n  },\n  {\n    \"$project\": {\n      \"_id\": 0,\n      \"host\": 1,\n      \"load\": 1\n    }\n  },\n  {\n    \"$sort\": {\n      \"host\": 1\n    }\n  }\n]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Load by host",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"ts\": {\"$gte\": \"$__timeFrom\", \"$lte\": \"$__timeTo\"}, \"host\": {\"$in\": \"${node:json}\"}}}, {\"$group\": {\"_id\": {\"t\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}, \"host\": \"$host\"}, \"load\": {\"$avg\": \"$load\"}}}, {\"$project\": {\"_id\": 0, \"time\": \"$_id.t\", \"host\": \"$_id.host\", \"load\": 1}}, {\"$sort\": {\"time\": 1}}]",
+          "collection": "node_load",
+          "queryType": "timeseries",
+          "database": "analytics",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Epoch macros",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"epoch_ms\": {\"$gte\": \"$__from\", \"$lte\": \"$__to\"}}}, {\"$limit\": \"$__interval_ms\"}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 4,
+      "type": "table",
+      "title": "No query type",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {}}]",
+          "collection": "orders",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 5,
+      "type": "table",
+      "title": "Wrapper",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"ts\": {\"$gte\": {\"$date\": {\"$numberLong\": \"$__from\"}}, \"$lte\": {\"$date\": {\"$numberLong\": \"$__to\"}}}}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 6,
+      "type": "table",
+      "title": "Bare token",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 16
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"epoch_ms\": {\"$gte\": $__from, \"$lte\": $__to}}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 7,
+      "type": "table",
+      "title": "Refused stage",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {}}, {\"$out\": \"stolen\"}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "Lookup outside the list",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$lookup\": {\"from\": \"secrets\", \"localField\": \"a\", \"foreignField\": \"b\", \"as\": \"c\"}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 9,
+      "type": "table",
+      "title": "Shell syntax",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "targets": [
+        {
+          "queryText": "db.orders.aggregate([{$match: {ts: {$gte: ISODate(\"2026-01-01\")}}}])",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 10,
+      "type": "table",
+      "title": "Binary form",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"b\": {\"$binary\": {\"base64\": \"AA==\", \"subType\": \"00\"}}}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 11,
+      "type": "table",
+      "title": "Placeholder in a key",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 40
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"${node}\": 1}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 12,
+      "type": "table",
+      "title": "Another query type",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 40
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {}}]",
+          "collection": "orders",
+          "queryType": "query",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 13,
+      "type": "table",
+      "title": "Old form",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 48
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"host\": \"[[region]]\"}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 14,
+      "type": "table",
+      "title": "Macro in a string",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 48
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {\"note\": \"from $__timeFrom\"}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 15,
+      "type": "table",
+      "title": "Unmapped data source",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "unmapped-mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 56
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "unmapped-mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 16,
+      "type": "table",
+      "title": "Find object",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 56
+      },
+      "targets": [
+        {
+          "queryText": "{\"filter\": {\"host\": \"a\"}}",
+          "collection": "orders",
+          "queryType": "table",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 17,
+      "type": "table",
+      "title": "SQL member",
+      "datasource": {
+        "type": "haohanyang-mongodb-datasource",
+        "uid": "mongo"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 64
+      },
+      "targets": [
+        {
+          "queryText": "[{\"$match\": {}}]",
+          "collection": "orders",
+          "queryType": "table",
+          "rawSql": "SELECT 1",
+          "datasource": {
+            "type": "haohanyang-mongodb-datasource",
+            "uid": "mongo"
+          },
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    },
+    {
+      "id": 18,
+      "type": "table",
+      "title": "ClickHouse panel",
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 64
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "rawSql": "SELECT 1 AS a",
+          "refId": "A",
+          "queryType": "table",
+          "pluginVersion": "4.5.1"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {}
+    }
+  ]
+}

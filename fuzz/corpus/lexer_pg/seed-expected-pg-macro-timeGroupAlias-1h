@@ -1,0 +1,1 @@
+SELECT floor(extract(epoch from ts)/3600)*3600 AS "time", avg(v) FROM t GROUP BY 1

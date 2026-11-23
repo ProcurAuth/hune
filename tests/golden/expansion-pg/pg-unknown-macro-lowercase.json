@@ -1,0 +1,32 @@
+{
+  "id": "pg-unknown-macro-lowercase",
+  "tags": [
+    "unknown"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT v FROM t WHERE $__timefilter(ts)",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": null,
+  "grafana_error": "interpolation failed: unknown macro \"__timefilter\"",
+  "sent_sql": "SELECT v FROM t WHERE $__timefilter(ts)",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse a name with another case. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

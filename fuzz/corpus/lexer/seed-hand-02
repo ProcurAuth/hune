@@ -1,0 +1,1 @@
+select 'it''s', 'a\'b', "q""n", `b\`c` # no comment

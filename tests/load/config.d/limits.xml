@@ -1,0 +1,4 @@
+<clickhouse>
+    <!-- The load test sends up to 6 queries for each viewer: lift the default limit of 100. -->
+    <max_concurrent_queries>2000</max_concurrent_queries>
+</clickhouse>

@@ -1,0 +1,4 @@
+server {
+  max_connections = 1e3
+  idle_timeout = "30s"
+}

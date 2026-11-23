@@ -1,0 +1,3262 @@
+{
+ "description": "FE-27: the repeat of panels and sections (4.13a, 9.8c). Six sets: the values, the states and the limits, the layout, the keys and the URL forms, the request, the queries of a trigger.",
+ "values": [
+  {
+   "name": "all gives each option in the order of the options",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": true,
+    "values": []
+   },
+   "expect": [
+    "a",
+    "b",
+    "c",
+    "d"
+   ]
+  },
+  {
+   "name": "a subset keeps the order of the options, not of the selection",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "c",
+     "a"
+    ]
+   },
+   "expect": [
+    "a",
+    "c"
+   ]
+  },
+  {
+   "name": "the same set in two orders gives the same copies",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "b",
+     "d",
+     "a"
+    ]
+   },
+   "expect": [
+    "a",
+    "b",
+    "d"
+   ]
+  },
+  {
+   "name": "the same set in another order",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a",
+     "d",
+     "b"
+    ]
+   },
+   "expect": [
+    "a",
+    "b",
+    "d"
+   ]
+  },
+  {
+   "name": "a value that is not an option gives no copy",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "x",
+     "b"
+    ]
+   },
+   "expect": [
+    "b"
+   ]
+  },
+  {
+   "name": "only values that are not options give no copy",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "x",
+     "y"
+    ]
+   },
+   "expect": []
+  },
+  {
+   "name": "a custom variable with options in its own order",
+   "options": [
+    {
+     "value": "2",
+     "text": "Two"
+    },
+    {
+     "value": "1",
+     "text": "One"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "1",
+     "2"
+    ]
+   },
+   "expect": [
+    "2",
+    "1"
+   ]
+  },
+  {
+   "name": "a query variable after the sort: the options come sorted",
+   "options": [
+    {
+     "value": "z",
+     "text": "z"
+    },
+    {
+     "value": "m",
+     "text": "m"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "m",
+     "z"
+    ]
+   },
+   "expect": [
+    "z",
+    "m"
+   ]
+  },
+  {
+   "name": "a repeated value in the selection gives one copy",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": [
+     "a",
+     "a"
+    ]
+   },
+   "expect": [
+    "a"
+   ]
+  },
+  {
+   "name": "an empty selection gives no copy",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Bravo"
+    },
+    {
+     "value": "c",
+     "text": "Charlie"
+    },
+    {
+     "value": "d",
+     "text": "Delta"
+    }
+   ],
+   "selection": {
+    "all": false,
+    "values": []
+   },
+   "expect": []
+  },
+  {
+   "name": "no option gives no copy, also with All",
+   "options": [],
+   "selection": {
+    "all": true,
+    "values": []
+   },
+   "expect": []
+  }
+ ],
+ "states": [
+  {
+   "name": "a panel with 0 values",
+   "kind": "panel",
+   "k": 0,
+   "expect": "empty"
+  },
+  {
+   "name": "a panel with 1 values",
+   "kind": "panel",
+   "k": 1,
+   "expect": "ok"
+  },
+  {
+   "name": "a panel with 24 values",
+   "kind": "panel",
+   "k": 24,
+   "expect": "ok"
+  },
+  {
+   "name": "a panel with 25 values",
+   "kind": "panel",
+   "k": 25,
+   "expect": "limit"
+  },
+  {
+   "name": "a section with 0 values",
+   "kind": "section",
+   "k": 0,
+   "expect": "empty"
+  },
+  {
+   "name": "a section with 1 values",
+   "kind": "section",
+   "k": 1,
+   "expect": "ok"
+  },
+  {
+   "name": "a section with 12 values",
+   "kind": "section",
+   "k": 12,
+   "expect": "ok"
+  },
+  {
+   "name": "a section with 13 values",
+   "kind": "section",
+   "k": 13,
+   "expect": "limit"
+  }
+ ],
+ "walks": [
+  {
+   "name": "the repeats fit: 24 + 24 + 24 + 24 + 24 = 120",
+   "repeats": [
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ]
+   ],
+   "expect": [
+    "ok",
+    "ok",
+    "ok",
+    "ok",
+    "ok"
+   ],
+   "scope": [
+    null,
+    null,
+    null,
+    null,
+    null
+   ]
+  },
+  {
+   "name": "the sixth repeat does not fit and takes nothing; the next one fits",
+   "repeats": [
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     2,
+     0
+    ],
+    [
+     "panel",
+     1,
+     0
+    ]
+   ],
+   "expect": [
+    "ok",
+    "ok",
+    "ok",
+    "ok",
+    "ok",
+    "limit",
+    "limit"
+   ],
+   "scope": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    "dashboard",
+    "dashboard"
+   ]
+  },
+  {
+   "name": "a section costs k times its panels: 12 x 5 = 60, then 12 x 6 does not fit",
+   "repeats": [
+    [
+     "section",
+     12,
+     5
+    ],
+    [
+     "section",
+     12,
+     6
+    ],
+    [
+     "panel",
+     24,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ]
+   ],
+   "expect": [
+    "ok",
+    "limit",
+    "ok",
+    "ok"
+   ],
+   "scope": [
+    null,
+    "dashboard",
+    null,
+    null
+   ]
+  },
+  {
+   "name": "a repeat that is over its own limit takes nothing",
+   "repeats": [
+    [
+     "panel",
+     25,
+     0
+    ],
+    [
+     "panel",
+     24,
+     0
+    ]
+   ],
+   "expect": [
+    "limit",
+    "ok"
+   ],
+   "scope": [
+    "panel",
+    null
+   ]
+  },
+  {
+   "name": "an empty repeat takes nothing",
+   "repeats": [
+    [
+     "panel",
+     0,
+     0
+    ],
+    [
+     "section",
+     12,
+     10
+    ]
+   ],
+   "expect": [
+    "empty",
+    "ok"
+   ],
+   "scope": [
+    null,
+    null
+   ]
+  }
+ ],
+ "layout": [
+  {
+   "dir": "h",
+   "k": 1,
+   "m": null,
+   "h": 3,
+   "c": 1,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 1,
+   "m": 24,
+   "h": 3,
+   "c": 1,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 2,
+   "m": null,
+   "h": 3,
+   "c": 2,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 2,
+   "m": 1,
+   "h": 3,
+   "c": 1,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 3,
+   "m": null,
+   "h": 3,
+   "c": 3,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 3,
+   "m": 1,
+   "h": 3,
+   "c": 1,
+   "q": 3,
+   "rows": 9,
+   "extra": 6,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 4,
+   "m": null,
+   "h": 3,
+   "c": 4,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 4,
+   "m": 24,
+   "h": 3,
+   "c": 4,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 5,
+   "m": null,
+   "h": 3,
+   "c": 4,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 5,
+   "m": 2,
+   "h": 3,
+   "c": 2,
+   "q": 3,
+   "rows": 9,
+   "extra": 6,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 5,
+   "m": 3,
+   "h": 3,
+   "c": 3,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 5,
+   "m": 5,
+   "h": 3,
+   "c": 5,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 6,
+   "m": null,
+   "h": 3,
+   "c": 4,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 6,
+   "m": 3,
+   "h": 3,
+   "c": 3,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 7,
+   "m": null,
+   "h": 3,
+   "c": 4,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 7,
+   "m": 3,
+   "h": 3,
+   "c": 3,
+   "q": 3,
+   "rows": 9,
+   "extra": 6,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     0,
+     2
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 7,
+   "m": 5,
+   "h": 3,
+   "c": 5,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 7,
+   "m": 24,
+   "h": 3,
+   "c": 7,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 12,
+   "m": 1,
+   "h": 3,
+   "c": 1,
+   "q": 12,
+   "rows": 36,
+   "extra": 33,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     0,
+     6
+    ],
+    [
+     0,
+     7
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     0,
+     9
+    ],
+    [
+     0,
+     10
+    ],
+    [
+     0,
+     11
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 12,
+   "m": 5,
+   "h": 3,
+   "c": 5,
+   "q": 3,
+   "rows": 9,
+   "extra": 6,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 12,
+   "m": 24,
+   "h": 3,
+   "c": 12,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     0
+    ],
+    [
+     7,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     9,
+     0
+    ],
+    [
+     10,
+     0
+    ],
+    [
+     11,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 13,
+   "m": 1,
+   "h": 3,
+   "c": 1,
+   "q": 13,
+   "rows": 39,
+   "extra": 36,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     0,
+     6
+    ],
+    [
+     0,
+     7
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     0,
+     9
+    ],
+    [
+     0,
+     10
+    ],
+    [
+     0,
+     11
+    ],
+    [
+     0,
+     12
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 13,
+   "m": 3,
+   "h": 3,
+   "c": 3,
+   "q": 5,
+   "rows": 15,
+   "extra": 12,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     0,
+     4
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 13,
+   "m": 5,
+   "h": 3,
+   "c": 5,
+   "q": 3,
+   "rows": 9,
+   "extra": 6,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 13,
+   "m": 24,
+   "h": 3,
+   "c": 13,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     0
+    ],
+    [
+     7,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     9,
+     0
+    ],
+    [
+     10,
+     0
+    ],
+    [
+     11,
+     0
+    ],
+    [
+     12,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 24,
+   "m": null,
+   "h": 3,
+   "c": 4,
+   "q": 6,
+   "rows": 18,
+   "extra": 15,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     2,
+     5
+    ],
+    [
+     3,
+     5
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 24,
+   "m": 1,
+   "h": 3,
+   "c": 1,
+   "q": 24,
+   "rows": 72,
+   "extra": 69,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     0,
+     6
+    ],
+    [
+     0,
+     7
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     0,
+     9
+    ],
+    [
+     0,
+     10
+    ],
+    [
+     0,
+     11
+    ],
+    [
+     0,
+     12
+    ],
+    [
+     0,
+     13
+    ],
+    [
+     0,
+     14
+    ],
+    [
+     0,
+     15
+    ],
+    [
+     0,
+     16
+    ],
+    [
+     0,
+     17
+    ],
+    [
+     0,
+     18
+    ],
+    [
+     0,
+     19
+    ],
+    [
+     0,
+     20
+    ],
+    [
+     0,
+     21
+    ],
+    [
+     0,
+     22
+    ],
+    [
+     0,
+     23
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 24,
+   "m": 5,
+   "h": 3,
+   "c": 5,
+   "q": 5,
+   "rows": 15,
+   "extra": 12,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     4,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     4,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     3,
+     4
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 24,
+   "m": 24,
+   "h": 3,
+   "c": 24,
+   "q": 1,
+   "rows": 3,
+   "extra": 0,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     0
+    ],
+    [
+     7,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     9,
+     0
+    ],
+    [
+     10,
+     0
+    ],
+    [
+     11,
+     0
+    ],
+    [
+     12,
+     0
+    ],
+    [
+     13,
+     0
+    ],
+    [
+     14,
+     0
+    ],
+    [
+     15,
+     0
+    ],
+    [
+     16,
+     0
+    ],
+    [
+     17,
+     0
+    ],
+    [
+     18,
+     0
+    ],
+    [
+     19,
+     0
+    ],
+    [
+     20,
+     0
+    ],
+    [
+     21,
+     0
+    ],
+    [
+     22,
+     0
+    ],
+    [
+     23,
+     0
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 25,
+   "m": null,
+   "h": 3,
+   "c": 4,
+   "q": 7,
+   "rows": 21,
+   "extra": 18,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     3,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     3,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     2,
+     5
+    ],
+    [
+     3,
+     5
+    ],
+    [
+     0,
+     6
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 25,
+   "m": 1,
+   "h": 3,
+   "c": 1,
+   "q": 25,
+   "rows": 75,
+   "extra": 72,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     0,
+     6
+    ],
+    [
+     0,
+     7
+    ],
+    [
+     0,
+     8
+    ],
+    [
+     0,
+     9
+    ],
+    [
+     0,
+     10
+    ],
+    [
+     0,
+     11
+    ],
+    [
+     0,
+     12
+    ],
+    [
+     0,
+     13
+    ],
+    [
+     0,
+     14
+    ],
+    [
+     0,
+     15
+    ],
+    [
+     0,
+     16
+    ],
+    [
+     0,
+     17
+    ],
+    [
+     0,
+     18
+    ],
+    [
+     0,
+     19
+    ],
+    [
+     0,
+     20
+    ],
+    [
+     0,
+     21
+    ],
+    [
+     0,
+     22
+    ],
+    [
+     0,
+     23
+    ],
+    [
+     0,
+     24
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 25,
+   "m": 3,
+   "h": 3,
+   "c": 3,
+   "q": 9,
+   "rows": 27,
+   "extra": 24,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     1
+    ],
+    [
+     0,
+     2
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     2,
+     2
+    ],
+    [
+     0,
+     3
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     0,
+     4
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     0,
+     5
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     2,
+     5
+    ],
+    [
+     0,
+     6
+    ],
+    [
+     1,
+     6
+    ],
+    [
+     2,
+     6
+    ],
+    [
+     0,
+     7
+    ],
+    [
+     1,
+     7
+    ],
+    [
+     2,
+     7
+    ],
+    [
+     0,
+     8
+    ]
+   ]
+  },
+  {
+   "dir": "h",
+   "k": 25,
+   "m": 24,
+   "h": 3,
+   "c": 24,
+   "q": 2,
+   "rows": 6,
+   "extra": 3,
+   "cells": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     0
+    ],
+    [
+     2,
+     0
+    ],
+    [
+     3,
+     0
+    ],
+    [
+     4,
+     0
+    ],
+    [
+     5,
+     0
+    ],
+    [
+     6,
+     0
+    ],
+    [
+     7,
+     0
+    ],
+    [
+     8,
+     0
+    ],
+    [
+     9,
+     0
+    ],
+    [
+     10,
+     0
+    ],
+    [
+     11,
+     0
+    ],
+    [
+     12,
+     0
+    ],
+    [
+     13,
+     0
+    ],
+    [
+     14,
+     0
+    ],
+    [
+     15,
+     0
+    ],
+    [
+     16,
+     0
+    ],
+    [
+     17,
+     0
+    ],
+    [
+     18,
+     0
+    ],
+    [
+     19,
+     0
+    ],
+    [
+     20,
+     0
+    ],
+    [
+     21,
+     0
+    ],
+    [
+     22,
+     0
+    ],
+    [
+     23,
+     0
+    ],
+    [
+     0,
+     1
+    ]
+   ]
+  },
+  {
+   "dir": "v",
+   "k": 1,
+   "h": 2,
+   "rows": 2,
+   "extra": 0,
+   "firsts": [
+    0
+   ]
+  },
+  {
+   "dir": "v",
+   "k": 2,
+   "h": 2,
+   "rows": 4,
+   "extra": 2,
+   "firsts": [
+    0,
+    2
+   ]
+  },
+  {
+   "dir": "v",
+   "k": 3,
+   "h": 2,
+   "rows": 6,
+   "extra": 4,
+   "firsts": [
+    0,
+    2,
+    4
+   ]
+  },
+  {
+   "dir": "v",
+   "k": 5,
+   "h": 2,
+   "rows": 10,
+   "extra": 8,
+   "firsts": [
+    0,
+    2,
+    4,
+    6,
+    8
+   ]
+  },
+  {
+   "dir": "v",
+   "k": 12,
+   "h": 2,
+   "rows": 24,
+   "extra": 22,
+   "firsts": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22
+   ]
+  },
+  {
+   "dir": "v",
+   "k": 24,
+   "h": 2,
+   "rows": 48,
+   "extra": 46,
+   "firsts": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30,
+    32,
+    34,
+    36,
+    38,
+    40,
+    42,
+    44,
+    46
+   ]
+  },
+  {
+   "dir": "v",
+   "k": 25,
+   "h": 2,
+   "rows": 50,
+   "extra": 48,
+   "firsts": [
+    0,
+    2,
+    4,
+    6,
+    8,
+    10,
+    12,
+    14,
+    16,
+    18,
+    20,
+    22,
+    24,
+    26,
+    28,
+    30,
+    32,
+    34,
+    36,
+    38,
+    40,
+    42,
+    44,
+    46,
+    48
+   ]
+  }
+ ],
+ "moves": [
+  {
+   "name": "the measure of Grafana 12.4.2: a panel with v and 3 copies, panels beside, below and a full width at the end",
+   "items": [
+    {
+     "id": 1,
+     "x": 0,
+     "w": 24,
+     "y": 0,
+     "h": 2
+    },
+    {
+     "id": 2,
+     "x": 8,
+     "w": 8,
+     "y": 2,
+     "h": 4,
+     "rep": {
+      "dir": "v",
+      "k": 3
+     }
+    },
+    {
+     "id": 3,
+     "x": 0,
+     "w": 8,
+     "y": 2,
+     "h": 4
+    },
+    {
+     "id": 4,
+     "x": 16,
+     "w": 8,
+     "y": 2,
+     "h": 4
+    },
+    {
+     "id": 5,
+     "x": 0,
+     "w": 8,
+     "y": 6,
+     "h": 2
+    },
+    {
+     "id": 6,
+     "x": 8,
+     "w": 8,
+     "y": 6,
+     "h": 2
+    },
+    {
+     "id": 7,
+     "x": 16,
+     "w": 8,
+     "y": 6,
+     "h": 2
+    },
+    {
+     "id": 8,
+     "x": 0,
+     "w": 24,
+     "y": 8,
+     "h": 2
+    }
+   ],
+   "expect": {
+    "1": 0,
+    "2": 2,
+    "3": 2,
+    "4": 2,
+    "5": 6,
+    "6": 14,
+    "7": 6,
+    "8": 16
+   },
+   "measured": "pixel tops 341 645 341 721 of the panels 5 to 8, top of y 0 at 113, step 38"
+  },
+  {
+   "name": "a band with h: every panel below moves by (q - 1) x h, whatever its columns",
+   "items": [
+    {
+     "id": 1,
+     "x": 0,
+     "w": 24,
+     "y": 0,
+     "h": 3,
+     "rep": {
+      "dir": "h",
+      "k": 7,
+      "m": 3
+     }
+    },
+    {
+     "id": 2,
+     "x": 0,
+     "w": 6,
+     "y": 3,
+     "h": 2
+    },
+    {
+     "id": 3,
+     "x": 12,
+     "w": 12,
+     "y": 3,
+     "h": 2
+    }
+   ],
+   "expect": {
+    "1": 0,
+    "2": 9,
+    "3": 9
+   }
+  },
+  {
+   "name": "a panel with v and one value: no move",
+   "items": [
+    {
+     "id": 1,
+     "x": 0,
+     "w": 12,
+     "y": 0,
+     "h": 4,
+     "rep": {
+      "dir": "v",
+      "k": 1
+     }
+    },
+    {
+     "id": 2,
+     "x": 0,
+     "w": 12,
+     "y": 4,
+     "h": 4
+    }
+   ],
+   "expect": {
+    "1": 0,
+    "2": 4
+   }
+  },
+  {
+   "name": "two repeats one under the other add their extra heights",
+   "items": [
+    {
+     "id": 1,
+     "x": 0,
+     "w": 24,
+     "y": 0,
+     "h": 2,
+     "rep": {
+      "dir": "h",
+      "k": 8,
+      "m": 4
+     }
+    },
+    {
+     "id": 2,
+     "x": 0,
+     "w": 12,
+     "y": 2,
+     "h": 2,
+     "rep": {
+      "dir": "v",
+      "k": 3
+     }
+    },
+    {
+     "id": 3,
+     "x": 0,
+     "w": 12,
+     "y": 4,
+     "h": 2
+    },
+    {
+     "id": 4,
+     "x": 12,
+     "w": 12,
+     "y": 2,
+     "h": 2
+    }
+   ],
+   "expect": {
+    "1": 0,
+    "2": 4,
+    "3": 10,
+    "4": 4
+   }
+  },
+  {
+   "name": "a panel in other columns than the region does not move for it",
+   "items": [
+    {
+     "id": 1,
+     "x": 0,
+     "w": 6,
+     "y": 0,
+     "h": 4,
+     "rep": {
+      "dir": "v",
+      "k": 4
+     }
+    },
+    {
+     "id": 2,
+     "x": 12,
+     "w": 6,
+     "y": 4,
+     "h": 2
+    },
+    {
+     "id": 3,
+     "x": 0,
+     "w": 6,
+     "y": 4,
+     "h": 2
+    }
+   ],
+   "expect": {
+    "1": 0,
+    "2": 4,
+    "3": 16
+   }
+  },
+  {
+   "name": "a repeat that is not ok has no extra height",
+   "items": [
+    {
+     "id": 1,
+     "x": 0,
+     "w": 24,
+     "y": 0,
+     "h": 3,
+     "rep": {
+      "dir": "h",
+      "k": 0,
+      "m": null,
+      "state": "empty"
+     }
+    },
+    {
+     "id": 2,
+     "x": 0,
+     "w": 24,
+     "y": 3,
+     "h": 3
+    }
+   ],
+   "expect": {
+    "1": 0,
+    "2": 3
+   }
+  }
+ ],
+ "keys": {
+  "forms": [
+   [
+    "7",
+    {
+     "id": 7,
+     "n": 1
+    },
+    7
+   ],
+   [
+    "panel-7",
+    {
+     "id": 7,
+     "n": 1
+    },
+    7
+   ],
+   [
+    "7-r2",
+    {
+     "id": 7,
+     "n": 2
+    },
+    "7-r2"
+   ],
+   [
+    "panel-7-r2",
+    {
+     "id": 7,
+     "n": 2
+    },
+    "7-r2"
+   ],
+   [
+    "b$panel-7",
+    {
+     "id": 7,
+     "value": "b"
+    },
+    "b$panel-7"
+   ],
+   [
+    "a$panel-7",
+    {
+     "id": 7,
+     "value": "a"
+    },
+    "a$panel-7"
+   ],
+   [
+    "2$panel-7",
+    {
+     "id": 7,
+     "value": "2"
+    },
+    "2$panel-7"
+   ],
+   [
+    "1$panel-7",
+    {
+     "id": 7,
+     "value": "1"
+    },
+    "1$panel-7"
+   ],
+   [
+    "0$panel-7",
+    {
+     "id": 7,
+     "value": "0"
+    },
+    "0$panel-7"
+   ],
+   [
+    "12$panel-7",
+    {
+     "id": 7,
+     "value": "12"
+    },
+    "12$panel-7"
+   ],
+   [
+    "Bravo$panel-7",
+    {
+     "id": 7,
+     "value": "Bravo"
+    },
+    "Bravo$panel-7"
+   ],
+   [
+    "a b$panel-7",
+    {
+     "id": 7,
+     "value": "a b"
+    },
+    "a b$panel-7"
+   ],
+   [
+    "a$panel-1$panel-7",
+    {
+     "id": 7,
+     "value": "a$panel-1"
+    },
+    "a$panel-1$panel-7"
+   ],
+   [
+    "$$panel-7",
+    {
+     "id": 7,
+     "value": "$"
+    },
+    "$$panel-7"
+   ],
+   [
+    "<b>x</b>$panel-7",
+    {
+     "id": 7,
+     "value": "<b>x</b>"
+    },
+    "<b>x</b>$panel-7"
+   ]
+  ],
+  "refused": [
+   "0",
+   "007",
+   "00",
+   "panel-0",
+   "panel-007",
+   "0-r2",
+   "007-r2",
+   "2$panel-0",
+   "2$panel-07",
+   "7-r1",
+   "7-r0",
+   "7-r",
+   "7-r-2",
+   "7-r2x",
+   "r2",
+   "panel-",
+   "panel-x",
+   "$panel-7",
+   "2$7",
+   "2$panel-",
+   "7-R2",
+   "7-r02",
+   "7_r2",
+   " 7",
+   "7 ",
+   "7-r2-r3",
+   "-7",
+   "1e3",
+   "99999999999999999999",
+   "",
+   "b$panel-7 ",
+   "b$panel-x",
+   "b$Panel-7",
+   "b$panel-7-r2",
+   "b$panel--7",
+   "b$panel-99999999999999999999",
+   "b$panel"
+  ],
+  "grafana": {
+   "note": "The form <x>$panel-<id> of Grafana names the copy by its value (10.2a, rule 1; the measure of Grafana 12.4.2 of 2026-11-15, ID-K92). The document has the panel 1 that repeats by host (direction h), the panel 3 with no repeat, and the section 1 that repeats by host with the panel 2. key null: no copy has this value, the state is view with the notice no-panel.",
+   "options": {
+    "text": [
+     [
+      "a",
+      "Alpha"
+     ],
+     [
+      "b",
+      "Bravo"
+     ],
+     [
+      "c",
+      "Charlie"
+     ],
+     [
+      "d",
+      "Delta"
+     ],
+     [
+      "e",
+      "Echo"
+     ]
+    ],
+    "number": [
+     [
+      "10",
+      "Ten"
+     ],
+     [
+      "20",
+      "Twenty"
+     ],
+     [
+      "30",
+      "Thirty"
+     ]
+    ],
+    "hostile": [
+     [
+      "ab",
+      "AB"
+     ],
+     [
+      "a.*",
+      "A star"
+     ],
+     [
+      "<b>x</b>",
+      "Bold"
+     ],
+     [
+      "$panel-9",
+      "Tail"
+     ]
+    ]
+   },
+   "cases": [
+    {
+     "name": "text values: the second copy",
+     "options": "text",
+     "selection": "all",
+     "view": "b$panel-1",
+     "key": "1-r2"
+    },
+    {
+     "name": "text values: the first copy has the prefix too",
+     "options": "text",
+     "selection": "all",
+     "view": "a$panel-1",
+     "key": 1
+    },
+    {
+     "name": "text values: the last copy",
+     "options": "text",
+     "selection": "all",
+     "view": "e$panel-1",
+     "key": "1-r5"
+    },
+    {
+     "name": "a repeated section: the panel of the second copy",
+     "options": "text",
+     "selection": "all",
+     "view": "b$panel-2",
+     "key": "2-r2"
+    },
+    {
+     "name": "a repeated section: the first copy",
+     "options": "text",
+     "selection": "all",
+     "view": "a$panel-2",
+     "key": 2
+    },
+    {
+     "name": "numeric values: the value, not an index",
+     "options": "number",
+     "selection": "all",
+     "view": "20$panel-1",
+     "key": "1-r2"
+    },
+    {
+     "name": "numeric values: the first copy",
+     "options": "number",
+     "selection": "all",
+     "view": "10$panel-1",
+     "key": 1
+    },
+    {
+     "name": "numeric values: 0 is not a value",
+     "options": "number",
+     "selection": "all",
+     "view": "0$panel-1",
+     "key": null
+    },
+    {
+     "name": "numeric values: the index 1 is not a value",
+     "options": "number",
+     "selection": "all",
+     "view": "1$panel-1",
+     "key": null
+    },
+    {
+     "name": "numeric values: the index 2 is not a value",
+     "options": "number",
+     "selection": "all",
+     "view": "2$panel-1",
+     "key": null
+    },
+    {
+     "name": "the option text does not match",
+     "options": "text",
+     "selection": "all",
+     "view": "Bravo$panel-1",
+     "key": null
+    },
+    {
+     "name": "the case counts",
+     "options": "text",
+     "selection": "all",
+     "view": "B$panel-1",
+     "key": null
+    },
+    {
+     "name": "a value that is not an option",
+     "options": "text",
+     "selection": "all",
+     "view": "z$panel-1",
+     "key": null
+    },
+    {
+     "name": "a space counts",
+     "options": "text",
+     "selection": "all",
+     "view": "b $panel-1",
+     "key": null
+    },
+    {
+     "name": "a value that is not selected",
+     "options": "number",
+     "selection": [
+      "10"
+     ],
+     "view": "20$panel-1",
+     "key": null
+    },
+    {
+     "name": "one value selected: one copy",
+     "options": "number",
+     "selection": [
+      "10"
+     ],
+     "view": "10$panel-1",
+     "key": 1
+    },
+    {
+     "name": "the order of the options, not of the selection",
+     "options": "text",
+     "selection": [
+      "c",
+      "a"
+     ],
+     "view": "c$panel-1",
+     "key": "1-r2"
+    },
+    {
+     "name": "a panel with no repeat has no copy",
+     "options": "text",
+     "selection": "all",
+     "view": "a$panel-3",
+     "key": null
+    },
+    {
+     "name": "a panel that does not exist",
+     "options": "text",
+     "selection": "all",
+     "view": "a$panel-9",
+     "key": null
+    },
+    {
+     "name": "the value is text, not a pattern: an exact match",
+     "options": "hostile",
+     "selection": "all",
+     "view": "a.*$panel-1",
+     "key": "1-r2"
+    },
+    {
+     "name": "the value is text, not a pattern: no match",
+     "options": "hostile",
+     "selection": "all",
+     "view": "a.$panel-1",
+     "key": null
+    },
+    {
+     "name": "markup is a value like any other text",
+     "options": "hostile",
+     "selection": "all",
+     "view": "<b>x</b>$panel-1",
+     "key": "1-r3"
+    },
+    {
+     "name": "the text before the last $panel- is the value",
+     "options": "hostile",
+     "selection": "all",
+     "view": "$panel-9$panel-1",
+     "key": "1-r4"
+    }
+   ]
+  }
+ },
+ "request": {
+  "variables": {
+   "host": {
+    "all": true,
+    "values": [
+     "a",
+     "b",
+     "c"
+    ]
+   },
+   "env": {
+    "all": false,
+    "values": [
+     "prod"
+    ]
+   },
+   "account": {
+    "all": false,
+    "values": [
+     "w"
+    ]
+   }
+  },
+  "cases": [
+   {
+    "name": "the repeat variable is fixed to one value, all is false",
+    "variable": "host",
+    "value": "b",
+    "expect": {
+     "host": {
+      "all": false,
+      "values": [
+       "b"
+      ]
+     },
+     "env": {
+      "all": false,
+      "values": [
+       "prod"
+      ]
+     },
+     "account": {
+      "all": false,
+      "values": [
+       "w"
+      ]
+     }
+    }
+   },
+   {
+    "name": "a value with a quote mark goes as it is",
+    "variable": "env",
+    "value": "p'rod",
+    "expect": {
+     "host": {
+      "all": true,
+      "values": [
+       "a",
+       "b",
+       "c"
+      ]
+     },
+     "env": {
+      "all": false,
+      "values": [
+       "p'rod"
+      ]
+     },
+     "account": {
+      "all": false,
+      "values": [
+       "w"
+      ]
+     }
+    }
+   }
+  ]
+ },
+ "trigger": {
+  "description": "The queries of a trigger run with a fake API in tests/frontend/repeat.test.mjs: see the test of each case."
+ }
+}

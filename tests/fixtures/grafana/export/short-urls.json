@@ -1,0 +1,18 @@
+[
+  {
+    "uid": "xYz12AB",
+    "path": "d/monitor/node-monitor?orgId=1&from=now-7d&to=now&var-node=$__all"
+  },
+  {
+    "uid": "Qw9-erT",
+    "path": "d/Mixed_Case_Uid"
+  },
+  {
+    "uid": "bad uid",
+    "path": "d/prod-main"
+  },
+  {
+    "uid": "Lm0pqRs",
+    "path": "explore?left=%7B%7D"
+  }
+]

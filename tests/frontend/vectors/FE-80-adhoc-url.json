@@ -1,0 +1,214 @@
+{
+ "id": "FE-80",
+ "about": "The URL form of the ad hoc filters (9.5, 9.10a). Measure of Grafana 12.4.2 on 2026-11-22 (temporary dashboard, Chrome): `read` gives the decoded `var-<name>` item and the filter that Grafana keeps (null: no filter); `write` gives the filter, the decoded item and the encoded item of the address of Grafana. Two differences on purpose: Hune writes `!` as it is (encodeURIComponent), and Hune writes a filter with an empty value as `key|op|` where Grafana writes no item for it.",
+ "read": [
+  {
+   "item": "host|=|web-1",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "web-1"
+   }
+  },
+  {
+   "item": "host|!=|web-1",
+   "filter": {
+    "key": "host",
+    "op": "!=",
+    "value": "web-1"
+   }
+  },
+  {
+   "item": "host|=|a__gfp__b",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a|b"
+   }
+  },
+  {
+   "item": "host|=|a__gfc__b",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a,b"
+   }
+  },
+  {
+   "item": "host|=|a__gfh__b",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a#b"
+   }
+  },
+  {
+   "item": "host|=|a,label",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a"
+   }
+  },
+  {
+   "item": "host|=|a#b",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a"
+   }
+  },
+  {
+   "item": "host|=|a|b",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a"
+   }
+  },
+  {
+   "item": "host|=|",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": ""
+   }
+  },
+  {
+   "item": "host|=",
+   "filter": null
+  },
+  {
+   "item": "host",
+   "filter": null
+  },
+  {
+   "item": "host|>|5",
+   "filter": {
+    "key": "host",
+    "op": ">",
+    "value": "5"
+   }
+  },
+  {
+   "item": "host|=~|w.*",
+   "filter": {
+    "key": "host",
+    "op": "=~",
+    "value": "w.*"
+   }
+  },
+  {
+   "item": "h o|=|'\\\" é ",
+   "filter": {
+    "key": "h o",
+    "op": "=",
+    "value": "'\\\" é "
+   }
+  },
+  {
+   "item": "host,Host|=,eq|v,V",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "v"
+   }
+  },
+  {
+   "item": "host|=|v|extra",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "v"
+   }
+  },
+  {
+   "item": "host|=|a+b%c",
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a+b%c"
+   }
+  }
+ ],
+ "write": [
+  {
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "web-1"
+   },
+   "item": "host|=|web-1",
+   "grafana": "host%7C%3D%7Cweb-1"
+  },
+  {
+   "filter": {
+    "key": "host",
+    "op": "!=",
+    "value": "a|b"
+   },
+   "item": "host|!=|a__gfp__b",
+   "grafana": "host%7C%21%3D%7Ca__gfp__b"
+  },
+  {
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a,b"
+   },
+   "item": "host|=|a__gfc__b",
+   "grafana": "host%7C%3D%7Ca__gfc__b"
+  },
+  {
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a#b"
+   },
+   "item": "host|=|a__gfh__b",
+   "grafana": "host%7C%3D%7Ca__gfh__b"
+  },
+  {
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "x y'\\\"é%+&=?/"
+   },
+   "item": "host|=|x y'\\\"é%+&=?/",
+   "grafana": "host%7C%3D%7Cx%20y%27%5C%22%C3%A9%25%2B%26%3D%3F%2F"
+  },
+  {
+   "filter": {
+    "key": "h|o,s#t",
+    "op": "=",
+    "value": "v"
+   },
+   "item": "h__gfp__o__gfc__s__gfh__t|=|v",
+   "grafana": "h__gfp__o__gfc__s__gfh__t%7C%3D%7Cv"
+  },
+  {
+   "filter": {
+    "key": "host",
+    "op": "=",
+    "value": "a__gfp__b"
+   },
+   "item": "host|=|a__gfp__b",
+   "grafana": "host%7C%3D%7Ca__gfp__b"
+  }
+ ],
+ "write_none": {
+  "filters": [],
+  "items": [
+   ""
+  ]
+ },
+ "write_empty_value": {
+  "filter": {
+   "key": "host",
+   "op": "=",
+   "value": ""
+  },
+  "item": "host|=|",
+  "grafana": null
+ }
+}

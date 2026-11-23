@@ -1,0 +1,1 @@
+SELECT floor((n + 1)/300)*300 AS t FROM t

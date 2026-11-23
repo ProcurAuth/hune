@@ -1,0 +1,22 @@
+{
+  "format_version": 2,
+  "uid": "minimal",
+  "title": "Minimal",
+  "description": "",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": []
+    }
+  ]
+}

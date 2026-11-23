@@ -1,0 +1,1 @@
+SELECT $__timeGroup(ts, '1.5s') FROM t

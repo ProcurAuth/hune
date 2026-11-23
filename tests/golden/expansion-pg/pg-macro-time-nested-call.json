@@ -1,0 +1,29 @@
+{
+  "id": "pg-macro-time-nested-call",
+  "tags": [
+    "macro:$__time"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__time(coalesce(ts, now())) FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT coalesce(ts AS \"time\")) FROM t",
+  "grafana_error": "db query error: ERROR: syntax error at or near \"AS\" (SQLSTATE 42601)",
+  "sent_sql": "SELECT $__time(coalesce(ts, now())) FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.10",
+    "reason": "Grafana reads the argument up to the first ). Hune counts the parentheses and the commas by depth.",
+    "hune": {
+      "sql": "SELECT coalesce(ts, now()) AS \"time\" FROM t"
+    }
+  }
+}

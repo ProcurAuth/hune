@@ -1,0 +1,381 @@
+{
+  "format_version": 3,
+  "uid": "pg-main",
+  "title": "PostgreSQL panels",
+  "description": "Synthetic dashboard of the importer tests: one panel for each PostgreSQL row of 15.6.",
+  "tags": [
+    "synthetic",
+    "postgres"
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "browser",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "query",
+      "name": "host",
+      "label": "Host",
+      "hide": "none",
+      "source": "analytics",
+      "sql": [
+        "SELECT DISTINCT host",
+        "FROM metrics.node_load",
+        "ORDER BY host"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ],
+      "allow_custom_value": true
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Recent rows",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "analytics",
+              "format": "table",
+              "sql": [
+                "SELECT ts, host, load",
+                "FROM metrics.node_load",
+                "WHERE $__timeFilter(ts) AND host IN ($host)",
+                "ORDER BY ts DESC",
+                "LIMIT 100"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "timeseries",
+          "title": "Load by host",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "analytics",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeGroupAlias(ts, $__interval), host, avg(load) AS load",
+                "FROM metrics.node_load",
+                "WHERE $__timeFilter(ts) AND host IN ($host)",
+                "GROUP BY 1, host",
+                "ORDER BY 1"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "table",
+          "title": "Row count",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "analytics",
+              "format": "table",
+              "sql": [
+                "SELECT count(*) AS n FROM metrics.node_load WHERE $__timeFilter(ts)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 5,
+          "type": "table",
+          "title": "Builder with SQL",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 16,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "analytics",
+              "format": "table",
+              "sql": [
+                "SELECT host, avg(load) FROM metrics.node_load GROUP BY host"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 7,
+          "type": "timeseries",
+          "title": "Gap fill value",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 24,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "analytics",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeGroupAlias(ts, '5m'), count(*) AS n FROM metrics.node_load WHERE $__timeFilter(ts) GROUP BY 1"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 10,
+          "type": "table",
+          "title": "Macro in a string",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 32,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "analytics",
+              "format": "table",
+              "sql": [
+                "SELECT '$__timeFrom()' AS note, 1 AS x"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 11,
+          "type": "timeseries",
+          "title": "Unix epoch group",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 40,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "analytics",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__unixEpochGroupAlias(epoch_s, '1h'), sum(n) AS n",
+                "FROM metrics.counts",
+                "WHERE $__unixEpochFilter(epoch_s)",
+                "GROUP BY 1"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 12,
+          "type": "table",
+          "title": "ClickHouse panel",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 40,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT now() AS t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

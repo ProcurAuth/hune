@@ -1,0 +1,97 @@
+[package]
+name = "hune-fuzz"
+description = "Fuzz targets of Hune (16.16). Run them with cargo-fuzz and the nightly toolchain."
+version = "0.0.0"
+edition = "2024"
+license = "Apache-2.0"
+publish = false
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+# The fuzz engine (libFuzzer).
+libfuzzer-sys = "=0.4.13"
+# The crates under test, by path.
+hune-core = { path = "../crates/hune-core" }
+hclconf = { path = "../crates/hclconf" }
+hune-grafana = { path = "../crates/hune-grafana" }
+# The conversion of the MongoDB driver module (8b.16), with the driver feature.
+hune-source = { path = "../crates/hune-source", features = ["mongo-driver"] }
+# Serde, for the grammar check of the frame JSON (IgnoredAny).
+serde = { version = "=1.0.229", default-features = false, features = ["std"] }
+# JSON values for the importer target and the checks of the frame JSON.
+serde_json = { version = "=1.0.154", default-features = false, features = ["std"] }
+
+# This crate is its own workspace: the workspace of the repository does not hold it.
+[workspace]
+
+# The MongoDB driver is the local copy of the root workspace (ID-MG25, 8b.15).
+[patch.crates-io]
+mongodb = { path = "../vendor/mongodb" }
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "lexer"
+path = "fuzz_targets/lexer.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "lexer_pg"
+path = "fuzz_targets/lexer_pg.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "expand"
+path = "fuzz_targets/expand.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "document_parse"
+path = "fuzz_targets/document_parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "hcl_config"
+path = "fuzz_targets/hcl_config.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "grafana_import"
+path = "fuzz_targets/grafana_import.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "frame_decode"
+path = "fuzz_targets/frame_decode.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "mongo_bson_decode"
+path = "fuzz_targets/mongo_bson_decode.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "annotation_frame"
+path = "fuzz_targets/annotation_frame.rs"
+test = false
+doc = false
+bench = false

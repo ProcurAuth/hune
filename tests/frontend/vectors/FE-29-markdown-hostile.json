@@ -1,0 +1,763 @@
+{
+ "id": "FE-29",
+ "vectors": [
+  {
+   "name": "payload 1",
+   "lines": [
+    "<script>alert(1)</script>"
+   ],
+   "hrefs": [],
+   "text": "<script>alert(1)</script>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 2",
+   "lines": [
+    "<img src=x onerror=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<img src=x onerror=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 3",
+   "lines": [
+    "<iframe src=\"javascript:alert(1)\"></iframe>"
+   ],
+   "hrefs": [],
+   "text": "<iframe src=\"javascript:alert(1)\"></iframe>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 4",
+   "lines": [
+    "<svg onload=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<svg onload=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 5",
+   "lines": [
+    "<style>*{display:none}</style>"
+   ],
+   "hrefs": [],
+   "text": "<style>*{display:none}</style>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 6",
+   "lines": [
+    "<a href=javascript:alert(1) onclick=alert(2)>x</a>"
+   ],
+   "hrefs": [],
+   "text": "<a href=javascript:alert(1) onclick=alert(2)>x</a>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 7",
+   "lines": [
+    "<meta http-equiv=refresh content=\"0;url=//evil.example\">"
+   ],
+   "hrefs": [],
+   "text": "<meta http-equiv=refresh content=\"0;url=//evil.example\">",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 8",
+   "lines": [
+    "<noscript><p title=\"</noscript><img src=x onerror=alert(1)>\">"
+   ],
+   "hrefs": [],
+   "text": "<noscript><p title=\"</noscript><img src=x onerror=alert(1)>\">",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 9",
+   "lines": [
+    "<math><mtext><table><mglyph><style><!--</style><img title=\"--&gt;&lt;img src=1 onerror=alert(1)&gt;\">"
+   ],
+   "hrefs": [],
+   "text": "<math><mtext><table><mglyph><style><!--</style><img title=\"--&gt;&lt;img src=1 onerror=alert(1)&gt;\">",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 10",
+   "lines": [
+    "<form><math><mtext></form><form><mglyph><style></math><img src onerror=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<form><math><mtext></form><form><mglyph><style></math><img src onerror=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 11",
+   "lines": [
+    "<svg><style><img src=x onerror=alert(1)></style></svg>"
+   ],
+   "hrefs": [],
+   "text": "<svg><style><img src=x onerror=alert(1)></style></svg>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 12",
+   "lines": [
+    "<a href=\"x\"><svg><style><a title=\"</style><img src onerror=alert(1)>\">"
+   ],
+   "hrefs": [],
+   "text": "<a href=\"x\"><svg><style><a title=\"</style><img src onerror=alert(1)>\">",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 13",
+   "lines": [
+    "<textarea><img src=x onerror=alert(1)></textarea>"
+   ],
+   "hrefs": [],
+   "text": "<textarea><img src=x onerror=alert(1)></textarea>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 14",
+   "lines": [
+    "<template><img src=x onerror=alert(1)></template>"
+   ],
+   "hrefs": [],
+   "text": "<template><img src=x onerror=alert(1)></template>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 15",
+   "lines": [
+    "<body onload=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<body onload=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 16",
+   "lines": [
+    "<input autofocus onfocus=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<input autofocus onfocus=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 17",
+   "lines": [
+    "<details open ontoggle=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<details open ontoggle=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 18",
+   "lines": [
+    "<video><source onerror=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<video><source onerror=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 19",
+   "lines": [
+    "<object data=\"javascript:alert(1)\"></object>"
+   ],
+   "hrefs": [],
+   "text": "<object data=\"javascript:alert(1)\"></object>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 20",
+   "lines": [
+    "<embed src=\"javascript:alert(1)\">"
+   ],
+   "hrefs": [],
+   "text": "<embed src=\"javascript:alert(1)\">",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 21",
+   "lines": [
+    "<base href=\"//evil.example/\">"
+   ],
+   "hrefs": [],
+   "text": "<base href=\"//evil.example/\">",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 22",
+   "lines": [
+    "<link rel=stylesheet href=\"//evil.example/x.css\">"
+   ],
+   "hrefs": [],
+   "text": "<link rel=stylesheet href=\"//evil.example/x.css\">",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 23",
+   "lines": [
+    "<div style=\"background:url(//evil.example/b)\">x</div>"
+   ],
+   "hrefs": [],
+   "text": "<div style=\"background:url(//evil.example/b)\">x</div>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 24",
+   "lines": [
+    "<x onclick=alert(1)>click</x>"
+   ],
+   "hrefs": [],
+   "text": "<x onclick=alert(1)>click</x>",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 25",
+   "lines": [
+    "[x](javascript:alert(1))"
+   ],
+   "hrefs": [],
+   "text": "[x](javascript:alert(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 26",
+   "lines": [
+    "[x](JAVASCRIPT:alert(1))"
+   ],
+   "hrefs": [],
+   "text": "[x](JAVASCRIPT:alert(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 27",
+   "lines": [
+    "[x](java\tscript:alert(1))"
+   ],
+   "hrefs": [],
+   "text": "[x](java\tscript:alert(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 28",
+   "lines": [
+    "[x](java&#9;script:alert(1))"
+   ],
+   "hrefs": [],
+   "text": "[x](java&#9;script:alert(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 29",
+   "lines": [
+    "[x]( javascript:alert(1))"
+   ],
+   "hrefs": [],
+   "text": "[x]( javascript:alert(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 30",
+   "lines": [
+    "[x](data:text/html,<script>alert(1)</script>)"
+   ],
+   "hrefs": [],
+   "text": "[x](data:text/html,<script>alert(1)</script>)",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 31",
+   "lines": [
+    "[x](vbscript:msgbox(1))"
+   ],
+   "hrefs": [],
+   "text": "[x](vbscript:msgbox(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 32",
+   "lines": [
+    "[x](//evil.example)"
+   ],
+   "hrefs": [],
+   "text": "[x](//evil.example)",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 33",
+   "lines": [
+    "[x](/\\evil.example)"
+   ],
+   "hrefs": [],
+   "text": "[x](/\\evil.example)",
+   "shape": "div p"
+  },
+  {
+   "name": "payload 34",
+   "lines": [
+    "[x](http://a/\"onmouseover=\"alert(1))"
+   ],
+   "hrefs": [
+    "http://a/\"onmouseover=\"alert(1)"
+   ],
+   "text": "[x](http://a/\"onmouseover=\"alert(1))",
+   "shape": "div p a"
+  },
+  {
+   "name": "payload 35",
+   "lines": [
+    "![x](http://evil.example/beacon.png)"
+   ],
+   "hrefs": [
+    "http://evil.example/beacon.png"
+   ],
+   "text": "!x",
+   "shape": "div p a"
+  },
+  {
+   "name": "payload 36",
+   "lines": [
+    "[x](http://a/\"b)"
+   ],
+   "hrefs": [
+    "http://a/\"b"
+   ],
+   "text": "x",
+   "shape": "div p a"
+  },
+  {
+   "name": "payload 37",
+   "lines": [
+    "http://a.example/<script>alert(1)</script>"
+   ],
+   "hrefs": [
+    "http://a.example/"
+   ],
+   "text": "http://a.example/<script>alert(1)</script>",
+   "shape": "div p a"
+  },
+  {
+   "name": "payload 38",
+   "lines": [
+    "https://a.example/\"><img src=x onerror=alert(1)>"
+   ],
+   "hrefs": [
+    "https://a.example/\">"
+   ],
+   "text": "https://a.example/\"><img src=x onerror=alert(1)>",
+   "shape": "div p a"
+  },
+  {
+   "name": "payload 39",
+   "lines": [
+    "[<img src=x onerror=alert(1)>](/ok)"
+   ],
+   "hrefs": [
+    "/ok"
+   ],
+   "text": "<img src=x onerror=alert(1)>",
+   "shape": "div p a"
+  },
+  {
+   "name": "payload 40",
+   "lines": [
+    "[x](/ok \"onclick=alert(1)\")"
+   ],
+   "hrefs": [],
+   "text": "[x](/ok \"onclick=alert(1)\")",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: nested form and table",
+   "lines": [
+    "<table><form><input name=x></form></table><img src=x onerror=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<table><form><input name=x></form></table><img src=x onerror=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: unclosed attribute",
+   "lines": [
+    "<img src=\"x onerror=alert(1)"
+   ],
+   "hrefs": [],
+   "text": "<img src=\"x onerror=alert(1)",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: backtick attribute",
+   "lines": [
+    "<img src=`x` onerror=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<img src=x onerror=alert(1)>",
+   "shape": "div p code"
+  },
+  {
+   "name": "mutation: slash separator",
+   "lines": [
+    "<svg/onload=alert(1)>"
+   ],
+   "hrefs": [],
+   "text": "<svg/onload=alert(1)>",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: null byte in a tag",
+   "lines": [
+    "<scr\u0000ipt>alert(1)</scr\u0000ipt>"
+   ],
+   "hrefs": [],
+   "text": "<scr\u0000ipt>alert(1)</scr\u0000ipt>",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: comment close trick",
+   "lines": [
+    "<!--><img src=x onerror=alert(1)>-->"
+   ],
+   "hrefs": [],
+   "text": "<!--><img src=x onerror=alert(1)>-->",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: cdata",
+   "lines": [
+    "<![CDATA[<img src=x onerror=alert(1)>]]>"
+   ],
+   "hrefs": [],
+   "text": "<![CDATA[<img src=x onerror=alert(1)>]]>",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: xml processing",
+   "lines": [
+    "<?xml version=\"1.0\"?><x:script xmlns:x=\"http://www.w3.org/1999/xhtml\">alert(1)</x:script>"
+   ],
+   "hrefs": [
+    "http://www.w3.org/1999/xhtml\">alert(1)"
+   ],
+   "text": "<?xml version=\"1.0\"?><x:script xmlns:x=\"http://www.w3.org/1999/xhtml\">alert(1)</x:script>",
+   "shape": "div p a"
+  },
+  {
+   "name": "mutation: entity encoded tag",
+   "lines": [
+    "&lt;img src=x onerror=alert(1)&gt;"
+   ],
+   "hrefs": [],
+   "text": "&lt;img src=x onerror=alert(1)&gt;",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: hex entity in the scheme",
+   "lines": [
+    "[x](&#x6A;avascript:alert(1))"
+   ],
+   "hrefs": [],
+   "text": "[x](&#x6A;avascript:alert(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: uppercase tag",
+   "lines": [
+    "<SCRIPT SRC=//evil.example/x.js></SCRIPT>"
+   ],
+   "hrefs": [],
+   "text": "<SCRIPT SRC=//evil.example/x.js></SCRIPT>",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: srcdoc",
+   "lines": [
+    "<iframe srcdoc=\"<script>alert(1)</script>\"></iframe>"
+   ],
+   "hrefs": [],
+   "text": "<iframe srcdoc=\"<script>alert(1)</script>\"></iframe>",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: formaction",
+   "lines": [
+    "<form><button formaction=javascript:alert(1)>x</button></form>"
+   ],
+   "hrefs": [],
+   "text": "<form><button formaction=javascript:alert(1)>x</button></form>",
+   "shape": "div p"
+  },
+  {
+   "name": "mutation: emphasis around a tag",
+   "lines": [
+    "*<img src=x onerror=alert(1)>*"
+   ],
+   "hrefs": [],
+   "text": "<img src=x onerror=alert(1)>",
+   "shape": "div p em"
+  },
+  {
+   "name": "mutation: code span with a tag",
+   "lines": [
+    "`<img src=x onerror=alert(1)>`"
+   ],
+   "hrefs": [],
+   "text": "<img src=x onerror=alert(1)>",
+   "shape": "div p code"
+  },
+  {
+   "name": "mutation: code block with a tag",
+   "lines": [
+    "```",
+    "<img src=x onerror=alert(1)>",
+    "```"
+   ],
+   "hrefs": [],
+   "text": "<img src=x onerror=alert(1)>",
+   "shape": "div pre code"
+  },
+  {
+   "name": "mutation: table cell with a tag",
+   "lines": [
+    "| a |",
+    "|---|",
+    "| <img src=x onerror=alert(1)> |"
+   ],
+   "hrefs": [],
+   "text": "a<img src=x onerror=alert(1)>",
+   "shape": "div table thead tr th tbody tr td"
+  },
+  {
+   "name": "mutation: heading with a tag",
+   "lines": [
+    "# <script>alert(1)</script>"
+   ],
+   "hrefs": [],
+   "text": "<script>alert(1)</script>",
+   "shape": "div h1"
+  },
+  {
+   "name": "destination: space",
+   "lines": [
+    "[x](http://a b)"
+   ],
+   "hrefs": [
+    "http://a"
+   ],
+   "text": "[x](http://a b)",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: space in a relative path",
+   "lines": [
+    "[x](/a b)"
+   ],
+   "hrefs": [],
+   "text": "[x](/a b)",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: control character",
+   "lines": [
+    "[x](http://a/\u0001b)"
+   ],
+   "hrefs": [
+    "http://a/"
+   ],
+   "text": "[x](http://a/\u0001b)",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: delete character",
+   "lines": [
+    "[x](http://a/b)"
+   ],
+   "hrefs": [
+    "http://a/"
+   ],
+   "text": "[x](http://a/b)",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: bidi override",
+   "lines": [
+    "[x](http://a/‮b)"
+   ],
+   "hrefs": [
+    "http://a/"
+   ],
+   "text": "[x](http://a/‮b)",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: zero width space",
+   "lines": [
+    "[x](http://a/​b)"
+   ],
+   "hrefs": [
+    "http://a/"
+   ],
+   "text": "[x](http://a/​b)",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: line separator",
+   "lines": [
+    "[x](http://a/ b)"
+   ],
+   "hrefs": [
+    "http://a/"
+   ],
+   "text": "[x](http://a/ b)",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: percent encoded newline",
+   "lines": [
+    "[x](http://a/%0d%0aSet-Cookie:x)"
+   ],
+   "hrefs": [
+    "http://a/%0d%0aSet-Cookie:x"
+   ],
+   "text": "x",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: backslash in a relative path",
+   "lines": [
+    "[x](/a\\b)"
+   ],
+   "hrefs": [
+    "/a\\b"
+   ],
+   "text": "x",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: backslash start",
+   "lines": [
+    "[x](\\\\evil.example)"
+   ],
+   "hrefs": [],
+   "text": "[x](\\evil.example)",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: quote",
+   "lines": [
+    "[x](http://a/\"b\"c)"
+   ],
+   "hrefs": [
+    "http://a/\"b\"c"
+   ],
+   "text": "x",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: less than",
+   "lines": [
+    "[x](http://a/<b)"
+   ],
+   "hrefs": [
+    "http://a/<b"
+   ],
+   "text": "x",
+   "shape": "div p a"
+  },
+  {
+   "name": "destination: angle form",
+   "lines": [
+    "[x](<javascript:alert(1)>)"
+   ],
+   "hrefs": [],
+   "text": "[x](<javascript:alert(1)>)",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: javascript after a slash",
+   "lines": [
+    "[x](/javascript:alert(1))"
+   ],
+   "hrefs": [],
+   "text": "[x](/javascript:alert(1))",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: uppercase scheme stays text",
+   "lines": [
+    "[x](HTTP://a.example)"
+   ],
+   "hrefs": [],
+   "text": "[x](HTTP://a.example)",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: mixed case scheme stays text",
+   "lines": [
+    "[x](Https://a.example)"
+   ],
+   "hrefs": [],
+   "text": "[x](Https://a.example)",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: uppercase scheme, bare url",
+   "lines": [
+    "HTTPS://a.example/x"
+   ],
+   "hrefs": [],
+   "text": "HTTPS://a.example/x",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: fullwidth scheme",
+   "lines": [
+    "[x](ｈttp://a)"
+   ],
+   "hrefs": [],
+   "text": "[x](ｈttp://a)",
+   "shape": "div p"
+  },
+  {
+   "name": "destination: nested parentheses",
+   "lines": [
+    "[x](javascript:alert((1)))"
+   ],
+   "hrefs": [],
+   "text": "[x](javascript:alert((1)))",
+   "shape": "div p"
+  },
+  {
+   "name": "text: U+0000 stays text",
+   "lines": [
+    "a\u0000b <b>"
+   ],
+   "hrefs": [],
+   "text": "a\u0000b <b>",
+   "shape": "div p"
+  },
+  {
+   "name": "text: right to left override stays text",
+   "lines": [
+    "‮<b>x</b>"
+   ],
+   "hrefs": [],
+   "text": "‮<b>x</b>",
+   "shape": "div p"
+  },
+  {
+   "name": "text: long payload in a heading",
+   "lines": [
+    "# <b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b>"
+   ],
+   "hrefs": [],
+   "text": "<b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b><b>",
+   "shape": "div h1"
+  }
+ ]
+}

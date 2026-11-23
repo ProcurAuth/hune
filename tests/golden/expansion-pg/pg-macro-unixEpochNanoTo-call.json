@@ -1,0 +1,20 @@
+{
+  "id": "pg-macro-unixEpochNanoTo-call",
+  "tags": [
+    "macro:$__unixEpochNanoTo"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT v FROM t WHERE n < $__unixEpochNanoTo()",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT v FROM t WHERE n < 1794232800000000000",
+  "sent_sql": "SELECT v FROM t WHERE n < $__unixEpochNanoTo()"
+}

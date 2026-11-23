@@ -1,0 +1,1 @@
+SELECT $__timeInterval(ts) FROM t

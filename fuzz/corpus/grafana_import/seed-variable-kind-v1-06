@@ -1,0 +1,1 @@
+{"uid": "a", "title": "T", "schemaVersion": 41, "templating": {"list": [{"type": "constant", "name": "k", "query": "eu-1", "hide": 2}]}, "panels": []}

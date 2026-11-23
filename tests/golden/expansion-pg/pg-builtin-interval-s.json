@@ -1,0 +1,29 @@
+{
+  "id": "pg-builtin-interval-s",
+  "tags": [
+    "builtin:$__interval_s"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__interval_s AS s FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 20s_s AS s FROM t",
+  "grafana_error": "db query error: ERROR: trailing junk after numeric literal at or near \"20s_s\" (SQLSTATE 42601)",
+  "sent_sql": "SELECT $__interval_s AS s FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana has no $__interval_s for PostgreSQL: it replaces the start of the name and the database refuses the text. Hune adds the macro.",
+    "hune": {
+      "sql": "SELECT 20 AS s FROM t"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+SELECT v FROM t WHERE n < $__unixEpochTo()

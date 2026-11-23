@@ -1,0 +1,164 @@
+# Compose project of the job `mongosource` (16.9b, 16.17): disposable MongoDB servers with synthetic data.
+# For each version (7.0 as mg70, 8.0 as mg80) there are five servers:
+#   mgNN       the main server: authorization on, TLS only, --noscripting, the full data of init.js.
+#   mgNN-js    the same without --noscripting, for the case MS18. Small data.
+#   mgNN-rs    a replica set of two members (rs0) in one container, on the ports MGS_PORT and MGS_PORT2, for the case MS12
+#              and the cases of the link. Small data. Two members, because the key `hosts` needs 2 to 7 (ID-MG18).
+#   mgNN-sha1  a server that offers only SCRAM-SHA-1, for the case MS10. Small data.
+#   mgNN-plain a server that offers only PLAIN, for the case MS10. Small data. The community server has no PLAIN
+#              credential, so no user can log in there, and the health check does not log in.
+#
+# Use: tests/ci/mongosource.sh (it makes the passwords, the certificates and the key file, exports
+# IMAGE_<NAME> from tests/images.lock, and starts the services of one version with `docker compose up -d --wait`).
+# The variables below are mandatory. The script sets them: MGS_PORT_70, MGS_PORT_70_JS, MGS_PORT_70_RS,
+# MGS_PORT_70_RS2, MGS_PORT_70_SHA1, MGS_PORT_70_PLAIN, the same six for 80, MGS_TLS_DIR, MGS_ADMIN_PASSWORD, MGS_RO_PASSWORD, MGS_RW_PASSWORD,
+# MGS_BAD_PASSWORD, MGS_LEGACY_PASSWORD, IMAGE_MONGO_7_0, IMAGE_MONGO_8_0.
+#
+# Each port is bound to 127.0.0.1 only, and the server listens on the same port number in the container.
+# The data is in a tmpfs, so the container leaves nothing on the disk. At its first start, each service runs
+# tests/fixtures/mongo-source/init.js through start.sh and apply.sh. Each password comes from the
+# environment: no file of the repository holds a password.
+
+x-mg: &mg
+  entrypoint: ["/bin/sh", "/fixtures/start.sh"]
+  environment: &mg-env
+    MGS_ADMIN_PASSWORD: ${MGS_ADMIN_PASSWORD:?run tests/ci/mongosource.sh}
+    MGS_RO_PASSWORD: ${MGS_RO_PASSWORD:?run tests/ci/mongosource.sh}
+    MGS_RW_PASSWORD: ${MGS_RW_PASSWORD:?run tests/ci/mongosource.sh}
+    MGS_BAD_PASSWORD: ${MGS_BAD_PASSWORD:?run tests/ci/mongosource.sh}
+    MGS_LEGACY_PASSWORD: ${MGS_LEGACY_PASSWORD:?run tests/ci/mongosource.sh}
+  volumes:
+    - ${MGS_TLS_DIR:?run tests/ci/mongosource.sh}:/tls:ro
+    - ../fixtures/mongo-source:/fixtures:ro
+  tmpfs:
+    - /data/db:size=3g
+  restart: "no"
+
+# The marker collection is the last write of init.js. The temporary server of the first start has no TLS,
+# so this check fails until the final server runs.
+x-health: &health
+  test:
+    - CMD-SHELL
+    - >-
+      mongosh --quiet --norc --host localhost --port $$MGS_PORT --tls --tlsCAFile /tls/ca.pem
+      --authenticationDatabase admin -u root -p "$$MGS_ADMIN_PASSWORD"
+      --eval 'if (db.getSiblingDB("analytics").fixture_marker.countDocuments({}) !== 1) { quit(1) }'
+  interval: 3s
+  timeout: 10s
+  retries: 200
+  start_period: 5s
+
+x-health-noauth: &health-noauth
+  test:
+    - CMD-SHELL
+    - >-
+      mongosh --quiet --norc --host localhost --port $$MGS_PORT --tls --tlsCAFile /tls/ca.pem
+      --eval 'if (!db.hello().isWritablePrimary) { quit(1) }'
+  interval: 3s
+  timeout: 10s
+  retries: 200
+  start_period: 5s
+
+x-light: &light
+  MGS_NODE_LOAD_DOCS: "2000"
+  MGS_BIG_BYTES: "1048576"
+  MGS_CACHE_GB: "0.25"
+
+services:
+  mg70:
+    <<: *mg
+    image: ${IMAGE_MONGO_7_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: *mg-env
+      MGS_PORT: ${MGS_PORT_70:?run tests/ci/mongosource.sh}
+      MGS_CACHE_GB: "1"
+    ports: ["127.0.0.1:${MGS_PORT_70:?run tests/ci/mongosource.sh}:${MGS_PORT_70}"]
+    healthcheck: *health
+  mg70-js:
+    <<: *mg
+    image: ${IMAGE_MONGO_7_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_70_JS:?run tests/ci/mongosource.sh}
+      MGS_NOSCRIPTING: "0"
+    ports: ["127.0.0.1:${MGS_PORT_70_JS:?run tests/ci/mongosource.sh}:${MGS_PORT_70_JS}"]
+    healthcheck: *health
+  mg70-rs:
+    <<: *mg
+    image: ${IMAGE_MONGO_7_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_70_RS:?run tests/ci/mongosource.sh}
+      MGS_PORT2: ${MGS_PORT_70_RS2:?run tests/ci/mongosource.sh}
+      MGS_REPLSET: rs0
+    ports:
+      - "127.0.0.1:${MGS_PORT_70_RS:?run tests/ci/mongosource.sh}:${MGS_PORT_70_RS}"
+      - "127.0.0.1:${MGS_PORT_70_RS2:?run tests/ci/mongosource.sh}:${MGS_PORT_70_RS2}"
+    healthcheck: *health
+  mg70-sha1:
+    <<: *mg
+    image: ${IMAGE_MONGO_7_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_70_SHA1:?run tests/ci/mongosource.sh}
+      MGS_MECHANISMS: SCRAM-SHA-1
+    ports: ["127.0.0.1:${MGS_PORT_70_SHA1:?run tests/ci/mongosource.sh}:${MGS_PORT_70_SHA1}"]
+    healthcheck: *health
+
+  mg80:
+    <<: *mg
+    image: ${IMAGE_MONGO_8_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: *mg-env
+      MGS_PORT: ${MGS_PORT_80:?run tests/ci/mongosource.sh}
+      MGS_CACHE_GB: "1"
+    ports: ["127.0.0.1:${MGS_PORT_80:?run tests/ci/mongosource.sh}:${MGS_PORT_80}"]
+    healthcheck: *health
+  mg80-js:
+    <<: *mg
+    image: ${IMAGE_MONGO_8_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_80_JS:?run tests/ci/mongosource.sh}
+      MGS_NOSCRIPTING: "0"
+    ports: ["127.0.0.1:${MGS_PORT_80_JS:?run tests/ci/mongosource.sh}:${MGS_PORT_80_JS}"]
+    healthcheck: *health
+  mg80-rs:
+    <<: *mg
+    image: ${IMAGE_MONGO_8_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_80_RS:?run tests/ci/mongosource.sh}
+      MGS_PORT2: ${MGS_PORT_80_RS2:?run tests/ci/mongosource.sh}
+      MGS_REPLSET: rs0
+    ports:
+      - "127.0.0.1:${MGS_PORT_80_RS:?run tests/ci/mongosource.sh}:${MGS_PORT_80_RS}"
+      - "127.0.0.1:${MGS_PORT_80_RS2:?run tests/ci/mongosource.sh}:${MGS_PORT_80_RS2}"
+    healthcheck: *health
+  mg80-sha1:
+    <<: *mg
+    image: ${IMAGE_MONGO_8_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_80_SHA1:?run tests/ci/mongosource.sh}
+      MGS_MECHANISMS: SCRAM-SHA-1
+    ports: ["127.0.0.1:${MGS_PORT_80_SHA1:?run tests/ci/mongosource.sh}:${MGS_PORT_80_SHA1}"]
+    healthcheck: *health
+  mg70-plain:
+    <<: *mg
+    image: ${IMAGE_MONGO_7_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_70_PLAIN:?run tests/ci/mongosource.sh}
+      MGS_MECHANISMS: PLAIN
+    ports: ["127.0.0.1:${MGS_PORT_70_PLAIN:?run tests/ci/mongosource.sh}:${MGS_PORT_70_PLAIN}"]
+    healthcheck: *health-noauth
+  mg80-plain:
+    <<: *mg
+    image: ${IMAGE_MONGO_8_0:?run tests/ci/mongosource.sh}
+    environment:
+      <<: [*mg-env, *light]
+      MGS_PORT: ${MGS_PORT_80_PLAIN:?run tests/ci/mongosource.sh}
+      MGS_MECHANISMS: PLAIN
+    ports: ["127.0.0.1:${MGS_PORT_80_PLAIN:?run tests/ci/mongosource.sh}:${MGS_PORT_80_PLAIN}"]
+    healthcheck: *health-noauth

@@ -1,0 +1,1 @@
+SELECT 1 WHERE $__conditionalAll(h IN ($h), $h)

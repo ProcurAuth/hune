@@ -1,0 +1,188 @@
+{
+ "id": 231566211354624,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {
+    "calculate": true
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 100000)) AS time, round(40 * (1 + 0.6*sin(number/100000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(100000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "calc 100k",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {
+    "calculate": true
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 200000)) AS time, round(40 * (1 + 0.6*sin(number/200000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(200000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "calc 200k",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {
+    "calculate": true
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 500000)) AS time, round(40 * (1 + 0.6*sin(number/500000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(500000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "calc 500k",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "id": 4,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 100000)) AS time, round(40 * (1 + 0.6*sin(number/100000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(100000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "hist 100k",
+   "type": "histogram"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 32
+   },
+   "id": 5,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 500000)) AS time, round(40 * (1 + 0.6*sin(number/500000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(500000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "hist 500k",
+   "type": "histogram"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f31 e",
+ "uid": "heatmap_e",
+ "version": 1
+}

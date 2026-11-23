@@ -1,0 +1,21 @@
+{
+  "id": "pg-interval-unit-m-90",
+  "tags": [
+    "macro:$__timeGroup",
+    "interval:90m"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeGroup(ts, '90m') FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT floor(extract(epoch from ts)/5400)*5400 FROM t",
+  "sent_sql": "SELECT $__timeGroup(ts, '90m') FROM t"
+}

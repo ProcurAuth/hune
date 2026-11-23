@@ -1,0 +1,3167 @@
+{
+ "id": "FE-77",
+ "about": "The write rule and the rules of display of the forms of stat, bargauge and piechart (10.3h, rules 4 and 8). A vector gives the options now, a row id and a value (or `remove`). It gives the options after the write (exact JSON, the order of 4.38) and the ids of the rows that show then, or an `error` text that the form shows under the control (nothing is written).",
+ "vectors": [
+  {
+   "name": "stat: values true hides calc",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-values",
+   "value": true,
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": true
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: values false shows calc",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": true
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-values",
+   "value": false,
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: calc max",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-calc",
+   "value": "max",
+   "after": {
+    "reduce": {
+     "calc": "max",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: calc first_not_null",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-calc",
+   "value": "first_not_null",
+   "after": {
+    "reduce": {
+     "calc": "first_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: calc unknown",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-calc",
+   "value": "avg",
+   "error": "is not valid"
+  },
+  {
+   "name": "stat: fields pattern of the Grafana form",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "/^Total$/",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "/^Total$/",
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: fields plain text",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "Total",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "Total",
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: fields with flags",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "/a|b/gi",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "/a|b/gi",
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: fields empty gives null",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "Total",
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: fields pattern that does not compile",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "/(/",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "stat: fields escape outside the common subset",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "/\\s+/",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "stat: fields flag twice",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "/a/ii",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "stat: fields lookahead",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "/(?=a)/",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "stat: fields 1025 bytes",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "stat: fields 1024 bytes",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "reduce-fields",
+   "value": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: orientation horizontal",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "orientation",
+   "value": "horizontal",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "horizontal"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: orientation vertical",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "orientation",
+   "value": "vertical",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "vertical"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: text mode value",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "text-mode",
+   "value": "value",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "value",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: text mode value_and_name",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "text-mode",
+   "value": "value_and_name",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "value_and_name",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: text mode name",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "text-mode",
+   "value": "name",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "name",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: text mode none",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "text-mode",
+   "value": "none",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "none",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: text mode unknown",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "x",
+    "orientation": "auto"
+   },
+   "row": "text-mode",
+   "value": "x",
+   "error": "is not valid"
+  },
+  {
+   "name": "stat: color mode none",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "color-mode",
+   "value": "none",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "none",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: color mode background",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "color-mode",
+   "value": "background",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "background",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: graph mode none",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "graph-mode",
+   "value": "none",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "none",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: justify center adds the member at the end",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "justify",
+   "value": "center",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto",
+    "justify": "center"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: justify auto removes the member",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto",
+    "justify": "center"
+   },
+   "row": "justify",
+   "value": "auto",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ]
+  },
+  {
+   "name": "stat: justify unknown",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "justify",
+   "value": "left",
+   "error": "is not valid"
+  },
+  {
+   "name": "stat: display name",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "display-name",
+   "value": "CPU",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ],
+   "panelFields": {
+    "defaults": {}
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "CPU"
+    }
+   }
+  },
+  {
+   "name": "stat: display name keeps the other defaults in order",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "display-name",
+   "value": "CPU",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ],
+   "panelFields": {
+    "defaults": {
+     "unit": "percent",
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "value": null,
+        "color": "green"
+       }
+      ]
+     },
+     "no_value": "n/a"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "unit": "percent",
+     "thresholds": {
+      "mode": "absolute",
+      "steps": [
+       {
+        "value": null,
+        "color": "green"
+       }
+      ]
+     },
+     "display_name": "CPU",
+     "no_value": "n/a"
+    }
+   }
+  },
+  {
+   "name": "stat: display name empty removes the member",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "display-name",
+   "value": "",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ],
+   "panelFields": {
+    "defaults": {
+     "display_name": "CPU"
+    }
+   },
+   "afterFields": {
+    "defaults": {}
+   }
+  },
+  {
+   "name": "stat: display name 256 characters",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "display-name",
+   "value": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "text-mode",
+    "color-mode",
+    "graph-mode",
+    "justify",
+    "percent-change",
+    "title-size",
+    "value-size",
+    "display-name"
+   ],
+   "panelFields": {
+    "defaults": {}
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+    }
+   }
+  },
+  {
+   "name": "stat: display name 257 characters",
+   "type": "stat",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "color_mode": "value",
+    "graph_mode": "area",
+    "text_mode": "auto",
+    "orientation": "auto"
+   },
+   "row": "display-name",
+   "value": "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+   "error": "needs 1 to 256"
+  },
+  {
+   "name": "bargauge: values true hides calc",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "reduce-values",
+   "value": true,
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": true
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: calc total",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "reduce-calc",
+   "value": "total",
+   "after": {
+    "reduce": {
+     "calc": "total",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: fields",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "reduce-fields",
+   "value": "/^a|b$/",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "/^a|b$/",
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: fields unclosed class",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "reduce-fields",
+   "value": "/[a/",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "bargauge: fields class operation",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "reduce-fields",
+   "value": "/[a&&b]/",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "bargauge: orientation vertical",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "orientation",
+   "value": "vertical",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "vertical",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: orientation auto is not a value",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "orientation",
+   "value": "auto",
+   "error": "is not valid"
+  },
+  {
+   "name": "bargauge: display mode lcd keeps the unfilled row",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "display-mode",
+   "value": "lcd",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "lcd",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: display mode basic keeps the unfilled row",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "display-mode",
+   "value": "basic",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "basic",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: show unfilled false",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "show-unfilled",
+   "value": false,
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": false
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: show unfilled true",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": false
+   },
+   "row": "show-unfilled",
+   "value": true,
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: unfilled row shows in lcd",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "lcd",
+    "show_unfilled": true
+   },
+   "row": "show-unfilled",
+   "value": false,
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "lcd",
+    "show_unfilled": false
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ]
+  },
+  {
+   "name": "bargauge: display name",
+   "type": "bargauge",
+   "options": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "row": "display-name",
+   "value": "Disk",
+   "after": {
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "orientation": "horizontal",
+    "display_mode": "gradient",
+    "show_unfilled": true
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "orientation",
+    "display-mode",
+    "show-unfilled",
+    "display-name"
+   ],
+   "panelFields": {
+    "defaults": {
+     "min": 0,
+     "max": 400
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "min": 0,
+     "max": 400,
+     "display_name": "Disk"
+    }
+   }
+  },
+  {
+   "name": "pie: values true hides calc",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "reduce-values",
+   "value": true,
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": true
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: calc median",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "reduce-calc",
+   "value": "median",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "median",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: fields",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "reduce-fields",
+   "value": "/^Total$/",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "/^Total$/",
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: fields empty gives null",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": "a",
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "reduce-fields",
+   "value": "",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: fields not closed",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "reduce-fields",
+   "value": "/a",
+   "error": "pattern is not valid"
+  },
+  {
+   "name": "pie: donut",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "pie-type",
+   "value": "donut",
+   "after": {
+    "pie_type": "donut",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: labels name and percent",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "labels",
+   "value": [
+    "name",
+    "percent"
+   ],
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [
+     "name",
+     "percent"
+    ],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: labels three",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "labels",
+   "value": [
+    "name",
+    "value",
+    "percent"
+   ],
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [
+     "name",
+     "value",
+     "percent"
+    ],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: labels empty",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [
+     "name"
+    ],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "labels",
+   "value": [],
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: labels twice the same item",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "labels",
+   "value": [
+    "name",
+    "name"
+   ],
+   "error": "once"
+  },
+  {
+   "name": "pie: labels four items",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "labels",
+   "value": [
+    "name",
+    "value",
+    "percent",
+    "name"
+   ],
+   "error": "3 at most"
+  },
+  {
+   "name": "pie: tooltip all is valid and shows no sort row",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "multi",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: tooltip hidden",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "hidden",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "hidden"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend hidden hides mode, placement, values and sort",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-show",
+   "value": false,
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": false,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend hidden keeps the table rows hidden too",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-show",
+   "value": false,
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": false,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend shown again keeps the mode",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": false,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-show",
+   "value": true,
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend table shows values and sort",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-mode",
+   "value": "table",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend placement bottom",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-placement",
+   "value": "bottom",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend values value",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "value"
+   ],
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [
+      "value"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend values both",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "value",
+    "percent"
+   ],
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [
+      "value",
+      "percent"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend values three items",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "value",
+    "percent",
+    "value"
+   ],
+   "error": "2 at most"
+  },
+  {
+   "name": "pie: legend values twice",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "value",
+    "value"
+   ],
+   "error": "once"
+  },
+  {
+   "name": "pie: legend sort by name shows sort descending",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "name",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend sort by value shows sort descending",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "value",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "value"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend sort by percent shows sort descending",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "percent",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "percent"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend sort by a calculation is not a value of a pie",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "max",
+   "error": "is not valid"
+  },
+  {
+   "name": "pie: legend sort descending",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-desc",
+   "value": true,
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend sort descending false removes the member",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-desc",
+   "value": false,
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: legend sort None removes sort_by and sort_desc",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": [],
+     "sort_by": "value",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "remove": true,
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "pie: display name",
+   "type": "piechart",
+   "options": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "Share",
+   "after": {
+    "pie_type": "pie",
+    "reduce": {
+     "calc": "last_not_null",
+     "fields": null,
+     "values": false
+    },
+    "labels": [],
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "reduce-values",
+    "reduce-calc",
+    "reduce-fields",
+    "pie-type",
+    "labels",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ],
+   "panelFields": {
+    "defaults": {}
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "Share"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,4 @@
+<clickhouse>
+    <!-- C13: ClickHouse closes an idle HTTP connection after 10 s. -->
+    <keep_alive_timeout>10</keep_alive_timeout>
+</clickhouse>

@@ -1,0 +1,5 @@
+SELECT floor(extract(epoch from created_at)/20)*20 AS "time", host, avg(load) AS load
+FROM metrics.node_load
+WHERE created_at BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z' AND host IN ('a1','b''2') AND env = 'prod'
+GROUP BY 1, host
+ORDER BY 1

@@ -1,0 +1,21 @@
+{
+  "id": "pg-macro-timeFilter-range-fractions",
+  "tags": [
+    "macro:$__timeFilter",
+    "time:ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT v FROM t WHERE $__timeFilter(ts)",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200125,
+  "to_ms": 1794232800999,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT v FROM t WHERE ts BETWEEN '2026-11-09T08:00:00.125Z' AND '2026-11-09T14:00:00.999Z'",
+  "sent_sql": "SELECT v FROM t WHERE $__timeFilter(ts)"
+}

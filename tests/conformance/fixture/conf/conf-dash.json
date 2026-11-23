@@ -1,0 +1,58 @@
+{
+  "format_version": 3,
+  "uid": "conf-dash",
+  "title": "Conformance",
+  "description": "",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Rows",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 10
+          },
+          "data": {
+            "query": {
+              "source": "conf",
+              "format": "table",
+              "sql": [
+                "SELECT n FROM analytics.conf_rows ORDER BY n"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

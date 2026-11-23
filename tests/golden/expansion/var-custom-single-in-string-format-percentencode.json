@@ -1,0 +1,40 @@
+{
+  "id": "var-custom-single-in-string-format-percentencode",
+  "tags": [
+    "var:custom-single",
+    "format:percentencode",
+    "edge:in-string"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE e = '${env:percentencode}'",
+  "variables": [
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "prod",
+        "dev"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "env": {
+      "all": false,
+      "values": [
+        "dev"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE e = 'dev'",
+  "sent_sql": "SELECT 1 WHERE e = 'dev'"
+}

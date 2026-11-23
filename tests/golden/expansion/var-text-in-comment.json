@@ -1,0 +1,41 @@
+{
+  "id": "var-text-in-comment",
+  "tags": [
+    "var:text",
+    "edge:comment"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 /* $t */",
+  "variables": [
+    {
+      "name": "t",
+      "kind": "text",
+      "value_type": "text"
+    }
+  ],
+  "values": {
+    "t": {
+      "all": false,
+      "values": [
+        "hello"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 /* hello */",
+  "sent_sql": "SELECT 1 /* hello */",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana replaces a variable in a comment. Hune leaves a comment as it is.",
+    "section": "7.6",
+    "hune": {
+      "sql": "SELECT 1 /* $t */"
+    }
+  }
+}

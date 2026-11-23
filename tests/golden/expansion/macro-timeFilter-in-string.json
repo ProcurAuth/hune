@@ -1,0 +1,27 @@
+{
+  "id": "macro-timeFilter-in-string",
+  "tags": [
+    "macro:$__timeFilter"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 'a $__timeFilter(timestamp) b' AS s, count() FROM analytics.events",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 'a timestamp >= toDateTime(1794211200) AND timestamp <= toDateTime(1794232800) b' AS s, count() FROM analytics.events",
+  "sent_sql": "SELECT 'a $__timeFilter(timestamp) b' AS s, count() FROM analytics.events",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT 'a $__timeFilter(timestamp) b' AS s, count() FROM analytics.events"
+    }
+  }
+}

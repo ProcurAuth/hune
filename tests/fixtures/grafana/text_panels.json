@@ -1,0 +1,271 @@
+{
+  "uid": "text-panels",
+  "title": "Text panels",
+  "description": "The text panels of 15.6.",
+  "schemaVersion": 41,
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "refresh": "",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "type": "custom",
+        "name": "region",
+        "label": "Region",
+        "query": "eu,as,us",
+        "multi": true,
+        "includeAll": true,
+        "current": {
+          "text": [
+            "eu"
+          ],
+          "value": [
+            "eu"
+          ]
+        },
+        "options": []
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "Markdown",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "markdown",
+        "content": "# Markdown\n\nRegion $region with **bold** and a [link](https://wiki.example/x).",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      }
+    },
+    {
+      "id": 2,
+      "type": "text",
+      "title": "Mode html",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "html",
+        "content": "<p style=\"color:red\">Hello <b>HTML</b></p>\n<img src=x onerror=alert(1)>",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      }
+    },
+    {
+      "id": 3,
+      "type": "text",
+      "title": "Mode code",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 6
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "code",
+        "content": "fn main() {\n    println!(\"hi\");\n}\n```",
+        "code": {
+          "language": "rust",
+          "showLineNumbers": true,
+          "showMiniMap": false
+        }
+      }
+    },
+    {
+      "id": 4,
+      "type": "text",
+      "title": "HTML in markdown",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 6
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "markdown",
+        "content": "Text <b>bold html</b> and <script>alert(1)</script>",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      }
+    },
+    {
+      "id": 5,
+      "type": "text",
+      "title": "Table and image",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "markdown",
+        "content": "| a | b |\n|---|---|\n| 1 | 2 |\n\n![alt](http://127.0.0.1:1/i.png)",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      }
+    },
+    {
+      "id": 6,
+      "type": "text",
+      "title": "Placeholders",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "markdown",
+        "content": "$region ${region:csv} ${region:json} [[region]] $__from",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      }
+    },
+    {
+      "id": 7,
+      "type": "text",
+      "title": "Repeat $region",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "markdown",
+        "content": "Repeated for $region",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      },
+      "repeat": "region",
+      "repeatDirection": "v"
+    },
+    {
+      "id": 8,
+      "type": "text",
+      "title": "Empty",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 18
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "markdown",
+        "content": "",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      }
+    },
+    {
+      "id": 9,
+      "type": "text",
+      "title": "Spaces",
+      "description": "",
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "pluginVersion": "12.4.2",
+      "options": {
+        "mode": "markdown",
+        "content": "   \n  ",
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        }
+      }
+    }
+  ]
+}

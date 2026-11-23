@@ -1,0 +1,28 @@
+{
+  "id": "pg-macro-in-quoted-name",
+  "tags": [
+    "macro:$__timeFrom"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT 1 AS \"$__timeFrom()\" FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 AS \"'2026-11-09T08:00:00Z'\" FROM t",
+  "sent_sql": "SELECT 1 AS \"$__timeFrom()\" FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana expands a macro in a quoted name. Hune expands a macro only in code.",
+    "hune": {
+      "sql": "SELECT 1 AS \"$__timeFrom()\" FROM t"
+    }
+  }
+}

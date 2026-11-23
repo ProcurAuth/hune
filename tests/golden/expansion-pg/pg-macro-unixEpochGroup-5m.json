@@ -1,0 +1,21 @@
+{
+  "id": "pg-macro-unixEpochGroup-5m",
+  "tags": [
+    "macro:$__unixEpochGroup",
+    "interval:5m"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__unixEpochGroup(n, '5m') AS t FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT floor((n)/300)*300 AS t FROM t",
+  "sent_sql": "SELECT $__unixEpochGroup(n, '5m') AS t FROM t"
+}

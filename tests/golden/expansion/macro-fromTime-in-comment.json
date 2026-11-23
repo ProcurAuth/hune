@@ -1,0 +1,27 @@
+{
+  "id": "macro-fromTime-in-comment",
+  "tags": [
+    "macro:$__fromTime"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 -- $__fromTime\n",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 -- toDateTime(1794211200)\n",
+  "sent_sql": "SELECT 1 -- $__fromTime\n",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT 1 -- $__fromTime\n"
+    }
+  }
+}

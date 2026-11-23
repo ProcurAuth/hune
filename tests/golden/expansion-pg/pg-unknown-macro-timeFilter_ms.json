@@ -1,0 +1,32 @@
+{
+  "id": "pg-unknown-macro-timeFilter_ms",
+  "tags": [
+    "unknown"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeFilter_ms(ts) FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": null,
+  "grafana_error": "interpolation failed: unknown macro \"__timeFilter_ms\"",
+  "sent_sql": "SELECT $__timeFilter_ms(ts) FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse this name. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

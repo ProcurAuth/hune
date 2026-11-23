@@ -1,0 +1,1 @@
+{"uid": "a", "title": "T", "schemaVersion": 41, "templating": {"list": [{"type": "interval", "name": "iv", "query": "1M", "auto_count": "x", "current": {"value": ["1m", "2m"]}}]}, "panels": []}

@@ -1,0 +1,32 @@
+{
+  "id": "pg-interval-refused-leading-zero",
+  "tags": [
+    "macro:$__timeGroup",
+    "interval:refused"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeGroup(ts, '05m') FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT floor(extract(epoch from ts)/300)*300 FROM t",
+  "sent_sql": "SELECT $__timeGroup(ts, '05m') FROM t",
+  "difference": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana reads a zero at the start. Hune refuses it.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

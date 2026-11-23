@@ -1,0 +1,176 @@
+# Synthetic acceptance file of the importer tests. Each line accepts one loss.
+Mixed_Case_Uid:/dashboard/uid   # changed: the uid does not fit the rule of 4.3: the new uid is mixed-case-uid
+Prod_Main:/dashboard/uid   # changed: the uid does not fit the rule of 4.3: the new uid is g-301f976e365b83e3
+bad-folder:/meta/folderUid   # unsupported: the folder uid does not fit the rule of 4.3 and the folder map has no entry (15.7)
+folder:kid0nested:/2/parentUid   # unsupported: Folders have one level: a folder with a parent is not imported
+monitor-v2a:/metadata/annotations/grafana.app~1createdBy   # unsupported: unknown member
+monitor-v2a:/metadata/annotations/grafana.app~1updatedTimestamp   # unsupported: unknown member
+monitor-v2a:/spec/annotations/1   # unsupported: the data source of the annotation is not in the source map
+monitor-v2a:/spec/cursorSync   # changed: the shared tooltip becomes the shared crosshair
+monitor-v2a:/spec/elements/panel-1/spec/vizConfig/spec/fieldConfig/overrides/0/properties/9/value/mode   # changed: the Grafana palette mode palette-classic-by-name becomes the series palette of Hune (mode palette)
+monitor-v2a:/spec/elements/panel-10/spec/vizConfig/spec/options/reduceOptions/calcs   # changed: no reducer: the Grafana default last_not_null
+monitor-v2a:/spec/elements/panel-11/spec/data/spec/queries/0/spec/datasource   # unsupported: the data source mongo1 is not in the source map
+monitor-v2a:/spec/elements/panel-14/spec/libraryPanel   # unsupported: library panels are out of scope
+monitor-v2a:/spec/elements/panel-15/spec/data/spec/queries/0/spec/datasource   # unsupported: the data source other-ch is not in the source map
+monitor-v2a:/spec/elements/panel-16/spec/data/spec/queries/0/spec/query/spec/editorType   # changed: the SQL that the builder made stays: the builder form is removed
+monitor-v2a:/spec/elements/panel-17/spec/data/spec/queries/0/spec/query/spec/rawSql   # unsupported: SQL: line 1, column 47: $__range_s is not a macro of Hune
+monitor-v2a:/spec/elements/panel-18/spec/data/spec/queries/0/spec/query/spec/panelId   # unsupported: the source panel 2 is absent, removed, or reuses a frame itself
+monitor-v2a:/spec/elements/panel-19/spec/data/spec/queries/0/spec/datasource   # unsupported: the data source -- Mixed -- has no equal in format 1
+monitor-v2a:/spec/elements/panel-2/spec/vizConfig/spec/options/colorMode   # changed: the value background_solid becomes background
+monitor-v2a:/spec/elements/panel-3/spec/data/spec/queries/0/spec/query/spec/rawSql   # changed: the text has a carriage return: each \r\n and \r is a line end
+monitor-v2a:/spec/elements/panel-3/spec/data/spec/transformations/2/spec/disabled   # dropped: the transformation is disabled: it is removed
+monitor-v2a:/spec/elements/panel-3/spec/data/spec/transformations/3/spec/options/filters/0/config/id   # unsupported: this matcher has no equal in format 1
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/1/properties/3/value/seriesBy   # dropped: seriesBy has no meaning in Hune
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/2/properties/0/value/0/options/2   # dropped: the mapping has no text and no colour
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/2/properties/0/value/4/options   # dropped: the mapping has no text and no colour
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/2/properties/2/value   # unsupported: no_value is permitted only in the defaults (4.18)
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/3/properties/0/value/1/url   # unsupported: the prefix of the url breaks the rule of 4.23
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/4/matcher/id   # unsupported: this matcher has no equal in format 2
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/5/properties/1/value   # unsupported: the unit is not in the list of 4.20
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/5/properties/2/value/type   # unsupported: this cell type is not in the property set (19.15)
+monitor-v2a:/spec/elements/panel-3/spec/vizConfig/spec/options/footer   # changed: Grafana 12 moves this footer to custom.footer.reducers: the importer moves it in the same way (4.18)
+monitor-v2a:/spec/elements/panel-7/spec/vizConfig/spec/options/namePlacement   # unsupported: unknown member
+monitor-v2a:/spec/elements/panel-7/spec/vizConfig/spec/options/orientation   # changed: the value auto becomes horizontal
+monitor-v2a:/spec/elements/panel-7/spec/vizConfig/spec/options/reduceOptions/calcs   # unsupported: format 1 has one reducer: the other items are removed
+monitor-v2a:/spec/elements/panel-8/spec/data/spec/transformations/0/spec/options/emptyValue   # unsupported: this emptyValue has no equal in format 1
+monitor-v2a:/spec/elements/panel-8/spec/data/spec/transformations/2   # changed: after long-to-wide, the result is the table form: format table
+monitor-v2a:/spec/elements/panel-9/spec/data/spec/transformations/0   # changed: the multi-frame form is the long-to-wide of format time_series
+monitor-v2a:/spec/elements/panel-9/spec/vizConfig/spec/options/legend/calcs/1   # unsupported: this reducer has no equal in format 2
+monitor-v2a:/spec/layout/spec/rows/3/spec/repeat/value   # unsupported: the variable env must be a query or custom variable with several values (multi): Hune repeats by such a variable only (4.13a)
+monitor-v2a:/spec/layout/spec/rows/3/spec/title   # changed: an empty title becomes the text Row
+monitor-v2a:/spec/tags/2   # changed: two equal tags are changed to one tag
+monitor-v2a:/spec/timeSettings/autoRefresh   # changed: refresh 5s is not a choice of 4.6: the next larger choice is 10s
+monitor-v2a:/spec/variables/1/spec/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200)
+monitor-v2a:/spec/variables/3/spec/query   # changed: the variable top_n stands in code: value_type is number
+monitor-v2a:/spec/variables/3/spec/skipUrlSync   # dropped: skipUrlSync has no meaning in Hune
+monitor-v2a:/spec/variables/4/spec/description   # dropped: format 1 has no description of a variable (4.7)
+monitor-v2a:/spec/variables/4/spec/refresh   # changed: Hune computes the options at load: Grafana keeps stored options
+monitor-v2a:/spec/zzz   # unsupported: unknown member
+monitor-v2b:/metadata/annotations/grafana.app~1createdBy   # unsupported: unknown member
+monitor-v2b:/metadata/annotations/grafana.app~1updatedTimestamp   # unsupported: unknown member
+monitor-v2b:/spec/annotations/1   # unsupported: the data source of the annotation is not in the source map
+monitor-v2b:/spec/cursorSync   # changed: the shared tooltip becomes the shared crosshair
+monitor-v2b:/spec/elements/panel-1/spec/vizConfig/spec/fieldConfig/overrides/0/properties/9/value/mode   # changed: the Grafana palette mode palette-classic-by-name becomes the series palette of Hune (mode palette)
+monitor-v2b:/spec/elements/panel-10/spec/vizConfig/spec/options/reduceOptions/calcs   # changed: no reducer: the Grafana default last_not_null
+monitor-v2b:/spec/elements/panel-11/spec/data/spec/queries/0/spec/query/datasource   # unsupported: the data source mongo1 is not in the source map
+monitor-v2b:/spec/elements/panel-14/spec/libraryPanel   # unsupported: library panels are out of scope
+monitor-v2b:/spec/elements/panel-15/spec/data/spec/queries/0/spec/query/datasource   # unsupported: the data source other-ch is not in the source map
+monitor-v2b:/spec/elements/panel-16/spec/data/spec/queries/0/spec/query/spec/editorType   # changed: the SQL that the builder made stays: the builder form is removed
+monitor-v2b:/spec/elements/panel-17/spec/data/spec/queries/0/spec/query/spec/rawSql   # unsupported: SQL: line 1, column 47: $__range_s is not a macro of Hune
+monitor-v2b:/spec/elements/panel-18/spec/data/spec/queries/0/spec/query/spec/panelId   # unsupported: the source panel 2 is absent, removed, or reuses a frame itself
+monitor-v2b:/spec/elements/panel-19/spec/data/spec/queries/0/spec/query/datasource   # unsupported: the data source -- Mixed -- has no equal in format 1
+monitor-v2b:/spec/elements/panel-2/spec/vizConfig/spec/options/colorMode   # changed: the value background_solid becomes background
+monitor-v2b:/spec/elements/panel-3/spec/data/spec/queries/0/spec/query/spec/rawSql   # changed: the text has a carriage return: each \r\n and \r is a line end
+monitor-v2b:/spec/elements/panel-3/spec/data/spec/transformations/2/spec/disabled   # dropped: the transformation is disabled: it is removed
+monitor-v2b:/spec/elements/panel-3/spec/data/spec/transformations/3/spec/options/filters/0/config/id   # unsupported: this matcher has no equal in format 1
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/1/properties/3/value/seriesBy   # dropped: seriesBy has no meaning in Hune
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/2/properties/0/value/0/options/2   # dropped: the mapping has no text and no colour
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/2/properties/0/value/4/options   # dropped: the mapping has no text and no colour
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/2/properties/2/value   # unsupported: no_value is permitted only in the defaults (4.18)
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/3/properties/0/value/1/url   # unsupported: the prefix of the url breaks the rule of 4.23
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/4/matcher/id   # unsupported: this matcher has no equal in format 2
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/5/properties/1/value   # unsupported: the unit is not in the list of 4.20
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/fieldConfig/overrides/5/properties/2/value/type   # unsupported: this cell type is not in the property set (19.15)
+monitor-v2b:/spec/elements/panel-3/spec/vizConfig/spec/options/footer   # changed: Grafana 12 moves this footer to custom.footer.reducers: the importer moves it in the same way (4.18)
+monitor-v2b:/spec/elements/panel-7/spec/vizConfig/spec/options/namePlacement   # unsupported: unknown member
+monitor-v2b:/spec/elements/panel-7/spec/vizConfig/spec/options/orientation   # changed: the value auto becomes horizontal
+monitor-v2b:/spec/elements/panel-7/spec/vizConfig/spec/options/reduceOptions/calcs   # unsupported: format 1 has one reducer: the other items are removed
+monitor-v2b:/spec/elements/panel-8/spec/data/spec/transformations/0/spec/options/emptyValue   # unsupported: this emptyValue has no equal in format 1
+monitor-v2b:/spec/elements/panel-8/spec/data/spec/transformations/2   # changed: after long-to-wide, the result is the table form: format table
+monitor-v2b:/spec/elements/panel-9/spec/data/spec/transformations/0   # changed: the multi-frame form is the long-to-wide of format time_series
+monitor-v2b:/spec/elements/panel-9/spec/vizConfig/spec/options/legend/calcs/1   # unsupported: this reducer has no equal in format 2
+monitor-v2b:/spec/layout/spec/rows/3/spec/repeat/value   # unsupported: the variable env must be a query or custom variable with several values (multi): Hune repeats by such a variable only (4.13a)
+monitor-v2b:/spec/layout/spec/rows/3/spec/title   # changed: an empty title becomes the text Row
+monitor-v2b:/spec/tags/2   # changed: two equal tags are changed to one tag
+monitor-v2b:/spec/timeSettings/autoRefresh   # changed: refresh 5s is not a choice of 4.6: the next larger choice is 10s
+monitor-v2b:/spec/variables/3/spec/query   # changed: the variable top_n stands in code: value_type is number
+monitor-v2b:/spec/variables/3/spec/skipUrlSync   # dropped: skipUrlSync has no meaning in Hune
+monitor-v2b:/spec/variables/4/spec/description   # dropped: format 1 has no description of a variable (4.7)
+monitor-v2b:/spec/variables/4/spec/refresh   # changed: Hune computes the options at load: Grafana keeps stored options
+monitor-v2b:/spec/zzz   # unsupported: unknown member
+monitor-wrapped:/dashboard/annotations/list/1/target   # unsupported: the annotation has no SQL text (rawSql)
+monitor-wrapped:/dashboard/graphTooltip   # changed: the shared tooltip becomes the shared crosshair
+monitor-wrapped:/dashboard/panels/0/fieldConfig/overrides/0/properties/9/value/mode   # changed: the Grafana palette mode palette-classic-by-name becomes the series palette of Hune (mode palette)
+monitor-wrapped:/dashboard/panels/1/options/colorMode   # changed: the value background_solid becomes background
+monitor-wrapped:/dashboard/panels/10/panels/0/options/reduceOptions/calcs   # changed: no reducer: the Grafana default last_not_null
+monitor-wrapped:/dashboard/panels/10/panels/1/targets/0/datasource   # unsupported: the data source mongo1 is not in the source map
+monitor-wrapped:/dashboard/panels/11/repeat   # unsupported: the variable env must be a query or custom variable with several values (multi): Hune repeats by such a variable only (4.13a)
+monitor-wrapped:/dashboard/panels/11/title   # changed: an empty title becomes the text Row
+monitor-wrapped:/dashboard/panels/13/libraryPanel   # unsupported: library panels are out of scope
+monitor-wrapped:/dashboard/panels/14/targets/0/datasource   # unsupported: the data source other-ch is not in the source map
+monitor-wrapped:/dashboard/panels/15/targets/0/editorType   # changed: the SQL that the builder made stays: the builder form is removed
+monitor-wrapped:/dashboard/panels/16/targets/0/rawSql   # unsupported: SQL: line 1, column 47: $__range_s is not a macro of Hune
+monitor-wrapped:/dashboard/panels/17/targets/0/panelId   # unsupported: the source panel 2 is absent, removed, or reuses a frame itself
+monitor-wrapped:/dashboard/panels/18/targets/0/datasource   # unsupported: the data source -- Mixed -- has no equal in format 1
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/1/properties/3/value/seriesBy   # dropped: seriesBy has no meaning in Hune
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/2/properties/0/value/0/options/2   # dropped: the mapping has no text and no colour
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/2/properties/0/value/4/options   # dropped: the mapping has no text and no colour
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/2/properties/2/value   # unsupported: no_value is permitted only in the defaults (4.18)
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/3/properties/0/value/1/url   # unsupported: the prefix of the url breaks the rule of 4.23
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/4/matcher/id   # unsupported: this matcher has no equal in format 2
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/5/properties/1/value   # unsupported: the unit is not in the list of 4.20
+monitor-wrapped:/dashboard/panels/3/fieldConfig/overrides/5/properties/2/value/type   # unsupported: this cell type is not in the property set (19.15)
+monitor-wrapped:/dashboard/panels/3/options/footer   # changed: Grafana 12 moves this footer to custom.footer.reducers: the importer moves it in the same way (4.18)
+monitor-wrapped:/dashboard/panels/3/targets/0/rawSql   # changed: the text has a carriage return: each \r\n and \r is a line end
+monitor-wrapped:/dashboard/panels/3/transformations/2/disabled   # dropped: the transformation is disabled: it is removed
+monitor-wrapped:/dashboard/panels/3/transformations/3/options/filters/0/config/id   # unsupported: this matcher has no equal in format 1
+monitor-wrapped:/dashboard/panels/7/options/namePlacement   # unsupported: unknown member
+monitor-wrapped:/dashboard/panels/7/options/orientation   # changed: the value auto becomes horizontal
+monitor-wrapped:/dashboard/panels/7/options/reduceOptions/calcs   # unsupported: format 1 has one reducer: the other items are removed
+monitor-wrapped:/dashboard/panels/8/transformations/0/options/emptyValue   # unsupported: this emptyValue has no equal in format 1
+monitor-wrapped:/dashboard/panels/8/transformations/2   # changed: after long-to-wide, the result is the table form: format table
+monitor-wrapped:/dashboard/panels/9/options/legend/calcs/1   # unsupported: this reducer has no equal in format 2
+monitor-wrapped:/dashboard/panels/9/transformations/0   # changed: the multi-frame form is the long-to-wide of format time_series
+monitor-wrapped:/dashboard/refresh   # changed: refresh 5s is not a choice of 4.6: the next larger choice is 10s
+monitor-wrapped:/dashboard/style   # unsupported: unknown member
+monitor-wrapped:/dashboard/tags/2   # changed: two equal tags are changed to one tag
+monitor-wrapped:/dashboard/templating/list/1/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200)
+monitor-wrapped:/dashboard/templating/list/3/query   # changed: the variable top_n stands in code: value_type is number
+monitor-wrapped:/dashboard/templating/list/3/skipUrlSync   # dropped: skipUrlSync has no meaning in Hune
+monitor-wrapped:/dashboard/templating/list/4/description   # dropped: format 1 has no description of a variable (4.7)
+monitor-wrapped:/dashboard/templating/list/4/refresh   # changed: Hune computes the options at load: Grafana keeps stored options
+monitor-wrapped:/dashboard/zzz   # unsupported: unknown member
+monitor:/annotations/list/1/target   # unsupported: the annotation has no SQL text (rawSql)
+monitor:/graphTooltip   # changed: the shared tooltip becomes the shared crosshair
+monitor:/panels/0/fieldConfig/overrides/0/properties/9/value/mode   # changed: the Grafana palette mode palette-classic-by-name becomes the series palette of Hune (mode palette)
+monitor:/panels/1/options/colorMode   # changed: the value background_solid becomes background
+monitor:/panels/10/panels/0/options/reduceOptions/calcs   # changed: no reducer: the Grafana default last_not_null
+monitor:/panels/10/panels/1/targets/0/datasource   # unsupported: the data source mongo1 is not in the source map
+monitor:/panels/11/repeat   # unsupported: the variable env must be a query or custom variable with several values (multi): Hune repeats by such a variable only (4.13a)
+monitor:/panels/11/title   # changed: an empty title becomes the text Row
+monitor:/panels/13/libraryPanel   # unsupported: library panels are out of scope
+monitor:/panels/14/targets/0/datasource   # unsupported: the data source other-ch is not in the source map
+monitor:/panels/15/targets/0/editorType   # changed: the SQL that the builder made stays: the builder form is removed
+monitor:/panels/16/targets/0/rawSql   # unsupported: SQL: line 1, column 47: $__range_s is not a macro of Hune
+monitor:/panels/17/targets/0/panelId   # unsupported: the source panel 2 is absent, removed, or reuses a frame itself
+monitor:/panels/18/targets/0/datasource   # unsupported: the data source -- Mixed -- has no equal in format 1
+monitor:/panels/3/fieldConfig/overrides/1/properties/3/value/seriesBy   # dropped: seriesBy has no meaning in Hune
+monitor:/panels/3/fieldConfig/overrides/2/properties/0/value/0/options/2   # dropped: the mapping has no text and no colour
+monitor:/panels/3/fieldConfig/overrides/2/properties/0/value/4/options   # dropped: the mapping has no text and no colour
+monitor:/panels/3/fieldConfig/overrides/2/properties/2/value   # unsupported: no_value is permitted only in the defaults (4.18)
+monitor:/panels/3/fieldConfig/overrides/3/properties/0/value/1/url   # unsupported: the prefix of the url breaks the rule of 4.23
+monitor:/panels/3/fieldConfig/overrides/4/matcher/id   # unsupported: this matcher has no equal in format 2
+monitor:/panels/3/fieldConfig/overrides/5/properties/1/value   # unsupported: the unit is not in the list of 4.20
+monitor:/panels/3/fieldConfig/overrides/5/properties/2/value/type   # unsupported: this cell type is not in the property set (19.15)
+monitor:/panels/3/options/footer   # changed: Grafana 12 moves this footer to custom.footer.reducers: the importer moves it in the same way (4.18)
+monitor:/panels/3/targets/0/rawSql   # changed: the text has a carriage return: each \r\n and \r is a line end
+monitor:/panels/3/transformations/2/disabled   # dropped: the transformation is disabled: it is removed
+monitor:/panels/3/transformations/3/options/filters/0/config/id   # unsupported: this matcher has no equal in format 1
+monitor:/panels/7/options/namePlacement   # unsupported: unknown member
+monitor:/panels/7/options/orientation   # changed: the value auto becomes horizontal
+monitor:/panels/7/options/reduceOptions/calcs   # unsupported: format 1 has one reducer: the other items are removed
+monitor:/panels/8/transformations/0/options/emptyValue   # unsupported: this emptyValue has no equal in format 1
+monitor:/panels/8/transformations/2   # changed: after long-to-wide, the result is the table form: format table
+monitor:/panels/9/options/legend/calcs/1   # unsupported: this reducer has no equal in format 2
+monitor:/panels/9/transformations/0   # changed: the multi-frame form is the long-to-wide of format time_series
+monitor:/refresh   # changed: refresh 5s is not a choice of 4.6: the next larger choice is 10s
+monitor:/style   # unsupported: unknown member
+monitor:/tags/2   # changed: two equal tags are changed to one tag
+monitor:/templating/list/1/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200)
+monitor:/templating/list/3/query   # changed: the variable top_n stands in code: value_type is number
+monitor:/templating/list/3/skipUrlSync   # dropped: skipUrlSync has no meaning in Hune
+monitor:/templating/list/4/description   # dropped: format 1 has no description of a variable (4.7)
+monitor:/templating/list/4/refresh   # changed: Hune computes the options at load: Grafana keeps stored options
+monitor:/zzz   # unsupported: unknown member
+short-url:Lm0pqRs:/3/path   # changed: the path is not a link to an imported dashboard: the redirect goes to the start page
+short-url:bad uid:/2/uid   # changed: the short uid has a character outside [A-Za-z0-9_-]: the nginx map has no line for it

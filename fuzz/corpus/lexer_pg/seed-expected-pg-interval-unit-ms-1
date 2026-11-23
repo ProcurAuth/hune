@@ -1,0 +1,1 @@
+SELECT floor(extract(epoch from ts)/0.001)*0.001 FROM t

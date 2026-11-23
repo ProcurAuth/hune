@@ -1,0 +1,3183 @@
+[
+  {
+    "name": "format json in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format json in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '[\"prod\",\"dev\"]'"
+  },
+  {
+    "name": "format json in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '[\"prod\"]'"
+  },
+  {
+    "name": "format json in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '[\"a.b\",\"c\\'d\",\"e\\\\\\\\f\",\"x\\' OR 1=1 --\"]'"
+  },
+  {
+    "name": "format json in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format json in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format json in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '[\"prod\",\"dev\",\"test\"]'"
+  },
+  {
+    "name": "format json in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format json in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '[\"a\",\"b\"]'"
+  },
+  {
+    "name": "format json in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '[]'"
+  },
+  {
+    "name": "format json in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:json}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format pipe in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format pipe in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod|dev'"
+  },
+  {
+    "name": "format pipe in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod'"
+  },
+  {
+    "name": "format pipe in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'a.b|c\\'d|e\\\\f|x\\' OR 1=1 --'"
+  },
+  {
+    "name": "format pipe in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format pipe in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format pipe in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod|dev|test'"
+  },
+  {
+    "name": "format pipe in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format pipe in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'a|b'"
+  },
+  {
+    "name": "format pipe in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format pipe in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:pipe}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format regex in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format regex in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(prod|dev)'"
+  },
+  {
+    "name": "format regex in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod'"
+  },
+  {
+    "name": "format regex in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(a\\\\.b|c\\'d|e\\\\\\\\f|x\\' OR 1=1 --)'"
+  },
+  {
+    "name": "format regex in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s\\\\/t\\'u\\\\\\\\v & <w>:1'"
+  },
+  {
+    "name": "format regex in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s\\\\/t\\'u\\\\\\\\v & <w>:1'"
+  },
+  {
+    "name": "format regex in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(prod|dev|test)'"
+  },
+  {
+    "name": "format regex in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format regex in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(a|b)'"
+  },
+  {
+    "name": "format regex in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '()'"
+  },
+  {
+    "name": "format regex in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:regex}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format glob in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format glob in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '{prod,dev}'"
+  },
+  {
+    "name": "format glob in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod'"
+  },
+  {
+    "name": "format glob in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '{a.b,c\\'d,e\\\\f,x\\' OR 1=1 --}'"
+  },
+  {
+    "name": "format glob in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format glob in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format glob in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '{prod,dev,test}'"
+  },
+  {
+    "name": "format glob in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format glob in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '{a,b}'"
+  },
+  {
+    "name": "format glob in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format glob in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:glob}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format lucene in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format lucene in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(\"prod\" OR \"dev\")'"
+  },
+  {
+    "name": "format lucene in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(\"prod\")'"
+  },
+  {
+    "name": "format lucene in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(\"a.b\" OR \"c\\'d\" OR \"e\\\\\\\\f\" OR \"x\\'\\\\ OR\\\\ 1\\\\=1\\\\ \\\\-\\\\-\")'"
+  },
+  {
+    "name": "format lucene in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\\\\\"r\\\\ s\\\\/t\\'u\\\\\\\\v\\\\ \\\\&\\\\ \\\\<w\\\\>\\\\:1'"
+  },
+  {
+    "name": "format lucene in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\\\\\"r\\\\ s\\\\/t\\'u\\\\\\\\v\\\\ \\\\&\\\\ \\\\<w\\\\>\\\\:1'"
+  },
+  {
+    "name": "format lucene in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(\"prod\" OR \"dev\" OR \"test\")'"
+  },
+  {
+    "name": "format lucene in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format lucene in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '(\"a\" OR \"b\")'"
+  },
+  {
+    "name": "format lucene in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '__empty__'"
+  },
+  {
+    "name": "format lucene in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:lucene}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format percentencode in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format percentencode in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '%7Bprod%2Cdev%7D'"
+  },
+  {
+    "name": "format percentencode in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '%7Bprod%7D'"
+  },
+  {
+    "name": "format percentencode in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '%7Ba.b%2Cc%27d%2Ce%5Cf%2Cx%27%20OR%201%3D1%20--%7D'"
+  },
+  {
+    "name": "format percentencode in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q%22r%20s%2Ft%27u%5Cv%20%26%20%3Cw%3E%3A1'"
+  },
+  {
+    "name": "format percentencode in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q%22r%20s%2Ft%27u%5Cv%20%26%20%3Cw%3E%3A1'"
+  },
+  {
+    "name": "format percentencode in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '%7Bprod%2Cdev%2Ctest%7D'"
+  },
+  {
+    "name": "format percentencode in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz%27z'"
+  },
+  {
+    "name": "format percentencode in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '%7Ba%2Cb%7D'"
+  },
+  {
+    "name": "format percentencode in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '%7B%7D'"
+  },
+  {
+    "name": "format percentencode in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:percentencode}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format queryparam in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=dev'"
+  },
+  {
+    "name": "format queryparam in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=prod&var-env=dev'"
+  },
+  {
+    "name": "format queryparam in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=prod'"
+  },
+  {
+    "name": "format queryparam in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=a.b&var-env=c%27d&var-env=e%5Cf&var-env=x%27+OR+1%3D1+--'"
+  },
+  {
+    "name": "format queryparam in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=q%22r+s%2Ft%27u%5Cv+%26+%3Cw%3E:1'"
+  },
+  {
+    "name": "format queryparam in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=q%22r+s%2Ft%27u%5Cv+%26+%3Cw%3E:1'"
+  },
+  {
+    "name": "format queryparam in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=$__all'"
+  },
+  {
+    "name": "format queryparam in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=$__all'"
+  },
+  {
+    "name": "format queryparam in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env=$__all'"
+  },
+  {
+    "name": "format queryparam in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env='"
+  },
+  {
+    "name": "format queryparam in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:queryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'var-env='"
+  },
+  {
+    "name": "format distributed in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format distributed in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod,env=dev'"
+  },
+  {
+    "name": "format distributed in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod'"
+  },
+  {
+    "name": "format distributed in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'a.b,env=c\\'d,env=e\\\\f,env=x\\' OR 1=1 --'"
+  },
+  {
+    "name": "format distributed in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format distributed in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format distributed in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod,env=dev,env=test'"
+  },
+  {
+    "name": "format distributed in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format distributed in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'a,env=b'"
+  },
+  {
+    "name": "format distributed in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format distributed in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:distributed}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format doublequote in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"dev\"'"
+  },
+  {
+    "name": "format doublequote in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"prod\",\"dev\"'"
+  },
+  {
+    "name": "format doublequote in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"prod\"'"
+  },
+  {
+    "name": "format doublequote in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"a.b\",\"c\\'d\",\"e\\\\f\",\"x\\' OR 1=1 --\"'"
+  },
+  {
+    "name": "format doublequote in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"q\\\\\"r s/t\\'u\\\\v & <w>:1\"'"
+  },
+  {
+    "name": "format doublequote in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"q\\\\\"r s/t\\'u\\\\v & <w>:1\"'"
+  },
+  {
+    "name": "format doublequote in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"prod\",\"dev\",\"test\"'"
+  },
+  {
+    "name": "format doublequote in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format doublequote in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"a\",\"b\"'"
+  },
+  {
+    "name": "format doublequote in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format doublequote in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:doublequote}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = '\"\"'"
+  },
+  {
+    "name": "format html in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format html in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod, dev'"
+  },
+  {
+    "name": "format html in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod'"
+  },
+  {
+    "name": "format html in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'a.b, c&#39;d, e\\\\f, x&#39; OR 1=1 --'"
+  },
+  {
+    "name": "format html in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q&quot;r s/t&#39;u\\\\v &amp; &lt;w&gt;:1'"
+  },
+  {
+    "name": "format html in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q&quot;r s/t&#39;u\\\\v &amp; &lt;w&gt;:1'"
+  },
+  {
+    "name": "format html in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod, dev, test'"
+  },
+  {
+    "name": "format html in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'zz\\'z'"
+  },
+  {
+    "name": "format html in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'a, b'"
+  },
+  {
+    "name": "format html in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format html in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:html}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format text in a string, custom single",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'dev'"
+  },
+  {
+    "name": "format text in a string, custom multi",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod + dev'"
+  },
+  {
+    "name": "format text in a string, custom multi, one value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'prod'"
+  },
+  {
+    "name": "format text in a string, query multi, hostile values",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c'd",
+          "e\\f",
+          "x' OR 1=1 --"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'a.b + c\\'d + e\\\\f + x\\' OR 1=1 --'"
+  },
+  {
+    "name": "format text in a string, query single, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format text in a string, text variable, hostile value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "q\"r s/t'u\\v & <w>:1"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'q\"r s/t\\'u\\\\v & <w>:1'"
+  },
+  {
+    "name": "format text in a string, custom All without all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'All'"
+  },
+  {
+    "name": "format text in a string, custom All with all_value",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz'z"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'All'"
+  },
+  {
+    "name": "format text in a string, query All with the values of the page",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE s = 'All'"
+  },
+  {
+    "name": "format text in a string, query multi, empty list",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format text in a string, query single, empty selection",
+    "sql": [
+      "SELECT 1 WHERE s = '${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE s = ''"
+  },
+  {
+    "name": "format regex between other text in a string",
+    "sql": [
+      "SELECT 1 FROM t WHERE match(x, '^pre-${env:regex}-post$')"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a.b",
+          "c|d"
+        ]
+      }
+    },
+    "expected": "SELECT 1 FROM t WHERE match(x, '^pre-(a\\\\.b|c\\\\|d)-post$')"
+  },
+  {
+    "name": "two formats of one variable in one string",
+    "sql": [
+      "SELECT '${env:pipe}/${env:text}'"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "a",
+          "b"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 'a|b/a + b'"
+  },
+  {
+    "name": "format in a string inside a macro argument",
+    "sql": [
+      "SELECT 1 WHERE $__timeFilter(f('${env:json}'))"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b'"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE f('[\"a\",\"b\\'\"]') >= toDateTime(1794211200) AND f('[\"a\",\"b\\'\"]') <= toDateTime(1794232800)"
+  }
+]

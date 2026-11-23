@@ -1,0 +1,1 @@
+SELECT $__unixEpochFrom() AS f, $__unixEpochTo() AS t2

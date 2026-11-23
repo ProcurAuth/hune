@@ -1,0 +1,3412 @@
+{
+ "blocks": [
+  {
+   "name": "paragraph one line",
+   "lines": [
+    "Hello world"
+   ],
+   "expect": "<p>Hello world</p>"
+  },
+  {
+   "name": "paragraph two lines join with one space",
+   "lines": [
+    "one",
+    "two"
+   ],
+   "expect": "<p>one two</p>"
+  },
+  {
+   "name": "paragraph split by a blank line",
+   "lines": [
+    "one",
+    "",
+    "two"
+   ],
+   "expect": "<p>one</p><p>two</p>"
+  },
+  {
+   "name": "paragraph split by several blank lines",
+   "lines": [
+    "one",
+    {
+     "line": "",
+     "times": 3
+    },
+    "two"
+   ],
+   "expect": "<p>one</p><p>two</p>"
+  },
+  {
+   "name": "paragraph leading spaces removed",
+   "lines": [
+    "   indented text"
+   ],
+   "expect": "<p>indented text</p>"
+  },
+  {
+   "name": "paragraph four spaces is text",
+   "lines": [
+    "    four spaces"
+   ],
+   "expect": "<p>four spaces</p>"
+  },
+  {
+   "name": "paragraph tab indent is text",
+   "lines": [
+    "\ttabbed"
+   ],
+   "expect": "<p>tabbed</p>"
+  },
+  {
+   "name": "paragraph two trailing spaces make a break",
+   "lines": [
+    "one  ",
+    "two"
+   ],
+   "expect": "<p>one<br>two</p>"
+  },
+  {
+   "name": "paragraph one trailing space is a soft break",
+   "lines": [
+    "one ",
+    "two"
+   ],
+   "expect": "<p>one two</p>"
+  },
+  {
+   "name": "paragraph backslash break",
+   "lines": [
+    "one\\",
+    "two"
+   ],
+   "expect": "<p>one<br>two</p>"
+  },
+  {
+   "name": "paragraph trailing spaces at the end are dropped",
+   "lines": [
+    "one  "
+   ],
+   "expect": "<p>one</p>"
+  },
+  {
+   "name": "paragraph trailing backslash stays",
+   "lines": [
+    "one\\"
+   ],
+   "expect": "<p>one\\</p>"
+  },
+  {
+   "name": "paragraph blank line of spaces splits",
+   "lines": [
+    "one",
+    "   ",
+    "two"
+   ],
+   "expect": "<p>one</p><p>two</p>"
+  },
+  {
+   "name": "paragraph continuation lines lose indent",
+   "lines": [
+    "one",
+    "    two",
+    "  three"
+   ],
+   "expect": "<p>one two three</p>"
+  },
+  {
+   "name": "paragraph empty text",
+   "lines": [
+    ""
+   ],
+   "expect": ""
+  },
+  {
+   "name": "paragraph only blank lines",
+   "lines": [
+    "",
+    "",
+    "  ",
+    ""
+   ],
+   "expect": ""
+  },
+  {
+   "name": "heading 1",
+   "lines": [
+    "# One"
+   ],
+   "expect": "<h1>One</h1>"
+  },
+  {
+   "name": "heading 2",
+   "lines": [
+    "## Two"
+   ],
+   "expect": "<h2>Two</h2>"
+  },
+  {
+   "name": "heading 3",
+   "lines": [
+    "### Three"
+   ],
+   "expect": "<h3>Three</h3>"
+  },
+  {
+   "name": "heading 4",
+   "lines": [
+    "#### Four"
+   ],
+   "expect": "<h4>Four</h4>"
+  },
+  {
+   "name": "heading 5",
+   "lines": [
+    "##### Five"
+   ],
+   "expect": "<h5>Five</h5>"
+  },
+  {
+   "name": "heading 6",
+   "lines": [
+    "###### Six"
+   ],
+   "expect": "<h6>Six</h6>"
+  },
+  {
+   "name": "heading 7 hashes is text",
+   "lines": [
+    "####### Seven"
+   ],
+   "expect": "<p>####### Seven</p>"
+  },
+  {
+   "name": "heading needs a space",
+   "lines": [
+    "#nospace"
+   ],
+   "expect": "<p>#nospace</p>"
+  },
+  {
+   "name": "heading tab after hash",
+   "lines": [
+    "#\tTabbed"
+   ],
+   "expect": "<h1>Tabbed</h1>"
+  },
+  {
+   "name": "heading closing run removed",
+   "lines": [
+    "## Two ##"
+   ],
+   "expect": "<h2>Two</h2>"
+  },
+  {
+   "name": "heading closing run needs a space",
+   "lines": [
+    "## Two##"
+   ],
+   "expect": "<h2>Two##</h2>"
+  },
+  {
+   "name": "heading closing run any length",
+   "lines": [
+    "# a ####"
+   ],
+   "expect": "<h1>a</h1>"
+  },
+  {
+   "name": "heading empty with hashes only",
+   "lines": [
+    "#"
+   ],
+   "expect": "<h1></h1>"
+  },
+  {
+   "name": "heading empty with closing run",
+   "lines": [
+    "# ##"
+   ],
+   "expect": "<h1></h1>"
+  },
+  {
+   "name": "heading three leading spaces",
+   "lines": [
+    "   # Indented"
+   ],
+   "expect": "<h1>Indented</h1>"
+  },
+  {
+   "name": "heading four leading spaces is text",
+   "lines": [
+    "    # Not heading"
+   ],
+   "expect": "<p># Not heading</p>"
+  },
+  {
+   "name": "heading with emphasis",
+   "lines": [
+    "# A *b* c"
+   ],
+   "expect": "<h1>A <em>b</em> c</h1>"
+  },
+  {
+   "name": "heading ends a paragraph",
+   "lines": [
+    "text",
+    "# Head",
+    "more"
+   ],
+   "expect": "<p>text</p><h1>Head</h1><p>more</p>"
+  },
+  {
+   "name": "heading with link",
+   "lines": [
+    "## See [x](/y)"
+   ],
+   "expect": "<h2>See <a href=\"/y\">x</a></h2>"
+  },
+  {
+   "name": "heading spaces around trimmed",
+   "lines": [
+    "#   Spaced   "
+   ],
+   "expect": "<h1>Spaced</h1>"
+  },
+  {
+   "name": "heading with escaped hash",
+   "lines": [
+    "# a \\# b"
+   ],
+   "expect": "<h1>a # b</h1>"
+  },
+  {
+   "name": "heading hash inside text",
+   "lines": [
+    "# a # b"
+   ],
+   "expect": "<h1>a # b</h1>"
+  },
+  {
+   "name": "heading in two lines is two blocks",
+   "lines": [
+    "# One",
+    "# Two"
+   ],
+   "expect": "<h1>One</h1><h1>Two</h1>"
+  },
+  {
+   "name": "heading no setext equals",
+   "lines": [
+    "Title",
+    "====="
+   ],
+   "expect": "<p>Title =====</p>"
+  },
+  {
+   "name": "quote one line",
+   "lines": [
+    "> quoted"
+   ],
+   "expect": "<quote><p>quoted</p></quote>"
+  },
+  {
+   "name": "quote without space",
+   "lines": [
+    ">quoted"
+   ],
+   "expect": "<quote><p>quoted</p></quote>"
+  },
+  {
+   "name": "quote two lines",
+   "lines": [
+    "> a",
+    "> b"
+   ],
+   "expect": "<quote><p>a b</p></quote>"
+  },
+  {
+   "name": "quote with blank line splits paragraphs",
+   "lines": [
+    "> a",
+    ">",
+    "> b"
+   ],
+   "expect": "<quote><p>a</p><p>b</p></quote>"
+  },
+  {
+   "name": "quote ends at a line without marker",
+   "lines": [
+    "> a",
+    "b"
+   ],
+   "expect": "<quote><p>a</p></quote><p>b</p>"
+  },
+  {
+   "name": "quote then blank then paragraph",
+   "lines": [
+    "> a",
+    "",
+    "b"
+   ],
+   "expect": "<quote><p>a</p></quote><p>b</p>"
+  },
+  {
+   "name": "quote nested",
+   "lines": [
+    "> a",
+    "> > b"
+   ],
+   "expect": "<quote><p>a</p><quote><p>b</p></quote></quote>"
+  },
+  {
+   "name": "quote nested without spaces",
+   "lines": [
+    ">>b"
+   ],
+   "expect": "<quote><quote><p>b</p></quote></quote>"
+  },
+  {
+   "name": "quote three levels",
+   "lines": [
+    "> > > c"
+   ],
+   "expect": "<quote><quote><quote><p>c</p></quote></quote></quote>"
+  },
+  {
+   "name": "quote with heading",
+   "lines": [
+    "> # H"
+   ],
+   "expect": "<quote><h1>H</h1></quote>"
+  },
+  {
+   "name": "quote with list",
+   "lines": [
+    "> - a",
+    "> - b"
+   ],
+   "expect": "<quote><ul><li>a</li><li>b</li></ul></quote>"
+  },
+  {
+   "name": "quote with code fence",
+   "lines": [
+    "> ```",
+    "> code",
+    "> ```"
+   ],
+   "expect": "<quote><pre><code>code</code></pre></quote>"
+  },
+  {
+   "name": "quote with leading spaces",
+   "lines": [
+    "   > a"
+   ],
+   "expect": "<quote><p>a</p></quote>"
+  },
+  {
+   "name": "quote four spaces is text",
+   "lines": [
+    "    > a"
+   ],
+   "expect": "<p>> a</p>"
+  },
+  {
+   "name": "quote empty",
+   "lines": [
+    ">"
+   ],
+   "expect": "<quote></quote>"
+  },
+  {
+   "name": "quote interrupts a paragraph",
+   "lines": [
+    "text",
+    "> q"
+   ],
+   "expect": "<p>text</p><quote><p>q</p></quote>"
+  },
+  {
+   "name": "quote two separate",
+   "lines": [
+    "> a",
+    "",
+    "> b"
+   ],
+   "expect": "<quote><p>a</p></quote><quote><p>b</p></quote>"
+  },
+  {
+   "name": "quote six levels allowed",
+   "lines": [
+    "> > > > > > f"
+   ],
+   "expect": "<quote><quote><quote><quote><quote><quote><p>f</p></quote></quote></quote></quote></quote></quote>"
+  },
+  {
+   "name": "quote seven levels is a limit",
+   "lines": [
+    "> > > > > > > g"
+   ],
+   "expect": "limit:depth"
+  },
+  {
+   "name": "quote with rule",
+   "lines": [
+    "> ---"
+   ],
+   "expect": "<quote><hr></quote>"
+  },
+  {
+   "name": "list bullet dash",
+   "lines": [
+    "- a",
+    "- b"
+   ],
+   "expect": "<ul><li>a</li><li>b</li></ul>"
+  },
+  {
+   "name": "list bullet star",
+   "lines": [
+    "* a",
+    "* b"
+   ],
+   "expect": "<ul><li>a</li><li>b</li></ul>"
+  },
+  {
+   "name": "list bullet plus",
+   "lines": [
+    "+ a",
+    "+ b"
+   ],
+   "expect": "<ul><li>a</li><li>b</li></ul>"
+  },
+  {
+   "name": "list mixed bullets stay one list",
+   "lines": [
+    "- a",
+    "* b",
+    "+ c"
+   ],
+   "expect": "<ul><li>a</li><li>b</li><li>c</li></ul>"
+  },
+  {
+   "name": "list ordered dot",
+   "lines": [
+    "1. a",
+    "2. b"
+   ],
+   "expect": "<ol><li>a</li><li>b</li></ol>"
+  },
+  {
+   "name": "list ordered paren",
+   "lines": [
+    "1) a",
+    "2) b"
+   ],
+   "expect": "<ol><li>a</li><li>b</li></ol>"
+  },
+  {
+   "name": "list ordered start 3 shows no number",
+   "lines": [
+    "3. a",
+    "4. b"
+   ],
+   "expect": "<ol><li>a</li><li>b</li></ol>"
+  },
+  {
+   "name": "list ordered nine digits",
+   "lines": [
+    "123456789. a"
+   ],
+   "expect": "<ol><li>a</li></ol>"
+  },
+  {
+   "name": "list ordered ten digits is text",
+   "lines": [
+    "1234567890. a"
+   ],
+   "expect": "<p>1234567890. a</p>"
+  },
+  {
+   "name": "list marker needs a space",
+   "lines": [
+    "-a"
+   ],
+   "expect": "<p>-a</p>"
+  },
+  {
+   "name": "list ordered marker needs a space",
+   "lines": [
+    "1.a"
+   ],
+   "expect": "<p>1.a</p>"
+  },
+  {
+   "name": "list ordered then bullet are two lists",
+   "lines": [
+    "1. a",
+    "- b"
+   ],
+   "expect": "<ol><li>a</li></ol><ul><li>b</li></ul>"
+  },
+  {
+   "name": "list bullet then ordered are two lists",
+   "lines": [
+    "- a",
+    "1. b"
+   ],
+   "expect": "<ul><li>a</li></ul><ol><li>b</li></ol>"
+  },
+  {
+   "name": "list nested by two spaces",
+   "lines": [
+    "- a",
+    "  - b"
+   ],
+   "expect": "<ul><li>a<ul><li>b</li></ul></li></ul>"
+  },
+  {
+   "name": "list nested by four spaces",
+   "lines": [
+    "- a",
+    "    - b"
+   ],
+   "expect": "<ul><li>a<ul><li>b</li></ul></li></ul>"
+  },
+  {
+   "name": "list nested one space is a sibling",
+   "lines": [
+    "- a",
+    " - b"
+   ],
+   "expect": "<ul><li>a</li><li>b</li></ul>"
+  },
+  {
+   "name": "list nested three levels",
+   "lines": [
+    "- a",
+    "  - b",
+    "    - c"
+   ],
+   "expect": "<ul><li>a<ul><li>b<ul><li>c</li></ul></li></ul></li></ul>"
+  },
+  {
+   "name": "list ordered nested in bullet",
+   "lines": [
+    "- a",
+    "  1. b"
+   ],
+   "expect": "<ul><li>a<ol><li>b</li></ol></li></ul>"
+  },
+  {
+   "name": "list item with two paragraphs is loose",
+   "lines": [
+    "- a",
+    "",
+    "  b"
+   ],
+   "expect": "<ul><li><p>a</p><p>b</p></li></ul>"
+  },
+  {
+   "name": "list item continuation line",
+   "lines": [
+    "- a",
+    "  b"
+   ],
+   "expect": "<ul><li>a b</li></ul>"
+  },
+  {
+   "name": "list item lazy line ends the list",
+   "lines": [
+    "- a",
+    "b"
+   ],
+   "expect": "<ul><li>a</li></ul><p>b</p>"
+  },
+  {
+   "name": "list blank lines between items",
+   "lines": [
+    "- a",
+    "",
+    "- b"
+   ],
+   "expect": "<ul><li>a</li><li>b</li></ul>"
+  },
+  {
+   "name": "list item with code fence",
+   "lines": [
+    "- a",
+    "  ```",
+    "  x",
+    "  ```"
+   ],
+   "expect": "<ul><li><p>a</p><pre><code>x</code></pre></li></ul>"
+  },
+  {
+   "name": "list item with quote",
+   "lines": [
+    "- > q"
+   ],
+   "expect": "<ul><li><quote><p>q</p></quote></li></ul>"
+  },
+  {
+   "name": "list item with heading",
+   "lines": [
+    "- # h"
+   ],
+   "expect": "<ul><li><h1>h</h1></li></ul>"
+  },
+  {
+   "name": "list item empty",
+   "lines": [
+    "-",
+    "- b"
+   ],
+   "expect": "<ul><li></li><li>b</li></ul>"
+  },
+  {
+   "name": "list item empty then indented text",
+   "lines": [
+    "-",
+    "  text"
+   ],
+   "expect": "<ul><li>text</li></ul>"
+  },
+  {
+   "name": "list five spaces after marker counts one",
+   "lines": [
+    "-     text"
+   ],
+   "expect": "<ul><li>text</li></ul>"
+  },
+  {
+   "name": "list item with a tight sublist keeps tight",
+   "lines": [
+    "- a",
+    "  - b",
+    "- c"
+   ],
+   "expect": "<ul><li>a<ul><li>b</li></ul></li><li>c</li></ul>"
+  },
+  {
+   "name": "list item with sublist then paragraph is loose",
+   "lines": [
+    "- a",
+    "  - b",
+    "",
+    "  c"
+   ],
+   "expect": "<ul><li><p>a</p><ul><li>b</li></ul><p>c</p></li></ul>"
+  },
+  {
+   "name": "list interrupts a paragraph",
+   "lines": [
+    "text",
+    "- a"
+   ],
+   "expect": "<p>text</p><ul><li>a</li></ul>"
+  },
+  {
+   "name": "list ordered two does not interrupt a paragraph",
+   "lines": [
+    "text",
+    "2. a"
+   ],
+   "expect": "<p>text 2. a</p>"
+  },
+  {
+   "name": "list ordered one interrupts a paragraph",
+   "lines": [
+    "text",
+    "1. a"
+   ],
+   "expect": "<p>text</p><ol><li>a</li></ol>"
+  },
+  {
+   "name": "list empty item does not interrupt a paragraph",
+   "lines": [
+    "text",
+    "-"
+   ],
+   "expect": "<p>text -</p>"
+  },
+  {
+   "name": "list ends before a heading",
+   "lines": [
+    "- a",
+    "# h"
+   ],
+   "expect": "<ul><li>a</li></ul><h1>h</h1>"
+  },
+  {
+   "name": "list item holds table",
+   "lines": [
+    "- | a | b |",
+    "  |---|---|",
+    "  | 1 | 2 |"
+   ],
+   "expect": "<ul><li><table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c>1</c><c>2</c></tr></tbody></table></li></ul>"
+  },
+  {
+   "name": "list six levels allowed",
+   "lines": [
+    "- a",
+    "  - b",
+    "    - c",
+    "      - d",
+    "        - e",
+    "          - f"
+   ],
+   "expect": "<ul><li>a<ul><li>b<ul><li>c<ul><li>d<ul><li>e<ul><li>f</li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>"
+  },
+  {
+   "name": "list seven levels is a limit",
+   "lines": [
+    "- a",
+    "  - b",
+    "    - c",
+    "      - d",
+    "        - e",
+    "          - f",
+    "            - g"
+   ],
+   "expect": "limit:depth"
+  },
+  {
+   "name": "list quote and list depth add",
+   "lines": [
+    "> - a",
+    ">   > - b"
+   ],
+   "expect": "<quote><ul><li><p>a</p><quote><ul><li>b</li></ul></quote></li></ul></quote>"
+  },
+  {
+   "name": "list tab indent nested",
+   "lines": [
+    "- a",
+    "\t- b"
+   ],
+   "expect": "<ul><li>a<ul><li>b</li></ul></li></ul>"
+  },
+  {
+   "name": "list star dash hr not a list",
+   "lines": [
+    "- - -"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "list item text with hash",
+   "lines": [
+    "- a # b"
+   ],
+   "expect": "<ul><li>a # b</li></ul>"
+  },
+  {
+   "name": "rule dashes",
+   "lines": [
+    "---"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule stars",
+   "lines": [
+    "***"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule underscores",
+   "lines": [
+    "___"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule long",
+   "lines": [
+    "----------"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule spaced",
+   "lines": [
+    "- - -"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule spaced stars",
+   "lines": [
+    "* * *"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule three leading spaces",
+   "lines": [
+    "   ---"
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule four leading spaces is text",
+   "lines": [
+    "    ---"
+   ],
+   "expect": "<p>---</p>"
+  },
+  {
+   "name": "rule two marks is text",
+   "lines": [
+    "--"
+   ],
+   "expect": "<p>--</p>"
+  },
+  {
+   "name": "rule mixed marks is text",
+   "lines": [
+    "-*-"
+   ],
+   "expect": "<p>-*-</p>"
+  },
+  {
+   "name": "rule ends a paragraph",
+   "lines": [
+    "text",
+    "---"
+   ],
+   "expect": "<p>text</p><hr>"
+  },
+  {
+   "name": "rule trailing spaces",
+   "lines": [
+    "---   "
+   ],
+   "expect": "<hr>"
+  },
+  {
+   "name": "rule between paragraphs",
+   "lines": [
+    "a",
+    "",
+    "---",
+    "",
+    "b"
+   ],
+   "expect": "<p>a</p><hr><p>b</p>"
+  },
+  {
+   "name": "code backticks",
+   "lines": [
+    "```",
+    "code",
+    "```"
+   ],
+   "expect": "<pre><code>code</code></pre>"
+  },
+  {
+   "name": "code tildes",
+   "lines": [
+    "~~~",
+    "code",
+    "~~~"
+   ],
+   "expect": "<pre><code>code</code></pre>"
+  },
+  {
+   "name": "code info string is not read",
+   "lines": [
+    "```js",
+    "x",
+    "```"
+   ],
+   "expect": "<pre><code>x</code></pre>"
+  },
+  {
+   "name": "code keeps html",
+   "lines": [
+    "```",
+    "<b>x</b>",
+    "```"
+   ],
+   "expect": "<pre><code>&lt;b>x&lt;/b></code></pre>"
+  },
+  {
+   "name": "code keeps markdown",
+   "lines": [
+    "```",
+    "# not heading",
+    "*not em*",
+    "```"
+   ],
+   "expect": "<pre><code># not heading\n*not em*</code></pre>"
+  },
+  {
+   "name": "code keeps blank lines",
+   "lines": [
+    "```",
+    "a",
+    "",
+    "b",
+    "```"
+   ],
+   "expect": "<pre><code>a\n\nb</code></pre>"
+  },
+  {
+   "name": "code open fence ends at the end",
+   "lines": [
+    "```",
+    "a",
+    "b"
+   ],
+   "expect": "<pre><code>a\nb</code></pre>"
+  },
+  {
+   "name": "code closing needs the same char",
+   "lines": [
+    "```",
+    "a",
+    "~~~",
+    "b",
+    "```"
+   ],
+   "expect": "<pre><code>a\n~~~\nb</code></pre>"
+  },
+  {
+   "name": "code closing may be longer",
+   "lines": [
+    "```",
+    "a",
+    "`````",
+    "b"
+   ],
+   "expect": "<pre><code>a</code></pre><p>b</p>"
+  },
+  {
+   "name": "code closing shorter does not close",
+   "lines": [
+    "`````",
+    "a",
+    "```",
+    "b",
+    "`````"
+   ],
+   "expect": "<pre><code>a\n```\nb</code></pre>"
+  },
+  {
+   "name": "code closing with text does not close",
+   "lines": [
+    "```",
+    "a",
+    "``` b",
+    "```"
+   ],
+   "expect": "<pre><code>a\n``` b</code></pre>"
+  },
+  {
+   "name": "code four fence marks",
+   "lines": [
+    "````",
+    "```",
+    "x",
+    "```",
+    "````"
+   ],
+   "expect": "<pre><code>```\nx\n```</code></pre>"
+  },
+  {
+   "name": "code fence indent removed",
+   "lines": [
+    "  ```",
+    "  a",
+    "   b",
+    "  ```"
+   ],
+   "expect": "<pre><code>a\n b</code></pre>"
+  },
+  {
+   "name": "code backtick info with backtick is a span",
+   "lines": [
+    "``` a`b"
+   ],
+   "expect": "<p>``` a`b</p>"
+  },
+  {
+   "name": "code empty",
+   "lines": [
+    "```",
+    "```"
+   ],
+   "expect": "<pre><code></code></pre>"
+  },
+  {
+   "name": "code interrupts a paragraph",
+   "lines": [
+    "text",
+    "```",
+    "x",
+    "```"
+   ],
+   "expect": "<p>text</p><pre><code>x</code></pre>"
+  },
+  {
+   "name": "code two marks is text",
+   "lines": [
+    "``",
+    "x",
+    "``"
+   ],
+   "expect": "<p><code>x</code></p>"
+  },
+  {
+   "name": "code four spaces is text not code",
+   "lines": [
+    "    code?"
+   ],
+   "expect": "<p>code?</p>"
+  },
+  {
+   "name": "code in quote ends with the quote",
+   "lines": [
+    "> ```",
+    "> a",
+    "b"
+   ],
+   "expect": "<quote><pre><code>a</code></pre></quote><p>b</p>"
+  },
+  {
+   "name": "code in item ends with the item",
+   "lines": [
+    "- ```",
+    "  a",
+    "b"
+   ],
+   "expect": "<ul><li><pre><code>a</code></pre></li></ul><p>b</p>"
+  },
+  {
+   "name": "code tilde with backtick info",
+   "lines": [
+    "~~~ a`b",
+    "x",
+    "~~~"
+   ],
+   "expect": "<pre><code>x</code></pre>"
+  },
+  {
+   "name": "html tag is text",
+   "lines": [
+    "<b>x</b>"
+   ],
+   "expect": "<p>&lt;b>x&lt;/b></p>"
+  },
+  {
+   "name": "html script is text",
+   "lines": [
+    "<script>alert(1)</script>"
+   ],
+   "expect": "<p>&lt;script>alert(1)&lt;/script></p>"
+  },
+  {
+   "name": "html comment is text",
+   "lines": [
+    "<!-- c -->"
+   ],
+   "expect": "<p>&lt;!-- c --></p>"
+  },
+  {
+   "name": "html block is text",
+   "lines": [
+    "<div>",
+    "x",
+    "</div>"
+   ],
+   "expect": "<p>&lt;div> x &lt;/div></p>"
+  },
+  {
+   "name": "entity is text",
+   "lines": [
+    "&amp; &lt; &#65;"
+   ],
+   "expect": "<p>&amp;amp; &amp;lt; &amp;#65;</p>"
+  },
+  {
+   "name": "image mark is text and a link",
+   "lines": [
+    "![alt](http://a/i.png)"
+   ],
+   "expect": "<p>!<a href=\"http://a/i.png\">alt</a></p>"
+  },
+  {
+   "name": "setext marks are text",
+   "lines": [
+    "a",
+    "---",
+    "b",
+    "==="
+   ],
+   "expect": "<p>a</p><hr><p>b ===</p>"
+  },
+  {
+   "name": "link reference is text",
+   "lines": [
+    "[a]: http://x",
+    "",
+    "[b][a]"
+   ],
+   "expect": "<p>[a]: <a href=\"http://x\">http://x</a></p><p>[b][a]</p>"
+  }
+ ],
+ "inline": [
+  {
+   "name": "em star",
+   "lines": [
+    "*a*"
+   ],
+   "expect": "<p><em>a</em></p>"
+  },
+  {
+   "name": "em underscore",
+   "lines": [
+    "_a_"
+   ],
+   "expect": "<p><em>a</em></p>"
+  },
+  {
+   "name": "strong star",
+   "lines": [
+    "**a**"
+   ],
+   "expect": "<p><strong>a</strong></p>"
+  },
+  {
+   "name": "strong underscore",
+   "lines": [
+    "__a__"
+   ],
+   "expect": "<p><strong>a</strong></p>"
+  },
+  {
+   "name": "em strong triple star",
+   "lines": [
+    "***a***"
+   ],
+   "expect": "<p><em><strong>a</strong></em></p>"
+  },
+  {
+   "name": "em strong triple underscore",
+   "lines": [
+    "___a___"
+   ],
+   "expect": "<p><em><strong>a</strong></em></p>"
+  },
+  {
+   "name": "em inside text",
+   "lines": [
+    "x *a* y"
+   ],
+   "expect": "<p>x <em>a</em> y</p>"
+  },
+  {
+   "name": "em with spaces inside is text",
+   "lines": [
+    "x * a *"
+   ],
+   "expect": "<p>x * a *</p>"
+  },
+  {
+   "name": "em star intraword",
+   "lines": [
+    "a*b*c"
+   ],
+   "expect": "<p>a<em>b</em>c</p>"
+  },
+  {
+   "name": "em underscore intraword is text",
+   "lines": [
+    "a_b_c"
+   ],
+   "expect": "<p>a_b_c</p>"
+  },
+  {
+   "name": "snake case is text",
+   "lines": [
+    "snake_case_name"
+   ],
+   "expect": "<p>snake_case_name</p>"
+  },
+  {
+   "name": "em underscore after punctuation",
+   "lines": [
+    "(_a_)"
+   ],
+   "expect": "<p>(<em>a</em>)</p>"
+  },
+  {
+   "name": "em star after punctuation",
+   "lines": [
+    "(*a*)"
+   ],
+   "expect": "<p>(<em>a</em>)</p>"
+  },
+  {
+   "name": "strong in em",
+   "lines": [
+    "*a **b** c*"
+   ],
+   "expect": "<p><em>a <strong>b</strong> c</em></p>"
+  },
+  {
+   "name": "em in strong",
+   "lines": [
+    "**a *b* c**"
+   ],
+   "expect": "<p><strong>a <em>b</em> c</strong></p>"
+  },
+  {
+   "name": "em open only",
+   "lines": [
+    "*a"
+   ],
+   "expect": "<p>*a</p>"
+  },
+  {
+   "name": "em close only",
+   "lines": [
+    "a*"
+   ],
+   "expect": "<p>a*</p>"
+  },
+  {
+   "name": "strong open only",
+   "lines": [
+    "**a"
+   ],
+   "expect": "<p>**a</p>"
+  },
+  {
+   "name": "em star pair across words",
+   "lines": [
+    "*a b c*"
+   ],
+   "expect": "<p><em>a b c</em></p>"
+  },
+  {
+   "name": "em two runs",
+   "lines": [
+    "*a* and *b*"
+   ],
+   "expect": "<p><em>a</em> and <em>b</em></p>"
+  },
+  {
+   "name": "em nested same char",
+   "lines": [
+    "*a *b* c*"
+   ],
+   "expect": "<p><em>a <em>b</em> c</em></p>"
+  },
+  {
+   "name": "em mismatch star underscore",
+   "lines": [
+    "*a_"
+   ],
+   "expect": "<p>*a_</p>"
+  },
+  {
+   "name": "em mixed star underscore",
+   "lines": [
+    "*a _b_ c*"
+   ],
+   "expect": "<p><em>a <em>b</em> c</em></p>"
+  },
+  {
+   "name": "em unmatched openers between stay text",
+   "lines": [
+    "*a *b c*"
+   ],
+   "expect": "<p>*a <em>b c</em></p>"
+  },
+  {
+   "name": "em run of four",
+   "lines": [
+    "****a****"
+   ],
+   "expect": "<p><strong><strong>a</strong></strong></p>"
+  },
+  {
+   "name": "em run of two star one",
+   "lines": [
+    "**a*"
+   ],
+   "expect": "<p>*<em>a</em></p>"
+  },
+  {
+   "name": "em run one two",
+   "lines": [
+    "*a**"
+   ],
+   "expect": "<p><em>a</em>*</p>"
+  },
+  {
+   "name": "em needs a non-space after",
+   "lines": [
+    "x *  a*"
+   ],
+   "expect": "<p>x *  a*</p>"
+  },
+  {
+   "name": "em needs a non-space before",
+   "lines": [
+    "*a *"
+   ],
+   "expect": "<p>*a *</p>"
+  },
+  {
+   "name": "em underscore both flanking needs punctuation",
+   "lines": [
+    "a _b_ c"
+   ],
+   "expect": "<p>a <em>b</em> c</p>"
+  },
+  {
+   "name": "em underscore at start",
+   "lines": [
+    "_a b_"
+   ],
+   "expect": "<p><em>a b</em></p>"
+  },
+  {
+   "name": "em with a link inside",
+   "lines": [
+    "*[x](/y)*"
+   ],
+   "expect": "<p><em><a href=\"/y\">x</a></em></p>"
+  },
+  {
+   "name": "em with code inside",
+   "lines": [
+    "*`c`*"
+   ],
+   "expect": "<p><em><code>c</code></em></p>"
+  },
+  {
+   "name": "em around a code span",
+   "lines": [
+    "*a `b*` c*"
+   ],
+   "expect": "<p><em>a <code>b*</code> c</em></p>"
+  },
+  {
+   "name": "em star in a code span stays",
+   "lines": [
+    "`*a*`"
+   ],
+   "expect": "<p><code>*a*</code></p>"
+  },
+  {
+   "name": "em escaped star",
+   "lines": [
+    "\\*a\\*"
+   ],
+   "expect": "<p>*a*</p>"
+  },
+  {
+   "name": "em escaped underscore",
+   "lines": [
+    "\\_a\\_"
+   ],
+   "expect": "<p>_a_</p>"
+  },
+  {
+   "name": "strong across a line end",
+   "lines": [
+    "**a",
+    "b**"
+   ],
+   "expect": "<p><strong>a b</strong></p>"
+  },
+  {
+   "name": "em with punctuation inside",
+   "lines": [
+    "*a.*"
+   ],
+   "expect": "<p><em>a.</em></p>"
+  },
+  {
+   "name": "em with unicode",
+   "lines": [
+    "*é*"
+   ],
+   "expect": "<p><em>é</em></p>"
+  },
+  {
+   "name": "em star next to punctuation start",
+   "lines": [
+    "*(a)*"
+   ],
+   "expect": "<p><em>(a)</em></p>"
+  },
+  {
+   "name": "em star both sides punctuation",
+   "lines": [
+    "(*)(*)"
+   ],
+   "expect": "<p>(<em>)(</em>)</p>"
+  },
+  {
+   "name": "em depth six allowed",
+   "lines": [
+    "*a **b *c **d *e **f** e* d** c* b** a*"
+   ],
+   "expect": "<p><em>a <strong>b <em>c <strong>d <em>e <strong>f</strong> e</em> d</strong> c</em> b</strong> a</em></p>"
+  },
+  {
+   "name": "em depth seven is a limit",
+   "lines": [
+    "*a **b *c **d *e **f *g* f** e* d** c* b** a*"
+   ],
+   "expect": "limit:inline"
+  },
+  {
+   "name": "code span",
+   "lines": [
+    "`a`"
+   ],
+   "expect": "<p><code>a</code></p>"
+  },
+  {
+   "name": "code span with double ticks",
+   "lines": [
+    "``a`b``"
+   ],
+   "expect": "<p><code>a`b</code></p>"
+  },
+  {
+   "name": "code span triple",
+   "lines": [
+    "```a```"
+   ],
+   "expect": "<p><code>a</code></p>"
+  },
+  {
+   "name": "code span spaces trimmed once",
+   "lines": [
+    "` a `"
+   ],
+   "expect": "<p><code>a</code></p>"
+  },
+  {
+   "name": "code span spaces trimmed once keeps inner",
+   "lines": [
+    "`  a  `"
+   ],
+   "expect": "<p><code> a </code></p>"
+  },
+  {
+   "name": "code span only spaces keeps them",
+   "lines": [
+    "`  `"
+   ],
+   "expect": "<p><code>  </code></p>"
+  },
+  {
+   "name": "code span one space at one end only",
+   "lines": [
+    "` a`"
+   ],
+   "expect": "<p><code> a</code></p>"
+  },
+  {
+   "name": "code span unmatched is text",
+   "lines": [
+    "`a"
+   ],
+   "expect": "<p>`a</p>"
+  },
+  {
+   "name": "code span different length is text",
+   "lines": [
+    "`a``"
+   ],
+   "expect": "<p>`a``</p>"
+  },
+  {
+   "name": "code span line end becomes a space",
+   "lines": [
+    "`a",
+    "b`"
+   ],
+   "expect": "<p><code>a b</code></p>"
+  },
+  {
+   "name": "code span keeps html",
+   "lines": [
+    "`<b>`"
+   ],
+   "expect": "<p><code>&lt;b></code></p>"
+  },
+  {
+   "name": "code span keeps backslash",
+   "lines": [
+    "`a\\`b`"
+   ],
+   "expect": "<p><code>a\\</code>b`</p>"
+  },
+  {
+   "name": "code span two spans",
+   "lines": [
+    "`a` `b`"
+   ],
+   "expect": "<p><code>a</code> <code>b</code></p>"
+  },
+  {
+   "name": "code span next run same length",
+   "lines": [
+    "`a``b`"
+   ],
+   "expect": "<p><code>a``b</code></p>"
+  },
+  {
+   "name": "code span before em",
+   "lines": [
+    "`a` *b*"
+   ],
+   "expect": "<p><code>a</code> <em>b</em></p>"
+  },
+  {
+   "name": "code span ticks escaped",
+   "lines": [
+    "\\`a\\`"
+   ],
+   "expect": "<p>`a`</p>"
+  },
+  {
+   "name": "code span empty run of two is text",
+   "lines": [
+    "``"
+   ],
+   "expect": "<p>``</p>"
+  },
+  {
+   "name": "code span long run is text",
+   "lines": [
+    "x `````"
+   ],
+   "expect": "<p>x `````</p>"
+  },
+  {
+   "name": "link simple",
+   "lines": [
+    "[a](/b)"
+   ],
+   "expect": "<p><a href=\"/b\">a</a></p>"
+  },
+  {
+   "name": "link with em text",
+   "lines": [
+    "[*a*](/b)"
+   ],
+   "expect": "<p><a href=\"/b\"><em>a</em></a></p>"
+  },
+  {
+   "name": "link with strong text",
+   "lines": [
+    "[**a**](/b)"
+   ],
+   "expect": "<p><a href=\"/b\"><strong>a</strong></a></p>"
+  },
+  {
+   "name": "link with code text",
+   "lines": [
+    "[`a`](/b)"
+   ],
+   "expect": "<p><a href=\"/b\"><code>a</code></a></p>"
+  },
+  {
+   "name": "link needs no space before paren",
+   "lines": [
+    "[a] (/b)"
+   ],
+   "expect": "<p>[a] (/b)</p>"
+  },
+  {
+   "name": "link empty text is text",
+   "lines": [
+    "[](/b)"
+   ],
+   "expect": "<p>[](/b)</p>"
+  },
+  {
+   "name": "link empty destination is text",
+   "lines": [
+    "[a]()"
+   ],
+   "expect": "<p>[a]()</p>"
+  },
+  {
+   "name": "link nested link is text",
+   "lines": [
+    "[a [b](/c) d](/e)"
+   ],
+   "expect": "<p>[a <a href=\"/c\">b</a> d](/e)</p>"
+  },
+  {
+   "name": "link brackets in text",
+   "lines": [
+    "[a [b] c](/d)"
+   ],
+   "expect": "<p><a href=\"/d\">a [b] c</a></p>"
+  },
+  {
+   "name": "link unclosed bracket",
+   "lines": [
+    "[a (/b)"
+   ],
+   "expect": "<p>[a (/b)</p>"
+  },
+  {
+   "name": "link two links",
+   "lines": [
+    "[a](/b) [c](/d)"
+   ],
+   "expect": "<p><a href=\"/b\">a</a> <a href=\"/d\">c</a></p>"
+  },
+  {
+   "name": "link in em",
+   "lines": [
+    "*a [b](/c) d*"
+   ],
+   "expect": "<p><em>a <a href=\"/c\">b</a> d</em></p>"
+  },
+  {
+   "name": "link text with escape",
+   "lines": [
+    "[a\\]b](/c)"
+   ],
+   "expect": "<p><a href=\"/c\">a]b</a></p>"
+  },
+  {
+   "name": "link bracket inside emphasis stays text",
+   "lines": [
+    "*a [b* c](/d)"
+   ],
+   "expect": "<p><em>a [b</em> c](/d)</p>"
+  },
+  {
+   "name": "link title is not read",
+   "lines": [
+    "[a](/b \"t\")"
+   ],
+   "expect": "<p>[a](/b &quot;t&quot;)</p>"
+  },
+  {
+   "name": "link angle destination is text",
+   "lines": [
+    "[a](</b>)"
+   ],
+   "expect": "<p>[a](&lt;/b>)</p>"
+  },
+  {
+   "name": "break two spaces",
+   "lines": [
+    "a  ",
+    "b"
+   ],
+   "expect": "<p>a<br>b</p>"
+  },
+  {
+   "name": "break backslash",
+   "lines": [
+    "a\\",
+    "b"
+   ],
+   "expect": "<p>a<br>b</p>"
+  },
+  {
+   "name": "break three spaces",
+   "lines": [
+    "a   ",
+    "b"
+   ],
+   "expect": "<p>a<br>b</p>"
+  },
+  {
+   "name": "soft break",
+   "lines": [
+    "a",
+    "b"
+   ],
+   "expect": "<p>a b</p>"
+  },
+  {
+   "name": "soft break one space",
+   "lines": [
+    "a ",
+    "b"
+   ],
+   "expect": "<p>a b</p>"
+  },
+  {
+   "name": "escape star",
+   "lines": [
+    "\\*"
+   ],
+   "expect": "<p>*</p>"
+  },
+  {
+   "name": "escape backslash",
+   "lines": [
+    "\\\\"
+   ],
+   "expect": "<p>\\</p>"
+  },
+  {
+   "name": "escape bracket",
+   "lines": [
+    "\\["
+   ],
+   "expect": "<p>[</p>"
+  },
+  {
+   "name": "escape hash",
+   "lines": [
+    "\\#"
+   ],
+   "expect": "<p>#</p>"
+  },
+  {
+   "name": "escape letter keeps backslash",
+   "lines": [
+    "\\a"
+   ],
+   "expect": "<p>\\a</p>"
+  },
+  {
+   "name": "escape dollar",
+   "lines": [
+    "\\$v"
+   ],
+   "expect": "<p>$v</p>"
+  },
+  {
+   "name": "escape pipe",
+   "lines": [
+    "a\\|b"
+   ],
+   "expect": "<p>a|b</p>"
+  },
+  {
+   "name": "escape underscore pair",
+   "lines": [
+    "\\_\\_a\\_\\_"
+   ],
+   "expect": "<p>__a__</p>"
+  },
+  {
+   "name": "escape tilde",
+   "lines": [
+    "\\~"
+   ],
+   "expect": "<p>~</p>"
+  },
+  {
+   "name": "escape backtick",
+   "lines": [
+    "\\`"
+   ],
+   "expect": "<p>`</p>"
+  },
+  {
+   "name": "escape angle",
+   "lines": [
+    "\\<b>"
+   ],
+   "expect": "<p>&lt;b></p>"
+  },
+  {
+   "name": "escape ampersand",
+   "lines": [
+    "\\&amp;"
+   ],
+   "expect": "<p>&amp;amp;</p>"
+  },
+  {
+   "name": "entity is text",
+   "lines": [
+    "&amp;"
+   ],
+   "expect": "<p>&amp;amp;</p>"
+  },
+  {
+   "name": "entity numeric is text",
+   "lines": [
+    "&#65;"
+   ],
+   "expect": "<p>&amp;#65;</p>"
+  },
+  {
+   "name": "less than is text",
+   "lines": [
+    "a < b"
+   ],
+   "expect": "<p>a &lt; b</p>"
+  },
+  {
+   "name": "html inline is text",
+   "lines": [
+    "x <b>y</b> z"
+   ],
+   "expect": "<p>x &lt;b>y&lt;/b> z</p>"
+  },
+  {
+   "name": "html attribute is text",
+   "lines": [
+    "<a href=\"x\" onclick=\"y\">z</a>"
+   ],
+   "expect": "<p>&lt;a href=&quot;x&quot; onclick=&quot;y&quot;>z&lt;/a></p>"
+  },
+  {
+   "name": "quotes stay text",
+   "lines": [
+    "\"a\" 'b'"
+   ],
+   "expect": "<p>&quot;a&quot; 'b'</p>"
+  },
+  {
+   "name": "tilde is text",
+   "lines": [
+    "~~a~~"
+   ],
+   "expect": "<p>~~a~~</p>"
+  },
+  {
+   "name": "task marks are text",
+   "lines": [
+    "[ ] a [x] b"
+   ],
+   "expect": "<p>[ ] a [x] b</p>"
+  },
+  {
+   "name": "footnote marks are text",
+   "lines": [
+    "a[^1]"
+   ],
+   "expect": "<p>a[^1]</p>"
+  },
+  {
+   "name": "www is text",
+   "lines": [
+    "www.example.com"
+   ],
+   "expect": "<p>www.example.com</p>"
+  },
+  {
+   "name": "mail is text",
+   "lines": [
+    "a@b.example"
+   ],
+   "expect": "<p>a@b.example</p>"
+  },
+  {
+   "name": "unicode text",
+   "lines": [
+    "é ü 日本 😀"
+   ],
+   "expect": "<p>é ü 日本 😀</p>"
+  },
+  {
+   "name": "nbsp stays",
+   "lines": [
+    "a b"
+   ],
+   "expect": "<p>a b</p>"
+  },
+  {
+   "name": "tab inside text",
+   "lines": [
+    "a\tb"
+   ],
+   "expect": "<p>a\tb</p>"
+  },
+  {
+   "name": "dollar stays text",
+   "lines": [
+    "$a ${b} $c:d"
+   ],
+   "expect": "<p>$a ${b} $c:d</p>"
+  },
+  {
+   "name": "percent and equals",
+   "lines": [
+    "100% = a"
+   ],
+   "expect": "<p>100% = a</p>"
+  },
+  {
+   "name": "long word",
+   "lines": [
+    "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   ],
+   "expect": "<p>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>"
+  },
+  {
+   "name": "star between spaces",
+   "lines": [
+    "a * b * c"
+   ],
+   "expect": "<p>a * b * c</p>"
+  },
+  {
+   "name": "underscore between spaces",
+   "lines": [
+    "a _ b _ c"
+   ],
+   "expect": "<p>a _ b _ c</p>"
+  },
+  {
+   "name": "lone brackets",
+   "lines": [
+    "] [ ]"
+   ],
+   "expect": "<p>] [ ]</p>"
+  },
+  {
+   "name": "placeholder with underscore name is one leaf",
+   "lines": [
+    "$my_var and $a*b"
+   ],
+   "expect": "<p>$my_var and $a*b</p>"
+  },
+  {
+   "name": "emoji with em",
+   "lines": [
+    "*😀*"
+   ],
+   "expect": "<p><em>😀</em></p>"
+  },
+  {
+   "name": "emphasis then text",
+   "lines": [
+    "*a*b"
+   ],
+   "expect": "<p><em>a</em>b</p>"
+  },
+  {
+   "name": "text then emphasis",
+   "lines": [
+    "a*b*"
+   ],
+   "expect": "<p>a<em>b</em></p>"
+  },
+  {
+   "name": "strong then em adjacent",
+   "lines": [
+    "**a***b*"
+   ],
+   "expect": "<p><strong>a</strong><em>b</em></p>"
+  },
+  {
+   "name": "em ends a link text",
+   "lines": [
+    "[*a*](/b) *c*"
+   ],
+   "expect": "<p><a href=\"/b\"><em>a</em></a> <em>c</em></p>"
+  },
+  {
+   "name": "backslash before newline in code",
+   "lines": [
+    "`a\\",
+    "b`"
+   ],
+   "expect": "<p><code>a\\ b</code></p>"
+  },
+  {
+   "name": "hard break before em",
+   "lines": [
+    "a  ",
+    "*b*"
+   ],
+   "expect": "<p>a<br><em>b</em></p>"
+  },
+  {
+   "name": "hard break at the end of a paragraph",
+   "lines": [
+    "a\\"
+   ],
+   "expect": "<p>a\\</p>"
+  },
+  {
+   "name": "em star after em",
+   "lines": [
+    "*a**b*"
+   ],
+   "expect": "<p><em>a</em><em>b</em></p>"
+  },
+  {
+   "name": "em underscore intraword strong is text",
+   "lines": [
+    "a__b__c"
+   ],
+   "expect": "<p>a__b__c</p>"
+  },
+  {
+   "name": "strong underscore with spaces around",
+   "lines": [
+    "x __b__ y"
+   ],
+   "expect": "<p>x <strong>b</strong> y</p>"
+  },
+  {
+   "name": "em with an escaped star inside",
+   "lines": [
+    "*a\\*b*"
+   ],
+   "expect": "<p><em>a*b</em></p>"
+  },
+  {
+   "name": "code span in strong",
+   "lines": [
+    "**`a`**"
+   ],
+   "expect": "<p><strong><code>a</code></strong></p>"
+  },
+  {
+   "name": "strong with a link",
+   "lines": [
+    "**[a](/b)**"
+   ],
+   "expect": "<p><strong><a href=\"/b\">a</a></strong></p>"
+  },
+  {
+   "name": "em with a break inside",
+   "lines": [
+    "*a  ",
+    "b*"
+   ],
+   "expect": "<p><em>a<br>b</em></p>"
+  },
+  {
+   "name": "link in strong in em",
+   "lines": [
+    "*a **[b](/c)** d*"
+   ],
+   "expect": "<p><em>a <strong><a href=\"/c\">b</a></strong> d</em></p>"
+  },
+  {
+   "name": "star run at the end",
+   "lines": [
+    "a **"
+   ],
+   "expect": "<p>a **</p>"
+  },
+  {
+   "name": "underscore run alone",
+   "lines": [
+    "__"
+   ],
+   "expect": "<p>__</p>"
+  },
+  {
+   "name": "star alone",
+   "lines": [
+    "x *"
+   ],
+   "expect": "<p>x *</p>"
+  },
+  {
+   "name": "em across a backslash break",
+   "lines": [
+    "*a\\",
+    "b*"
+   ],
+   "expect": "<p><em>a<br>b</em></p>"
+  },
+  {
+   "name": "em around an escaped underscore",
+   "lines": [
+    "*a\\_b*"
+   ],
+   "expect": "<p><em>a_b</em></p>"
+  },
+  {
+   "name": "digits with star and underscore",
+   "lines": [
+    "2*3*4 and 2_3_4"
+   ],
+   "expect": "<p>2<em>3</em>4 and 2_3_4</p>"
+  },
+  {
+   "name": "strong and em after punctuation",
+   "lines": [
+    "**(a)** *(b)*"
+   ],
+   "expect": "<p><strong>(a)</strong> <em>(b)</em></p>"
+  },
+  {
+   "name": "em in a table cell",
+   "lines": [
+    "| *a* |",
+    "|---|",
+    "| _b_ |"
+   ],
+   "expect": "<table><thead><tr><c><em>a</em></c></tr></thead><tbody><tr><c><em>b</em></c></tr></tbody></table>"
+  }
+ ],
+ "links": [
+  {
+   "name": "link http",
+   "lines": [
+    "[x](http://a.example/b)"
+   ],
+   "expect": "<p><a href=\"http://a.example/b\">x</a></p>"
+  },
+  {
+   "name": "link https",
+   "lines": [
+    "[x](https://a.example/b)"
+   ],
+   "expect": "<p><a href=\"https://a.example/b\">x</a></p>"
+  },
+  {
+   "name": "link query and amp",
+   "lines": [
+    "[x](http://a.example/p?q=1&r=2)"
+   ],
+   "expect": "<p><a href=\"http://a.example/p?q=1&amp;r=2\">x</a></p>"
+  },
+  {
+   "name": "link relative path",
+   "lines": [
+    "[x](/d/other-uid)"
+   ],
+   "expect": "<p><a href=\"/d/other-uid\">x</a></p>"
+  },
+  {
+   "name": "link fragment",
+   "lines": [
+    "[x](#top)"
+   ],
+   "expect": "<p><a href=\"#top\">x</a></p>"
+  },
+  {
+   "name": "link query only",
+   "lines": [
+    "[x](?x=1)"
+   ],
+   "expect": "<p><a href=\"?x=1\">x</a></p>"
+  },
+  {
+   "name": "link scheme upper",
+   "lines": [
+    "[x](HTTP://A.example)"
+   ],
+   "expect": "<p>[x](HTTP://A.example)</p>"
+  },
+  {
+   "name": "link scheme mixed",
+   "lines": [
+    "[x](HtTpS://a.example)"
+   ],
+   "expect": "<p>[x](HtTpS://a.example)</p>"
+  },
+  {
+   "name": "link root",
+   "lines": [
+    "[x](/)"
+   ],
+   "expect": "<p><a href=\"/\">x</a></p>"
+  },
+  {
+   "name": "link path with dots",
+   "lines": [
+    "[x](/a/../b)"
+   ],
+   "expect": "<p><a href=\"/a/../b\">x</a></p>"
+  },
+  {
+   "name": "link javascript",
+   "lines": [
+    "[x](javascript:alert(1))"
+   ],
+   "expect": "<p>[x](javascript:alert(1))</p>"
+  },
+  {
+   "name": "link javascript mixed case",
+   "lines": [
+    "[x](JaVaScRiPt:x)"
+   ],
+   "expect": "<p>[x](JaVaScRiPt:x)</p>"
+  },
+  {
+   "name": "link javascript leading space",
+   "lines": [
+    "[x]( javascript:x)"
+   ],
+   "expect": "<p>[x]( javascript:x)</p>"
+  },
+  {
+   "name": "link javascript tab",
+   "lines": [
+    "[x](java\tscript:x)"
+   ],
+   "expect": "<p>[x](java\tscript:x)</p>"
+  },
+  {
+   "name": "link data",
+   "lines": [
+    "[x](data:text/html,x)"
+   ],
+   "expect": "<p>[x](data:text/html,x)</p>"
+  },
+  {
+   "name": "link mailto",
+   "lines": [
+    "[x](mailto:a@b.c)"
+   ],
+   "expect": "<p>[x](mailto:a@b.c)</p>"
+  },
+  {
+   "name": "link ftp",
+   "lines": [
+    "[x](ftp://h/f)"
+   ],
+   "expect": "<p>[x](ftp://h/f)</p>"
+  },
+  {
+   "name": "link vbscript",
+   "lines": [
+    "[x](vbscript:x)"
+   ],
+   "expect": "<p>[x](vbscript:x)</p>"
+  },
+  {
+   "name": "link file",
+   "lines": [
+    "[x](file:///etc/passwd)"
+   ],
+   "expect": "<p>[x](file:///etc/passwd)</p>"
+  },
+  {
+   "name": "link blob",
+   "lines": [
+    "[x](blob:http://a/b)"
+   ],
+   "expect": "<p>[x](blob:<a href=\"http://a/b\">http://a/b</a>)</p>"
+  },
+  {
+   "name": "link protocol relative",
+   "lines": [
+    "[x](//evil.example)"
+   ],
+   "expect": "<p>[x](//evil.example)</p>"
+  },
+  {
+   "name": "link backslash",
+   "lines": [
+    "[x](/\\evil.example)"
+   ],
+   "expect": "<p>[x](/\\evil.example)</p>"
+  },
+  {
+   "name": "link dotdot",
+   "lines": [
+    "[x](../up)"
+   ],
+   "expect": "<p>[x](../up)</p>"
+  },
+  {
+   "name": "link bare word",
+   "lines": [
+    "[x](page.html)"
+   ],
+   "expect": "<p>[x](page.html)</p>"
+  },
+  {
+   "name": "link www",
+   "lines": [
+    "[x](www.example.com)"
+   ],
+   "expect": "<p>[x](www.example.com)</p>"
+  },
+  {
+   "name": "link http no colon slashes",
+   "lines": [
+    "[x](http:/a)"
+   ],
+   "expect": "<p>[x](http:/a)</p>"
+  },
+  {
+   "name": "link http with space",
+   "lines": [
+    "[x](http://a b)"
+   ],
+   "expect": "<p>[x](<a href=\"http://a\">http://a</a> b)</p>"
+  },
+  {
+   "name": "link with parentheses",
+   "lines": [
+    "[x](http://a/(b))"
+   ],
+   "expect": "<p>[x](<a href=\"http://a/(b)\">http://a/(b)</a>)</p>"
+  },
+  {
+   "name": "link with non ascii",
+   "lines": [
+    "[x](http://a/é)"
+   ],
+   "expect": "<p>[x](<a href=\"http://a/\">http://a/</a>é)</p>"
+  },
+  {
+   "name": "link with control char",
+   "lines": [
+    "[x](http://a/\u0001b)"
+   ],
+   "expect": "<p>[x](<a href=\"http://a/\">http://a/</a>\u0001b)</p>"
+  },
+  {
+   "name": "link with bidi char",
+   "lines": [
+    "[x](http://a/‮b)"
+   ],
+   "expect": "<p>[x](<a href=\"http://a/\">http://a/</a>‮b)</p>"
+  },
+  {
+   "name": "link with zero width",
+   "lines": [
+    "[x](http://a/​b)"
+   ],
+   "expect": "<p>[x](<a href=\"http://a/\">http://a/</a>​b)</p>"
+  },
+  {
+   "name": "link with newline escape text",
+   "lines": [
+    "[x](http://a/%0a)"
+   ],
+   "expect": "<p><a href=\"http://a/%0a\">x</a></p>"
+  },
+  {
+   "name": "link with percent",
+   "lines": [
+    "[x](http://a/%41)"
+   ],
+   "expect": "<p><a href=\"http://a/%41\">x</a></p>"
+  },
+  {
+   "name": "link with quote",
+   "lines": [
+    "[x](http://a/\"b)"
+   ],
+   "expect": "<p><a href=\"http://a/&quot;b\">x</a></p>"
+  },
+  {
+   "name": "link with angle",
+   "lines": [
+    "[x](http://a/<b>)"
+   ],
+   "expect": "<p><a href=\"http://a/&lt;b>\">x</a></p>"
+  },
+  {
+   "name": "link with backslash",
+   "lines": [
+    "[x](http://a/\\b)"
+   ],
+   "expect": "<p><a href=\"http://a/\\b\">x</a></p>"
+  },
+  {
+   "name": "link with entity",
+   "lines": [
+    "[x](http://a/&amp;b)"
+   ],
+   "expect": "<p><a href=\"http://a/&amp;amp;b\">x</a></p>"
+  },
+  {
+   "name": "link with hash and query",
+   "lines": [
+    "[x](https://a/b?c=d#e)"
+   ],
+   "expect": "<p><a href=\"https://a/b?c=d#e\">x</a></p>"
+  },
+  {
+   "name": "link with star",
+   "lines": [
+    "[x](http://a/*b*)"
+   ],
+   "expect": "<p><a href=\"http://a/*b*\">x</a></p>"
+  },
+  {
+   "name": "link with underscore",
+   "lines": [
+    "[x](http://a/_b_)"
+   ],
+   "expect": "<p><a href=\"http://a/_b_\">x</a></p>"
+  },
+  {
+   "name": "link with backtick",
+   "lines": [
+    "[x](http://a/`b)"
+   ],
+   "expect": "<p><a href=\"http://a/`b\">x</a></p>"
+  },
+  {
+   "name": "link with brackets",
+   "lines": [
+    "[x](http://a/[b])"
+   ],
+   "expect": "<p><a href=\"http://a/[b]\">x</a></p>"
+  },
+  {
+   "name": "link dest 2048 characters",
+   "lines": [
+    "[x](/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)"
+   ],
+   "expect": "<p><a href=\"/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\">x</a></p>"
+  },
+  {
+   "name": "link dest 2049 characters",
+   "lines": [
+    "[x](/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)"
+   ],
+   "expect": "<p>[x](/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)</p>"
+  },
+  {
+   "name": "link image mark",
+   "lines": [
+    "![alt](http://a/i.png)"
+   ],
+   "expect": "<p>!<a href=\"http://a/i.png\">alt</a></p>"
+  },
+  {
+   "name": "link text with brackets",
+   "lines": [
+    "[a [b] c](/d)"
+   ],
+   "expect": "<p><a href=\"/d\">a [b] c</a></p>"
+  },
+  {
+   "name": "autolink http",
+   "lines": [
+    "see http://a.example/x here"
+   ],
+   "expect": "<p>see <a href=\"http://a.example/x\">http://a.example/x</a> here</p>"
+  },
+  {
+   "name": "autolink https",
+   "lines": [
+    "see https://a.example/x here"
+   ],
+   "expect": "<p>see <a href=\"https://a.example/x\">https://a.example/x</a> here</p>"
+  },
+  {
+   "name": "autolink comma",
+   "lines": [
+    "http://a.example/x, and more"
+   ],
+   "expect": "<p><a href=\"http://a.example/x\">http://a.example/x</a>, and more</p>"
+  },
+  {
+   "name": "autolink period",
+   "lines": [
+    "go to http://a.example."
+   ],
+   "expect": "<p>go to <a href=\"http://a.example\">http://a.example</a>.</p>"
+  },
+  {
+   "name": "autolink closing paren no open",
+   "lines": [
+    "(see http://a.example/x)"
+   ],
+   "expect": "<p>(see <a href=\"http://a.example/x\">http://a.example/x</a>)</p>"
+  },
+  {
+   "name": "autolink balanced parens",
+   "lines": [
+    "http://a.example/a_(b)"
+   ],
+   "expect": "<p><a href=\"http://a.example/a_(b)\">http://a.example/a_(b)</a></p>"
+  },
+  {
+   "name": "autolink two urls",
+   "lines": [
+    "see https://a.example/x, or https://b.example/y)."
+   ],
+   "expect": "<p>see <a href=\"https://a.example/x\">https://a.example/x</a>, or <a href=\"https://b.example/y\">https://b.example/y</a>).</p>"
+  },
+  {
+   "name": "autolink only scheme is text",
+   "lines": [
+    "http://"
+   ],
+   "expect": "<p>http://</p>"
+  },
+  {
+   "name": "autolink only scheme https",
+   "lines": [
+    "https:// text"
+   ],
+   "expect": "<p>https:// text</p>"
+  },
+  {
+   "name": "autolink after a letter is text",
+   "lines": [
+    "xhttp://a.example"
+   ],
+   "expect": "<p>xhttp://a.example</p>"
+  },
+  {
+   "name": "autolink after a digit is text",
+   "lines": [
+    "1http://a.example"
+   ],
+   "expect": "<p>1http://a.example</p>"
+  },
+  {
+   "name": "autolink in a link text is text",
+   "lines": [
+    "[see http://a.example](/b)"
+   ],
+   "expect": "<p><a href=\"/b\">see http://a.example</a></p>"
+  },
+  {
+   "name": "autolink ends at less than",
+   "lines": [
+    "http://a.example/x<b>"
+   ],
+   "expect": "<p><a href=\"http://a.example/x\">http://a.example/x</a>&lt;b></p>"
+  },
+  {
+   "name": "autolink ends at non ascii",
+   "lines": [
+    "http://a.example/xé"
+   ],
+   "expect": "<p><a href=\"http://a.example/x\">http://a.example/x</a>é</p>"
+  },
+  {
+   "name": "autolink upper scheme is text",
+   "lines": [
+    "HTTP://A.example"
+   ],
+   "expect": "<p>HTTP://A.example</p>"
+  },
+  {
+   "name": "autolink with query",
+   "lines": [
+    "http://a.example/p?q=1&r=2"
+   ],
+   "expect": "<p><a href=\"http://a.example/p?q=1&amp;r=2\">http://a.example/p?q=1&amp;r=2</a></p>"
+  },
+  {
+   "name": "autolink trailing marks removed",
+   "lines": [
+    "http://a.example/x?!.,:;*_~'\""
+   ],
+   "expect": "<p><a href=\"http://a.example/x\">http://a.example/x</a>?!.,:;*_~'&quot;</p>"
+  },
+  {
+   "name": "autolink star after em",
+   "lines": [
+    "*see http://a.example*"
+   ],
+   "expect": "<p><em>see <a href=\"http://a.example\">http://a.example</a></em></p>"
+  },
+  {
+   "name": "autolink in a heading",
+   "lines": [
+    "# http://a.example"
+   ],
+   "expect": "<h1><a href=\"http://a.example\">http://a.example</a></h1>"
+  },
+  {
+   "name": "autolink in a table cell",
+   "lines": [
+    "| a |",
+    "|---|",
+    "| http://a.example |"
+   ],
+   "expect": "<table><thead><tr><c>a</c></tr></thead><tbody><tr><c><a href=\"http://a.example\">http://a.example</a></c></tr></tbody></table>"
+  },
+  {
+   "name": "autolink javascript is text",
+   "lines": [
+    "javascript:alert(1)"
+   ],
+   "expect": "<p>javascript:alert(1)</p>"
+  },
+  {
+   "name": "autolink with hash",
+   "lines": [
+    "http://a.example/#x"
+   ],
+   "expect": "<p><a href=\"http://a.example/#x\">http://a.example/#x</a></p>"
+  },
+  {
+   "name": "autolink very long is text",
+   "lines": [
+    "http://a.example/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+   ],
+   "expect": "<p>http://a.example/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</p>"
+  },
+  {
+   "name": "autolink inside code is text",
+   "lines": [
+    "`http://a.example`"
+   ],
+   "expect": "<p><code>http://a.example</code></p>"
+  },
+  {
+   "name": "autolink escaped scheme",
+   "lines": [
+    "\\http://a.example"
+   ],
+   "expect": "<p>\\<a href=\"http://a.example\">http://a.example</a></p>"
+  },
+  {
+   "name": "autolink in quote",
+   "lines": [
+    "> http://a.example/q"
+   ],
+   "expect": "<quote><p><a href=\"http://a.example/q\">http://a.example/q</a></p></quote>"
+  }
+ ],
+ "tables": [
+  {
+   "name": "table simple",
+   "lines": [
+    "| a | b |",
+    "|---|---|",
+    "| 1 | 2 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c>1</c><c>2</c></tr></tbody></table>"
+  },
+  {
+   "name": "table without edge pipes",
+   "lines": [
+    "a | b",
+    "--|--",
+    "1 | 2"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c>1</c><c>2</c></tr></tbody></table>"
+  },
+  {
+   "name": "table alignment",
+   "lines": [
+    "| a | b | c | d |",
+    "|---|:--|--:|:-:|",
+    "| 1 | 2 | 3 | 4 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c><c r>c</c><c c>d</c></tr></thead><tbody><tr><c>1</c><c>2</c><c r>3</c><c c>4</c></tr></tbody></table>"
+  },
+  {
+   "name": "table short row gets empty cells",
+   "lines": [
+    "| a | b |",
+    "|---|---|",
+    "| 1 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c>1</c><c></c></tr></tbody></table>"
+  },
+  {
+   "name": "table long row loses extra cells",
+   "lines": [
+    "| a | b |",
+    "|---|---|",
+    "| 1 | 2 | 3 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c>1</c><c>2</c></tr></tbody></table>"
+  },
+  {
+   "name": "table escaped pipe in a cell",
+   "lines": [
+    "| a | b |",
+    "|---|---|",
+    "| x\\|y | 2 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c>x|y</c><c>2</c></tr></tbody></table>"
+  },
+  {
+   "name": "table inline in cells",
+   "lines": [
+    "| a | b |",
+    "|---|---|",
+    "| *x* | `y` |",
+    "| [l](/m) | **z** |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c><em>x</em></c><c><code>y</code></c></tr><tr><c><a href=\"/m\">l</a></c><c><strong>z</strong></c></tr></tbody></table>"
+  },
+  {
+   "name": "table delimiter count must match",
+   "lines": [
+    "| a | b |",
+    "|---|",
+    "| 1 | 2 |"
+   ],
+   "expect": "<p>| a | b | |---| | 1 | 2 |</p>"
+  },
+  {
+   "name": "table needs a pipe in the header",
+   "lines": [
+    "a",
+    "---"
+   ],
+   "expect": "<p>a</p><hr>"
+  },
+  {
+   "name": "table header only",
+   "lines": [
+    "| a | b |",
+    "|---|---|"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody></tbody></table>"
+  },
+  {
+   "name": "table ends at a blank line",
+   "lines": [
+    "| a |",
+    "|---|",
+    "| 1 |",
+    "",
+    "text"
+   ],
+   "expect": "<table><thead><tr><c>a</c></tr></thead><tbody><tr><c>1</c></tr></tbody></table><p>text</p>"
+  },
+  {
+   "name": "table ends at a line without a pipe",
+   "lines": [
+    "| a |",
+    "|---|",
+    "| 1 |",
+    "text"
+   ],
+   "expect": "<table><thead><tr><c>a</c></tr></thead><tbody><tr><c>1</c></tr></tbody></table><p>text</p>"
+  },
+  {
+   "name": "table one column",
+   "lines": [
+    "| a |",
+    "|---|",
+    "| 1 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c></tr></thead><tbody><tr><c>1</c></tr></tbody></table>"
+  },
+  {
+   "name": "table delimiter with spaces",
+   "lines": [
+    "| a | b |",
+    "| --- | :-: |",
+    "| 1 | 2 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c c>b</c></tr></thead><tbody><tr><c>1</c><c c>2</c></tr></tbody></table>"
+  },
+  {
+   "name": "table delimiter bad cell",
+   "lines": [
+    "| a | b |",
+    "|---|-x-|",
+    "| 1 | 2 |"
+   ],
+   "expect": "<p>| a | b | |---|-x-| | 1 | 2 |</p>"
+  },
+  {
+   "name": "table in quote",
+   "lines": [
+    "> | a |",
+    "> |---|",
+    "> | 1 |"
+   ],
+   "expect": "<quote><table><thead><tr><c>a</c></tr></thead><tbody><tr><c>1</c></tr></tbody></table></quote>"
+  },
+  {
+   "name": "table after paragraph is text",
+   "lines": [
+    "text",
+    "| a |",
+    "|---|",
+    "| 1 |"
+   ],
+   "expect": "<p>text | a | |---| | 1 |</p>"
+  },
+  {
+   "name": "table empty cells",
+   "lines": [
+    "| a | b |",
+    "|---|---|",
+    "|  |  |"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>b</c></tr></thead><tbody><tr><c></c><c></c></tr></tbody></table>"
+  },
+  {
+   "name": "table placeholders in cells",
+   "lines": [
+    "| $v |",
+    "|---|",
+    "| ${v} |"
+   ],
+   "expect": "<table><thead><tr><c>$v</c></tr></thead><tbody><tr><c>${v}</c></tr></tbody></table>"
+  },
+  {
+   "name": "table 20 columns allowed",
+   "lines": [
+    "|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|",
+    "|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|"
+   ],
+   "expect": "<table><thead><tr><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c><c>a</c></tr></thead><tbody></tbody></table>"
+  },
+  {
+   "name": "table 21 columns is a limit",
+   "lines": [
+    "|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|",
+    "|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|"
+   ],
+   "expect": "limit:columns"
+  },
+  {
+   "name": "table html in cells is text",
+   "lines": [
+    "| a |",
+    "|---|",
+    "| <b>x</b> |"
+   ],
+   "expect": "<table><thead><tr><c>a</c></tr></thead><tbody><tr><c>&lt;b>x&lt;/b></c></tr></tbody></table>"
+  },
+  {
+   "name": "table two tables",
+   "lines": [
+    "| a |",
+    "|---|",
+    "| 1 |",
+    "",
+    "| b |",
+    "|---|",
+    "| 2 |"
+   ],
+   "expect": "<table><thead><tr><c>a</c></tr></thead><tbody><tr><c>1</c></tr></tbody></table><table><thead><tr><c>b</c></tr></thead><tbody><tr><c>2</c></tr></tbody></table>"
+  },
+  {
+   "name": "table header with em",
+   "lines": [
+    "| *a* | b |",
+    "|---|---|",
+    "| 1 | 2 |"
+   ],
+   "expect": "<table><thead><tr><c><em>a</em></c><c>b</c></tr></thead><tbody><tr><c>1</c><c>2</c></tr></tbody></table>"
+  }
+ ],
+ "items": [
+  {
+   "name": "item tight text",
+   "lines": [
+    "- a"
+   ],
+   "expect": "<ul><li>a</li></ul>"
+  },
+  {
+   "name": "item tight with sublist",
+   "lines": [
+    "- a",
+    "  - b"
+   ],
+   "expect": "<ul><li>a<ul><li>b</li></ul></li></ul>"
+  },
+  {
+   "name": "item loose two paragraphs",
+   "lines": [
+    "- a",
+    "",
+    "  b"
+   ],
+   "expect": "<ul><li><p>a</p><p>b</p></li></ul>"
+  },
+  {
+   "name": "item first block heading",
+   "lines": [
+    "- # h"
+   ],
+   "expect": "<ul><li><h1>h</h1></li></ul>"
+  },
+  {
+   "name": "item first block code",
+   "lines": [
+    "- ```",
+    "  x",
+    "  ```"
+   ],
+   "expect": "<ul><li><pre><code>x</code></pre></li></ul>"
+  },
+  {
+   "name": "item quote",
+   "lines": [
+    "- > q"
+   ],
+   "expect": "<ul><li><quote><p>q</p></quote></li></ul>"
+  },
+  {
+   "name": "item paragraph then code is loose",
+   "lines": [
+    "- a",
+    "  ```",
+    "  x",
+    "  ```"
+   ],
+   "expect": "<ul><li><p>a</p><pre><code>x</code></pre></li></ul>"
+  },
+  {
+   "name": "item paragraph then quote is loose",
+   "lines": [
+    "- a",
+    "  > q"
+   ],
+   "expect": "<ul><li><p>a</p><quote><p>q</p></quote></li></ul>"
+  },
+  {
+   "name": "item paragraph and two lists is tight",
+   "lines": [
+    "- a",
+    "  - b",
+    "  1. c"
+   ],
+   "expect": "<ul><li>a<ul><li>b</li></ul><ol><li>c</li></ol></li></ul>"
+  },
+  {
+   "name": "item list only",
+   "lines": [
+    "- - a"
+   ],
+   "expect": "<ul><li><ul><li>a</li></ul></li></ul>"
+  },
+  {
+   "name": "item ordered tight",
+   "lines": [
+    "1. a",
+    "2. b"
+   ],
+   "expect": "<ol><li>a</li><li>b</li></ol>"
+  },
+  {
+   "name": "item empty",
+   "lines": [
+    "-"
+   ],
+   "expect": "<ul><li></li></ul>"
+  },
+  {
+   "name": "item blank only first line then text",
+   "lines": [
+    "-",
+    "  a",
+    "",
+    "  b"
+   ],
+   "expect": "<ul><li><p>a</p><p>b</p></li></ul>"
+  },
+  {
+   "name": "item table",
+   "lines": [
+    "- | a |",
+    "  |---|",
+    "  | 1 |"
+   ],
+   "expect": "<ul><li><table><thead><tr><c>a</c></tr></thead><tbody><tr><c>1</c></tr></tbody></table></li></ul>"
+  },
+  {
+   "name": "item two lists with blank line",
+   "lines": [
+    "- a",
+    "",
+    "- b",
+    "",
+    "- c"
+   ],
+   "expect": "<ul><li>a</li><li>b</li><li>c</li></ul>"
+  },
+  {
+   "name": "item paragraph with break",
+   "lines": [
+    "- a  ",
+    "  b"
+   ],
+   "expect": "<ul><li>a<br>b</li></ul>"
+  },
+  {
+   "name": "item with hr",
+   "lines": [
+    "- a",
+    "  ---"
+   ],
+   "expect": "<ul><li><p>a</p><hr></li></ul>"
+  },
+  {
+   "name": "item sublist ordered in bullet",
+   "lines": [
+    "- a",
+    "  1. x",
+    "  2. y"
+   ],
+   "expect": "<ul><li>a<ol><li>x</li><li>y</li></ol></li></ul>"
+  },
+  {
+   "name": "item quote with paragraph",
+   "lines": [
+    "- > a",
+    "  > b"
+   ],
+   "expect": "<ul><li><quote><p>a b</p></quote></li></ul>"
+  },
+  {
+   "name": "item nested loose",
+   "lines": [
+    "- a",
+    "  - b",
+    "",
+    "    c"
+   ],
+   "expect": "<ul><li>a<ul><li><p>b</p><p>c</p></li></ul></li></ul>"
+  }
+ ],
+ "escapes": [
+  {
+   "name": "escape every ASCII punctuation",
+   "lines": [
+    "\\! \\\" \\# \\$ \\% \\& \\' \\( \\) \\* \\+ \\, \\- \\. \\/ \\: ; \\< \\= \\> \\? \\@ \\[ \\\\ \\] \\^ \\_ \\` \\{ \\| \\} \\~"
+   ],
+   "expect": "<p>! &quot; # $ % &amp; ' ( ) * + , - . / : ; &lt; = > ? @ [ \\ ] ^ _ ` { | } ~</p>"
+  },
+  {
+   "name": "escape star not em",
+   "lines": [
+    "\\*a\\*"
+   ],
+   "expect": "<p>*a*</p>"
+  },
+  {
+   "name": "escape heading",
+   "lines": [
+    "\\# a"
+   ],
+   "expect": "<p># a</p>"
+  },
+  {
+   "name": "escape list marker",
+   "lines": [
+    "\\- a"
+   ],
+   "expect": "<p>- a</p>"
+  },
+  {
+   "name": "escape ordered marker",
+   "lines": [
+    "1\\. a"
+   ],
+   "expect": "<p>1. a</p>"
+  },
+  {
+   "name": "escape quote marker",
+   "lines": [
+    "\\> a"
+   ],
+   "expect": "<p>> a</p>"
+  },
+  {
+   "name": "escape link bracket",
+   "lines": [
+    "\\[a](/b)"
+   ],
+   "expect": "<p>[a](/b)</p>"
+  },
+  {
+   "name": "escape link paren",
+   "lines": [
+    "[a]\\(/b)"
+   ],
+   "expect": "<p>[a](/b)</p>"
+  },
+  {
+   "name": "escape code tick",
+   "lines": [
+    "\\`a`"
+   ],
+   "expect": "<p>`a`</p>"
+  },
+  {
+   "name": "escape dollar",
+   "lines": [
+    "\\$a"
+   ],
+   "expect": "<p>$a</p>"
+  },
+  {
+   "name": "escape dollar brace",
+   "lines": [
+    "\\${a}"
+   ],
+   "expect": "<p>${a}</p>"
+  },
+  {
+   "name": "escape backslash then star",
+   "lines": [
+    "\\\\*a*"
+   ],
+   "expect": "<p>\\<em>a</em></p>"
+  },
+  {
+   "name": "escape space is text",
+   "lines": [
+    "\\ a"
+   ],
+   "expect": "<p>\\ a</p>"
+  },
+  {
+   "name": "escape digit is text",
+   "lines": [
+    "\\1"
+   ],
+   "expect": "<p>\\1</p>"
+  },
+  {
+   "name": "escape at line end is a break",
+   "lines": [
+    "a\\",
+    "b"
+   ],
+   "expect": "<p>a<br>b</p>"
+  },
+  {
+   "name": "escape in code is literal",
+   "lines": [
+    "`\\*`"
+   ],
+   "expect": "<p><code>\\*</code></p>"
+  },
+  {
+   "name": "escape in link text",
+   "lines": [
+    "[\\*a\\*](/b)"
+   ],
+   "expect": "<p><a href=\"/b\">*a*</a></p>"
+  },
+  {
+   "name": "escape in cell",
+   "lines": [
+    "| \\*a\\* |",
+    "|---|",
+    "| \\| |"
+   ],
+   "expect": "<table><thead><tr><c>*a*</c></tr></thead><tbody><tr><c>|</c></tr></tbody></table>"
+  },
+  {
+   "name": "escape double backslash at end",
+   "lines": [
+    "a\\\\"
+   ],
+   "expect": "<p>a\\</p>"
+  }
+ ],
+ "limits": [
+  {
+   "name": "limit lines 2000 allowed",
+   "lines": [
+    {
+     "line": "a",
+     "times": 2000
+    }
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit lines 2001 is size",
+   "lines": [
+    {
+     "line": "a",
+     "times": 2001
+    }
+   ],
+   "expect": "limit:size"
+  },
+  {
+   "name": "limit bytes 65536 allowed",
+   "lines": [
+    {
+     "fill": [
+      "a",
+      8191
+     ],
+     "times": 7
+    },
+    {
+     "fill": [
+      "a",
+      8192
+     ]
+    }
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit bytes 65537 is size",
+   "lines": [
+    {
+     "fill": [
+      "a",
+      8191
+     ],
+     "times": 7
+    },
+    {
+     "fill": [
+      "a",
+      8193
+     ]
+    }
+   ],
+   "expect": "limit:size"
+  },
+  {
+   "name": "limit bytes counts UTF-8 not characters",
+   "lines": [
+    {
+     "fill": [
+      "é",
+      4096
+     ],
+     "times": 8
+    }
+   ],
+   "expect": "limit:size"
+  },
+  {
+   "name": "limit bytes UTF-8 below the limit",
+   "lines": [
+    {
+     "fill": [
+      "é",
+      4095
+     ],
+     "times": 8
+    }
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit depth six quotes allowed",
+   "lines": [
+    "> > > > > > a"
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit depth seven quotes",
+   "lines": [
+    "> > > > > > > a"
+   ],
+   "expect": "limit:depth"
+  },
+  {
+   "name": "limit depth six lists allowed",
+   "lines": [
+    "- a",
+    "  - b",
+    "    - c",
+    "      - d",
+    "        - e",
+    "          - f"
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit depth seven lists",
+   "lines": [
+    "- a",
+    "  - b",
+    "    - c",
+    "      - d",
+    "        - e",
+    "          - f",
+    "            - g"
+   ],
+   "expect": "limit:depth"
+  },
+  {
+   "name": "limit depth mixed quote and list",
+   "lines": [
+    "> - > - > - > x"
+   ],
+   "expect": "limit:depth"
+  },
+  {
+   "name": "limit inline six allowed",
+   "lines": [
+    "*a **b *c **d *e **f** e* d** c* b** a*"
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit inline seven",
+   "lines": [
+    "*a **b *c **d *e **f *g* f** e* d** c* b** a*"
+   ],
+   "expect": "limit:inline"
+  },
+  {
+   "name": "limit inline link inside emphasis counts",
+   "lines": [
+    "*a **b *c **d *e [f](/g)* d** c* b** a*"
+   ],
+   "expect": "<p><em>a <strong>b <em>c <strong>d <em>e <a href=\"/g\">f</a></em> d</strong> c</em> b</strong> a</em></p>"
+  },
+  {
+   "name": "limit nodes 4000 allowed",
+   "lines": [
+    {
+     "line": "# a",
+     "times": 2000
+    }
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit nodes 4001",
+   "lines": [
+    {
+     "line": "# a",
+     "times": 1999
+    },
+    "# *a*"
+   ],
+   "expect": "limit:nodes"
+  },
+  {
+   "name": "limit columns 20 allowed",
+   "lines": [
+    "|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|",
+    "|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|"
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit columns 21",
+   "lines": [
+    "|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|a|",
+    "|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|"
+   ],
+   "expect": "limit:columns"
+  },
+  {
+   "name": "limit url 2048 allowed",
+   "lines": [
+    "[x](/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)"
+   ],
+   "expect": "ok"
+  },
+  {
+   "name": "limit url 2049 is text",
+   "lines": [
+    "[x](/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)"
+   ],
+   "expect": "<p>[x](/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)</p>"
+  },
+  {
+   "name": "limit empty array",
+   "lines": [],
+   "expect": ""
+  }
+ ]
+}

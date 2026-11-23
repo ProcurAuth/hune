@@ -1,0 +1,1 @@
+SELECT $other, ${other}, ${other:csv}, '$other'

@@ -1,0 +1,209 @@
+{
+  "format_version": 3,
+  "uid": "parity-annotations-filter",
+  "title": "Parity: annotation filter",
+  "description": "The filter of panels and a switch off (15.14c).",
+  "tags": [],
+  "time": {
+    "from": "1794528000000",
+    "to": "1794546000000",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "annotations": [
+    {
+      "name": "All series",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 3600 AS time",
+        "FROM numbers(4)"
+      ],
+      "color": "red"
+    },
+    {
+      "name": "Second only",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 3600 + 1800 AS time",
+        "FROM numbers(4)"
+      ],
+      "color": "semi-dark-blue",
+      "panels": [
+        2
+      ]
+    },
+    {
+      "name": "Switched off",
+      "source": "prod",
+      "sql": [
+        "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 600 AS time"
+      ],
+      "color": "green",
+      "enabled": false
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Series one",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 0) * 10 + 20 AS v",
+                "FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "timeseries",
+          "title": "Series two",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 1) * 10 + 20 AS v",
+                "FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "timeseries",
+          "title": "Series three",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 2) * 10 + 20 AS v",
+                "FROM numbers(61)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

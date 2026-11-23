@@ -1,0 +1,29 @@
+{
+  "id": "pg-macro-timeGroup-comma-in-argument",
+  "tags": [
+    "macro:$__timeGroup"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeGroup(coalesce(ts, now()), '5m') FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": null,
+  "grafana_error": "interpolation failed: error parsing interval now(",
+  "sent_sql": "SELECT $__timeGroup(coalesce(ts, now()), '5m') FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.10",
+    "reason": "Grafana splits the arguments at each comma. Hune counts the parentheses and the commas by depth.",
+    "hune": {
+      "sql": "SELECT floor(extract(epoch from coalesce(ts, now()))/300)*300 FROM t"
+    }
+  }
+}

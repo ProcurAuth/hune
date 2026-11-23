@@ -1,0 +1,33 @@
+{
+  "id": "pg-interval-refused-zero",
+  "tags": [
+    "macro:$__timeGroup",
+    "interval:refused"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeGroup(ts, '0s') FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT floor(extract(epoch from ts)/0)*0 FROM t",
+  "grafana_error": "db query error: ERROR: division by zero (SQLSTATE 22012)",
+  "sent_sql": "SELECT $__timeGroup(ts, '0s') FROM t",
+  "difference": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana gives a division by zero at run time. Hune refuses an interval of 0.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "pg-macro-timeFrom-with-argument",
+  "tags": [
+    "macro:$__timeFrom"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeFrom( 1 ) FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT '2026-11-09T08:00:00Z' FROM t",
+  "sent_sql": "SELECT $__timeFrom( 1 ) FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana ignores an argument of a macro that takes none. Hune refuses the call.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

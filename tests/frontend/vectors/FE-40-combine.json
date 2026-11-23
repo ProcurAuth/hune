@@ -1,0 +1,2515 @@
+{
+ "vectors": [
+  {
+   "name": "timeseries, one query: no prefix",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     }
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "a"
+   ],
+   "lists": [
+    "A"
+   ]
+  },
+  {
+   "name": "timeseries, two queries: joined, prefix",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "timeseries, three queries",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      },
+      {
+       "ref": "C",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        5,
+        6
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b",
+    "C c"
+   ],
+   "lists": [
+    "A",
+    "B",
+    "C"
+   ]
+  },
+  {
+   "name": "timeseries, refs Z A M keep the order of the queries",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null,
+      "ref": "Z"
+     },
+     "extra_queries": [
+      {
+       "ref": "A",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      },
+      {
+       "ref": "M",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "Z",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "M",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "Z c",
+    "A a",
+    "M b"
+   ],
+   "lists": [
+    "Z",
+    "A",
+    "M"
+   ]
+  },
+  {
+   "name": "timeseries, B failed: the prefix stays",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a"
+   ],
+   "lists": [
+    "A"
+   ]
+  },
+  {
+   "name": "timeseries, B hidden: no prefix",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ],
+       "hide": true
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "a"
+   ],
+   "lists": [
+    "A"
+   ]
+  },
+  {
+   "name": "timeseries, first query hidden: the visible one has no prefix",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null,
+      "hide": true
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "b"
+   ],
+   "lists": [
+    "B"
+   ]
+  },
+  {
+   "name": "timeseries, a long frame with a label",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        0
+       ]
+      },
+      {
+       "name": "host",
+       "kind": "text",
+       "values": [
+        "h0",
+        "h1"
+       ]
+      },
+      {
+       "name": "v",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "v",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A v h0",
+    "A v h1",
+    "B v"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "table, two queries: the first frame",
+   "panel": {
+    "id": 1,
+    "type": "table",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "n",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "m",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "A n"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "table, the choice B",
+   "panel": {
+    "id": 1,
+    "type": "table",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "n",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "m",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": "B",
+   "names": [
+    "B m"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "table, a choice that is not in the list: the first frame",
+   "panel": {
+    "id": 1,
+    "type": "table",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "n",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "m",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": "Q",
+   "names": [
+    "A n"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "table, one answered frame",
+   "panel": {
+    "id": 1,
+    "type": "table",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "m",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "B m"
+   ],
+   "lists": [
+    "B"
+   ]
+  },
+  {
+   "name": "table, one visible query: no prefix",
+   "panel": {
+    "id": 1,
+    "type": "table",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     }
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "n",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "n"
+   ],
+   "lists": [
+    "A"
+   ]
+  },
+  {
+   "name": "stat, two queries: the lists one after the other",
+   "panel": {
+    "id": 1,
+    "type": "stat",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time 1",
+    "A a",
+    "time 2",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "stat, rows stay as they are",
+   "panel": {
+    "id": 1,
+    "type": "stat",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60,
+        120
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2,
+        3
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time 1",
+    "A a",
+    "time 2",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    3,
+    3,
+    1,
+    1
+   ]
+  },
+  {
+   "name": "bargauge, two queries",
+   "panel": {
+    "id": 1,
+    "type": "bargauge",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "piechart, three queries",
+   "panel": {
+    "id": 1,
+    "type": "piechart",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      },
+      {
+       "ref": "C",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "C",
+     "cols": [
+      {
+       "name": "c",
+       "kind": "number",
+       "values": [
+        3
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "A a",
+    "B b",
+    "C c"
+   ],
+   "lists": [
+    "A",
+    "B",
+    "C"
+   ]
+  },
+  {
+   "name": "barchart takes the first list",
+   "panel": {
+    "id": 1,
+    "type": "barchart",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     }
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "a"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "state_timeline joins",
+   "panel": {
+    "id": 1,
+    "type": "state_timeline",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "status_history joins",
+   "panel": {
+    "id": 1,
+    "type": "status_history",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "the matcher query matches the fields of one query",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": [
+      {
+       "match": {
+        "by": "query",
+        "value": "B"
+       },
+       "set": {
+        "unit": "ms"
+       }
+      }
+     ]
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "matches": [
+    {
+     "by": "query",
+     "value": "B",
+     "fields": [
+      "B b"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "the matcher query never matches the joined time field",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "matches": [
+    {
+     "by": "query",
+     "value": "A",
+     "fields": [
+      "A a"
+     ]
+    },
+    {
+     "by": "query",
+     "value": "B",
+     "fields": [
+      "B b"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "the matcher query on a collected list",
+   "panel": {
+    "id": 1,
+    "type": "stat",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "matches": [
+    {
+     "by": "query",
+     "value": "A",
+     "fields": [
+      "A a"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a matcher with a ref that no query has matches nothing",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "matches": [
+    {
+     "by": "query",
+     "value": "Z",
+     "fields": []
+    }
+   ]
+  },
+  {
+   "name": "the matcher name finds the base display name with the prefix",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "matches": [
+    {
+     "by": "name",
+     "value": "A a",
+     "fields": [
+      "A a"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "a transform applies to each frame alone: the filter of A leaves B whole",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [
+     {
+      "kind": "filter_by_value",
+      "mode": "include",
+      "match": "any",
+      "filters": [
+       {
+        "field": "A a",
+        "matcher": {
+         "kind": "greater",
+         "value": 1
+        }
+       }
+      ]
+     }
+    ],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A a",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    2,
+    2,
+    2
+   ]
+  },
+  {
+   "name": "a transform filters its own frame",
+   "panel": {
+    "id": 1,
+    "type": "stat",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [
+     {
+      "kind": "filter_by_value",
+      "mode": "include",
+      "match": "any",
+      "filters": [
+       {
+        "field": "A a",
+        "matcher": {
+         "kind": "greater",
+         "value": 1
+        }
+       }
+      ]
+     }
+    ],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "a",
+       "kind": "number",
+       "values": [
+        1,
+        2
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0,
+        60
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        3,
+        4
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time 1",
+    "A a",
+    "time 2",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ],
+   "rows": [
+    1,
+    1,
+    2,
+    2
+   ]
+  },
+  {
+   "name": "long-to-wide of a query with the format time_series, a table query stays long",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "table",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "h",
+       "kind": "text",
+       "values": [
+        "x"
+       ]
+      },
+      {
+       "name": "v",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "w",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A v x",
+    "B w"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "two labels on one frame",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "h",
+       "kind": "text",
+       "values": [
+        "x"
+       ]
+      },
+      {
+       "name": "z",
+       "kind": "text",
+       "values": [
+        "y"
+       ]
+      },
+      {
+       "name": "v",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "b",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A v {h=\"x\", z=\"y\"}",
+    "B b"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  },
+  {
+   "name": "equal field names in two queries stay apart by the prefix",
+   "panel": {
+    "id": 1,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "time_series",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "time_series",
+       "sql": [
+        "SELECT 1"
+       ]
+      }
+     ]
+    },
+    "transforms": [],
+    "fields": {
+     "defaults": {},
+     "overrides": []
+    }
+   },
+   "items": [
+    {
+     "ref": "A",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "v",
+       "kind": "number",
+       "values": [
+        1
+       ]
+      }
+     ]
+    },
+    {
+     "ref": "B",
+     "cols": [
+      {
+       "name": "time",
+       "kind": "time",
+       "values": [
+        0
+       ]
+      },
+      {
+       "name": "v",
+       "kind": "number",
+       "values": [
+        2
+       ]
+      }
+     ]
+    }
+   ],
+   "choice": null,
+   "names": [
+    "time",
+    "A v",
+    "B v"
+   ],
+   "lists": [
+    "A",
+    "B"
+   ]
+  }
+ ]
+}

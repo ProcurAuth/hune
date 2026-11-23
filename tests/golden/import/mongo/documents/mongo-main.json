@@ -1,0 +1,484 @@
+{
+  "format_version": 3,
+  "uid": "mongo-main",
+  "title": "MongoDB panels",
+  "description": "Synthetic dashboard of the importer tests: one panel for each MongoDB row of 15.6.",
+  "tags": [
+    "synthetic",
+    "mongodb"
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "browser",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "custom",
+      "name": "node",
+      "label": "Node",
+      "hide": "none",
+      "options": [
+        {
+          "text": "node-a",
+          "value": "node-a"
+        },
+        {
+          "text": "node-b",
+          "value": "node-b"
+        },
+        {
+          "text": "node-c",
+          "value": "node-c"
+        }
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "default": [
+        "$__all"
+      ]
+    },
+    {
+      "kind": "custom",
+      "name": "region",
+      "label": "Region",
+      "hide": "none",
+      "options": [
+        {
+          "text": "eu",
+          "value": "eu"
+        },
+        {
+          "text": "us",
+          "value": "us"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "eu"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Orders table",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{\"ts\":{\"$gte\":\"$__timeFrom\",\"$lte\":\"$__timeTo\"},\"host\":{\"$in\":\"${node:json}\"}}},",
+                "    {\"$project\":{\"_id\":0,\"host\":1,\"load\":1}},",
+                "    {\"$sort\":{\"host\":1}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "timeseries",
+          "title": "Load by host",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "time_series",
+              "sql": [
+                "{",
+                "  \"collection\": \"node_load\",",
+                "  \"database\": \"analytics\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{\"ts\":{\"$gte\":\"$__timeFrom\",\"$lte\":\"$__timeTo\"},\"host\":{\"$in\":\"${node:json}\"}}},",
+                "    {\"$group\":{\"_id\":{\"t\":{\"$dateTrunc\":{\"date\":\"$ts\",\"unit\":\"second\",\"binSize\":\"$__interval_s\"}},\"host\":\"$host\"},\"load\":{\"$avg\":\"$load\"}}},",
+                "    {\"$project\":{\"_id\":0,\"time\":\"$_id.t\",\"host\":\"$_id.host\",\"load\":1}},",
+                "    {\"$sort\":{\"time\":1}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "table",
+          "title": "Epoch macros",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{\"epoch_ms\":{\"$gte\":\"$__from\",\"$lte\":\"$__to\"}}},",
+                "    {\"$limit\":\"$__interval_ms\"}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 4,
+          "type": "table",
+          "title": "No query type",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 5,
+          "type": "table",
+          "title": "Wrapper",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 16,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{\"ts\":{\"$gte\":\"$__timeFrom\",\"$lte\":\"$__timeTo\"}}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 6,
+          "type": "table",
+          "title": "Bare token",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 16,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{\"epoch_ms\":{\"$gte\":\"$__from\",\"$lte\":\"$__to\"}}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 13,
+          "type": "table",
+          "title": "Old form",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 48,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{\"host\":\"${region}\"}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 14,
+          "type": "table",
+          "title": "Macro in a string",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 48,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{\"note\":\"from $__timeFrom\"}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 17,
+          "type": "table",
+          "title": "SQL member",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 64,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "events",
+              "format": "table",
+              "sql": [
+                "{",
+                "  \"collection\": \"orders\",",
+                "  \"aggregate\": [",
+                "    {\"$match\":{}}",
+                "  ]",
+                "}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 18,
+          "type": "table",
+          "title": "ClickHouse panel",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 64,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 1 AS a"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

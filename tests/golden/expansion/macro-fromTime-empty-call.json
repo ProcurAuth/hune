@@ -1,0 +1,30 @@
+{
+  "id": "macro-fromTime-empty-call",
+  "tags": [
+    "macro:$__fromTime"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__fromTime()",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT toDateTime(1794211200)",
+  "sent_sql": "SELECT $__fromTime()",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana leaves the text or drops the parentheses. Hune gives a document error for a macro with a wrong argument count or an unexpected parenthesis.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "format_version": 3,
+  "uid": "parity-text-links",
+  "title": "Parity: text links",
+  "description": "Parity fixture of the text panel: links, a table and a code block (15.14c).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "text",
+          "title": "Links",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 12
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "A [docs link](https://wiki.example/runbook?a=1&b=2), a [relative link](/d/other-uid) and a [fragment](#top).",
+              "A bare URL: https://wiki.example/status.",
+              "",
+              "| Link | Destination |",
+              "|---|---|",
+              "| [one](https://wiki.example/one) | `/one` |",
+              "| [two](/d/two) | `/two` |",
+              "",
+              "```",
+              "curl https://wiki.example/api",
+              "```"
+            ]
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

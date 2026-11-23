@@ -1,0 +1,1826 @@
+{
+ "id": "FE-30",
+ "variables": {
+  "A": {
+   "kind": "custom",
+   "multi": true,
+   "include_all": true,
+   "all_value": null,
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ]
+  },
+  "W": {
+   "kind": "custom",
+   "multi": true,
+   "include_all": true,
+   "all_value": "ALL",
+   "options": [
+    {
+     "value": "a",
+     "text": "Alpha"
+    },
+    {
+     "value": "b",
+     "text": "Beta"
+    },
+    {
+     "value": "c",
+     "text": "Gamma"
+    }
+   ]
+  },
+  "T": {
+   "kind": "text"
+  }
+ },
+ "cases": [
+  {
+   "name": "single value, bare form",
+   "lines": [
+    "Region: $v."
+   ],
+   "expect": "Region: a.",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "single value, braced form",
+   "lines": [
+    "Region: ${v}."
+   ],
+   "expect": "Region: a.",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "several values are joined with a comma and a space",
+   "lines": [
+    "$v"
+   ],
+   "expect": "a, b",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the format text gives the option texts joined with a plus",
+   "lines": [
+    "${v:text}"
+   ],
+   "expect": "Alpha + Beta",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the format csv",
+   "lines": [
+    "${v:csv}"
+   ],
+   "expect": "a,b",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the format pipe",
+   "lines": [
+    "${v:pipe}"
+   ],
+   "expect": "a|b",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the format glob with several values",
+   "lines": [
+    "${v:glob}"
+   ],
+   "expect": "{a,b}",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the format glob with one value",
+   "lines": [
+    "${v:glob}"
+   ],
+   "expect": "a",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "All with an all_value: bare form",
+   "lines": [
+    "$v"
+   ],
+   "expect": "ALL",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": "ALL",
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "All with an all_value: csv",
+   "lines": [
+    "${v:csv}"
+   ],
+   "expect": "ALL",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": "ALL",
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "All with an all_value: glob",
+   "lines": [
+    "${v:glob}"
+   ],
+   "expect": "ALL",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": "ALL",
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "All with an all_value: text",
+   "lines": [
+    "${v:text}"
+   ],
+   "expect": "All",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": "ALL",
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "All without an all_value: the values of all the options",
+   "lines": [
+    "$v"
+   ],
+   "expect": "a, b, c",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "All without an all_value: csv",
+   "lines": [
+    "${v:csv}"
+   ],
+   "expect": "a,b,c",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "All without an all_value: text",
+   "lines": [
+    "${v:text}"
+   ],
+   "expect": "All",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "a text variable shows its value",
+   "lines": [
+    "Hello $t, ${t}!"
+   ],
+   "expect": "Hello hello world, hello world!",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "hello world"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a text variable is not parsed",
+   "lines": [
+    "$t"
+   ],
+   "expect": "*x* [y](javascript:alert(1))",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "*x* [y](javascript:alert(1))"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the name is the longest run of letters, digits and underscore",
+   "lines": [
+    "$v_x $v"
+   ],
+   "expect": "$v_x a",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a name with an underscore",
+   "lines": [
+    "$my_var and ${my_var}"
+   ],
+   "expect": "a and a",
+   "variables": {
+    "my_var": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "my_var": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "an unknown name stays as written",
+   "lines": [
+    "$nope ${nope} ${nope:csv}"
+   ],
+   "expect": "$nope ${nope} ${nope:csv}",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a name that starts with two underscores stays",
+   "lines": [
+    "$__from ${__to} $__dashboard"
+   ],
+   "expect": "$__from ${__to} $__dashboard",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a format that the table does not list stays",
+   "lines": [
+    "${v:json} ${v:raw}"
+   ],
+   "expect": "${v:json} ${v:raw}",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the form with square brackets stays",
+   "lines": [
+    "[[v]]"
+   ],
+   "expect": "[[v]]",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "an escaped dollar shows the name",
+   "lines": [
+    "\\$v and \\${v}"
+   ],
+   "expect": "$v and ${v}",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a dollar with no name stays",
+   "lines": [
+    "$ and $$ and ${} and $-"
+   ],
+   "expect": "$ and $$ and ${} and $-",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a leaf inside emphasis changes",
+   "lines": [
+    "*$v* and **${v}**"
+   ],
+   "expect": "a and a",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "an inline code span changes",
+   "lines": [
+    "`$v`"
+   ],
+   "expect": "a",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a code block changes",
+   "lines": [
+    "```",
+    "$v",
+    "${v:csv}",
+    "```"
+   ],
+   "expect": "a\na",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a table cell changes",
+   "lines": [
+    "| $v |",
+    "|---|",
+    "| ${v} |"
+   ],
+   "expect": "aa",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a heading changes",
+   "lines": [
+    "# Region $v"
+   ],
+   "expect": "Region a",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the text of a link changes and the destination stays",
+   "lines": [
+    "[$v](/d?x=$v)"
+   ],
+   "expect": "a",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   },
+   "hrefs": [
+    "/d?x=$v"
+   ]
+  },
+  {
+   "name": "a placeholder in the destination of an autolink stays",
+   "lines": [
+    "http://a.example/?x=$v"
+   ],
+   "expect": "http://a.example/?x=$v",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "an escaped leaf in a link text stays",
+   "lines": [
+    "[\\$v](/d)"
+   ],
+   "expect": "$v",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "the placeholder does not go over the end of a leaf",
+   "lines": [
+    "$*a*v"
+   ],
+   "expect": "$av",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "two placeholders side by side",
+   "lines": [
+    "$v$v"
+   ],
+   "expect": "aa",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   }
+  },
+  {
+   "name": "an empty selection gives an empty text",
+   "lines": [
+    "x${v}y"
+   ],
+   "expect": "xy",
+   "variables": {
+    "v": {
+     "kind": "custom",
+     "multi": true,
+     "include_all": true,
+     "all_value": null,
+     "options": [
+      {
+       "value": "a",
+       "text": "Alpha"
+      },
+      {
+       "value": "b",
+       "text": "Beta"
+      },
+      {
+       "value": "c",
+       "text": "Gamma"
+      }
+     ]
+    }
+   },
+   "selections": {
+    "v": {
+     "all": false,
+     "values": []
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: html",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "<b>x</b>"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: emphasis",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "*x*"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: link",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "[x](javascript:alert(1))"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: backtick",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "`"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: pipe",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "|"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: dollar",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "$"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: hash and quote",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "# a > b\n- c"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: fence",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "```"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: image",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "![x](http://evil.example/a.png)"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: autolink",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "http://evil.example/x"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: script",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "<script>alert(1)</script>"
+     ]
+    }
+   }
+  },
+  {
+   "name": "a hostile value keeps the shape: long line",
+   "lines": [
+    "# Title $t",
+    "",
+    "- item ${t}",
+    "",
+    "| h |",
+    "|---|",
+    "| $t |",
+    "",
+    "`$t` and [link]($t)",
+    "",
+    "> $t",
+    "",
+    "```",
+    "$t",
+    "```"
+   ],
+   "expect": "",
+   "variables": {
+    "t": {
+     "kind": "text"
+    }
+   },
+   "selections": {
+    "t": {
+     "all": false,
+     "values": [
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     ]
+    }
+   }
+  },
+  {
+   "name": "interval, an item",
+   "lines": [
+    "Bucket: $b."
+   ],
+   "expect": "Bucket: 1h.",
+   "variables": {
+    "b": {
+     "kind": "interval",
+     "intervals": [
+      "1m",
+      "1h",
+      "7d"
+     ],
+     "auto": true,
+     "auto_count": 30,
+     "auto_min": "10s",
+     "default": null
+    }
+   },
+   "selections": {
+    "b": {
+     "all": false,
+     "values": [
+      "1h"
+     ]
+    }
+   }
+  },
+  {
+   "name": "constant, braced form",
+   "lines": [
+    "Note: ${k}"
+   ],
+   "expect": "Note: a'b\"c",
+   "variables": {
+    "k": {
+     "kind": "constant",
+     "value": "a'b\"c",
+     "hide": "variable"
+    }
+   },
+   "selections": {
+    "k": {
+     "all": false,
+     "values": [
+      "a'b\"c"
+     ]
+    }
+   }
+  },
+  {
+   "name": "constant, format csv",
+   "lines": [
+    "${k:csv}"
+   ],
+   "expect": "a'b\"c",
+   "variables": {
+    "k": {
+     "kind": "constant",
+     "value": "a'b\"c",
+     "hide": "variable"
+    }
+   },
+   "selections": {
+    "k": {
+     "all": false,
+     "values": [
+      "a'b\"c"
+     ]
+    }
+   }
+  }
+ ]
+}

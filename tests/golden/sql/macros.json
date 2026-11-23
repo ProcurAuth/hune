@@ -1,0 +1,995 @@
+[
+  {
+    "name": "fromTime and toTime",
+    "sql": [
+      "SELECT $__fromTime, $__toTime"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT toDateTime(1794211200), toDateTime(1794232800)"
+  },
+  {
+    "name": "timeFilter",
+    "sql": [
+      "SELECT 1 FROM t WHERE $__timeFilter(ts)"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT 1 FROM t WHERE ts >= toDateTime(1794211200) AND ts <= toDateTime(1794232800)"
+  },
+  {
+    "name": "timeFilter, blanks and a newline around the argument",
+    "sql": [
+      "SELECT 1 FROM t WHERE $__timeFilter(\n   a.ts\n)"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT 1 FROM t WHERE a.ts >= toDateTime(1794211200) AND a.ts <= toDateTime(1794232800)"
+  },
+  {
+    "name": "timeFilter, argument with a call, a comma and a string",
+    "sql": [
+      "SELECT 1 FROM t WHERE $__timeFilter(toDateTime(x, ','))"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT 1 FROM t WHERE toDateTime(x, ',') >= toDateTime(1794211200) AND toDateTime(x, ',') <= toDateTime(1794232800)"
+  },
+  {
+    "name": "timeInterval, 6 hours, 1200 points",
+    "sql": [
+      "SELECT $__timeInterval(ts) FROM t"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT toStartOfInterval(toDateTime(ts), INTERVAL 20 second) FROM t"
+  },
+  {
+    "name": "interval_s",
+    "sql": [
+      "SELECT $__interval_s"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT 20"
+  },
+  {
+    "name": "interval, 7 days, 800 points",
+    "sql": [
+      "SELECT $__interval_s, $__timeInterval(ts)"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200000,
+    "to_ms": 1794816000000,
+    "max_data_points": 800,
+    "expected": "SELECT 900, toStartOfInterval(toDateTime(ts), INTERVAL 900 second)"
+  },
+  {
+    "name": "interval, 1 hour, min interval 1m",
+    "sql": [
+      "SELECT $__interval_s"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200000,
+    "to_ms": 1794214800000,
+    "max_data_points": 1200,
+    "min_interval_ms": 60000,
+    "expected": "SELECT 60"
+  },
+  {
+    "name": "interval, 10 minutes, 1920 points",
+    "sql": [
+      "SELECT $__interval_s"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200000,
+    "to_ms": 1794211800000,
+    "max_data_points": 1920,
+    "expected": "SELECT 1"
+  },
+  {
+    "name": "interval, 30 days, 1000 points",
+    "sql": [
+      "SELECT $__interval_s"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200000,
+    "to_ms": 1796803200000,
+    "max_data_points": 1000,
+    "expected": "SELECT 1800"
+  },
+  {
+    "name": "range with milliseconds: seconds round down",
+    "sql": [
+      "SELECT $__fromTime, $__toTime"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1000999,
+    "to_ms": 1002001,
+    "expected": "SELECT toDateTime(1000), toDateTime(1002)"
+  },
+  {
+    "name": "macros stay text in a string, a name and a comment",
+    "sql": [
+      "SELECT '$__fromTime', \"$__toTime\", `$__interval_s` -- $__timeFilter(x)"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT '$__fromTime', \"$__toTime\", `$__interval_s` -- $__timeFilter(x)"
+  },
+  {
+    "name": "timeFilter without parenthesis",
+    "sql": [
+      "SELECT $__timeFilter"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "timeFilter with two arguments",
+    "sql": [
+      "SELECT $__timeFilter(a, b)"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "fromTime with an argument",
+    "sql": [
+      "SELECT $__fromTime()"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "interval macro in a variable query",
+    "sql": [
+      "SELECT $__interval_s"
+    ],
+    "variables": [],
+    "request": {},
+    "usage": "variable",
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "timeFilter in a variable query",
+    "sql": [
+      "SELECT DISTINCT x FROM t WHERE $__timeFilter(ts)"
+    ],
+    "variables": [],
+    "request": {},
+    "usage": "variable",
+    "expected": "SELECT DISTINCT x FROM t WHERE ts >= toDateTime(1794211200) AND ts <= toDateTime(1794232800)"
+  },
+  {
+    "name": "unknown macro",
+    "sql": [
+      "SELECT $__range_ms"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "built-in variables from, to and interval_ms",
+    "sql": [
+      "SELECT $__from AS f, $__to AS t, $__interval_ms AS i"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT 1794211200000 AS f, 1794232800000 AS t, 20000 AS i"
+  },
+  {
+    "name": "built-in variables with milliseconds in the range",
+    "sql": [
+      "SELECT $__from, $__to"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200123,
+    "to_ms": 1794232800987,
+    "expected": "SELECT 1794211200123, 1794232800987"
+  },
+  {
+    "name": "built-in variable interval_ms, 7 days, 800 points",
+    "sql": [
+      "SELECT $__interval_ms, $__interval_s"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200000,
+    "to_ms": 1794816000000,
+    "max_data_points": 800,
+    "expected": "SELECT 900000, 900"
+  },
+  {
+    "name": "built-in variable interval_ms below one second",
+    "sql": [
+      "SELECT $__interval_ms, $__interval_s"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200000,
+    "to_ms": 1794211260000,
+    "expected": "SELECT 50, 1"
+  },
+  {
+    "name": "built-in variables in a string, a name and a comment stay text",
+    "sql": [
+      "SELECT '$__from', `$__to`, \"$__interval_ms\" -- $__from\n/* $__to */"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT '$__from', `$__to`, \"$__interval_ms\" -- $__from\n/* $__to */"
+  },
+  {
+    "name": "built-in variable with a call",
+    "sql": [
+      "SELECT $__from(1)"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "built-in interval_ms in a variable query",
+    "sql": [
+      "SELECT $__interval_ms"
+    ],
+    "variables": [],
+    "request": {},
+    "usage": "variable",
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "built-in from and to in a variable query",
+    "sql": [
+      "SELECT $__from, $__to"
+    ],
+    "variables": [],
+    "request": {},
+    "usage": "variable",
+    "expected": "SELECT 1794211200000, 1794232800000"
+  },
+  {
+    "name": "range built-ins stay refused",
+    "sql": [
+      "SELECT $__range_s"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "interval without ms stays refused in code",
+    "sql": [
+      "SELECT $__interval"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "fromTime_ms and toTime_ms",
+    "sql": [
+      "SELECT $__fromTime_ms, $__toTime_ms"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200123,
+    "to_ms": 1794232800987,
+    "expected": "SELECT fromUnixTimestamp64Milli(1794211200123), fromUnixTimestamp64Milli(1794232800987)"
+  },
+  {
+    "name": "timeFilter_ms",
+    "sql": [
+      "SELECT 1 FROM t WHERE $__timeFilter_ms(ts)"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200123,
+    "to_ms": 1794232800987,
+    "expected": "SELECT 1 FROM t WHERE ts >= fromUnixTimestamp64Milli(1794211200123) AND ts <= fromUnixTimestamp64Milli(1794232800987)"
+  },
+  {
+    "name": "timeFilter_ms, argument with a call and a string",
+    "sql": [
+      "SELECT 1 FROM t WHERE $__timeFilter_ms(f(a, ')'))"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT 1 FROM t WHERE f(a, ')') >= fromUnixTimestamp64Milli(1794211200000) AND f(a, ')') <= fromUnixTimestamp64Milli(1794232800000)"
+  },
+  {
+    "name": "timeInterval_ms",
+    "sql": [
+      "SELECT $__timeInterval_ms(ts) AS t FROM t GROUP BY t"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT toStartOfInterval(toDateTime64(ts, 3), INTERVAL 20000 millisecond) AS t FROM t GROUP BY t"
+  },
+  {
+    "name": "timeInterval_ms, sub-second interval",
+    "sql": [
+      "SELECT $__timeInterval_ms(ts)"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794211200000,
+    "to_ms": 1794211260000,
+    "expected": "SELECT toStartOfInterval(toDateTime64(ts, 3), INTERVAL 50 millisecond)"
+  },
+  {
+    "name": "timeInterval_ms in a variable query",
+    "sql": [
+      "SELECT $__timeInterval_ms(ts)"
+    ],
+    "variables": [],
+    "request": {},
+    "usage": "variable",
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "timeFilter_ms with two arguments",
+    "sql": [
+      "SELECT $__timeFilter_ms(a, b)"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "timeFilter_ms without parenthesis",
+    "sql": [
+      "SELECT $__timeFilter_ms"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "fromTime_ms with a parenthesis",
+    "sql": [
+      "SELECT $__fromTime_ms()"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "dateFilter",
+    "sql": [
+      "SELECT count() FROM t WHERE $__dateFilter(d)"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT count() FROM t WHERE d >= toDate('2026-11-09') AND d <= toDate('2026-11-09')"
+  },
+  {
+    "name": "dateFilter across midnight in UTC",
+    "sql": [
+      "SELECT count() FROM t WHERE $__dateFilter(d)"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1794265200000,
+    "to_ms": 1794272400000,
+    "expected": "SELECT count() FROM t WHERE d >= toDate('2026-11-09') AND d <= toDate('2026-11-10')"
+  },
+  {
+    "name": "dateFilter at the start of 1970",
+    "sql": [
+      "SELECT $__dateFilter(d)"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 0,
+    "to_ms": 86400000,
+    "expected": "SELECT d >= toDate('1970-01-01') AND d <= toDate('1970-01-02')"
+  },
+  {
+    "name": "dateFilter in a leap year",
+    "sql": [
+      "SELECT $__dateFilter(d)"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 1709164800000,
+    "to_ms": 1709251200000,
+    "expected": "SELECT d >= toDate('2024-02-29') AND d <= toDate('2024-03-01')"
+  },
+  {
+    "name": "dateFilter at the last millisecond of 7.3",
+    "sql": [
+      "SELECT $__dateFilter(d)"
+    ],
+    "variables": [],
+    "request": {},
+    "from_ms": 4294950000000,
+    "to_ms": 4294967295999,
+    "expected": "SELECT d >= toDate('2106-02-07') AND d <= toDate('2106-02-07')"
+  },
+  {
+    "name": "dateFilter without argument",
+    "sql": [
+      "SELECT $__dateFilter()"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "dateTimeFilter",
+    "sql": [
+      "SELECT count() FROM t WHERE $__dateTimeFilter(toDate(ts), ts)"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT count() FROM t WHERE (toDate(ts) >= toDate('2026-11-09') AND toDate(ts) <= toDate('2026-11-09')) AND (ts >= toDateTime(1794211200) AND ts <= toDateTime(1794232800))"
+  },
+  {
+    "name": "dateTimeFilter, blanks and a call with a comma in the first argument",
+    "sql": [
+      "SELECT 1 WHERE $__dateTimeFilter( f(a, b) ,\n  ts )"
+    ],
+    "variables": [],
+    "request": {},
+    "expected": "SELECT 1 WHERE (f(a, b) >= toDate('2026-11-09') AND f(a, b) <= toDate('2026-11-09')) AND (ts >= toDateTime(1794211200) AND ts <= toDateTime(1794232800))"
+  },
+  {
+    "name": "dateTimeFilter with one argument",
+    "sql": [
+      "SELECT $__dateTimeFilter(a)"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "dateTimeFilter with three arguments",
+    "sql": [
+      "SELECT $__dateTimeFilter(a, b, c)"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "dateTimeFilter with an empty argument",
+    "sql": [
+      "SELECT $__dateTimeFilter(a, )"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "conditionalAll, All selected",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(env IN ($env), $env)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE 1=1"
+  },
+  {
+    "name": "conditionalAll, two values",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(env IN ($env), $env)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod",
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE env IN ('prod','dev')"
+  },
+  {
+    "name": "conditionalAll, one value, braces",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(env IN (${env}), ${env})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE env IN ('prod')"
+  },
+  {
+    "name": "conditionalAll, a condition with its own variable and a comma",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(f(a, b) IN ($env) AND k = '$k', $env)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      },
+      {
+        "name": "k",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      },
+      "k": {
+        "all": false,
+        "values": [
+          "x'y"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE f(a, b) IN ('prod') AND k = 'x\\'y'"
+  },
+  {
+    "name": "conditionalAll, All with all_value gives 1=1",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(env = $env, $env)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE 1=1"
+  },
+  {
+    "name": "conditionalAll, a single value that is not All",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(env = '$env', $env)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev"
+        ],
+        "multi": false,
+        "include_all": true,
+        "all_value": "zz"
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "dev"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE env = 'dev'"
+  },
+  {
+    "name": "conditionalAll, query variable with All and the values of the page",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(h IN ($h), $h)"
+    ],
+    "variables": [
+      {
+        "name": "h",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "h": {
+        "all": true,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE 1=1"
+  },
+  {
+    "name": "conditionalAll, hostile value stays in its literal",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(h IN ($h), $h)"
+    ],
+    "variables": [
+      {
+        "name": "h",
+        "kind": "query",
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "h": {
+        "all": false,
+        "values": [
+          "a'); DROP TABLE t; --",
+          "b\\"
+        ]
+      }
+    },
+    "expected": "SELECT 1 WHERE h IN ('a\\'); DROP TABLE t; --','b\\\\')"
+  },
+  {
+    "name": "conditionalAll, the macro in a macro argument",
+    "sql": [
+      "SELECT 1 WHERE $__timeFilter($__conditionalAll(c, $env))"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": true,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE 1=1 >= toDateTime(1794211200) AND 1=1 <= toDateTime(1794232800)"
+  },
+  {
+    "name": "conditionalAll with a text variable",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(a = 1, $t)"
+    ],
+    "variables": [
+      {
+        "name": "t",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "t": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "conditionalAll with a format on the variable",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(a = 1, ${env:csv})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "conditionalAll with a second argument that is no placeholder",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(a = 1, 1)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "conditionalAll with a second argument in a string",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(a = 1, '$env')"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "conditionalAll with an unknown variable",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(a = 1, $nobody)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "conditionalAll with one argument",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(a = 1)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "prod"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "macro"
+    }
+  },
+  {
+    "name": "conditionalAll, a missing member of the variable",
+    "sql": [
+      "SELECT 1 WHERE $__conditionalAll(a = 1, $env)"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "prod",
+          "dev",
+          "test"
+        ],
+        "multi": true,
+        "include_all": true,
+        "all_value": null
+      }
+    ],
+    "request": {},
+    "error": {
+      "code": "bad_request",
+      "variable": "env"
+    }
+  }
+]

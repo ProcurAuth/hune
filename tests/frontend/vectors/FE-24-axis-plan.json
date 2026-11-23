@@ -1,0 +1,555 @@
+{
+ "id": "FE-24",
+ "comment": "The axis plan (9.19, paper 10.8 V1 and V2). Each series is [unit, placement or null, members that the properties set].",
+ "cases": [
+  {
+   "name": "one series",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "two series of the same unit share the left scale",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ],
+    [
+     "ms",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0,
+      1
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "a second unit goes right",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ],
+    [
+     "reqps",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "right"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0
+     ],
+     "shown": true
+    },
+    {
+     "side": "right",
+     "series": [
+      1
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "three units: the third shares the right scale (decision D17)",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ],
+    [
+     "reqps",
+     null,
+     {}
+    ],
+    [
+     "bytes",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "right",
+    "right"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0
+     ],
+     "shown": true
+    },
+    {
+     "side": "right",
+     "series": [
+      1,
+      2
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "a later series of the first unit comes back to the left",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ],
+    [
+     "reqps",
+     null,
+     {}
+    ],
+    [
+     "ms",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "right",
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0,
+      2
+     ],
+     "shown": true
+    },
+    {
+     "side": "right",
+     "series": [
+      1
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "right is fixed, the left unit comes from the first auto series",
+   "series": [
+    [
+     "ms",
+     "right",
+     {}
+    ],
+    [
+     "reqps",
+     null,
+     {}
+    ],
+    [
+     "ms",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "right",
+    "left",
+    "right"
+   ],
+   "grid": "right",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      1
+     ],
+     "shown": true
+    },
+    {
+     "side": "right",
+     "series": [
+      0,
+      2
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "left is fixed",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ],
+    [
+     "reqps",
+     "left",
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0,
+      1
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "a hidden series never gives the left unit",
+   "series": [
+    [
+     "ms",
+     "hidden",
+     {}
+    ],
+    [
+     "reqps",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "right",
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      1
+     ],
+     "shown": true
+    },
+    {
+     "side": "right",
+     "series": [
+      0
+     ],
+     "shown": false
+    }
+   ]
+  },
+  {
+   "name": "a hidden series of the left unit stays on the left scale",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ],
+    [
+     "ms",
+     "hidden",
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0,
+      1
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "every series hidden: no axis shows and the chart has no grid",
+   "series": [
+    [
+     "ms",
+     "hidden",
+     {}
+    ],
+    [
+     "ms",
+     "hidden",
+     {}
+    ]
+   ],
+   "sides": [
+    "right",
+    "right"
+   ],
+   "grid": null,
+   "scales": [
+    {
+     "side": "right",
+     "series": [
+      0,
+      1
+     ],
+     "shown": false
+    }
+   ]
+  },
+  {
+   "name": "only right series: no left scale, the grid follows the right one",
+   "series": [
+    [
+     "ms",
+     "right",
+     {}
+    ],
+    [
+     "ms",
+     "right",
+     {}
+    ]
+   ],
+   "sides": [
+    "right",
+    "right"
+   ],
+   "grid": "right",
+   "scales": [
+    {
+     "side": "right",
+     "series": [
+      0,
+      1
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "the first series has a hidden axis: the grid follows the first axis that shows",
+   "series": [
+    [
+     "ms",
+     "hidden",
+     {}
+    ],
+    [
+     "reqps",
+     "right",
+     {}
+    ]
+   ],
+   "sides": [
+    "right",
+    "right"
+   ],
+   "grid": "right",
+   "scales": [
+    {
+     "side": "right",
+     "series": [
+      0,
+      1
+     ],
+     "shown": true
+    }
+   ]
+  },
+  {
+   "name": "label, soft ends and hard ends of the first series that sets them",
+   "series": [
+    [
+     "ms",
+     null,
+     {}
+    ],
+    [
+     "ms",
+     null,
+     {
+      "axis_label": "Latency",
+      "soft_min": 0,
+      "soft_max": 100,
+      "min": -5
+     }
+    ],
+    [
+     "ms",
+     null,
+     {
+      "axis_label": "Other",
+      "soft_max": 500,
+      "min": 7,
+      "max": 50
+     }
+    ]
+   ],
+   "sides": [
+    "left",
+    "left",
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0,
+      1,
+      2
+     ],
+     "shown": true,
+     "label": "Latency",
+     "softMin": 0,
+     "softMax": 100,
+     "min": -5,
+     "max": 50
+    }
+   ]
+  },
+  {
+   "name": "an empty label is not a label",
+   "series": [
+    [
+     "ms",
+     null,
+     {
+      "axis_label": ""
+     }
+    ]
+   ],
+   "sides": [
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0
+     ],
+     "shown": true,
+     "label": null
+    }
+   ]
+  },
+  {
+   "name": "a value that is not a number is not an end",
+   "series": [
+    [
+     "ms",
+     null,
+     {
+      "soft_min": "0",
+      "max": null
+     }
+    ]
+   ],
+   "sides": [
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0
+     ],
+     "shown": true,
+     "softMin": null,
+     "max": null
+    }
+   ]
+  },
+  {
+   "name": "a series with negative_y: its ends swap and change sign",
+   "series": [
+    [
+     "percent",
+     null,
+     {
+      "transform": "negative_y",
+      "min": 0,
+      "max": 100,
+      "soft_max": 10
+     }
+    ],
+    [
+     "percent",
+     null,
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "left"
+   ],
+   "grid": "left",
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0,
+      1
+     ],
+     "shown": true,
+     "min": -100,
+     "max": 0,
+     "softMin": -10,
+     "softMax": null
+    }
+   ]
+  }
+ ]
+}

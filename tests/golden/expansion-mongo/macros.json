@@ -1,0 +1,768 @@
+{
+ "description": "Each macro of 7.34 and the interval examples of 7.4.",
+ "cases": [
+  {
+   "id": "macro-__timeFrom-plain",
+   "tags": [
+    "macro:$__timeFrom"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__timeFrom\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$date\":\"2026-11-09T08:00:00.000Z\"}}}]}"
+  },
+  {
+   "id": "macro-__timeFrom-braced",
+   "tags": [
+    "macro:$__timeFrom"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__timeFrom}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$date\":\"2026-11-09T08:00:00.000Z\"}}}]}"
+  },
+  {
+   "id": "macro-__timeFrom-in-longer-string",
+   "tags": [
+    "macro:$__timeFrom",
+    "macro-text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"at $__timeFrom\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"at $__timeFrom\"}}]}"
+  },
+  {
+   "id": "macro-__timeFrom-with-format",
+   "tags": [
+    "macro:$__timeFrom",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__timeFrom:json}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__timeFrom-trailing-space",
+   "tags": [
+    "macro:$__timeFrom",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__timeFrom \"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__timeTo-plain",
+   "tags": [
+    "macro:$__timeTo"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__timeTo\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$date\":\"2026-11-09T14:00:00.000Z\"}}}]}"
+  },
+  {
+   "id": "macro-__timeTo-braced",
+   "tags": [
+    "macro:$__timeTo"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__timeTo}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$date\":\"2026-11-09T14:00:00.000Z\"}}}]}"
+  },
+  {
+   "id": "macro-__timeTo-in-longer-string",
+   "tags": [
+    "macro:$__timeTo",
+    "macro-text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"at $__timeTo\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"at $__timeTo\"}}]}"
+  },
+  {
+   "id": "macro-__timeTo-with-format",
+   "tags": [
+    "macro:$__timeTo",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__timeTo:json}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__timeTo-trailing-space",
+   "tags": [
+    "macro:$__timeTo",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__timeTo \"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__from-plain",
+   "tags": [
+    "macro:$__from"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__from\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"1794211200000\"}}}]}"
+  },
+  {
+   "id": "macro-__from-braced",
+   "tags": [
+    "macro:$__from"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__from}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"1794211200000\"}}}]}"
+  },
+  {
+   "id": "macro-__from-in-longer-string",
+   "tags": [
+    "macro:$__from",
+    "macro-text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"at $__from\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"at $__from\"}}]}"
+  },
+  {
+   "id": "macro-__from-with-format",
+   "tags": [
+    "macro:$__from",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__from:json}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__from-trailing-space",
+   "tags": [
+    "macro:$__from",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__from \"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__to-plain",
+   "tags": [
+    "macro:$__to"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__to\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"1794232800000\"}}}]}"
+  },
+  {
+   "id": "macro-__to-braced",
+   "tags": [
+    "macro:$__to"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__to}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"1794232800000\"}}}]}"
+  },
+  {
+   "id": "macro-__to-in-longer-string",
+   "tags": [
+    "macro:$__to",
+    "macro-text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"at $__to\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"at $__to\"}}]}"
+  },
+  {
+   "id": "macro-__to-with-format",
+   "tags": [
+    "macro:$__to",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__to:json}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__to-trailing-space",
+   "tags": [
+    "macro:$__to",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__to \"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__interval_ms-plain",
+   "tags": [
+    "macro:$__interval_ms"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"20000\"}}}]}"
+  },
+  {
+   "id": "macro-__interval_ms-braced",
+   "tags": [
+    "macro:$__interval_ms"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__interval_ms}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"20000\"}}}]}"
+  },
+  {
+   "id": "macro-__interval_ms-in-longer-string",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro-text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"at $__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"at $__interval_ms\"}}]}"
+  },
+  {
+   "id": "macro-__interval_ms-with-format",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__interval_ms:json}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__interval_ms-trailing-space",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms \"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__interval_s-plain",
+   "tags": [
+    "macro:$__interval_s"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_s\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"20\"}}}]}"
+  },
+  {
+   "id": "macro-__interval_s-braced",
+   "tags": [
+    "macro:$__interval_s"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__interval_s}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"20\"}}}]}"
+  },
+  {
+   "id": "macro-__interval_s-in-longer-string",
+   "tags": [
+    "macro:$__interval_s",
+    "macro-text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"at $__interval_s\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"at $__interval_s\"}}]}"
+  },
+  {
+   "id": "macro-__interval_s-with-format",
+   "tags": [
+    "macro:$__interval_s",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${__interval_s:json}\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__interval_s-trailing-space",
+   "tags": [
+    "macro:$__interval_s",
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_s \"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__interval_ms-in-a-variable-query",
+   "tags": [
+    "macro:$__interval_ms",
+    "usage:variable"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "usage": "variable",
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__interval_s-in-a-variable-query",
+   "tags": [
+    "macro:$__interval_s",
+    "usage:variable"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_s\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "usage": "variable",
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-__timeFrom-in-a-variable-query-ok",
+   "tags": [
+    "macro:$__timeFrom",
+    "usage:variable"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__timeFrom\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "usage": "variable",
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$date\":\"2026-11-09T08:00:00.000Z\"}}}]}"
+  },
+  {
+   "id": "macro-__from-in-a-variable-query-ok",
+   "tags": [
+    "macro:$__from",
+    "usage:variable"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__from\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "usage": "variable",
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"1794211200000\"}}}]}"
+  },
+  {
+   "id": "macro-unknown-interval",
+   "tags": [
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-unknown-range",
+   "tags": [
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__range\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-unknown-timeInterval",
+   "tags": [
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__timeInterval\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-unknown-foo",
+   "tags": [
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__foo\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "macro-unknown-",
+   "tags": [
+    "macro-error"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "interval-6h",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro:$__interval_s",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794232800000,
+   "max_data_points": 1200,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$addFields\":{\"x\":{\"$dateTrunc\":{\"date\":\"$ts\",\"unit\":\"second\",\"binSize\":{\"$numberLong\":\"20\"}}}}}]}"
+  },
+  {
+   "id": "interval-ms-6h",
+   "tags": [
+    "macro:$__interval_ms",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794232800000,
+   "max_data_points": 1200,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"20000\"}}}]}"
+  },
+  {
+   "id": "interval-7d",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro:$__interval_s",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794816000000,
+   "max_data_points": 800,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$addFields\":{\"x\":{\"$dateTrunc\":{\"date\":\"$ts\",\"unit\":\"second\",\"binSize\":{\"$numberLong\":\"900\"}}}}}]}"
+  },
+  {
+   "id": "interval-ms-7d",
+   "tags": [
+    "macro:$__interval_ms",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794816000000,
+   "max_data_points": 800,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"900000\"}}}]}"
+  },
+  {
+   "id": "interval-1h-min-1m",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro:$__interval_s",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794214800000,
+   "max_data_points": 1200,
+   "min_interval_ms": 60000,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$addFields\":{\"x\":{\"$dateTrunc\":{\"date\":\"$ts\",\"unit\":\"second\",\"binSize\":{\"$numberLong\":\"60\"}}}}}]}"
+  },
+  {
+   "id": "interval-ms-1h-min-1m",
+   "tags": [
+    "macro:$__interval_ms",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794214800000,
+   "max_data_points": 1200,
+   "min_interval_ms": 60000,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"60000\"}}}]}"
+  },
+  {
+   "id": "interval-10min",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro:$__interval_s",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794211800000,
+   "max_data_points": 1920,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$addFields\":{\"x\":{\"$dateTrunc\":{\"date\":\"$ts\",\"unit\":\"second\",\"binSize\":{\"$numberLong\":\"1\"}}}}}]}"
+  },
+  {
+   "id": "interval-ms-10min",
+   "tags": [
+    "macro:$__interval_ms",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1794211800000,
+   "max_data_points": 1920,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"200\"}}}]}"
+  },
+  {
+   "id": "interval-30d",
+   "tags": [
+    "macro:$__interval_ms",
+    "macro:$__interval_s",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1796803200000,
+   "max_data_points": 1000,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$addFields\":{\"x\":{\"$dateTrunc\":{\"date\":\"$ts\",\"unit\":\"second\",\"binSize\":{\"$numberLong\":\"1800\"}}}}}]}"
+  },
+  {
+   "id": "interval-ms-30d",
+   "tags": [
+    "macro:$__interval_ms",
+    "interval"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$__interval_ms\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "from_ms": 1794211200000,
+   "to_ms": 1796803200000,
+   "max_data_points": 1000,
+   "min_interval_ms": 1,
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":{\"$numberLong\":\"1800000\"}}}]}"
+  },
+  {
+   "id": "example-7-29",
+   "tags": [
+    "example"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"ts\": {\"$gte\": \"$__timeFrom\", \"$lte\": \"$__timeTo\"}, \"host\": {\"$in\": \"${host:json}\"}}},{\"$group\": {\"_id\": {\"t\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}, \"host\": \"$host\"}, \"load\": {\"$avg\": \"$load\"}}},{\"$project\": {\"_id\": 0, \"time\": \"$_id.t\", \"host\": \"$_id.host\", \"load\": 1}}, {\"$sort\": {\"time\": 1}}]}"
+   ],
+   "variables": [
+    {
+     "name": "host",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "host": {
+     "all": false,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "example-7-29-hosts",
+   "tags": [
+    "example"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"ts\": {\"$gte\": \"$__timeFrom\", \"$lte\": \"$__timeTo\"}, \"host\": {\"$in\": \"${hosts:json}\"}}},{\"$group\": {\"_id\": {\"t\": {\"$dateTrunc\": {\"date\": \"$ts\", \"unit\": \"second\", \"binSize\": \"$__interval_s\"}}, \"host\": \"$host\"}, \"load\": {\"$avg\": \"$load\"}}},{\"$project\": {\"_id\": 0, \"time\": \"$_id.t\", \"host\": \"$_id.host\", \"load\": 1}}, {\"$sort\": {\"time\": 1}}]}"
+   ],
+   "variables": [
+    {
+     "name": "hosts",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "hosts": {
+     "all": false,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"ts\":{\"$gte\":{\"$date\":\"2026-11-09T08:00:00.000Z\"},\"$lte\":{\"$date\":\"2026-11-09T14:00:00.000Z\"}},\"host\":{\"$in\":[\"a\",\"b\"]}}},{\"$group\":{\"_id\":{\"t\":{\"$dateTrunc\":{\"date\":\"$ts\",\"unit\":\"second\",\"binSize\":{\"$numberLong\":\"20\"}}},\"host\":\"$host\"},\"load\":{\"$avg\":\"$load\"}}},{\"$project\":{\"_id\":0,\"time\":\"$_id.t\",\"host\":\"$_id.host\",\"load\":1}},{\"$sort\":{\"time\":1}}]}"
+  }
+ ]
+}

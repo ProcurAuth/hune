@@ -1,0 +1,52 @@
+{
+  "id": "var-custom-multi-format-regex",
+  "tags": [
+    "var:custom-multi",
+    "format:regex"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE e IN (${env:regex})",
+  "variables": [
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "prod",
+        "dev",
+        "test"
+      ],
+      "multi": true,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "env": {
+      "all": false,
+      "values": [
+        "prod",
+        "dev"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE e IN ((prod|dev))",
+  "sent_sql": "SELECT 1 WHERE e IN ((prod|dev))",
+  "difference": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  }
+}

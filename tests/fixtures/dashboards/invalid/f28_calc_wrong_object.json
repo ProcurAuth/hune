@@ -1,0 +1,151 @@
+{
+  "format_version": 3,
+  "uid": "transforms-small",
+  "title": "Transforms of milestone F, one panel",
+  "description": "One transform of each kind (4.25a).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Typical",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 1 AS a, 2 AS b"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [
+            {
+              "kind": "organize",
+              "hide": [
+                "b"
+              ],
+              "order": [
+                "a",
+                "b",
+                "c"
+              ],
+              "rename": [
+                {
+                  "field": "a",
+                  "name": "A"
+                }
+              ]
+            },
+            {
+              "kind": "calculate_field",
+              "mode": "binary",
+              "alias": "sum_ab",
+              "replace_fields": false,
+              "unary": {
+                "operator": "abs",
+                "field": "a"
+              }
+            },
+            {
+              "kind": "sort_by",
+              "sort": [
+                {
+                  "field": "a",
+                  "desc": true
+                }
+              ]
+            },
+            {
+              "kind": "limit",
+              "count": 0,
+              "end": "first"
+            },
+            {
+              "kind": "merge"
+            },
+            {
+              "kind": "reduce",
+              "mode": "series_to_rows",
+              "reducers": [
+                "max",
+                "mean"
+              ]
+            },
+            {
+              "kind": "partition_by_values",
+              "fields": [
+                "host"
+              ],
+              "keep_fields": false
+            },
+            {
+              "kind": "join_by_field",
+              "field": null,
+              "mode": "outer"
+            },
+            {
+              "kind": "filter_fields_by_name",
+              "include": {
+                "names": [
+                  "a",
+                  "b"
+                ],
+                "pattern": null
+              },
+              "exclude": {
+                "names": [],
+                "pattern": "^tmp_"
+              }
+            },
+            {
+              "kind": "rename_by_regex",
+              "regex": "(.*)_total",
+              "rename_pattern": "$1"
+            },
+            {
+              "kind": "convert_field_type",
+              "conversions": [
+                {
+                  "field": "a",
+                  "to": "number"
+                }
+              ]
+            }
+          ],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

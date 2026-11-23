@@ -1,0 +1,98 @@
+{
+ "id": "FE-03",
+ "frame": {
+  "etag": "x",
+  "query_id": "q",
+  "interval_ms": 20000,
+  "columns": [
+   {
+    "name": "t",
+    "type": "DateTime",
+    "kind": "time"
+   },
+   {
+    "name": "node",
+    "type": "LowCardinality(String)",
+    "kind": "text"
+   },
+   {
+    "name": "weight",
+    "type": "Decimal(38, 9)",
+    "kind": "number_text"
+   },
+   {
+    "name": "blocks",
+    "type": "UInt32",
+    "kind": "number"
+   },
+   {
+    "name": "active",
+    "type": "Bool",
+    "kind": "bool"
+   },
+   {
+    "name": "x",
+    "type": "Nothing",
+    "kind": "null"
+   }
+  ],
+  "values": [
+   [
+    1794211200,
+    1794211220.5
+   ],
+   [
+    "a1",
+    null
+   ],
+   [
+    "12.500000000",
+    "3.000000000"
+   ],
+   [
+    42,
+    null
+   ],
+   [
+    true,
+    false
+   ],
+   [
+    null,
+    null
+   ]
+  ],
+  "rows": 2
+ },
+ "frame2": {
+  "columns": [
+   {
+    "name": "f",
+    "type": "Float64",
+    "kind": "number"
+   },
+   {
+    "name": "i",
+    "type": "Int64",
+    "kind": "number_text"
+   }
+  ],
+  "values": [
+   [
+    "nan",
+    "inf",
+    "-inf",
+    1.5,
+    null
+   ],
+   [
+    "9007199254740993",
+    "-5",
+    null,
+    "0",
+    "12"
+   ]
+  ],
+  "rows": 5
+ }
+}

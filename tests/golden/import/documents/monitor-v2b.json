@@ -1,0 +1,1089 @@
+{
+  "format_version": 3,
+  "uid": "monitor-v2b",
+  "title": "Node monitor",
+  "description": "Synthetic dashboard of the importer tests.",
+  "tags": [
+    "synthetic",
+    "chain"
+  ],
+  "time": {
+    "from": "now-24h",
+    "to": "now",
+    "timezone": "Europe/Paris",
+    "refresh": "10s"
+  },
+  "cursor_sync": "crosshair",
+  "links": [
+    {
+      "kind": "link",
+      "title": "Home",
+      "url": "/",
+      "target_blank": true,
+      "include_vars": false,
+      "keep_time": true
+    },
+    {
+      "kind": "dashboards",
+      "title": "Related",
+      "tags": [
+        "chain",
+        "prod"
+      ],
+      "as_dropdown": true,
+      "target_blank": false,
+      "include_vars": true,
+      "keep_time": true
+    }
+  ],
+  "variables": [
+    {
+      "kind": "query",
+      "name": "node",
+      "label": "Node",
+      "hide": "none",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT node",
+        "FROM demo_chain.nodes",
+        "ORDER BY node"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ],
+      "allow_custom_value": true
+    },
+    {
+      "kind": "custom",
+      "name": "env",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "Production",
+          "value": "prod"
+        },
+        {
+          "text": "Preproduction",
+          "value": "preprod"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "prod"
+      ],
+      "allow_custom_value": true
+    },
+    {
+      "kind": "text",
+      "name": "account",
+      "label": "Account",
+      "hide": "none",
+      "value_type": "text",
+      "default": ""
+    },
+    {
+      "kind": "text",
+      "name": "top_n",
+      "label": "Top",
+      "hide": "label",
+      "value_type": "number",
+      "default": "10"
+    },
+    {
+      "kind": "query",
+      "name": "region",
+      "label": "Region",
+      "hide": "variable",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT region FROM demo_chain.nodes WHERE $__timeFilter(ts)"
+      ],
+      "multi": false,
+      "include_all": true,
+      "all_value": "%",
+      "refresh": "load",
+      "sort": "alpha_ci_asc",
+      "regex": "/^eu-.*/i",
+      "default": [
+        "eu-west"
+      ],
+      "allow_custom_value": true
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Weight over time",
+          "description": "Weight of the selected nodes.",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 16,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT",
+                "  $__timeInterval(ts) AS t,",
+                "  node,",
+                "  sum(weight) AS weight",
+                "FROM demo_chain.node_weight",
+                "WHERE $__timeFilter(ts)",
+                "  AND ts >= $__fromTime AND ts <= $__toTime",
+                "  AND node IN (${node})",
+                "GROUP BY t, node",
+                "ORDER BY t -- step $__interval_s s"
+              ],
+              "min_interval": "1m",
+              "max_data_points": null,
+              "time_shift": "1d",
+              "hide_time_override": true
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts",
+              "decimals": 2,
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 80,
+                    "color": "red"
+                  }
+                ]
+              },
+              "axis_placement": "left",
+              "axis_label": "Weight",
+              "soft_min": 0,
+              "soft_max": 1000,
+              "line_dash": "dash"
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "ratio"
+                },
+                "set": {
+                  "color": {
+                    "mode": "palette",
+                    "fixed": null
+                  },
+                  "axis_placement": "right",
+                  "axis_label": "Ratio",
+                  "draw": "bars",
+                  "line_width": 2,
+                  "fill_opacity": 30,
+                  "line_dash": "dot",
+                  "show_points": "never",
+                  "point_size": 4,
+                  "transform": "negative_y",
+                  "line_dash_array": [
+                    10,
+                    10
+                  ]
+                }
+              }
+            ]
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "smooth",
+            "line_width": 2,
+            "fill_opacity": 10,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "table",
+              "values": [
+                "mean",
+                "last_not_null"
+              ]
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Total weight",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 16,
+            "y": 0,
+            "w": 8,
+            "h": 8
+          },
+          "data": {
+            "reuse": {
+              "panel": 1,
+              "with_transforms": true
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "red"
+                  },
+                  {
+                    "value": 1000000,
+                    "color": "#73BF69"
+                  }
+                ]
+              },
+              "mappings": [
+                {
+                  "kind": "special",
+                  "match": "null",
+                  "text": "n/a",
+                  "color": null
+                }
+              ]
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "total",
+              "fields": "/^weight$/",
+              "values": false
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    },
+    {
+      "title": "Details",
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 3,
+          "type": "table",
+          "title": "Nodes",
+          "description": "One row for each node.",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 10
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT node, name, weight, ratio, status, region",
+                "FROM demo_chain.nodes",
+                "WHERE ('${account}' = '' OR account = '${account}')",
+                "  AND env = '${env}'",
+                "  AND region LIKE '${region}'",
+                "  AND node IN (${node})",
+                "ORDER BY weight DESC",
+                "LIMIT ${top_n}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [
+            {
+              "kind": "filter_by_value",
+              "mode": "exclude",
+              "match": "any",
+              "filters": [
+                {
+                  "field": "status",
+                  "matcher": {
+                    "kind": "is_null"
+                  }
+                },
+                {
+                  "field": "weight",
+                  "matcher": {
+                    "kind": "lower_or_equal",
+                    "value": 0
+                  }
+                },
+                {
+                  "field": "name",
+                  "matcher": {
+                    "kind": "regex",
+                    "pattern": "^test-"
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "filter_by_value",
+              "mode": "include",
+              "match": "all",
+              "filters": [
+                {
+                  "field": "ratio",
+                  "matcher": {
+                    "kind": "range",
+                    "from": 0,
+                    "to": 20
+                  }
+                },
+                {
+                  "field": "status",
+                  "matcher": {
+                    "kind": "not_equal",
+                    "value": "jailed"
+                  }
+                },
+                {
+                  "field": "weight",
+                  "matcher": {
+                    "kind": "greater_or_equal",
+                    "value": 1
+                  }
+                }
+              ]
+            },
+            {
+              "kind": "organize",
+              "hide": [
+                "region"
+              ],
+              "order": [],
+              "rename": []
+            }
+          ],
+          "fields": {
+            "defaults": {
+              "color": {
+                "mode": "continuous_gr_yl_rd",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 80,
+                    "color": "red"
+                  }
+                ]
+              },
+              "no_value": "-",
+              "width": 120,
+              "align": "auto",
+              "cell": {
+                "type": "auto",
+                "mode": null
+              },
+              "filterable": false,
+              "footer": {
+                "reducers": [
+                  "total"
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "weight"
+                },
+                "set": {
+                  "unit": "suffix: pts",
+                  "decimals": 2,
+                  "min": 0,
+                  "max": 5000000,
+                  "display_name": "Weight",
+                  "width": 140,
+                  "align": "right"
+                }
+              },
+              {
+                "match": {
+                  "by": "regex",
+                  "value": "/^ratio/"
+                },
+                "set": {
+                  "unit": "percent",
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "yellow"
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 10,
+                        "color": "orange"
+                      },
+                      {
+                        "value": 20,
+                        "color": "rgba(245, 54, 54, 0.9)"
+                      }
+                    ]
+                  },
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "basic"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "status"
+                },
+                "set": {
+                  "mappings": [
+                    {
+                      "kind": "value",
+                      "value": "1",
+                      "text": "Active",
+                      "color": "green"
+                    },
+                    {
+                      "kind": "value",
+                      "value": "0",
+                      "text": "Offline",
+                      "color": "red"
+                    },
+                    {
+                      "kind": "range",
+                      "from": 3,
+                      "to": 9,
+                      "text": "Other",
+                      "color": "#FADE2A"
+                    },
+                    {
+                      "kind": "regex",
+                      "pattern": "/^jail/i",
+                      "text": "Jailed",
+                      "color": null
+                    },
+                    {
+                      "kind": "special",
+                      "match": "null_nan",
+                      "text": "none",
+                      "color": "rgb(10, 20, 30)"
+                    }
+                  ],
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "basic"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "node"
+                },
+                "set": {
+                  "links": [
+                    {
+                      "title": "Open in the explorer",
+                      "url": "https://nodes.demo.example/id/${__value.raw}",
+                      "target_blank": true
+                    },
+                    {
+                      "title": "Detail",
+                      "url": "/v/${__series.name}",
+                      "target_blank": false
+                    },
+                    {
+                      "title": "Other board",
+                      "url": "/dashboards/d/mixed-case-uid/other?var-x=${node}",
+                      "target_blank": false
+                    }
+                  ],
+                  "filterable": true,
+                  "hidden": false
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "region"
+                },
+                "set": {
+                  "cell": {
+                    "type": "auto",
+                    "mode": null
+                  },
+                  "inspect": true
+                }
+              }
+            ]
+          },
+          "options": {
+            "show_header": true,
+            "sort": [
+              {
+                "field": "weight",
+                "desc": true
+              }
+            ]
+          },
+          "links": [
+            {
+              "title": "Docs",
+              "url": "https://docs.demo.example/nodes",
+              "target_blank": true
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "barchart",
+          "title": "Weight by day",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 10,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT toDate(ts) AS day, sum(weight) AS weight",
+                "FROM demo_chain.node_weight",
+                "WHERE $__timeFilter(ts)",
+                "GROUP BY day",
+                "ORDER BY day"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "color": {
+                "mode": "continuous_blues",
+                "fixed": null
+              },
+              "axis_label": "Weight",
+              "soft_max": 500
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "auto",
+            "x_field": "day",
+            "stacking": "none",
+            "show_values": "auto",
+            "bar_width": 97,
+            "group_width": 70,
+            "x_tick_rotation": 0,
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 5,
+          "type": "piechart",
+          "title": "Share",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 10,
+            "w": 6,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT node, sum(weight) AS weight",
+                "FROM demo_chain.node_weight",
+                "WHERE $__timeFilter(ts)",
+                "GROUP BY node"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "pie_type": "donut",
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": true
+            },
+            "labels": [
+              "name",
+              "percent"
+            ],
+            "legend": {
+              "show": true,
+              "placement": "right",
+              "mode": "table",
+              "values": [
+                "value",
+                "percent"
+              ]
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 6,
+          "type": "xychart",
+          "title": "Weight and ratio",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 18,
+            "y": 10,
+            "w": 6,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT weight, ratio FROM demo_chain.nodes"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "x_field": "weight",
+            "y_fields": [
+              "ratio"
+            ],
+            "draw": "points",
+            "point_size": 6,
+            "line_width": 1,
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 7,
+          "type": "bargauge",
+          "title": "Ratio",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 18,
+            "w": 8,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT node, ratio FROM demo_chain.nodes ORDER BY ratio DESC LIMIT 5"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 80,
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "max",
+              "fields": null,
+              "values": false
+            },
+            "orientation": "horizontal",
+            "display_mode": "gradient",
+            "show_unfilled": true
+          },
+          "links": []
+        },
+        {
+          "id": 8,
+          "type": "table",
+          "title": "Matrix",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 8,
+            "y": 18,
+            "w": 16,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT day, node, weight FROM demo_chain.daily_weight WHERE $__timeFilter(day)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [
+            {
+              "kind": "grouping_to_matrix",
+              "column_field": "node",
+              "row_field": "day",
+              "value_field": "weight",
+              "empty_value": "null"
+            }
+          ],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        },
+        {
+          "id": 9,
+          "type": "timeseries",
+          "title": "Wide series",
+          "description": "",
+          "transparent": true,
+          "grid": {
+            "x": 0,
+            "y": 24,
+            "w": 24,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(ts) AS t, node, weight FROM demo_chain.node_weight WHERE $__timeFilter(ts)"
+              ],
+              "min_interval": null,
+              "max_data_points": 500,
+              "time_from": "now-7d"
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "draw": "bars",
+            "interpolation": "step_before",
+            "line_width": 0,
+            "fill_opacity": 70,
+            "show_points": "never",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "normal",
+            "y_scale": "log",
+            "legend": {
+              "show": false,
+              "placement": "right",
+              "mode": "list",
+              "values": [
+                "total"
+              ]
+            },
+            "tooltip": {
+              "mode": "hidden"
+            },
+            "span_nulls_ms": 3600000
+          },
+          "links": [],
+          "repeat": {
+            "variable": "node",
+            "direction": "h"
+          }
+        }
+      ]
+    },
+    {
+      "title": "Archive",
+      "collapsed": true,
+      "panels": [
+        {
+          "id": 10,
+          "type": "stat",
+          "title": "Inner stat",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() FROM demo_chain.nodes"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "area",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 12,
+          "type": "table",
+          "title": "Second query",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 18,
+            "y": 0,
+            "w": 6,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 1"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "B",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 2"
+                ]
+              },
+              {
+                "ref": "C",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 3"
+                ],
+                "hide": true
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    },
+    {
+      "title": "Row",
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 13,
+          "type": "text",
+          "title": "Notes",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 3
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "hello"
+            ]
+          },
+          "links": []
+        },
+        {
+          "id": 16,
+          "type": "table",
+          "title": "Builder query",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 4,
+            "w": 12,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT a FROM demo_chain.t LIMIT 10"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,8979 @@
+{
+ "description": "The formats of an embedded placeholder (7.34, 7.9) for one value and for lists.",
+ "cases": [
+  {
+   "id": "embedded-json-one-0",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-one-1",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c d-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-one-2",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-one-3",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-one-4",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\"b-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-one-5",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-<a&b>-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-one-6",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-list-0",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-[\\\"a.b\\\",\\\"c\\\"]-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-list-1",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-[\\\"a\\\",\\\"b\\\",\\\"c\\\"]-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-list-2",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-[]-y\"}}]}"
+  },
+  {
+   "id": "embedded-json-list-3",
+   "tags": [
+    "embedded:json"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:json}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-[\\\"only\\\"]-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-one-0",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-one-1",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c d-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-one-2",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-one-3",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-one-4",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\"b-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-one-5",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-<a&b>-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-one-6",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-list-0",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b|c-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-list-1",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a|b|c-y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-list-2",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x--y\"}}]}"
+  },
+  {
+   "id": "embedded-pipe-list-3",
+   "tags": [
+    "embedded:pipe"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:pipe}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-only-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-one-0",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\\.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-one-1",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c d-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-one-2",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-one-3",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-one-4",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\"b-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-one-5",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-<a&b>-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-one-6",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x\\\\/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-list-0",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-(a\\\\.b|c)-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-list-1",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-(a|b|c)-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-list-2",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-()-y\"}}]}"
+  },
+  {
+   "id": "embedded-regex-list-3",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:regex}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-only-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-one-0",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-one-1",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c d-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-one-2",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-one-3",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-one-4",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\"b-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-one-5",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-<a&b>-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-one-6",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-list-0",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-{a.b,c}-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-list-1",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-{a,b,c}-y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-list-2",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x--y\"}}]}"
+  },
+  {
+   "id": "embedded-glob-list-3",
+   "tags": [
+    "embedded:glob"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:glob}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-only-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-one-0",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-one-1",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c\\\\ d-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-one-2",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\\:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-one-3",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-one-4",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\\\\\"b-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-one-5",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\\<a\\\\&b\\\\>-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-one-6",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x\\\\/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-list-0",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-(\\\"a.b\\\" OR \\\"c\\\")-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-list-1",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-(\\\"a\\\" OR \\\"b\\\" OR \\\"c\\\")-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-list-2",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-__empty__-y\"}}]}"
+  },
+  {
+   "id": "embedded-lucene-list-3",
+   "tags": [
+    "embedded:lucene"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:lucene}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-(\\\"only\\\")-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-one-0",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-one-1",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c%20d-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-one-2",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a%3Ab-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-one-3",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-one-4",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a%22b-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-one-5",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-%3Ca%26b%3E-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-one-6",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x%2Fy-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-list-0",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-%7Ba.b%2Cc%7D-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-list-1",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-%7Ba%2Cb%2Cc%7D-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-list-2",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-%7B%7D-y\"}}]}"
+  },
+  {
+   "id": "embedded-percentencode-list-3",
+   "tags": [
+    "embedded:percentencode"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:percentencode}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-%7Bonly%7D-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-one-0",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-t=a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-one-1",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-t=c+d-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-one-2",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-t=a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-one-3",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-t=12-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-one-4",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-t=a%22b-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-one-5",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-t=%3Ca%26b%3E-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-one-6",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-t=x%2Fy-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-list-0",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-q=a.b&var-q=c-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-list-1",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-q=a&var-q=b&var-q=c-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-list-2",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-q=-y\"}}]}"
+  },
+  {
+   "id": "embedded-queryparam-list-3",
+   "tags": [
+    "embedded:queryparam"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:queryparam}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-var-q=only-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-one-0",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-one-1",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c d-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-one-2",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-one-3",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-one-4",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\"b-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-one-5",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-<a&b>-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-one-6",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-list-0",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b,q=c-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-list-1",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a,q=b,q=c-y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-list-2",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x--y\"}}]}"
+  },
+  {
+   "id": "embedded-distributed-list-3",
+   "tags": [
+    "embedded:distributed"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:distributed}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-only-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-one-0",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"a.b\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-one-1",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"c d\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-one-2",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"a:b\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-one-3",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"12\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-one-4",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"a\\\\\\\"b\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-one-5",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"<a&b>\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-one-6",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"x/y\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-list-0",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"a.b\\\",\\\"c\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-list-1",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"a\\\",\\\"b\\\",\\\"c\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-list-2",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x--y\"}}]}"
+  },
+  {
+   "id": "embedded-doublequote-list-3",
+   "tags": [
+    "embedded:doublequote"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:doublequote}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-\\\"only\\\"-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-one-0",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-one-1",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c d-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-one-2",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-one-3",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-one-4",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a&quot;b-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-one-5",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-&lt;a&amp;b&gt;-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-one-6",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-list-0",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b, c-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-list-1",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a, b, c-y\"}}]}"
+  },
+  {
+   "id": "embedded-html-list-2",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x--y\"}}]}"
+  },
+  {
+   "id": "embedded-html-list-3",
+   "tags": [
+    "embedded:html"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:html}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-only-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-one-0",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-one-1",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-c d-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-one-2",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a:b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a:b-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-one-3",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "12"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-12-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-one-4",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\"b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a\\\"b-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-one-5",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "<a&b>"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-<a&b>-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-one-6",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x/y"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-x/y-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-list-0",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b + c-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-list-1",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a",
+      "b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a + b + c-y\"}}]}"
+  },
+  {
+   "id": "embedded-text-list-2",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x--y\"}}]}"
+  },
+  {
+   "id": "embedded-text-list-3",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:text}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "only"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-only-y\"}}]}"
+  },
+  {
+   "id": "embedded-raw-one",
+   "tags": [
+    "embedded:raw"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:raw}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-raw-list-is-an-error",
+   "tags": [
+    "embedded:raw"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:raw}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "embedded-csv-one",
+   "tags": [
+    "embedded:csv"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:csv}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-csv-list",
+   "tags": [
+    "embedded:csv"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:csv}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b",
+      "c"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b,c-y\"}}]}"
+  },
+  {
+   "id": "embedded-csv-empty",
+   "tags": [
+    "embedded:csv"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q:csv}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x--y\"}}]}"
+  },
+  {
+   "id": "embedded-none-one",
+   "tags": [
+    "embedded:none"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t}-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-none-dollar-name",
+   "tags": [
+    "embedded:none"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-$t-y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x-a.b-y\"}}]}"
+  },
+  {
+   "id": "embedded-none-list-is-an-error",
+   "tags": [
+    "embedded:none"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${q}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "embedded-two-placeholders",
+   "tags": [
+    "embedded:none"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p ${o} ${t:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "o": {
+     "all": false,
+     "values": [
+      "c d"
+     ]
+    },
+    "t": {
+     "all": false,
+     "values": [
+      "e"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p c d e\"}}]}"
+  },
+  {
+   "id": "embedded-all-value-regex",
+   "tags": [
+    "embedded:regex"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${v:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "v": {
+     "all": true,
+     "values": []
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^.*$\"}}]}"
+  },
+  {
+   "id": "embedded-all-text",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x ${q:text}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": true,
+     "values": [
+      "a",
+      "b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x All\"}}]}"
+  },
+  {
+   "id": "embedded-singlequote-refused",
+   "tags": [
+    "embedded:refused"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:singlequote}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "embedded-sqlstring-refused",
+   "tags": [
+    "embedded:refused"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:sqlstring}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "embedded-number-refused",
+   "tags": [
+    "embedded:refused"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x-${t:number}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "1"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "embedded-unknown-name-stays-text",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x ${nosuch} y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x ${nosuch} y\"}}]}"
+  },
+  {
+   "id": "embedded-unknown-format-name-stays-text",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x ${nosuch:json} y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x ${nosuch:json} y\"}}]}"
+  },
+  {
+   "id": "embedded-undeclared-dollar-name-stays-text",
+   "tags": [
+    "embedded:text"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"x $nosuch y\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"x $nosuch y\"}}]}"
+  }
+ ]
+}

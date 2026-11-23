@@ -1,0 +1,29 @@
+{
+  "id": "pg-macro-timeFilter-nested-call",
+  "tags": [
+    "macro:$__timeFilter"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT v FROM t WHERE $__timeFilter(date_trunc('day', ts))",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT v FROM t WHERE date_trunc('day' BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z')",
+  "grafana_error": "db query error: ERROR: function date_trunc(boolean) does not exist (SQLSTATE 42883)",
+  "sent_sql": "SELECT v FROM t WHERE $__timeFilter(date_trunc('day', ts))",
+  "difference": {
+    "cause": "other",
+    "section": "7.10",
+    "reason": "Grafana reads the argument up to the first ). Hune counts the parentheses and the commas by depth.",
+    "hune": {
+      "sql": "SELECT v FROM t WHERE date_trunc('day', ts) BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+    }
+  }
+}

@@ -1,0 +1,701 @@
+{
+ "id": "FE-09",
+ "expand": [
+  {
+   "template": "https://nodes.example.org/id/${__value.raw}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "https://nodes.example.org/id/n7"
+  },
+  {
+   "template": "/x/${__value.raw}",
+   "ctx": {
+    "rawValue": "a b&c/d",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/x/a%20b%26c%2Fd"
+  },
+  {
+   "template": "/x/${__value.text}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/x/Seven"
+  },
+  {
+   "template": "/x/${__data.fields.weight}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/x/12.5"
+  },
+  {
+   "template": "/x/${__data.fields[\"Total weight\"]}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/x/99"
+  },
+  {
+   "template": "/x/${__data.fields.nope}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/x/${__data.fields.nope}"
+  },
+  {
+   "template": "/x/${__field.name}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/x/node"
+  },
+  {
+   "template": "/d?${__url_time_range}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/d?from=1000&to=2000"
+  },
+  {
+   "template": "/d?a=${__from}&b=${__to}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/d?a=1000&b=2000"
+  },
+  {
+   "template": "/d?${__all_variables}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/d?var-env=prod&var-node=a&var-node=b&var-x=%24__all"
+  },
+  {
+   "template": "/d?e=$env&v=${node}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/d?e=prod&v=a%2Cb"
+  },
+  {
+   "template": "/d?x=$x",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/d?x=%24__all"
+  },
+  {
+   "template": "/d?z=${unknown}&y=$unknown2",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/d?z=${unknown}&y=$unknown2"
+  },
+  {
+   "template": "/plain",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/plain"
+  },
+  {
+   "template": "/d?v=${node:csv}",
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "expect": "/d?v=${node:csv}"
+  }
+ ],
+ "check": {
+  "/d/x": true,
+  "?a=1": true,
+  "#x": true,
+  "http://a": true,
+  "HTTPS://a": true,
+  "HtTp://a": true,
+  "//evil": false,
+  "/\\evil": false,
+  "javascript:alert(1)": false,
+  "": false,
+  "ftp://x": false,
+  "data:text/html,x": false,
+  "x/y": false,
+  " /x": false
+ },
+ "build": [
+  {
+   "link": {
+    "title": "t",
+    "url": "${__value.raw}",
+    "target_blank": true
+   },
+   "ctx": {
+    "rawValue": "javascript:alert(1)",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "href": null
+  },
+  {
+   "link": {
+    "title": "t",
+    "url": "${__value.raw}",
+    "target_blank": false
+   },
+   "ctx": {
+    "rawValue": "//evil.com",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "href": null
+  },
+  {
+   "link": {
+    "title": "t",
+    "url": "/ok/${__value.raw}",
+    "target_blank": true
+   },
+   "ctx": {
+    "rawValue": "n7",
+    "displayText": "Seven",
+    "fieldName": "node",
+    "from": 1000,
+    "to": 2000,
+    "row": {
+     "weight": "12.5",
+     "Total weight": "99"
+    },
+    "variables": [
+     {
+      "name": "env",
+      "values": [
+       "prod"
+      ],
+      "all": false
+     },
+     {
+      "name": "node",
+      "values": [
+       "a",
+       "b"
+      ],
+      "all": false
+     },
+     {
+      "name": "x",
+      "values": [],
+      "all": true
+     }
+    ]
+   },
+   "href": "/ok/n7"
+  }
+ ]
+}

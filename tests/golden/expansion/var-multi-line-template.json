@@ -1,0 +1,39 @@
+{
+  "id": "var-multi-line-template",
+  "tags": [
+    "var:custom-single",
+    "edge:lines"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT\n  1\nFROM numbers(1)\nWHERE e = '$env'\n  AND x = 1",
+  "variables": [
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "prod",
+        "dev"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "env": {
+      "all": false,
+      "values": [
+        "dev"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT\n  1\nFROM numbers(1)\nWHERE e = 'dev'\n  AND x = 1",
+  "sent_sql": "SELECT\n  1\nFROM numbers(1)\nWHERE e = 'dev'\n  AND x = 1"
+}

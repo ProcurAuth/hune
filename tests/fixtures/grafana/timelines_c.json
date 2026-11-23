@@ -1,0 +1,1226 @@
+{
+ "id": 4499913685929984,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number IN (3,4,10,11,12), NULL, intDiv(number,5)%3) AS a FROM numbers(30) WHERE number NOT IN (16,17,18)",
+     "refId": "A"
+    }
+   ],
+   "title": "nulls default",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "spanNulls": true
+     },
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number IN (3,4,10,11,12), NULL, intDiv(number,5)%3) AS a FROM numbers(30) WHERE number NOT IN (16,17,18)",
+     "refId": "A"
+    }
+   ],
+   "title": "nulls spanNulls true",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "spanNulls": 1200000
+     },
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number IN (3,4,10,11,12), NULL, intDiv(number,5)%3) AS a FROM numbers(30) WHERE number NOT IN (16,17,18)",
+     "refId": "A"
+    }
+   ],
+   "title": "nulls spanNulls 1200000",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "insertNulls": true
+     },
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "id": 4,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number IN (3,4,10,11,12), NULL, intDiv(number,5)%3) AS a FROM numbers(30) WHERE number NOT IN (16,17,18)",
+     "refId": "A"
+    }
+   ],
+   "title": "nulls insertNulls true",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "insertNulls": 1200000
+     },
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 32
+   },
+   "id": 5,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number IN (3,4,10,11,12), NULL, intDiv(number,5)%3) AS a FROM numbers(30) WHERE number NOT IN (16,17,18)",
+     "refId": "A"
+    }
+   ],
+   "title": "nulls insertNulls 1200000",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      },
+      {
+       "options": {
+        "match": "null",
+        "result": {
+         "color": "gray",
+         "text": "NO DATA"
+        }
+       },
+       "type": "special"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 40
+   },
+   "id": 6,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number IN (3,4,10,11,12), NULL, intDiv(number,5)%3) AS a FROM numbers(30) WHERE number NOT IN (16,17,18)",
+     "refId": "A"
+    }
+   ],
+   "title": "nulls mapped special null",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "from": 0,
+        "result": {
+         "color": "green",
+         "text": "LOW"
+        },
+        "to": 2
+       },
+       "type": "range"
+      },
+      {
+       "options": {
+        "from": 2,
+        "result": {
+         "color": "red",
+         "text": "HIGH"
+        },
+        "to": 8
+       },
+       "type": "range"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 48
+   },
+   "id": 7,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, round(number/4.0, 2) AS v FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "range mapping",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "up": {
+         "color": "green",
+         "text": "UP"
+        }
+       },
+       "type": "value"
+      },
+      {
+       "options": {
+        "pattern": "^degraded-(.*)$",
+        "result": {
+         "color": "orange",
+         "text": "DEG $1"
+        }
+       },
+       "type": "regex"
+      },
+      {
+       "options": {
+        "pattern": "^d",
+        "result": {
+         "color": "red",
+         "text": "DOWN"
+        }
+       },
+       "type": "regex"
+      },
+      {
+       "options": {
+        "match": "empty",
+        "result": {
+         "color": "purple",
+         "text": "EMPTY"
+        }
+       },
+       "type": "special"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 56
+   },
+   "id": 8,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, multiIf(number<4,'up', number<8,'down', number<10,'', number<14,'maint', number<20,'degraded-1','degraded-2') AS s FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "regex + value mapping on strings",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 64
+   },
+   "id": 9,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, toBool(number%10<4) AS flag FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "bool no mapping",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "match": "true",
+        "result": {
+         "color": "green",
+         "text": "UP"
+        }
+       },
+       "type": "special"
+      },
+      {
+       "options": {
+        "match": "false",
+        "result": {
+         "color": "red",
+         "text": "DOWN"
+        }
+       },
+       "type": "special"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 72
+   },
+   "id": 10,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, toBool(number%10<4) AS flag FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "bool with true/false mapping",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 80
+   },
+   "id": 11,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number%7=3, nan, number%3) AS x FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "nan special + nan default",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      },
+      {
+       "options": {
+        "match": "nan",
+        "result": {
+         "color": "gray",
+         "text": "NAN"
+        }
+       },
+       "type": "special"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 88
+   },
+   "id": 12,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number%7=3, nan, number%3) AS x FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "nan mapped",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "text": "ZERO"
+        },
+        "1": {
+         "color": "blue"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 96
+   },
+   "id": 13,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, if(number IN (3,4,10,11,12), NULL, intDiv(number,5)%3) AS a FROM numbers(30) WHERE number NOT IN (16,17,18)",
+     "refId": "A"
+    }
+   ],
+   "title": "mapping text only, colour only",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "from": 0,
+        "result": {
+         "color": "blue",
+         "text": "R"
+        },
+        "to": 3
+       },
+       "type": "range"
+      },
+      {
+       "options": {
+        "1": {
+         "color": "red",
+         "text": "V"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 104
+   },
+   "id": 14,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, round(number/4.0, 2) AS v FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "mapping order: range before value",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 112
+   },
+   "id": 15,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, 1 AS a FROM numbers(30) WHERE 0",
+     "refId": "A"
+    }
+   ],
+   "title": "empty result",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 120
+   },
+   "id": 16,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT number AS n, number%3 AS a FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "no time field",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 128
+   },
+   "id": 17,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "time only",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 136
+   },
+   "id": 18,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, 1 AS a FROM numbers(1)",
+     "refId": "A"
+    }
+   ],
+   "title": "single row",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 144
+   },
+   "id": 19,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 0,
+     "queryType": "timeseries",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, concat('h', toString(number%3)) AS host, intDiv(number,6)%3 AS st FROM numbers(30) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "time series format long, 3 hosts",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 152
+   },
+   "id": 20,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, intDiv(number,5)%3 AS qa FROM numbers(30)",
+     "refId": "A"
+    },
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, intDiv(number,8)%3 AS qb FROM numbers(30)",
+     "refId": "B"
+    }
+   ],
+   "title": "two queries (A,B)",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 160
+   },
+   "id": 21,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, intDiv(number,5)%3 AS a FROM numbers(30) ORDER BY rand()",
+     "refId": "A"
+    }
+   ],
+   "title": "unsorted time rows",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 168
+   },
+   "id": 22,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, a FROM (SELECT number, intDiv(number,5)%3 AS a FROM numbers(30)) ARRAY JOIN [0,1] AS dup",
+     "refId": "A"
+    }
+   ],
+   "title": "duplicate times",
+   "type": "state-timeline"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {
+     "mappings": [
+      {
+       "options": {
+        "0": {
+         "color": "green",
+         "text": "OK"
+        },
+        "1": {
+         "color": "yellow",
+         "text": "WARN"
+        },
+        "2": {
+         "color": "red",
+         "text": "FAIL"
+        }
+       },
+       "type": "value"
+      }
+     ]
+    },
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 176
+   },
+   "id": 23,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*600 AS time, toDateTime('2026-11-13 00:00:00','UTC') + number*600 + 1 AS time2, intDiv(number,5)%3 AS a FROM numbers(30)",
+     "refId": "A"
+    }
+   ],
+   "title": "two time cols",
+   "type": "state-timeline"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f30 c",
+ "uid": "timelines_c",
+ "version": 1
+}

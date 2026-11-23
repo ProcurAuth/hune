@@ -1,0 +1,521 @@
+{
+ "id": 228648708018176,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {
+    "calculate": true
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "calc defaults",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {
+    "calculate": true,
+    "calculation": {
+     "xBuckets": {
+      "mode": "count",
+      "value": "10"
+     },
+     "yBuckets": {
+      "mode": "count",
+      "value": "5"
+     }
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "x count 10, y count 5",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {
+    "calculate": true,
+    "calculation": {
+     "xBuckets": {
+      "mode": "size",
+      "value": "10m"
+     },
+     "yBuckets": {
+      "mode": "size",
+      "value": "20"
+     }
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "x size 10m, y size 20",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "id": 4,
+   "options": {
+    "calculate": true,
+    "calculation": {
+     "yBuckets": {
+      "mode": "size",
+      "scale": {
+       "log": 2,
+       "type": "log"
+      },
+      "value": "1"
+     }
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "y log2 split 1",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 32
+   },
+   "id": 5,
+   "options": {
+    "calculate": true,
+    "calculation": {
+     "yBuckets": {
+      "mode": "size",
+      "scale": {
+       "log": 10,
+       "type": "log"
+      },
+      "value": "1"
+     }
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "y log10 split 1",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 40
+   },
+   "id": 6,
+   "options": {
+    "calculate": true,
+    "calculation": {
+     "yBuckets": {
+      "mode": "size",
+      "scale": {
+       "log": 2,
+       "type": "log"
+      },
+      "value": "2"
+     }
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "y log2 split 2",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 48
+   },
+   "id": 7,
+   "options": {
+    "calculate": true,
+    "color": {
+     "exponent": 0.5,
+     "fill": "dark-orange",
+     "mode": "opacity",
+     "scale": "linear",
+     "steps": 64
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "opacity linear",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 56
+   },
+   "id": 8,
+   "options": {
+    "calculate": true,
+    "color": {
+     "exponent": 0.5,
+     "fill": "dark-orange",
+     "mode": "opacity",
+     "scale": "exponential",
+     "steps": 64
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "opacity exponential 0.5",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 64
+   },
+   "id": 9,
+   "options": {
+    "calculate": true,
+    "color": {
+     "mode": "scheme",
+     "reverse": false,
+     "scheme": "Viridis",
+     "steps": 5
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "scheme Viridis steps 5",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 72
+   },
+   "id": 10,
+   "options": {
+    "calculate": true,
+    "color": {
+     "mode": "scheme",
+     "reverse": true,
+     "scheme": "Oranges",
+     "steps": 64
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "scheme Oranges reverse",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 80
+   },
+   "id": 11,
+   "options": {
+    "calculate": true,
+    "color": {
+     "max": 100,
+     "min": 50,
+     "mode": "scheme",
+     "scheme": "Oranges",
+     "steps": 64
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "color min 50 max 100",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 88
+   },
+   "id": 12,
+   "options": {
+    "calculate": true,
+    "cellGap": 0
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 20000)) AS time, round(40 * (1 + 0.6*sin(number/20000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(20000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "cellGap 0",
+   "type": "heatmap"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f31 b",
+ "uid": "heatmap_b",
+ "version": 1
+}

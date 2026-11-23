@@ -1,0 +1,28 @@
+{
+  "id": "pg-macro-in-string",
+  "tags": [
+    "macro:$__unixEpochFrom"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT 'a$__unixEpochFrom()b' AS s FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 'a1794211200b' AS s FROM t",
+  "sent_sql": "SELECT 'a$__unixEpochFrom()b' AS s FROM t",
+  "difference": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana expands a macro in a string. Hune expands a macro only in code.",
+    "hune": {
+      "sql": "SELECT 'a$__unixEpochFrom()b' AS s FROM t"
+    }
+  }
+}

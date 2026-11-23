@@ -1,0 +1,77 @@
+{
+  "format_version": 3,
+  "uid": "multi-query-table",
+  "title": "Multi query table",
+  "description": "Parity case of several queries.",
+  "tags": [],
+  "time": {
+    "from": "1794528000000",
+    "to": "1794546000000",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "table AB",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT number AS n, concat('x', toString(number)) AS s FROM numbers(5)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "B",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT number AS m, number*2 AS d, 'y' AS z FROM numbers(3)"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": [
+              {
+                "field": "a",
+                "desc": false
+              },
+              {
+                "field": "b",
+                "desc": true
+              }
+            ]
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

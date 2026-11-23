@@ -1,0 +1,247 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "An open and a closed variable of each kind (4.7 to 4.10).",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Counts",
+      "description": "",
+      "transparent": false,
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "pluginVersion": "12.4.2",
+      "datasource": {
+        "type": "grafana-clickhouse-datasource",
+        "uid": "clickhouse"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-clickhouse-datasource",
+            "uid": "clickhouse"
+          },
+          "editorType": "sql",
+          "format": 1,
+          "pluginVersion": "4.5.1",
+          "queryType": "table",
+          "rawSql": "SELECT count() AS n\nFROM analytics.`${env_closed}`\nWHERE region IN (${region_open:singlequote})\n  AND env IN (${env_open:singlequote})\n  AND name = '${note}'\n  AND zone = ${region_closed:singlequote}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "suffix: pts"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "auto",
+        "orientation": "auto"
+      },
+      "links": [],
+      "transformations": []
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "name": "region_open",
+        "label": "Region (open)",
+        "hide": 0,
+        "skipUrlSync": false,
+        "multi": true,
+        "includeAll": true,
+        "allowCustomValue": true,
+        "type": "query",
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "clickhouse"
+        },
+        "definition": "SELECT DISTINCT region\nFROM analytics.nodes\nORDER BY region",
+        "query": {
+          "editorType": "sql",
+          "format": 1,
+          "pluginVersion": "4.5.1",
+          "queryType": "table",
+          "rawSql": "SELECT DISTINCT region\nFROM analytics.nodes\nORDER BY region",
+          "refId": "variable"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "regex": "",
+        "options": [],
+        "current": {
+          "selected": true,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        }
+      },
+      {
+        "name": "region_closed",
+        "label": "Region (closed)",
+        "hide": 0,
+        "skipUrlSync": false,
+        "multi": false,
+        "includeAll": false,
+        "allowCustomValue": false,
+        "type": "query",
+        "datasource": {
+          "type": "grafana-clickhouse-datasource",
+          "uid": "clickhouse"
+        },
+        "definition": "SELECT DISTINCT region\nFROM analytics.nodes\nORDER BY region",
+        "query": {
+          "editorType": "sql",
+          "format": 1,
+          "pluginVersion": "4.5.1",
+          "queryType": "table",
+          "rawSql": "SELECT DISTINCT region\nFROM analytics.nodes\nORDER BY region",
+          "refId": "variable"
+        },
+        "refresh": 1,
+        "sort": 0,
+        "regex": "",
+        "options": [],
+        "current": {}
+      },
+      {
+        "name": "env_open",
+        "label": "Environment (open)",
+        "hide": 0,
+        "skipUrlSync": false,
+        "multi": true,
+        "includeAll": true,
+        "allowCustomValue": true,
+        "type": "custom",
+        "query": "Production : prod, Staging : staging",
+        "options": [
+          {
+            "selected": false,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": true,
+            "text": "Production",
+            "value": "prod"
+          },
+          {
+            "selected": false,
+            "text": "Staging",
+            "value": "staging"
+          }
+        ],
+        "current": {
+          "selected": true,
+          "text": [
+            "Production",
+            "a typed value"
+          ],
+          "value": [
+            "prod",
+            "a typed value"
+          ]
+        }
+      },
+      {
+        "name": "env_closed",
+        "label": "Environment (closed)",
+        "hide": 0,
+        "skipUrlSync": false,
+        "multi": false,
+        "includeAll": false,
+        "allowCustomValue": false,
+        "type": "custom",
+        "query": "Production : prod, Staging : staging",
+        "options": [
+          {
+            "selected": true,
+            "text": "Production",
+            "value": "prod"
+          },
+          {
+            "selected": false,
+            "text": "Staging",
+            "value": "staging"
+          }
+        ],
+        "current": {
+          "selected": true,
+          "text": "Production",
+          "value": "prod"
+        }
+      },
+      {
+        "name": "note",
+        "label": "",
+        "hide": 0,
+        "skipUrlSync": false,
+        "type": "textbox",
+        "query": "free",
+        "current": {
+          "selected": false,
+          "text": "free",
+          "value": "free"
+        },
+        "options": [
+          {
+            "selected": true,
+            "text": "free",
+            "value": "free"
+          }
+        ]
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "utc",
+  "title": "Open variables",
+  "uid": "open-variables",
+  "version": 1,
+  "weekStart": ""
+}

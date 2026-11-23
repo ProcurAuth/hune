@@ -1,0 +1,5117 @@
+{
+  "format_version": 3,
+  "uid": "queries",
+  "title": "Queries",
+  "description": "Panels with several queries.",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 100,
+          "type": "stat",
+          "title": "Q0",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 101,
+          "type": "stat",
+          "title": "Q1",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 1,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 102,
+          "type": "stat",
+          "title": "Q2",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 2,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 103,
+          "type": "stat",
+          "title": "Q3",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 3,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 104,
+          "type": "stat",
+          "title": "Q4",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 4,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 105,
+          "type": "stat",
+          "title": "Q5",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 5,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 106,
+          "type": "stat",
+          "title": "Q6",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 6,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 107,
+          "type": "stat",
+          "title": "Q7",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 7,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 108,
+          "type": "stat",
+          "title": "Q8",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 109,
+          "type": "stat",
+          "title": "Q9",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 9,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 110,
+          "type": "stat",
+          "title": "Q10",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 10,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 111,
+          "type": "stat",
+          "title": "Q11",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 11,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 112,
+          "type": "stat",
+          "title": "Q12",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 12,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 113,
+          "type": "stat",
+          "title": "Q13",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 13,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 114,
+          "type": "stat",
+          "title": "Q14",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 14,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 115,
+          "type": "stat",
+          "title": "Q15",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 15,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 116,
+          "type": "stat",
+          "title": "Q16",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 16,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 117,
+          "type": "stat",
+          "title": "Q17",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 17,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 118,
+          "type": "stat",
+          "title": "Q18",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 18,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 119,
+          "type": "stat",
+          "title": "Q19",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 19,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 120,
+          "type": "stat",
+          "title": "Q20",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 20,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 121,
+          "type": "stat",
+          "title": "Q21",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 21,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 122,
+          "type": "stat",
+          "title": "Q22",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 22,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 123,
+          "type": "stat",
+          "title": "Q23",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 23,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 124,
+          "type": "stat",
+          "title": "Q24",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 24,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 125,
+          "type": "stat",
+          "title": "Q25",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 25,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 126,
+          "type": "stat",
+          "title": "Q26",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 26,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 127,
+          "type": "stat",
+          "title": "Q27",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 27,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 128,
+          "type": "stat",
+          "title": "Q28",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 28,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 129,
+          "type": "stat",
+          "title": "Q29",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 29,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 130,
+          "type": "stat",
+          "title": "Q30",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 30,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 131,
+          "type": "stat",
+          "title": "Q31",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 31,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 132,
+          "type": "stat",
+          "title": "Q32",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 32,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 133,
+          "type": "stat",
+          "title": "Q33",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 33,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 134,
+          "type": "stat",
+          "title": "Q34",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 34,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 135,
+          "type": "stat",
+          "title": "Q35",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 35,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 136,
+          "type": "stat",
+          "title": "Q36",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 36,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 137,
+          "type": "stat",
+          "title": "Q37",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 37,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 138,
+          "type": "stat",
+          "title": "Q38",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 38,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 139,
+          "type": "stat",
+          "title": "Q39",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 39,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 140,
+          "type": "stat",
+          "title": "Q40",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 40,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 141,
+          "type": "stat",
+          "title": "Q41",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 41,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 142,
+          "type": "stat",
+          "title": "Q42",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 42,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 143,
+          "type": "stat",
+          "title": "Q43",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 43,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 144,
+          "type": "stat",
+          "title": "Q44",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 44,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 145,
+          "type": "stat",
+          "title": "Q45",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 45,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 146,
+          "type": "stat",
+          "title": "Q46",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 46,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 147,
+          "type": "stat",
+          "title": "Q47",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 47,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 148,
+          "type": "stat",
+          "title": "Q48",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 48,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 149,
+          "type": "stat",
+          "title": "Q49",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 49,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            },
+            "extra_queries": [
+              {
+                "ref": "R0",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R1",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R2",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R3",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R4",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R5",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              },
+              {
+                "ref": "R6",
+                "source": "prod",
+                "format": "table",
+                "sql": [
+                  "SELECT 1"
+                ]
+              }
+            ]
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        },
+        {
+          "id": 150,
+          "type": "stat",
+          "title": "Q50",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 50,
+            "w": 24,
+            "h": 1
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS rows FROM t"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "first_not_null",
+              "fields": null,
+              "values": true
+            },
+            "color_mode": "background",
+            "graph_mode": "area",
+            "text_mode": "value_and_name",
+            "orientation": "vertical"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

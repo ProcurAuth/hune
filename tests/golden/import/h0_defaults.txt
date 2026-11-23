@@ -1,0 +1,259 @@
+{
+  "cursor_sync": "off",
+  "description": "",
+  "format_version": 3,
+  "links": [],
+  "sections": [
+    {
+      "collapsed": false,
+      "panels": [
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT 1 AS a"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {
+              "axis_grid": false
+            },
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 0,
+            "y": 0
+          },
+          "id": 1,
+          "links": [],
+          "options": {
+            "bar_width": 97,
+            "fill_opacity": 0,
+            "group_width": 70,
+            "legend": {
+              "mode": "list",
+              "placement": "bottom",
+              "show": true,
+              "values": []
+            },
+            "line_width": 0,
+            "orientation": "vertical",
+            "show_values": "auto",
+            "stacking": "none",
+            "tooltip": {
+              "mode": "single"
+            },
+            "x_field": null,
+            "x_tick_rotation": 0
+          },
+          "title": "Panel 1",
+          "transforms": [],
+          "transparent": false,
+          "type": "barchart"
+        },
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT 1 AS a"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 0,
+            "y": 4
+          },
+          "id": 2,
+          "links": [],
+          "options": {
+            "color_mode": "value",
+            "graph_mode": "area",
+            "orientation": "auto",
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "text_mode": "value_and_name"
+          },
+          "title": "Panel 2",
+          "transforms": [],
+          "transparent": false,
+          "type": "stat"
+        },
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT 1 AS a"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "b"
+                },
+                "set": {
+                  "footer": {
+                    "reducers": [
+                      "total"
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 0,
+            "y": 8
+          },
+          "id": 3,
+          "links": [],
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "title": "Panel 1",
+          "transforms": [],
+          "transparent": false,
+          "type": "table"
+        },
+        {
+          "data": {
+            "query": {
+              "format": "time_series",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT 1 AS a"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 0,
+            "y": 12
+          },
+          "id": 4,
+          "links": [],
+          "options": {
+            "draw": "line",
+            "fill_opacity": 0,
+            "interpolation": "linear",
+            "legend": {
+              "mode": "list",
+              "placement": "bottom",
+              "show": true,
+              "values": []
+            },
+            "line_width": 1,
+            "point_size": 5,
+            "show_points": "auto",
+            "span_nulls": false,
+            "stacking": "none",
+            "tooltip": {
+              "mode": "single"
+            },
+            "y_scale": "linear"
+          },
+          "title": "Panel 1",
+          "transforms": [],
+          "transparent": false,
+          "type": "timeseries"
+        },
+        {
+          "data": {
+            "query": {
+              "format": "table",
+              "max_data_points": null,
+              "min_interval": null,
+              "source": "prod",
+              "sql": [
+                "SELECT 1 AS a"
+              ]
+            }
+          },
+          "description": "",
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "grid": {
+            "h": 4,
+            "w": 12,
+            "x": 0,
+            "y": 16
+          },
+          "id": 5,
+          "links": [],
+          "options": {
+            "display_mode": "gradient",
+            "orientation": "horizontal",
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "show_unfilled": true
+          },
+          "title": "Panel 1",
+          "transforms": [],
+          "transparent": false,
+          "type": "bargauge"
+        }
+      ],
+      "title": null
+    }
+  ],
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "refresh": null,
+    "timezone": "browser",
+    "to": "now"
+  },
+  "title": "Test",
+  "uid": "t1",
+  "variables": []
+}
+t1:/panels/1/options/wideLayout [unsupported] false puts the name above the value in a wide tile: Hune puts it at the left (9.19) | member removed
+t1:/panels/2/options/footer [changed] Grafana 12 moves this footer to custom.footer.reducers: the importer moves it in the same way (4.18) | -
+t1:/panels/3/fieldConfig/defaults/custom/axisGridShow [unsupported] false hides the grid lines of the axis: Hune draws them for each axis that shows (9.19) | property removed
+t1:/panels/3/transformations/0 [changed] the multi-frame form is the long-to-wide of format time_series | -

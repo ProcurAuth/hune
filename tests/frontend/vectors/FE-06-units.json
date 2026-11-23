@@ -1,0 +1,1187 @@
+{
+ "id": "FE-06",
+ "cases": [
+  {
+   "unit": "none",
+   "v": 1234.5678,
+   "d": null,
+   "expect": "1235"
+  },
+  {
+   "unit": "none",
+   "v": 45.5,
+   "d": null,
+   "expect": "45.5"
+  },
+  {
+   "unit": "none",
+   "v": 0.012345,
+   "d": null,
+   "expect": "0.0123"
+  },
+  {
+   "unit": "none",
+   "v": 3,
+   "d": null,
+   "expect": "3"
+  },
+  {
+   "unit": "none",
+   "v": 1234.5678,
+   "d": 2,
+   "expect": "1234.57"
+  },
+  {
+   "unit": "none",
+   "v": 0,
+   "d": null,
+   "expect": "0"
+  },
+  {
+   "unit": "none",
+   "v": 0,
+   "d": 2,
+   "expect": "0.00"
+  },
+  {
+   "unit": "none",
+   "v": -2.5,
+   "d": null,
+   "expect": "-2.50"
+  },
+  {
+   "unit": "none",
+   "v": 2.5,
+   "d": 0,
+   "expect": "3"
+  },
+  {
+   "unit": "none",
+   "v": "NaN",
+   "d": null,
+   "expect": "NaN"
+  },
+  {
+   "unit": "none",
+   "v": "Infinity",
+   "d": null,
+   "expect": "∞"
+  },
+  {
+   "unit": "none",
+   "v": "-Infinity",
+   "d": null,
+   "expect": "-∞"
+  },
+  {
+   "unit": "short",
+   "v": 1534000,
+   "d": null,
+   "expect": "1.53 Mil"
+  },
+  {
+   "unit": "short",
+   "v": 999,
+   "d": null,
+   "expect": "999"
+  },
+  {
+   "unit": "short",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50 K"
+  },
+  {
+   "unit": "short",
+   "v": 0,
+   "d": null,
+   "expect": "0"
+  },
+  {
+   "unit": "percent",
+   "v": 45.5,
+   "d": null,
+   "expect": "45.5%"
+  },
+  {
+   "unit": "percentunit",
+   "v": 0.455,
+   "d": null,
+   "expect": "45.5%"
+  },
+  {
+   "unit": "percentunit",
+   "v": 1,
+   "d": null,
+   "expect": "100%"
+  },
+  {
+   "unit": "ms",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50 s"
+  },
+  {
+   "unit": "ms",
+   "v": 500,
+   "d": null,
+   "expect": "500 ms"
+  },
+  {
+   "unit": "ms",
+   "v": 90000,
+   "d": null,
+   "expect": "1.50 mins"
+  },
+  {
+   "unit": "ms",
+   "v": 7200000,
+   "d": null,
+   "expect": "2 hours"
+  },
+  {
+   "unit": "ms",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50 s"
+  },
+  {
+   "unit": "s",
+   "v": 90,
+   "d": null,
+   "expect": "1.50 mins"
+  },
+  {
+   "unit": "s",
+   "v": 0,
+   "d": null,
+   "expect": "0 s"
+  },
+  {
+   "unit": "s",
+   "v": 0.0005,
+   "d": null,
+   "expect": "500 µs"
+  },
+  {
+   "unit": "s",
+   "v": 0.5,
+   "d": null,
+   "expect": "500 ms"
+  },
+  {
+   "unit": "s",
+   "v": 3,
+   "d": null,
+   "expect": "3 s"
+  },
+  {
+   "unit": "s",
+   "v": 7200,
+   "d": null,
+   "expect": "2 hours"
+  },
+  {
+   "unit": "bytes",
+   "v": 1536,
+   "d": null,
+   "expect": "1.50 KiB"
+  },
+  {
+   "unit": "bytes",
+   "v": 0,
+   "d": null,
+   "expect": "0 B"
+  },
+  {
+   "unit": "bytes",
+   "v": 1048576,
+   "d": null,
+   "expect": "1 MiB"
+  },
+  {
+   "unit": "decbytes",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50 kB"
+  },
+  {
+   "unit": "decbytes",
+   "v": 12,
+   "d": null,
+   "expect": "12 B"
+  },
+  {
+   "unit": "suffix: pts",
+   "v": 12.5,
+   "d": null,
+   "expect": "12.5 pts"
+  },
+  {
+   "unit": "suffix:pts",
+   "v": 12.5,
+   "d": null,
+   "expect": "12.5pts"
+  },
+  {
+   "unit": "prefix:$",
+   "v": 12.5,
+   "d": null,
+   "expect": "$12.5"
+  },
+  {
+   "unit": "suffix: pts",
+   "v": 1234.5,
+   "d": 2,
+   "expect": "1234.50 pts"
+  },
+  {
+   "unit": "none",
+   "v": 9007199254740992,
+   "d": null,
+   "expect": "9007199254740993",
+   "exact": "9007199254740993"
+  },
+  {
+   "unit": "suffix: pts",
+   "v": 12345678901234568,
+   "d": 2,
+   "expect": "12345678901234567.12 pts",
+   "exact": "12345678901234567.123456789"
+  },
+  {
+   "unit": "none",
+   "v": 12.5,
+   "d": null,
+   "expect": "12.5",
+   "exact": "12.500000000"
+  },
+  {
+   "unit": "none",
+   "v": 12.5,
+   "d": 2,
+   "expect": "12.50",
+   "exact": "12.500000000"
+  },
+  {
+   "unit": "ms",
+   "v": 60000,
+   "d": null,
+   "expect": "1 min"
+  },
+  {
+   "unit": "ms",
+   "v": 160000,
+   "d": null,
+   "expect": "2.67 mins"
+  },
+  {
+   "unit": "ms",
+   "v": 3599999,
+   "d": null,
+   "expect": "60.0 mins"
+  },
+  {
+   "unit": "ms",
+   "v": 3600000,
+   "d": null,
+   "expect": "1 hour"
+  },
+  {
+   "unit": "ms",
+   "v": 5000000,
+   "d": null,
+   "expect": "1.39 hours"
+  },
+  {
+   "unit": "ms",
+   "v": 86400000,
+   "d": null,
+   "expect": "1 day"
+  },
+  {
+   "unit": "ms",
+   "v": 90000000,
+   "d": null,
+   "expect": "1.04 days"
+  },
+  {
+   "unit": "ms",
+   "v": 50000000000,
+   "d": null,
+   "expect": "1.59 years"
+  },
+  {
+   "unit": "ms",
+   "v": 60001,
+   "d": null,
+   "expect": "1.00 mins"
+  },
+  {
+   "unit": "ms",
+   "v": 60001,
+   "d": 0,
+   "expect": "1 mins"
+  },
+  {
+   "unit": "ms",
+   "v": -60000,
+   "d": null,
+   "expect": "-1 min"
+  },
+  {
+   "unit": "ms",
+   "v": -120000,
+   "d": null,
+   "expect": "-2 mins"
+  },
+  {
+   "unit": "s",
+   "v": 604800,
+   "d": null,
+   "expect": "1 week"
+  },
+  {
+   "unit": "s",
+   "v": 1000000,
+   "d": null,
+   "expect": "1.65 weeks"
+  },
+  {
+   "unit": "s",
+   "v": 31536000,
+   "d": null,
+   "expect": "0.999 year"
+  },
+  {
+   "unit": "s",
+   "v": 400000000,
+   "d": null,
+   "expect": "12.7 years"
+  },
+  {
+   "unit": "s",
+   "v": 3601,
+   "d": null,
+   "expect": "1.00 hours"
+  },
+  {
+   "unit": "s",
+   "v": 30,
+   "d": null,
+   "expect": "30 s"
+  },
+  {
+   "unit": "ns",
+   "v": 500,
+   "d": null,
+   "expect": "500 ns",
+   "new": true
+  },
+  {
+   "unit": "ns",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50 µs",
+   "new": true
+  },
+  {
+   "unit": "ns",
+   "v": 25000000000,
+   "d": null,
+   "expect": "25 s",
+   "new": true
+  },
+  {
+   "unit": "ns",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50 µs",
+   "new": true
+  },
+  {
+   "unit": "ns",
+   "v": 0,
+   "d": null,
+   "expect": "0 ns",
+   "new": true
+  },
+  {
+   "unit": "ns",
+   "v": 1500,
+   "d": 1,
+   "expect": "1.5 µs",
+   "new": true
+  },
+  {
+   "unit": "µs",
+   "v": 500,
+   "d": null,
+   "expect": "500 µs",
+   "new": true
+  },
+  {
+   "unit": "µs",
+   "v": 2500,
+   "d": null,
+   "expect": "2.50 ms",
+   "new": true
+  },
+  {
+   "unit": "µs",
+   "v": 2500000,
+   "d": null,
+   "expect": "2.50 s",
+   "new": true
+  },
+  {
+   "unit": "µs",
+   "v": -2500,
+   "d": null,
+   "expect": "-2.50 ms",
+   "new": true
+  },
+  {
+   "unit": "µs",
+   "v": 0,
+   "d": null,
+   "expect": "0 µs",
+   "new": true
+  },
+  {
+   "unit": "µs",
+   "v": 2500,
+   "d": 0,
+   "expect": "3 ms",
+   "new": true
+  },
+  {
+   "unit": "m",
+   "v": 30,
+   "d": null,
+   "expect": "30 min",
+   "new": true
+  },
+  {
+   "unit": "m",
+   "v": 90,
+   "d": null,
+   "expect": "1.50 hours",
+   "new": true
+  },
+  {
+   "unit": "m",
+   "v": 3000,
+   "d": null,
+   "expect": "2.08 days",
+   "new": true
+  },
+  {
+   "unit": "m",
+   "v": -90,
+   "d": null,
+   "expect": "-1.50 hours",
+   "new": true
+  },
+  {
+   "unit": "m",
+   "v": 0,
+   "d": null,
+   "expect": "0 min",
+   "new": true
+  },
+  {
+   "unit": "m",
+   "v": 90,
+   "d": 1,
+   "expect": "1.5 hours",
+   "new": true
+  },
+  {
+   "unit": "h",
+   "v": 12,
+   "d": null,
+   "expect": "12 hour",
+   "new": true
+  },
+  {
+   "unit": "h",
+   "v": 36,
+   "d": null,
+   "expect": "1.50 days",
+   "new": true
+  },
+  {
+   "unit": "h",
+   "v": 500,
+   "d": null,
+   "expect": "2.98 weeks",
+   "new": true
+  },
+  {
+   "unit": "h",
+   "v": -36,
+   "d": null,
+   "expect": "-1.50 days",
+   "new": true
+  },
+  {
+   "unit": "h",
+   "v": 0,
+   "d": null,
+   "expect": "0 hour",
+   "new": true
+  },
+  {
+   "unit": "h",
+   "v": 36,
+   "d": 0,
+   "expect": "2 days",
+   "new": true
+  },
+  {
+   "unit": "d",
+   "v": 3,
+   "d": null,
+   "expect": "3 days",
+   "new": true
+  },
+  {
+   "unit": "d",
+   "v": 10,
+   "d": null,
+   "expect": "1.43 weeks",
+   "new": true
+  },
+  {
+   "unit": "d",
+   "v": 500,
+   "d": null,
+   "expect": "1.37 years",
+   "new": true
+  },
+  {
+   "unit": "d",
+   "v": -10,
+   "d": null,
+   "expect": "-1.43 weeks",
+   "new": true
+  },
+  {
+   "unit": "d",
+   "v": 0,
+   "d": null,
+   "expect": "0 day",
+   "new": true
+  },
+  {
+   "unit": "d",
+   "v": 10,
+   "d": 3,
+   "expect": "1.429 weeks",
+   "new": true
+  },
+  {
+   "unit": "dtdurationms",
+   "v": 1500,
+   "d": null,
+   "expect": "1 second",
+   "new": true
+  },
+  {
+   "unit": "dtdurationms",
+   "v": 3723000,
+   "d": null,
+   "expect": "1 hour",
+   "new": true
+  },
+  {
+   "unit": "dtdurationms",
+   "v": 90061001,
+   "d": null,
+   "expect": "1 day",
+   "new": true
+  },
+  {
+   "unit": "dtdurationms",
+   "v": -3723000,
+   "d": null,
+   "expect": "1 hour ago",
+   "new": true
+  },
+  {
+   "unit": "dtdurationms",
+   "v": 0,
+   "d": null,
+   "expect": "0 milliseconds",
+   "new": true
+  },
+  {
+   "unit": "dtdurationms",
+   "v": 3723000,
+   "d": 2,
+   "expect": "1 hour, 2 minutes, 3 seconds",
+   "new": true
+  },
+  {
+   "unit": "dtdurations",
+   "v": 90,
+   "d": null,
+   "expect": "1 minute",
+   "new": true
+  },
+  {
+   "unit": "dtdurations",
+   "v": 3723,
+   "d": null,
+   "expect": "1 hour",
+   "new": true
+  },
+  {
+   "unit": "dtdurations",
+   "v": 100000,
+   "d": null,
+   "expect": "1 day",
+   "new": true
+  },
+  {
+   "unit": "dtdurations",
+   "v": -3723,
+   "d": null,
+   "expect": "1 hour ago",
+   "new": true
+  },
+  {
+   "unit": "dtdurations",
+   "v": 0,
+   "d": null,
+   "expect": "0 seconds",
+   "new": true
+  },
+  {
+   "unit": "dtdurations",
+   "v": 3723,
+   "d": 1,
+   "expect": "1 hour, 2 minutes",
+   "new": true
+  },
+  {
+   "unit": "bits",
+   "v": 100,
+   "d": null,
+   "expect": "100 b",
+   "new": true
+  },
+  {
+   "unit": "bits",
+   "v": 1536,
+   "d": null,
+   "expect": "1.50 Kib",
+   "new": true
+  },
+  {
+   "unit": "bits",
+   "v": 5000000000,
+   "d": null,
+   "expect": "4.66 Gib",
+   "new": true
+  },
+  {
+   "unit": "bits",
+   "v": -1536,
+   "d": null,
+   "expect": "-1.50 Kib",
+   "new": true
+  },
+  {
+   "unit": "bits",
+   "v": 0,
+   "d": null,
+   "expect": "0 b",
+   "new": true
+  },
+  {
+   "unit": "bits",
+   "v": 1536,
+   "d": 0,
+   "expect": "2 Kib",
+   "new": true
+  },
+  {
+   "unit": "bps",
+   "v": 0.5,
+   "d": null,
+   "expect": "500 mb/s",
+   "new": true
+  },
+  {
+   "unit": "bps",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50 kb/s",
+   "new": true
+  },
+  {
+   "unit": "bps",
+   "v": 2500000000,
+   "d": null,
+   "expect": "2.50 Gb/s",
+   "new": true
+  },
+  {
+   "unit": "bps",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50 kb/s",
+   "new": true
+  },
+  {
+   "unit": "bps",
+   "v": 0,
+   "d": null,
+   "expect": "0 b/s",
+   "new": true
+  },
+  {
+   "unit": "bps",
+   "v": 1500,
+   "d": 3,
+   "expect": "1.500 kb/s",
+   "new": true
+  },
+  {
+   "unit": "Bps",
+   "v": 0.5,
+   "d": null,
+   "expect": "500 mB/s",
+   "new": true
+  },
+  {
+   "unit": "Bps",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50 kB/s",
+   "new": true
+  },
+  {
+   "unit": "Bps",
+   "v": 2500000000,
+   "d": null,
+   "expect": "2.50 GB/s",
+   "new": true
+  },
+  {
+   "unit": "Bps",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50 kB/s",
+   "new": true
+  },
+  {
+   "unit": "Bps",
+   "v": 0,
+   "d": null,
+   "expect": "0 B/s",
+   "new": true
+  },
+  {
+   "unit": "Bps",
+   "v": 1500,
+   "d": 0,
+   "expect": "2 kB/s",
+   "new": true
+  },
+  {
+   "unit": "binBps",
+   "v": 100,
+   "d": null,
+   "expect": "100 B/s",
+   "new": true
+  },
+  {
+   "unit": "binBps",
+   "v": 1536,
+   "d": null,
+   "expect": "1.50 KiB/s",
+   "new": true
+  },
+  {
+   "unit": "binBps",
+   "v": 5000000000,
+   "d": null,
+   "expect": "4.66 GiB/s",
+   "new": true
+  },
+  {
+   "unit": "binBps",
+   "v": -1536,
+   "d": null,
+   "expect": "-1.50 KiB/s",
+   "new": true
+  },
+  {
+   "unit": "binBps",
+   "v": 0,
+   "d": null,
+   "expect": "0 B/s",
+   "new": true
+  },
+  {
+   "unit": "binBps",
+   "v": 1536,
+   "d": 1,
+   "expect": "1.5 KiB/s",
+   "new": true
+  },
+  {
+   "unit": "reqps",
+   "v": 12,
+   "d": null,
+   "expect": "12 req/s",
+   "new": true
+  },
+  {
+   "unit": "reqps",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50K req/s",
+   "new": true
+  },
+  {
+   "unit": "reqps",
+   "v": 2500000000,
+   "d": null,
+   "expect": "2.50B req/s",
+   "new": true
+  },
+  {
+   "unit": "reqps",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50K req/s",
+   "new": true
+  },
+  {
+   "unit": "reqps",
+   "v": 0,
+   "d": null,
+   "expect": "0 req/s",
+   "new": true
+  },
+  {
+   "unit": "reqps",
+   "v": 1500,
+   "d": 0,
+   "expect": "2K req/s",
+   "new": true
+  },
+  {
+   "unit": "ops",
+   "v": 12,
+   "d": null,
+   "expect": "12 ops/s",
+   "new": true
+  },
+  {
+   "unit": "ops",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50K ops/s",
+   "new": true
+  },
+  {
+   "unit": "ops",
+   "v": 2500000,
+   "d": null,
+   "expect": "2.50M ops/s",
+   "new": true
+  },
+  {
+   "unit": "ops",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50K ops/s",
+   "new": true
+  },
+  {
+   "unit": "ops",
+   "v": 0,
+   "d": null,
+   "expect": "0 ops/s",
+   "new": true
+  },
+  {
+   "unit": "ops",
+   "v": 1500,
+   "d": 1,
+   "expect": "1.5K ops/s",
+   "new": true
+  },
+  {
+   "unit": "rps",
+   "v": 12,
+   "d": null,
+   "expect": "12 rd/s",
+   "new": true
+  },
+  {
+   "unit": "rps",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50K rd/s",
+   "new": true
+  },
+  {
+   "unit": "rps",
+   "v": 2500000,
+   "d": null,
+   "expect": "2.50M rd/s",
+   "new": true
+  },
+  {
+   "unit": "rps",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50K rd/s",
+   "new": true
+  },
+  {
+   "unit": "rps",
+   "v": 0,
+   "d": null,
+   "expect": "0 rd/s",
+   "new": true
+  },
+  {
+   "unit": "rps",
+   "v": 1500,
+   "d": 2,
+   "expect": "1.50K rd/s",
+   "new": true
+  },
+  {
+   "unit": "iops",
+   "v": 12,
+   "d": null,
+   "expect": "12 io/s",
+   "new": true
+  },
+  {
+   "unit": "iops",
+   "v": 1500,
+   "d": null,
+   "expect": "1.50K io/s",
+   "new": true
+  },
+  {
+   "unit": "iops",
+   "v": 2500000,
+   "d": null,
+   "expect": "2.50M io/s",
+   "new": true
+  },
+  {
+   "unit": "iops",
+   "v": -1500,
+   "d": null,
+   "expect": "-1.50K io/s",
+   "new": true
+  },
+  {
+   "unit": "iops",
+   "v": 0,
+   "d": null,
+   "expect": "0 io/s",
+   "new": true
+  },
+  {
+   "unit": "iops",
+   "v": 1500,
+   "d": 3,
+   "expect": "1.500K io/s",
+   "new": true
+  },
+  {
+   "unit": "bool_yes_no",
+   "v": 0,
+   "d": null,
+   "expect": "No",
+   "new": true
+  },
+  {
+   "unit": "bool_yes_no",
+   "v": 1,
+   "d": null,
+   "expect": "Yes",
+   "new": true
+  },
+  {
+   "unit": "bool_yes_no",
+   "v": 7,
+   "d": null,
+   "expect": "Yes",
+   "new": true
+  },
+  {
+   "unit": "bool_yes_no",
+   "v": -3,
+   "d": null,
+   "expect": "Yes",
+   "new": true
+  },
+  {
+   "unit": "bool_yes_no",
+   "v": "NaN",
+   "d": null,
+   "expect": "NaN",
+   "new": true
+  },
+  {
+   "unit": "bool_yes_no",
+   "v": 1,
+   "d": 2,
+   "expect": "Yes",
+   "new": true
+  },
+  {
+   "unit": "currencyUSD",
+   "v": 12,
+   "d": null,
+   "expect": "$12",
+   "new": true
+  },
+  {
+   "unit": "currencyUSD",
+   "v": 1500,
+   "d": null,
+   "expect": "$1.50K",
+   "new": true
+  },
+  {
+   "unit": "currencyUSD",
+   "v": 2500000000,
+   "d": null,
+   "expect": "$2.50B",
+   "new": true
+  },
+  {
+   "unit": "currencyUSD",
+   "v": -1500,
+   "d": null,
+   "expect": "-$1.50K",
+   "new": true
+  },
+  {
+   "unit": "currencyUSD",
+   "v": 0,
+   "d": null,
+   "expect": "$0",
+   "new": true
+  },
+  {
+   "unit": "currencyUSD",
+   "v": 1500,
+   "d": 0,
+   "expect": "$2K",
+   "new": true
+  },
+  {
+   "unit": "currencyEUR",
+   "v": 12,
+   "d": null,
+   "expect": "€12",
+   "new": true
+  },
+  {
+   "unit": "currencyEUR",
+   "v": 1500,
+   "d": null,
+   "expect": "€1.50K",
+   "new": true
+  },
+  {
+   "unit": "currencyEUR",
+   "v": 2500000000,
+   "d": null,
+   "expect": "€2.50B",
+   "new": true
+  },
+  {
+   "unit": "currencyEUR",
+   "v": -1500,
+   "d": null,
+   "expect": "-€1.50K",
+   "new": true
+  },
+  {
+   "unit": "currencyEUR",
+   "v": 0,
+   "d": null,
+   "expect": "€0",
+   "new": true
+  },
+  {
+   "unit": "currencyEUR",
+   "v": 1500,
+   "d": 3,
+   "expect": "€1.500K",
+   "new": true
+  }
+ ],
+ "toFixed": [
+  {
+   "v": 1.005,
+   "d": 2,
+   "expect": "1.00"
+  },
+  {
+   "v": 1e+22,
+   "d": 2,
+   "expect": "1e+22"
+  },
+  {
+   "v": 0.1,
+   "d": 3,
+   "expect": "0.100"
+  }
+ ],
+ "autoDecimals": [
+  {
+   "v": 1234.5678,
+   "expect": 0
+  },
+  {
+   "v": 45.5,
+   "expect": 1
+  },
+  {
+   "v": 0.012345,
+   "expect": 4
+  },
+  {
+   "v": 3,
+   "expect": 0
+  },
+  {
+   "v": 1.5,
+   "expect": 2
+  }
+ ],
+ "time": [
+  {
+   "ms": 1794211200000,
+   "zone": "utc",
+   "expect": "2026-11-09 08:00:00"
+  },
+  {
+   "ms": 1794211200000,
+   "zone": "Europe/Paris",
+   "expect": "2026-11-09 09:00:00"
+  },
+  {
+   "ms": 1794211200000,
+   "zone": "America/New_York",
+   "expect": "2026-11-09 03:00:00"
+  }
+ ]
+}

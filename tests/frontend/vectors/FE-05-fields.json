@@ -1,0 +1,196 @@
+{
+ "id": "FE-05",
+ "cols": [
+  {
+   "name": "node",
+   "kind": "text",
+   "values": [
+    "a",
+    "b"
+   ]
+  },
+  {
+   "name": "weight",
+   "kind": "number_text",
+   "values": [
+    "10.5",
+    "20"
+   ]
+  },
+  {
+   "name": "ratio",
+   "kind": "number",
+   "values": [
+    5,
+    12
+   ]
+  },
+  {
+   "name": "Ratio total",
+   "kind": "number",
+   "values": [
+    1,
+    2
+   ]
+  }
+ ],
+ "spec": {
+  "defaults": {
+   "unit": "short",
+   "decimals": 1,
+   "no_value": "-"
+  },
+  "overrides": [
+   {
+    "match": {
+     "by": "name",
+     "value": "weight"
+    },
+    "set": {
+     "unit": "suffix: pts",
+     "width": 140
+    }
+   },
+   {
+    "match": {
+     "by": "regex",
+     "value": "/^ratio/i"
+    },
+    "set": {
+     "unit": "percent",
+     "decimals": 0
+    }
+   },
+   {
+    "match": {
+     "by": "regex",
+     "value": "ratio"
+    },
+    "set": {
+     "align": "left"
+    }
+   },
+   {
+    "match": {
+     "by": "name",
+     "value": "weight"
+    },
+    "set": {
+     "decimals": 2
+    }
+   },
+   {
+    "match": {
+     "by": "regex",
+     "value": "/(/"
+    },
+    "set": {
+     "unit": "bytes"
+    }
+   }
+  ]
+ },
+ "expect": [
+  {
+   "unit": "short",
+   "decimals": 1,
+   "min": null,
+   "max": null,
+   "align": "auto",
+   "width": null,
+   "no_value": "-",
+   "hidden": false,
+   "filterable": false,
+   "cell": {
+    "type": "auto",
+    "mode": null
+   },
+   "color": {
+    "mode": "thresholds",
+    "fixed": null
+   }
+  },
+  {
+   "unit": "suffix: pts",
+   "decimals": 2,
+   "min": 10.5,
+   "max": 20,
+   "width": 140,
+   "align": "auto"
+  },
+  {
+   "unit": "percent",
+   "decimals": 0,
+   "min": 5,
+   "max": 12,
+   "align": "left",
+   "width": null
+  },
+  {
+   "unit": "percent",
+   "decimals": 0,
+   "min": 1,
+   "max": 2,
+   "align": "auto"
+  }
+ ],
+ "warnings": [
+  "The override pattern /(/ is not a valid regular expression."
+ ],
+ "patterns": [
+  {
+   "p": "/^Total$/",
+   "text": "Total",
+   "match": true
+  },
+  {
+   "p": "/^Total$/",
+   "text": "Total 2",
+   "match": false
+  },
+  {
+   "p": "Total",
+   "text": "Total",
+   "match": true
+  },
+  {
+   "p": "Total",
+   "text": "My Total",
+   "match": false
+  },
+  {
+   "p": "/score/i",
+   "text": "Score daily",
+   "match": true
+  },
+  {
+   "p": "/score/",
+   "text": "Score daily",
+   "match": false
+  },
+  {
+   "p": "/a/gi",
+   "text": "A",
+   "match": true
+  },
+  {
+   "p": "/(/",
+   "text": "x",
+   "compiles": false
+  },
+  {
+   "p": "/a/x",
+   "text": "a",
+   "compiles": false
+  }
+ ],
+ "defaults_by_type": {
+  "timeseries": "palette",
+  "barchart": "palette",
+  "piechart": "palette",
+  "xychart": "palette",
+  "stat": "thresholds",
+  "bargauge": "thresholds",
+  "table": "thresholds"
+ }
+}

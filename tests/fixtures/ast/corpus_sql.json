@@ -1,0 +1,2157 @@
+{
+ "description": "The SQL texts of the repository files. Built by build_corpus.mjs.",
+ "entries": [
+  {
+   "source": "docs/02-format-and-storage.md#json",
+   "text": "\"annotations\": [\n  {\n    \"name\": \"Deploys\",\n    \"source\": \"prod\",\n    \"sql\": [\n      \"SELECT deployed_at AS time, concat('v', version) AS text, 'prod,deploy' AS tags\",\n      \"FROM ops.deploys\",\n      \"WHERE $__timeFilter(deployed_at)\"\n    ],\n    \"color\": \"red\",\n    \"panels\": [2, 5]\n  }\n],"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#json",
+   "text": "\"data\": {\n  \"query\": {\n    \"source\": \"prod\",\n    \"format\": \"time_series\",\n    \"sql\": [\"SELECT $__timeInterval(ts) AS t, avg(v) AS cpu FROM m GROUP BY t ORDER BY t\"],\n    \"min_interval\": null,\n    \"max_data_points\": null\n  },\n  \"extra_queries\": [\n    {\n      \"ref\": \"B\",\n      \"source\": \"prod\",\n      \"format\": \"time_series\",\n      \"sql\": [\"SELECT $__timeInterval(ts) AS t, avg(v) AS mem FROM n GROUP BY t ORDER BY t\"]\n    }\n  ]\n}"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#json",
+   "text": "\"data\": {\n  \"query\": { \"source\": \"prod\", \"format\": \"table\", \"sql\": [\"SELECT 1 AS n\"], \"min_interval\": null, \"max_data_points\": null, \"ref\": \"C\", \"hide\": true },\n  \"extra_queries\": [\n    { \"ref\": \"A\", \"source\": \"conf\", \"format\": \"table\", \"sql\": [\"SELECT 2 AS n\"], \"hide\": true }\n  ]\n}"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#json",
+   "text": "\"repeat\": { \"variable\": \"host\" }"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#json",
+   "text": "\"repeat\": { \"variable\": \"host\", \"direction\": \"h\", \"max_per_row\": 3 }"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#json",
+   "text": "\"repeat\": { \"variable\": \"region\", \"direction\": \"v\" }"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#sql",
+   "text": "-- Migration 1 of the Hune schema.\nCREATE TABLE hune_schema (\n    id         boolean     PRIMARY KEY DEFAULT true CHECK (id),\n    version    integer     NOT NULL CHECK (version >= 1),\n    updated_at timestamptz NOT NULL\n);\n\nCREATE TABLE hune_folders (\n    id         text        PRIMARY KEY CHECK (id ~ '^[a-z0-9][a-z0-9-]{0,39}$'),\n    title      text        NOT NULL CHECK (char_length(title) BETWEEN 1 AND 256),\n    created_at timestamptz NOT NULL,\n    updated_at timestamptz NOT NULL\n);\n\nCREATE TABLE hune_dashboards (\n    uid            text        PRIMARY KEY CHECK (uid ~ '^[a-z0-9][a-z0-9-]{0,39}$'),\n    folder_id      text        NOT NULL REFERENCES hune_folders (id) ON DELETE RESTRICT,\n    version        bigint      NOT NULL CHECK (version >= 1),\n    etag           text        NOT NULL CHECK (etag ~ '^[0-9a-f]{64}$'),\n    format_version integer     NOT NULL,\n    title          text        NOT NULL,\n    document       text        NOT NULL CHECK (octet_length(document) <= 4194304),\n    updated_at     timestamptz NOT NULL,\n    updated_by     text        NOT NULL CHECK (char_length(updated_by) BETWEEN 1 AND 256)\n);\n\nCREATE TABLE hune_versions (\n    uid        text        NOT NULL CHECK (uid ~ '^[a-z0-9][a-z0-9-]{0,39}$'),\n    version    bigint      NOT NULL CHECK (version >= 1),\n    kind       text        NOT NULL CHECK (kind IN ('create', 'save', 'restore', 'move',\n                                                    'delete', 'import', 'external', 'migrate')),\n    folder_id  text        NOT NULL CHECK (folder_id ~ '^[a-z0-9][a-z0-9-]{0,39}$'),\n    document   text        CHECK (octet_length(document) <= 4194304),\n    etag       text        CHECK (etag ~ '^[0-9a-f]{64}$'),\n    saved_at   timestamptz NOT NULL,\n    saved_by   text        NOT NULL CHECK (char_length(saved_by) BETWEEN 1 AND 256),\n    message    text        NOT NULL CHECK (char_length(message) <= 500),\n    save_id    uuid,\n    PRIMARY KEY (uid, version),\n    UNIQUE (uid, save_id),\n    CHECK ((kind IN ('delete', 'external')) OR document IS NOT NULL),\n    CHECK (kind <> 'delete' OR document IS NULL),\n    CHECK ((kind = 'delete') = (etag IS NULL))\n);\n\nINSERT INTO hune_schema (id, version, updated_at) VALUES (true, 1, now());\n\n-- The default privileges of 5.25 give the application role INSERT, UPDATE and DELETE on\n-- each new table. Only migrate-store writes hune_schema, so remove these rights from each\n-- role other than the owner. With the role names of 5.25, this is:\n-- REVOKE INSERT, UPDATE, DELETE ON hune_schema FROM hune_app;\nDO $$\nDECLARE r record;\nBEGIN\n    FOR r IN SELECT DISTINCT grantee FROM information_schema.role_table_grants\n              WHERE table_schema = 'public' AND table_name = 'hune_schema'\n                AND privilege_type IN ('INSERT', 'UPDATE', 'DELETE')\n                AND grantee <> current_user AND grantee <> 'PUBLIC'\n    LOOP\n        EXECUTE format('REVOKE INSERT, UPDATE, DELETE ON hune_schema FROM %I', r.grantee);\n    END LOOP;\nEND $$;"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#sql",
+   "text": "-- P1  Encoding of the database (start, migrate-store)\nSHOW server_encoding;\n-- P2  The schema table exists (start, migrate-store)\nSELECT to_regclass('public.hune_schema') IS NOT NULL;\n-- P3  Schema version (start, migrate-store)\nSELECT version FROM hune_schema WHERE id;\n-- P4  All folders (load, poll, export)\nSELECT id, title FROM hune_folders ORDER BY id COLLATE \"C\";\n-- P5  All current dashboards (load)\nSELECT uid, folder_id, version, etag, document, updated_at, updated_by\n  FROM hune_dashboards ORDER BY uid COLLATE \"C\";\n-- P6  Marks of the current dashboards (poll)\nSELECT uid, folder_id, etag FROM hune_dashboards ORDER BY uid COLLATE \"C\";\n-- P7  Changed dashboards (poll), at most 1000 uids in $1\nSELECT uid, folder_id, version, etag, document, updated_at, updated_by\n  FROM hune_dashboards WHERE uid = ANY($1::text[]) ORDER BY uid COLLATE \"C\";\n-- P8  One current dashboard (get, export)\nSELECT folder_id, version, etag, document, updated_at, updated_by\n  FROM hune_dashboards WHERE uid = $1;\n-- P9  Lock of one current dashboard (writes)\nSELECT folder_id, version, etag, document FROM hune_dashboards WHERE uid = $1 FOR UPDATE;\n-- P10 Version with this save id (writes): the kind decides \"the same request\" (5.5, rule 4)\nSELECT version, kind, folder_id, etag FROM hune_versions WHERE uid = $1 AND save_id = $2;\n-- P11 Head version (writes)\nSELECT version, etag FROM hune_versions WHERE uid = $1 ORDER BY version DESC LIMIT 1;\n-- P12 Lock of the creates (create, create_folder, restore of a deleted dashboard, import)\nSELECT pg_advisory_xact_lock(8532464671393841154);\n-- P13 Counts (create, create_folder)\nSELECT (SELECT count(*) FROM hune_dashboards), (SELECT count(*) FROM hune_folders);\n-- P14 The folder exists (create, move_to, restore of a deleted dashboard)\nSELECT 1 FROM hune_folders WHERE id = $1 FOR SHARE;\n-- P15 Insert a version\nINSERT INTO hune_versions (uid, version, kind, folder_id, document, etag,\n                            saved_at, saved_by, message, save_id)\n  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);\n-- P16 Insert a current dashboard (create, restore of a deleted dashboard, import)\nINSERT INTO hune_dashboards (uid, folder_id, version, etag, format_version, title,\n                              document, updated_at, updated_by)\n  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (uid) DO NOTHING;\n-- P17 Update a current dashboard (save, move_to, restore)\nUPDATE hune_dashboards SET folder_id = $2, version = $3, etag = $4, format_version = $5,\n       title = $6, document = $7, updated_at = $8, updated_by = $9 WHERE uid = $1;\n-- P18 Remove a current dashboard (delete)\nDELETE FROM hune_dashboards WHERE uid = $1;\n-- P19 Retention: $2 = the new version number minus history_keep\nDELETE FROM hune_versions WHERE uid = $1 AND version <= $2;\n-- P20 One page of history: $2 = before, or 9223372036854775807; $3 = limit\nSELECT version, kind, folder_id, etag, saved_at, saved_by, message, save_id, octet_length(document)\n  FROM hune_versions WHERE uid = $1 AND version < $2 ORDER BY version DESC LIMIT $3;\n-- P21 One version (version, restore)\nSELECT kind, folder_id, document, etag, saved_at, saved_by, message, save_id\n  FROM hune_versions WHERE uid = $1 AND version = $2;\n-- P22 Create a folder (create_folder, import)\nINSERT INTO hune_folders (id, title, created_at, updated_at) VALUES ($1, $2, $3, $3)\n  ON CONFLICT (id) DO NOTHING;\n-- P23 Rename a folder\nUPDATE hune_folders SET title = $2, updated_at = $3 WHERE id = $1;\n-- P24 Delete a folder\nDELETE FROM hune_folders WHERE id = $1;\n-- P25 All uids with a current dashboard or a version (export)\nSELECT uid FROM hune_versions UNION SELECT uid FROM hune_dashboards ORDER BY 1 COLLATE \"C\";\n-- P26 All versions of one uid (export)\nSELECT version, kind, folder_id, document, etag, saved_at, saved_by, message, save_id\n  FROM hune_versions WHERE uid = $1 ORDER BY version;\n-- P27 The store is empty (import)\nSELECT (SELECT count(*) FROM hune_folders) + (SELECT count(*) FROM hune_dashboards)\n     + (SELECT count(*) FROM hune_versions);\n-- P28 Lock of the migrations (migrate-store)\nSELECT pg_try_advisory_lock(8532464671393841153);\n-- P29 Release of the lock of the migrations (migrate-store)\nSELECT pg_advisory_unlock(8532464671393841153);\n-- P30 Rights of the role (start of serve): superuser, and owner of a table of Hune\nSELECT r.rolsuper,\n       EXISTS (SELECT 1 FROM pg_tables t\n                WHERE t.schemaname = 'public'\n                  AND t.tablename IN ('hune_schema', 'hune_folders', 'hune_dashboards', 'hune_versions')\n                  AND pg_has_role(current_user, t.tableowner, 'MEMBER'))\n  FROM pg_roles r WHERE r.rolname = current_user;"
+  },
+  {
+   "source": "docs/02-format-and-storage.md#sql",
+   "text": "CREATE ROLE hune_owner LOGIN;\nGRANT CONNECT ON DATABASE hune TO hune_owner;\nGRANT CREATE, USAGE ON SCHEMA public TO hune_owner;\n\nCREATE ROLE hune_app LOGIN;\nGRANT CONNECT ON DATABASE hune TO hune_app;\nGRANT USAGE ON SCHEMA public TO hune_app;\n\n-- Before the first \"hune migrate-store\": each table that the owner role makes later\n-- (migration 1 and each later migration) gives these rights to the application role.\nALTER DEFAULT PRIVILEGES FOR ROLE hune_owner IN SCHEMA public\n    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO hune_app;\n\n-- Only for tables that exist before the statement above (a database made without it):\nGRANT SELECT ON hune_schema TO hune_app;\nGRANT SELECT, INSERT, UPDATE, DELETE ON hune_folders, hune_dashboards, hune_versions TO hune_app;\n\n-- In every case: the application role only reads hune_schema.\n-- Migration 1 of 5.24 does the same for each role other than the owner.\nREVOKE INSERT, UPDATE, DELETE ON hune_schema FROM hune_app;"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "CREATE ROLE hune_ro LOGIN\n    PASSWORD '<the password of the secret store>'\n    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS\n    CONNECTION LIMIT 18;\n\nALTER ROLE hune_ro SET default_transaction_read_only = on;\nALTER ROLE hune_ro SET statement_timeout = '60s';\nALTER ROLE hune_ro SET idle_in_transaction_session_timeout = '15s';\nALTER ROLE hune_ro SET temp_file_limit = '1GB';\nALTER ROLE hune_ro SET jit = off;\n\nGRANT CONNECT ON DATABASE analytics TO hune_ro;\nGRANT USAGE ON SCHEMA metrics TO hune_ro;\nGRANT SELECT ON ALL TABLES IN SCHEMA metrics TO hune_ro;\nALTER DEFAULT PRIVILEGES FOR ROLE metrics_owner IN SCHEMA metrics GRANT SELECT ON TABLES TO hune_ro;\n\nREVOKE CREATE ON SCHEMA public FROM PUBLIC;\nREVOKE USAGE ON LANGUAGE plpgsql FROM PUBLIC;"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "CREATE SETTINGS PROFILE IF NOT EXISTS hune_readonly SETTINGS\n    readonly = 2,\n    max_execution_time = 60 MAX 60,\n    max_result_rows = 100000 MAX 100000,\n    max_result_bytes = 33554432 MAX 33554432,\n    max_rows_to_read = 20000000000 MAX 20000000000,\n    max_memory_usage = 4294967296 MAX 4294967296,\n    max_query_size = 1048576 MAX 1048576,\n    result_overflow_mode = 'throw' CONST,\n    timeout_overflow_mode = 'throw' CONST,\n    read_overflow_mode = 'throw' CONST;\n\nCREATE USER IF NOT EXISTS hune\n    IDENTIFIED WITH sha256_password BY '<the password of the secret store>'\n    DEFAULT DATABASE analytics\n    SETTINGS PROFILE 'hune_readonly';\n\nGRANT SELECT ON analytics.* TO hune;"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "INSERT INTO metrics.node_load DEFAULT VALUES;     -- 42501\nUPDATE metrics.node_load SET load = 0;            -- 42501\nDELETE FROM metrics.node_load;                    -- 42501\nTRUNCATE metrics.node_load;                       -- 42501\nCREATE TABLE metrics.x (a int);                   -- 42501\nCREATE EXTENSION dblink;                          -- 42501\nCOPY metrics.node_load TO PROGRAM 'id';           -- 42501\nSELECT pg_read_file('/etc/passwd');               -- 42501\nSELECT lo_import('/etc/passwd');                  -- 42501\nDO $$ BEGIN NULL; END $$;                         -- 42501 after the revoke of A1\nSELECT pg_terminate_backend(:other_pid);          -- 42501 after the revoke of R7, also for a session of the same role\nSELECT pg_logical_emit_message(false, 'p', 'x');  -- 42501 after the revoke of R7\nSELECT * FROM ts_stat('SELECT 1::text::tsvector'); -- 42501 after the revoke of R7"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT $__timeGroupAlias(created_at, $__interval), host, avg(load) AS load\nFROM metrics.node_load\nWHERE $__timeFilter(created_at) AND host IN ($host) AND env = '$env'\nGROUP BY 1, host\nORDER BY 1"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT $__timeInterval(event_time) AS t, node, sum(weight) AS weight\nFROM analytics.weights\nWHERE $__timeFilter(event_time) AND node IN ($node) AND env = '$env'\nGROUP BY t, node\nORDER BY t"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT floor(extract(epoch from created_at)/20)*20 AS \"time\", host, avg(load) AS load\nFROM metrics.node_load\nWHERE created_at BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z' AND host IN ('a1','b''2') AND env = 'prod'\nGROUP BY 1, host\nORDER BY 1"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC;', p.oid::regprocedure)\nFROM pg_proc p\nWHERE p.pronamespace = 'pg_catalog'::regnamespace\n  AND (p.proname IN ('pg_sleep', 'pg_sleep_for', 'pg_sleep_until', 'pg_cancel_backend',\n                     'pg_terminate_backend', 'pg_notify', 'pg_logical_emit_message', 'ts_stat', 'ts_rewrite')\n       OR p.proname LIKE 'pg\\_advisory\\_%' OR p.proname LIKE 'pg\\_try\\_advisory\\_%'\n       OR p.proname LIKE 'query\\_to\\_xml%' OR p.proname LIKE 'cursor\\_to\\_xml%');"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT getSetting('readonly');            -- 2\nCHECK GRANT SELECT ON analytics.*;          -- 1\nCHECK GRANT INSERT ON analytics.*;          -- 0\nCHECK GRANT ALTER ON analytics.*;           -- 0\nCHECK GRANT CREATE ON *.*;                 -- 0\nCHECK GRANT DROP ON *.*;                   -- 0\nCHECK GRANT SOURCES ON *.*;                -- 0\nCHECK GRANT URL ON *.*;                    -- 0\nCHECK GRANT S3 ON *.*;                     -- 0\nCHECK GRANT REMOTE ON *.*;                 -- 0\nCHECK GRANT FILE ON *.*;                   -- 0\nCHECK GRANT MONGO ON *.*;                  -- 0\nCHECK GRANT KILL QUERY ON *.*;             -- 0\nCHECK GRANT ACCESS MANAGEMENT ON *.*;      -- 0\nCHECK GRANT SYSTEM ON *.*;                 -- 0\nSHOW GRANTS;                               -- exactly the GRANT SELECT lines of the contract"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT pid, application_name, state, now() - query_start AS running\nFROM pg_stat_activity\nWHERE application_name LIKE 'hune/%';"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT query_id, JSONExtractString(log_comment, 'uid') AS uid, query_duration_ms, read_rows\nFROM system.query_log\nWHERE event_date = today() AND JSONExtractString(log_comment, 'app') = 'hune' AND type = 'QueryFinish'"
+  },
+  {
+   "source": "docs/03-api-query-sources.md#sql",
+   "text": "SELECT toStartOfInterval(toDateTime(event_time), INTERVAL 20 second) AS t, node, sum(weight) AS weight\nFROM analytics.weights\nWHERE event_time >= toDateTime(1794211200) AND event_time <= toDateTime(1794232800) AND node IN ('a1','b\\'2') AND env = 'prod'\nGROUP BY t, node\nORDER BY t"
+  },
+  {
+   "source": "docs/05-access-security.md#sql",
+   "text": "CREATE SETTINGS PROFILE IF NOT EXISTS hune_readonly SETTINGS\n    readonly = 2,\n    max_execution_time = 60 MAX 60,\n    max_result_rows = 100000 MAX 100000,\n    max_result_bytes = 33554432 MAX 33554432,\n    max_rows_to_read = 20000000000 MAX 20000000000,\n    max_memory_usage = 4294967296 MAX 4294967296,\n    max_query_size = 1048576 MAX 1048576,\n    result_overflow_mode = 'throw' CONST,\n    timeout_overflow_mode = 'throw' CONST,\n    read_overflow_mode = 'throw' CONST;\n\nCREATE USER IF NOT EXISTS hune\n    IDENTIFIED WITH sha256_password BY '<the test password>'\n    DEFAULT DATABASE analytics\n    SETTINGS PROFILE 'hune_readonly';\n\nGRANT SELECT ON analytics.* TO hune;"
+  },
+  {
+   "source": "design record arbiter-A-architecture#sql",
+   "text": "CREATE TABLE hune_schema   (id boolean PRIMARY KEY DEFAULT true CHECK (id), version integer NOT NULL, readable_from integer NOT NULL);\nCREATE TABLE hune_folders  (id text PRIMARY KEY CHECK (id ~ '^[a-z0-9][a-z0-9_-]{0,63}$'),\n                             title text NOT NULL CHECK (char_length(title) BETWEEN 1 AND 100));\nCREATE TABLE hune_dashboards (\n  uid text PRIMARY KEY CHECK (uid ~ '^[A-Za-z0-9_-]{1,40}$'),\n  folder_id text NOT NULL REFERENCES hune_folders(id),\n  title text NOT NULL, format integer NOT NULL,\n  document text NOT NULL CHECK (octet_length(document) <= 2097152),\n  etag text NOT NULL, updated_at timestamptz NOT NULL, updated_by text NOT NULL);\nCREATE UNIQUE INDEX hune_dashboards_uid_ci ON hune_dashboards (lower(uid));\nCREATE TABLE hune_versions (\n  uid text NOT NULL, seq bigint NOT NULL, folder_id text NOT NULL,\n  document text, etag text,                       -- NULL for a delete (tombstone)\n  saved_at timestamptz NOT NULL, saved_by text NOT NULL,\n  message text NOT NULL CHECK (char_length(message) <= 500),\n  PRIMARY KEY (uid, seq));"
+  },
+  {
+   "source": "design record feature-gaps-f#json",
+   "text": "\"links\": [\n  { \"kind\": \"link\", \"title\": \"Runbook\", \"url\": \"https://wiki.example.test/runbook\", \"target_blank\": true, \"include_vars\": false, \"keep_time\": false },\n  { \"kind\": \"dashboards\", \"title\": \"Related\", \"tags\": [\"chain\"], \"as_dropdown\": true, \"target_blank\": false, \"include_vars\": true, \"keep_time\": true }\n]"
+  },
+  {
+   "source": "design record feature-gaps-f#json",
+   "text": "\"query\": {\n  \"source\": \"prod\", \"format\": \"time_series\", \"sql\": [\"SELECT 1\"], \"min_interval\": null, \"max_data_points\": null,\n  \"time_from\": \"now-24h\", \"time_shift\": \"1w\", \"hide_time_override\": true\n}"
+  },
+  {
+   "source": "design record feature-gaps-f#json",
+   "text": "\"set\": {\n  \"axis_placement\": \"right\", \"axis_label\": \"Latency\", \"soft_min\": 0, \"soft_max\": 100,\n  \"draw\": \"bars\", \"line_width\": 2, \"fill_opacity\": 30, \"line_dash\": \"dash\", \"show_points\": \"never\", \"point_size\": 4, \"transform\": \"negative_y\"\n}"
+  },
+  {
+   "source": "tests/compose/grafana/clickhouse-init/01-table.sql",
+   "text": "-- Synthetic table of the expansion vectors and the parity capture (16.13). All data is fictitious.\n-- The compose project runs this file at the first start of ClickHouse (docker-entrypoint-initdb.d).\nCREATE TABLE IF NOT EXISTS analytics.events\n(\n    `timestamp` DateTime64(3, 'UTC'),\n    -- event.* : kind and result of the event.\n    `event` Tuple(\n        name LowCardinality(String),\n        outcome LowCardinality(Nullable(String)),\n        reason LowCardinality(Nullable(String))),\n    -- system.* : server that wrote the event.\n    `system` Tuple(\n        region LowCardinality(String),\n        server LowCardinality(String),\n        version LowCardinality(String)),\n    -- metrics.* : size and duration of the work of the event.\n    `metrics` Tuple(\n        bytes Nullable(UInt64),\n        duration_us Nullable(UInt64)),\n    -- attributes : free fields of the event (Dynamic sub-paths).\n    `attributes` JSON\n)\nENGINE = MergeTree\nPARTITION BY toYYYYMMDD(timestamp)\nORDER BY timestamp;\n\n-- Ten rows so that each query of a vector can run. The other columns hold their default values.\nINSERT INTO analytics.events (timestamp)\nSELECT toDateTime64('2026-11-09 08:00:00', 3, 'UTC') + number FROM numbers(10);\n"
+  },
+  {
+   "source": "tests/conformance/fixture/conf/conf-dash.json",
+   "text": "SELECT n FROM analytics.conf_rows ORDER BY n"
+  },
+  {
+   "source": "tests/conformance/init-conf.sql",
+   "text": "-- Synthetic data of the series U (11.32): the table that the panel of the fixture reads.\n-- The user `hune` and the profile come from tests/fixtures/clickhouse/init.sql (8.12).\n\nCREATE DATABASE IF NOT EXISTS analytics;\n\nCREATE TABLE IF NOT EXISTS analytics.conf_rows (n UInt32) ENGINE = MergeTree ORDER BY n;\n\nINSERT INTO analytics.conf_rows SELECT number + 1 FROM numbers(10);\n\nGRANT SELECT ON analytics.conf_rows TO hune;\n"
+  },
+  {
+   "source": "tests/fixtures/clickhouse/init.sql",
+   "text": "-- Synthetic setup of the test ClickHouse of the `source` job (16.8, 16.9).\n-- The profile and the user are the ones of 8.12, with the test database `analytics`.\n-- All passwords here are throwaway test values. They protect nothing.\n\nCREATE DATABASE IF NOT EXISTS analytics;\n\nCREATE SETTINGS PROFILE IF NOT EXISTS hune_readonly SETTINGS\n    readonly = 2,\n    max_execution_time = 60 MAX 60,\n    max_result_rows = 100000 MAX 100000,\n    max_result_bytes = 33554432 MAX 33554432,\n    max_rows_to_read = 20000000000 MAX 20000000000,\n    max_memory_usage = 4294967296 MAX 4294967296,\n    max_query_size = 1048576 MAX 1048576,\n    result_overflow_mode = 'throw' CONST,\n    timeout_overflow_mode = 'throw' CONST,\n    read_overflow_mode = 'throw' CONST;\n\nCREATE USER IF NOT EXISTS hune\n    IDENTIFIED WITH sha256_password BY 'hune-test-password'\n    DEFAULT DATABASE analytics\n    SETTINGS PROFILE 'hune_readonly';\n\nGRANT SELECT ON analytics.* TO hune;\n\n-- C06: accounts with readonly = 0 and readonly = 1.\nCREATE SETTINGS PROFILE IF NOT EXISTS hune_readonly_0 SETTINGS readonly = 0;\nCREATE SETTINGS PROFILE IF NOT EXISTS hune_readonly_1 SETTINGS readonly = 1;\nCREATE USER IF NOT EXISTS hune_ro0 IDENTIFIED WITH sha256_password BY 'hune-test-password'\n    DEFAULT DATABASE analytics SETTINGS PROFILE 'hune_readonly_0';\nCREATE USER IF NOT EXISTS hune_ro1 IDENTIFIED WITH sha256_password BY 'hune-test-password'\n    DEFAULT DATABASE analytics SETTINGS PROFILE 'hune_readonly_1';\nGRANT SELECT ON analytics.* TO hune_ro0;\nGRANT SELECT ON analytics.* TO hune_ro1;\n\n-- C09: an account with a grant that the contract of 8.12 forbids.\nCREATE USER IF NOT EXISTS hune_extra IDENTIFIED WITH sha256_password BY 'hune-test-password'\n    DEFAULT DATABASE analytics SETTINGS PROFILE 'hune_readonly';\nGRANT SELECT ON analytics.* TO hune_extra;\nGRANT URL ON *.* TO hune_extra;\n\n-- Access denied (497): an account that reads one table only.\nCREATE USER IF NOT EXISTS hune_narrow IDENTIFIED WITH sha256_password BY 'hune-test-password'\n    DEFAULT DATABASE analytics SETTINGS PROFILE 'hune_readonly';\nGRANT SELECT ON analytics.seed TO hune_narrow;\n\n-- C12 and the settings checks: an account whose profile has a lower MAX than the source keys.\nCREATE SETTINGS PROFILE IF NOT EXISTS hune_low_max SETTINGS\n    readonly = 2,\n    max_execution_time = 60 MAX 60,\n    max_result_rows = 50 MAX 50,\n    max_result_bytes = 33554432 MAX 33554432,\n    max_query_size = 1048576 MAX 1048576,\n    result_overflow_mode = 'throw' CONST,\n    timeout_overflow_mode = 'throw' CONST,\n    read_overflow_mode = 'throw' CONST;\nCREATE USER IF NOT EXISTS hune_lowmax IDENTIFIED WITH sha256_password BY 'hune-test-password'\n    DEFAULT DATABASE analytics SETTINGS PROFILE 'hune_low_max';\nGRANT SELECT ON analytics.* TO hune_lowmax;\n\n-- Seed data with known times (C01, C02).\nCREATE TABLE IF NOT EXISTS analytics.seed\n(\n    event_time DateTime,\n    node LowCardinality(String),\n    weight Decimal(38, 9),\n    blocks UInt32,\n    active Bool\n)\nENGINE = MergeTree\nORDER BY event_time;\n\nINSERT INTO analytics.seed\nSELECT\n    toDateTime(1794211200) + number * 20,\n    concat('v', toString(number % 3)),\n    toDecimal128(number, 9) + toDecimal128('0.5', 9),\n    toUInt32(number),\n    number % 2 = 0\nFROM numbers(30);\n\nCREATE TABLE IF NOT EXISTS analytics.secret (x UInt8) ENGINE = Memory;\nINSERT INTO analytics.secret VALUES (1);\n\n-- C07: a table with a SimpleAggregateFunction column.\nCREATE TABLE IF NOT EXISTS analytics.types_extra\n(\n    k UInt8,\n    total SimpleAggregateFunction(sum, UInt64),\n    peak SimpleAggregateFunction(max, Nullable(Float64))\n)\nENGINE = AggregatingMergeTree\nORDER BY k;\nINSERT INTO analytics.types_extra VALUES (1, 18446744073709551615, 2.5), (2, 7, NULL);\n"
+  },
+  {
+   "source": "tests/fixtures/dashboards/all_types.compact.json",
+   "text": "SELECT $__timeInterval(t) AS t, v\nFROM s\nWHERE $__timeFilter(t)"
+  },
+  {
+   "source": "tests/fixtures/dashboards/all_types.compact.json",
+   "text": "SELECT 1\n\tFROM t -- tab above"
+  },
+  {
+   "source": "tests/fixtures/dashboards/all_types.compact.json",
+   "text": "SELECT DISTINCT a FROM t WHERE b = '${t}'"
+  },
+  {
+   "source": "tests/fixtures/dashboards/all_types.compact.json",
+   "text": "SELECT c, v FROM b"
+  },
+  {
+   "source": "tests/fixtures/dashboards/all_types.compact.json",
+   "text": "SELECT g FROM g"
+  },
+  {
+   "source": "tests/fixtures/dashboards/all_types.compact.json",
+   "text": "SELECT n, v FROM p"
+  },
+  {
+   "source": "tests/fixtures/dashboards/all_types.compact.json",
+   "text": "SELECT x, y1, y2 FROM xy"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT 1 AS time"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT 2 AS time"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT at AS time FROM ops.alerts WHERE $__timeFilter(at)"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT at AS time, title, details AS text\nFROM ops.incidents\nWHERE at >= $__fromTime AND at <= $__toTime"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT deployed_at AS time, concat('v', version) AS text, 'prod,deploy' AS tags\nFROM ops.deploys\nWHERE $__timeFilter(deployed_at)"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT noted AS time, note AS text FROM ops.notes WHERE $__timeFilter(noted)"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT released AS time, name AS title FROM ops.releases WHERE $__timeFilter(released)"
+  },
+  {
+   "source": "tests/fixtures/dashboards/annotations.json",
+   "text": "SELECT start AS time, finish AS timeEnd, 'Maintenance' AS title, reason AS text\nFROM ops.windows\nWHERE $__timeFilter(start) AND env = ${env}"
+  },
+  {
+   "source": "tests/fixtures/dashboards/f2_members.json",
+   "text": "SELECT 1"
+  },
+  {
+   "source": "tests/fixtures/dashboards/f2_members.json",
+   "text": "SELECT 2"
+  },
+  {
+   "source": "tests/fixtures/dashboards/format1/nodes.json",
+   "text": "SELECT\n  $__timeInterval(ts) AS t,\n  node,\n  sum(weight) AS weight\nFROM analytics.node_weight\nWHERE $__timeFilter(ts)\n  AND node IN (${node})\nGROUP BY t, node\nORDER BY t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/format1/nodes.json",
+   "text": "SELECT DISTINCT node\nFROM analytics.nodes\nORDER BY node"
+  },
+  {
+   "source": "tests/fixtures/dashboards/format1/nodes.json",
+   "text": "SELECT node, name, weight, ratio, status\nFROM analytics.nodes\nWHERE ('${account}' = '' OR account = '${account}')\n  AND env = '${env}'\n  AND node IN (${node})"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f23_direction_bad.json",
+   "text": "SELECT DISTINCT region\nFROM analytics.nodes\nORDER BY region"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f23_direction_bad.json",
+   "text": "SELECT sum(weight) AS weight\nFROM analytics.nodes\nWHERE host IN (${host})"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f23_direction_bad.json",
+   "text": "SELECT sum(weight) AS weight\nFROM analytics.nodes\nWHERE region IN (${region})"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_401_queries.json",
+   "text": "SELECT count() AS rows FROM t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_extra_8_items.json",
+   "text": "SELECT $__timeInterval(ts) AS t, avg(v) AS cpu\nFROM m\nWHERE $__timeFilter(ts)\nGROUP BY t ORDER BY t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_extra_8_items.json",
+   "text": "SELECT $__timeInterval(ts) AS t, avg(v) AS mem\nFROM n\nWHERE $__timeFilter(ts)\nGROUP BY t ORDER BY t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_extra_8_items.json",
+   "text": "SELECT $__timeInterval(ts) AS t, count() AS errors\nFROM e\nWHERE $__timeFilter(ts)\nGROUP BY t ORDER BY t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_extra_8_items.json",
+   "text": "SELECT 1 AS n"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_extra_8_items.json",
+   "text": "SELECT 2 AS n"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_extra_8_items.json",
+   "text": "SELECT n FROM t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_extra_in_barchart.json",
+   "text": "SELECT 1 AS draft"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f24_item_sql_line_end.json",
+   "text": "SELECT 1\nFROM t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f25_macro_interval_ms.json",
+   "text": "SELECT $__interval_ms AS time"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f25_macro_interval_s.json",
+   "text": "SELECT 1 AS time FROM ops.deploys\nWHERE x > $__interval_s"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f25_macro_time_interval.json",
+   "text": "SELECT $__timeInterval(deployed_at) AS time\nFROM ops.deploys"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f25_macro_time_interval_ms.json",
+   "text": "SELECT 1 AS time\nFROM ops.deploys\nGROUP BY $__timeInterval_ms(deployed_at)"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f25_nine_annotations.json",
+   "text": "SELECT 3 AS time"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f25_sql_line_lf.json",
+   "text": "SELECT 1 AS time\nFROM t"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/f30_defaults_axis_placement.json",
+   "text": "SELECT now() AS time, 1 AS state"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/grid_w_and_extra_member.json",
+   "text": "SELECT 3"
+  },
+  {
+   "source": "tests/fixtures/dashboards/invalid/k_place_extra_member.json",
+   "text": "SELECT sum(weight) AS weight\nFROM analytics.nodes\nWHERE env = '${env}'\n  AND node IN (${node})\n  AND weight >= ${min_weight}"
+  },
+  {
+   "source": "tests/fixtures/dashboards/state_timeline.json",
+   "text": "SELECT toStartOfInterval(ts, INTERVAL 10 minute) AS time, max(state) AS state\nFROM checks\nWHERE $__timeFilter(ts)\nGROUP BY time ORDER BY time"
+  },
+  {
+   "source": "tests/fixtures/dashboards/state_timeline.json",
+   "text": "SELECT ts AS time, state FROM checks WHERE host IN (${host})"
+  },
+  {
+   "source": "tests/fixtures/grafana/round-trip-pg.json",
+   "text": "SELECT $__timeGroupAlias(ts, $__interval), host, avg(load) AS load\nFROM metrics.node_load\nWHERE $__timeFilter(ts)\nGROUP BY 1, host\nORDER BY 1"
+  },
+  {
+   "source": "tests/fixtures/grafana/round-trip-pg.json",
+   "text": "SELECT ts, host, load\nFROM metrics.node_load\nWHERE $__timeFilter(ts) AND host IN ($q)\nORDER BY ts DESC"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-colours.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 2700 AS time, concat('Deploy ', toString(number)) AS text\nFROM numbers(6)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-colours.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 0) * 10 + 20 AS v\nFROM numbers(61)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-colours.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 2) * 10 + 20 AS v\nFROM numbers(61)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-colours.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 7200 - 3600 AS time, toDateTime('2026-11-13 00:00:00', 'UTC') + number * 7200 + 1800 AS timeEnd, 'Window' AS title\nFROM numbers(3)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-colours.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') - 3600 AS time, toDateTime('2026-11-13 00:00:00', 'UTC') + 1800 AS timeEnd, 'Starts before the range' AS title\nUNION ALL\nSELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 17100 AS time, toDateTime('2026-11-13 00:00:00', 'UTC') + 21600 AS timeEnd, 'Ends after the range' AS title"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-filter.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 600 AS time"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-filter.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 300 AS t, sin(number / 6 + 1) * 10 + 20 AS v\nFROM numbers(61)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-filter.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 3600 + 1800 AS time\nFROM numbers(4)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-filter.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 3600 AS time\nFROM numbers(4)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-many.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + number * 18 AS time\nFROM numbers(1000)"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-texts.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 10800 AS time, 'Two lines' AS title, concat('first line', char(10), 'second line') AS text"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-texts.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 3600 AS time, 'Release' AS title, 'Version 1.2' AS text, 'prod,release' AS tags"
+  },
+  {
+   "source": "tests/fixtures/parity/annotations-texts.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00', 'UTC') + 7200 AS time, 'Long' AS title, repeat('long text ', 150) AS text"
+  },
+  {
+   "source": "tests/fixtures/parity/multi-query-all-hidden.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*300 AS time, cos(number/6) * 10 + 20 AS b FROM numbers(61)"
+  },
+  {
+   "source": "tests/fixtures/parity/multi-query-all-hidden.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*300 AS time, sin(number/6) * 10 + 20 AS a FROM numbers(61)"
+  },
+  {
+   "source": "tests/fixtures/parity/multi-query-error.json",
+   "text": "SELECT nope FROM nothing"
+  },
+  {
+   "source": "tests/fixtures/parity/multi-query-table.json",
+   "text": "SELECT number AS m, number*2 AS d, 'y' AS z FROM numbers(3)"
+  },
+  {
+   "source": "tests/fixtures/parity/multi-query-table.json",
+   "text": "SELECT number AS n, concat('x', toString(number)) AS s FROM numbers(5)"
+  },
+  {
+   "source": "tests/fixtures/parity/multi-query-timeseries.json",
+   "text": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + number*300 AS time, number AS c FROM numbers(61)"
+  },
+  {
+   "source": "tests/fixtures/parity/repeat-h.json",
+   "text": "SELECT toDateTime(1) AS t, 1 AS n\nWHERE 'a' IN (${host})"
+  },
+  {
+   "source": "tests/fixtures/postgres-probe/objects.sql",
+   "text": "-- The objects of each probe database. Run by roles.sql after \\connect.\nCREATE SCHEMA metrics;\nCREATE TABLE metrics.t (id int, v text);\nCREATE VIEW metrics.v AS SELECT id FROM metrics.t;\nCREATE SEQUENCE metrics.seq;\nGRANT USAGE ON SCHEMA metrics TO probe_readers;\nGRANT SELECT ON ALL TABLES IN SCHEMA metrics TO probe_readers;\n-- A table that nobody can read: the test of 42501.\nCREATE TABLE metrics.hidden (x int);\n"
+  },
+  {
+   "source": "tests/fixtures/postgres-probe/revoke.sql",
+   "text": "-- The functions that PUBLIC runs by default and that the probe refuses (R7, finding H1): the statement of 8a.13\n-- for these five names. Run by roles.sql after \\connect, in each database except probe_public.\nSELECT format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC', p.oid::regprocedure)\nFROM pg_proc p\nWHERE p.pronamespace = 'pg_catalog'::regnamespace\n  AND p.proname IN ('pg_logical_emit_message', 'pg_terminate_backend', 'pg_cancel_backend', 'ts_stat', 'ts_rewrite')\n\\gexec\n"
+  },
+  {
+   "source": "tests/fixtures/postgres-probe/roles.sql",
+   "text": "-- Fixture of the probe test (8a.12, 16.9a): synthetic roles and databases.\n-- Run as the administrator of a disposable server: psql -v pw=<password> -f roles.sql\n-- Each role probe_* has the password `pw`. The names tell the check that must fail.\n\\set ON_ERROR_STOP on\n\nCREATE ROLE grp_createdb NOLOGIN CREATEDB;\nCREATE ROLE probe_readers NOLOGIN;\n-- Plain groups for the memberships of finding M3. Each one holds one right that the probe refuses.\nCREATE ROLE grp_writer NOLOGIN;\nCREATE ROLE grp_creator NOLOGIN;\nCREATE ROLE grp_seq NOLOGIN;\nCREATE ROLE grp_col NOLOGIN;\nCREATE ROLE grp_exec NOLOGIN;\nCREATE ROLE grp_fdw NOLOGIN;\nCREATE ROLE grp_outer NOLOGIN;\nCREATE ROLE grp_owner NOLOGIN;\n\nSELECT format('CREATE ROLE %I LOGIN PASSWORD %L %s', r, :'pw', a)\nFROM (VALUES\n    ('probe_ok', ''),\n    ('probe_hard', ''),\n    ('probe_super', 'SUPERUSER'),\n    ('probe_createrole', 'CREATEROLE'),\n    ('probe_createdb', 'CREATEDB'),\n    ('probe_replication', 'REPLICATION'),\n    ('probe_bypassrls', 'BYPASSRLS'),\n    ('probe_member_pg_read_all_data', ''),\n    ('probe_member_pg_execute', ''),\n    ('probe_member_noinherit', 'NOINHERIT'),\n    ('probe_member_attr', ''),\n    ('probe_schema_create', ''),\n    ('probe_db_create', ''),\n    ('probe_t_insert', ''),\n    ('probe_t_update', ''),\n    ('probe_t_delete', ''),\n    ('probe_t_truncate', ''),\n    ('probe_t_references', ''),\n    ('probe_t_trigger', ''),\n    ('probe_view_update', ''),\n    ('probe_seq_update', ''),\n    ('probe_col_insert', ''),\n    ('probe_col_update', ''),\n    ('probe_col_references', ''),\n    ('probe_readfile', ''),\n    ('probe_fdw', ''),\n    ('probe_srv', ''),\n    -- H1: one explicit grant on each function that runs text or signals.\n    ('probe_exec_term', ''),\n    ('probe_exec_cancel', ''),\n    ('probe_exec_emit', ''),\n    ('probe_exec_tsstat', ''),\n    ('probe_exec_tsrewrite', ''),\n    -- M3: a membership with NOINHERIT (the member can run SET ROLE), one role for each check R3 to R8.\n    ('probe_noinh_r3', 'NOINHERIT'),\n    ('probe_noinh_r4', 'NOINHERIT'),\n    ('probe_noinh_r5', 'NOINHERIT'),\n    ('probe_noinh_r6', 'NOINHERIT'),\n    ('probe_noinh_r7', 'NOINHERIT'),\n    ('probe_noinh_r8', 'NOINHERIT'),\n    -- M3: a plain inherited membership, and an indirect one.\n    ('probe_inherit_r4', ''),\n    ('probe_indirect_r4', 'NOINHERIT'),\n    -- M3: an owner (R9): of a table, of a table through a group, of a schema, a function, a type and a large object.\n    ('probe_owner_table', ''),\n    ('probe_owner_member', 'NOINHERIT'),\n    ('probe_owner_schema', ''),\n    ('probe_owner_function', ''),\n    ('probe_owner_type', ''),\n    ('probe_owner_lo', '')\n) AS v(r, a)\n\\gexec\n\n-- A harmless group: a member of it passes R2. Each login role reads through it.\nSELECT format('GRANT probe_readers TO %I', rolname) FROM pg_roles WHERE rolname LIKE 'probe\\_%' AND rolcanlogin \\gexec\n\nGRANT pg_read_all_data TO probe_member_pg_read_all_data;\nGRANT pg_execute_server_program TO probe_member_pg_execute;\nGRANT pg_monitor TO probe_member_noinherit;\nGRANT grp_createdb TO probe_member_attr;\n\nGRANT grp_writer TO probe_noinh_r4, probe_inherit_r4;\nGRANT grp_writer TO grp_outer;\nGRANT grp_outer TO probe_indirect_r4;\nGRANT grp_creator TO probe_noinh_r3;\nGRANT grp_seq TO probe_noinh_r5;\nGRANT grp_col TO probe_noinh_r6;\nGRANT grp_exec TO probe_noinh_r7;\nGRANT grp_fdw TO probe_noinh_r8;\nGRANT grp_owner TO probe_owner_member;\n\nCREATE DATABASE probe_db;\nCREATE DATABASE probe_hard;\nCREATE DATABASE probe_dblink;\nCREATE DATABASE probe_fdw;\n-- probe_public: the default install. PUBLIC still runs the functions that the probe refuses (R7, finding H1).\nCREATE DATABASE probe_public;\n\n-- probe_db: the default install, plus one right for each failing role.\n\\connect probe_db\n\\ir objects.sql\n\\ir revoke.sql\nGRANT INSERT ON metrics.t TO probe_t_insert;\nGRANT UPDATE ON metrics.t TO probe_t_update;\nGRANT DELETE ON metrics.t TO probe_t_delete;\nGRANT TRUNCATE ON metrics.t TO probe_t_truncate;\nGRANT REFERENCES ON metrics.t TO probe_t_references;\nGRANT TRIGGER ON metrics.t TO probe_t_trigger;\nGRANT UPDATE ON metrics.v TO probe_view_update;\nGRANT UPDATE ON SEQUENCE metrics.seq TO probe_seq_update;\nGRANT INSERT (v) ON metrics.t TO probe_col_insert;\nGRANT UPDATE (v) ON metrics.t TO probe_col_update;\nGRANT REFERENCES (id) ON metrics.t TO probe_col_references;\nGRANT CREATE ON SCHEMA metrics TO probe_schema_create;\nGRANT CREATE ON DATABASE probe_db TO probe_db_create;\nGRANT EXECUTE ON FUNCTION pg_read_file(text) TO probe_readfile;\n\n-- H1: one explicit grant for each function of R7 that PUBLIC ran before the revoke.\nSELECT format('GRANT EXECUTE ON FUNCTION %s TO %I', p.oid::regprocedure, g.role)\nFROM pg_proc p\nJOIN (VALUES ('pg_terminate_backend', 'probe_exec_term'), ('pg_cancel_backend', 'probe_exec_cancel'),\n             ('pg_logical_emit_message', 'probe_exec_emit'), ('ts_stat', 'probe_exec_tsstat'),\n             ('ts_rewrite', 'probe_exec_tsrewrite')) AS g(fn, role) ON g.fn = p.proname\nWHERE p.pronamespace = 'pg_catalog'::regnamespace\n\\gexec\n\n-- M3: the right of each group. The members use it through SET ROLE (NOINHERIT), through the inheritance\n-- (probe_inherit_r4) or through a group of a group (probe_indirect_r4).\nGRANT INSERT ON metrics.t TO grp_writer;\nGRANT CREATE ON SCHEMA metrics TO grp_creator;\nGRANT UPDATE ON SEQUENCE metrics.seq TO grp_seq;\nGRANT INSERT (v) ON metrics.t TO grp_col;\nGRANT EXECUTE ON FUNCTION pg_read_file(text) TO grp_exec;\n\n-- M3, R9: each object has no right for its owner except SELECT or USAGE, so R3 to R8 see nothing and only\n-- the check of the owner refuses the role.\nCREATE TABLE metrics.owned (id int);\nALTER TABLE metrics.owned OWNER TO probe_owner_table;\nSET ROLE probe_owner_table;\nREVOKE ALL ON metrics.owned FROM probe_owner_table;\nGRANT SELECT ON metrics.owned TO probe_owner_table;\nRESET ROLE;\nCREATE TABLE metrics.owned_group (id int);\nALTER TABLE metrics.owned_group OWNER TO grp_owner;\nREVOKE ALL ON metrics.owned_group FROM grp_owner;\nGRANT SELECT ON metrics.owned_group TO grp_owner;\nCREATE SCHEMA own_schema AUTHORIZATION probe_owner_schema;\nSET ROLE probe_owner_schema;\nREVOKE ALL ON SCHEMA own_schema FROM probe_owner_schema;\nRESET ROLE;\nCREATE FUNCTION metrics.own_fn() RETURNS int LANGUAGE sql AS 'SELECT 1';\nALTER FUNCTION metrics.own_fn() OWNER TO probe_owner_function;\nCREATE TYPE metrics.own_type AS ENUM ('a');\nALTER TYPE metrics.own_type OWNER TO probe_owner_type;\nSET ROLE probe_owner_lo;\nSELECT lo_create(424242);\nRESET ROLE;\n\n-- probe_hard: the closure of the advice A1 to A4 (8a.13).\n\\connect probe_hard\n\\ir objects.sql\n\\ir revoke.sql\nREVOKE TEMPORARY ON DATABASE probe_hard FROM PUBLIC;\nREVOKE USAGE ON LANGUAGE plpgsql FROM PUBLIC;\nSELECT format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC', p.oid::regprocedure)\nFROM pg_proc p\nWHERE p.pronamespace = 'pg_catalog'::regnamespace\n  AND (p.proname IN ('pg_sleep', 'pg_sleep_for', 'pg_sleep_until', 'pg_cancel_backend',\n                     'pg_terminate_backend', 'pg_notify', 'pg_logical_emit_message', 'ts_stat', 'ts_rewrite')\n       OR p.proname LIKE 'pg\\_advisory\\_%' OR p.proname LIKE 'pg\\_try\\_advisory\\_%'\n       OR p.proname LIKE 'query\\_to\\_xml%' OR p.proname LIKE 'cursor\\_to\\_xml%')\n\\gexec\nALTER ROLE probe_hard SET temp_file_limit = '1GB';\n\n-- probe_dblink: the extension makes its functions callable by PUBLIC (R7).\n\\connect probe_dblink\n\\ir objects.sql\n\\ir revoke.sql\nCREATE EXTENSION dblink;\n\n-- probe_fdw: a wrapper and a server, with USAGE for two roles (R8).\n\\connect probe_fdw\n\\ir objects.sql\n\\ir revoke.sql\nCREATE EXTENSION postgres_fdw;\nCREATE SERVER probe_remote FOREIGN DATA WRAPPER postgres_fdw OPTIONS (host '127.0.0.1', dbname 'none');\nGRANT USAGE ON FOREIGN DATA WRAPPER postgres_fdw TO probe_fdw;\nGRANT USAGE ON FOREIGN SERVER probe_remote TO probe_srv;\nGRANT USAGE ON FOREIGN SERVER probe_remote TO grp_fdw;\n\n-- probe_public: objects.sql only. No revoke: PUBLIC runs pg_terminate_backend and the other four functions.\n\\connect probe_public\n\\ir objects.sql\n"
+  },
+  {
+   "source": "tests/fixtures/postgres-source/demo.sql",
+   "text": "-- Synthetic demo database for a local demo of the PostgreSQL source (not a test fixture).\n-- All data is synthetic and made from formulas. No name here is a real name.\n--\n-- Use: demo.sh runs this file. To run it by hand, connect as a superuser to a new PostgreSQL 15 to 18 server:\n--   psql -v ON_ERROR_STOP=1 -v ro_password=... [-v days=2] -f demo.sql\n-- The file holds no password. It makes the database `analytics`, the schema `metrics` and the role\n-- `hune_ro` with the contract of 8a.13 (the example SQL of that section).\n-- The times are relative to the start of the current minute: the data ends now and starts `days` days ago.\n-- The file is not idempotent: run it one time on a new server.\n--\n-- Tables of the schema `metrics`:\n--   node_load     one row each minute for 6 hosts: load, memory use and network bytes.\n--   http_requests one row each minute for 3 services and 3 status classes: requests and latency.\n--   orders        one row each 5 minutes: region, channel and amount (a `numeric`).\n--   fleet         one row for each host: environment, region, role, up or down, and a list of tags.\n-- The columns use the types of 7.16a. The time columns are `timestamptz`.\n\n\\set ON_ERROR_STOP on\n\\if :{?ro_password}\n\\else\n    DO $$ BEGIN RAISE EXCEPTION 'psql variable ro_password is not set'; END $$;\n\\endif\n\\if :{?days}\n\\else\n    \\set days 2\n\\endif\n\nCREATE ROLE metrics_owner NOLOGIN;\nCREATE ROLE hune_ro LOGIN\n    PASSWORD :'ro_password'\n    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS\n    CONNECTION LIMIT 18;\nALTER ROLE hune_ro SET default_transaction_read_only = on;\nALTER ROLE hune_ro SET statement_timeout = '60s';\nALTER ROLE hune_ro SET idle_in_transaction_session_timeout = '15s';\nALTER ROLE hune_ro SET temp_file_limit = '1GB';\nALTER ROLE hune_ro SET jit = off;\n\nCREATE DATABASE analytics OWNER metrics_owner;\n\\connect analytics\n\nREVOKE USAGE ON LANGUAGE plpgsql FROM PUBLIC;\nREVOKE CREATE ON SCHEMA public FROM PUBLIC;\n\n-- The functions that PUBLIC runs by default and that the probe refuses: the statement of 8a.13. Without it the\n-- probe gives `misconfigured` with the check R7 (pg_terminate_backend, pg_cancel_backend, pg_logical_emit_message,\n-- ts_stat, ts_rewrite).\nSELECT format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC', p.oid::regprocedure)\nFROM pg_proc p\nWHERE p.pronamespace = 'pg_catalog'::regnamespace\n  AND (p.proname IN ('pg_sleep', 'pg_sleep_for', 'pg_sleep_until', 'pg_cancel_backend',\n                     'pg_terminate_backend', 'pg_notify', 'pg_logical_emit_message', 'ts_stat', 'ts_rewrite')\n       OR p.proname LIKE 'pg\\_advisory\\_%' OR p.proname LIKE 'pg\\_try\\_advisory\\_%'\n       OR p.proname LIKE 'query\\_to\\_xml%' OR p.proname LIKE 'cursor\\_to\\_xml%')\n\\gexec\n\nCREATE SCHEMA metrics AUTHORIZATION metrics_owner;\n\nSET ROLE metrics_owner;\nSET search_path = metrics, pg_catalog;\n\nCREATE TABLE fleet (\n    host   text PRIMARY KEY,\n    env    text NOT NULL,\n    region text NOT NULL,\n    role   text NOT NULL,\n    up     bool NOT NULL,\n    tags   text[] NOT NULL\n);\nINSERT INTO fleet VALUES\n    ('node-a', 'prod',  'north', 'web',   true,  ARRAY['edge', 'blue']),\n    ('node-b', 'prod',  'north', 'web',   true,  ARRAY['edge', 'green']),\n    ('node-c', 'prod',  'south', 'db',    true,  ARRAY['storage']),\n    ('node-d', 'prod',  'south', 'cache', true,  ARRAY['memory']),\n    ('node-e', 'stage', 'north', 'web',   true,  ARRAY['edge']),\n    ('node-f', 'stage', 'south', 'db',    false, ARRAY['storage', 'maintenance']);\n\n-- The start of the current minute, and the number of minutes of the data.\nCREATE TEMPORARY TABLE demo_axis AS\nSELECT i, date_trunc('minute', now()) - (i * interval '1 minute') AS t\nFROM generate_series(0, (:days) * 1440) AS i;\n\nCREATE TABLE node_load (\n    created_at timestamptz NOT NULL,\n    host       text        NOT NULL,\n    env        text        NOT NULL,\n    load       float8      NOT NULL,\n    mem_used   float8      NOT NULL,\n    net_bytes  int8        NOT NULL\n);\nINSERT INTO node_load\nSELECT a.t, f.host, f.env,\n       round((1.5 + 1.2 * sin(a.i / 90.0 + k.n) + 0.4 * sin(a.i / 7.0 + k.n * 2)\n              + (abs(hashtext(f.host || a.i::text)) % 100) / 400.0)::numeric, 3)::float8,\n       round((55 + 20 * sin(a.i / 360.0 + k.n) + (abs(hashtext(a.i::text || f.host)) % 100) / 25.0)::numeric, 2)::float8,\n       (2000000 + 1500000 * (1 + sin(a.i / 45.0 + k.n)) + abs(hashtext(f.host || '-net-' || a.i::text)) % 500000)::int8\nFROM demo_axis a\nCROSS JOIN (SELECT host, env, row_number() OVER (ORDER BY host) AS n FROM fleet) AS k\nJOIN fleet f ON f.host = k.host\nORDER BY a.t, f.host;\nCREATE INDEX node_load_created_at ON node_load (created_at);\n\nCREATE TABLE http_requests (\n    created_at timestamptz NOT NULL,\n    service    text        NOT NULL,\n    status     int4        NOT NULL,\n    requests   int4        NOT NULL,\n    latency_ms float8      NOT NULL\n);\nINSERT INTO http_requests\nSELECT a.t, s.service, c.status,\n       greatest(0, round(s.base * c.share * (1 + 0.6 * sin(a.i / 120.0 + s.n))\n                         + (abs(hashtext(s.service || c.status::text || a.i::text)) % 10))::int4),\n       round((s.lat * c.slow + (abs(hashtext(a.i::text || s.service)) % 200) / 10.0)::numeric, 1)::float8\nFROM demo_axis a\nCROSS JOIN (VALUES ('api', 400, 20.0, 1), ('web', 250, 35.0, 2), ('search', 120, 60.0, 3)) AS s(service, base, lat, n)\nCROSS JOIN (VALUES (200, 0.93, 1.0), (404, 0.05, 0.8), (500, 0.02, 3.0)) AS c(status, share, slow);\nCREATE INDEX http_requests_created_at ON http_requests (created_at);\n\nCREATE TABLE orders (\n    created_at timestamptz   NOT NULL,\n    region     text          NOT NULL,\n    channel    text          NOT NULL,\n    amount     numeric(12, 2) NOT NULL\n);\nINSERT INTO orders\nSELECT a.t, r.region, ch.channel,\n       round((20 + (abs(hashtext(a.i::text || r.region || ch.channel)) % 18000) / 100.0)::numeric, 2)\nFROM demo_axis a\nCROSS JOIN (VALUES ('north'), ('south'), ('east')) AS r(region)\nCROSS JOIN (VALUES ('web'), ('mobile')) AS ch(channel)\nWHERE a.i % 5 = 0 AND abs(hashtext(a.i::text || r.region || ch.channel || 'o')) % 3 <> 0;\nCREATE INDEX orders_created_at ON orders (created_at);\n\nRESET ROLE;\nRESET search_path;\nANALYZE metrics.node_load;\nANALYZE metrics.http_requests;\nANALYZE metrics.orders;\n\n-- The grants of 8a.13.\nGRANT CONNECT ON DATABASE analytics TO hune_ro;\nGRANT USAGE ON SCHEMA metrics TO hune_ro;\nGRANT SELECT ON ALL TABLES IN SCHEMA metrics TO hune_ro;\nALTER DEFAULT PRIVILEGES FOR ROLE metrics_owner IN SCHEMA metrics GRANT SELECT ON TABLES TO hune_ro;\n"
+  },
+  {
+   "source": "tests/fixtures/postgres-source/init.sql",
+   "text": "-- Synthetic setup of the test PostgreSQL of the `pgsource` job (16.9a).\n-- All data is synthetic. No name here is a real name.\n--\n-- Use. Run this file with psql as a superuser on a new cluster. The script `apply.sh` does it at the first\n-- start of the container. The file holds no password: each password is a psql variable.\n--   psql -v ON_ERROR_STOP=1 -v ro_password=... -v rw_password=... -v bad_password=... -v legacy_password=... -f init.sql\n-- The file is not idempotent: run it one time on an empty cluster.\n--\n-- Roles (the names are a contract with the tests):\n--   metrics_owner      owner of the database, the schemas and the tables. No login.\n--   metrics_writer     a plain role with INSERT on metrics.write_target. No login. Only hune_bad_noinh is a member.\n--   hune_ro           the role of 8a.13, as written there. It is the role of the source.\n--   hune_bad_*        deviant roles. Each one has the rights of hune_ro and one more thing that breaks one\n--                      check of the probe (8a.12):\n--                        hune_bad_createrole  R1  the attribute CREATEROLE\n--                        hune_bad_pgread      R2  member of pg_read_all_data\n--                        hune_bad_create      R3  CREATE on the schema metrics\n--                        hune_bad_write       R4  INSERT on the table metrics.write_target\n--                        hune_bad_seq         R5  UPDATE on the sequence metrics.audit_seq\n--                        hune_bad_col         R6  INSERT on one column of metrics.col_target\n--                        hune_bad_dblink      R7  EXECUTE on the functions of dblink\n--                        hune_bad_fdw         R8  USAGE on the foreign server hune_fx\n--                        hune_bad_signal      R7  EXECUTE on pg_terminate_backend and pg_cancel_backend (H1)\n--                        hune_bad_emit        R7  EXECUTE on pg_logical_emit_message (H1)\n--                        hune_bad_ts          R7  EXECUTE on ts_stat and ts_rewrite (H1)\n--                        hune_bad_noinh       R4  a NOINHERIT member of the plain role metrics_writer (M3)\n--                        hune_bad_owner       R9  owner of the table metrics.owned, with its own rights\n--                                                  revoked except SELECT (M3)\n--                      PS11 needs the six roles R1, R2, R3, R4, R7 and R8. The others are extra.\n--   hune_rw           all rights on the schema metrics, for PS07. No superuser.\n--   hune_md5          the contract of hune_ro, but its password is an MD5 password and pg_hba.conf asks\n--                      the method md5 (PS12). apply.sh writes the pg_hba.conf lines.\n--   hune_clear        the same, with the method `password` (clear text on the wire) (PS12).\n--\n-- Objects of the database `analytics`, schema `metrics`:\n--   node_load          3 hosts, one row each minute, 720 minutes from 2026-01-01T00:00:00Z (PS01, PS02).\n--   node_load_v        a view of node_load.\n--   types_all          one column of each type of 7.16a, 4 rows (PS06). types_unsupported: other types.\n--   big_rows           1,000,000 rows (PS04). big_value: one row with a text of 50,000,000 bytes (PS04).\n--   write_target, col_target, audit_seq   objects for the write cases (PS07, PS08).\n-- The schema `restricted` has one table that no test role can read. The schema `ext` holds dblink.\n\n\\set ON_ERROR_STOP on\n\n-- The four passwords are mandatory.\n\\if :{?ro_password}\n\\else\n    DO $$ BEGIN RAISE EXCEPTION 'psql variable ro_password is not set'; END $$;\n\\endif\n\\if :{?rw_password}\n\\else\n    DO $$ BEGIN RAISE EXCEPTION 'psql variable rw_password is not set'; END $$;\n\\endif\n\\if :{?bad_password}\n\\else\n    DO $$ BEGIN RAISE EXCEPTION 'psql variable bad_password is not set'; END $$;\n\\endif\n\\if :{?legacy_password}\n\\else\n    DO $$ BEGIN RAISE EXCEPTION 'psql variable legacy_password is not set'; END $$;\n\\endif\n\n-- ---------------------------------------------------------------------------------------------------\n-- Roles of the cluster\n-- ---------------------------------------------------------------------------------------------------\n\nCREATE ROLE metrics_owner NOLOGIN;\n\n-- The role of the source: the SQL of 8a.13, with the password from the variable.\nCREATE ROLE hune_ro LOGIN\n    PASSWORD :'ro_password'\n    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS\n    CONNECTION LIMIT 18;\n\nALTER ROLE hune_ro SET default_transaction_read_only = on;\nALTER ROLE hune_ro SET statement_timeout = '60s';\nALTER ROLE hune_ro SET idle_in_transaction_session_timeout = '15s';\nALTER ROLE hune_ro SET temp_file_limit = '1GB';\nALTER ROLE hune_ro SET jit = off;\n\n-- The deviant roles. The attribute of R1 is set at the creation. The other changes come with the grants below.\nCREATE ROLE hune_bad_createrole LOGIN PASSWORD :'bad_password'\n    NOSUPERUSER NOCREATEDB CREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 18;\nSELECT format(\n    'CREATE ROLE %I LOGIN PASSWORD %L NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 18',\n    r, :'bad_password')\nFROM unnest(ARRAY['hune_bad_pgread', 'hune_bad_create', 'hune_bad_write', 'hune_bad_seq', 'hune_bad_col',\n                  'hune_bad_dblink', 'hune_bad_fdw', 'hune_bad_signal', 'hune_bad_emit', 'hune_bad_ts',\n                  'hune_bad_owner']) AS r\n\\gexec\n\n-- M3: a role with the attribute NOINHERIT does not use the rights of its groups, but it can run SET ROLE to\n-- them. The group is a plain role: no attribute, no name pg_*, so R2 does not refuse the membership.\nCREATE ROLE metrics_writer NOLOGIN;\nCREATE ROLE hune_bad_noinh LOGIN PASSWORD :'bad_password'\n    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS NOINHERIT CONNECTION LIMIT 18;\nGRANT metrics_writer TO hune_bad_noinh;\nALTER ROLE hune_bad_noinh SET default_transaction_read_only = on;\nALTER ROLE hune_bad_noinh SET statement_timeout = '60s';\n\n-- The role with all rights.\nCREATE ROLE hune_rw LOGIN PASSWORD :'rw_password'\n    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;\n\n-- The roles with an old method of login. The MD5 hash needs password_encryption = 'md5' for one statement.\nSET password_encryption = 'md5';\nCREATE ROLE hune_md5 LOGIN PASSWORD :'legacy_password'\n    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 18;\nRESET password_encryption;\nCREATE ROLE hune_clear LOGIN PASSWORD :'legacy_password'\n    NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS CONNECTION LIMIT 18;\n\n-- Each role with the contract of hune_ro has the same session defaults as hune_ro.\nSELECT format('ALTER ROLE %I SET default_transaction_read_only = on', r) FROM unnest(ARRAY[\n    'hune_bad_createrole', 'hune_bad_pgread', 'hune_bad_create', 'hune_bad_write', 'hune_bad_seq',\n    'hune_bad_col', 'hune_bad_dblink', 'hune_bad_fdw', 'hune_bad_signal', 'hune_bad_emit', 'hune_bad_ts',\n    'hune_bad_owner', 'hune_md5', 'hune_clear']) AS r\n\\gexec\nSELECT format('ALTER ROLE %I SET statement_timeout = ''60s''', r) FROM unnest(ARRAY[\n    'hune_bad_createrole', 'hune_bad_pgread', 'hune_bad_create', 'hune_bad_write', 'hune_bad_seq',\n    'hune_bad_col', 'hune_bad_dblink', 'hune_bad_fdw', 'hune_bad_signal', 'hune_bad_emit', 'hune_bad_ts',\n    'hune_bad_owner', 'hune_md5', 'hune_clear']) AS r\n\\gexec\n\nGRANT pg_read_all_data TO hune_bad_pgread;\n\n-- ---------------------------------------------------------------------------------------------------\n-- The database\n-- ---------------------------------------------------------------------------------------------------\n\nSELECT 'CREATE DATABASE analytics OWNER metrics_owner'\nWHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'analytics')\n\\gexec\n\n\\connect analytics\n\n-- The language of A1: the last line of 8a.13.\nREVOKE USAGE ON LANGUAGE plpgsql FROM PUBLIC;\nREVOKE CREATE ON SCHEMA public FROM PUBLIC;\n\n-- The five functions that PUBLIC runs by default and that the probe refuses (R7, finding H1): the statement of\n-- 8a.13, limited to these names. The probe refuses a role that can run pg_logical_emit_message,\n-- pg_terminate_backend, pg_cancel_backend, ts_stat and ts_rewrite, so hune_ro needs this revoke. The deviant\n-- roles get their right back below. The fixture does NOT revoke pg_sleep and the other functions of the advice\n-- A3: the tests of the deadline and of the cancel request use pg_sleep.\nSELECT format('REVOKE EXECUTE ON FUNCTION %s FROM PUBLIC', p.oid::regprocedure)\nFROM pg_proc p\nWHERE p.pronamespace = 'pg_catalog'::regnamespace\n  AND p.proname IN ('pg_logical_emit_message', 'pg_terminate_backend', 'pg_cancel_backend', 'ts_stat', 'ts_rewrite')\n\\gexec\n\nCREATE SCHEMA metrics AUTHORIZATION metrics_owner;\nCREATE SCHEMA restricted AUTHORIZATION metrics_owner;\n\n-- dblink lives in its own schema. Its functions go to PUBLIC by default: take that right away, so that\n-- only hune_bad_dblink can call them (R7).\nCREATE SCHEMA ext;\nCREATE EXTENSION dblink SCHEMA ext;\nSELECT format('REVOKE ALL ON FUNCTION %s FROM PUBLIC', p.oid::regprocedure)\nFROM pg_proc p WHERE p.pronamespace = 'ext'::regnamespace AND p.proname LIKE 'dblink%'\n\\gexec\nGRANT USAGE ON SCHEMA ext TO hune_bad_dblink;\nSELECT format('GRANT EXECUTE ON FUNCTION %s TO hune_bad_dblink', p.oid::regprocedure)\nFROM pg_proc p WHERE p.pronamespace = 'ext'::regnamespace AND p.proname LIKE 'dblink%'\n\\gexec\n\n-- The foreign server of R8. No connection is made to it.\nCREATE SERVER hune_fx FOREIGN DATA WRAPPER dblink_fdw OPTIONS (host '127.0.0.1', dbname 'analytics');\nGRANT USAGE ON FOREIGN SERVER hune_fx TO hune_bad_fdw;\n\n-- ---------------------------------------------------------------------------------------------------\n-- The objects of the owner\n-- ---------------------------------------------------------------------------------------------------\n\nSET ROLE metrics_owner;\nSET search_path = metrics, pg_catalog;\n\nCREATE TYPE level AS ENUM ('debug', 'info', 'warn', 'error');\nCREATE DOMAIN positive_int AS int4 CHECK (VALUE > 0);\nCREATE DOMAIN short_code AS text CHECK (length(VALUE) <= 8);\nCREATE TYPE pair AS (a int4, b text);\n\n-- PS01, PS02: the seed table. The times are known: 2026-01-01T00:00:00Z plus i minutes.\nCREATE TABLE node_load (\n    created_at    timestamptz NOT NULL,\n    created_plain timestamp   NOT NULL,\n    epoch_s       bigint      NOT NULL,\n    epoch_ns      bigint      NOT NULL,\n    host          text        NOT NULL,\n    env           text        NOT NULL,\n    load          float8      NOT NULL\n);\nINSERT INTO node_load\nSELECT t, t AT TIME ZONE 'UTC', extract(epoch FROM t)::bigint, extract(epoch FROM t)::bigint * 1000000000,\n       h.host, h.env, (i % 60) + h.base\nFROM generate_series(0, 719) AS i\nCROSS JOIN LATERAL (SELECT timestamptz '2026-01-01 00:00:00+00' + i * interval '1 minute' AS t) AS tt\nCROSS JOIN (VALUES ('node-a', 'prod', 0.0), ('node-b', 'prod', 100.0), ('node-c', 'stage', 200.0)) AS h(host, env, base);\nCREATE INDEX node_load_created_at ON node_load (created_at);\nCREATE VIEW node_load_v AS SELECT created_at, host, env, load FROM node_load;\n\n-- PS06: one column of each supported type. The rows:\n--   1 typical values; 2 maximum values and NaN; 3 minimum values and the infinities; 4 a NULL row\n--   with +Infinity in the float columns.\nCREATE TABLE types_all (\n    id           int4 PRIMARY KEY,\n    c_bool       bool,\n    c_int2       int2,\n    c_int4       int4,\n    c_oid        oid,\n    c_int8       int8,\n    c_float4     float4,\n    c_float8     float8,\n    c_numeric    numeric,\n    c_numeric_38 numeric(38, 9),\n    c_text       text,\n    c_varchar    varchar(20),\n    c_bpchar     char(8),\n    c_name       name,\n    c_uuid       uuid,\n    c_json       json,\n    c_jsonb      jsonb,\n    c_inet       inet,\n    c_inet_net   inet,\n    c_cidr       cidr,\n    c_enum       level,\n    c_domain     positive_int,\n    c_domain_txt short_code,\n    c_date       date,\n    c_timestamptz timestamptz,\n    c_timestamp  timestamp,\n    c_time       time,\n    a_bool       bool[],\n    a_int4       int4[],\n    a_int8       int8[],\n    a_float8     float8[],\n    a_numeric    numeric[],\n    a_text       text[],\n    a_date       date[],\n    a_timestamptz timestamptz[],\n    a_timestamp  timestamp[],\n    a_enum       level[],\n    a_int4_2d    int4[]\n);\nINSERT INTO types_all VALUES (\n    1, true, 12, 123456, 16384, 4503599627370496, 0.1, 0.1, 12.50, 12.500000000,\n    'plain text', 'varchar', 'ab', 'a_name', '123e4567-e89b-42d3-a456-426614174000',\n    '{\"a\" :  1, \"b\": [true,null]}', '{\"b\": [true, null], \"a\": 1}', '192.168.1.5', '192.168.1.5/24', '10.1.0.0/16',\n    'warn', 7, 'code', '2026-11-09', '2026-11-09 08:00:00.125+00', '2026-11-09 08:00:00.123456',\n    '08:30:15.5',\n    ARRAY[true, NULL, false], ARRAY[1, NULL, 3], ARRAY[1, 2]::int8[], ARRAY[1.5, 'NaN', 'Infinity']::float8[],\n    ARRAY[1.10, NULL]::numeric[], ARRAY['x', NULL, 'y z'], ARRAY['2026-11-09'::date, NULL],\n    ARRAY['2026-11-09 08:00:00.125+00'::timestamptz, NULL], ARRAY['2026-11-09 08:00:00'::timestamp],\n    ARRAY['info', NULL]::level[], ARRAY[[1, 2], [3, 4]]\n);\nINSERT INTO types_all (id, c_int2, c_int4, c_int8, c_float4, c_float8, c_numeric, c_numeric_38, c_date, c_timestamptz,\n                       c_timestamp)\nVALUES (2, 32767, 2147483647, 9223372036854775807, 'NaN', 'NaN', 'NaN', 99999999999999999999999999999.999999999,\n        'infinity', 'infinity', 'infinity');\nINSERT INTO types_all (id, c_int2, c_int4, c_int8, c_float4, c_float8, c_numeric, c_numeric_38, c_date, c_timestamptz,\n                       c_timestamp)\nVALUES (3, -32768, -2147483648, -9223372036854775808, '-Infinity', '-Infinity', '-Infinity',\n        -99999999999999999999999999999.999999999, '-infinity', '-infinity', '-infinity');\nINSERT INTO types_all (id, c_float4, c_float8) VALUES (4, 'Infinity', 'Infinity');\n\n-- PS06: a column of each type that 7.16a does not list. The row is not NULL.\nCREATE TABLE types_unsupported (\n    id         int4 PRIMARY KEY,\n    c_bytea    bytea,\n    c_interval interval,\n    c_money    money,\n    c_xml      xml,\n    c_int4range int4range,\n    c_tsrange  tsrange,\n    c_point    point,\n    c_composite pair,\n    c_macaddr  macaddr,\n    c_bit      bit(4),\n    c_tsvector tsvector,\n    a_jsonb    jsonb[]\n);\nINSERT INTO types_unsupported VALUES (\n    1, '\\xdeadbeef', '1 day 02:03:04', 12.34, '<a>1</a>', '[1,10)', '[2026-01-01,2026-01-02)', '(1,2)', ROW(1, 'x'),\n    '08:00:2b:01:02:03', B'1010', 'a fat cat'::tsvector, ARRAY['{\"k\": 1}']::jsonb[]\n);\n\n-- PS04: a table of 1,000,000 rows.\nCREATE TABLE big_rows (\n    id int4 PRIMARY KEY,\n    ts timestamptz NOT NULL,\n    v  float8 NOT NULL\n);\nINSERT INTO big_rows\nSELECT i, timestamptz '2026-01-01 00:00:00+00' + i * interval '1 second', (i % 1000)::float8\nFROM generate_series(1, 1000000) AS i;\n\n-- PS04: one row with a value of 50,000,000 bytes. The text is md5 hex, so it does not compress to nothing.\nCREATE TABLE big_value (\n    id int4 PRIMARY KEY,\n    v  text NOT NULL\n);\nALTER TABLE big_value ALTER COLUMN v SET STORAGE EXTERNAL;\nINSERT INTO big_value VALUES (1, repeat(md5('hune-fixture'), 1562500));\n\n-- PS07, PS08: objects for the write cases.\nCREATE TABLE write_target (\n    id   bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,\n    note text NOT NULL DEFAULT ''\n);\nCREATE TABLE col_target (\n    id   int4 PRIMARY KEY,\n    note text,\n    flag bool\n);\nINSERT INTO col_target VALUES (1, 'row', false);\nCREATE SEQUENCE audit_seq;\n\n-- A table that hune_ro can not read: no grant, and no USAGE on its schema.\nCREATE TABLE restricted.hidden (id int4 PRIMARY KEY, note text);\nINSERT INTO restricted.hidden VALUES (1, 'synthetic');\n\n-- The marker. The healthcheck of the compose project waits for this table: it is the last object.\nCREATE TABLE fixture_marker (version int4 NOT NULL);\nINSERT INTO fixture_marker VALUES (1);\n\nRESET ROLE;\nRESET search_path;\nANALYZE metrics.node_load;\nANALYZE metrics.big_rows;\n\n-- ---------------------------------------------------------------------------------------------------\n-- The contract of 8a.13, as written there\n-- ---------------------------------------------------------------------------------------------------\n\nGRANT CONNECT ON DATABASE analytics TO hune_ro;\nGRANT USAGE ON SCHEMA metrics TO hune_ro;\nGRANT SELECT ON ALL TABLES IN SCHEMA metrics TO hune_ro;\nALTER DEFAULT PRIVILEGES FOR ROLE metrics_owner IN SCHEMA metrics GRANT SELECT ON TABLES TO hune_ro;\n\n-- The same grants for the roles that must differ from hune_ro in one point only.\nSELECT format('GRANT CONNECT ON DATABASE analytics TO %I', r) FROM unnest(ARRAY[\n    'hune_bad_createrole', 'hune_bad_pgread', 'hune_bad_create', 'hune_bad_write', 'hune_bad_seq',\n    'hune_bad_col', 'hune_bad_dblink', 'hune_bad_fdw', 'hune_bad_signal', 'hune_bad_emit', 'hune_bad_ts',\n    'hune_bad_owner', 'hune_bad_noinh', 'hune_md5', 'hune_clear']) AS r\n\\gexec\nSELECT format('GRANT USAGE ON SCHEMA metrics TO %I', r) FROM unnest(ARRAY[\n    'hune_bad_createrole', 'hune_bad_pgread', 'hune_bad_create', 'hune_bad_write', 'hune_bad_seq',\n    'hune_bad_col', 'hune_bad_dblink', 'hune_bad_fdw', 'hune_bad_signal', 'hune_bad_emit', 'hune_bad_ts',\n    'hune_bad_owner', 'hune_bad_noinh', 'hune_md5', 'hune_clear']) AS r\n\\gexec\nSELECT format('GRANT SELECT ON ALL TABLES IN SCHEMA metrics TO %I', r) FROM unnest(ARRAY[\n    'hune_bad_createrole', 'hune_bad_pgread', 'hune_bad_create', 'hune_bad_write', 'hune_bad_seq',\n    'hune_bad_col', 'hune_bad_dblink', 'hune_bad_fdw', 'hune_bad_signal', 'hune_bad_emit', 'hune_bad_ts',\n    'hune_bad_owner', 'hune_bad_noinh', 'hune_md5', 'hune_clear']) AS r\n\\gexec\n\n-- The one extra right of each deviant role.\nGRANT CREATE ON SCHEMA metrics TO hune_bad_create;                       -- R3\nGRANT INSERT ON metrics.write_target TO hune_bad_write;                  -- R4\nGRANT UPDATE ON SEQUENCE metrics.audit_seq TO hune_bad_seq;              -- R5\nGRANT INSERT (note) ON metrics.col_target TO hune_bad_col;               -- R6\n-- R1 (CREATEROLE), R2 (pg_read_all_data), R7 (dblink) and R8 (foreign server) are set above.\n\n-- R7, finding H1: one explicit grant for each group of functions that the probe refuses.\nSELECT format('GRANT EXECUTE ON FUNCTION %s TO hune_bad_signal', p.oid::regprocedure)\nFROM pg_proc p WHERE p.pronamespace = 'pg_catalog'::regnamespace\n  AND p.proname IN ('pg_terminate_backend', 'pg_cancel_backend')\n\\gexec\nSELECT format('GRANT EXECUTE ON FUNCTION %s TO hune_bad_emit', p.oid::regprocedure)\nFROM pg_proc p WHERE p.pronamespace = 'pg_catalog'::regnamespace AND p.proname = 'pg_logical_emit_message'\n\\gexec\nSELECT format('GRANT EXECUTE ON FUNCTION %s TO hune_bad_ts', p.oid::regprocedure)\nFROM pg_proc p WHERE p.pronamespace = 'pg_catalog'::regnamespace AND p.proname IN ('ts_stat', 'ts_rewrite')\n\\gexec\n\n-- R4 by a membership with NOINHERIT, finding M3: the right is the right of the group.\nGRANT INSERT ON metrics.write_target TO metrics_writer;\n\n-- R9, finding M3: an owner can grant itself each right again, so the probe refuses it at once. The table has\n-- no right for its owner except SELECT: R4, R5 and R6 see nothing.\nCREATE TABLE metrics.owned (id int4);\nALTER TABLE metrics.owned OWNER TO hune_bad_owner;\nSET ROLE hune_bad_owner;\nREVOKE ALL ON metrics.owned FROM hune_bad_owner;\nGRANT SELECT ON metrics.owned TO hune_bad_owner;\nRESET ROLE;\nGRANT SELECT ON metrics.owned TO hune_ro;\n\n-- ---------------------------------------------------------------------------------------------------\n-- The role with all rights (PS07)\n-- ---------------------------------------------------------------------------------------------------\n\nGRANT CONNECT, TEMPORARY, CREATE ON DATABASE analytics TO hune_rw;\nGRANT ALL ON SCHEMA metrics TO hune_rw;\nGRANT ALL ON ALL TABLES IN SCHEMA metrics TO hune_rw;\nGRANT ALL ON ALL SEQUENCES IN SCHEMA metrics TO hune_rw;\nGRANT ALL ON SCHEMA public TO hune_rw;\n"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "\"\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "\"$a\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "\"a"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "\"a\"\n\"b\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "\"a\"\"b\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "\"a\\\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "#"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "# x\ny"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "#!"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$ a"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$ -- $$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$ /* $$ */"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$a$$\n'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$a$$$$b$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$a$a$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$$a'b$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$-"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$0"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$1"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$1$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$1$2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$1,$2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$12"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$1a"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$1a$x$1a$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$_$x$_$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$a$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$a$ $$ $a$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$a$ $b $a$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$a$ $b$ $a$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$a$b$A$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$a$b$a$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$a1$x$a1$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$env_name"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$tag$ a $tag"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$tag$a$$b$tag$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "${a:csv}"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "${a}"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "$é$x$é$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'$a'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "''"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "''''"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'\\'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'\\'; select 1; --'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n\n'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n\"b\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n'\\'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n'b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n-- c\n'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n-- c'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\n/* c */'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\u000b\n'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'\r'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a' \t\n \t'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a' 'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a''b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a''b'\n'c'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a'-- c\n'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a' 'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a\\'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a\\'c'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'a\\\\'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "'é'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "(a)[b]"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "*"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "++"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "+-+"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "-"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "--"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "-- c"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "-- c\nx"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "-- c\r\nx"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "-- c\rx"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/* ' */ a"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/* -- */ a"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/* /* */"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/* a */ */"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/* a /* b */ c */"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/* a /* b */ c */ d"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/**/"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "/*/"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "0x1F 1e3 1_000 .5 1.e3 0b101 1e-5 0x1p-3"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1 # x"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1 --x"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1#2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1-2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1.5.6"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1=+2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1e'a'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1e+5"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "1 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "?"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "@+-"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "@-"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "B'1"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "B'1'\n'0'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "B'101'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'\\"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'\\\\'; select 1; --'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'\\é'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a'\n\u000b'\\''"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a'\n'\\''"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a'\n'b'\n'\\''"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a'\n'b\\'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a'\u000b\n'\\''"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a' '\\''"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a''b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a\\'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "E'a\\'b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "Ex'a'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "KILL QUERY"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "N'a'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "SELECT 1;SELECT 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "U &'a'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "U&"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "U&\"a\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "U&\"a\"\"b\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "U&\"a\\\""
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "U&'a"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "U&'a'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "`a`"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a\u0000b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a\tb\nc\rd"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a\u000bb"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a\fb"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a $$b$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a!~*b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a$$b$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a$b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a%b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a&&b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a*-b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a*/b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a+--x"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a+-b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a+/*c*/b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a,b;c"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a--+b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a--b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a->>b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a.b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a/*c*/"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a::int"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a<-b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a<=b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a<>b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a?b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a\\b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a^b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a|-b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a||b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a~b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "a　b"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "e'a\\\\'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "e'abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "n'a''b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "select $$a;b$$"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "select 'a;b'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "u&\"abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "u&'\\0041'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "x $a$ y"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "x'1F'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "x=$1"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "x=-1"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "x@-1"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "xE'a'"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": " SELECT"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "é"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors-pg.json",
+   "text": "﻿SELECT"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": " ; "
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "'a'/*b*/--c\n\"d\"`e`"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "-- a;b\nselect 1;"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "/* a /* b */ ; c */ select 1"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "/*/ ; */ x"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": ";"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": ";;"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select \"a\"\"b;c\"; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select \"a;b\"; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select \"a\\\";b\"; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select \"abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select \"it's\" , 'x' -- c"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select $$a;'b$$; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'a;b' ; x"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'a;b'; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'a\\"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'a\\';b'; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'a\\\\'; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'it''s;'; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 'é;😀'; select \"é😀\" -- é\nx"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select (1; 2); select 3"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select /* abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 # a\r; b\n; c"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 # a;b\n; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 #a; b\n; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 - 2; a - -b; x--y\nz / * c"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 -- a\r\n; x"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 -- a;b\n; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 -- abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 /* a;b */; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1 from `a;b`"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select 1; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select `a--b`, 1 /* c */"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select `a;b`; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select `a\\`; select 2"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select `abc"
+  },
+  {
+   "source": "tests/fixtures/sql-lex-vectors.json",
+   "text": "select f(1, ')', 2); select 3"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-builtin-interval-s.json",
+   "text": "SELECT 20 AS s FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-interval-builtin-in-string.json",
+   "text": "SELECT '$__interval' AS i FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-interval-unit-M-1.json",
+   "text": "SELECT floor(extract(epoch from ts)/2592000)*2592000 FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-interval-unit-d-365.json",
+   "text": "SELECT floor(extract(epoch from ts)/31536000)*31536000 FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-conditionalAll-all.json",
+   "text": "SELECT v FROM t WHERE 1=1"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-conditionalAll-one.json",
+   "text": "SELECT v FROM t WHERE host IN ('a1')"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-in-block-comment.json",
+   "text": "SELECT v FROM t /* $__unixEpochFrom() */ WHERE ts BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-in-line-comment.json",
+   "text": "SELECT v FROM t -- $__unixEpochFrom()\nWHERE ts BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-in-quoted-name.json",
+   "text": "SELECT 1 AS \"$__timeFrom()\" FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-in-string.json",
+   "text": "SELECT 'a$__unixEpochFrom()b' AS s FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-time-nested-call.json",
+   "text": "SELECT coalesce(ts, now()) AS \"time\" FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-timeFilter-nested-call.json",
+   "text": "SELECT v FROM t WHERE date_trunc('day', ts) BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-timeFrom-bare.json",
+   "text": "SELECT v FROM t WHERE ts > '2026-11-09T08:00:00Z'"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-timeGroup-comma-in-argument.json",
+   "text": "SELECT floor(extract(epoch from coalesce(ts, now()))/300)*300 FROM t"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-timeTo-bare.json",
+   "text": "SELECT v FROM t WHERE ts <= '2026-11-09T14:00:00Z'"
+  },
+  {
+   "source": "tests/golden/expansion-pg/pg-macro-unixEpochFrom-bare.json",
+   "text": "SELECT v FROM t WHERE n > 1794211200"
+  },
+  {
+   "source": "tests/golden/expansion/builtin-interval.json",
+   "text": "SELECT '$__interval' AS i"
+  },
+  {
+   "source": "tests/golden/expansion/escape-custom-single-backslash-in-string.json",
+   "text": "SELECT 1 WHERE e = 'a\\\\b'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-custom-single-quote-in-string.json",
+   "text": "SELECT 1 WHERE e = 'a\\'b'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-query-multi-backslash-default.json",
+   "text": "SELECT 1 WHERE h IN ('a1','b\\\\2')"
+  },
+  {
+   "source": "tests/golden/expansion/escape-query-multi-quote-all.json",
+   "text": "SELECT 1 WHERE h IN ('a1','b\\'2')"
+  },
+  {
+   "source": "tests/golden/expansion/escape-query-multi-quote-in-string-csv.json",
+   "text": "SELECT 1 WHERE h = 'a1,b\\'2'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-query-single-quote-string.json",
+   "text": "SELECT 1 WHERE h = 'a\\'b'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-text-backslash-in-string.json",
+   "text": "SELECT 1 WHERE s = 'a\\\\b'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-text-backslash-quote-in-string.json",
+   "text": "SELECT 1 WHERE s = 'a\\\\\\'b'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-text-macro-name-in-value.json",
+   "text": "SELECT 1 WHERE s = '$__fromTime'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-text-quote-closes-string.json",
+   "text": "SELECT 1 WHERE s = '\\' OR 1=1 --'"
+  },
+  {
+   "source": "tests/golden/expansion/escape-text-quote-in-string.json",
+   "text": "SELECT 1 WHERE s = 'a\\'b'"
+  },
+  {
+   "source": "tests/golden/expansion/macro-fromTime-in-comment.json",
+   "text": "SELECT 1 -- $__fromTime\n"
+  },
+  {
+   "source": "tests/golden/expansion/macro-fromTime-in-string.json",
+   "text": "SELECT '$__fromTime' AS s"
+  },
+  {
+   "source": "tests/golden/expansion/macro-interval_s-in-comment.json",
+   "text": "SELECT 1 -- $__interval_s\n"
+  },
+  {
+   "source": "tests/golden/expansion/macro-interval_s-in-string.json",
+   "text": "SELECT '$__interval_s' AS s"
+  },
+  {
+   "source": "tests/golden/expansion/macro-timeFilter-in-block-comment.json",
+   "text": "SELECT count() /* $__timeFilter(timestamp) */ FROM analytics.events"
+  },
+  {
+   "source": "tests/golden/expansion/macro-timeFilter-in-line-comment.json",
+   "text": "SELECT count() FROM analytics.events -- $__timeFilter(timestamp)\nWHERE 1"
+  },
+  {
+   "source": "tests/golden/expansion/macro-timeFilter-in-string.json",
+   "text": "SELECT 'a $__timeFilter(timestamp) b' AS s, count() FROM analytics.events"
+  },
+  {
+   "source": "tests/golden/expansion/macro-timeFilter-string-with-paren.json",
+   "text": "SELECT count() FROM analytics.events WHERE concat(')', toString(timestamp)) >= toDateTime(1794211200) AND concat(')', toString(timestamp)) <= toDateTime(1794232800)"
+  },
+  {
+   "source": "tests/golden/expansion/macro-timeInterval-in-string.json",
+   "text": "SELECT '$__timeInterval(t)' AS s"
+  },
+  {
+   "source": "tests/golden/expansion/var-custom-single-in-block-comment.json",
+   "text": "SELECT 1 /* $env */"
+  },
+  {
+   "source": "tests/golden/expansion/var-custom-single-in-line-comment.json",
+   "text": "SELECT 1 -- $env\n"
+  },
+  {
+   "source": "tests/golden/expansion/var-custom-single-old-syntax.json",
+   "text": "SELECT '[[env]]'"
+  },
+  {
+   "source": "tests/golden/expansion/var-query-multi-empty-selection-singlequote.json",
+   "text": "SELECT 1 WHERE h IN ('')"
+  },
+  {
+   "source": "tests/golden/expansion/var-text-in-comment.json",
+   "text": "SELECT 1 /* $t */"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT\n  $__timeInterval(ts) AS t,\n  node,\n  sum(weight) AS weight\nFROM demo_chain.node_weight\nWHERE $__timeFilter(ts)\n  AND ts >= $__fromTime AND ts <= $__toTime\n  AND node IN (${node})\nGROUP BY t, node\nORDER BY t -- step $__interval_s s"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT $__timeInterval(ts) AS t, node, weight FROM demo_chain.node_weight WHERE $__timeFilter(ts)"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT DISTINCT region FROM demo_chain.nodes WHERE $__timeFilter(ts)"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT DISTINCT node\nFROM demo_chain.nodes\nORDER BY node"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT a FROM demo_chain.t LIMIT 10"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT count() FROM demo_chain.nodes"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT day, node, weight FROM demo_chain.daily_weight WHERE $__timeFilter(day)"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT weight, ratio FROM demo_chain.nodes"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT toDate(ts) AS day, sum(weight) AS weight\nFROM demo_chain.node_weight\nWHERE $__timeFilter(ts)\nGROUP BY day\nORDER BY day"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT node, ratio FROM demo_chain.nodes ORDER BY ratio DESC LIMIT 5"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT node, name, weight, ratio, status, region\nFROM demo_chain.nodes\nWHERE ('${account}' = '' OR account = '${account}')\n  AND env = '${env}'\n  AND region LIKE '${region}'\n  AND node IN (${node})\nORDER BY weight DESC\nLIMIT ${top_n}"
+  },
+  {
+   "source": "tests/golden/import/documents/monitor-v2a.json",
+   "text": "SELECT node, sum(weight) AS weight\nFROM demo_chain.node_weight\nWHERE $__timeFilter(ts)\nGROUP BY node"
+  },
+  {
+   "source": "tests/golden/import/mongo/documents/mongo-main.json",
+   "text": "SELECT 1 AS a"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT $__timeGroupAlias(ts, $__interval), host, avg(load) AS load\nFROM metrics.node_load\nWHERE $__timeFilter(ts) AND host IN ($host)\nGROUP BY 1, host\nORDER BY 1"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT $__timeGroupAlias(ts, '5m'), count(*) AS n FROM metrics.node_load WHERE $__timeFilter(ts) GROUP BY 1"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT $__unixEpochGroupAlias(epoch_s, '1h'), sum(n) AS n\nFROM metrics.counts\nWHERE $__unixEpochFilter(epoch_s)\nGROUP BY 1"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT '$__timeFrom()' AS note, 1 AS x"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT DISTINCT host\nFROM metrics.node_load\nORDER BY host"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT count(*) AS n FROM metrics.node_load WHERE $__timeFilter(ts)"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT host, avg(load) FROM metrics.node_load GROUP BY host"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT now() AS t"
+  },
+  {
+   "source": "tests/golden/import/pg/documents/pg-main.json",
+   "text": "SELECT ts, host, load\nFROM metrics.node_load\nWHERE $__timeFilter(ts) AND host IN ($host)\nORDER BY ts DESC\nLIMIT 100"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT \"$c\""
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ $n $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:distributed} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:doublequote} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:glob} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:html} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:json} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:lucene} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:percentencode} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:pipe} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:queryparam} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:regex} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $$ ${n:text} $$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT $tag$ $zz $tag$"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:customqueryparam}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:date}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:distributed}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:doublequote}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:glob}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:html}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:join}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:json}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:lucene}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:percentencode}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:pipe}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:queryparam}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:regex}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:text}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${n:uriencode}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT ${zzz:date}"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT '$n', 1"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT '${n', '$n'"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT '${n:customqueryparam}'"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT '${n:date}'"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT '${n:join}'"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT '${n:singlequote}'"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT '${n:uriencode}'"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 'a$n' AS x -- c"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 'a\\${q}' AND y = 'b'"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 'abc"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 0-${m:csv}- 1"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 1 FORMAT JSON"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 1 FROM t WHERE x = 1.$n"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 1 WHERE x IN (${m:csv})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT 1; SELECT 2"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `$c`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `$c` FROM t"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `$m`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `$n`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `$q`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:distributed}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:doublequote}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:glob}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:html}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:json}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:lucene}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:percentencode}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:pipe}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:queryparam}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:regex}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT `${env:text}`"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:distributed})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:doublequote})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:glob})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:html})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:json})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:lucene})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:percentencode})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:pipe})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:queryparam})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:regex})"
+  },
+  {
+   "source": "tests/golden/sql/contexts.json",
+   "text": "SELECT x IN (${env:text})"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT '${env:pipe}/${env:text}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 FROM t WHERE match(x, '^pre-${env:regex}-post$')"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE $__timeFilter(f('${env:json}'))"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:distributed}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:doublequote}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:glob}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:html}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:json}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:lucene}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:percentencode}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:pipe}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:queryparam}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:regex}'"
+  },
+  {
+   "source": "tests/golden/sql/formats.json",
+   "text": "SELECT 1 WHERE s = '${env:text}'"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__dateFilter()"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__dateFilter(d)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__dateTimeFilter(a)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__dateTimeFilter(a, )"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__dateTimeFilter(a, b, c)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__from AS f, $__to AS t, $__interval_ms AS i"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__from(1)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__from, $__to"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__fromTime()"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__fromTime, $__toTime"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__fromTime_ms()"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__fromTime_ms, $__toTime_ms"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__interval"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__interval_ms"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__interval_ms, $__interval_s"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__interval_s"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__interval_s, $__timeInterval(ts)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__range_ms"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__range_s"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__timeFilter"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__timeFilter(a, b)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__timeFilter_ms"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__timeFilter_ms(a, b)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__timeInterval(ts) FROM t"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__timeInterval_ms(ts)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT $__timeInterval_ms(ts) AS t FROM t GROUP BY t"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT '$__from', `$__to`, \"$__interval_ms\" -- $__from\n/* $__to */"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT '$__fromTime', \"$__toTime\", `$__interval_s` -- $__timeFilter(x)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 FROM t WHERE $__timeFilter(\n   a.ts\n)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 FROM t WHERE $__timeFilter(toDateTime(x, ','))"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 FROM t WHERE $__timeFilter(ts)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 FROM t WHERE $__timeFilter_ms(f(a, ')'))"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 FROM t WHERE $__timeFilter_ms(ts)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(a = 1)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(a = 1, $env)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(a = 1, $nobody)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(a = 1, $t)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(a = 1, ${env:csv})"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(a = 1, '$env')"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(a = 1, 1)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(env = $env, $env)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(env = '$env', $env)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(env IN ($env), $env)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(env IN (${env}), ${env})"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(f(a, b) IN ($env) AND k = '$k', $env)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__conditionalAll(h IN ($h), $h)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__dateTimeFilter( f(a, b) ,\n  ts )"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT 1 WHERE $__timeFilter($__conditionalAll(c, $env))"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT DISTINCT x FROM t WHERE $__timeFilter(ts)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT count() FROM t WHERE $__dateFilter(d)"
+  },
+  {
+   "source": "tests/golden/sql/macros.json",
+   "text": "SELECT count() FROM t WHERE $__dateTimeFilter(toDate(ts), ts)"
+  },
+  {
+   "source": "tests/golden/sql/spec.json",
+   "text": "SELECT $__timeInterval(event_time) AS t, node, sum(weight) AS weight\nFROM chain.weights\nWHERE $__timeFilter(event_time) AND node IN ($node) AND env = '$env'\nGROUP BY t, node\nORDER BY t"
+  },
+  {
+   "source": "tests/golden/sql/spec.json",
+   "text": "SELECT 1 FROM t WHERE amount > 0 - $min AND tenant = 'a'"
+  },
+  {
+   "source": "tests/golden/sql/spec.json",
+   "text": "SELECT 1 FROM t WHERE amount > 0-$min AND tenant = 'a'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT $env_name, ${env}_name"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT $n"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT $other, ${other}, ${other:csv}, '$other'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT '$a', '$b'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT '$e'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT '$m'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT '$n'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT '${m:csv}'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT '[$q]'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT '[[n]]', [[n]]"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 -- $n ${n:csv}\n/* $n */"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 FROM t WHERE e = '$e'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 FROM t WHERE name = '$n'"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 FROM t WHERE x > $n"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 WHERE e IN ($e)"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 WHERE x = $q"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 WHERE x IN ($m)"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 WHERE x IN (${m:raw})"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 WHERE x IN (${m:singlequote})"
+  },
+  {
+   "source": "tests/golden/sql/variables.json",
+   "text": "SELECT 1 WHERE x IN (${m:sqlstring})"
+  }
+ ]
+}

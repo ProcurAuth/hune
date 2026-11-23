@@ -1,0 +1,222 @@
+{
+  "format_version": 3,
+  "uid": "transforms-small",
+  "title": "Transforms of milestone F, one panel",
+  "description": "One transform of each kind (4.25a).",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Typical",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 1 AS a, 2 AS b"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [
+            {
+              "kind": "organize",
+              "hide": [
+                "h00",
+                "h01",
+                "h02",
+                "h03",
+                "h04",
+                "h05",
+                "h06",
+                "h07",
+                "h08",
+                "h09",
+                "h10",
+                "h11",
+                "h12",
+                "h13",
+                "h14",
+                "h15",
+                "h16",
+                "h17",
+                "h18",
+                "h19",
+                "h20",
+                "h21",
+                "h22",
+                "h23",
+                "h24",
+                "h25",
+                "h26",
+                "h27",
+                "h28",
+                "h29",
+                "h30",
+                "h31",
+                "h32",
+                "h33",
+                "h34",
+                "h35",
+                "h36",
+                "h37",
+                "h38",
+                "h39",
+                "h40",
+                "h41",
+                "h42",
+                "h43",
+                "h44",
+                "h45",
+                "h46",
+                "h47",
+                "h48",
+                "h49",
+                "h50",
+                "h51",
+                "h52",
+                "h53",
+                "h54",
+                "h55",
+                "h56",
+                "h57",
+                "h58",
+                "h59",
+                "h60",
+                "h61",
+                "h62",
+                "h63",
+                "h64"
+              ],
+              "order": [
+                "a",
+                "b",
+                "c"
+              ],
+              "rename": [
+                {
+                  "field": "a",
+                  "name": "A"
+                }
+              ]
+            },
+            {
+              "kind": "calculate_field",
+              "mode": "binary",
+              "alias": "sum_ab",
+              "replace_fields": false,
+              "binary": {
+                "left": {
+                  "kind": "field",
+                  "field": "a"
+                },
+                "right": {
+                  "kind": "number",
+                  "value": 2.5
+                },
+                "operator": "add"
+              }
+            },
+            {
+              "kind": "sort_by",
+              "sort": [
+                {
+                  "field": "a",
+                  "desc": true
+                }
+              ]
+            },
+            {
+              "kind": "limit",
+              "count": 0,
+              "end": "first"
+            },
+            {
+              "kind": "merge"
+            },
+            {
+              "kind": "reduce",
+              "mode": "series_to_rows",
+              "reducers": [
+                "max",
+                "mean"
+              ]
+            },
+            {
+              "kind": "partition_by_values",
+              "fields": [
+                "host"
+              ],
+              "keep_fields": false
+            },
+            {
+              "kind": "join_by_field",
+              "field": null,
+              "mode": "outer"
+            },
+            {
+              "kind": "filter_fields_by_name",
+              "include": {
+                "names": [
+                  "a",
+                  "b"
+                ],
+                "pattern": null
+              },
+              "exclude": {
+                "names": [],
+                "pattern": "^tmp_"
+              }
+            },
+            {
+              "kind": "rename_by_regex",
+              "regex": "(.*)_total",
+              "rename_pattern": "$1"
+            },
+            {
+              "kind": "convert_field_type",
+              "conversions": [
+                {
+                  "field": "a",
+                  "to": "number"
+                }
+              ]
+            }
+          ],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "format_version": 3,
+  "uid": "placements",
+  "title": "Placements",
+  "description": "Three variables have a place in the grid. Two stay in the variables bar.",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [
+    {
+      "kind": "custom",
+      "name": "env",
+      "label": null,
+      "hide": "none",
+      "options": [
+        {
+          "text": "Production",
+          "value": "prod"
+        },
+        {
+          "text": "Preproduction",
+          "value": "preprod"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "prod"
+      ],
+      "placement": {
+        "section": 0,
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 2,
+        "z": 1
+      }
+    },
+    {
+      "kind": "query",
+      "name": "node",
+      "label": "Node",
+      "hide": "label",
+      "source": "prod",
+      "sql": [
+        "SELECT DISTINCT node",
+        "FROM analytics.nodes",
+        "ORDER BY node"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "load",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ],
+      "placement": {
+        "section": 1,
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 2,
+        "title": "Pick nodes"
+      }
+    },
+    {
+      "kind": "text",
+      "name": "min_weight",
+      "label": "Minimum weight",
+      "hide": "none",
+      "value_type": "number",
+      "default": "0",
+      "placement": {
+        "section": 1,
+        "x": 12,
+        "y": 0,
+        "w": 8,
+        "h": 2
+      }
+    },
+    {
+      "kind": "text",
+      "name": "account",
+      "label": "Account",
+      "hide": "none",
+      "value_type": "text",
+      "default": ""
+    },
+    {
+      "kind": "custom",
+      "name": "region",
+      "label": null,
+      "hide": "variable",
+      "options": [
+        {
+          "text": "Europe",
+          "value": "eu"
+        }
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "default": [
+        "eu"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Weight of the selection",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 2,
+            "w": 12,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE env = '${env}'",
+                "  AND node IN (${node})",
+                "  AND weight >= ${min_weight}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    },
+    {
+      "title": "Filters",
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Weight of the selection",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 2,
+            "w": 12,
+            "h": 6
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT sum(weight) AS weight",
+                "FROM analytics.nodes",
+                "WHERE env = '${env}'",
+                "  AND node IN (${node})",
+                "  AND weight >= ${min_weight}"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "suffix: pts"
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last_not_null",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

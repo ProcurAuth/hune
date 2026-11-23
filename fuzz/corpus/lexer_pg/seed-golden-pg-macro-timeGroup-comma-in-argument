@@ -1,0 +1,1 @@
+SELECT $__timeGroup(coalesce(ts, now()), '5m') FROM t

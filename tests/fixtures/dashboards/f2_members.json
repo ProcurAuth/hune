@@ -1,0 +1,369 @@
+{
+  "format_version": 3,
+  "uid": "f2-members",
+  "title": "Members of milestone F, wave 2",
+  "description": "Every member that wave 2 of milestone F adds to format 3, at least once.",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "Europe/Paris",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [
+    {
+      "kind": "link",
+      "title": "Runbook",
+      "url": "https://wiki.example.test/runbook",
+      "target_blank": true,
+      "include_vars": false,
+      "keep_time": false
+    },
+    {
+      "kind": "dashboards",
+      "title": "Related",
+      "tags": [
+        "chain",
+        "prod"
+      ],
+      "as_dropdown": true,
+      "target_blank": false,
+      "include_vars": true,
+      "keep_time": true
+    },
+    {
+      "kind": "dashboards",
+      "title": "",
+      "tags": [],
+      "as_dropdown": false,
+      "target_blank": true,
+      "include_vars": false,
+      "keep_time": true
+    }
+  ],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Series",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "time_series",
+              "sql": [
+                "SELECT 1"
+              ],
+              "min_interval": null,
+              "max_data_points": null,
+              "time_from": "now-24h",
+              "time_shift": "1w",
+              "hide_time_override": true
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "color": {
+                "mode": "continuous_gr_yl_rd",
+                "fixed": null
+              },
+              "axis_placement": "left",
+              "axis_label": "Rate",
+              "soft_min": -1,
+              "soft_max": 10,
+              "line_dash": "dash",
+              "transform": "none"
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m0"
+                },
+                "set": {
+                  "color": {
+                    "mode": "palette",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m1"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_gr_yl_rd",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m2"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_rd_yl_gr",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m3"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_bl_yl_rd",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m4"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_yl_rd",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m5"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_bl_pu",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m6"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_yl_bl",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m7"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_blues",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m8"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_reds",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m9"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_greens",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "m10"
+                },
+                "set": {
+                  "color": {
+                    "mode": "continuous_purples",
+                    "fixed": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "latency"
+                },
+                "set": {
+                  "axis_placement": "right",
+                  "axis_label": "Latency",
+                  "soft_min": 0,
+                  "soft_max": 100,
+                  "draw": "bars",
+                  "line_width": 2,
+                  "fill_opacity": 30,
+                  "line_dash": "dot",
+                  "show_points": "never",
+                  "point_size": 4,
+                  "transform": "negative_y"
+                }
+              }
+            ]
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 0,
+            "show_points": "auto",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "barchart",
+          "title": "Bars",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 2"
+              ],
+              "min_interval": null,
+              "max_data_points": null,
+              "time_from": "now/d",
+              "time_shift": "1d"
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              },
+              "axis_label": "Count",
+              "soft_min": 0,
+              "soft_max": 50
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "vertical",
+            "x_field": null,
+            "stacking": "none",
+            "show_values": "auto",
+            "bar_width": 80,
+            "group_width": 70,
+            "x_tick_rotation": 0,
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "Same data",
+          "description": "Reuses the series.",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 4
+          },
+          "data": {
+            "reuse": {
+              "panel": 1,
+              "with_transforms": false
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "color": {
+                "mode": "continuous_blues",
+                "fixed": null
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

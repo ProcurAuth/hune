@@ -1,0 +1,1 @@
+SELECT floor((n)/300)*300 AS "time", sum(v) FROM t GROUP BY 1

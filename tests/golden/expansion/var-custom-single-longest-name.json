@@ -1,0 +1,56 @@
+{
+  "id": "var-custom-single-longest-name",
+  "tags": [
+    "var:custom-single",
+    "edge:longest-name"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE e = '$env_name'",
+  "variables": [
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "prod",
+        "dev"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    },
+    {
+      "name": "env_name",
+      "kind": "custom",
+      "options": [
+        "x1",
+        "x2"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "env": {
+      "all": false,
+      "values": [
+        "prod"
+      ]
+    },
+    "env_name": {
+      "all": false,
+      "values": [
+        "x2"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE e = 'x2'",
+  "sent_sql": "SELECT 1 WHERE e = 'x2'"
+}

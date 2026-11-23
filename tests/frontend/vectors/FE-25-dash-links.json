@@ -1,0 +1,69 @@
+{
+  "description": "FE-25: the URLs and the lists of the dashboard links (9.8a). `ctx.from` and `ctx.to` are epoch milliseconds, `fromText` and `toText` are the texts of the URL of the page.",
+  "ctx": {
+    "from": 1000, "to": 2000, "fromText": "now-6h", "toText": "now",
+    "variables": [
+      { "name": "env", "all": false, "values": ["prod"] },
+      { "name": "v", "all": true, "values": [] },
+      { "name": "s", "all": false, "values": ["a b"] }
+    ]
+  },
+  "hrefs": [
+    { "name": "plain", "link": { "url": "https://wiki.example.test/runbook" }, "href": "https://wiki.example.test/runbook" },
+    { "name": "include_vars", "link": { "url": "https://wiki.example.test/runbook", "include_vars": true }, "href": "https://wiki.example.test/runbook?var-env=prod&var-v=%24__all&var-s=a%20b" },
+    { "name": "keep_time", "link": { "url": "https://wiki.example.test/runbook", "keep_time": true }, "href": "https://wiki.example.test/runbook?from=now-6h&to=now" },
+    { "name": "keep_time then include_vars", "link": { "url": "https://wiki.example.test/runbook", "keep_time": true, "include_vars": true }, "href": "https://wiki.example.test/runbook?from=now-6h&to=now&var-env=prod&var-v=%24__all&var-s=a%20b" },
+    { "name": "a URL with a query gets &", "link": { "url": "https://x.test/p?a=1", "keep_time": true }, "href": "https://x.test/p?a=1&from=now-6h&to=now" },
+    { "name": "a URL that ends with & gets &&", "link": { "url": "https://x.test/p?a=1&", "keep_time": true }, "href": "https://x.test/p?a=1&&from=now-6h&to=now" },
+    { "name": "a URL with an empty query gets &", "link": { "url": "https://x.test/p?", "keep_time": true }, "href": "https://x.test/p?&from=now-6h&to=now" },
+    { "name": "the names go before a fragment", "link": { "url": "https://x.test/p#f", "keep_time": true }, "href": "https://x.test/p?from=now-6h&to=now#f" },
+    { "name": "the names go before a fragment, with a query", "link": { "url": "https://x.test/p?a=1#f?x", "include_vars": true }, "href": "https://x.test/p?a=1&var-env=prod&var-v=%24__all&var-s=a%20b#f?x" },
+    { "name": "a relative URL", "link": { "url": "/d/other", "keep_time": true }, "href": "/d/other?from=now-6h&to=now" },
+    { "name": "a fragment URL", "link": { "url": "#top", "keep_time": true }, "href": "?from=now-6h&to=now#top" },
+    { "name": "a query URL", "link": { "url": "?x=1", "keep_time": true }, "href": "?x=1&from=now-6h&to=now" },
+    { "name": "tokens of the time", "link": { "url": "https://x.test/?f=${__from}&t=${__to}" }, "href": "https://x.test/?f=1000&t=2000" },
+    { "name": "the token __url_time_range", "link": { "url": "https://x.test/?${__url_time_range}" }, "href": "https://x.test/?from=1000&to=2000" },
+    { "name": "the token __all_variables", "link": { "url": "https://x.test/?${__all_variables}" }, "href": "https://x.test/?var-env=prod&var-v=%24__all&var-s=a%20b" },
+    { "name": "a variable as $name and ${name}", "link": { "url": "https://x.test/?e=$env&e2=${env}&s=$s" }, "href": "https://x.test/?e=prod&e2=prod&s=a%20b" },
+    { "name": "the variable with All gives $__all", "link": { "url": "https://x.test/?v=$v" }, "href": "https://x.test/?v=%24__all" },
+    { "name": "a token of a data link stays", "link": { "url": "https://x.test/?a=${__value.raw}&b=${__field.name}&c=${__data.fields.x}" }, "href": "https://x.test/?a=${__value.raw}&b=${__field.name}&c=${__data.fields.x}" },
+    { "name": "an unknown token stays", "link": { "url": "https://x.test/?a=${nope}&b=$nope" }, "href": "https://x.test/?a=${nope}&b=$nope" },
+    { "name": "javascript: is refused", "link": { "url": "javascript:alert(1)" }, "href": null },
+    { "name": "javascript: in capitals is refused", "link": { "url": "JAVASCRIPT:alert(1)", "keep_time": true }, "href": null },
+    { "name": "a scheme-relative URL is refused", "link": { "url": "//evil.test/x" }, "href": null },
+    { "name": "a backslash URL is refused", "link": { "url": "/\\evil.test" }, "href": null },
+    { "name": "a data URL is refused", "link": { "url": "data:text/html,x" }, "href": null },
+    { "name": "a variable value cannot make a scheme", "link": { "url": "$env" , "vars": "x" }, "ctx": { "variables": [{ "name": "env", "all": false, "values": ["javascript:alert(1)"] }] }, "href": null },
+    { "name": "the scheme http in capitals is permitted", "link": { "url": "HTTPS://x.test/a" }, "href": "HTTPS://x.test/a" },
+    { "name": "a link of the other kind has no URL", "link": { "kind": "dashboards", "url": "https://x.test" }, "href": null }
+  ],
+  "items": {
+    "list": [
+      { "uid": "u-10", "title": "10", "tags": ["a"], "state": "valid" },
+      { "uid": "u-9", "title": "9", "tags": ["a"], "state": "valid" },
+      { "uid": "u-ab-sp", "title": "a b", "tags": ["a"], "state": "valid" },
+      { "uid": "u-ab-par", "title": "a(b", "tags": ["a"], "state": "valid" },
+      { "uid": "u-ab-dash", "title": "a-b", "tags": ["a"], "state": "valid" },
+      { "uid": "u-ab-dot", "title": "a.b", "tags": ["a"], "state": "valid" },
+      { "uid": "u-ab-und", "title": "a_b", "tags": ["a"], "state": "valid" },
+      { "uid": "u-ab", "title": "ab", "tags": ["a", "b"], "state": "valid" },
+      { "uid": "u-beta", "title": "Beta", "tags": ["a", "b"], "state": "valid" },
+      { "uid": "u-ea", "title": "ea", "tags": ["a", "b"], "state": "valid" },
+      { "uid": "u-zz", "title": "ZZ", "tags": ["b"], "state": "valid" },
+      { "uid": "u-eacute", "title": "Éa", "tags": ["a"], "state": "valid" },
+      { "uid": "u-tie-2", "title": "tie", "tags": ["a"], "state": "valid" },
+      { "uid": "u-tie-1", "title": "tie", "tags": ["a"], "state": "valid" },
+      { "uid": "current", "title": "Current", "tags": ["a", "b"], "state": "valid" },
+      { "uid": "broken", "title": "broken", "tags": [], "state": "invalid" },
+      { "uid": "u-case", "title": "case", "tags": ["A"], "state": "valid" }
+    ],
+    "cases": [
+      { "name": "one tag, the current dashboard is out, an invalid item is out, the tag is exact", "tags": ["a"], "uids": ["u-10", "u-9", "u-ab-sp", "u-ab-par", "u-ab-dash", "u-ab-dot", "u-ab-und", "u-ab", "u-beta", "u-ea", "u-tie-1", "u-tie-2", "u-eacute"] },
+      { "name": "two tags are an AND", "tags": ["a", "b"], "uids": ["u-ab", "u-beta", "u-ea"] },
+      { "name": "the order of the tags does not matter", "tags": ["b", "a"], "uids": ["u-ab", "u-beta", "u-ea"] },
+      { "name": "no tag selects all the valid dashboards except the current one", "tags": [], "uids": ["u-10", "u-9", "u-ab-sp", "u-ab-par", "u-ab-dash", "u-ab-dot", "u-ab-und", "u-ab", "u-beta", "u-case", "u-ea", "u-tie-1", "u-tie-2", "u-zz", "u-eacute"] },
+      { "name": "a tag that no item has", "tags": ["nope"], "uids": [] },
+      { "name": "the comparison is exact", "tags": ["A"], "uids": ["u-case"] }
+    ]
+  }
+}

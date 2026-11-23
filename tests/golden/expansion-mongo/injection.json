@@ -1,0 +1,6003 @@
+{
+ "description": "The injection vectors of 7.35: a value stays in its leaf, and a placeholder in a key or a name place is an error.",
+ "cases": [
+  {
+   "id": "spec-field-path",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$secret"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "spec-regex",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^a\\\\.b\"}}]}"
+  },
+  {
+   "id": "spec-number",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${tn:number}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "tn": {
+     "all": false,
+     "values": [
+      "12abc"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "variable": "tn",
+    "reason": "The value is not a number."
+   }
+  },
+  {
+   "id": "whole-dollar-0",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-json-item-dollar-0",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "ok",
+      "$"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "q"
+   }
+  },
+  {
+   "id": "embedded-dollar-0",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p-${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p-$\"}}]}"
+  },
+  {
+   "id": "in-array-dollar-0",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": [\"$t\", \"z\"]}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-dollar-1",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$$ROOT"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-json-item-dollar-1",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "ok",
+      "$$ROOT"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "q"
+   }
+  },
+  {
+   "id": "embedded-dollar-1",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p-${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$$ROOT"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p-$$ROOT\"}}]}"
+  },
+  {
+   "id": "in-array-dollar-1",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": [\"$t\", \"z\"]}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$$ROOT"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-dollar-2",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$secret"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-json-item-dollar-2",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "ok",
+      "$secret"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "q"
+   }
+  },
+  {
+   "id": "embedded-dollar-2",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p-${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$secret"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p-$secret\"}}]}"
+  },
+  {
+   "id": "in-array-dollar-2",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": [\"$t\", \"z\"]}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$secret"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-dollar-3",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$a.b"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-json-item-dollar-3",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "ok",
+      "$a.b"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "q"
+   }
+  },
+  {
+   "id": "embedded-dollar-3",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p-${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p-$a.b\"}}]}"
+  },
+  {
+   "id": "in-array-dollar-3",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": [\"$t\", \"z\"]}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$a.b"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-dollar-4",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$__timeFrom"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-json-item-dollar-4",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "ok",
+      "$__timeFrom"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "q"
+   }
+  },
+  {
+   "id": "embedded-dollar-4",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p-${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$__timeFrom"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p-$__timeFrom\"}}]}"
+  },
+  {
+   "id": "in-array-dollar-4",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": [\"$t\", \"z\"]}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$__timeFrom"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-dollar-5",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "${t}"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-json-item-dollar-5",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "ok",
+      "${t}"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "q"
+   }
+  },
+  {
+   "id": "embedded-dollar-5",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p-${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "${t}"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p-${t}\"}}]}"
+  },
+  {
+   "id": "in-array-dollar-5",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": [\"$t\", \"z\"]}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "${t}"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-dollar-6",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$t"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "whole-json-item-dollar-6",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "ok",
+      "$t"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "q"
+   }
+  },
+  {
+   "id": "embedded-dollar-6",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"p-${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$t"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"p-$t\"}}]}"
+  },
+  {
+   "id": "in-array-dollar-6",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": [\"$t\", \"z\"]}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$t"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "reason": "The value changes the structure of the query.",
+    "variable": "t"
+   }
+  },
+  {
+   "id": "stays-text-0",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "{\"$out\": \"x\"}"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"{\\\"$out\\\": \\\"x\\\"}\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-0",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "{\"$out\": \"x\"}"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\\\\{\\\"\\\\$out\\\": \\\"x\\\"\\\\}$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-0",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "{\"$out\": \"x\"}"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"{\\\"$out\\\": \\\"x\\\"}\"]}}]}"
+  },
+  {
+   "id": "stays-text-1",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "[{\"$where\": \"1\"}]"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"[{\\\"$where\\\": \\\"1\\\"}]\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-1",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "[{\"$where\": \"1\"}]"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\\\\[\\\\{\\\"\\\\$where\\\": \\\"1\\\"\\\\}\\\\]$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-1",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "[{\"$where\": \"1\"}]"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"[{\\\"$where\\\": \\\"1\\\"}]\"]}}]}"
+  },
+  {
+   "id": "stays-text-2",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\""
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"\\\"\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-2",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\""
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\\\"$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-2",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "\""
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"\\\"\"]}}]}"
+  },
+  {
+   "id": "stays-text-3",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "'"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"'\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-3",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "'"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^'$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-3",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "'"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"'\"]}}]}"
+  },
+  {
+   "id": "stays-text-4",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\\"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"\\\\\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-4",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\\"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\\\\\\\\$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-4",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "\\"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"\\\\\"]}}]}"
+  },
+  {
+   "id": "stays-text-5",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "{"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"{\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-5",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "{"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\\\\{$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-5",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "{"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"{\"]}}]}"
+  },
+  {
+   "id": "stays-text-6",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "}"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"}\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-6",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "}"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\\\\}$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-6",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "}"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"}\"]}}]}"
+  },
+  {
+   "id": "stays-text-7",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\u2028"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"\u2028\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-7",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\u2028"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\u2028$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-7",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "\u2028"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"\u2028\"]}}]}"
+  },
+  {
+   "id": "stays-text-8",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\ud83d\ude00"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"\ud83d\ude00\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-8",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "\ud83d\ude00"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\ud83d\ude00$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-8",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "\ud83d\ude00"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"\ud83d\ude00\"]}}]}"
+  },
+  {
+   "id": "stays-text-9",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a$b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"a$b\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-9",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a$b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^a\\\\$b$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-9",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a$b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"a$b\"]}}]}"
+  },
+  {
+   "id": "stays-text-10",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      " $"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\" $\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-10",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      " $"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^ \\\\$$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-10",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      " $"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\" $\"]}}]}"
+  },
+  {
+   "id": "stays-text-11",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "."
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\".\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-11",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "."
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^\\\\.$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-11",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "."
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\".\"]}}]}"
+  },
+  {
+   "id": "stays-text-12",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"a.b\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-12",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^a\\\\.b$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-12",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "a.b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"a.b\"]}}]}"
+  },
+  {
+   "id": "stays-text-13",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}}]}"
+  },
+  {
+   "id": "stays-text-embedded-13",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"^${t:regex}$\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"^xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx$\"}}]}"
+  },
+  {
+   "id": "stays-text-in-list-13",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${q:json}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "q": {
+     "all": false,
+     "values": [
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":[\"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"]}}]}"
+  },
+  {
+   "id": "value-with-nul",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "a\u0000b"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "variable": "t",
+    "reason": "A value has no control character."
+   }
+  },
+  {
+   "id": "value-too-long",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+     ]
+    }
+   },
+   "error": {
+    "code": "variable_value_refused",
+    "variable": "t",
+    "reason": "A value has 1024 bytes at most."
+   }
+  },
+  {
+   "id": "author-value-may-start-with-dollar",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$c\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "c": {
+     "all": false,
+     "values": [
+      "$dev"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"$dev\"}}]}"
+  },
+  {
+   "id": "macro-name-in-a-value-stays-text",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"a${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "$__timeFrom"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"a$__timeFrom\"}}]}"
+  },
+  {
+   "id": "unknown-variable-is-text",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$cpu\"}}]}"
+   ],
+   "variables": [],
+   "values": {},
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"$cpu\"}}]}"
+  },
+  {
+   "id": "placeholder-completes-a-path",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$a_${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "b"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "placeholder-starts-the-string",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"${t}_a\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "b"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "path-of-a-variable-name",
+   "tags": [
+    "injection"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"x\": \"$$CURRENT.t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    },
+    {
+     "name": "tn",
+     "kind": "text",
+     "value_type": "number"
+    },
+    {
+     "name": "q",
+     "kind": "query",
+     "multi": true,
+     "include_all": true
+    },
+    {
+     "name": "o",
+     "kind": "query"
+    },
+    {
+     "name": "v",
+     "kind": "query",
+     "multi": true,
+     "include_all": true,
+     "all_value": ".*"
+    },
+    {
+     "name": "c",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "$dev",
+      "a.b"
+     ]
+    },
+    {
+     "name": "cm",
+     "kind": "custom",
+     "options": [
+      "prod",
+      "dev"
+     ],
+     "multi": true,
+     "include_all": true
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "b"
+     ]
+    }
+   },
+   "expected": "{\"collection\":\"node_load\",\"aggregate\":[{\"$match\":{\"x\":\"$$CURRENT.t\"}}]}"
+  },
+  {
+   "id": "name-place-key-match",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"${t}\": 1}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-key-match-dollar-name",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"$t\": 1}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-key-operator",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$match\": {\"a\": {\"${t}\": 1}}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-key-addfields",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"${t}\": 1}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-key-stage",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"${t}\": {}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-key-sort",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$sort\": {\"${t}\": 1}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-collection",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"${t}\", \"find\": {}}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-database",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"database\": \"$t\", \"find\": {}}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-lookup-from",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$lookup\": {\"from\": \"${t}\", \"localField\": \"a\", \"foreignField\": \"b\", \"as\": \"c\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-lookup-as",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$lookup\": {\"from\": \"hosts\", \"localField\": \"a\", \"foreignField\": \"b\", \"as\": \"${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-lookup-localField",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$lookup\": {\"from\": \"hosts\", \"localField\": \"$t\", \"foreignField\": \"b\", \"as\": \"c\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-unionwith",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$unionWith\": \"${t}\"}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-unionwith-coll",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$unionWith\": {\"coll\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-unwind-path",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$unwind\": \"$t\"}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-unwind-object-path",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$unwind\": {\"path\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-unwind-index",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$unwind\": {\"path\": \"$a\", \"includeArrayIndex\": \"${t}\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-count",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$count\": \"${t}\"}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-unset",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$unset\": [\"a\", \"${t}\"]}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-newRoot",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$replaceRoot\": {\"newRoot\": \"$t\"}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-getField",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$getField\": \"${t}\"}}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-getField-object",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$getField\": {\"field\": \"${t}\", \"input\": \"$$ROOT\"}}}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-setField",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$setField\": {\"field\": \"${t}\", \"input\": \"$$ROOT\", \"value\": 1}}}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-unsetField",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$unsetField\": {\"field\": \"${t}\", \"input\": \"$$ROOT\"}}}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-map-as",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$addFields\": {\"x\": {\"$map\": {\"input\": \"$a\", \"as\": \"${t}\", \"in\": 1}}}}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  },
+  {
+   "id": "name-place-macro-in-name-place",
+   "tags": [
+    "injection",
+    "pm3"
+   ],
+   "lines": [
+    "{\"collection\": \"node_load\", \"aggregate\": [{\"$unwind\": \"$__timeFrom\"}]}"
+   ],
+   "variables": [
+    {
+     "name": "t",
+     "kind": "text"
+    }
+   ],
+   "values": {
+    "t": {
+     "all": false,
+     "values": [
+      "x"
+     ]
+    }
+   },
+   "error": {
+    "code": "sql_invalid"
+   }
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "macro-toTime_ms-range-fractions",
+  "tags": [
+    "macro:$__toTime_ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__toTime_ms AS t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200123,
+  "to_ms": 1794232800987,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT fromUnixTimestamp64Milli(1794232800987) AS t",
+  "sent_sql": "SELECT $__toTime_ms AS t"
+}

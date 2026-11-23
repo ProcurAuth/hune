@@ -1,0 +1,18 @@
+# Written by hune import-grafana. Include in the http context.
+map $hune_grafana_uid $hune_new_uid {
+    default "";
+    "Mixed_Case_Uid" "mixed-case-uid";
+    "Prod_Main" "g-301f976e365b83e3";
+    "monitor" "monitor";
+    "monitor-v2a" "monitor-v2a";
+    "monitor-v2b" "monitor-v2b";
+    "monitor-wrapped" "monitor-wrapped";
+    "plain-raw" "plain-raw";
+    "prod-main" "prod-main";
+}
+map $hune_grafana_short $hune_short_target {
+    default "";
+    "Lm0pqRs" "/dashboards/";
+    "Qw9-erT" "/dashboards/d/mixed-case-uid";
+    "xYz12AB" "/dashboards/d/monitor/node-monitor?orgId=1&from=now-7d&to=now&var-node=%24__all";
+}

@@ -1,0 +1,1 @@
+SELECT $__timeFrom( 1 ) FROM t

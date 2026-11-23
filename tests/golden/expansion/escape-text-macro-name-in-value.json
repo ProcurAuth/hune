@@ -1,0 +1,41 @@
+{
+  "id": "escape-text-macro-name-in-value",
+  "tags": [
+    "escape:macro-in-value",
+    "edge:reread"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE s = '$t'",
+  "variables": [
+    {
+      "name": "t",
+      "kind": "text",
+      "value_type": "text"
+    }
+  ],
+  "values": {
+    "t": {
+      "all": false,
+      "values": [
+        "$__fromTime"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE s = 'toDateTime(1794211200)'",
+  "sent_sql": "SELECT 1 WHERE s = '$__fromTime'",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana expands the macro name inside a variable value in its second step. Hune never reads an inserted value again.",
+    "section": "7.11",
+    "hune": {
+      "sql": "SELECT 1 WHERE s = '$__fromTime'"
+    }
+  }
+}

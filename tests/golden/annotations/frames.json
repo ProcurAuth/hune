@@ -1,0 +1,1762 @@
+{
+ "cases": [
+  {
+   "name": "point",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.123"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800123,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "role_case_is_folded",
+   "columns": [
+    {
+     "name": "TIME",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "Title",
+     "type": "String"
+    },
+    {
+     "name": "TEXT",
+     "type": "String"
+    },
+    {
+     "name": "TAGS",
+     "type": "String"
+    },
+    {
+     "name": "TimeEnd",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "t",
+     "x",
+     "a,b",
+     "1794211860.000"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     1794211860000,
+     "t",
+     "x",
+     [
+      "a",
+      "b"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "timeEnd_is_a_region",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "1794211810.500"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     1794211810500,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_end_has_no_role",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "time_end",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "1794211810.000"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "end_has_no_role",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "end",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "1794211810.000"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "other_columns_are_ignored",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "color",
+     "type": "String"
+    },
+    {
+     "name": "id",
+     "type": "UInt64"
+    },
+    {
+     "name": "value",
+     "type": "Float64"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "red",
+     "7",
+     1.5
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "duplicate_time",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "TIME",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "1794211800.000"
+    ]
+   ],
+   "error": {
+    "reason": "duplicate_column",
+    "row": null
+   }
+  },
+  {
+   "name": "duplicate_title",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    },
+    {
+     "name": "Title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "a",
+     "b"
+    ]
+   ],
+   "error": {
+    "reason": "duplicate_column",
+    "row": null
+   }
+  },
+  {
+   "name": "duplicate_tags",
+   "columns": [
+    {
+     "name": "tags",
+     "type": "String"
+    },
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "TAGS",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "a",
+     "1794211800.000",
+     "b"
+    ]
+   ],
+   "error": {
+    "reason": "duplicate_column",
+    "row": null
+   }
+  },
+  {
+   "name": "no_time_column",
+   "columns": [
+    {
+     "name": "text",
+     "type": "String"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "a",
+     "b"
+    ]
+   ],
+   "error": {
+    "reason": "no_time",
+    "row": null
+   }
+  },
+  {
+   "name": "first_time_kind_column_is_the_time",
+   "columns": [
+    {
+     "name": "name",
+     "type": "String"
+    },
+    {
+     "name": "ts",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "text",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "n",
+     "1794211800.000",
+     "x"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "x",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "the_first_of_two_time_kind_columns",
+   "columns": [
+    {
+     "name": "later",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "ts",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211809.000",
+     "1794211800.000"
+    ]
+   ],
+   "marks": [
+    [
+     1794211809000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_column_of_kind_text",
+   "columns": [
+    {
+     "name": "time",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "2026-11-13"
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": null
+   }
+  },
+  {
+   "name": "time_in_milliseconds_float",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Float64"
+    }
+   ],
+   "rows": [
+    [
+     1794211800123
+    ]
+   ],
+   "marks": [
+    [
+     1794211800123,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_in_milliseconds_uint64",
+   "columns": [
+    {
+     "name": "time",
+     "type": "UInt64"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800123"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800123,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_negative",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Int64"
+    }
+   ],
+   "rows": [
+    [
+     "-1"
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 1
+   }
+  },
+  {
+   "name": "time_at_lower_bound",
+   "columns": [
+    {
+     "name": "time",
+     "type": "UInt64"
+    }
+   ],
+   "rows": [
+    [
+     "0"
+    ]
+   ],
+   "marks": [
+    [
+     0,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_at_upper_bound_ms",
+   "columns": [
+    {
+     "name": "time",
+     "type": "UInt64"
+    }
+   ],
+   "rows": [
+    [
+     "4294967295999"
+    ]
+   ],
+   "marks": [
+    [
+     4294967295999,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_above_upper_bound_ms",
+   "columns": [
+    {
+     "name": "time",
+     "type": "UInt64"
+    }
+   ],
+   "rows": [
+    [
+     "4294967296000"
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 1
+   }
+  },
+  {
+   "name": "time_at_upper_bound_seconds",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "4294967295.999"
+    ]
+   ],
+   "marks": [
+    [
+     4294967295999,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_above_upper_bound_seconds",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "4294967296.000"
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 1
+   }
+  },
+  {
+   "name": "time_with_a_fraction_in_milliseconds",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Float64"
+    }
+   ],
+   "rows": [
+    [
+     1500.5
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 1
+   }
+  },
+  {
+   "name": "time_whole_float",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Float64"
+    }
+   ],
+   "rows": [
+    [
+     1500
+    ]
+   ],
+   "marks": [
+    [
+     1500,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_null_in_row_2",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Nullable(DateTime)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800"
+    ],
+    [
+     null
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 2
+   }
+  },
+  {
+   "name": "time_of_kind_date",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Date"
+    }
+   ],
+   "rows": [
+    [
+     "2026-11-13"
+    ]
+   ],
+   "marks": [
+    [
+     1794528000000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_digits_below_the_millisecond_are_cut",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(9)"
+    }
+   ],
+   "rows": [
+    [
+     "1.123456789"
+    ]
+   ],
+   "marks": [
+    [
+     1123,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_decimal_with_zero_fraction",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Decimal(18, 3)"
+    }
+   ],
+   "rows": [
+    [
+     "1500.000"
+    ]
+   ],
+   "marks": [
+    [
+     1500,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "time_decimal_with_a_fraction",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Decimal(18, 3)"
+    }
+   ],
+   "rows": [
+    [
+     "1500.250"
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 1
+   }
+  },
+  {
+   "name": "time_column_of_kind_null",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Nullable(Nothing)"
+    }
+   ],
+   "rows": [
+    [
+     null
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 1
+   }
+  },
+  {
+   "name": "order_by_time_then_row",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211805.000",
+     "c"
+    ],
+    [
+     "1794211800.000",
+     "a"
+    ],
+    [
+     "1794211805.000",
+     "d"
+    ],
+    [
+     "1794211800.000",
+     "b"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "a",
+     "",
+     []
+    ],
+    [
+     1794211800000,
+     null,
+     "b",
+     "",
+     []
+    ],
+    [
+     1794211805000,
+     null,
+     "c",
+     "",
+     []
+    ],
+    [
+     1794211805000,
+     null,
+     "d",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "end_null_is_a_point",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "Nullable(DateTime)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     null
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "end_zero_is_a_point",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "UInt64"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "0"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "end_equal_is_a_point",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.250",
+     "1794211800.250"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800250,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "end_below_the_time",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "DateTime64(3)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "1794211800.000"
+    ],
+    [
+     "1794211800.000",
+     "1794211799.000"
+    ]
+   ],
+   "error": {
+    "reason": "bad_end",
+    "row": 2
+   }
+  },
+  {
+   "name": "end_of_kind_text",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "x"
+    ]
+   ],
+   "error": {
+    "reason": "bad_end",
+    "row": null
+   }
+  },
+  {
+   "name": "end_negative",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "Int64"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "-5"
+    ]
+   ],
+   "error": {
+    "reason": "bad_end",
+    "row": 1
+   }
+  },
+  {
+   "name": "end_above_the_bound",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "UInt64"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "4294967296000"
+    ]
+   ],
+   "error": {
+    "reason": "bad_end",
+    "row": 1
+   }
+  },
+  {
+   "name": "end_null_in_some_rows",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "Nullable(DateTime)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "1794211860"
+    ],
+    [
+     "1794211809.000",
+     null
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     1794211860000,
+     "",
+     "",
+     []
+    ],
+    [
+     1794211809000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "end_column_of_kind_null",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "timeEnd",
+     "type": "Nullable(Nothing)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     null
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "end_in_milliseconds",
+   "columns": [
+    {
+     "name": "time",
+     "type": "UInt64"
+    },
+    {
+     "name": "timeEnd",
+     "type": "UInt64"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800000",
+     "1794211860000"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     1794211860000,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "title_and_text_null_are_empty",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "Nullable(String)"
+    },
+    {
+     "name": "text",
+     "type": "Nullable(String)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     null,
+     null
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "title_of_kind_number",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "UInt32"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     5
+    ]
+   ],
+   "error": {
+    "reason": "bad_text",
+    "row": null
+   }
+  },
+  {
+   "name": "text_of_kind_bool",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "text",
+     "type": "Bool"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     true
+    ]
+   ],
+   "error": {
+    "reason": "bad_text",
+    "row": null
+   }
+  },
+  {
+   "name": "tags_of_kind_number",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "UInt8"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     1
+    ]
+   ],
+   "error": {
+    "reason": "bad_text",
+    "row": null
+   }
+  },
+  {
+   "name": "title_256_characters",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "title_257_characters",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "ttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+    ]
+   ],
+   "error": {
+    "reason": "too_long",
+    "row": 1
+   }
+  },
+  {
+   "name": "title_counts_characters_not_bytes",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "éééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "text_2048_bytes",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "text",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "text_2049_bytes",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "text",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    ]
+   ],
+   "error": {
+    "reason": "too_long",
+    "row": 1
+   }
+  },
+  {
+   "name": "text_counts_bytes_not_characters",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "text",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "ééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééééé"
+    ]
+   ],
+   "error": {
+    "reason": "too_long",
+    "row": 1
+   }
+  },
+  {
+   "name": "text_with_tab_and_line_end",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "text",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "a\tb\nc"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "a\tb\nc",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "tags_split_trim_drop_unique",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "a, b ,,a, "
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "a",
+      "b"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tags_json_array",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "Array(String)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     [
+      "x",
+      "y",
+      "x"
+     ]
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "x",
+      "y"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tags_json_array_with_blanks",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "Array(String)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     [
+      " x ",
+      " ",
+      ""
+     ]
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "x"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tags_json_array_of_numbers_is_split_as_text",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "[1,2]"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "[1",
+      "2]"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tags_malformed_json_is_split_as_text",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "[\"a\","
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "[\"a\""
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tags_8",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "a,b,c,d,e,f,g,h"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tags_9",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "a,b,c,d,e,f,g,h,i"
+    ]
+   ],
+   "error": {
+    "reason": "too_long",
+    "row": 1
+   }
+  },
+  {
+   "name": "tags_8_unique_among_duplicates",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "a,b,c,d,e,f,g,h,a,b"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g",
+      "h"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tag_64_characters",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     [
+      "gggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
+     ]
+    ]
+   ]
+  },
+  {
+   "name": "tag_65_characters",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
+    ]
+   ],
+   "error": {
+    "reason": "too_long",
+    "row": 1
+   }
+  },
+  {
+   "name": "tags_null",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "Nullable(String)"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     null
+    ]
+   ],
+   "marks": [
+    [
+     1794211800000,
+     null,
+     "",
+     "",
+     []
+    ]
+   ]
+  },
+  {
+   "name": "the_first_fault_is_the_first_row",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "ok"
+    ],
+    [
+     "1794211800.000",
+     "<b>x</b>"
+    ],
+    [
+     "1794211800.000",
+     "tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+    ]
+   ],
+   "error": {
+    "reason": "bad_chars",
+    "row": 2
+   }
+  },
+  {
+   "name": "control_character_in_a_tag_after_the_trim_edge",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "tags",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     "1794211800.000",
+     "a,\u000b"
+    ]
+   ],
+   "error": {
+    "reason": "bad_chars",
+    "row": 1
+   }
+  },
+  {
+   "name": "no_row",
+   "columns": [
+    {
+     "name": "time",
+     "type": "DateTime64(3)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [],
+   "marks": []
+  },
+  {
+   "name": "a_fault_in_time_comes_before_a_fault_in_text",
+   "columns": [
+    {
+     "name": "time",
+     "type": "Nullable(DateTime)"
+    },
+    {
+     "name": "title",
+     "type": "String"
+    }
+   ],
+   "rows": [
+    [
+     null,
+     "<b>"
+    ]
+   ],
+   "error": {
+    "reason": "bad_time",
+    "row": 1
+   }
+  }
+ ]
+}

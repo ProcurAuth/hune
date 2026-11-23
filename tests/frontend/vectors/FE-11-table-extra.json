@@ -1,0 +1,67 @@
+{
+ "id": "FE-11",
+ "distinct": {
+  "text": [
+   [
+    "b",
+    "a",
+    "B",
+    "a",
+    "",
+    ""
+   ],
+   [
+    "",
+    "a",
+    "B",
+    "b"
+   ]
+  ],
+  "numbers": [
+   [
+    "10",
+    "9",
+    "2.5",
+    "-1",
+    "9"
+   ],
+   [
+    "-1",
+    "2.5",
+    "9",
+    "10"
+   ]
+  ]
+ },
+ "initial": {
+  "names": [
+   "weight",
+   "name",
+   "x"
+  ],
+  "sort": [
+   {
+    "field": "name",
+    "desc": true
+   },
+   {
+    "field": "gone",
+    "desc": false
+   },
+   {
+    "field": "weight",
+    "desc": false
+   }
+  ],
+  "expect": [
+   {
+    "index": 1,
+    "desc": true
+   },
+   {
+    "index": 0,
+    "desc": false
+   }
+  ]
+ }
+}

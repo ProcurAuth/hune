@@ -1,0 +1,60 @@
+{
+  "id": "var-with-macros-and-lists",
+  "tags": [
+    "var:query-multi",
+    "var:custom-single",
+    "macro:$__timeFilter",
+    "macro:$__timeInterval"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__timeInterval(timestamp) AS t, count() FROM analytics.events WHERE $__timeFilter(timestamp) AND event.name IN ($host) AND system.region = '$env' GROUP BY t",
+  "variables": [
+    {
+      "name": "host",
+      "kind": "query",
+      "options": [
+        "a1",
+        "b2",
+        "c3"
+      ],
+      "multi": true,
+      "include_all": false,
+      "all_value": null
+    },
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "prod",
+        "dev"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "host": {
+      "all": false,
+      "values": [
+        "a1",
+        "b2"
+      ]
+    },
+    "env": {
+      "all": false,
+      "values": [
+        "prod"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT toStartOfInterval(toDateTime(timestamp), INTERVAL 20 second) AS t, count() FROM analytics.events WHERE timestamp >= toDateTime(1794211200) AND timestamp <= toDateTime(1794232800) AND event.name IN ('a1','b2') AND system.region = 'prod' GROUP BY t",
+  "sent_sql": "SELECT $__timeInterval(timestamp) AS t, count() FROM analytics.events WHERE $__timeFilter(timestamp) AND event.name IN ('a1','b2') AND system.region = 'prod' GROUP BY t"
+}

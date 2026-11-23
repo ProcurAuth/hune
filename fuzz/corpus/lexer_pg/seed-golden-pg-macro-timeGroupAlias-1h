@@ -1,0 +1,1 @@
+SELECT $__timeGroupAlias(ts, '1h'), avg(v) FROM t GROUP BY 1

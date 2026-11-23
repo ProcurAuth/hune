@@ -1,0 +1,1 @@
+{"dashboard":{"uid":"a","title":"T","panels":[{"id":1,"type":"stat","title":"p","targets":[{"rawSql":"SELECT 1","datasource":{"uid":"ch-main"}}]}]},"meta":{"folderUid":"f"}}

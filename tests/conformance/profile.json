@@ -1,0 +1,165 @@
+{
+  "pep": {
+    "service": "hune-conf",
+    "token": {
+      "header": "X-Identity-Token",
+      "iss": "https://edge.example",
+      "max_age_seconds": 300,
+      "skew_seconds": 30,
+      "keys": [
+        {
+          "alg": "Ed25519",
+          "kid": "edge-ed25519",
+          "file": "test-edge-ed25519.pem"
+        },
+        {
+          "alg": "ES256",
+          "kid": "edge-es256",
+          "file": "test-edge-es256.pem"
+        }
+      ]
+    },
+    "pdp": {
+      "listen": "127.0.0.1:8181",
+      "credential_file": "pdp-credential.txt"
+    },
+    "answer_cache": false,
+    "options_type": "folder",
+    "operations": {
+      "use_plain": {
+        "method": "GET",
+        "path": "/api/dashboards/conf-dash?download=true",
+        "action": "dashboard.read",
+        "resource_type": "dashboard",
+        "resource_id": "conf-dash",
+        "ancestors": [
+          {
+            "type": "service",
+            "id": "hune-conf"
+          },
+          {
+            "type": "folder",
+            "id": "conf"
+          }
+        ]
+      },
+      "use_ceiling": {
+        "method": "POST",
+        "path": "/api/dashboards/conf-dash/panels/1/query",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "etag": "c8f63fa5fc031ee11b1bb05089805128c2baac9017d476476888a7e86ba18f5f",
+          "from_ms": 1794211200000,
+          "to_ms": 1794232800000,
+          "max_data_points": 100,
+          "variables": {}
+        },
+        "action": "dashboard.read",
+        "resource_type": "dashboard",
+        "resource_id": "conf-dash",
+        "ancestors": [
+          {
+            "type": "service",
+            "id": "hune-conf"
+          },
+          {
+            "type": "folder",
+            "id": "conf"
+          }
+        ],
+        "ceiling": "max_rows",
+        "ceiling_value": 1000
+      },
+      "use_multi": {
+        "method": "PUT",
+        "path": "/api/dashboards/conf-dash",
+        "headers": {
+          "Content-Type": "application/json",
+          "If-Match": "\"c8f63fa5fc031ee11b1bb05089805128c2baac9017d476476888a7e86ba18f5f\"",
+          "Idempotency-Key": "0194b3c6-6f1e-7d2a-9b4c-000000000001"
+        },
+        "body": {
+          "message": "conformance",
+          "document": {
+            "format_version": 3,
+            "uid": "conf-dash",
+            "title": "Conformance",
+            "description": "",
+            "tags": [],
+            "time": {
+              "from": "now-6h",
+              "to": "now",
+              "timezone": "utc",
+              "refresh": null
+            },
+            "cursor_sync": "off",
+            "links": [],
+            "variables": [],
+            "sections": [
+              {
+                "title": null,
+                "collapsed": false,
+                "panels": [
+                  {
+                    "id": 1,
+                    "type": "table",
+                    "title": "Rows",
+                    "description": "",
+                    "transparent": false,
+                    "grid": {
+                      "x": 0,
+                      "y": 0,
+                      "w": 24,
+                      "h": 10
+                    },
+                    "data": {
+                      "query": {
+                        "source": "conf",
+                        "format": "table",
+                        "sql": [
+                          "SELECT n FROM analytics.conf_rows ORDER BY n"
+                        ],
+                        "min_interval": null,
+                        "max_data_points": null
+                      }
+                    },
+                    "transforms": [],
+                    "fields": {
+                      "defaults": {},
+                      "overrides": []
+                    },
+                    "options": {
+                      "show_header": true,
+                      "sort": []
+                    },
+                    "links": []
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "action": "dashboard.write",
+        "resource_type": "dashboard",
+        "resource_id": "conf-dash",
+        "ancestors": [
+          {
+            "type": "service",
+            "id": "hune-conf"
+          },
+          {
+            "type": "folder",
+            "id": "conf"
+          }
+        ]
+      }
+    }
+  },
+  "timeouts": {
+    "request_seconds": 10,
+    "case_seconds": 60,
+    "settle_ms": 50
+  }
+}

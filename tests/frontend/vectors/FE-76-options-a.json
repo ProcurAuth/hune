@@ -1,0 +1,9470 @@
+{
+ "id": "FE-76",
+ "about": "The write rule and the rules of display of the forms of timeseries, barchart and xychart (10.3h, rules 4 and 8). A vector gives the options now, a row id and a value (or `remove`). It gives the options after the write (exact JSON, the order of 4.38) and the ids of the rows that show then, or an `error` text that the form shows under the control (nothing is written).",
+ "vectors": [
+  {
+   "name": "timeseries: tooltip multi shows the sort and the zeros",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "multi",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: tooltip hidden",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "hidden",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "hidden"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: the sort asc is written after the mode",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "row": "tooltip-sort",
+   "value": "asc",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "asc"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: the sort none leaves the panel",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "desc"
+    }
+   },
+   "row": "tooltip-sort",
+   "value": "none",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: hide zeros true",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "row": "tooltip-hide-zeros",
+   "value": true,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "hide_zeros": true
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: hide zeros false leaves the panel",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "hide_zeros": true
+    }
+   },
+   "row": "tooltip-hide-zeros",
+   "value": false,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: a hidden sort keeps its member when the mode goes back to single",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "asc"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "single",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single",
+     "sort": "asc"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend off hides the mode and the place",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-show",
+   "value": false,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": false,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend table shows the values and the sort",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-mode",
+   "value": "table",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend values",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean"
+   ],
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [
+      "max",
+      "mean"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend values at the limit of 5",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean",
+    "min",
+    "last",
+    "total"
+   ],
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [
+      "max",
+      "mean",
+      "min",
+      "last",
+      "total"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend values over the limit",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean",
+    "min",
+    "last",
+    "total",
+    "count"
+   ],
+   "error": "Choose 5 at most."
+  },
+  {
+   "name": "timeseries: legend values twice",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "max"
+   ],
+   "error": "Choose each item once."
+  },
+  {
+   "name": "timeseries: legend sort by name shows the descending switch",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "name",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend sort by a calculation",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "max",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "max"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend sort descending",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-desc",
+   "value": true,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend sort None removes sort_by and sort_desc",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "remove": true,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: legend placement right",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-placement",
+   "value": "right",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: a value that the row does not know",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-mode",
+   "value": "grid",
+   "error": "The value \"grid\" is not valid. Choose a value."
+  },
+  {
+   "name": "timeseries: display name",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "Total",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "Total"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: display name empty leaves the panel",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "panelFields": {
+    "defaults": {
+     "display_name": "Total"
+    },
+    "overrides": []
+   },
+   "row": "display-name",
+   "value": "",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {},
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: display name of 256 characters",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: display name of 257 characters",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "error": "needs 1 to 256 characters"
+  },
+  {
+   "name": "barchart: tooltip multi shows the sort and the zeros",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "multi",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: tooltip hidden",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "hidden",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "hidden"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: the sort asc is written after the mode",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "row": "tooltip-sort",
+   "value": "asc",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "asc"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: the sort none leaves the panel",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "desc"
+    }
+   },
+   "row": "tooltip-sort",
+   "value": "none",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: hide zeros true",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "row": "tooltip-hide-zeros",
+   "value": true,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "hide_zeros": true
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: hide zeros false leaves the panel",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "hide_zeros": true
+    }
+   },
+   "row": "tooltip-hide-zeros",
+   "value": false,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: a hidden sort keeps its member when the mode goes back to single",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "asc"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "single",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single",
+     "sort": "asc"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend off hides the mode and the place",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-show",
+   "value": false,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": false,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend table shows the values and the sort",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-mode",
+   "value": "table",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend values",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean"
+   ],
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [
+      "max",
+      "mean"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend values at the limit of 5",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean",
+    "min",
+    "last",
+    "total"
+   ],
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [
+      "max",
+      "mean",
+      "min",
+      "last",
+      "total"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend values over the limit",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean",
+    "min",
+    "last",
+    "total",
+    "count"
+   ],
+   "error": "Choose 5 at most."
+  },
+  {
+   "name": "barchart: legend values twice",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "max"
+   ],
+   "error": "Choose each item once."
+  },
+  {
+   "name": "barchart: legend sort by name shows the descending switch",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "name",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend sort by a calculation",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "max",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "max"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend sort descending",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-desc",
+   "value": true,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend sort None removes sort_by and sort_desc",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "remove": true,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: legend placement right",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-placement",
+   "value": "right",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: a value that the row does not know",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-mode",
+   "value": "grid",
+   "error": "The value \"grid\" is not valid. Choose a value."
+  },
+  {
+   "name": "barchart: display name",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "Total",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "Total"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: display name empty leaves the panel",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "panelFields": {
+    "defaults": {
+     "display_name": "Total"
+    },
+    "overrides": []
+   },
+   "row": "display-name",
+   "value": "",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {},
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: display name of 256 characters",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: display name of 257 characters",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "error": "needs 1 to 256 characters"
+  },
+  {
+   "name": "xychart: tooltip multi shows the sort and the zeros",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "multi",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: tooltip hidden",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "hidden",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "hidden"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: the sort asc is written after the mode",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "row": "tooltip-sort",
+   "value": "asc",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "asc"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: the sort none leaves the panel",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "desc"
+    }
+   },
+   "row": "tooltip-sort",
+   "value": "none",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: hide zeros true",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "row": "tooltip-hide-zeros",
+   "value": true,
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "hide_zeros": true
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: hide zeros false leaves the panel",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "hide_zeros": true
+    }
+   },
+   "row": "tooltip-hide-zeros",
+   "value": false,
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "tooltip-sort",
+    "tooltip-hide-zeros",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: a hidden sort keeps its member when the mode goes back to single",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "multi",
+     "sort": "asc"
+    }
+   },
+   "row": "tooltip-mode",
+   "value": "single",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single",
+     "sort": "asc"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend off hides the mode and the place",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-show",
+   "value": false,
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": false,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend table shows the values and the sort",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-mode",
+   "value": "table",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend values",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean"
+   ],
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [
+      "max",
+      "mean"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend values at the limit of 5",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean",
+    "min",
+    "last",
+    "total"
+   ],
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [
+      "max",
+      "mean",
+      "min",
+      "last",
+      "total"
+     ]
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend values over the limit",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "mean",
+    "min",
+    "last",
+    "total",
+    "count"
+   ],
+   "error": "Choose 5 at most."
+  },
+  {
+   "name": "xychart: legend values twice",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-values",
+   "value": [
+    "max",
+    "max"
+   ],
+   "error": "Choose each item once."
+  },
+  {
+   "name": "xychart: legend sort by name shows the descending switch",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "name",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend sort by a calculation",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "value": "max",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "max"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend sort descending",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name"
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-desc",
+   "value": true,
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "legend-sort-desc",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend sort None removes sort_by and sort_desc",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": [],
+     "sort_by": "name",
+     "sort_desc": true
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-sort-by",
+   "remove": true,
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "table",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "legend-values",
+    "legend-sort-by",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: legend placement right",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-placement",
+   "value": "right",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "right",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: a value that the row does not know",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "legend-mode",
+   "value": "grid",
+   "error": "The value \"grid\" is not valid. Choose a value."
+  },
+  {
+   "name": "xychart: display name",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "Total",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "Total"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: display name empty leaves the panel",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "panelFields": {
+    "defaults": {
+     "display_name": "Total"
+    },
+    "overrides": []
+   },
+   "row": "display-name",
+   "value": "",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {},
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: display name of 256 characters",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "display_name": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: display name of 257 characters",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "display-name",
+   "value": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+   "error": "needs 1 to 256 characters"
+  },
+  {
+   "name": "timeseries: draw bars hides the line rows",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "bars",
+   "after": {
+    "draw": "bars",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "bar-alignment",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: draw points hides the width and the fill",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "points",
+   "after": {
+    "draw": "points",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "gradient-mode",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: draw back to line",
+   "type": "timeseries",
+   "options": {
+    "draw": "bars",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "line",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: draw x is not valid",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "x",
+   "error": "The value \"x\" is not valid"
+  },
+  {
+   "name": "timeseries: interpolation smooth",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "interpolation",
+   "value": "smooth",
+   "after": {
+    "draw": "line",
+    "interpolation": "smooth",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: line width 0",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 0,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 0,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: line width 10",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 10,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 10,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: line width 11",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 11,
+   "error": "Use a whole number from 0 to 10."
+  },
+  {
+   "name": "timeseries: line width -1",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": -1,
+   "error": "Use a whole number from 0 to 10."
+  },
+  {
+   "name": "timeseries: line width 5.5",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 5.5,
+   "error": "Use a whole number from 0 to 10."
+  },
+  {
+   "name": "timeseries: fill opacity 100",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "fill-opacity",
+   "value": 100,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 100,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: fill opacity 101",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "fill-opacity",
+   "value": 101,
+   "error": "Use a whole number from 0 to 100."
+  },
+  {
+   "name": "timeseries: span nulls",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "span-nulls",
+   "value": true,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": true,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: show points never hides the point size",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "show-points",
+   "value": "never",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "never",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: show points always",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "show-points",
+   "value": "always",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "always",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: point size 1",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "point-size",
+   "value": 1,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 1,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: point size 40",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "point-size",
+   "value": 40,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 40,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: point size 0",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "point-size",
+   "value": 0,
+   "error": "Use a whole number from 1 to 40."
+  },
+  {
+   "name": "timeseries: point size 41",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "point-size",
+   "value": 41,
+   "error": "Use a whole number from 1 to 40."
+  },
+  {
+   "name": "timeseries: draw points shows the point size when show_points is never",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "never",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "points",
+   "after": {
+    "draw": "points",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "never",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "gradient-mode",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: stacking percent",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "stacking",
+   "value": "percent",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "percent",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: scale log",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "y-scale",
+   "value": "log",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "log",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "log-base",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: thresholds style is the last member",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "thresholds-style",
+   "value": "dashed_area",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "thresholds_style": "dashed_area"
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: thresholds style off leaves the panel",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "thresholds_style": "line"
+   },
+   "row": "thresholds-style",
+   "value": "off",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries: thresholds style as lines",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "thresholds-style",
+   "value": "line",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "thresholds_style": "line"
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: x field",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "x-field",
+   "value": "node",
+   "after": {
+    "orientation": "vertical",
+    "x_field": "node",
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: x field back to the first field",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": "node",
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "x-field",
+   "value": null,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: horizontal hides the rotation",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "orientation",
+   "value": "horizontal",
+   "after": {
+    "orientation": "horizontal",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: rotation -90",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "x-tick-rotation",
+   "value": -90,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": -90,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: rotation 90",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "x-tick-rotation",
+   "value": 90,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 90,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: rotation 91",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "x-tick-rotation",
+   "value": 91,
+   "error": "Use a whole number from -90 to 90."
+  },
+  {
+   "name": "barchart: rotation -91",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "x-tick-rotation",
+   "value": -91,
+   "error": "Use a whole number from -90 to 90."
+  },
+  {
+   "name": "barchart: show values always",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "show-values",
+   "value": "always",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "always",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: a stack hides the values and the group width",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "stacking",
+   "value": "normal",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "normal",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "stacking",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: a 100% stack hides the same rows",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "stacking",
+   "value": "percent",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "percent",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "stacking",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: group width 10",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "group-width",
+   "value": 10,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 10,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: group width 100",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "group-width",
+   "value": 100,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 100,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: group width 9",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "group-width",
+   "value": 9,
+   "error": "Use a whole number from 10 to 100."
+  },
+  {
+   "name": "barchart: group width 101",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "group-width",
+   "value": 101,
+   "error": "Use a whole number from 10 to 100."
+  },
+  {
+   "name": "barchart: bar width 10",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "bar-width",
+   "value": 10,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 10,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: bar width 100",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "bar-width",
+   "value": 100,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 100,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: bar width 9",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "bar-width",
+   "value": 9,
+   "error": "Use a whole number from 10 to 100."
+  },
+  {
+   "name": "barchart: thresholds style dashed",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "thresholds-style",
+   "value": "dashed",
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "thresholds_style": "dashed"
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: x field",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "x-field",
+   "value": "blocks",
+   "after": {
+    "x_field": "blocks",
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: y fields",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "y-fields",
+   "value": [
+    "y",
+    "z"
+   ],
+   "after": {
+    "x_field": null,
+    "y_fields": [
+     "y",
+     "z"
+    ],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: y fields back to none",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [
+     "y"
+    ],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "y-fields",
+   "value": [],
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: y fields over the limit of 32",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "y-fields",
+   "value": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f8",
+    "f9",
+    "f10",
+    "f11",
+    "f12",
+    "f13",
+    "f14",
+    "f15",
+    "f16",
+    "f17",
+    "f18",
+    "f19",
+    "f20",
+    "f21",
+    "f22",
+    "f23",
+    "f24",
+    "f25",
+    "f26",
+    "f27",
+    "f28",
+    "f29",
+    "f30",
+    "f31",
+    "f32"
+   ],
+   "error": "Choose 32 at most."
+  },
+  {
+   "name": "xychart: y fields at the limit of 32",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "y-fields",
+   "value": [
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f8",
+    "f9",
+    "f10",
+    "f11",
+    "f12",
+    "f13",
+    "f14",
+    "f15",
+    "f16",
+    "f17",
+    "f18",
+    "f19",
+    "f20",
+    "f21",
+    "f22",
+    "f23",
+    "f24",
+    "f25",
+    "f26",
+    "f27",
+    "f28",
+    "f29",
+    "f30",
+    "f31"
+   ],
+   "after": {
+    "x_field": null,
+    "y_fields": [
+     "f0",
+     "f1",
+     "f2",
+     "f3",
+     "f4",
+     "f5",
+     "f6",
+     "f7",
+     "f8",
+     "f9",
+     "f10",
+     "f11",
+     "f12",
+     "f13",
+     "f14",
+     "f15",
+     "f16",
+     "f17",
+     "f18",
+     "f19",
+     "f20",
+     "f21",
+     "f22",
+     "f23",
+     "f24",
+     "f25",
+     "f26",
+     "f27",
+     "f28",
+     "f29",
+     "f30",
+     "f31"
+    ],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: draw lines hides the point size",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "lines",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "lines",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "line-width",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: draw both shows both",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "points_and_lines",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points_and_lines",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "line-width",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: draw points hides the line width",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "draw",
+   "value": "points",
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: point size 1",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "point-size",
+   "value": 1,
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 1,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "point-size",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: point size 41",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "points",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "point-size",
+   "value": 41,
+   "error": "Use a whole number from 1 to 40."
+  },
+  {
+   "name": "xychart: line width 0",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "lines",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 0,
+   "after": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "lines",
+    "point_size": 5,
+    "line_width": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "y-fields",
+    "draw",
+    "line-width",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "display-name"
+   ]
+  },
+  {
+   "name": "xychart: line width 11",
+   "type": "xychart",
+   "options": {
+    "x_field": null,
+    "y_fields": [],
+    "draw": "lines",
+    "point_size": 5,
+    "line_width": 1,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 11,
+   "error": "Use a whole number from 0 to 10."
+  },
+  {
+   "name": "barchart: line width 4 is written after the tooltip (4.30 order)",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 4,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "line_width": 4
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: line width 1 removes the member (P03 default)",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "line_width": 3
+   },
+   "row": "line-width",
+   "value": 1,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: line width 0 is written",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 0,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "line_width": 0
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: line width 11 is an error",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "line-width",
+   "value": 11,
+   "error": "Use a whole number from 0 to 10."
+  },
+  {
+   "name": "barchart: fill opacity 61 is written last",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "thresholds_style": "line",
+    "line_width": 2
+   },
+   "row": "fill-opacity",
+   "value": 61,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "thresholds_style": "line",
+    "fill_opacity": 61,
+    "line_width": 2
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: fill opacity 80 removes the member (P03 default)",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "fill_opacity": 10
+   },
+   "row": "fill-opacity",
+   "value": 80,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: fill opacity 101 is an error",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "fill-opacity",
+   "value": 101,
+   "error": "Use a whole number from 0 to 100."
+  },
+  {
+   "name": "barchart: grid lines off writes axis_grid false",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-grid",
+   "value": false,
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_grid": false
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: grid lines on removes axis_grid",
+   "type": "barchart",
+   "options": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-grid",
+   "value": true,
+   "panelFields": {
+    "defaults": {
+     "unit": "short",
+     "axis_grid": false
+    },
+    "overrides": []
+   },
+   "after": {
+    "orientation": "vertical",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "unit": "short"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart: orientation auto shows the rotation",
+   "type": "barchart",
+   "options": {
+    "orientation": "horizontal",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "orientation",
+   "value": "auto",
+   "after": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P10: gradient mode hue writes the optional member",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "gradient-mode",
+   "value": "hue",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "gradient_mode": "hue"
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P10: gradient mode none removes the member",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "gradient_mode": "scheme"
+   },
+   "row": "gradient-mode",
+   "value": "none",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: log base 2 shows with a log scale",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "log",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "log-base",
+   "value": 2,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "log",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "log_base": 2
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "log-base",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: log base 10 removes the member",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "log",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "log_base": 2
+   },
+   "row": "log-base",
+   "value": 10,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "log",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "log-base",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: bar alignment after with bars",
+   "type": "timeseries",
+   "options": {
+    "draw": "bars",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "bar-alignment",
+   "value": "after",
+   "after": {
+    "draw": "bars",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "bar_alignment": "after"
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "bar-alignment",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: null threshold 150000 ms",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "span-nulls-ms",
+   "value": "150000",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "span_nulls_ms": 150000
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: an empty null threshold removes the member",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "span_nulls_ms": 150000
+   },
+   "row": "span-nulls-ms",
+   "value": "",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: a null threshold of 0 is out of range",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "span-nulls-ms",
+   "value": "0",
+   "error": "Use a number from 1 to"
+  },
+  {
+   "name": "timeseries P14: axis width 80",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-width",
+   "value": "80",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_width": 80
+    },
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: axis colour series",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-color",
+   "value": "series",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_color": "series"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: axis colour text removes the member",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-color",
+   "panelFields": {
+    "defaults": {
+     "axis_color": "series"
+    },
+    "overrides": []
+   },
+   "value": "text",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {},
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: axis border on",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-border",
+   "value": true,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_border": true
+    },
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: centred zero on a linear scale",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-centered-zero",
+   "value": true,
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_centered_zero": true
+    },
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: dash array 10, 20",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "dash-array",
+   "value": "10, 20",
+   "after": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "line_dash_array": [
+      10,
+      20
+     ]
+    },
+    "overrides": []
+   },
+   "shown": [
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-placement",
+    "axis-label",
+    "axis-width",
+    "axis-color",
+    "axis-border",
+    "y-scale",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "draw",
+    "interpolation",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "line-dash",
+    "dash-array",
+    "span-nulls",
+    "span-nulls-ms",
+    "show-points",
+    "point-size",
+    "stacking",
+    "transform",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "timeseries P14: a dash array of zeros is refused",
+   "type": "timeseries",
+   "options": {
+    "draw": "line",
+    "interpolation": "linear",
+    "line_width": 1,
+    "fill_opacity": 0,
+    "show_points": "auto",
+    "point_size": 5,
+    "span_nulls": false,
+    "stacking": "none",
+    "y_scale": "linear",
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "dash-array",
+   "value": "0, 0",
+   "error": "Use 1 to 8 whole numbers"
+  },
+  {
+   "name": "barchart P10: gradient mode hue writes the optional member",
+   "type": "barchart",
+   "options": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "gradient-mode",
+   "value": "hue",
+   "after": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    },
+    "gradient_mode": "hue"
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart P14: axis width 70",
+   "type": "barchart",
+   "options": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-width",
+   "value": "70",
+   "after": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_width": 70
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart P14: axis colour series",
+   "type": "barchart",
+   "options": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-color",
+   "value": "series",
+   "after": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_color": "series"
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart P14: axis border on",
+   "type": "barchart",
+   "options": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-border",
+   "value": true,
+   "after": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_border": true
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  },
+  {
+   "name": "barchart P14: centred zero",
+   "type": "barchart",
+   "options": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "row": "axis-centered-zero",
+   "value": true,
+   "after": {
+    "orientation": "auto",
+    "x_field": null,
+    "stacking": "none",
+    "show_values": "auto",
+    "bar_width": 97,
+    "group_width": 70,
+    "x_tick_rotation": 0,
+    "legend": {
+     "show": true,
+     "placement": "bottom",
+     "mode": "list",
+     "values": []
+    },
+    "tooltip": {
+     "mode": "single"
+    }
+   },
+   "afterFields": {
+    "defaults": {
+     "axis_centered_zero": true
+    },
+    "overrides": []
+   },
+   "shown": [
+    "x-field",
+    "orientation",
+    "x-tick-rotation",
+    "show-values",
+    "stacking",
+    "group-width",
+    "bar-width",
+    "line-width",
+    "fill-opacity",
+    "gradient-mode",
+    "tooltip-mode",
+    "legend-show",
+    "legend-mode",
+    "legend-placement",
+    "axis-label",
+    "axis-width",
+    "axis-grid",
+    "axis-color",
+    "axis-border",
+    "axis-centered-zero",
+    "axis-soft-min",
+    "axis-soft-max",
+    "thresholds-style",
+    "display-name"
+   ]
+  }
+ ]
+}

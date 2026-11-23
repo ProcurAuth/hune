@@ -1,0 +1,33 @@
+{
+  "server": "hune-test",
+  "resource_types": [
+    { "name": "folder", "parent": "service",
+      "description": "One folder of dashboards, by its id." },
+    { "name": "dashboard", "parent": "folder",
+      "description": "One dashboard, by its uid." },
+    { "name": "source", "parent": "service",
+      "description": "One data source of the configuration, by the id of its block." }
+  ],
+  "actions": [
+    { "name": "dashboard.read", "resource_types": ["service", "folder", "dashboard"],
+      "description": "List and open dashboards, run their saved queries and the queries of their variables, and read their history.",
+      "limits": ["max_rows", "max_duration"] },
+    { "name": "dashboard.write", "resource_types": ["service", "folder", "dashboard"],
+      "description": "Create, change, move, restore and delete dashboards. Create, rename and delete folders." },
+    { "name": "source.query", "resource_types": ["service", "source"],
+      "description": "Run SQL that is not saved on this source, and save dashboards whose SQL uses this source.",
+      "limits": ["max_rows", "max_duration"] }
+  ],
+  "resources": [
+    { "path": "source:conf", "label": "Conformance" },
+    { "path": "source:prod", "label": "Production" }
+  ],
+  "limits": [
+    { "name": "max_rows", "label": "Most rows of one query",
+      "description": "The most rows that the result of one query can have.",
+      "unit": "row", "kind": "ceiling", "min": 1, "max": 100000 },
+    { "name": "max_duration", "label": "Longest query",
+      "description": "The longest run of one query, in seconds.",
+      "unit": "second", "kind": "ceiling", "min": 1, "max": 60 }
+  ]
+}

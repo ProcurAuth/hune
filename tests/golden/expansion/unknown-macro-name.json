@@ -1,0 +1,30 @@
+{
+  "id": "unknown-macro-name",
+  "tags": [
+    "macro:unknown"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT $__nothing AS n",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT $__nothing AS n",
+  "sent_sql": "SELECT $__nothing AS n",
+  "difference": {
+    "cause": "other",
+    "reason": "The plugin or Grafana knows this macro. Hune knows five macros, and it reads each other $__name in code as a document error.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  }
+}

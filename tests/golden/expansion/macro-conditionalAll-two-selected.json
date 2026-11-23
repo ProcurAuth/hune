@@ -1,0 +1,40 @@
+{
+  "id": "macro-conditionalAll-two-selected",
+  "tags": [
+    "macro:$__conditionalAll"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT 1 WHERE $__conditionalAll(env IN ($env), $env)",
+  "variables": [
+    {
+      "name": "env",
+      "kind": "custom",
+      "options": [
+        "prod",
+        "dev",
+        "test"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null
+    }
+  ],
+  "values": {
+    "env": {
+      "all": false,
+      "values": [
+        "prod",
+        "dev"
+      ]
+    }
+  },
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT 1 WHERE env IN ('prod','dev')",
+  "sent_sql": "SELECT 1 WHERE env IN ('prod','dev')"
+}

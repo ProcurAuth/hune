@@ -1,0 +1,87 @@
+{
+  "format_version": 3,
+  "uid": "text-panel",
+  "title": "Text panel",
+  "description": "",
+  "tags": [],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Table",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "prod",
+              "format": "table",
+              "sql": [
+                "SELECT 1"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_header": true,
+            "sort": []
+          },
+          "links": [
+            {
+              "title": "Docs",
+              "url": "https://example.org/${__url_time_range}",
+              "target_blank": true
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "type": "text",
+          "title": "Notes",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "# Title",
+              "",
+              "Text"
+            ],
+            "extra": true
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

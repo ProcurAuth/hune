@@ -1,0 +1,1909 @@
+[
+  {
+    "name": "quoted name, custom",
+    "sql": [
+      "SELECT `$c` FROM t"
+    ],
+    "variables": [
+      {
+        "name": "c",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "c": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "expected": "SELECT `col` FROM t"
+  },
+  {
+    "name": "quoted name with a backquote",
+    "sql": [
+      "SELECT `$c`"
+    ],
+    "variables": [
+      {
+        "name": "c",
+        "kind": "custom",
+        "options": [
+          "a`b"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "c": {
+        "all": false,
+        "values": [
+          "a`b"
+        ]
+      }
+    },
+    "expected": "SELECT `a\\`b`"
+  },
+  {
+    "name": "double-quoted name with a double quote",
+    "sql": [
+      "SELECT \"$c\""
+    ],
+    "variables": [
+      {
+        "name": "c",
+        "kind": "custom",
+        "options": [
+          "a\"b"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "c": {
+        "all": false,
+        "values": [
+          "a\"b"
+        ]
+      }
+    },
+    "expected": "SELECT \"a\\\"b\""
+  },
+  {
+    "name": "quoted name, text variable",
+    "sql": [
+      "SELECT `$n`"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name, query variable",
+    "sql": [
+      "SELECT `$q`"
+    ],
+    "variables": [
+      {
+        "name": "q",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "q": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name, list",
+    "sql": [
+      "SELECT `$m`"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "custom",
+        "options": [
+          "a"
+        ],
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": [
+          "a"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a variable",
+    "sql": [
+      "SELECT $$ $n $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with an unknown name",
+    "sql": [
+      "SELECT $tag$ $zz $tag$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT $tag$ $zz $tag$"
+  },
+  {
+    "name": "string with singlequote format",
+    "sql": [
+      "SELECT '${n:singlequote}'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a malformed brace",
+    "sql": [
+      "SELECT ${n"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "placeholder"
+    }
+  },
+  {
+    "name": "code with an unknown format",
+    "sql": [
+      "SELECT ${n:date}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "placeholder"
+    }
+  },
+  {
+    "name": "string with a malformed brace stays text",
+    "sql": [
+      "SELECT '${n', '$n'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT '${n', 'x'"
+  },
+  {
+    "name": "a lexer error in the stored text",
+    "sql": [
+      "SELECT 'abc"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "lexer"
+    }
+  },
+  {
+    "name": "a statement that fails on the final text",
+    "sql": [
+      "SELECT 1; SELECT 2"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "statement"
+    }
+  },
+  {
+    "name": "FORMAT clause",
+    "sql": [
+      "SELECT 1 FORMAT JSON"
+    ],
+    "variables": [],
+    "request": {},
+    "error": {
+      "code": "sql_invalid",
+      "kind": "statement"
+    }
+  },
+  {
+    "name": "size limit",
+    "sql": [
+      "SELECT 1"
+    ],
+    "variables": [],
+    "request": {},
+    "max_query_size": 7,
+    "error": {
+      "code": "sql_too_large"
+    }
+  },
+  {
+    "name": "size at the limit",
+    "sql": [
+      "SELECT 1"
+    ],
+    "variables": [],
+    "request": {},
+    "max_query_size": 8,
+    "expected": "SELECT 1"
+  },
+  {
+    "name": "value that joins a number",
+    "sql": [
+      "SELECT 1 FROM t WHERE x = 1.$n"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "5"
+        ]
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "n"
+    }
+  },
+  {
+    "name": "a hostile text in a string",
+    "sql": [
+      "SELECT 'a$n' AS x -- c"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "'; DROP TABLE x; --"
+        ]
+      }
+    },
+    "expected": "SELECT 'a\\'; DROP TABLE x; --' AS x -- c"
+  },
+  {
+    "name": "a text with comment openers in a string",
+    "sql": [
+      "SELECT '$n', 1"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "/* -- # $$"
+        ]
+      }
+    },
+    "expected": "SELECT '/* -- # $$', 1"
+  },
+  {
+    "name": "empty list between two minus signs",
+    "sql": [
+      "SELECT 0-${m:csv}- 1"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": []
+      }
+    },
+    "error": {
+      "code": "variable_value_refused",
+      "variable": "m"
+    }
+  },
+  {
+    "name": "empty list in a call",
+    "sql": [
+      "SELECT 1 WHERE x IN (${m:csv})"
+    ],
+    "variables": [
+      {
+        "name": "m",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "m": {
+        "all": false,
+        "values": []
+      }
+    },
+    "expected": "SELECT 1 WHERE x IN ()"
+  },
+  {
+    "name": "empty query selection before a backslash and the closing quote mark",
+    "sql": [
+      "SELECT 'a\\${q}' AND y = 'b'"
+    ],
+    "variables": [
+      {
+        "name": "q",
+        "kind": "query",
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "q": {
+        "all": false,
+        "values": []
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "lexer"
+    }
+  },
+  {
+    "name": "code with a literal-only format json",
+    "sql": [
+      "SELECT ${n:json}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format json, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:json})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format json",
+    "sql": [
+      "SELECT `${env:json}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format json",
+    "sql": [
+      "SELECT $$ ${n:json} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format pipe",
+    "sql": [
+      "SELECT ${n:pipe}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format pipe, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:pipe})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format pipe",
+    "sql": [
+      "SELECT `${env:pipe}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format pipe",
+    "sql": [
+      "SELECT $$ ${n:pipe} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format regex",
+    "sql": [
+      "SELECT ${n:regex}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format regex, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:regex})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format regex",
+    "sql": [
+      "SELECT `${env:regex}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format regex",
+    "sql": [
+      "SELECT $$ ${n:regex} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format glob",
+    "sql": [
+      "SELECT ${n:glob}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format glob, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:glob})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format glob",
+    "sql": [
+      "SELECT `${env:glob}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format glob",
+    "sql": [
+      "SELECT $$ ${n:glob} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format lucene",
+    "sql": [
+      "SELECT ${n:lucene}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format lucene, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:lucene})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format lucene",
+    "sql": [
+      "SELECT `${env:lucene}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format lucene",
+    "sql": [
+      "SELECT $$ ${n:lucene} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format percentencode",
+    "sql": [
+      "SELECT ${n:percentencode}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format percentencode, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:percentencode})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format percentencode",
+    "sql": [
+      "SELECT `${env:percentencode}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format percentencode",
+    "sql": [
+      "SELECT $$ ${n:percentencode} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format queryparam",
+    "sql": [
+      "SELECT ${n:queryparam}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format queryparam, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:queryparam})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format queryparam",
+    "sql": [
+      "SELECT `${env:queryparam}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format queryparam",
+    "sql": [
+      "SELECT $$ ${n:queryparam} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format distributed",
+    "sql": [
+      "SELECT ${n:distributed}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format distributed, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:distributed})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format distributed",
+    "sql": [
+      "SELECT `${env:distributed}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format distributed",
+    "sql": [
+      "SELECT $$ ${n:distributed} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format doublequote",
+    "sql": [
+      "SELECT ${n:doublequote}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format doublequote, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:doublequote})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format doublequote",
+    "sql": [
+      "SELECT `${env:doublequote}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format doublequote",
+    "sql": [
+      "SELECT $$ ${n:doublequote} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format html",
+    "sql": [
+      "SELECT ${n:html}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format html, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:html})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format html",
+    "sql": [
+      "SELECT `${env:html}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format html",
+    "sql": [
+      "SELECT $$ ${n:html} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format text",
+    "sql": [
+      "SELECT ${n:text}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "code with a literal-only format text, a list in a call",
+    "sql": [
+      "SELECT x IN (${env:text})"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "query",
+        "multi": true,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "a",
+          "b"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "quoted name with a literal-only format text",
+    "sql": [
+      "SELECT `${env:text}`"
+    ],
+    "variables": [
+      {
+        "name": "env",
+        "kind": "custom",
+        "options": [
+          "col"
+        ],
+        "multi": false,
+        "include_all": false,
+        "all_value": null
+      }
+    ],
+    "request": {
+      "env": {
+        "all": false,
+        "values": [
+          "col"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "heredoc with a literal-only format text",
+    "sql": [
+      "SELECT $$ ${n:text} $$"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "context"
+    }
+  },
+  {
+    "name": "unknown format in code with an undeclared name",
+    "sql": [
+      "SELECT ${zzz:date}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "placeholder"
+    }
+  },
+  {
+    "name": "code with the Grafana format date that Hune refuses",
+    "sql": [
+      "SELECT '${n:date}'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT '${n:date}'"
+  },
+  {
+    "name": "code with the Grafana format date that Hune refuses, in code",
+    "sql": [
+      "SELECT ${n:date}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "placeholder"
+    }
+  },
+  {
+    "name": "code with the Grafana format join that Hune refuses",
+    "sql": [
+      "SELECT '${n:join}'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT '${n:join}'"
+  },
+  {
+    "name": "code with the Grafana format join that Hune refuses, in code",
+    "sql": [
+      "SELECT ${n:join}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "placeholder"
+    }
+  },
+  {
+    "name": "code with the Grafana format uriencode that Hune refuses",
+    "sql": [
+      "SELECT '${n:uriencode}'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT '${n:uriencode}'"
+  },
+  {
+    "name": "code with the Grafana format uriencode that Hune refuses, in code",
+    "sql": [
+      "SELECT ${n:uriencode}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "placeholder"
+    }
+  },
+  {
+    "name": "code with the Grafana format customqueryparam that Hune refuses",
+    "sql": [
+      "SELECT '${n:customqueryparam}'"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "expected": "SELECT '${n:customqueryparam}'"
+  },
+  {
+    "name": "code with the Grafana format customqueryparam that Hune refuses, in code",
+    "sql": [
+      "SELECT ${n:customqueryparam}"
+    ],
+    "variables": [
+      {
+        "name": "n",
+        "kind": "text",
+        "value_type": "text"
+      }
+    ],
+    "request": {
+      "n": {
+        "all": false,
+        "values": [
+          "x"
+        ]
+      }
+    },
+    "error": {
+      "code": "sql_invalid",
+      "kind": "placeholder"
+    }
+  }
+]

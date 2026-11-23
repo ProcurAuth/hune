@@ -1,0 +1,1281 @@
+{
+ "panels": {
+  "one": {
+   "id": 1,
+   "type": "table",
+   "data": {
+    "query": {
+     "source": "prod",
+     "format": "table",
+     "sql": [
+      "SELECT 1"
+     ],
+     "min_interval": null,
+     "max_data_points": null
+    }
+   }
+  },
+  "three": {
+   "id": 2,
+   "type": "timeseries",
+   "data": {
+    "query": {
+     "source": "prod",
+     "format": "table",
+     "sql": [
+      "SELECT 1"
+     ],
+     "min_interval": null,
+     "max_data_points": null
+    },
+    "extra_queries": [
+     {
+      "ref": "B",
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 2"
+      ]
+     },
+     {
+      "ref": "C",
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 2"
+      ]
+     }
+    ]
+   }
+  },
+  "hiddenFirst": {
+   "id": 3,
+   "type": "timeseries",
+   "data": {
+    "query": {
+     "source": "prod",
+     "format": "table",
+     "sql": [
+      "SELECT 1"
+     ],
+     "min_interval": null,
+     "max_data_points": null,
+     "hide": true
+    },
+    "extra_queries": [
+     {
+      "ref": "B",
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 2"
+      ]
+     }
+    ]
+   }
+  },
+  "firstRef": {
+   "id": 4,
+   "type": "stat",
+   "data": {
+    "query": {
+     "source": "prod",
+     "format": "table",
+     "sql": [
+      "SELECT 1"
+     ],
+     "min_interval": null,
+     "max_data_points": null,
+     "ref": "Z"
+    },
+    "extra_queries": [
+     {
+      "ref": "A",
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 2"
+      ]
+     },
+     {
+      "ref": "M",
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 2"
+      ],
+      "hide": false
+     }
+    ]
+   }
+  },
+  "allHidden": {
+   "id": 5,
+   "type": "table",
+   "data": {
+    "query": {
+     "source": "prod",
+     "format": "table",
+     "sql": [
+      "SELECT 1"
+     ],
+     "min_interval": null,
+     "max_data_points": null,
+     "hide": true
+    },
+    "extra_queries": [
+     {
+      "ref": "B",
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 2"
+      ],
+      "hide": true
+     }
+    ]
+   }
+  },
+  "reuse": {
+   "id": 6,
+   "type": "table",
+   "data": {
+    "reuse": {
+     "panel": 1,
+     "with_transforms": true
+    }
+   }
+  },
+  "text": {
+   "id": 7,
+   "type": "text"
+  }
+ },
+ "queries": [
+  {
+   "name": "one",
+   "panel": {
+    "id": 1,
+    "type": "table",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     }
+    }
+   },
+   "refs": [
+    "A"
+   ],
+   "visible": [
+    "A"
+   ],
+   "hasExtra": false
+  },
+  {
+   "name": "three",
+   "panel": {
+    "id": 2,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "table",
+       "sql": [
+        "SELECT 2"
+       ]
+      },
+      {
+       "ref": "C",
+       "source": "prod",
+       "format": "table",
+       "sql": [
+        "SELECT 2"
+       ]
+      }
+     ]
+    }
+   },
+   "refs": [
+    "A",
+    "B",
+    "C"
+   ],
+   "visible": [
+    "A",
+    "B",
+    "C"
+   ],
+   "hasExtra": true
+  },
+  {
+   "name": "hiddenFirst",
+   "panel": {
+    "id": 3,
+    "type": "timeseries",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null,
+      "hide": true
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "table",
+       "sql": [
+        "SELECT 2"
+       ]
+      }
+     ]
+    }
+   },
+   "refs": [
+    "A",
+    "B"
+   ],
+   "visible": [
+    "B"
+   ],
+   "hasExtra": true
+  },
+  {
+   "name": "firstRef",
+   "panel": {
+    "id": 4,
+    "type": "stat",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null,
+      "ref": "Z"
+     },
+     "extra_queries": [
+      {
+       "ref": "A",
+       "source": "prod",
+       "format": "table",
+       "sql": [
+        "SELECT 2"
+       ]
+      },
+      {
+       "ref": "M",
+       "source": "prod",
+       "format": "table",
+       "sql": [
+        "SELECT 2"
+       ],
+       "hide": false
+      }
+     ]
+    }
+   },
+   "refs": [
+    "Z",
+    "A",
+    "M"
+   ],
+   "visible": [
+    "Z",
+    "A",
+    "M"
+   ],
+   "hasExtra": true
+  },
+  {
+   "name": "allHidden",
+   "panel": {
+    "id": 5,
+    "type": "table",
+    "data": {
+     "query": {
+      "source": "prod",
+      "format": "table",
+      "sql": [
+       "SELECT 1"
+      ],
+      "min_interval": null,
+      "max_data_points": null,
+      "hide": true
+     },
+     "extra_queries": [
+      {
+       "ref": "B",
+       "source": "prod",
+       "format": "table",
+       "sql": [
+        "SELECT 2"
+       ],
+       "hide": true
+      }
+     ]
+    }
+   },
+   "refs": [
+    "A",
+    "B"
+   ],
+   "visible": [],
+   "hasExtra": true
+  },
+  {
+   "name": "reuse",
+   "panel": {
+    "id": 6,
+    "type": "table",
+    "data": {
+     "reuse": {
+      "panel": 1,
+      "with_transforms": true
+     }
+    }
+   },
+   "refs": [],
+   "visible": [],
+   "hasExtra": false
+  },
+  {
+   "name": "text",
+   "panel": {
+    "id": 7,
+    "type": "text"
+   },
+   "refs": [],
+   "visible": [],
+   "hasExtra": false
+  }
+ ],
+ "bodies": {
+  "base": {
+   "etag": "e",
+   "from_ms": 1,
+   "to_ms": 2,
+   "max_data_points": 100,
+   "variables": {}
+  },
+  "cases": [
+   {
+    "panel": "one",
+    "ref": "A",
+    "body": {
+     "etag": "e",
+     "from_ms": 1,
+     "to_ms": 2,
+     "max_data_points": 100,
+     "variables": {}
+    }
+   },
+   {
+    "panel": "three",
+    "ref": "A",
+    "body": {
+     "etag": "e",
+     "from_ms": 1,
+     "to_ms": 2,
+     "max_data_points": 100,
+     "variables": {},
+     "ref": "A"
+    }
+   },
+   {
+    "panel": "three",
+    "ref": "B",
+    "body": {
+     "etag": "e",
+     "from_ms": 1,
+     "to_ms": 2,
+     "max_data_points": 100,
+     "variables": {},
+     "ref": "B"
+    }
+   },
+   {
+    "panel": "three",
+    "ref": "C",
+    "body": {
+     "etag": "e",
+     "from_ms": 1,
+     "to_ms": 2,
+     "max_data_points": 100,
+     "variables": {},
+     "ref": "C"
+    }
+   },
+   {
+    "panel": "firstRef",
+    "ref": "Z",
+    "body": {
+     "etag": "e",
+     "from_ms": 1,
+     "to_ms": 2,
+     "max_data_points": 100,
+     "variables": {},
+     "ref": "Z"
+    }
+   },
+   {
+    "panel": "firstRef",
+    "ref": "M",
+    "body": {
+     "etag": "e",
+     "from_ms": 1,
+     "to_ms": 2,
+     "max_data_points": 100,
+     "variables": {},
+     "ref": "M"
+    }
+   },
+   {
+    "panel": "hiddenFirst",
+    "ref": "B",
+    "body": {
+     "etag": "e",
+     "from_ms": 1,
+     "to_ms": 2,
+     "max_data_points": 100,
+     "variables": {},
+     "ref": "B"
+    }
+   }
+  ]
+ },
+ "states": [
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "ready"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "ready"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "ready"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "ready"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "ready"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "ready"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "error"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "idle",
+     "frame": false
+    }
+   ],
+   "state": "idle"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "queued",
+     "frame": false
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "loading",
+     "frame": false
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "idle",
+     "frame": false
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "idle",
+     "frame": false
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "idle"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "idle"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "idle"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "queued",
+     "frame": false
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "idle",
+     "frame": false
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "idle",
+     "frame": false
+    }
+   ],
+   "state": "idle"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "idle",
+     "frame": false
+    }
+   ],
+   "state": "idle"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "loading",
+     "frame": false
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "frame": true
+    },
+    {
+     "ref": "C",
+     "state": "queued",
+     "frame": false
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "queued",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "error",
+     "frame": false
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "loading",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "frame": true
+    }
+   ],
+   "state": "loading"
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "idle",
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "queued",
+     "frame": false
+    }
+   ],
+   "state": "queued"
+  },
+  {
+   "slots": [],
+   "state": "empty"
+  }
+ ],
+ "failed": [
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "error": null,
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "error": {
+      "code": "sql_invalid",
+      "message": "Bad."
+     },
+     "frame": false
+    },
+    {
+     "ref": "C",
+     "state": "ready",
+     "error": null,
+     "frame": true
+    }
+   ],
+   "many": true,
+   "failed": "B",
+   "badge": "Error:\nQuery B: sql_invalid: Bad.",
+   "firstMessage": "Query B: Bad."
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "error": {
+      "code": "source_busy",
+      "message": "Busy.",
+      "status": 503
+     },
+     "frame": false
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "error": {
+      "code": "sql_invalid",
+      "message": "Bad."
+     },
+     "frame": false
+    }
+   ],
+   "many": true,
+   "failed": "A,B",
+   "badge": "Error:\nQuery A: source_busy: Busy.\nQuery B: sql_invalid: Bad.",
+   "firstMessage": "Query A: Busy."
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "error": null,
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "ready",
+     "error": null,
+     "frame": true
+    }
+   ],
+   "many": true,
+   "failed": "",
+   "badge": "Error:",
+   "firstMessage": null
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "error",
+     "error": {
+      "code": "not_found",
+      "message": "No.",
+      "status": 404
+     },
+     "frame": false
+    }
+   ],
+   "many": false,
+   "failed": "A",
+   "badge": "Error:\nQuery A: not_found: No.",
+   "firstMessage": "No."
+  },
+  {
+   "slots": [
+    {
+     "ref": "A",
+     "state": "ready",
+     "error": null,
+     "frame": true
+    },
+    {
+     "ref": "B",
+     "state": "error",
+     "error": {
+      "code": "source_timeout",
+      "message": "Slow."
+     },
+     "frame": false
+    }
+   ],
+   "many": true,
+   "failed": "B",
+   "badge": "Error:\nQuery B: source_timeout: Slow.",
+   "firstMessage": "Query B: Slow."
+  }
+ ],
+ "whole": [
+  {
+   "error": {
+    "status": 401,
+    "code": "unauthorized"
+   },
+   "whole": true
+  },
+  {
+   "error": {
+    "status": 403,
+    "code": "forbidden"
+   },
+   "whole": true
+  },
+  {
+   "error": {
+    "status": 404,
+    "code": "not_found"
+   },
+   "whole": true
+  },
+  {
+   "error": {
+    "status": 409,
+    "code": "dashboard_changed"
+   },
+   "whole": true
+  },
+  {
+   "error": {
+    "status": 413,
+    "code": "payload_too_large"
+   },
+   "whole": true
+  },
+  {
+   "error": {
+    "status": 503,
+    "code": "pdp_unavailable"
+   },
+   "whole": true
+  },
+  {
+   "error": {
+    "status": 503,
+    "code": "source_busy"
+   },
+   "whole": false
+  },
+  {
+   "error": {
+    "status": 422,
+    "code": "sql_invalid"
+   },
+   "whole": false
+  },
+  {
+   "error": {
+    "status": 502,
+    "code": "source_error"
+   },
+   "whole": false
+  },
+  {
+   "error": {
+    "status": 0,
+    "code": "network_error"
+   },
+   "whole": false
+  },
+  {
+   "error": {
+    "status": 504,
+    "code": "source_timeout"
+   },
+   "whole": false
+  },
+  {
+   "error": {
+    "status": 400,
+    "code": "bad_request"
+   },
+   "whole": false
+  }
+ ]
+}

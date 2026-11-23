@@ -1,0 +1,1 @@
+SELECT $__unixEpochGroupAlias(n, '5m'), sum(v) FROM t GROUP BY 1

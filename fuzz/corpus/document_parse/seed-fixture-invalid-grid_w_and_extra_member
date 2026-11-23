@@ -1,0 +1,43 @@
+{
+  "format_version": 3,
+  "uid": "grid-errors",
+  "title": "Grid errors",
+  "description": "The example of 4.37: the grid of the third panel has w 30 and an extra member.",
+  "tags": [],
+  "time": {"from": "now-6h", "to": "now", "timezone": "utc", "refresh": null},
+  "cursor_sync": "off",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1, "type": "stat", "title": "A", "description": "", "transparent": false,
+          "grid": {"x": 0, "y": 0, "w": 8, "h": 4},
+          "data": {"query": {"source": "main", "format": "table", "sql": ["SELECT 1"], "min_interval": null, "max_data_points": null}},
+          "transforms": [], "fields": {"defaults": {}, "overrides": []},
+          "options": {"reduce": {"calc": "last", "fields": null, "values": false}, "color_mode": "none", "graph_mode": "none", "text_mode": "auto", "orientation": "auto"},
+          "links": []
+        },
+        {
+          "id": 2, "type": "stat", "title": "B", "description": "", "transparent": false,
+          "grid": {"x": 8, "y": 0, "w": 8, "h": 4},
+          "data": {"query": {"source": "main", "format": "table", "sql": ["SELECT 2"], "min_interval": null, "max_data_points": null}},
+          "transforms": [], "fields": {"defaults": {}, "overrides": []},
+          "options": {"reduce": {"calc": "last", "fields": null, "values": false}, "color_mode": "none", "graph_mode": "none", "text_mode": "auto", "orientation": "auto"},
+          "links": []
+        },
+        {
+          "id": 3, "type": "stat", "title": "C", "description": "", "transparent": false,
+          "grid": {"x": 0, "y": 4, "w": 30, "h": 4, "heigth": 8},
+          "data": {"query": {"source": "main", "format": "table", "sql": ["SELECT 3"], "min_interval": null, "max_data_points": null}},
+          "transforms": [], "fields": {"defaults": {}, "overrides": []},
+          "options": {"reduce": {"calc": "last", "fields": null, "values": false}, "color_mode": "none", "graph_mode": "none", "text_mode": "auto", "orientation": "auto"},
+          "links": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "id": "macro-timeFilter-string-with-paren",
+  "tags": [
+    "macro:$__timeFilter"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-clickhouse-datasource 4.5.1",
+  "template": "SELECT count() FROM analytics.events WHERE $__timeFilter(concat(')', toString(timestamp)))",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT count() FROM analytics.events WHERE $__timeFilter(concat(')', toString(timestamp)))",
+  "sent_sql": "SELECT count() FROM analytics.events WHERE $__timeFilter(concat(')', toString(timestamp)))",
+  "difference": {
+    "cause": "other",
+    "reason": "Grafana does not expand the macro when a string in the argument holds a parenthesis. Hune counts only punctuation tokens, so it expands it.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT count() FROM analytics.events WHERE concat(')', toString(timestamp)) >= toDateTime(1794211200) AND concat(')', toString(timestamp)) <= toDateTime(1794232800)"
+    }
+  }
+}

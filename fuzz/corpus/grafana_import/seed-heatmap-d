@@ -1,0 +1,165 @@
+{
+ "id": 229943988785152,
+ "panels": [
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 0
+   },
+   "id": 1,
+   "options": {
+    "calculate": false
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + t*18 AS time, toUInt32(round(100*exp(-pow(0-50-sin(t/60)*20,2)/200))) AS `001`, toUInt32(round(100*exp(-pow(1-50-sin(t/60)*20,2)/200))) AS `002`, toUInt32(round(100*exp(-pow(2-50-sin(t/60)*20,2)/200))) AS `003`, toUInt32(round(100*exp(-pow(3-50-sin(t/60)*20,2)/200))) AS `004`, toUInt32(round(100*exp(-pow(4-50-sin(t/60)*20,2)/200))) AS `005`, toUInt32(round(100*exp(-pow(5-50-sin(t/60)*20,2)/200))) AS `006`, toUInt32(round(100*exp(-pow(6-50-sin(t/60)*20,2)/200))) AS `007`, toUInt32(round(100*exp(-pow(7-50-sin(t/60)*20,2)/200))) AS `008`, toUInt32(round(100*exp(-pow(8-50-sin(t/60)*20,2)/200))) AS `009`, toUInt32(round(100*exp(-pow(9-50-sin(t/60)*20,2)/200))) AS `010`, toUInt32(round(100*exp(-pow(10-50-sin(t/60)*20,2)/200))) AS `011`, toUInt32(round(100*exp(-pow(11-50-sin(t/60)*20,2)/200))) AS `012`, toUInt32(round(100*exp(-pow(12-50-sin(t/60)*20,2)/200))) AS `013`, toUInt32(round(100*exp(-pow(13-50-sin(t/60)*20,2)/200))) AS `014`, toUInt32(round(100*exp(-pow(14-50-sin(t/60)*20,2)/200))) AS `015`, toUInt32(round(100*exp(-pow(15-50-sin(t/60)*20,2)/200))) AS `016`, toUInt32(round(100*exp(-pow(16-50-sin(t/60)*20,2)/200))) AS `017`, toUInt32(round(100*exp(-pow(17-50-sin(t/60)*20,2)/200))) AS `018`, toUInt32(round(100*exp(-pow(18-50-sin(t/60)*20,2)/200))) AS `019`, toUInt32(round(100*exp(-pow(19-50-sin(t/60)*20,2)/200))) AS `020`, toUInt32(round(100*exp(-pow(20-50-sin(t/60)*20,2)/200))) AS `021`, toUInt32(round(100*exp(-pow(21-50-sin(t/60)*20,2)/200))) AS `022`, toUInt32(round(100*exp(-pow(22-50-sin(t/60)*20,2)/200))) AS `023`, toUInt32(round(100*exp(-pow(23-50-sin(t/60)*20,2)/200))) AS `024`, toUInt32(round(100*exp(-pow(24-50-sin(t/60)*20,2)/200))) AS `025`, toUInt32(round(100*exp(-pow(25-50-sin(t/60)*20,2)/200))) AS `026`, toUInt32(round(100*exp(-pow(26-50-sin(t/60)*20,2)/200))) AS `027`, toUInt32(round(100*exp(-pow(27-50-sin(t/60)*20,2)/200))) AS `028`, toUInt32(round(100*exp(-pow(28-50-sin(t/60)*20,2)/200))) AS `029`, toUInt32(round(100*exp(-pow(29-50-sin(t/60)*20,2)/200))) AS `030`, toUInt32(round(100*exp(-pow(30-50-sin(t/60)*20,2)/200))) AS `031`, toUInt32(round(100*exp(-pow(31-50-sin(t/60)*20,2)/200))) AS `032`, toUInt32(round(100*exp(-pow(32-50-sin(t/60)*20,2)/200))) AS `033`, toUInt32(round(100*exp(-pow(33-50-sin(t/60)*20,2)/200))) AS `034`, toUInt32(round(100*exp(-pow(34-50-sin(t/60)*20,2)/200))) AS `035`, toUInt32(round(100*exp(-pow(35-50-sin(t/60)*20,2)/200))) AS `036`, toUInt32(round(100*exp(-pow(36-50-sin(t/60)*20,2)/200))) AS `037`, toUInt32(round(100*exp(-pow(37-50-sin(t/60)*20,2)/200))) AS `038`, toUInt32(round(100*exp(-pow(38-50-sin(t/60)*20,2)/200))) AS `039`, toUInt32(round(100*exp(-pow(39-50-sin(t/60)*20,2)/200))) AS `040`, toUInt32(round(100*exp(-pow(40-50-sin(t/60)*20,2)/200))) AS `041`, toUInt32(round(100*exp(-pow(41-50-sin(t/60)*20,2)/200))) AS `042`, toUInt32(round(100*exp(-pow(42-50-sin(t/60)*20,2)/200))) AS `043`, toUInt32(round(100*exp(-pow(43-50-sin(t/60)*20,2)/200))) AS `044`, toUInt32(round(100*exp(-pow(44-50-sin(t/60)*20,2)/200))) AS `045`, toUInt32(round(100*exp(-pow(45-50-sin(t/60)*20,2)/200))) AS `046`, toUInt32(round(100*exp(-pow(46-50-sin(t/60)*20,2)/200))) AS `047`, toUInt32(round(100*exp(-pow(47-50-sin(t/60)*20,2)/200))) AS `048`, toUInt32(round(100*exp(-pow(48-50-sin(t/60)*20,2)/200))) AS `049`, toUInt32(round(100*exp(-pow(49-50-sin(t/60)*20,2)/200))) AS `050`, toUInt32(round(100*exp(-pow(50-50-sin(t/60)*20,2)/200))) AS `051`, toUInt32(round(100*exp(-pow(51-50-sin(t/60)*20,2)/200))) AS `052`, toUInt32(round(100*exp(-pow(52-50-sin(t/60)*20,2)/200))) AS `053`, toUInt32(round(100*exp(-pow(53-50-sin(t/60)*20,2)/200))) AS `054`, toUInt32(round(100*exp(-pow(54-50-sin(t/60)*20,2)/200))) AS `055`, toUInt32(round(100*exp(-pow(55-50-sin(t/60)*20,2)/200))) AS `056`, toUInt32(round(100*exp(-pow(56-50-sin(t/60)*20,2)/200))) AS `057`, toUInt32(round(100*exp(-pow(57-50-sin(t/60)*20,2)/200))) AS `058`, toUInt32(round(100*exp(-pow(58-50-sin(t/60)*20,2)/200))) AS `059`, toUInt32(round(100*exp(-pow(59-50-sin(t/60)*20,2)/200))) AS `060`, toUInt32(round(100*exp(-pow(60-50-sin(t/60)*20,2)/200))) AS `061`, toUInt32(round(100*exp(-pow(61-50-sin(t/60)*20,2)/200))) AS `062`, toUInt32(round(100*exp(-pow(62-50-sin(t/60)*20,2)/200))) AS `063`, toUInt32(round(100*exp(-pow(63-50-sin(t/60)*20,2)/200))) AS `064`, toUInt32(round(100*exp(-pow(64-50-sin(t/60)*20,2)/200))) AS `065`, toUInt32(round(100*exp(-pow(65-50-sin(t/60)*20,2)/200))) AS `066`, toUInt32(round(100*exp(-pow(66-50-sin(t/60)*20,2)/200))) AS `067`, toUInt32(round(100*exp(-pow(67-50-sin(t/60)*20,2)/200))) AS `068`, toUInt32(round(100*exp(-pow(68-50-sin(t/60)*20,2)/200))) AS `069`, toUInt32(round(100*exp(-pow(69-50-sin(t/60)*20,2)/200))) AS `070`, toUInt32(round(100*exp(-pow(70-50-sin(t/60)*20,2)/200))) AS `071`, toUInt32(round(100*exp(-pow(71-50-sin(t/60)*20,2)/200))) AS `072`, toUInt32(round(100*exp(-pow(72-50-sin(t/60)*20,2)/200))) AS `073`, toUInt32(round(100*exp(-pow(73-50-sin(t/60)*20,2)/200))) AS `074`, toUInt32(round(100*exp(-pow(74-50-sin(t/60)*20,2)/200))) AS `075`, toUInt32(round(100*exp(-pow(75-50-sin(t/60)*20,2)/200))) AS `076`, toUInt32(round(100*exp(-pow(76-50-sin(t/60)*20,2)/200))) AS `077`, toUInt32(round(100*exp(-pow(77-50-sin(t/60)*20,2)/200))) AS `078`, toUInt32(round(100*exp(-pow(78-50-sin(t/60)*20,2)/200))) AS `079`, toUInt32(round(100*exp(-pow(79-50-sin(t/60)*20,2)/200))) AS `080`, toUInt32(round(100*exp(-pow(80-50-sin(t/60)*20,2)/200))) AS `081`, toUInt32(round(100*exp(-pow(81-50-sin(t/60)*20,2)/200))) AS `082`, toUInt32(round(100*exp(-pow(82-50-sin(t/60)*20,2)/200))) AS `083`, toUInt32(round(100*exp(-pow(83-50-sin(t/60)*20,2)/200))) AS `084`, toUInt32(round(100*exp(-pow(84-50-sin(t/60)*20,2)/200))) AS `085`, toUInt32(round(100*exp(-pow(85-50-sin(t/60)*20,2)/200))) AS `086`, toUInt32(round(100*exp(-pow(86-50-sin(t/60)*20,2)/200))) AS `087`, toUInt32(round(100*exp(-pow(87-50-sin(t/60)*20,2)/200))) AS `088`, toUInt32(round(100*exp(-pow(88-50-sin(t/60)*20,2)/200))) AS `089`, toUInt32(round(100*exp(-pow(89-50-sin(t/60)*20,2)/200))) AS `090`, toUInt32(round(100*exp(-pow(90-50-sin(t/60)*20,2)/200))) AS `091`, toUInt32(round(100*exp(-pow(91-50-sin(t/60)*20,2)/200))) AS `092`, toUInt32(round(100*exp(-pow(92-50-sin(t/60)*20,2)/200))) AS `093`, toUInt32(round(100*exp(-pow(93-50-sin(t/60)*20,2)/200))) AS `094`, toUInt32(round(100*exp(-pow(94-50-sin(t/60)*20,2)/200))) AS `095`, toUInt32(round(100*exp(-pow(95-50-sin(t/60)*20,2)/200))) AS `096`, toUInt32(round(100*exp(-pow(96-50-sin(t/60)*20,2)/200))) AS `097`, toUInt32(round(100*exp(-pow(97-50-sin(t/60)*20,2)/200))) AS `098`, toUInt32(round(100*exp(-pow(98-50-sin(t/60)*20,2)/200))) AS `099`, toUInt32(round(100*exp(-pow(99-50-sin(t/60)*20,2)/200))) AS `100` FROM (SELECT number AS t FROM numbers(1000)) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "pre-bucketed 1000x100 = 100000 cells",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 8
+   },
+   "id": 2,
+   "options": {
+    "calculate": true,
+    "calculation": {
+     "xBuckets": {
+      "mode": "count",
+      "value": "1000"
+     },
+     "yBuckets": {
+      "mode": "count",
+      "value": "100"
+     }
+    }
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 1000000)) AS time, round(40 * (1 + 0.6*sin(number/1000000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(1000000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "calc 1M rows x1000 y100",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 16
+   },
+   "id": 3,
+   "options": {
+    "calculate": true
+   },
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 1000000)) AS time, round(40 * (1 + 0.6*sin(number/1000000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(1000000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "calc 1M rows defaults",
+   "type": "heatmap"
+  },
+  {
+   "datasource": {
+    "type": "grafana-clickhouse-datasource",
+    "uid": "clickhouse"
+   },
+   "fieldConfig": {
+    "defaults": {},
+    "overrides": []
+   },
+   "gridPos": {
+    "h": 8,
+    "w": 24,
+    "x": 0,
+    "y": 24
+   },
+   "id": 4,
+   "options": {},
+   "targets": [
+    {
+     "datasource": {
+      "type": "grafana-clickhouse-datasource",
+      "uid": "clickhouse"
+     },
+     "editorType": "sql",
+     "format": 1,
+     "queryType": "table",
+     "rawSql": "SELECT toDateTime('2026-11-13 00:00:00','UTC') + toUInt32(intDiv(number*18000, 1000000)) AS time, round(40 * (1 + 0.6*sin(number/1000000*6.2832*2)) * -log(1 - (cityHash64(number) % 1000000 + 0.5)/1000000), 3) AS latency FROM numbers(1000000) ORDER BY time",
+     "refId": "A"
+    }
+   ],
+   "title": "histogram 1M values",
+   "type": "histogram"
+  }
+ ],
+ "schemaVersion": 41,
+ "templating": {
+  "list": []
+ },
+ "time": {
+  "from": "1794528000000",
+  "to": "1794546000000"
+ },
+ "timezone": "utc",
+ "title": "hune-f31 d",
+ "uid": "heatmap_d",
+ "version": 1
+}

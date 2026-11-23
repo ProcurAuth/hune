@@ -1,0 +1,21 @@
+{
+  "id": "pg-macro-timeTo-range-fractions",
+  "tags": [
+    "macro:$__timeTo",
+    "time:ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "ds-query",
+  "template": "SELECT $__timeTo() AS t2",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200125,
+  "to_ms": 1794232800999,
+  "max_data_points": 1200,
+  "min_interval": null,
+  "min_interval_ms": null,
+  "interval_ms": 20000,
+  "expected": "SELECT '2026-11-09T14:00:00.999Z' AS t2",
+  "sent_sql": "SELECT $__timeTo() AS t2"
+}

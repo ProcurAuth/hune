@@ -1,0 +1,20 @@
+{
+  "id": "pg-builtin-interval-ms",
+  "tags": [
+    "builtin:$__interval_ms"
+  ],
+  "grafana": "12.4.2",
+  "plugin": "grafana-postgresql-datasource (core)",
+  "capture": "explore",
+  "template": "SELECT $__interval_ms AS i FROM t",
+  "variables": [],
+  "values": {},
+  "from_ms": 1794211200000,
+  "to_ms": 1794232800000,
+  "max_data_points": 1000,
+  "min_interval": "1m",
+  "min_interval_ms": 60000,
+  "interval_ms": 60000,
+  "expected": "SELECT 60000 AS i FROM t",
+  "sent_sql": "SELECT 60000 AS i FROM t"
+}

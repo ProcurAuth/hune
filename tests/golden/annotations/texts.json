@@ -1,0 +1,222 @@
+{
+ "hostile": [
+  {
+   "name": "control_0000",
+   "text": "a\u0000b"
+  },
+  {
+   "name": "control_0001",
+   "text": "a\u0001b"
+  },
+  {
+   "name": "control_0007",
+   "text": "a\u0007b"
+  },
+  {
+   "name": "control_0008",
+   "text": "a\bb"
+  },
+  {
+   "name": "control_000b",
+   "text": "a\u000bb"
+  },
+  {
+   "name": "control_000c",
+   "text": "a\fb"
+  },
+  {
+   "name": "control_000d",
+   "text": "a\rb"
+  },
+  {
+   "name": "control_001b",
+   "text": "a\u001bb"
+  },
+  {
+   "name": "control_001f",
+   "text": "a\u001fb"
+  },
+  {
+   "name": "c1_007f",
+   "text": "ab"
+  },
+  {
+   "name": "c1_0080",
+   "text": "ab"
+  },
+  {
+   "name": "c1_0085",
+   "text": "ab"
+  },
+  {
+   "name": "c1_009f",
+   "text": "ab"
+  },
+  {
+   "name": "bidi_202a",
+   "text": "a‪b"
+  },
+  {
+   "name": "bidi_202b",
+   "text": "a‫b"
+  },
+  {
+   "name": "bidi_202c",
+   "text": "a‬b"
+  },
+  {
+   "name": "bidi_202d",
+   "text": "a‭b"
+  },
+  {
+   "name": "bidi_202e",
+   "text": "a‮b"
+  },
+  {
+   "name": "bidi_2066",
+   "text": "a⁦b"
+  },
+  {
+   "name": "bidi_2067",
+   "text": "a⁧b"
+  },
+  {
+   "name": "bidi_2068",
+   "text": "a⁨b"
+  },
+  {
+   "name": "bidi_2069",
+   "text": "a⁩b"
+  },
+  {
+   "name": "html_b",
+   "text": "<b>"
+  },
+  {
+   "name": "html_close_i",
+   "text": "</i>"
+  },
+  {
+   "name": "html_comment",
+   "text": "<!--"
+  },
+  {
+   "name": "html_script",
+   "text": "<script>alert(1)</script>"
+  },
+  {
+   "name": "html_img",
+   "text": "<img src=x onerror=alert(1)>"
+  },
+  {
+   "name": "html_anchor",
+   "text": "<a href=\"javascript:x\">y</a>"
+  },
+  {
+   "name": "html_upper",
+   "text": "x<B>y"
+  },
+  {
+   "name": "html_doctype",
+   "text": "<!DOCTYPE html>"
+  },
+  {
+   "name": "html_svg",
+   "text": "<svg/onload=1>"
+  },
+  {
+   "name": "html_open_i",
+   "text": "a <i"
+  },
+  {
+   "name": "html_p",
+   "text": "<p"
+  },
+  {
+   "name": "html_cdata",
+   "text": "<![CDATA[x]]>"
+  },
+  {
+   "name": "html_after_newline",
+   "text": "line1\n<b>"
+  },
+  {
+   "name": "html_at_the_end",
+   "text": "5 <b"
+  },
+  {
+   "name": "html_after_tab",
+   "text": "\t<u>"
+  },
+  {
+   "name": "html_close_only",
+   "text": "</"
+  },
+  {
+   "name": "html_bang_only",
+   "text": "<!"
+  },
+  {
+   "name": "html_mixed",
+   "text": "ok &amp; <em>no</em>"
+  },
+  {
+   "name": "html_late",
+   "text": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx<i>"
+  },
+  {
+   "name": "html_bidi_in_html",
+   "text": "<b>‮"
+  }
+ ],
+ "safe": [
+  {
+   "name": "less_than_space",
+   "text": "a < b"
+  },
+  {
+   "name": "digits",
+   "text": "1<2"
+  },
+  {
+   "name": "heart",
+   "text": "x <3"
+  },
+  {
+   "name": "entities",
+   "text": "&lt;b&gt;"
+  },
+  {
+   "name": "lone",
+   "text": "<"
+  },
+  {
+   "name": "trailing",
+   "text": "a<"
+  },
+  {
+   "name": "double",
+   "text": "<<"
+  },
+  {
+   "name": "space_after",
+   "text": "< b>"
+  },
+  {
+   "name": "quotes",
+   "text": "\"quotes\" 'single'"
+  },
+  {
+   "name": "javascript",
+   "text": "javascript:alert(1)"
+  },
+  {
+   "name": "ampersand",
+   "text": "a & b"
+  },
+  {
+   "name": "number",
+   "text": "<1>"
+  }
+ ]
+}

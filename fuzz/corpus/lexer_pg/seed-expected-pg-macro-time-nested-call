@@ -1,0 +1,1 @@
+SELECT coalesce(ts AS "time")) FROM t

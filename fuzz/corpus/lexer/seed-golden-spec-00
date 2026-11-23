@@ -1,0 +1,5 @@
+SELECT $__timeInterval(event_time) AS t, node, sum(weight) AS weight
+FROM chain.weights
+WHERE $__timeFilter(event_time) AND node IN ($node) AND env = '$env'
+GROUP BY t, node
+ORDER BY t

@@ -1,0 +1,332 @@
+{
+ "id": "FE-08",
+ "cases": [
+  {
+   "name": "value matches the raw text",
+   "m": [
+    {
+     "kind": "value",
+     "value": "1",
+     "text": "Active",
+     "color": "green"
+    }
+   ],
+   "v": 1,
+   "expect": {
+    "text": "Active",
+    "color": "green"
+   }
+  },
+  {
+   "name": "value text of a string",
+   "m": [
+    {
+     "kind": "value",
+     "value": "a",
+     "text": "A",
+     "color": null
+    }
+   ],
+   "v": "a",
+   "expect": {
+    "text": "A",
+    "color": null
+   }
+  },
+  {
+   "name": "first match wins",
+   "m": [
+    {
+     "kind": "value",
+     "value": "1",
+     "text": "One",
+     "color": null
+    },
+    {
+     "kind": "range",
+     "from": 0,
+     "to": 5,
+     "text": "Low",
+     "color": null
+    }
+   ],
+   "v": 1,
+   "expect": {
+    "text": "One",
+    "color": null
+   }
+  },
+  {
+   "name": "range includes both bounds",
+   "m": [
+    {
+     "kind": "range",
+     "from": 1,
+     "to": 3,
+     "text": "in",
+     "color": "red"
+    }
+   ],
+   "v": 3,
+   "expect": {
+    "text": "in",
+    "color": "red"
+   }
+  },
+  {
+   "name": "range lower bound",
+   "m": [
+    {
+     "kind": "range",
+     "from": 1,
+     "to": 3,
+     "text": "in",
+     "color": null
+    }
+   ],
+   "v": 1,
+   "expect": {
+    "text": "in",
+    "color": null
+   }
+  },
+  {
+   "name": "range outside",
+   "m": [
+    {
+     "kind": "range",
+     "from": 1,
+     "to": 3,
+     "text": "in",
+     "color": null
+    }
+   ],
+   "v": 3.01,
+   "expect": null
+  },
+  {
+   "name": "range with open bound",
+   "m": [
+    {
+     "kind": "range",
+     "from": null,
+     "to": 3,
+     "text": "le3",
+     "color": null
+    }
+   ],
+   "v": -1000,
+   "expect": {
+    "text": "le3",
+    "color": null
+   }
+  },
+  {
+   "name": "range never matches a text",
+   "m": [
+    {
+     "kind": "range",
+     "from": null,
+     "to": 3,
+     "text": "x",
+     "color": null
+    }
+   ],
+   "v": "2",
+   "expect": null
+  },
+  {
+   "name": "range does not match null",
+   "m": [
+    {
+     "kind": "range",
+     "from": null,
+     "to": 3,
+     "text": "x",
+     "color": null
+    }
+   ],
+   "v": null,
+   "expect": null
+  },
+  {
+   "name": "regex plain form is exact",
+   "m": [
+    {
+     "kind": "regex",
+     "pattern": "ab",
+     "text": "hit",
+     "color": null
+    }
+   ],
+   "v": "xab",
+   "expect": null
+  },
+  {
+   "name": "regex /re/ finds anywhere",
+   "m": [
+    {
+     "kind": "regex",
+     "pattern": "/b/",
+     "text": "hit",
+     "color": null
+    }
+   ],
+   "v": "abc",
+   "expect": {
+    "text": "hit",
+    "color": null
+   }
+  },
+  {
+   "name": "regex group references",
+   "m": [
+    {
+     "kind": "regex",
+     "pattern": "/^(\\w+)-(\\d+)$/",
+     "text": "$2 of $1",
+     "color": null
+    }
+   ],
+   "v": "abc-12",
+   "expect": {
+    "text": "12 of abc",
+    "color": null
+   }
+  },
+  {
+   "name": "regex colour only keeps the text",
+   "m": [
+    {
+     "kind": "regex",
+     "pattern": "/^a/",
+     "text": null,
+     "color": "red"
+    }
+   ],
+   "v": "abc",
+   "expect": {
+    "text": null,
+    "color": "red"
+   }
+  },
+  {
+   "name": "special null",
+   "m": [
+    {
+     "kind": "special",
+     "match": "null",
+     "text": "none",
+     "color": null
+    }
+   ],
+   "v": null,
+   "expect": {
+    "text": "none",
+    "color": null
+   }
+  },
+  {
+   "name": "special nan",
+   "m": [
+    {
+     "kind": "special",
+     "match": "nan",
+     "text": "n/a",
+     "color": null
+    }
+   ],
+   "v": "NaN",
+   "expect": {
+    "text": "n/a",
+    "color": null
+   }
+  },
+  {
+   "name": "special null_nan on null",
+   "m": [
+    {
+     "kind": "special",
+     "match": "null_nan",
+     "text": "n/a",
+     "color": null
+    }
+   ],
+   "v": null,
+   "expect": {
+    "text": "n/a",
+    "color": null
+   }
+  },
+  {
+   "name": "special null_nan on NaN",
+   "m": [
+    {
+     "kind": "special",
+     "match": "null_nan",
+     "text": "n/a",
+     "color": null
+    }
+   ],
+   "v": "NaN",
+   "expect": {
+    "text": "n/a",
+    "color": null
+   }
+  },
+  {
+   "name": "special true",
+   "m": [
+    {
+     "kind": "special",
+     "match": "true",
+     "text": "yes",
+     "color": "green"
+    }
+   ],
+   "v": true,
+   "expect": {
+    "text": "yes",
+    "color": "green"
+   }
+  },
+  {
+   "name": "special false",
+   "m": [
+    {
+     "kind": "special",
+     "match": "false",
+     "text": "no",
+     "color": null
+    }
+   ],
+   "v": false,
+   "expect": {
+    "text": "no",
+    "color": null
+   }
+  },
+  {
+   "name": "special empty",
+   "m": [
+    {
+     "kind": "special",
+     "match": "empty",
+     "text": "blank",
+     "color": null
+    }
+   ],
+   "v": "",
+   "expect": {
+    "text": "blank",
+    "color": null
+   }
+  },
+  {
+   "name": "no mapping",
+   "m": [],
+   "v": 1,
+   "expect": null
+  }
+ ]
+}

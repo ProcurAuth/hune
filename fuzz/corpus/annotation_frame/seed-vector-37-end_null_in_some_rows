@@ -1,0 +1,4 @@
+["time", "timeEnd"]
+["DateTime64(3)", "Nullable(DateTime)"]
+["1794211800.000", "1794211860"]
+["1794211809.000", null]
