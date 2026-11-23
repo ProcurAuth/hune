@@ -1,0 +1,88 @@
+// Chart chrome. One component serves every page (css/10-components/chart.css).
+// The chart engine (app_chart_core.js) draws the plot and its legend. This module
+// gives every trend line the same sparkline.
+// hune: E39. No chartUi.cardHtml: Hune calls only chartUi.sparkline.draw (panels/stat.js).
+//
+//   chartUi.sparkline.html(values, { max, min, area, alt, marks, className, label })
+//     an SVG polyline (and area) in --sparkline-color, viewBox 100 x 24. The
+//     polyline stretches to its box. alt: a second series (errors) in --danger.
+//     marks: one entry per value. Each entry is null or a tone ("warn", "danger",
+//     "accent"). A tone draws a dot on the line (an anomaly).
+//   chartUi.sparkline.draw(el, values, options) writes it into el.
+
+import { util } from "./app_util.js";
+
+const esc = (value) => util.escapeHtml(value ?? "");
+
+const W = 100;
+const H = 24;
+
+// values: numbers, evenly spaced. A null or NaN value is a gap, and the line
+// bridges it. Or pass { xs, values } with xs in any unit. Each point is "x,y", or null for a gap.
+function coords(values, xs, min, max) {
+  const n = values.length;
+  const x0 = xs ? xs[0] : 0;
+  const x1 = xs ? xs[n - 1] : n - 1;
+  const span = x1 - x0 || 1;
+  const range = max - min || 1;
+  const out = new Array(n).fill(null);
+  for (let i = 0; i < n; i++) {
+    const v = Number(values[i]);
+    if (values[i] == null || !Number.isFinite(v)) continue;
+    const x = ((xs ? xs[i] : i) - x0) / span * W;
+    const y = H - 1.5 - (Math.max(min, Math.min(max, v)) - min) / range * (H - 3);
+    out[i] = `${x.toFixed(2)},${y.toFixed(2)}`;
+  }
+  return out;
+}
+
+function points(values, xs, min, max) {
+  return values.length ? coords(values, xs, min, max).filter(Boolean).join(" ") : "";
+}
+
+const MARK_TONES = new Set(["warn", "danger", "accent"]);
+
+// Each marked value gets a dot. The dot is a zero-length stroke with round caps.
+// The stroke stays round in the stretched viewBox.
+function marksHtml(values, marks, xs, min, max) {
+  if (!Array.isArray(marks) || !marks.some(Boolean)) return "";
+  const at = coords(values, xs, min, max);
+  let html = "";
+  for (let i = 0; i < at.length; i++) {
+    const tone = marks[i];
+    if (!at[i] || !MARK_TONES.has(tone)) continue;
+    html += `<polyline class="sparkline__mark sparkline__mark--${tone}" points="${at[i]} ${at[i]}"/>`;
+  }
+  return html;
+}
+
+// The drawn values: a null is a gap, never a zero.
+function finite(values) {
+  return values.filter((v) => v != null).map(Number).filter(Number.isFinite);
+}
+
+function sparklineHtml(values, { xs = null, max = null, min = null, area = false, alt = null, marks = null, className = "", label = "" } = {}) {
+  const list = Array.isArray(values) ? values : [];
+  const all = finite(alt ? list.concat(alt) : list);
+  const lo = min != null ? Number(min) : Math.min(0, ...all);
+  const hi = max != null ? Number(max) : Math.max(lo + 1, ...all);
+  const aria = label ? ` role="img" aria-label="${esc(label)}"` : ' aria-hidden="true"';
+  const cls = `sparkline${className ? ` ${esc(className)}` : ""}`;
+  if (finite(list).length < 2) return `<svg class="${cls}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"${aria}></svg>`;
+  const line = points(list, xs, lo, hi);
+  const drawn = line.split(" ");
+  const fill = area ? `<polygon class="sparkline__area" points="${drawn[0].split(",")[0]},${H} ${line} ${drawn[drawn.length - 1].split(",")[0]},${H}"/>` : "";
+  const second = alt && finite(alt).some((v) => v > 0) ? `<polyline class="sparkline__line sparkline__line--alt" points="${points(alt, xs, lo, hi)}"/>` : "";
+  return `<svg class="${cls}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"${aria}>${fill}<polyline class="sparkline__line" points="${line}"/>${second}${marksHtml(list, marks, xs, lo, hi)}</svg>`;
+}
+
+function drawSparkline(el, values, options = {}) {
+  if (!el) return;
+  const html = sparklineHtml(values, options);
+  if (el.__sparkline !== html) {
+    el.__sparkline = html;
+    el.innerHTML = html;
+  }
+}
+
+export const chartUi = Object.freeze({ sparkline: Object.freeze({ html: sparklineHtml, draw: drawSparkline }) });

@@ -1,0 +1,149 @@
+{
+  "upstream": "ClickHouse Dash",
+  "tag": "v1.3.1",
+  "commit": "e970694e5e0b17b07cf187f3128af93fa1a82b76",
+  "licence": "MIT",
+  "patch": "vendor/chdash.patch",
+  "files": [
+    {
+      "path": "css/vendor/chdash/00-tokens.css",
+      "origin": "copy",
+      "upstream_path": "src/static/css/00-tokens.css",
+      "upstream_sha256": "668da9b068ccd3e5878608c8222cbc381f6dca4525382053e54272a7dd85df5b",
+      "sha256": "668da9b068ccd3e5878608c8222cbc381f6dca4525382053e54272a7dd85df5b"
+    },
+    {
+      "path": "css/vendor/chdash/chart.css",
+      "origin": "copy",
+      "upstream_path": "src/static/css/10-components/chart.css",
+      "upstream_sha256": "053460254bb524f431d16d3e4136a7b242d4ad03797e4b1d34defabb57fd4cb0",
+      "sha256": "053460254bb524f431d16d3e4136a7b242d4ad03797e4b1d34defabb57fd4cb0"
+    },
+    {
+      "path": "css/vendor/chdash/sql.css",
+      "origin": "copy",
+      "upstream_path": "src/static/css/10-components/sql.css",
+      "upstream_sha256": "d81251f5c4fa6c5e3190cd46c7dea74e026943e29af37b686ab9ea04a07bd581",
+      "sha256": "d81251f5c4fa6c5e3190cd46c7dea74e026943e29af37b686ab9ea04a07bd581"
+    },
+    {
+      "path": "css/vendor/chdash/stat.css",
+      "origin": "copy",
+      "upstream_path": "src/static/css/10-components/stat.css",
+      "upstream_sha256": "e7ff5c86d857d9b9affd109efca0fd2617e45ac79cce58162223f96b53f8bee5",
+      "sha256": "e7ff5c86d857d9b9affd109efca0fd2617e45ac79cce58162223f96b53f8bee5"
+    },
+    {
+      "path": "css/vendor/chdash/table.css",
+      "origin": "copy",
+      "upstream_path": "src/static/css/10-components/table.css",
+      "upstream_sha256": "f6d128d03d1c0a270bb7322c040aa343b74dee8ab61a1e791eca9501cca05b51",
+      "sha256": "f6d128d03d1c0a270bb7322c040aa343b74dee8ab61a1e791eca9501cca05b51"
+    },
+    {
+      "path": "js/vendor/chdash/LICENSE",
+      "origin": "copy",
+      "upstream_path": "LICENSE",
+      "upstream_sha256": "3811b03fc5402be63ee6cf93af1bade381ff29388f808943d18ae68591bf9499",
+      "sha256": "3811b03fc5402be63ee6cf93af1bade381ff29388f808943d18ae68591bf9499"
+    },
+    {
+      "path": "js/vendor/chdash/app_chart_core.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_chart_core.js",
+      "upstream_sha256": "2c89445d03816d950d07b9c1767f4aeb4c757d0c72f110a3070439c565380240",
+      "sha256": "dca4cc447c9c4a4a46c010837af2c4c0fdf2f7a589f13af9b9748b75f2992130"
+    },
+    {
+      "path": "js/vendor/chdash/app_dom.js",
+      "origin": "hune",
+      "sha256": "60c2d6ba35253f01857d341a783ca14c99d3a2eb6ebbff2284bfc45937a8c009"
+    },
+    {
+      "path": "js/vendor/chdash/app_format.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_format.js",
+      "upstream_sha256": "c81aa5655936b678c5c45b83a14c96bd950a581f86a4012ce26059b61e44aa8b",
+      "sha256": "c81aa5655936b678c5c45b83a14c96bd950a581f86a4012ce26059b61e44aa8b"
+    },
+    {
+      "path": "js/vendor/chdash/app_highlight.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_highlight.js",
+      "upstream_sha256": "59bd96381796b8b58d67a7c68ed57df67267e55a78e1efeac5551621333b7c58",
+      "sha256": "5312c150842c0fcda4d3dcf03680f07ac28f737d74c80b9de0ea8e3d5139abf0"
+    },
+    {
+      "path": "js/vendor/chdash/app_loader.js",
+      "origin": "hune",
+      "sha256": "26b1a4b3d0135ec56b8d687b94c034dc7e0f2cc4cd09b4c849d9b338c58a8761"
+    },
+    {
+      "path": "js/vendor/chdash/app_results_sort.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_results_sort.js",
+      "upstream_sha256": "b1e317c412c26631b76b37ba5426f2173d6d0a4fe0761bde12503e24abdfaa4e",
+      "sha256": "756098fcb2de82a605c2e7246427abaca2821b660d14fb2c87226d7f7d24a1ae"
+    },
+    {
+      "path": "js/vendor/chdash/app_results_values.js",
+      "origin": "hune",
+      "sha256": "1281308647e09149e5fd915c965a6e3ec6a99b3da7a852b53d84c92b25cc3a87"
+    },
+    {
+      "path": "js/vendor/chdash/app_sql_lex.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_sql_lex.js",
+      "upstream_sha256": "24b08a67395e35e922a81c079c9cc238a5203591144d95cdb5d119720435e99d",
+      "sha256": "6dff9475422e639225b590bf88bab436027cf433aa1c4f6c16f18a4b1749e783"
+    },
+    {
+      "path": "js/vendor/chdash/app_state.js",
+      "origin": "hune",
+      "sha256": "96674c81874b354035359aeb7b830d5dc1c7648b25034b9c77a4faa54964cb33"
+    },
+    {
+      "path": "js/vendor/chdash/app_ui_chart.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_ui_chart.js",
+      "upstream_sha256": "cbaa8fd0fbdd9991975ddfe994825c2174535115af0c54847092cd707881ca66",
+      "sha256": "24a2e263f8b4ec938c10da9a48288f076e2ee9dda87d2850d77a1d1491d7504d"
+    },
+    {
+      "path": "js/vendor/chdash/app_ui_sql.js",
+      "origin": "hune",
+      "sha256": "c89f488a01298a1d0a395f7d2b0d1dd0d8720ccac01d39988dfd9a303d7978fd"
+    },
+    {
+      "path": "js/vendor/chdash/app_ui_stat.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_ui_stat.js",
+      "upstream_sha256": "bb58d802f427ad455ff06d30a729f4753e7b563a7bb57bc7050b85c8ba0f8828",
+      "sha256": "bb58d802f427ad455ff06d30a729f4753e7b563a7bb57bc7050b85c8ba0f8828"
+    },
+    {
+      "path": "js/vendor/chdash/app_ui_state.js",
+      "origin": "hune",
+      "sha256": "4b37d9535ef4b0acfc6e7d74d23ea92a1156642297cae867169f0fac770fd484"
+    },
+    {
+      "path": "js/vendor/chdash/app_ui_table.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_ui_table.js",
+      "upstream_sha256": "513046551a76b1066c8b5bd71fbff4d168ff12e346dd48ae9ca77e367142b4f3",
+      "sha256": "8c1cc367a3359b81bb25bb1fcfdc3b70188b49717dabbd9489aebf5075cead65"
+    },
+    {
+      "path": "js/vendor/chdash/app_util.js",
+      "origin": "copy",
+      "upstream_path": "src/static/app_util.js",
+      "upstream_sha256": "324dd01360c175d7b1273e0dea68b30e6294be1dfec65d642024ae4d8a42a8f1",
+      "sha256": "1a441524ae392ac528db4d5788f2caa2eecd53891ca81218cac238704190b373"
+    },
+    {
+      "path": "js/vendor/chdash/app_wasm.js",
+      "origin": "hune",
+      "sha256": "8c824fed7539eb0d9700f4eabf831b71e45a1e3203248176fb16e7e181922fa1"
+    }
+  ]
+}

@@ -1,0 +1,3854 @@
+--- a/js/vendor/chdash/app_chart_core.js
++++ b/js/vendor/chdash/app_chart_core.js
+@@ -20,40 +20,47 @@
+ // The line connects across a missing row. nulls === null means that every NaN breaks the line.
+ //
+ // The legend is the list of the series under the plot. The "Values" mode shows a table of Total, Min, Max, Mean and Last.
+-// The engine keeps the mode as a preference. The legend is the same on every page.
++// The legend is the same on every page. hune: E41, the host sets the mode (setLegendMode); the engine keeps no preference.
+ // A series can have `weights`, one per point: the calls behind an average, or the requests behind a rate.
+ // Its Mean is then weighted. A chart whose values do not add up omits the Total (`legendColumns`).
+-// Set `legendClick: "filter"` to make a click the host's job (`onLegendClick`: a filter), not a hide.
+-// Charts that share an `alignKey` and sit side by side keep their grid lines on the same lines.
+-// See "Alignment groups" in create().
++// hune: E41. No legend that filters (`legendClick`), no totals legend and no button of the mode: Hune never asks for them.
++// hune: E40. No alignment groups (`alignKey`) and no aligned y axes: Hune never sets alignKey.
+ 
+ import { dom } from "./app_dom.js";
+-import { format } from "./app_format.js";
+-import { palette } from "./app_palette.js";
+-import { storage } from "./app_state.js";
++// hune: E36. No import of app_format.js: the engine read only format.range, for a time axis of buckets (bucketMs). Hune never sets bucketMs.
++// hune: E37. No import of app_palette.js: the engine read only its WebAssembly colour kernel (palette.batch). v1 has no kernel.
++// hune: E41. No import of app_state.js: the engine read it only for the preference of the legend mode.
+ import { uiState } from "./app_ui_state.js";
+ import { util } from "./app_util.js";
+ 
+ const { $ } = dom;
+ 
+ const DEFAULT_HEIGHT = 300;
+-const FONT_SIZE = 11;
++// hune: the axis text is 12 px, as in the Grafana look of the dashboard (9.24, wave G).
++const FONT_SIZE = 12;
+ const Y_TICK_SPACE = 34;
+-// An aligned axis has at most this many intervals.
+-const Y_MAX_INTERVALS = 10;
+-const X_TICK_GAP = 22;
++// hune: 11.5 px of room around a label of the x axis (Grafana, measured); the engine had 22.
++const X_TICK_GAP = 11.5;
+ const X_LABEL_GAP = 6;
+ const X_CONTEXT_GAP = 10;
+-const PAD_TOP = 10;
+-// Labelled annotations (release markers) write their label in a gutter above the plot.
+-// They never draw over the data.
+-const ANNOTATION_GUTTER = 16;
+-const PAD_RIGHT = 14;
+-const TICK_LEN = 4;
++// hune: the plot starts 8 px under the top edge.
++const PAD_TOP = 8;
++// hune: E19. The engine annotations are removed: Hune never sets the option `annotations` (engine-patches.md).
++// hune: the plot ends 8 px before the right edge.
++const PAD_RIGHT = 8;
++// hune: E13, F16. A y axis takes the width of its widest label plus 9 px (rounded up). The labels end 5 px before the plot, or start 5 px after it.
++// A title of an axis takes 28 px. A side with no axis keeps the margin of 8 px (Grafana 12.4.2, measured: paper 10.8, V2).
++const Y_AXIS_PAD = 9;
++const Y_LABEL_GAP = 5;
++const Y_TITLE_W = 28;
++const Y_TITLE_CENTRE = 12;
++// hune: the x axis has no tick marks.
++const TICK_LEN = 0;
+ const DRAG_MIN_PX = 4;
+ const POINTS_AUTO_SPACING = 12;
+ const MAX_CATEGORY_CHARS = 18;
+-const LEGEND_STORE_KEY = storage.KEYS.chartLegend;
++// hune: E31. The longest start of an axis title that fitTitle measures.
++const TITLE_MAX_CHARS = 256;
+ 
+ // Work counters of every chart on the page. They are test and profiling hooks.
+ // Use ns.chartCore.counters() and resetCounters(). The counters only increase.
+@@ -140,41 +147,51 @@
+   return { step, values };
+ }
+ 
+-// --- Time (browser-local, like every chart of the app) -----------------------
++// --- Time ---------------------------------------------------------------------------------------------------------
++// hune: the ticks and the texts of a time axis follow a zone (opts.zone), not only the zone of the browser (milestone F, F10; engine
++// edit E7 of docs/engine-patches.md). A zone is a clock: { parts(ms) -> {y, mo (1 to 12), d, h, mi, s, ms},
++// epoch(y, mo, d, h, mi, s) -> ms }. The fields of epoch may overflow (day 0, month 13). Without a zone the clock is the one of the browser.
++
++const LOCAL_CLOCK = {
++  parts(ms) {
++    const d = new Date(ms);
++    return { y: d.getFullYear(), mo: d.getMonth() + 1, d: d.getDate(), h: d.getHours(), mi: d.getMinutes(), s: d.getSeconds(), ms: d.getMilliseconds() };
++  },
++  epoch(y, mo, d, h = 0, mi = 0, s = 0) {
++    return new Date(y, mo - 1, d, h, mi, s).getTime();
++  },
++};
+ 
+ const SECOND_MS = 1000, MINUTE_MS = 60000, HOUR_MS = 3600000, DAY_MS = 86400000;
++// hune: the steps of Grafana: 2 minutes is not a step, and 4 and 8 hours are (measured on Grafana 12.4.2).
+ const SUB_DAY_STEPS_MS = [
+   1, 2, 5, 10, 20, 50, 100, 200, 500,
+   SECOND_MS, 2 * SECOND_MS, 5 * SECOND_MS, 10 * SECOND_MS, 15 * SECOND_MS, 30 * SECOND_MS,
+-  MINUTE_MS, 2 * MINUTE_MS, 5 * MINUTE_MS, 10 * MINUTE_MS, 15 * MINUTE_MS, 30 * MINUTE_MS,
+-  HOUR_MS, 2 * HOUR_MS, 3 * HOUR_MS, 6 * HOUR_MS, 12 * HOUR_MS,
++  MINUTE_MS, 5 * MINUTE_MS, 10 * MINUTE_MS, 15 * MINUTE_MS, 30 * MINUTE_MS,
++  HOUR_MS, 2 * HOUR_MS, 3 * HOUR_MS, 4 * HOUR_MS, 6 * HOUR_MS, 8 * HOUR_MS, 12 * HOUR_MS,
+ ];
+-const DAY_STEPS = [1, 2, 7, 14];
++const DAY_STEPS = [1, 2, 3, 4, 5, 6, 7, 14];
+ const MONTH_STEPS = [1, 2, 3, 6];
+ const YEAR_STEPS = [1, 2, 5, 10, 20, 50, 100, 1000];
+ const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+ const pad2 = (v) => String(v).padStart(2, "0");
+ const pad3 = (v) => String(v).padStart(3, "0");
+ 
+-function localMidnight(ms) {
+-  const d = new Date(ms);
+-  d.setHours(0, 0, 0, 0);
+-  return d.getTime();
++function midnightOf(ms, K) {
++  const p = K.parts(ms);
++  return K.epoch(p.y, p.mo, p.d);
+ }
+ 
+-function dateText(ms) {
+-  const d = new Date(ms);
+-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+-}
++// hune: E42. No dateText: only the option xDateOnly used it.
+ 
+ // Example: 2026-09-30 14:05:00.000. A fractionDigits value of 6 adds the microseconds.
+-function formatInstant(ms, fractionDigits = 3) {
+-  if (!Number.isFinite(ms)) return "\u2014";
++function formatInstant(ms, fractionDigits = 3, K = LOCAL_CLOCK) {
++  if (!Number.isFinite(ms)) return "—";
+   const whole = Math.floor(ms);
+-  const d = new Date(whole);
+-  let text = `${dateText(whole)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
++  const p = K.parts(whole);
++  let text = `${p.y}-${pad2(p.mo)}-${pad2(p.d)} ${pad2(p.h)}:${pad2(p.mi)}:${pad2(p.s)}`;
+   if (fractionDigits > 0) {
+-    text += `.${pad3(d.getMilliseconds())}`;
++    text += `.${pad3(p.ms)}`;
+     if (fractionDigits > 3) text += String(Math.min(999, Math.round((ms - whole) * 1000))).padStart(3, "0").slice(0, fractionDigits - 3);
+   }
+   return text;
+@@ -182,7 +199,7 @@
+ 
+ function formatDuration(ms) {
+   if (!(ms >= 0)) return "";
+-  if (ms < 1) return `${formatValue(Number((ms * 1000).toPrecision(4)))} \u00b5s`;
++  if (ms < 1) return `${formatValue(Number((ms * 1000).toPrecision(4)))} µs`;
+   if (ms < SECOND_MS) return `${formatValue(Number(ms.toPrecision(4)))} ms`;
+   const parts = [];
+   let rest = Math.round(ms);
+@@ -206,18 +223,18 @@
+   return `UTC${sign}${pad2(Math.floor(abs / 60))}:${pad2(abs % 60)}`;
+ }
+ 
+-function subDayTicks(startMs, endMs, stepMs) {
++function subDayTicks(startMs, endMs, stepMs, K) {
+   const ticks = [];
+-  const day = new Date(localMidnight(startMs));
+-  for (let guard = 0; day.getTime() <= endMs && guard < 4000; guard++) {
+-    const midnight = day.getTime();
+-    day.setDate(day.getDate() + 1);
+-    const next = day.getTime();
++  let day = midnightOf(startMs, K);
++  for (let guard = 0; day <= endMs && guard < 4000; guard++) {
++    const midnight = day;
++    const p = K.parts(midnight);
++    const next = K.epoch(p.y, p.mo, p.d + 1);
++    day = next;
+     if (stepMs >= HOUR_MS) {
+       // Wall-clock hours, such as 00:00, 06:00 and 12:00, even on DST days.
+-      const base = new Date(midnight);
+       for (let hour = 0; hour < 24; hour += stepMs / HOUR_MS) {
+-        const t = new Date(base.getFullYear(), base.getMonth(), base.getDate(), hour).getTime();
++        const t = K.epoch(p.y, p.mo, p.d, hour);
+         if (t >= startMs && t <= endMs && (!ticks.length || ticks[ticks.length - 1] < t)) ticks.push(t);
+       }
+       continue;
+@@ -228,83 +245,105 @@
+   return ticks;
+ }
+ 
+-function dayTicks(startMs, endMs, everyDays) {
++// hune: the day ticks start at the first midnight after the start of the range, then every `everyDays` days (Grafana).
++function dayTicks(startMs, endMs, everyDays, K) {
+   const ticks = [];
+-  const day = new Date(localMidnight(startMs));
+-  for (let guard = 0; day.getTime() <= endMs && guard < 5000; guard++, day.setDate(day.getDate() + 1)) {
+-    const t = day.getTime();
+-    const dayNumber = Math.round(Date.UTC(day.getFullYear(), day.getMonth(), day.getDate()) / DAY_MS);
+-    if (t >= startMs && dayNumber % everyDays === 0) ticks.push(t);
++  let t = midnightOf(startMs, K);
++  if (t < startMs) {
++    const p = K.parts(t);
++    t = K.epoch(p.y, p.mo, p.d + 1);
++  }
++  for (let guard = 0; t <= endMs && guard < 5000; guard++) {
++    ticks.push(t);
++    const p = K.parts(t);
++    t = K.epoch(p.y, p.mo, p.d + everyDays);
+   }
+   return ticks;
+ }
+ 
+-function monthTicks(startMs, endMs, everyMonths) {
++function monthTicks(startMs, endMs, everyMonths, K) {
+   const ticks = [];
+-  const start = new Date(startMs);
+-  const cursor = new Date(start.getFullYear(), start.getMonth(), 1);
+-  for (let guard = 0; cursor.getTime() <= endMs && guard < 5000; guard++, cursor.setMonth(cursor.getMonth() + 1)) {
+-    const t = cursor.getTime();
+-    if (t >= startMs && (cursor.getFullYear() * 12 + cursor.getMonth()) % everyMonths === 0) ticks.push(t);
++  const start = K.parts(startMs);
++  let y = start.y, mo = start.mo;
++  for (let guard = 0; guard < 5000; guard++) {
++    const t = K.epoch(y, mo, 1);
++    if (t > endMs) break;
++    if (t >= startMs && (y * 12 + mo - 1) % everyMonths === 0) ticks.push(t);
++    mo += 1;
++    if (mo > 12) { mo = 1; y += 1; }
+   }
+   return ticks;
+ }
+ 
+-function yearTicks(startMs, endMs, everyYears) {
++function yearTicks(startMs, endMs, everyYears, K) {
+   const ticks = [];
+-  const first = new Date(startMs).getFullYear();
++  const first = K.parts(startMs).y;
+   for (let y = first; y <= first + 100000 && ticks.length < 200; y++) {
+-    const t = new Date(y, 0, 1).getTime();
++    const t = K.epoch(y, 1, 1);
+     if (t > endMs) break;
+     if (t >= startMs && y % everyYears === 0) ticks.push(t);
+   }
+   return ticks;
+ }
+ 
+-function clockText(ms, unit) {
+-  const d = new Date(ms);
+-  const hm = `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+-  if (unit === "minute") return hm;
+-  const hms = `${hm}:${pad2(d.getSeconds())}`;
+-  return unit === "second" ? hms : `${hms}.${pad3(d.getMilliseconds())}`;
++// hune: a step of one minute writes the seconds (12:27:00), as Grafana does. A range over one day writes the date before the clock (11/10 04:00).
++function clockText(ms, unit, K, dated) {
++  const p = K.parts(ms);
++  const hm = `${pad2(p.h)}:${pad2(p.mi)}`;
++  const date = dated ? `${pad2(p.mo)}/${pad2(p.d)} ` : "";
++  if (unit === "minute") return date + hm;
++  const hms = `${hm}:${pad2(p.s)}`;
++  return unit === "second" ? date + hms : `${date}${hms}.${pad3(p.ms)}`;
+ }
+ 
+-const dayLabel = (ms) => {
+-  const d = new Date(ms);
+-  return `${MONTH_NAMES[d.getMonth()]} ${d.getDate()}`;
++// The day text of a day tick, and of a tick at midnight: the month and the day, "11/10" (Grafana).
++const dayLabel = (ms, K = LOCAL_CLOCK) => {
++  const p = K.parts(ms);
++  return `${pad2(p.mo)}/${pad2(p.d)}`;
+ };
+ 
+-// Calendar-aligned ticks. The function uses the smallest step whose labels stay apart, like Grafana.
++// Calendar-aligned ticks. The function uses the smallest step whose labels stay apart, like Grafana: the room of a label is its width
++// (in the format of its step) and 11.5 px. Measured on Grafana 12.4.2 (steps of 5 minutes at 48.9 px, but not at 45.1 px).
+ // Each tick is { v, label, date, year }: the label and its context.
+ // The date is the day under clock times. The year is the year under clock times, days and months.
+ // layoutXLabels decides where the context line shows.
+-function timeTicks(startMs, endMs, plotWidthPx, measure) {
++function timeTicks(startMs, endMs, plotWidthPx, measure, K = LOCAL_CLOCK) {
+   const span = Math.max(1e-3, endMs - startMs);
+   const width = Math.max(60, plotWidthPx);
++  // hune: a range of more than 24 hours writes the date before the clock; a shorter one writes the clock only, also at midnight.
++  const dated = span > DAY_MS;
+   const fits = (count, sample) => count <= 80 && width / Math.max(1, count) >= measure(sample) + X_TICK_GAP;
+-  const make = (ticks, labelOf, dated) => ticks.map((t) => ({
+-    v: t, label: labelOf(t), date: dated ? dayLabel(t) : "", year: String(new Date(t).getFullYear()),
+-  }));
++  const make = (ticks, labelOf) => ticks.map((t) => ({ v: t, label: labelOf(t), date: "", year: "" }));
+   for (const step of SUB_DAY_STEPS_MS) {
+-    const unit = step < SECOND_MS ? "milli" : step < MINUTE_MS ? "second" : "minute";
+-    const sample = unit === "milli" ? "00:00:00.000" : unit === "second" ? "00:00:00" : "00:00";
++    const unit = step < SECOND_MS ? "milli" : step <= MINUTE_MS ? "second" : "minute";
++    const base = unit === "milli" ? "00:00:00.000" : unit === "second" ? "00:00:00" : "00:00";
++    const sample = dated && unit !== "milli" ? `00/00 ${base}` : base;
+     if (!fits(span / step, sample)) continue;
+-    return make(subDayTicks(startMs, endMs, step), (t) => clockText(t, unit), true);
++    return make(subDayTicks(startMs, endMs, step, K), (t) => clockText(t, unit, K, dated && unit !== "milli"));
+   }
+   for (const days of DAY_STEPS) {
+-    if (!fits(span / (days * DAY_MS), "Sep 30")) continue;
+-    return make(dayTicks(startMs, endMs, days), dayLabel, false);
++    if (!fits(span / (days * DAY_MS), "00/00")) continue;
++    return make(dayTicks(startMs, endMs, days, K), (t) => dayLabel(t, K));
+   }
+   const monthMs = 30.44 * DAY_MS;
+   for (const months of MONTH_STEPS) {
+     if (!fits(span / (months * monthMs), "Sep")) continue;
+-    return make(monthTicks(startMs, endMs, months), (t) => MONTH_NAMES[new Date(t).getMonth()], false);
++    return make(monthTicks(startMs, endMs, months, K), (t) => MONTH_NAMES[K.parts(t).mo - 1]);
+   }
+   for (const years of YEAR_STEPS) {
+     if (!fits(span / (years * 365.25 * DAY_MS), "2026") && years !== YEAR_STEPS[YEAR_STEPS.length - 1]) continue;
+-    return yearTicks(startMs, endMs, years).map((t) => ({ v: t, label: String(new Date(t).getFullYear()), date: "", year: "" }));
++    return yearTicks(startMs, endMs, years, K).map((t) => ({ v: t, label: String(K.parts(t).y), date: "", year: "" }));
+   }
+   return [];
++}
++
++// hune: E25. The box of a label of width w px turned by deg degrees (not 0) about its anchor. A positive angle turns the text clockwise
++// and puts its start at the anchor. A negative angle turns it counter-clockwise and puts its end at the anchor (Grafana). The text is FONT_SIZE px high.
++// h: the height of the box under the anchor line. a, b: the px of the box before and after the anchor. step: the room that the label
++// takes for a neighbour with the same angle: its width, or less when the labels lie side by side (a line of text is FONT_SIZE px thick).
++function turnedBox(w, deg) {
++  const r = Math.abs(deg) * Math.PI / 180, s = Math.sin(r), c = Math.cos(r), k = FONT_SIZE / 2 * s;
++  return { h: w * s + FONT_SIZE * c, a: deg > 0 ? k : w * c + k, b: deg > 0 ? w * c + k : k, step: Math.min(w * c + FONT_SIZE * s, FONT_SIZE / s) };
+ }
+ 
+ // The x labels to draw, from left to right. The function is pure: the tests run it on made-up ticks.
+@@ -318,7 +357,8 @@
+ //   span; width the canvas width (labels stay inside it); measure(text) and
+ //   measureContext(text) the widths at the label and the context fonts.
+ //   -> [{ v, label, x, left, right, context, cx, cleft, cright }]
+-function layoutXLabels(ticks, xOf, lo, hi, width, measure, measureContext) {
++// hune: E25. rot: the rotation of the labels in degrees (default 0, the picture of the engine).
++function layoutXLabels(ticks, xOf, lo, hi, width, measure, measureContext, rot = 0) {
+   const out = [];
+   const centre = (x, w) => Math.max(w / 2 + 1, Math.min(width - w / 2 - 1, x));
+   let lastRight = -Infinity;
+@@ -328,13 +368,16 @@
+     const x = xOf(t.v);
+     if (!(x >= lo - 0.5 && x <= hi + 0.5)) continue;
+     const w = measure(t.label);
+-    const lx = centre(x, w);
+-    if (lx - w / 2 < lastRight + X_LABEL_GAP) continue;
+-    const item = { v: t.v, label: t.label, x: lx, left: lx - w / 2, right: lx + w / 2, context: "", cx: 0, cleft: 0, cright: 0 };
++    // hune: E25. A turned label (rot degrees) is not centred on its tick: it spans box.a px before the anchor and box.b px after it.
++    // Its neighbours keep box.step apart, and the anchor stays where the whole label is inside the canvas.
++    const box = rot ? turnedBox(w, rot) : { a: w / 2, b: w / 2, step: w };
++    const lx = Math.max(box.a + 1, Math.min(width - box.b - 1, x));
++    if (lx - box.step / 2 < lastRight + X_LABEL_GAP) continue;
++    const item = { v: t.v, label: t.label, x: lx, left: lx - box.a, right: lx + box.b, context: "", cx: 0, cleft: 0, cright: 0 };
+     const date = t.date || "", year = t.year || "";
+     if ((!date && !year) || (shown && date === shown.date && year === shown.year)) {
+       out.push(item);
+-      lastRight = item.right;
++      lastRight = lx + box.step / 2;
+       continue;
+     }
+     let text = contextText(date, year, shown ? shown.year : "");
+@@ -348,7 +391,7 @@
+       cx = centre(x, cw);
+     }
+     out.push(item);
+-    lastRight = item.right;
++    lastRight = lx + box.step / 2;
+     first = shown ? null : item;
+     item.context = text;
+     item.cx = cx;
+@@ -364,103 +407,7 @@
+   return year && year !== shownYear ? `${date} ${year}` : date;
+ }
+ 
+-// --- Aligned y axes ---------------------------------------------------------
+-//
+-// The y axis of a chart that has an `alignKey` (create(), "Alignment groups") has `intervals` equal steps. The plot height gives their number.
+-// The domain is [0 or the minimum, that many steps]. The step is taken from the sequence of the chart's kind.
+-// The step depends on the extent of the data and on the number of intervals only.
+-// Charts of one group whose plots have one height keep their grid lines at the same heights, whatever the data. Only the numbers on the lines differ.
+-//   number    1-2-2.5-5 x 10^n (niceStep). `whole` omits the steps that are not whole numbers. Under 10, 3 replaces 2.5 (a count of requests).
+-//   bytes     The same steps, in the largest unit of 1024 that the data reaches (B, KB, MB, GB, TB). The steps of B are whole numbers.
+-//   duration  Values in milliseconds. 1-2-2.5-5 x 10^n ms up to a second. Then the clock steps (1, 2, 5, 10, 15, 30 s; the same in minutes; 1, 2, 3, 6, 12 h).
+-//             Then whole days. The unit of the ticks is the unit of the step.
+-//   percent   Values in percent. 1-2-2.5-5 x 10^n with a % suffix (0.25%, 1%, 25%...). A rate cannot pass 100.
+-//             When the data does not pass 100, the domain stops at 100. For example, four intervals of a plot of 156 px are 25 each.
+-//             When no nice step divides 100 by the interval count, the steps are 100 / intervals. They have at most one decimal.
+-const CLOCK_STEPS_MS = [
+-  ...[1, 2, 5, 10, 15, 30].map((s) => s * SECOND_MS),
+-  ...[1, 2, 5, 10, 15, 30].map((m) => m * MINUTE_MS),
+-  ...[1, 2, 3, 6, 12].map((h) => h * HOUR_MS),
+-];
+-const BYTE_UNITS = [[1024 ** 4, " TB"], [1024 ** 3, " GB"], [1024 ** 2, " MB"], [1024, " KB"], [1, " B"]];
+-const DURATION_UNITS = [[DAY_MS, " d"], [HOUR_MS, " h"], [MINUTE_MS, " min"], [SECOND_MS, " s"], [1, " ms"]];
+-const PERCENT_UNIT = { factor: 1, suffix: "%" };
+-// The highest value of a rate, in percent.
+-const PERCENT_MAX = 100;
+-const unitOfFactor = (list, value) => {
+-  const [factor, suffix] = list.find(([size]) => value >= size) || list[list.length - 1];
+-  return { factor, suffix };
+-};
+-
+-// The 1-2-2.5-5 x 10^n steps that are at least `from`, smallest first. `whole` keeps the whole numbers only.
+-// It uses 3 where the 2.5 of the units is not a whole number. A count has steps of 1, 2, 3, 5, 10, 20, 25, 50...
+-function* niceSteps(from, whole = false) {
+-  const start = from > 0 && Number.isFinite(from) ? from : 1;
+-  let magnitude = 10 ** Math.floor(Math.log10(start));
+-  for (let decade = 0; decade < 300; decade += 1, magnitude *= 10) {
+-    for (const multiple of NICE_MULTIPLES) {
+-      const step = Number(((whole && multiple === 2.5 && magnitude === 1 ? 3 : multiple) * magnitude).toPrecision(12));
+-      if (step < start * (1 - 1e-9) || (whole && !Number.isInteger(step))) continue;
+-      yield step;
+-    }
+-  }
+-}
+-
+-// The steps of a duration in milliseconds that are at least `from`, smallest first.
+-function* durationSteps(from, whole = false) {
+-  const start = from > 0 && Number.isFinite(from) ? from : 1;
+-  for (const step of niceSteps(start, whole)) {
+-    if (step >= SECOND_MS) break;
+-    yield step;
+-  }
+-  for (const step of CLOCK_STEPS_MS) if (step >= start * (1 - 1e-9)) yield step;
+-  for (const days of niceSteps(Math.max(1, start / DAY_MS), true)) yield days * DAY_MS;
+-}
+-
+-// The axis of the kind over [lo, hi] in `intervals` steps: { min, max, step, unit: { factor, suffix }, values }.
+-// The function takes the first step of the sequence for which [lo rounded down to a step, + intervals steps] reaches hi.
+-// `unitOf(maxAbs)` gives the unit of a "number" axis. The default is K, M, B, T.
+-// `values` are the ticks, `min` to `max`.
+-function alignedAxis(kind, lo, hi, intervals, { whole = false, unitOf = compactUnitFor } = {}) {
+-  const count = Math.max(1, Math.round(intervals));
+-  const top = hi > lo ? hi : lo + 1;
+-  const reach = Math.max(Math.abs(lo), Math.abs(top));
+-  let unit = kind === "bytes" ? unitOfFactor(BYTE_UNITS, reach) : null;
+-  let steps;
+-  if (kind === "bytes") {
+-    const factor = unit.factor;
+-    steps = (function* bytes() { for (const step of niceSteps((top - lo) / count / factor, whole || factor === 1)) yield step * factor; })();
+-  } else if (kind === "duration") {
+-    steps = durationSteps((top - lo) / count, whole);
+-  } else {
+-    steps = niceSteps((top - lo) / count, whole);
+-  }
+-  let found = null;
+-  for (const step of steps) {
+-    const min = lo === 0 ? 0 : Number((Math.floor(lo / step + 1e-9) * step).toPrecision(12));
+-    if (min + count * step >= top - step * 1e-9) { found = { min, step }; break; }
+-  }
+-  if (!found) found = { min: lo, step: (top - lo) / count };
+-  const { min } = found;
+-  let { step } = found;
+-  // The ticks are `min + k * span`. A rate does not pass 100. When the data does not pass 100, the domain ends at 100.
+-  // Each interval is then 100 / count. This is not always a nice step. For example, a plot of three intervals has 33.3, 66.7 and 100.
+-  // The code rounds such a step to three digits for the labels.
+-  let span = step;
+-  if (kind === "percent" && top <= PERCENT_MAX && min + count * step > PERCENT_MAX * (1 + 1e-9)) {
+-    span = (PERCENT_MAX - min) / count;
+-    step = Number(span.toPrecision(3));
+-  }
+-  const max = Number((min + count * span).toPrecision(12));
+-  if (kind === "duration") unit = unitOfFactor(DURATION_UNITS, step);
+-  else if (kind === "percent") unit = PERCENT_UNIT;
+-  else if (kind !== "bytes") unit = unitOf(Math.max(Math.abs(min), Math.abs(max)));
+-  const values = Array.from({ length: count + 1 }, (_, k) => {
+-    const v = Number((min + k * span).toPrecision(12));
+-    return Math.abs(v) < span * 1e-9 ? 0 : v;
+-  });
+-  return { min, max, step, unit, values };
+-}
++// hune: E40. The aligned y axes (alignedAxis, its steps and its units) are removed: only a chart with an `alignKey` used them.
+ 
+ // --- Colours ----------------------------------------------------------------
+ 
+@@ -481,32 +428,10 @@
+   return { r: 128, g: 128, b: 128, a: 1 };
+ }
+ 
+-// parseColor of many texts. From 5000 texts, the parsing runs on src/wasm/color.c (ns.palette.batch.colorKernel, docs/wasm.md).
+-// A short list and a missing kernel use parseColor. So does each item that the kernel hands back with a non-zero status.
+-// force: use the kernel at any size (the tests).
+-function parseColors(texts, force) {
+-  const list = Array.from(texts);
+-  const out = palette && palette.batch ? palette.batch.colorKernel("parseChart", { texts: list.map((text) => String(text || "")) }, list.length, force) : null;
+-  if (!out) return list.map(parseColor);
+-  return list.map((text, i) => (out.status[i] === 0 ? { r: out.nums[i * 4], g: out.nums[i * 4 + 1], b: out.nums[i * 4 + 2], a: out.nums[i * 4 + 3] } : parseColor(text)));
+-}
+-
+-// rgba(c, alpha) of many colors (the same alpha for all). The kernel does this work from 5000 colors.
+-function rgbaBatch(colors, alpha = 1, force) {
+-  const list = Array.from(colors);
+-  let out = null;
+-  if (palette && palette.batch && (force || list.length >= palette.batch.minItems.rgba)) {
+-    const colorsIn = new Float64Array(list.length * 4);
+-    for (let i = 0; i < list.length; i += 1) {
+-      colorsIn[i * 4] = list[i].r;
+-      colorsIn[i * 4 + 1] = list[i].g;
+-      colorsIn[i * 4 + 2] = list[i].b;
+-      colorsIn[i * 4 + 3] = list[i].a;
+-    }
+-    out = palette.batch.colorKernel("rgba", { colors: colorsIn, alphas: new Float64Array(list.length).fill(alpha) }, list.length, force);
+-  }
+-  if (!out) return list.map((c) => rgba(c, alpha));
+-  return list.map((c, i) => (out.status[i] === 0 ? out.texts[i] : rgba(c, alpha)));
++// parseColor of many texts.
++// hune: E37. No WebAssembly kernel (palette.batch) and no rgbaBatch: each text goes to parseColor.
++function parseColors(texts) {
++  return Array.from(texts).map(parseColor);
+ }
+ 
+ const rgba = (c, alpha = 1) => `rgba(${Math.round(c.r)}, ${Math.round(c.g)}, ${Math.round(c.b)}, ${+(c.a * alpha).toFixed(3)})`;
+@@ -516,8 +441,6 @@
+ 
+ const live = new Set();
+ const syncGroups = new Map();
+-// Alignment groups: each alignKey maps to the charts that have it. Each chart is { xScaleKey(), gutter(), settle(), setLegendMode(mode) }. See create().
+-const alignGroups = new Map();
+ let themeWatch = null;
+ 
+ function watchTheme() {
+@@ -546,13 +469,6 @@
+     if (xs[mid] <= value) lo = mid + 1; else hi = mid;
+   }
+   return lo;
+-}
+-
+-// The widest gutter (px) among the charts of an alignment group that have the x scale `key`.
+-function alignGutter(group, key) {
+-  let left = 0;
+-  for (const member of group) if (member.xScaleKey() === key) left = Math.max(left, member.gutter());
+-  return left;
+ }
+ 
+ // --- Block summaries of long series --------------------------------------------
+@@ -643,45 +559,10 @@
+ // util.escapeHtml is the only escaper. null prints as "".
+ const esc = (value) => util.escapeHtml(value == null ? "" : value);
+ 
+-const legendPref = () => storage.pref(LEGEND_STORE_KEY, "list", { allowed: ["list", "table"] });
+-
+-function readLegendMode() {
+-  return legendPref().get();
+-}
+-
+-function storeLegendMode(mode) {
+-  legendPref().set(mode);
+-}
+-
+-// --- Gap bridging (Metrics) --------------------------------------------------
+-
+-// A series that reports less often than the bucket has regular empty buckets.
+-// NaN gaps up to `factor` times its median spacing are bridged. Longer gaps (missing data) break the line.
+-// The function returns the `nulls` flags of the series.
+-function bridgeGaps(values, factor = 2) {
+-  const n = values.length;
+-  const nulls = new Uint8Array(n);
+-  const gaps = [];
+-  let prev = -1;
+-  for (let i = 0; i < n; i++) {
+-    if (values[i] !== values[i]) continue;
+-    if (prev >= 0) gaps.push(i - prev);
+-    prev = i;
+-  }
+-  gaps.sort((a, b) => a - b);
+-  const bridge = Math.max(1, factor * (gaps.length ? gaps[gaps.length >> 1] : 1));
+-  prev = -1;
+-  for (let i = 0; i < n; i++) {
+-    if (values[i] !== values[i]) continue;
+-    if (prev >= 0 && i - prev > bridge) nulls[prev + 1] = 1;
+-    prev = i;
+-  }
+-  return nulls;
+-}
++// hune: E42. No bridgeGaps: Hune never calls it.
+ 
+ // --- Extensions (module level) ---------------------------------------------------
+ 
+-const instances = new WeakMap(); // chart root -> api
+ 
+ // The function makes 1-2-5 ticks per decade inside [lo, hi]. lo must be above 0.
+ // It keeps only the powers of ten when there are more than 7 ticks. It makes linear ticks when the range spans less than 8x.
+@@ -770,18 +651,15 @@
+     stack: false,
+     xLabel: "",
+     xFractionDigits: 3,
+-    xDateOnly: false,
+     tooltip: "all",
+     legend: true,
+     syncKey: "",
+     onZoom: null,
+-    onHiddenChange: null,
+-    tooltipFooter: null,
+     ...initial,
+   };
+   let hidden = new Set(initial.hidden || []);
+   let highlight = null;
+-  let legendMode = readLegendMode();
++  let legendMode = "list"; // hune: E41
+   let zoom = null; // [lo, hi] in x units
+   let theme = null;
+   let layout = null;
+@@ -807,49 +685,13 @@
+   let observedWidth = 0;
+   let widthObserved = false;
+   let refreshCursor = false;
+-  // The alignment group of the chart is set when the chart is made. See "Alignment groups" below.
+   // The y axis of the visible range is kept until the data, the zoom, the hidden series or the theme changes (axisStamp).
+-  // The charts of a group ask each other for this axis. So, the engine works it out once.
+-  const alignKey = String(initial.alignKey || "");
++  // hune: the clock of the time axis, the cursor time and the head of the tooltip (E7, F10): the option `zone`, else the browser.
++  const clockOf = () => (opts.zone && typeof opts.zone.parts === "function" && typeof opts.zone.epoch === "function" ? opts.zone : LOCAL_CLOCK);
+   let axisStamp = 1;
+   let axisCache = null;
+ 
+-  // --- Alignment groups -------------------------------------------------------
+-  //
+-  // Charts that have the same `alignKey` are read together. They are drawn side by side or one under the other.
+-  //   - Their y axes have the same number of intervals. The plot height gives this number. The axes end on a step of their kind.
+-  //     So, their grid lines sit at the same heights. Only the scale differs (yKind, yInteger: alignedAxis, and yAxisOf below).
+-  //   - Charts that share an x scale have the same kind, the same domain and the same plot width.
+-  //     They have one gutter at the left of the plot: the widest of their y labels. So, their vertical grid lines sit at the same x.
+-  //   - They share the mode of their legend (list or table).
+-  // The engine works out the layout in one pass, and it never feeds the result back.
+-  // The steps are taken from the data and the plot height. The labels are taken from the steps. The gutter is taken from the labels.
+-  // The x ticks are taken from the plot that is left. Only the resize observer and the data read the layout.
+-  // A chart that changes tells the other charts of its group. Those charts draw again only when their gutter differs from the one they drew with.
+-  const member = alignKey ? {
+-    xScaleKey: () => xScaleKey(axisNow().view, knownWidth()),
+-    gutter: () => ownGutter(axisNow().axis),
+-    settle() {
+-      if (destroyed || released || !layout || !sizeW) return;
+-      const { view, axis } = axisNow();
+-      if (layout.left !== gutterFor(axis, view, knownWidth())) scheduleDraw();
+-    },
+-    setLegendMode: (mode) => setLegendMode(mode),
+-  } : null;
+-
+-  // The width of the plot as the chart last saw it. This is the width of the resize observer, or the chart's own measure.
+-  // Each draw takes its own measure until the observer reports a width.
+-  // The other charts of a group compare this width. A chart that nobody measured yet is measured now, once.
+-  function knownWidth() {
+-    if (!widthObserved && !observedWidth) observedWidth = plotWidth();
+-    return observedWidth;
+-  }
+-
+-  // The charts of the group read their gutter again after this chart draws or leaves. A chart whose gutter changed draws again.
+-  function settleGroup() {
+-    const group = alignKey ? alignGroups.get(alignKey) : null;
+-    if (group) for (const other of group) if (other !== member) other.settle();
+-  }
++  // hune: E40. No alignment group: no `member`, knownWidth or settleGroup.
+ 
+   plotEl.style.height = `${opts.height}px`;
+ 
+@@ -884,13 +726,15 @@
+       text,
+       muted,
+       panel,
+-      font: `500 ${FONT_SIZE}px ${family}`,
++      // hune: the axis labels have the regular weight.
++      font: `400 ${FONT_SIZE}px ${family}`,
+       fontBold: `600 ${FONT_SIZE}px ${family}`,
+       // Grafana: hairline grids at 9% of the text color. The grid uses the theme tokens.
+       // The grid has no color of its own.
+       grid: rgba(text, forced ? 0.3 : 0.09),
+       axis: rgba(muted, 0.55),
+-      label: rgba(muted, 1),
++      // hune: the axis labels have the full text colour, not the muted colour.
++      label: rgba(text, 1),
+       seriesColors,
+     };
+   }
+@@ -904,6 +748,44 @@
+ 
+   const visibleSeries = () => opts.series.filter((s) => !hidden.has(s.id));
+   const isStacked = () => opts.stack && (opts.type === "area" || opts.type === "bar");
++
++  // hune: E13, F16. A chart has the left scale `y` and, when the option `y2` is an object, the right scale `y2`. `opts.scales` maps the id of a series
++  // to "y" or "y2" (a series that it does not name is on `y`). Without `y2`, every series is on `y` and the chart is the chart of one scale.
++  // The options of the right scale are in `opts.y2`: yAxis, yBounds, ySoft, yTickFormat, yTitle, yScale, yUnit, yHeadroom, formatY, shown.
++  const hasY2 = () => !!opts.y2 && typeof opts.y2 === "object";
++  const scaleOf = (s) => (hasY2() && opts.scales && opts.scales[s.id] === "y2" ? "y2" : "y");
++  const viewFor = (L, s) => (L.y2 && scaleOf(s) === "y2" ? L.y2 : L);
++  const leftShown = () => opts.yShown !== false;
++  const rightShown = () => hasY2() && opts.y2.shown !== false;
++  // The options that a scale reads. The left scale reads the options of the chart. The right scale has none of them but its own.
++  function scaleOpts(key) {
++    if (key !== "y2") return opts;
++    const o2 = opts.y2 || {};
++    return { ...opts, yScale: o2.yScale, yAxis: o2.yAxis, yBounds: o2.yBounds, ySoft: o2.ySoft, yTickFormat: o2.yTickFormat, yTitle: o2.yTitle,
++      yUnit: o2.yUnit, yHeadroom: o2.yHeadroom, formatY: o2.formatY }; // hune: E40
++  }
++  // The scale whose grid lines the chart draws: the option `gridScale` ("y", "y2" or "none"), else the left scale when its axis shows, else the right one.
++  function gridKey() {
++    const g = opts.gridScale;
++    if (g === "none") return null;
++    if (g === "y2" && hasY2()) return "y2";
++    if (g === "y") return "y";
++    return leftShown() ? "y" : rightShown() ? "y2" : null;
++  }
++  // hune: E14, F17. A series with `negate` draws -v. The values of the series, the legend and the tooltip stay the data (paper 10.8, V3).
++  const negatedValues = new WeakMap();
++  function drawnValues(s) {
++    if (!s.negate || s.derived) return s.values;
++    let neg = negatedValues.get(s.values);
++    if (!neg || neg.length !== s.values.length) {
++      neg = new Float64Array(s.values.length);
++      for (let i = 0; i < neg.length; i++) neg[i] = -s.values[i];
++      negatedValues.set(s.values, neg);
++    }
++    return neg;
++  }
++  const negSeries = (s) => ({ ...s, values: drawnValues(s), derived: true });
++  const isBarSeries = (s) => (s.type || opts.type) === "bar";
+ 
+   // Cumulative tops and bases of the visible series. NULL counts as 0.
+   // Bars stack positive values up and negative values down. Areas only add up.
+@@ -915,27 +797,53 @@
+     stacks = new Map();
+     // stackMode "percent": each x shows the shares of its group, out of 100.
+     const totals = new Map();
+-    if (opts.stackMode === "percent") {
++    // hune: E32. `stackSign: "series"` (Grafana 12.4.2): a series stacks down from 0, in a group of its own, when more of its values are below 0
++    // than above 0 (about 100 samples, from its first to its last value; `negate` turns the side). Its values add as they are, and a percent is
++    // of the signed total of its group. A NULL is at the top of its group when a series of the group has a value there, else it is not drawn.
++    const bySign = opts.stackSign === "series";
++    const sideOf = (s) => {
++      const a = s.values;
++      let i = 0, j = a.length - 1, neg = 0, pos = 0;
++      while (i <= j && !(a[i] === a[i])) i++;
++      while (j >= i && !(a[j] === a[j])) j--;
++      for (const d = Math.max(1, Math.floor((j - i + 1) / 100)); i <= j; i += d) if (a[i] < 0 || Object.is(a[i], -0)) neg++; else if (a[i] > 0) pos++;
++      return (neg > pos) !== !!s.negate ? -1 : 1;
++    };
++    const sides = new Map(bySign ? visibleSeries().map((s) => [s.id, sideOf(s)]) : []);
++    const has = new Map();
++    // hune: E13. A series stacks only with the series of its own scale.
++    // hune: E33. With `stackSign`, a series of another draw (`type`: bars, points or a line) stacks in a group of its own (Grafana 12.4.2).
++    const stackKey = (s) => (s.group == null ? "" : String(s.group)) + (scaleOf(s) === "y2" ? "\u0001y2" : "") + (sides.get(s.id) < 0 ? "\u0002" : "") + (bySign && s.type ? "\u0003" + s.type : "");
++    if (opts.stackMode === "percent" || bySign) {
+       for (const s of visibleSeries()) {
+         if (ownMark(s)) continue;
+-        const key = s.group == null ? "" : String(s.group);
+-        if (!totals.has(key)) totals.set(key, new Float64Array(n));
++        const key = stackKey(s);
++        if (!totals.has(key)) { totals.set(key, new Float64Array(n)); has.set(key, new Uint8Array(n)); }
+         const sum = totals.get(key);
+-        for (let i = 0; i < n; i++) { const v = s.values[i]; if (v === v) sum[i] += Math.abs(v); }
++        const dvs = drawnValues(s);
++        for (let i = 0; i < n; i++) { const v = dvs[i]; if (v === v) { sum[i] += bySign ? v : Math.abs(v); has.get(key)[i] = 1; } } // hune: E32
+       }
+     }
+     for (const s of visibleSeries()) {
+       if (ownMark(s)) continue;
+-      const key = s.group == null ? "" : String(s.group);
++      const key = stackKey(s);
+       if (!state.has(key)) state.set(key, { pos: new Float64Array(n), neg: opts.type === "bar" ? new Float64Array(n) : null });
+       const st = state.get(key);
+       const top = new Float64Array(n);
+       const base = new Float64Array(n);
+       counters.allocBytes += 16 * n;
+-      const values = s.values;
+-      const sum = totals.get(key);
++      const values = drawnValues(s);
++      const sum = opts.stackMode === "percent" ? totals.get(key) : null; // hune: E32
++      // hune: E32. In percent, a top is the sum below it divided by the signed total of its group, times 100. Thus the last top is 100.
++      const share = (a, i) => (sum ? (sum[i] ? ((sides.get(s.id) * a) / sum[i]) * 100 : 0) : a);
+       for (let i = 0; i < n; i++) {
+         const v = values[i];
++        if (bySign) {
++          base[i] = share(st.pos[i], i);
++          if (v === v) st.pos[i] += v;
++          top[i] = v === v || has.get(key)[i] ? share(st.pos[i], i) : NaN;
++          continue;
++        }
+         const value = v === v ? (sum ? (sum[i] > 0 ? v / sum[i] * 100 : 0) : v) : 0;
+         if (st.neg && value < 0) {
+           base[i] = st.neg[i];
+@@ -1050,110 +958,119 @@
+     let i0 = opts.xKind === "category" ? Math.max(0, Math.ceil(xLo)) : lowerBound(xs, xLo);
+     let i1 = opts.xKind === "category" ? Math.min(n, Math.floor(xHi) + 1) : upperBound(xs, xHi);
+     const v0 = i0, v1 = i1;
+-    if (opts.type !== "bar" && opts.xKind !== "category") { i0 = Math.max(0, i0 - 1); i1 = Math.min(n, i1 + 1); }
++    // hune: bars on a time axis draw the bars next to the range too: a bar whose centre is outside the plot shows its part inside (E10, V item, Grafana).
++    if (opts.xKind !== "category" && (opts.type !== "bar" || opts.xKind === "time")) { i0 = Math.max(0, i0 - 1); i1 = Math.min(n, i1 + 1); }
+     return { xLo, xHi, i0, i1, v0, v1 };
+   }
+ 
+   // The y axis of a visible range has a domain, ticks with their labels, and the width of the widest label.
+   // It reads the data, the height of the plot and the font. It never reads the width of the chart.
+-  // So, the charts of an alignment group can ask each other for this axis.
+-  // A chart with an `alignKey` takes its step from the sequence of its kind. It ends its domain on a step (alignedAxis).
+-  // The other charts pad their range and keep the ticks inside it.
+-  function yAxisOf(view) {
++  // The chart pads its range and keeps the ticks inside it. hune: E40, no aligned axis.
++  function yAxisOf(view, key = "y") {
++    const so = scaleOpts(key);
+     const { xLo, xHi, v0, v1 } = view;
+-    // Y domain over the visible points.
++    // Y domain over the visible points of the series of this scale.
+     let yMin = Infinity, yMax = -Infinity;
+-    const vis = visibleSeries();
++    // hune: E30. The data ends for a yAxis hook (raw): the tops of a stack, no base and no soft end.
++    let rMin = Infinity, rMax = -Infinity;
++    const vis = visibleSeries().filter((s) => scaleOf(s) === key);
+     for (const s of vis) {
+       const st = stacks && stacks.get(s.id);
+       const [a0, a1] = s.xs ? ownRange(s, xLo, xHi) : [v0, v1];
+-      const sum = st ? null : summaryOf(s);
+-      for (const a of st ? [st.top, st.base] : [s.values]) {
++      const sum = st || s.negate ? null : summaryOf(s);
++      for (const a of st ? [st.top, st.base] : [drawnValues(s)]) {
+         const e = sum ? summaryRange(sum, a, a0, a1) : extent(a, a0, a1);
+         if (e.min < yMin) yMin = e.min;
+         if (e.max > yMax) yMax = e.max;
++        if (!st || a === st.top) { rMin = Math.min(rMin, e.min); rMax = Math.max(rMax, e.max); } // hune: E30
+       }
+     }
+-    const included = includedY();
+-    if (included) { yMin = Math.min(yMin, included[0]); yMax = Math.max(yMax, included[1]); }
+-    const cellsY = cellsExtent(xLo, xHi);
++    const cellsY = key === "y" ? cellsExtent(xLo, xHi) : null;
+     if (cellsY) { yMin = Math.min(yMin, cellsY[0]); yMax = Math.max(yMax, cellsY[1]); }
+     if (!(yMin <= yMax)) { yMin = 0; yMax = 1; }
++    // hune: E15, F16. A soft end moves the end of the data, before the automatic rule: `ySoft` is [soft_min, soft_max], an end that is null is not set.
++    if (Array.isArray(so.ySoft)) {
++      if (Number.isFinite(so.ySoft[0]) && so.ySoft[0] < yMin) yMin = so.ySoft[0];
++      if (Number.isFinite(so.ySoft[1]) && so.ySoft[1] > yMax) yMax = so.ySoft[1];
++    }
+     const dataMin = yMin, dataMax = yMax;
+-    const xTwoLines = opts.xKind === "time" && !opts.xDateOnly;
+-    const bottom = xTwoLines ? 34 : 22;
+-    const padTop = PAD_TOP + ((opts.annotations || []).some((m) => m && m.label) ? ANNOTATION_GUTTER : 0);
+-    const plotH = Math.max(40, opts.height - padTop - bottom);
+-    // A fixed edge (yBounds), a log scale and a yAxis hook keep their own axis. They cannot end on a step.
+-    const aligned = !!alignKey && opts.yScale !== "log" && typeof opts.yAxis !== "function" && !Array.isArray(opts.yBounds);
+-    const pinned = isStacked() || opts.type === "bar";
++    // hune: one row of x labels (no second row with the date), and a band of 21 px under the plot.
++    // hune: a title under the x axis (xTitle) takes 20 px more (Grafana, E11).
++    const bottom = 21;
++    // hune: E25. Turned x labels (opts.xTickRotation) take the height of the tallest one, where a flat label takes FONT_SIZE px of the 21 px.
++    const turn = rotation();
++    let more = 0;
++    if (turn) {
++      for (let i = 0; i < Math.min(400, opts.xs.length); i++) more = Math.max(more, turnedBox(measure(short(i)), turn).h - FONT_SIZE);
++    }
++    const band = bottom + more + (opts.xTitle ? 20 : 0);
++    const padTop = PAD_TOP; // hune: E19, no gutter for the labels of engine annotations.
++    // hune: E27. With no y axis on either side, the plot starts at the top of the canvas (Grafana).
++    const top = leftShown() || rightShown() ? padTop : 0;
++    const plotH = Math.max(40, opts.height - top - band);
++    // hune: E13. A bar series of a chart that draws in series order (opts.drawOrder) also starts its bars at 0.
++    const pinned = isStacked() || opts.type === "bar" || (opts.drawOrder === "series" && vis.some((s) => isBarSeries(s)));
+     if (pinned) { yMin = Math.min(0, yMin); yMax = Math.max(0, yMax); }
+     else if (yMin >= 0 && yMax - yMin > 0.25 * yMax) yMin = 0;
+     else if (yMax <= 0 && yMax - yMin > 0.25 * -yMin) yMax = 0;
+     if (yMax === yMin) {
+       const pad = yMin === 0 ? 1 : Math.abs(yMin) * 0.1;
+       yMin -= pad; yMax += pad;
+-    } else if (!aligned) {
++    } else {
+       const pad = (yMax - yMin) * 0.06;
+       // yHeadroom: more room above the largest value. Dots of a sparse series never sit on the top edge of the plot.
+-      const head = opts.yHeadroom > 0 ? (yMax - yMin) * opts.yHeadroom : pad;
++      const head = so.yHeadroom > 0 ? (yMax - yMin) * so.yHeadroom : pad;
+       if (yMax !== 0 || !pinned) yMax += head;
+       if (yMin !== 0) yMin -= pad;
+     }
+ 
+     // yBounds [min, max]: a fixed edge. null uses the edge of the data. A pair that leaves no range is ignored.
+-    if (Array.isArray(opts.yBounds)) {
+-      const lo = Number.isFinite(opts.yBounds[0]) ? opts.yBounds[0] : yMin;
+-      const hi = Number.isFinite(opts.yBounds[1]) ? opts.yBounds[1] : yMax;
++    if (Array.isArray(so.yBounds)) {
++      const lo = Number.isFinite(so.yBounds[0]) ? so.yBounds[0] : yMin;
++      const hi = Number.isFinite(so.yBounds[1]) ? so.yBounds[1] : yMax;
+       if (hi > lo) { yMin = lo; yMax = hi; }
+     }
+ 
+-    let yAx;
+-    if (aligned) {
+-      // The plot height gives the number of intervals. So, every chart of a group whose plots are as high has the same number.
+-      const ax = alignedAxis(opts.yKind, yMin, yMax, Math.min(Y_MAX_INTERVALS, Math.max(2, Math.floor(plotH / Y_TICK_SPACE))), { whole: opts.yInteger === true, unitOf: yUnitFor });
+-      yAx = { min: ax.min, max: ax.max, step: ax.step, ticks: ax.values.map((v) => ({ v, label: yTickLabel(v, ax.step, ax.unit) })) };
+-    } else yAx = customYAxis(dataMin, dataMax, plotH);
++    const yAx = customYAxis(dataMin, dataMax, plotH, so, rMin <= rMax ? [rMin, rMax] : null); // hune: E30
+     if (yAx) { yMin = yAx.min; yMax = yAx.max; }
+     const yt = yAx ? { step: yAx.step || 0, values: yAx.ticks.map((t) => t.v) } : linearTicks(yMin, yMax, Math.max(2, Math.floor(plotH / Y_TICK_SPACE)));
+-    const yUnit = yUnitFor(Math.max(Math.abs(yMin), Math.abs(yMax)));
+-    const yLabels = yAx ? yAx.ticks.map((t) => t.label) : yt.values.map((v) => yTickLabel(v, yt.step, yUnit));
++    const yUnit = yUnitFor(Math.max(Math.abs(yMin), Math.abs(yMax)), so);
++    const yLabels = yAx ? yAx.ticks.map((t) => t.label) : yt.values.map((v) => yTickLabel(v, yt.step, yUnit, so));
+     let labelW = 0;
+     for (const l of yLabels) labelW = Math.max(labelW, measure(l));
+-    return { yMin, yMax, plotH, padTop, bottom, ticks: yt, labels: yLabels, labelW };
++    return { yMin, yMax, plotH, padTop: top, bottom: band, ticks: yt, labels: yLabels, labelW, key }; // hune: E27
+   }
+ 
+   // The visible range and its y axis are kept while nothing that they read changes (axisStamp).
+-  // A draw and the charts of the group that ask for the gutter share one computation.
++  // A draw and the layout readers share one computation.
+   function axisNow() {
+     if (axisCache && axisCache.stamp === axisStamp) return axisCache;
+     if (!theme) theme = readTheme();
+     if (stacks === undefined || stacks === null) computeStacks();
+     const view = viewOf();
+-    axisCache = { stamp: axisStamp, view, axis: yAxisOf(view) };
++    axisCache = { stamp: axisStamp, view, axis: yAxisOf(view, "y"), axis2: hasY2() ? yAxisOf(view, "y2") : null };
+     return axisCache;
+   }
+ 
+   // The gutter at the left of the plot (px) has room for the widest y label.
+-  // A chart of an alignment group uses the widest of the charts that share its x scale (alignGutter). So, their vertical grid lines sit at the same x.
+-  const ownGutter = (axis) => Math.ceil(Math.max(24, axis.labelW) + 12);
+-  const xScaleKey = (view, width) => `${opts.xKind}|${view.xLo}|${view.xHi}|${width}`;
+-  function gutterFor(axis, view, width) {
+-    const own = ownGutter(axis);
+-    const group = alignKey ? alignGroups.get(alignKey) : null;
+-    return group ? Math.max(own, alignGutter(group, xScaleKey(view, width))) : own;
+-  }
++  // hune: the gutter is the widest label plus 9 px (E13: Grafana, paper 10.8 V2), and a title at the left of the y axis (yTitle) takes 28 px more (E11, E15).
++  // A left axis that does not show (opts.yShown === false) takes the margin of 8 px.
++  // hune: E46. `yWidth` (the property `axis_width`) is the gutter in px; a title adds 20 px (Grafana: the size of the axis, then the label).
++  const ownGutter = (axis) => (leftShown() ? (Number.isFinite(opts.yWidth) ? opts.yWidth + (opts.yTitle ? 20 : 0) : Math.ceil(axis.labelW + Y_AXIS_PAD + (opts.yTitle ? Y_TITLE_W : 0))) : PAD_RIGHT);
++  // hune: E13. The gutter at the right of the plot: the widest label of the right scale plus 9 px, and the title. It replaces the margin of 8 px.
++  const rightGutter = (axis2) => (rightShown() && axis2 ? (Number.isFinite(opts.y2.yWidth) ? opts.y2.yWidth + (opts.y2.yTitle ? 20 : 0) : Math.ceil(axis2.labelW + Y_AXIS_PAD + (opts.y2.yTitle ? Y_TITLE_W : 0))) : PAD_RIGHT); // hune: E46
+ 
+   function computeLayout(width) {
+-    const { view, axis } = axisNow();
++    const { view, axis, axis2 } = axisNow();
+     const { xLo, xHi, i0, i1, v0, v1 } = view;
+     const { yMin, yMax, plotH, padTop, bottom, ticks: yt, labels: yLabels } = axis;
+-    const left = gutterFor(axis, view, width);
+-    const plotW = Math.max(40, width - left - PAD_RIGHT);
++    const left = ownGutter(axis); // hune: E40
++    const right = rightGutter(axis2);
++    const plotW = Math.max(40, width - left - right);
+     const ky = plotH / (yMax - yMin);
+     const kx = plotW / (xHi - xLo);
+     const L = {
+-      width, height: opts.height, left, top: padTop, plotW, plotH, bottom,
++      width, height: opts.height, left, right, top: padTop, plotW, plotH, bottom,
+       xLo, xHi, yMin, yMax, kx, ky, i0, i1, v0, v1,
+       yTicks: yt.values.map((v, k) => ({ v, label: yLabels[k] })), yStep: yt.step,
+       xOf: (x) => left + (x - xLo) * kx,
+@@ -1162,18 +1079,44 @@
+       yAt: (py) => yMin + (padTop + plotH - py) / ky,
+     };
+     if (opts.yScale === "log") applyLogScale(L);
++    // hune: E13. The view of the right scale: the layout of the left scale with the range, the ticks and the functions of the right scale. A series of
++    // the right scale draws and reads its dots on this view (viewFor).
++    if (axis2) {
++      const ky2 = plotH / (axis2.yMax - axis2.yMin);
++      const V = Object.assign({}, L, {
++        yMin: axis2.yMin, yMax: axis2.yMax, ky: ky2,
++        yTicks: axis2.ticks.values.map((v, k) => ({ v, label: axis2.labels[k] })), yStep: axis2.ticks.step,
++        yOf: (y) => padTop + plotH - (y - axis2.yMin) * ky2,
++        yAt: (py) => axis2.yMin + (padTop + plotH - py) / ky2,
++        scaleKey: "y2", logY: false, logView: null,
++      });
++      if (scaleOpts("y2").yScale === "log") applyLogScale(V);
++      L.y2 = V;
++    }
+     L.xTicks = xTicks(L);
+-    L.xLabels = layoutXLabels(L.xTicks, L.xOf, left, left + plotW, width, measure, measureBold);
++    L.xLabels = layoutXLabels(L.xTicks, L.xOf, left, left + plotW, width, measure, measureBold, rotation());
+     return L;
++  }
++
++  // hune: E25. The rotation of the x labels, in degrees: only a category axis turns its labels. 0 is the picture of the engine.
++  function rotation() {
++    return opts.xKind === "category" && Number.isFinite(opts.xTickRotation) ? opts.xTickRotation : 0;
++  }
++
++  // The text of a category label: at most MAX_CATEGORY_CHARS characters. hune: E25. A turned label also keeps the plot at 40 px or more
++  // (and the title of the axis): a longer label ends with an ellipsis.
++  function short(i) {
++    const c = String(opts.categories[i] ?? ""), turn = rotation();
++    const t = c.length > MAX_CATEGORY_CHARS ? `${c.slice(0, MAX_CATEGORY_CHARS - 1)}\u2026` : c;
++    if (!turn) return t;
++    const r = Math.abs(turn) * Math.PI / 180;
++    return fitTitle(t, (opts.height - PAD_TOP - 49 - (opts.xTitle ? 20 : 0) - FONT_SIZE * Math.cos(r)) / Math.sin(r));
+   }
+ 
+   function xTicks(L) {
+     const { xLo, xHi, plotW } = L;
+     if (opts.xKind === "time") {
+-      if (opts.xDateOnly) {
+-        return timeTicks(xLo, xHi, plotW, measure).filter((t) => localMidnight(t.v) === t.v).map((t) => ({ v: t.v, label: dayLabel(t.v) }));
+-      }
+-      return timeTicks(xLo, xHi, plotW, measure);
++      return timeTicks(xLo, xHi, plotW, measure, clockOf()); // hune: E42, no xDateOnly
+     }
+     if (opts.xKind === "category") {
+       const n = opts.xs.length;
+@@ -1181,12 +1124,13 @@
+       const lo = Math.max(0, Math.ceil(xLo)), hi = Math.min(n - 1, Math.floor(xHi));
+       const band = plotW / Math.max(1, xHi - xLo);
+       let widest = 0;
+-      const short = (i) => { const c = String(opts.categories[i] ?? ""); return c.length > MAX_CATEGORY_CHARS ? `${c.slice(0, MAX_CATEGORY_CHARS - 1)}\u2026` : c; };
+       for (let i = lo; i <= hi && i - lo < 400; i++) widest = Math.max(widest, measure(short(i)));
+-      const every = Math.max(1, Math.ceil((widest + 10) / band));
++      const every = Math.max(1, Math.ceil(((rotation() ? turnedBox(widest, rotation()).step : widest) + 10) / band));
+       for (let i = lo; i <= hi; i += every) labels.push({ v: i, label: short(i) });
+       return labels;
+     }
++    // hune: a host that knows the unit of the x field gives its own ticks (E11): xTicksFn(lo, hi, plotW, measure) -> [{ v, label }].
++    if (typeof opts.xTicksFn === "function") return opts.xTicksFn(xLo, xHi, plotW, measure) || [];
+     const sample = formatValue(Math.max(Math.abs(xLo), Math.abs(xHi)));
+     const count = Math.max(2, Math.min(14, Math.floor(plotW / (measure(sample) + 36))));
+     const t = linearTicks(xLo, xHi, count, opts.xKind === "index");
+@@ -1237,16 +1181,28 @@
+     ctx.rect(layout.left, layout.top - 1, layout.plotW, layout.plotH + 2);
+     ctx.clip();
+     let points = drawCells(ctx, layout);
++    // hune: a hook of the host draws under the series, inside the plot (E8, F12: the lines and the bands of the thresholds). It reads
++    // the layout (left, top, plotW, plotH, yMin, yMax, yOf) and draws nothing for the style "off".
++    if (typeof opts.drawUnder === "function") opts.drawUnder(ctx, layout, { dpr });
+     markedSeries = 0;
+     washedSeries = 0;
+     const all = visibleSeries();
+     const own = all.filter(ownMark);
+     const vis = own.length ? all.filter((s) => !own.includes(s)) : all;
+     const perSeries = {};
+-    if (opts.type === "bar") points = Math.max(points, drawBars(ctx, layout, vis, perSeries));
++    if (opts.drawOrder === "series") {
++      // hune: E14, F17. The bars and the lines of one chart draw in the order of the series: the bars are one cluster, each bar series in its turn.
++      const bars = vis.filter(isBarSeries);
++      for (const s of vis) {
++        if (isBarSeries(s)) { points = Math.max(points, drawBars(ctx, layout, bars, perSeries, [s])); continue; }
++        const drawn = drawSeries(ctx, viewFor(layout, s), s);
++        perSeries[s.label] = { points: drawn, runs: runs.length };
++        points = Math.max(points, drawn);
++      }
++    } else if (opts.type === "bar") points = Math.max(points, drawBars(ctx, layout, vis, perSeries));
+     else {
+       for (const s of vis) {
+-        const drawn = drawSeries(ctx, layout, s);
++        const drawn = drawSeries(ctx, viewFor(layout, s), s);
+         perSeries[s.label] = { points: drawn, runs: runs.length };
+         points = Math.max(points, drawn);
+       }
+@@ -1259,12 +1215,11 @@
+     publishExtras();
+     drawOverlay();
+     renderLegend();
+-    placeMarkers();
++    // hune: E17, no exemplar markers to place.
+     if (refreshCursor) {
+       refreshCursor = false;
+       if (cursor) moveCursor(cursor);
+     }
+-    settleGroup();
+   }
+ 
+   function publish() {
+@@ -1279,6 +1234,8 @@
+     root.dataset.gaps = String(gapInfo().count);
+     root.dataset.yMin = String(L.yMin);
+     root.dataset.yMax = String(L.yMax);
++    // hune: E13. The range of the right scale.
++    if (L.y2) { root.dataset.y2Min = String(L.y2.yMin); root.dataset.y2Max = String(L.y2.yMax); } else { delete root.dataset.y2Min; delete root.dataset.y2Max; }
+     root.dataset.zoomed = String(!!zoom);
+     root.dataset.drawMs = stats.ms.toFixed(2);
+     root.dataset.type = opts.type;
+@@ -1286,62 +1243,126 @@
+     root.dataset.seriesStats = JSON.stringify(stats.perSeries);
+     root.dataset.draws = String((Number(root.dataset.draws) || 0) + 1);
+     root.dataset.plot = `${L.left} ${L.top} ${L.plotW} ${L.plotH}`;
+-    // The y step and the number of its intervals. The charts of an alignment group have the same number.
++    // The y step.
+     root.dataset.yStep = String(L.yStep);
+-    if (alignKey) root.dataset.align = alignKey;
+-    if (typeof opts.onDraw === "function") opts.onDraw({ ...stats, xLo: L.xLo, xHi: L.xHi, zoomed: !!zoom });
++    if (typeof opts.onDraw === "function") opts.onDraw({ ...stats, xLo: L.xLo, xHi: L.xHi, zoomed: !!zoom, yMin: L.yMin, yMax: L.yMax, y2Min: L.y2 ? L.y2.yMin : null, y2Max: L.y2 ? L.y2.yMax : null });
++  }
++
++  // hune: E15. A title longer than the room of its axis ends with an ellipsis. hune: E31. A binary search in the first TITLE_MAX_CHARS characters.
++  function fitTitle(text, maxW) {
++    const all = String(text);
++    const t = all.slice(0, TITLE_MAX_CHARS);
++    if (t.length === all.length && measure(t) <= maxW) return t;
++    let lo = 1, hi = t.length;
++    while (lo < hi) {
++      const mid = (lo + hi + 1) >> 1;
++      if (measure(`${t.slice(0, mid)}\u2026`) <= maxW) lo = mid;
++      else hi = mid - 1;
++    }
++    return `${t.slice(0, lo)}\u2026`;
++  }
++
++  // hune: E46. The colour of a y axis (the property `axis_color`): a CSS colour, or a function (ctx, L) that gives a CSS colour or a canvas style
++  // (a gradient); else the colour of the labels.
++  function axisPaint(ctx, L, c) {
++    const v = typeof c === "function" ? c(ctx, L) : c;
++    return typeof v === "string" && v ? rgba(cssColor(v), 1) : v || theme.label;
++  }
++  // hune: E46. The border of a y axis (the property `axis_border`): a line of 1 device px on the edge of the plot from its top to its bottom, and a tick
++  // of 4 px (`out` is -4 at the left, 4 at the right) at each tick of the scale, in the colour of the axis (Grafana 12.4.2).
++  function axisBorder(ctx, L, x, out, c) {
++    const cx = crisp(x);
++    ctx.save();
++    ctx.lineWidth = 1 / dpr;
++    ctx.strokeStyle = axisPaint(ctx, L, c);
++    ctx.beginPath();
++    ctx.moveTo(cx, L.top);
++    ctx.lineTo(cx, L.top + L.plotH);
++    for (const t of L.yTicks) {
++      const y = crisp(L.yOf(t.v));
++      ctx.moveTo(cx, y);
++      ctx.lineTo(cx + out, y);
++    }
++    ctx.stroke();
++    ctx.restore();
+   }
+ 
+   function drawAxes(ctx, L) {
+     const { left, top, plotW, plotH } = L;
++    // hune: E13. The grid lines are those of one scale (gridKey). The ticks of the other scale have their labels only.
++    const gk = gridKey();
++    const gv = gk === "y2" && L.y2 ? L.y2 : L;
+     ctx.lineWidth = 1 / dpr;
+     ctx.strokeStyle = theme.grid;
+     ctx.beginPath();
+-    for (const t of L.yTicks) {
+-      const y = crisp(L.yOf(t.v));
++    if (gk) for (const t of gv.yTicks) {
++      const y = crisp(gv.yOf(t.v));
+       ctx.moveTo(left, y);
+       ctx.lineTo(left + plotW, y);
+     }
+-    for (const t of L.xTicks) {
++    // hune: `xGrid: false` draws no vertical grid line (the bar chart of Grafana has none) (E10).
++    if (opts.xGrid !== false) for (const t of L.xTicks) {
+       const x = crisp(L.xOf(t.v));
+       if (x < left - 0.5 || x > left + plotW + 0.5) continue;
+       ctx.moveTo(x, top);
+       ctx.lineTo(x, top + plotH);
+     }
+     ctx.stroke();
+-    // Zero line and baseline.
+-    ctx.strokeStyle = theme.axis;
+-    ctx.lineWidth = 1;
+-    ctx.beginPath();
+-    const base = crisp(top + plotH);
+-    ctx.moveTo(left, base);
+-    ctx.lineTo(left + plotW, base);
+-    if (L.yMin < 0 && L.yMax > 0) {
+-      const z = crisp(L.yOf(0));
+-      ctx.moveTo(left, z);
+-      ctx.lineTo(left + plotW, z);
+-    }
+-    for (const t of L.xTicks) {
+-      const x = crisp(L.xOf(t.v));
+-      if (x < left - 0.5 || x > left + plotW + 0.5) continue;
+-      ctx.moveTo(x, base);
+-      ctx.lineTo(x, base + TICK_LEN);
+-    }
+-    ctx.stroke();
+-
++    // hune: no axis baseline, no zero line and no tick marks. The grid lines are the only lines (Grafana look).
+     ctx.font = theme.font;
+     ctx.fillStyle = theme.label;
+     ctx.textBaseline = "middle";
+-    ctx.textAlign = "right";
+-    for (const t of L.yTicks) ctx.fillText(t.label, left - 8, L.yOf(t.v));
++    // hune: the y labels of the left axis end 5 px before the plot, and those of the right axis start 5 px after it (E13); an axis that does not show has none.
++    if (leftShown()) {
++      ctx.textAlign = "right";
++      ctx.fillStyle = axisPaint(ctx, L, opts.yColor); // hune: E46
++      for (const t of L.yTicks) if (t.label !== "") ctx.fillText(t.label, left - Y_LABEL_GAP - (opts.yBorder ? 4 : 0), L.yOf(t.v));
++      if (opts.yBorder) axisBorder(ctx, L, left, -4, opts.yColor);
++    }
++    if (rightShown() && L.y2) {
++      ctx.textAlign = "left";
++      ctx.fillStyle = axisPaint(ctx, L.y2, opts.y2.yColor); // hune: E46
++      for (const t of L.y2.yTicks) if (t.label !== "") ctx.fillText(t.label, left + plotW + Y_LABEL_GAP + (opts.y2.yBorder ? 4 : 0), L.y2.yOf(t.v));
++      if (opts.y2.yBorder) axisBorder(ctx, L.y2, left + plotW, 4, opts.y2.yColor);
++    }
++    ctx.fillStyle = theme.label; // hune: E46
+     ctx.textBaseline = "top";
+     ctx.textAlign = "center";
+-    const y1 = top + plotH + TICK_LEN + 3;
+-    for (const t of L.xLabels) ctx.fillText(t.label, t.x, y1);
+-    ctx.font = theme.fontBold;
+-    ctx.fillStyle = rgba(theme.text, 0.8);
+-    for (const t of L.xLabels) if (t.context) ctx.fillText(t.context, t.cx, y1 + 14);
+-    ctx.font = theme.font;
++    const y1 = top + plotH + TICK_LEN + 9;
++    const turn = rotation();
++    if (!turn) for (const t of L.xLabels) ctx.fillText(t.label, t.x, y1);
++    else {
++      // hune: E25. Each label turns about its anchor (x, y1 + half its height), so the top of its box is at y1. A positive angle turns it
++      // clockwise and starts it at the anchor, a negative angle turns it counter-clockwise and ends it there (Grafana `xTickLabelRotation`).
++      ctx.save();
++      ctx.textBaseline = "middle";
++      ctx.textAlign = turn > 0 ? "left" : "right";
++      for (const t of L.xLabels) {
++        ctx.save();
++        ctx.translate(t.x, y1 + FONT_SIZE / 2 * Math.cos(turn * Math.PI / 180));
++        ctx.rotate(turn * Math.PI / 180);
++        ctx.fillText(t.label, 0, 0);
++        ctx.restore();
++      }
++      ctx.restore();
++    }
++    // hune: the titles of the axes (E11): the name of the x field under the labels, and the name of the y field turned, at the left.
++    if (opts.xTitle) {
++      ctx.textBaseline = "alphabetic";
++      ctx.fillText(String(opts.xTitle), left + plotW / 2, top + plotH + L.bottom - 1);
++    }
++    // hune: E15. A title of a y axis has the font of the labels. Its centre is 12 px from the outer edge. The left title turns by -90 degrees, the right title by 90.
++    const titleAt = (text, x, angle) => {
++      ctx.save();
++      ctx.translate(x, top + plotH / 2);
++      ctx.rotate(angle);
++      ctx.textAlign = "center";
++      ctx.textBaseline = "middle";
++      ctx.fillText(fitTitle(text, plotH), 0, 0);
++      ctx.restore();
++    };
++    if (opts.yTitle && leftShown()) titleAt(opts.yTitle, Y_TITLE_CENTRE, -Math.PI / 2);
++    if (rightShown() && opts.y2.yTitle) titleAt(opts.y2.yTitle, L.width - Y_TITLE_CENTRE, Math.PI / 2);
+   }
+ 
+   function alphaFor(s) {
+@@ -1474,10 +1495,14 @@
+   let colX = new Float64Array(2048), colFy = new Float64Array(2048), colLy = new Float64Array(2048);
+   let colTop = new Float64Array(2048), colBot = new Float64Array(2048), colDev = new Float64Array(2048);
+   let colBrk = new Uint8Array(2048);
+-  function column(dev, fy, lo, hi, ly, brk, prevLast) {
++  // hune: the extremes of a column in plot px (colMn is the smallest y, colMx the largest) and the order in which they occur
++  // (colLoFirst is 1 when the smallest y comes first). The line goes through first, the two extremes in that order, last (uPlot's linear path).
++  let colMn = new Float64Array(2048), colMx = new Float64Array(2048), colLoFirst = new Uint8Array(2048);
++  function column(dev, fy, lo, hi, ly, brk, prevLast, loFirst) {
+     if (colCount === colX.length) {
+       const grow = (a) => { const next = new a.constructor(a.length * 2); counters.allocBytes += next.byteLength; next.set(a); return next; };
+       colX = grow(colX); colFy = grow(colFy); colLy = grow(colLy); colTop = grow(colTop); colBot = grow(colBot); colDev = grow(colDev); colBrk = grow(colBrk);
++      colMn = grow(colMn); colMx = grow(colMx); colLoFirst = grow(colLoFirst);
+     }
+     const k = colCount++;
+     colDev[k] = dev;
+@@ -1487,6 +1512,9 @@
+     colTop[k] = !brk && prevLast < lo ? prevLast : lo;
+     colBot[k] = !brk && prevLast > hi ? prevLast : hi;
+     colBrk[k] = brk ? 1 : 0;
++    colMn[k] = lo;
++    colMx[k] = hi;
++    colLoFirst[k] = loFirst ? 1 : 0;
+   }
+ 
+   // Per-column first, lowest, highest and last value of the visible points.
+@@ -1504,13 +1532,14 @@
+     const useBlocks = !!sum && gl === Infinity && i1 - i0 > plotW * dpr * BLOCK * 2;
+     colCount = 0;
+     let col = -Infinity, fy = 0, lo = 0, hi = 0, ly = 0;
++    let loSeq = 0, hiSeq = 0, seq = 0; // hune: the order of the extremes inside a column
+     let has = false;
+     let brk = true;
+     let prevLast = NaN;
+     let read = 0;
+     const flush = () => {
+       if (!has) return;
+-      column(col, fy, lo, hi, ly, brk, prevLast);
++      column(col, fy, lo, hi, ly, brk, prevLast, loSeq <= hiSeq);
+       brk = false;
+       prevLast = ly;
+       has = false;
+@@ -1530,10 +1559,11 @@
+             fy = bottom - (ys[i] - yMin) * ky;
+             lo = top;
+             hi = low;
++            loSeq = 0; hiSeq = 1; seq = 2;
+             has = true;
+           } else {
+-            if (top < lo) lo = top;
+-            if (low > hi) hi = low;
++            if (top < lo) { lo = top; loSeq = seq++; }
++            if (low > hi) { hi = low; hiSeq = seq++; }
+           }
+           ly = bottom - (ys[e - 1] - yMin) * ky;
+           read += 3;
+@@ -1555,10 +1585,12 @@
+         flush();
+         col = c;
+         fy = lo = hi = ly = y;
++        loSeq = hiSeq = 0; seq = 1;
+         has = true;
+       } else {
+-        if (y < lo) lo = y;
+-        if (y > hi) hi = y;
++        if (y < lo) { lo = y; loSeq = seq; }
++        if (y > hi) { hi = y; hiSeq = seq; }
++        seq++;
+         ly = y;
+       }
+       i++;
+@@ -1567,77 +1599,77 @@
+     counters.tracedPoints += read;
+   }
+ 
+-  // The engine draws a column taller than this (css px) as a rect.
+-  // It draws flatter columns as a stroked line through their first and last value.
+-  const TALL_PX = 2;
+-  const isTall = (k) => colBot[k] - colTop[k] > TALL_PX || (colBrk[k] === 1 && (k + 1 === colCount || colBrk[k + 1] === 1));
+-
+-  // A dense line is made by traceColumns(). Each tall column is one filled,
+-  // pixel-aligned rect. It runs from the highest to the lowest value, and the step
+-  // from the previous column. Runs of flat columns are one stroked line.
+-  // A stroke through every column's first, low, high and last value makes a
+-  // zigzag of thousands of tall segments. That took 100 ms and more to
+-  // rasterise per frame. The rects need no antialiasing pass.
++  // A dense line is made by traceColumns().
++  // hune: one continuous polyline goes through every column, as the linear path of uPlot
++  // (Grafana) does: to the first value of the column, to its two extremes in the order in which they occur, to its last value,
++  // then to the next column. A NULL gap (colBrk) starts a new run. The fill under the line follows the same vertices.
++  // Adds the vertices of the columns a to b-1 (one run) to the current path; the pen moves to the first vertex.
++  function columnsPath(ctx, a, b) {
++    let px = NaN, py = NaN;
++    let n = 0;
++    const to = (x, y) => {
++      if (x === px && y === py) return;
++      if (n === 0) ctx.moveTo(x, y);
++      else ctx.lineTo(x, y);
++      px = x;
++      py = y;
++      n++;
++    };
++    for (let k = a; k < b; k++) {
++      const x = colX[k];
++      to(x, colFy[k]);
++      const e1 = colLoFirst[k] ? colMn[k] : colMx[k];
++      const e2 = colLoFirst[k] ? colMx[k] : colMn[k];
++      if (e1 !== py) to(x, e1);
++      if (e2 !== py) to(x, e2);
++      if (colLy[k] !== py) to(x, colLy[k]);
++    }
++    return n;
++  }
++
+   function drawColumns(ctx, L, s, c, alpha, wash) {
+     const n = colCount;
+-    const lw = lineW(1.5);
++    const lw = seriesWidth(s, 1.5);
+     if (wash) {
+       washedSeries++;
+-      // The wash under a single series, along each column's top.
++      // The wash under a single series, along the polyline.
+       const baseY = Math.min(L.top + L.plotH, Math.max(L.top, L.yOf(Math.max(L.yMin, Math.min(0, L.yMax)))));
+       ctx.beginPath();
+       for (let a = 0; a < n;) {
+         let b = a + 1;
+         while (b < n && !colBrk[b]) b++;
+         if (b - a > 1) {
+-          ctx.moveTo(colX[a], colTop[a]);
+-          for (let k = a + 1; k < b; k++) ctx.lineTo(colX[k], colTop[k]);
++          columnsPath(ctx, a, b);
+           ctx.lineTo(colX[b - 1], baseY);
+           ctx.lineTo(colX[a], baseY);
+           ctx.closePath();
+         }
+         a = b;
+       }
+-      ctx.fillStyle = washStyle(ctx, L, c, alpha, wash);
++      ctx.fillStyle = paintOf(s, "fill", ctx, L, c, wash === "auto" ? 0 : wash * alpha) || washStyle(ctx, L, c, alpha, wash); // hune: E43
+       ctx.fill();
+-    }
+-    const color = rgba(c, alpha);
+-    ctx.fillStyle = color;
+-    let rects = 0;
+-    // A rect is as wide as the line width (in device pixels). It is cut short where
+-    // the next column's rect starts. This stops double blending when the series is dimmed.
+-    const wide = Math.max(1, Math.round(lw * dpr));
+-    for (let k = 0; k < n; k++) {
+-      if (!isTall(k)) continue;
+-      const y0 = Math.floor((colTop[k] - lw / 2) * dpr) / dpr;
+-      const y1 = Math.ceil((colBot[k] + lw / 2) * dpr) / dpr;
+-      const w = k + 1 < n && isTall(k + 1) ? Math.min(wide, colDev[k + 1] - colDev[k]) : wide;
+-      ctx.fillRect((colDev[k] - ((wide - 1) >> 1)) / dpr, y0, w / dpr, y1 - y0);
+-      rects++;
+     }
+     ctx.beginPath();
+     runs.length = 0;
+     let vertices = 0;
+-    let pen = false;
+-    for (let k = 0; k < n; k++) {
+-      if (colBrk[k]) pen = false;
+-      if (isTall(k)) { pen = false; continue; }
+-      if (!pen) {
+-        runs.push(vertices);
+-        pen = true;
+-        if (k > 0 && !colBrk[k]) { ctx.moveTo(colX[k - 1], colLy[k - 1]); ctx.lineTo(colX[k], colFy[k]); vertices += 2; }
+-        else { ctx.moveTo(colX[k], colFy[k]); vertices++; }
+-      } else { ctx.lineTo(colX[k], colFy[k]); vertices++; }
+-      if (colLy[k] !== colFy[k]) { ctx.lineTo(colX[k], colLy[k]); vertices++; }
+-    }
+-    if (vertices) {
+-      ctx.strokeStyle = color;
++    for (let a = 0; a < n;) {
++      let b = a + 1;
++      while (b < n && !colBrk[b]) b++;
++      runs.push(vertices);
++      const m = columnsPath(ctx, a, b);
++      // A run of one column with one value is a lone value: a mark of the width of the line.
++      if (m === 1) ctx.lineTo(colX[a] + 0.01, colFy[a]);
++      vertices += m;
++      a = b;
++    }
++    if (vertices && lw > 0) {
++      ctx.strokeStyle = paintOf(s, "line", ctx, L, c, alpha) || rgba(c, alpha); // hune: E43
+       ctx.lineWidth = lw;
+       ctx.lineJoin = "round";
+       ctx.lineCap = "round";
+-      ctx.stroke();
+-    }
+-    return vertices + 2 * rects;
++      strokeDashed(ctx, s);
++    }
++    return vertices;
+   }
+ 
+   const runEnd = (r) => (r + 1 < runs.length ? runs[r + 1] : vCount);
+@@ -1715,10 +1747,17 @@
+ 
+   // The width of a line is opts.lineWidth. Otherwise, it is the width of the mark.
+   const lineW = (own) => (opts.lineWidth > 0 ? opts.lineWidth : own);
++  // hune: E14, F17. The width of the line of a series: its own `width` (0 draws no line), else the width of the chart.
++  const seriesWidth = (s, own) => (s && Number.isFinite(s.width) && s.width >= 0 ? s.width : lineW(own));
++
++  // hune: E43. `s.paint(part, ctx, L, c, alpha)` gives the style of the fill ("fill") or of the line and the points ("line") of a series: a gradient
++  // of the host (9.19, the option `gradient_mode`), or null for the plain colour. `L` is the view of the scale of the series. An alpha of 0 has no paint.
++  const paintOf = (s, part, ctx, L, c, alpha) => (typeof s.paint === "function" && (alpha > 0 || part === "line") ? s.paint(part, ctx, L, c, alpha) : null);
+ 
+   // The fill under a line: opts.fillOpacity (0..1) applies to every line.
+   // When it is unset, a lone series ("auto") gets a light wash. Each line of an area that is not stacked gets 0.3.
+-  function washOf(unstackedArea) {
++  function washOf(unstackedArea, s) {
++    if (s && Number.isFinite(s.fill)) return s.fill; // hune: E14, the fill of the series
+     if (Number.isFinite(opts.fillOpacity)) return opts.fillOpacity;
+     if (unstackedArea) return 0.3;
+     return opts.fill !== false && visibleSeries().length === 1 ? "auto" : 0;
+@@ -1733,6 +1772,7 @@
+   }
+ 
+   function drawSeries(ctx, L, s) {
++    if (s.negate && !s.derived) s = negSeries(s); // hune: E14. The series draws -v.
+     const c = seriesColor(s);
+     const alpha = alphaFor(s);
+     let type = s.type || opts.type;
+@@ -1740,15 +1780,20 @@
+     const st = stacks && stacks.get(s.id);
+     if (type === "area" && st) {
+       // Fill between the top and the base of this series. Then stroke the top.
+-      trace(L, st.top, null, st.base);
++      trace(L, st.top, nulls, st.base); // hune: E32, a top with no value (stackSign) breaks the line only at a NULL of `nulls`
+       pathFill(ctx, null);
+-      ctx.fillStyle = rgba(c, (Number.isFinite(opts.fillOpacity) ? opts.fillOpacity : 0.3) * alpha);
++      const fa = (Number.isFinite(s.fill) ? s.fill : Number.isFinite(opts.fillOpacity) ? opts.fillOpacity : 0.3) * alpha;
++      ctx.fillStyle = paintOf(s, "fill", ctx, L, c, fa) || rgba(c, fa); // hune: E43
+       ctx.fill();
+-      pathLine(ctx);
+-      ctx.strokeStyle = rgba(c, alpha);
+-      ctx.lineWidth = lineW(1.25);
+-      ctx.lineJoin = "round";
+-      ctx.stroke();
++      const lwTop = seriesWidth(s, 1.25);
++      if (lwTop > 0) {
++        pathLine(ctx);
++        ctx.strokeStyle = paintOf(s, "line", ctx, L, c, alpha) || rgba(c, alpha); // hune: E43
++        ctx.lineWidth = lwTop;
++        ctx.lineJoin = "round";
++        ctx.lineCap = "butt";
++        strokeDashed(ctx, s);
++      }
+       return vCount;
+     }
+     // An area that is not stacked: each series is a line with its own fill.
+@@ -1759,13 +1804,16 @@
+     const maxPoints = L.plotW / POINTS_AUTO_SPACING;
+     let count = 0;
+     if (type === "line") for (let i = L.v0; i < L.v1 && count <= maxPoints; i++) if (s.values[i] === s.values[i]) count++;
+-    const marks = opts.showPoints === "always" ? "always" : opts.showPoints === "never" ? "never" : "auto";
++    // hune: E14. `s.points` and `s.pointSize` are the marks of one series. They replace the options of the chart.
++    const pointsOpt = s.points !== undefined && s.points !== null ? s.points : opts.showPoints;
++    const pointSize = Number.isFinite(s.pointSize) ? s.pointSize : opts.pointSize;
++    const marks = pointsOpt === "always" ? "always" : pointsOpt === "never" ? "never" : "auto";
+     const showPoints = type === "points" || (type === "line" && (marks === "always" ? true : marks === "auto" && count > 0 && count <= maxPoints));
+     if (showPoints && type === "line") markedSeries++;
+-    const radius = opts.pointSize > 0 ? opts.pointSize / 2 : 2.6;
++    const radius = pointSize > 0 ? pointSize / 2 : 2.6;
+     let drawn = 0;
+     if (type === "line") {
+-      const wash = washOf(unstackedArea);
++      const wash = washOf(unstackedArea, s);
+       trace(L, s.values, nulls, null, s.derived ? null : summaryOf(s));
+       if (decimated) return drawColumns(ctx, L, s, c, alpha, wash);
+       drawn = vCount;
+@@ -1774,29 +1822,34 @@
+         washedSeries++;
+         const baseY = Math.min(L.top + L.plotH, Math.max(L.top, L.yOf(Math.max(L.yMin, Math.min(0, L.yMax)))));
+         pathFill(ctx, baseY);
+-        ctx.fillStyle = washStyle(ctx, L, c, alpha, wash);
++        ctx.fillStyle = paintOf(s, "fill", ctx, L, c, wash === "auto" ? 0 : wash * alpha) || washStyle(ctx, L, c, alpha, wash); // hune: E43
+         ctx.fill();
+       }
+-      pathLine(ctx);
+-      ctx.strokeStyle = rgba(c, alpha);
+-      ctx.lineWidth = lineW(1.5);
+-      // Use round joins only where angles show. A decimated line is mostly
+-      // vertical strokes. These rasterise much cheaper with bevels.
+-      ctx.lineJoin = decimated ? "bevel" : "round";
+-      ctx.lineCap = decimated ? "butt" : "round";
+-      strokeDashed(ctx, s);
++      const lw = seriesWidth(s, 1.5);
++      if (lw > 0) {
++        pathLine(ctx);
++        ctx.strokeStyle = paintOf(s, "line", ctx, L, c, alpha) || rgba(c, alpha); // hune: E43
++        ctx.lineWidth = lw;
++        // Use round joins only where angles show. A decimated line is mostly
++        // vertical strokes. These rasterise much cheaper with bevels.
++        ctx.lineJoin = decimated ? "bevel" : "round";
++        ctx.lineCap = decimated ? "butt" : "round";
++        strokeDashed(ctx, s);
++      }
+       // Isolated values (a run of one point between NULLs) still show.
+-      if (!showPoints) {
++      if (!showPoints && lw > 0) {
+         ctx.beginPath();
+         let singles = 0;
+         for (let r = 0; r < runs.length; r++) {
+           const a = runs[r];
+           if (runEnd(r) - a !== 1) continue;
+-          ctx.moveTo(vx[a] + 2.2, vy[a]);
+-          ctx.arc(vx[a], vy[a], 2.2, 0, Math.PI * 2);
++          // hune: a lone value is a mark of the width of the line (Grafana draws no dot at this density), not a 4.4 px dot.
++          const dotR = Math.max(0.6, lw / 2);
++          ctx.moveTo(vx[a] + dotR, vy[a]);
++          ctx.arc(vx[a], vy[a], dotR, 0, Math.PI * 2);
+           singles++;
+         }
+-        if (singles) { ctx.fillStyle = rgba(c, alpha); ctx.fill(); }
++        if (singles) { ctx.fillStyle = paintOf(s, "line", ctx, L, c, alpha) || rgba(c, alpha); ctx.fill(); } // hune: E43
+       }
+     }
+     if (showPoints) {
+@@ -1813,7 +1866,7 @@
+         ctx.arc(x, y, radius, 0, Math.PI * 2);
+         dots++;
+       }
+-      ctx.fillStyle = rgba(c, alpha);
++      ctx.fillStyle = paintOf(s, "line", ctx, L, c, alpha) || rgba(c, alpha); // hune: E43, the points take the paint of the line (Grafana)
+       ctx.fill();
+       if (type === "points") drawn = dots;
+     }
+@@ -1826,23 +1879,27 @@
+   const BAR_ALPHA = 0.78;
+   const BAR_GAP_PX = 1;
+   const barOffsets = new Map();
+-  function drawBars(ctx, L, vis, perSeries) {
+-    barOffsets.clear();
++  function drawBars(ctx, L, vis, perSeries, only = null) {
++    if (!only) barOffsets.clear(); // hune: E14. `only` draws some of the bar series (a chart in series order); the offsets of the others stay.
+     const xs = opts.xs;
+-    const { v0, v1, plotW } = L;
++    // hune: a time axis draws the bars next to the range, cut by the plot (E10).
++    const { plotW } = L;
++    const v0 = opts.xKind === "time" ? L.i0 : L.v0, v1 = opts.xKind === "time" ? L.i1 : L.v1;
+     const n = v1 - v0;
+     if (!n || !vis.length) return 0;
+     const groups = [];
+     for (const s of vis) {
+-      const key = isStacked() ? (s.group == null ? "" : String(s.group)) : s.id;
++      // hune: E23, `barOverlap`
++      const key = isStacked() ? (s.group == null ? "" : String(s.group)) : opts.barOverlap ? "" : s.id;
+       if (!groups.includes(key)) groups.push(key);
+     }
+     let slotPx;
+     if (opts.xKind === "category") slotPx = L.kx;
+-    else slotPx = n > 1 ? minGap(v0, v1) * L.kx : plotW / 2;
++    // hune: E24, `barSlot` (x units) and `barDecimate: false`
++    else slotPx = opts.barSlot > 0 ? opts.barSlot * L.kx : n > 1 ? minGap(v0, v1) * L.kx : plotW / 2;
+     const maxBars = Math.max(1, Math.floor(plotW / 3));
+     let picks = null;
+-    if (n > maxBars) {
++    if (n > maxBars && opts.barDecimate !== false) {
+       picks = [];
+       const bucketW = plotW / maxBars;
+       let bucket = -1, best = -1, bestTotal = -Infinity;
+@@ -1851,7 +1908,7 @@
+         let total = 0;
+         for (const s of vis) {
+           const st = stacks && stacks.get(s.id);
+-          const v = st ? st.top[i] - st.base[i] : s.values[i];
++          const v = st ? st.top[i] - st.base[i] : drawnValues(s)[i];
+           if (v === v) total += Math.abs(v);
+         }
+         if (b !== bucket) {
+@@ -1863,33 +1920,58 @@
+       slotPx = Math.min(slotPx, bucketW);
+     }
+     // Adjacent bars keep a 1 px gap at least, however dense.
+-    const barW = Math.max(1, Math.min(opts.xKind === "category" ? 64 : 56, slotPx * barRatio(), slotPx >= 2 ? slotPx - BAR_GAP_PX : slotPx));
++    // hune: `barMaxWidth` (px) replaces the cap of 64 px (56 px on a time axis) of a bar, and `barInnerRatio` is the share of its slot that a bar
++    // fills inside a group of several bars (Grafana: group width, then bar width) (E10).
++    const barCap = opts.barMaxWidth > 0 ? opts.barMaxWidth : opts.xKind === "category" ? 64 : 56;
++    const barW = Math.max(1, Math.min(barCap, slotPx * barRatio(), slotPx >= 2 ? slotPx - BAR_GAP_PX : slotPx));
+     const clusterW = barW / groups.length;
+-    const drawW = groups.length > 1 ? Math.max(1, clusterW - Math.min(2, clusterW * 0.15)) : barW;
++    const inner = opts.barInnerRatio > 0 && opts.barInnerRatio <= 1 ? opts.barInnerRatio : null;
++    const drawW = groups.length > 1 ? (inner !== null ? Math.max(1, clusterW * inner) : Math.max(1, clusterW - Math.min(2, clusterW * 0.15))) : barW;
+     let drawnMax = 0;
+-    for (const s of vis) {
++    // hune: `barLabel(ctx, { x, y, w, i, series, value, negative }, L)` draws the value of each bar after all bars are drawn (E10, the value labels of the bar chart).
++    const labelBars = typeof opts.barLabel === "function" ? [] : null;
++    for (const s of only || vis) {
+       const c = seriesColor(s);
+       const st = stacks && stacks.get(s.id);
+-      const offset = (groups.indexOf(isStacked() ? (s.group == null ? "" : String(s.group)) : s.id) - (groups.length - 1) / 2) * clusterW;
++      const V = viewFor(L, s); // hune: E13, the scale of the series
++      const dvs = drawnValues(s); // hune: E14
++      const offset = (groups.indexOf(isStacked() ? (s.group == null ? "" : String(s.group)) : opts.barOverlap ? "" : s.id) - (groups.length - 1) / 2) * clusterW;
+       ctx.beginPath();
+       let count = 0;
++      // hune: E26. `barInset`: the line of a bar stays inside the bar at its top and its bottom (Grafana), so each end loses half the line.
++      const ins = opts.barInset ? (Number.isFinite(s.width) ? s.width : opts.barLineWidth || 0) / 2 : 0;
++      const insX = opts.barInset === "box" ? ins : 0; // hune: E34, "box": the line stays inside the bar at its sides too (the bar chart of Grafana)
++      // hune: E44. `barAlign` -1 or 1 (the option `bar_alignment`): the bar ends half its line before its x, or starts half its line after it (Grafana).
++      const lwBar = Number.isFinite(s.width) ? s.width : opts.barLineWidth > 0 ? opts.barLineWidth : 0;
++      const shift = opts.barAlign === -1 || opts.barAlign === 1 ? opts.barAlign * (drawW + lwBar) / 2 : 0;
+       const each = (i) => {
+-        const top = st ? st.top[i] : s.values[i];
++        const top = st ? st.top[i] : dvs[i];
+         const bottom = st ? st.base[i] : 0;
+         if (!(top === top) || top === bottom) return;
+-        const x = L.xOf(opts.xKind === "category" ? i : xs[i]) + offset - drawW / 2;
+-        const yTop = L.yOf(Math.max(top, bottom));
+-        const yBottom = L.yOf(Math.min(top, bottom));
+-        ctx.rect(x, yTop, drawW, Math.max(1 / dpr, yBottom - yTop));
++        const x = L.xOf(opts.xKind === "category" ? i : xs[i]) + offset - drawW / 2 + shift; // hune: E44
++        const yTop = V.yOf(Math.max(top, bottom));
++        const yBottom = V.yOf(Math.min(top, bottom));
++        ctx.rect(x + insX, yTop + ins, Math.max(1 / dpr, drawW - 2 * insX), Math.max(1 / dpr, yBottom - yTop - 2 * ins));
++        if (labelBars && !st) labelBars.push({ x, y: top >= bottom ? yTop : yBottom, w: drawW, i, series: s, value: top, negative: top < bottom });
+         count++;
+       };
+       if (picks) for (const i of picks) each(i); else for (let i = v0; i < v1; i++) each(i);
+-      ctx.fillStyle = rgba(c, BAR_ALPHA * alphaFor(s));
+-      ctx.fill();
++      // hune: `barFillAlpha` is the fill opacity of a bar (the option `fill_opacity`). `barLineWidth` draws a line of that width around each bar,
++      // in the colour of the series (Grafana draws both) (E10).
++      const fillAlpha = Number.isFinite(s.fill) ? s.fill : opts.barFillAlpha >= 0 ? opts.barFillAlpha : BAR_ALPHA; // hune: E14, `s.fill` and `s.width` are the fill and the outline of one bar series
++      const outline = Number.isFinite(s.width) ? s.width : opts.barLineWidth;
++      ctx.fillStyle = paintOf(s, "fill", ctx, V, c, fillAlpha * alphaFor(s)) || rgba(c, fillAlpha * alphaFor(s)); // hune: E43
++      if (fillAlpha > 0) ctx.fill(); // hune: E34, no fill at the opacity 0, as Grafana
++      if (outline > 0) {
++        ctx.lineWidth = outline;
++        ctx.strokeStyle = paintOf(s, "line", ctx, V, c, alphaFor(s)) || rgba(c, alphaFor(s)); // hune: E43
++        ctx.stroke();
++      }
+       drawnMax = Math.max(drawnMax, count);
+       perSeries[s.label] = { points: count, runs: count ? 1 : 0 };
+       barOffsets.set(s.id, offset);
+     }
++    if (labelBars) for (const b of labelBars) opts.barLabel(ctx, b, L);
+     return drawnMax;
+   }
+ 
+@@ -1908,18 +1990,13 @@
+     return x - xs[i - 1] <= xs[i] - x ? i - 1 : i;
+   }
+ 
+-  // The x readout is the tooltip title and the x badge. A time axis of buckets
+-  // (bucketMs) reads the range of the bucket (ns.format.range). This is one format for every chart.
+-  // bucketAlign "center" applies when xs are bucket middles.
++  // The x readout is the tooltip title and the x badge.
++  // hune: E36. No range of a bucket (bucketMs, bucketAlign): Hune never sets these options.
+   function xReadout(i) {
+     if (typeof opts.xReadout === "function") return opts.xReadout(i);
+     if (opts.xKind === "category") return String(opts.categories[i] ?? "");
+     const x = opts.xs[i];
+-    if (opts.xKind === "time" && Number(opts.bucketMs) > 0 && format?.range) {
+-      const start = opts.bucketAlign === "center" ? x - Number(opts.bucketMs) / 2 : x;
+-      return format.range(start, start + Number(opts.bucketMs));
+-    }
+-    if (opts.xKind === "time") return opts.xDateOnly ? dateText(x) : formatInstant(x, opts.xFractionDigits);
++    if (opts.xKind === "time") return formatInstant(x, opts.xFractionDigits, clockOf()); // hune: E42
+     if (opts.xKind === "index") return `Row ${formatExact(x)}`;
+     return formatExact(x);
+   }
+@@ -2000,7 +2077,7 @@
+       selectEl.style.height = `${L.plotH}px`;
+       place(selectEl, a, L.top);
+       const lo = L.xAt(a), hi = L.xAt(b);
+-      const fmt = (v) => (opts.xKind === "time" ? formatInstant(v, opts.xFractionDigits).slice(11) : formatValue(Number(v.toPrecision(8))));
++      const fmt = (v) => (opts.xKind === "time" ? formatInstant(v, opts.xFractionDigits, clockOf()).slice(11) : formatValue(Number(v.toPrecision(8))));
+       if (opts.xKind !== "category") {
+         selectBadge.textContent = `${fmt(lo)} \u2013 ${fmt(hi)}`;
+         placeBadge(selectBadge, (a + b) / 2, L.top + 4, "center", L.left, L.left + L.plotW);
+@@ -2020,20 +2097,22 @@
+     }
+     show(yLine, active);
+     show(xBadge, active);
+-    show(yBadge, active);
++    // hune: E13. The readout of the y axis follows the left scale. When the left axis does not show, it follows the right scale, at the right of the plot.
++    const badgeOnRight = !leftShown() && rightShown() && !!L.y2;
++    show(yBadge, active && (leftShown() || badgeOnRight));
+     let used = 0;
+     if (active) {
+       const py = Math.max(L.top, Math.min(L.top + L.plotH, cursor.py));
+       yLine.style.width = `${L.plotW}px`;
+       place(yLine, L.left, py);
+       // Points on every visible series at that x.
+-      for (const s of opts.cursorPoints === false ? [] : visibleSeries()) {
+-        if (s.xs) continue;
++      for (const s of visibleSeries()) { // hune: E42, no cursorPoints
++        if (s.xs || s.tooltipHidden) continue; // hune: a series with the flag tooltipHidden has no dot (E9, F03)
+         const st = stacks && stacks.get(s.id);
+-        const v = st ? st.top[i] : s.values[i];
++        const v = st ? st.top[i] : drawnValues(s)[i];
+         if (!(v === v) || !(s.values[i] === s.values[i])) continue;
+         const dx = opts.type === "bar" ? (barOffsets.get(s.id) || 0) : 0;
+-        const y = L.yOf(v);
++        const y = viewFor(L, s).yOf(v); // hune: E13, E14. The dot sits on the scale of the series, at the drawn value.
+         if (y < L.top - 1 || y > L.top + L.plotH + 1) continue;
+         const dot = dotFor(used++);
+         const bg = rgba(seriesColor(s), 1);
+@@ -2046,10 +2125,13 @@
+       const xText = xReadout(i);
+       if (xText !== lastBadgeX) { xBadge.textContent = xText; lastBadgeX = xText; }
+       placeBadge(xBadge, x, L.top + L.plotH + 2, "center", 0, L.width);
+-      const yd = Math.min(10, decimalsFor(L.yStep) + 2);
+-      const yText = typeof opts.formatY === "function" ? opts.formatY(L.yAt(py)) : formatExact(Number(L.yAt(py).toFixed(yd)));
++      const bv = badgeOnRight ? L.y2 : L;
++      const bo = scaleOpts(badgeOnRight ? "y2" : "y");
++      const yd = Math.min(10, decimalsFor(bv.yStep) + 2);
++      const yText = typeof bo.formatY === "function" ? bo.formatY(bv.yAt(py)) : formatExact(Number(bv.yAt(py).toFixed(yd)));
+       if (yText !== lastBadgeY) { yBadge.textContent = yText; lastBadgeY = yText; }
+-      placeBadge(yBadge, L.left - 3, py - 8.5, "right", 0, L.left - 2);
++      if (badgeOnRight) placeBadge(yBadge, L.left + L.plotW + 3, py - 8.5, "left", L.left + L.plotW + 2, L.width);
++      else placeBadge(yBadge, L.left - 3, py - 8.5, "right", 0, L.left - 2);
+       root.dataset.cursorIndex = String(i);
+       root.dataset.cursorX = xText;
+       root.dataset.cursorPx = String(Math.round(x * 100) / 100);
+@@ -2069,11 +2151,11 @@
+   function nearestSeries(i, py) {
+     let best = null, bestD = Infinity;
+     for (const s of visibleSeries()) {
+-      if (s.xs) continue;
++      if (s.xs || s.tooltipHidden) continue; // hune: E9, F03
+       const st = stacks && stacks.get(s.id);
+-      const v = st ? st.top[i] : s.values[i];
++      const v = st ? st.top[i] : drawnValues(s)[i];
+       if (!(v === v) || !(s.values[i] === s.values[i])) continue;
+-      const d = Math.abs(layout.yOf(v) - py);
++      const d = Math.abs(viewFor(layout, s).yOf(v) - py);
+       if (d < bestD) { bestD = d; best = s.id; }
+     }
+     return best;
+@@ -2088,11 +2170,12 @@
+       const rowsHtml = [];
+       let total = 0, any = false;
+       for (const s of tooltipSeries(i)) {
+-        if (s.xs || (opts.tooltip === "single" && s.id !== cursor.nearest)) continue;
++        if (s.xs || s.tooltipHidden || (opts.tooltip === "single" && s.id !== cursor.nearest)) continue;
+         const v = s.values[i];
+         const has = v === v;
++        if (has && v === 0 && opts.tooltipHideZeros === true) continue; // hune: hide_zeros removes the rows that equal 0 (E9, F20)
+         const isNull = !has && (s.nulls === null || s.nulls === undefined || s.nulls[i]);
+-        if (!has && (!isNull || opts.tooltipNulls === false)) continue; // no row for this series at this x
++        if (!has && !isNull) continue; // no row for this series at this x
+         if (has) { total += v; any = true; }
+         const c = seriesColor(s);
+         const text = has ? (typeof opts.formatValue === "function" ? opts.formatValue(v, s) : formatValue(v)) : "NULL";
+@@ -2102,10 +2185,8 @@
+         rowsHtml.push(`<span class="chartCore__tipRow chartCore__tipRow--total"><i></i><em>Total</em><b>${esc(typeof opts.formatValue === "function" ? opts.formatValue(total, null) : formatValue(total))}</b></span>`);
+       }
+       if (!rowsHtml.length) rowsHtml.push(`<span class="chartCore__tipRow is-empty"><i></i><em>No value</em><b>\u2014</b></span>`);
+-      capTooltipRows(rowsHtml);
+-      const footer = typeof opts.tooltipFooter === "function" ? opts.tooltipFooter(i) : "";
+-      const title = typeof opts.tooltipTitle === "function" ? opts.tooltipTitle(i) : xReadout(i);
+-      tooltipEl.innerHTML = `<strong>${esc(title)}</strong>${rowsHtml.join("")}${footer ? `<small>${esc(footer)}</small>` : ""}`;
++      // hune: E42. No tooltipMaxRows, tooltipFooter or tooltipTitle: Hune never sets them.
++      tooltipEl.innerHTML = `<strong>${esc(xReadout(i))}</strong>${rowsHtml.join("")}`;
+       tooltipEl.dataset.index = String(i);
+       tooltipEl.hidden = false;
+     }
+@@ -2113,10 +2194,13 @@
+     tooltipEl.hidden = false;
+     const L = layout;
+     const x = L.xOf(opts.xKind === "category" ? i : opts.xs[i]);
+-    let lx = x + 16;
+-    if (lx + tooltipSize.w > L.width - 4) lx = x - 16 - tooltipSize.w;
++    // hune: the card sits 10 px right of and 10 px under the cursor (Grafana), and flips to the other side at an edge.
++    let lx = x + 10;
++    if (lx + tooltipSize.w > L.width - 4) lx = x - 10 - tooltipSize.w;
+     lx = Math.max(4, lx);
+-    const ty = Math.max(0, Math.min(L.height - tooltipSize.h, cursor.py - tooltipSize.h / 2));
++    let ty = cursor.py + 10;
++    if (ty + tooltipSize.h > L.height) ty = cursor.py - 10 - tooltipSize.h;
++    ty = Math.max(0, Math.min(L.height - tooltipSize.h, ty));
+     tooltipEl.style.transform = `translate(${Math.round(lx)}px, ${Math.round(ty)}px)`;
+   }
+ 
+@@ -2133,7 +2217,7 @@
+   }
+ 
+   function moveCursor(p) {
+-    if (!layout || !opts.xs.length || boxDrag) return;
++    if (!layout || !opts.xs.length) return; // hune: E18, no 2-D brush.
+     if (!inPlot(p) && !(drag && drag.active)) { leaveCursor(); return; }
+     if (!(drag && drag.active) && showPick(p)) return;
+     const px = Math.max(layout.left, Math.min(layout.left + layout.plotW, p.px));
+@@ -2204,7 +2288,7 @@
+     if (ev.button !== 0 || !layout) return;
+     const p = localPoint(ev);
+     if (!inPlot(p)) return;
+-    if (startBox(p, ev)) return;
++    // hune: E18, a press never starts a box of the 2-D brush.
+     moveCursor(p);
+     if (opts.zoomable === false || opts.xs.length < 2) return;
+     drag = { x0: Math.max(layout.left, Math.min(layout.left + layout.plotW, p.px)), x1: p.px, active: false, id: ev.pointerId };
+@@ -2260,7 +2344,7 @@
+     const px = L.xOf(opts.xKind === "category" ? i : opts.xs[i]);
+     const s = visibleSeries().find((x) => !x.xs && x.values[i] === x.values[i]);
+     const st = s && stacks && stacks.get(s.id);
+-    const py = s ? L.yOf(st ? st.top[i] : s.values[i]) : L.top + L.plotH / 2;
++    const py = s ? viewFor(L, s).yOf(st ? st.top[i] : drawnValues(s)[i]) : L.top + L.plotH / 2;
+     moveCursor({ px, py });
+     // A hover readout is not announced. The keyboard cursor readout is announced in one polite region.
+     if (!tooltipEl.hidden) uiState?.announce?.(tooltipEl.textContent);
+@@ -2268,16 +2352,62 @@
+   overCanvas.addEventListener("blur", () => { if (!drag) leaveCursor(); });
+   document.addEventListener("keydown", onKey, true);
+ 
+-  // --- legend (Grafana: click isolates, Ctrl / Cmd+click toggles; legendClick "filter": the click is the host's) --------------
++  // --- legend (Grafana: click isolates, Ctrl / Cmd+click toggles) --------------
+ 
+   const LEGEND_COLUMNS = ["total", "min", "max", "mean", "last"];
+-  const LEGEND_HEADS = { total: "Total", min: "Min", max: "Max", mean: "Mean", last: "Last" };
++  // hune: the 18 calculations of the format (E9, F20). The names of the heads are those of Grafana. The engine computes the first five.
++  // The host computes the others (opts.legendCalc(series, name)).
++  const LEGEND_HEADS = {
++    total: "Total", min: "Min", max: "Max", mean: "Mean", last: "Last",
++    last_not_null: "Last *", first: "First", first_not_null: "First *", count: "Count", median: "Median", std_dev: "Std Dev",
++    variance: "Variance", range: "Range", diff: "Difference", diff_percent: "Difference %", delta: "Delta",
++    distinct_count: "Distinct count", change_count: "Change count",
++  };
+   const NO_CALCS = { total: NaN, min: NaN, max: NaN, mean: NaN, last: NaN };
+ 
+-  // The columns of the table, in their order. opts.legendColumns keeps some of them. A chart whose values do not add up omits the Total.
++  // The columns of the table, in their order. opts.legendColumns keeps some of them, in the order that it gives (the order of the document, as Grafana does).
++  // A chart whose values do not add up omits the Total.
+   function legendColumns() {
+-    const asked = Array.isArray(opts.legendColumns) ? LEGEND_COLUMNS.filter((name) => opts.legendColumns.includes(name)) : [];
++    const asked = Array.isArray(opts.legendColumns) ? opts.legendColumns.filter((name, k, all) => Object.prototype.hasOwnProperty.call(LEGEND_HEADS, name) && all.indexOf(name) === k) : [];
+     return asked.length ? asked : LEGEND_COLUMNS;
++  }
++
++  // hune: the value of a column for a series. The engine computes the first five (over the visible range). The host computes the others.
++  function legendValue(s, name) {
++    if (LEGEND_COLUMNS.includes(name)) return calcs(s)[name];
++    return typeof opts.legendCalc === "function" ? opts.legendCalc(s, name) : NaN;
++  }
++
++  // hune: the sort of the legend table (E9, F20). `opts.legendSort` is { by: "name" | a calculation, desc } or null. A click on a head changes it for this chart only:
++  // first up, then down, then the order of the series.
++  let legendSortState = null;
++  let legendSortSource;
++  const legendSortNow = () => {
++    if (legendSortSource !== opts.legendSort) {
++      legendSortSource = opts.legendSort;
++      legendSortState = opts.legendSort && opts.legendSort.by ? { by: opts.legendSort.by, desc: !!opts.legendSort.desc } : null;
++    }
++    return legendSortState;
++  };
++  const NAME_COLLATOR = new Intl.Collator("en", { sensitivity: "base" });
++  // The series of the legend, in the order of the rows: the series with no `legendHidden` flag, sorted. A key that is null or NaN goes last in both directions.
++  // Rows with equal keys keep the order of the series.
++  function legendRows() {
++    const rows = opts.series.map((s, index) => ({ s, index })).filter((r) => !r.s.legendHidden);
++    const sort = legendSortNow();
++    if (!sort) return rows;
++    const keyOf = (r) => {
++      if (sort.by === "name") return String(r.s.label);
++      const v = legendValue(r.s, sort.by);
++      return typeof v === "number" && Number.isFinite(v) ? v : null;
++    };
++    const keyed = rows.map((r) => ({ r, key: keyOf(r) }));
++    keyed.sort((a, b) => {
++      if (a.key === null || b.key === null) return a.key === b.key ? a.r.index - b.r.index : a.key === null ? 1 : -1;
++      const c = sort.by === "name" ? NAME_COLLATOR.compare(a.key, b.key) : a.key - b.key;
++      return c !== 0 ? (sort.desc ? -c : c) : a.r.index - b.r.index;
++    });
++    return keyed.map((k) => k.r);
+   }
+ 
+   // The table shows these values of a series over the visible range: the total, the min, the max, the mean and the last value.
+@@ -2310,40 +2440,20 @@
+     return { total: sum, min, max, mean: weights ? (weight > 0 ? weighted / weight : NaN) : sum / count, last };
+   }
+ 
+-  // An entry is on when its series is shown (a legend that hides). It is also on when the host says it is picked (legendClick "filter": legendPressed(series)).
+-  const filterLegend = () => opts.legendClick === "filter";
+-  const legendPressedOf = (s) => (filterLegend() ? typeof opts.legendPressed === "function" && !!opts.legendPressed(s) : !hidden.has(s.id));
+-
+-  // An entry is a row of the list, or a cell of the first column of the table. A legend that filters dims the entries that the pressed ones omit (is-off).
+-  // `legendDisabled(series)` locks an entry that is not a filter. The entry has no click and no aria-pressed.
+-  function legendItemHtml(s, index, anyPressed = false) {
+-    const filter = filterLegend();
+-    const pressed = legendPressedOf(s);
+-    const locked = filter && typeof opts.legendDisabled === "function" && !!opts.legendDisabled(s);
++  // An entry is on when its series is shown. An entry is a row of the list, or a cell of the first column of the table.
++  // hune: E41. No legend that filters: no legendPressed, legendDisabled, legendTitle or onLegendClick.
++  function legendItemHtml(s, index, table = false, rightFirst = false) {
++    const pressed = !hidden.has(s.id);
+     const c = rgba(seriesColor(s));
+-    const title = typeof opts.legendTitle === "function" ? opts.legendTitle(s, pressed) : `${s.label}\n${legendHint()}`;
+-    const off = filter && anyPressed && !pressed;
+-    return `<button type="button" class="chartCore__legendItem${filter ? " chartCore__legendItem--filter" : ""}${s.dash ? " is-dashed" : ""}${off ? " is-off" : ""}" data-index="${index}" data-series="${esc(s.id)}"${locked ? " disabled" : ` aria-pressed="${pressed}"`} title="${esc(title)}"><i style="background-color:${c}"></i><span>${esc(s.label)}</span></button>`;
+-  }
+-
+-  // The "totals" legend shows each series with its total over the whole range. A
+-  // click goes to opts.onLegendClick(series, event), for example a filter.
+-  // opts.legendPressed(series) says which series are on.
+-  function seriesTotal(s) {
+-    let sum = 0;
+-    for (let i = 0; i < s.values.length; i++) { const v = s.values[i]; if (v === v) sum += v; }
+-    return sum;
+-  }
+-
+-  // The legend reads at full strength. When some series are pressed (a
+-  // filter), the others are left out and dim (is-off).
+-  function legendTotalItemHtml(s, index, anyPressed) {
+-    const pressed = typeof opts.legendPressed === "function" ? !!opts.legendPressed(s) : false;
+-    const c = rgba(seriesColor(s));
+-    const total = typeof opts.legendTotal === "function" ? opts.legendTotal(s, seriesTotal(s)) : formatValue(seriesTotal(s));
+-    const title = typeof opts.legendTitle === "function" ? opts.legendTitle(s, pressed) : s.label;
+-    return `<button type="button" class="chartCore__legendItem chartCore__legendItem--total${s.dash ? " is-dashed" : ""}${anyPressed && !pressed ? " is-off" : ""}" data-index="${index}" data-series="${esc(s.id)}" aria-pressed="${pressed}" title="${esc(title)}"><i style="background-color:${c}"></i><span>${esc(s.label)}</span><b>${esc(total)}</b></button>`;
+-  }
++    const title = `${s.label}\nClick: show only this series (again: show all)\nCtrl / Cmd+click: show or hide it`;
++    // hune: E13, V2. A table legend ends the name of a series of the right scale with " (right y-axis)" (a span of 12 px in the muted colour).
++    // A list legend has no mark: its items of the right scale go to the end of the row (data-scale, `is-right-first`).
++    const mark = table && scaleOf(s) === "y2" ? `<span class="chartCore__axisMark"> (right y-axis)</span>` : "";
++    const right = scaleOf(s) === "y2" ? ` data-scale="y2"` : "";
++    return `<button type="button" class="chartCore__legendItem${s.dash ? " is-dashed" : ""}${rightFirst ? " is-right-first" : ""}" data-index="${index}" data-series="${esc(s.id)}"${right} aria-pressed="${pressed}" title="${esc(title)}"><i style="background-color:${c}"></i><span>${esc(s.label)}${mark}</span></button>`;
++  }
++
++  // hune: E41. No totals legend (seriesTotal, legendTotalItemHtml).
+ 
+   // The engine rebuilds the legend markup only when it changes.
+   // A resize, a theme change or streamed rows redraw the plot, not the legend.
+@@ -2358,27 +2468,14 @@
+   }
+ 
+   // The legend shows by default when there is more than one series.
+-  // "always" shows it even for one series. false hides it. "totals" selects the totals legend.
++  // "always" shows it even for one series. false hides it.
+   function renderLegend() {
+-    const totals = opts.legend === "totals";
+-    const shown = totals || opts.legend === "always" || (!!opts.legend && opts.series.length > 1);
+-    if (!shown || !opts.series.length) { setLegendHtml(""); legendEl.hidden = true; return; }
++    const shown = opts.legend === "always" || (!!opts.legend && opts.series.length > 1);
++    if (!shown || !opts.series.length || !opts.series.some((s) => !s.legendHidden)) { setLegendHtml(""); legendEl.hidden = true; return; }
+     legendEl.hidden = false;
+-    if (totals) {
+-      legendEl.dataset.mode = "totals";
+-      // legendOrder "reverse": a stack's top series first.
+-      const anyPressed = typeof opts.legendPressed === "function" && opts.series.some((s) => !!opts.legendPressed(s));
+-      const items = opts.series.map((s, index) => legendTotalItemHtml(s, index, anyPressed));
+-      if (opts.legendOrder === "reverse") items.reverse();
+-      setLegendHtml(`<div class="chartCore__legendList">${items.join("")}</div>`);
+-      return;
+-    }
+     legendEl.dataset.mode = legendMode;
+     const columns = legendColumns();
+-    const names = columns.map((name) => LEGEND_HEADS[name].toLowerCase()).join(" / ");
+-    const modeBtn = `<button type="button" class="chartCore__legendMode" aria-pressed="${legendMode === "table"}" title="${legendMode === "table" ? "Show the legend as a list" : `Show ${names} per series`}">${legendMode === "table" ? "List" : "Values"}</button>`;
+-    const filter = filterLegend();
+-    const anyPressed = filter && opts.series.some(legendPressedOf);
++    // hune: E41. No button of the mode: the mode comes from the document (9.19).
+     if (legendMode === "table") {
+       // A cell uses the format of the chart values (formatValue). Otherwise, legendFormat(value, column, series) formats it. A mean of counts has decimals.
+       const fmt = (v, column, s) => {
+@@ -2386,35 +2483,42 @@
+         if (typeof opts.legendFormat === "function") return opts.legendFormat(v, column, s);
+         return typeof opts.formatValue === "function" ? opts.formatValue(v) : formatValue(v);
+       };
+-      const rows = opts.series.map((s, index) => `<tr${anyPressed && !legendPressedOf(s) ? ' class="is-off"' : ""}><th scope="row">${legendItemHtml(s, index, anyPressed)}</th>${columns.map(() => "<td></td>").join("")}</tr>`).join("");
+-      const heads = columns.map((name) => `<th scope="col">${LEGEND_HEADS[name]}</th>`).join("");
+-      setLegendHtml(`<div class="chartCore__legendTableWrap"><table class="chartCore__legendTable" aria-label="Values of the series"><thead><tr><th scope="col">Series</th>${heads}</tr></thead><tbody>${rows}</tbody></table></div>${modeBtn}`);
++      // hune: the rows follow the sort. The head of a column is a button that sorts (aria-sort). The first head reads "Name", as in Grafana.
++      const order = legendRows();
++      const sort = legendSortNow();
++      const head = (name, text) => {
++        const state = sort && sort.by === name ? (sort.desc ? "descending" : "ascending") : "none";
++        return `<th scope="col" aria-sort="${state}"><button type="button" class="chartCore__legendSort" data-column="${esc(name)}" title="Sort by ${esc(text)}">${esc(text)}</button></th>`;
++      };
++      const rows = order.map(({ s, index }) => `<tr><th scope="row">${legendItemHtml(s, index, true)}</th>${columns.map(() => "<td></td>").join("")}</tr>`).join("");
++      const heads = columns.map((name) => head(name, LEGEND_HEADS[name])).join("");
++      setLegendHtml(`<div class="chartCore__legendTableWrap"><table class="chartCore__legendTable" aria-label="Values of the series"><thead><tr>${head("name", "Name")}${heads}</tr></thead><tbody>${rows}</tbody></table></div>`);
+       const body = $(".chartCore__legendTable tbody", legendEl);
+-      opts.series.forEach((s, index) => {
+-        const row = body && body.rows[index];
++      order.forEach(({ s }, position) => {
++        const row = body && body.rows[position];
+         if (!row) return;
+-        const c = calcs(s);
+         columns.forEach((name, k) => {
+           const cell = row.cells[k + 1];
+-          const text = fmt(c[name], name, s);
++          const text = fmt(legendValue(s, name), name, s);
+           if (cell.textContent !== text) { cell.textContent = text; counters.legendUpdates++; }
+         });
+       });
+     } else {
+-      setLegendHtml(`<div class="chartCore__legendList">${opts.series.map((s, index) => legendItemHtml(s, index, anyPressed)).join("")}</div>${modeBtn}`);
+-    }
+-  }
+-
+-  // The mode of the legend, list or table, is a preference. The next chart starts with it.
+-  // The charts of an alignment group change together, because they are read side by side.
+-  // onLegendMode(mode) tells the host, for example a page that sizes the cards for it.
++      // hune: E13. The items of the right scale go after the others.
++      const listed = opts.series.map((s, index) => ({ s, index })).filter((r) => !r.s.legendHidden);
++      const ordered = [...listed.filter((r) => scaleOf(r.s) !== "y2"), ...listed.filter((r) => scaleOf(r.s) === "y2")];
++      const firstRight = ordered.findIndex((r) => scaleOf(r.s) === "y2");
++      setLegendHtml(`<div class="chartCore__legendList">${ordered.map((r, k) => legendItemHtml(r.s, r.index, false, k === firstRight)).join("")}</div>`);
++    }
++  }
++
++  // The mode of the legend, list or table. hune: E41, no preference and no onLegendMode.
+   function setLegendMode(mode) {
+     if (mode !== "list" && mode !== "table") return;
+     const changed = mode !== legendMode;
+     legendMode = mode;
+     // A chart that has not drawn yet (no theme) writes its legend with its first draw.
+     if (changed && theme) renderLegend();
+-    if (typeof opts.onLegendMode === "function") opts.onLegendMode(mode);
+   }
+ 
+   function setHiddenInternal(next, focusIndex) {
+@@ -2422,7 +2526,6 @@
+     stacks = null;
+     axisStamp++;
+     tooltipKey = "";
+-    if (typeof opts.onHiddenChange === "function") opts.onHiddenChange(new Set(hidden));
+     flushDraw(true);
+     if (focusIndex != null) {
+       const again = $(`.chartCore__legendItem[data-index="${focusIndex}"]`, legendEl);
+@@ -2431,14 +2534,15 @@
+   }
+ 
+   legendEl.addEventListener("click", (ev) => {
+-    const mode = ev.target.closest(".chartCore__legendMode");
+-    if (mode) {
+-      const next = legendMode === "table" ? "list" : "table";
+-      storeLegendMode(next);
+-      setLegendMode(next);
+-      const group = alignKey ? alignGroups.get(alignKey) : null;
+-      if (group) for (const other of group) if (other !== member) other.setLegendMode(next);
+-      const again = $(".chartCore__legendMode", legendEl);
++    // hune: a click on a head of the table sorts the rows (E9): up, down, then the order of the series.
++    const sortHead = ev.target.closest(".chartCore__legendSort");
++    if (sortHead) {
++      const by = sortHead.dataset.column;
++      const now = legendSortNow();
++      if (!now || now.by !== by) legendSortState = { by, desc: false };
++      else legendSortState = now.desc ? null : { by, desc: true };
++      renderLegend();
++      const again = legendEl.querySelector(`.chartCore__legendSort[data-column="${by}"]`);
+       if (again) again.focus({ preventScroll: true });
+       return;
+     }
+@@ -2447,10 +2551,6 @@
+     const index = Number(item.dataset.index);
+     const s = opts.series[index];
+     if (!s) return;
+-    if (opts.legend === "totals" || filterLegend()) {
+-      if (typeof opts.onLegendClick === "function") opts.onLegendClick(s, ev);
+-      return;
+-    }
+     const ids = opts.series.map((x) => x.id);
+     const next = new Set(hidden);
+     if (legendToggles(ev)) {
+@@ -2502,61 +2602,50 @@
+   // --- Options for the Logs histogram and the Metrics panels ------------------------------
+   //
+   //   xDomain: [lo, hi]          the full x domain (the requested time range), not the data's
+-  //   yInclude: [v, ...]         values the y domain always covers (0, exemplar values)
++  //   zone: { parts(ms), epoch(y, mo, d, h, mi, s) }   hune (E7): the clock of the time axis, the cursor time and the tooltip head. Default: the browser.
++  //   drawUnder(ctx, layout, { dpr })                  hune (E8): draws under the series, inside the plot (thresholds).
++  //   legendColumns (any calculation, in order), legendCalc(series, name), legendSort { by, desc }, tooltipSort "asc" | "desc",
++  //   tooltipHideZeros, series[].legendHidden / tooltipHidden, hidden (a Set of ids)   hune (E9)
++  //   barFillAlpha, barLineWidth, barMaxWidth, barInnerRatio, barLabel(ctx, bar, layout), xGrid: false   hune (E10), bars
++  //   xTitle, yTitle, xTicksFn(lo, hi, plotW, measure)   hune (E11), titles of the axes and the ticks of a number axis
++  //   cellGap, barOverlap, barSlot, barDecimate: false   hune (E22 to E24); barInset   hune (E26), barInset: "box"   hune (E34)
++  //   xTickRotation              hune (E25), degrees (positive: clockwise, the start of the text at the tick) of the labels of a category axis
++  //   scales: { <series id>: "y" | "y2" }, y2: { yAxis, yBounds, ySoft, yTickFormat, yTitle, yScale, yUnit, yHeadroom, formatY, shown },
++  //   yShown, ySoft: [soft_min, soft_max], gridScale: "y" | "y2" | "none"   hune (E13, E15), the right y scale, the soft ends and the grid
++  //   drawOrder: "series"; series[].type / width / fill / dash / dashCap / points / pointSize / negate   hune (E14), the style of one series
+   //   yHeadroom: 0.15            room above the largest value, a share of the range (default 0.06)
+   //   yUnit(maxAbs)              -> { factor, suffix }: the y tick unit (default K / M / B / T)
+   //   formatY(v)                 the y readout of the cursor
+   //   barWidthRatio              bar width / slot width (default 0.72)
+   //   series[].dash: [6, 3]      dashed line (and legend swatch)
+-  //   tooltipTitle(i)            the tooltip heading (default: the x readout)
+-  //   tooltipSort: "desc" | "reverse"   rows by value, or bottom-of-stack last
+-  //   tooltipMaxRows             rows past it fold into "+N more"
+-  //   tooltipNulls: false        no "NULL" rows (gap flags from bridgeGaps are not values)
+-  //   legendClick: "toggle"      click shows / hides, Alt / Ctrl / Cmd+click isolates
+-  //   legendClick: "filter"      the host handles the click: onLegendClick(series, event) (a filter), nothing is hidden. legendPressed(series) says
+-  //                              which entries are on (the others dim while some are), legendDisabled(series) locks an entry (no click, no
+-  //                              aria-pressed) and legendTitle(series, pressed) writes its title
++  //   tooltipSort: "asc" | "desc" | "reverse"   rows by value, or bottom-of-stack last (hune: asc; tooltipHideZeros removes the rows that equal 0)
++  // hune: E42, the options `tooltipTitle`, `tooltipMaxRows`, `tooltipNulls`, `tooltipFooter`, `onHiddenChange`, `xDateOnly`, `yInclude`,
++  // `cursorPoints` and the function bridgeGaps are removed.
++  // hune: E41, the options `legendClick`, `legendPressed`, `legendDisabled`, `legendTitle`, `onLegendClick`, `onLegendMode` and the totals legend are removed.
+   //   legendColumns: ["min", ...] the columns of the Values table, among total, min, max, mean and last (all by default); series[].weights (one
+   //                              number per point: the calls behind an average, the requests behind a rate) makes the Mean the mean of the values weighted by them;
+   //                              series[].stats: the values that the table reads when the plot omits some (the zeros of a stack);
+   //                              legendFormat(value, column, series): the text of a cell (default: formatValue)
+-  //   onLegendMode(mode)         the legend went to "list" or "table" (by its button, or with the other charts of its alignment group)
+-  //   alignKey: "page"           charts that share it are aligned: the same number of intervals on the y axis, ending on a step of yKind,
+-  //                              and one gutter for those that share an x scale; set when the chart is made (see "Alignment groups")
+-  //   yKind: "number" | "bytes" | "duration" | "percent"   the steps and the unit of an aligned y axis: 1-2-2.5-5 x 10^n, the same in KB / MB / GB,
+-  //                              the clock for milliseconds, a % suffix for values in percent that stop at 100 (alignedAxis); yInteger: true
+-  //                              keeps the steps of a "number" axis whole (counts)
+-  //   cursorPoints: false        no points on the series under the cursor (stacked bars)
+-  //   markers: [{ x, y, href, className, label, attrs, tooltip() }]
+-  //                              DOM links over the plot (exemplars): y not finite sits on a
+-  //                              strip along the bottom; a marker overlapping one placed
+-  //                              before it (markerSpacing px, default 9) is skipped.
++  // hune: E40, the options `alignKey`, `yKind` and `yInteger` are removed.
++  // hune: E17, the option `markers` is removed.
+ 
+   function fixedDomain() {
+     const d = opts.xDomain;
+     return d && Number.isFinite(d[0]) && Number.isFinite(d[1]) && d[1] > d[0] ? [d[0], d[1]] : null;
+   }
+ 
+-  function includedY() {
+-    const list = opts.yInclude;
+-    if (!list || !list.length) return null;
+-    let lo = Infinity, hi = -Infinity;
+-    for (const v of list) {
+-      if (!Number.isFinite(v)) continue;
+-      if (v < lo) lo = v;
+-      if (v > hi) hi = v;
+-    }
+-    return lo <= hi ? [lo, hi] : null;
+-  }
+-
+-  function yUnitFor(maxAbs) {
+-    const unit = typeof opts.yUnit === "function" ? opts.yUnit(maxAbs) : null;
++
++  function yUnitFor(maxAbs, so = opts) {
++    const unit = typeof so.yUnit === "function" ? so.yUnit(maxAbs) : null;
+     return unit && unit.factor > 0 ? { factor: unit.factor, suffix: String(unit.suffix || "") } : compactUnitFor(maxAbs);
+   }
+ 
+   function strokeDashed(ctx, s) {
+     const dash = Array.isArray(s.dash) && s.dash.length ? s.dash : null;
+-    if (dash) ctx.setLineDash(dash);
++    if (dash) {
++      ctx.setLineDash(dash.map((v) => v / dpr)); // hune: E45. The array is in device pixels, as Grafana draws it (9.19).
++      if (s.dashCap) ctx.lineCap = s.dashCap; // hune: E14. `dash` has a butt cap and `dot` has a round cap (paper 10.8, V3).
++    }
+     ctx.stroke();
+     if (dash) ctx.setLineDash([]);
+   }
+@@ -2566,206 +2655,25 @@
+   function tooltipSeries(i) {
+     const list = visibleSeries();
+     if (opts.tooltipSort === "reverse") return list.reverse();
+-    if (opts.tooltipSort === "desc") {
+-      const value = (s) => (s.values[i] === s.values[i] ? s.values[i] : -Infinity);
+-      return list.sort((a, b) => value(b) - value(a));
++    if (opts.tooltipSort === "desc" || opts.tooltipSort === "asc") {
++      // hune: asc and desc (E9, F20). A row with no value goes last. Rows with equal values keep the order of the series (a stable sort).
++      const up = opts.tooltipSort === "asc";
++      const has = (s) => s.values[i] === s.values[i];
++      return list.sort((a, b) => {
++        if (!has(a) || !has(b)) return has(a) === has(b) ? 0 : has(a) ? -1 : 1;
++        return up ? a.values[i] - b.values[i] : b.values[i] - a.values[i];
++      });
+     }
+     return list;
+   }
+ 
+-  function capTooltipRows(rows) {
+-    const max = opts.tooltipMaxRows;
+-    if (!(max > 0)) return;
+-    const total = rows.length && rows[rows.length - 1].includes("chartCore__tipRow--total") ? rows.pop() : null;
+-    if (rows.length > max) {
+-      const more = rows.length - max;
+-      rows.length = max;
+-      rows.push(`<span class="chartCore__tipRow chartCore__tipRow--more"><i></i><em>+${more} more</em><b></b></span>`);
+-    }
+-    if (total) rows.push(total);
+-  }
+-
+-  const legendHint = () => (filterLegend()
+-    ? "Click: filter by this series"
+-    : opts.legendClick === "toggle"
+-      ? "Click: show or hide it\nAlt / Ctrl / Cmd+click: show only this series (again: show all)"
+-      : "Click: show only this series (again: show all)\nCtrl / Cmd+click: show or hide it");
+-
++
++  // hune: E41. Ctrl or Cmd+click toggles (no legendClick "toggle").
+   function legendToggles(ev) {
+-    const modified = ev.ctrlKey || ev.metaKey || (opts.legendClick === "toggle" && ev.altKey);
+-    return opts.legendClick === "toggle" ? !modified : modified;
+-  }
+-
+-  // Markers are diamonds. They are drawn on the plot canvas, under a pool of transparent links.
+-  // The engine moves the links on redraws and never rebuilds them. The links take the pointer and the keyboard.
+-  // A link paints nothing until it is hovered or focused. Links sit at left and top, with no transform.
+-  // So, hundreds of them add no compositing work.
+-  let markerLayer = null;
+-  const markerNodes = [];
+-
+-  function markerNode(k) {
+-    while (markerNodes.length <= k) {
+-      const node = document.createElement("a");
+-      node.className = "chartCore__marker";
+-      node.hidden = true;
+-      node.appendChild(document.createElement("i"));
+-      markerLayer.appendChild(node);
+-      markerNodes.push(node);
+-    }
+-    return markerNodes[k];
+-  }
+-
+-  function configureMarker(node, m) {
+-    if (node._marker === m) return;
+-    if (node._marker && node._marker.attrs) for (const name of Object.keys(node._marker.attrs)) node.removeAttribute(name);
+-    node._marker = m;
+-    node.className = `chartCore__marker${m.className ? ` ${m.className}` : ""}`;
+-    if (m.href) node.setAttribute("href", m.href); else node.removeAttribute("href");
+-    if (m.label) node.setAttribute("aria-label", m.label); else node.removeAttribute("aria-label");
+-    if (m.attrs) for (const [name, value] of Object.entries(m.attrs)) node.setAttribute(name, String(value == null ? "" : value));
+-  }
+-
+-  // The engine samples dense markers. Past one per MARKER_DENSE_PX of plot width,
+-  // each column of that width keeps its highest marker (the slowest exemplar).
+-  // So, a long range shows a readable scatter, not a row of diamonds.
+-  // A closer zoom keeps every marker of a column reachable.
+-  const MARKER_DENSE_PX = 40;
+-  function sampleMarkers(list, L) {
+-    const inView = [];
+-    for (const m of list) {
+-      const x = L.xOf(Number(m.x));
+-      if (x >= L.left - 0.5 && x <= L.left + L.plotW + 0.5) inView.push([m, x]);
+-    }
+-    const cap = Math.max(1, Math.floor(L.plotW / MARKER_DENSE_PX));
+-    root.dataset.markersInView = String(inView.length);
+-    if (inView.length <= cap) return inView.map(([m]) => m);
+-    const columns = new Map();
+-    for (const [m, x] of inView) {
+-      const col = Math.floor((x - L.left) / MARKER_DENSE_PX);
+-      const y = m.y == null ? -Infinity : Number(m.y);
+-      const held = columns.get(col);
+-      if (!held || (Number.isFinite(y) ? y : -Infinity) > held[1]) columns.set(col, [m, Number.isFinite(y) ? y : -Infinity]);
+-    }
+-    return [...columns.values()].map(([m]) => m);
+-  }
+-
+-  function placeMarkers() {
+-    const list = Array.isArray(opts.markers) ? opts.markers : [];
+-    if (!markerLayer) {
+-      if (!list.length) return;
+-      markerLayer = document.createElement("div");
+-      markerLayer.className = "chartCore__markers";
+-      plotEl.appendChild(markerLayer);
+-      bindMarkers();
+-    }
+-    const L = layout;
+-    let used = 0;
+-    if (L) {
+-      const spacing = opts.markerSpacing > 0 ? opts.markerSpacing : 9;
+-      // Placed markers by grid cell: an overlap test looks at 9 cells only.
+-      const placed = new Map();
+-      const free = (x, y) => {
+-        const cx = Math.floor(x / spacing), cy = Math.floor(y / spacing);
+-        for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
+-          for (const p of placed.get(`${cx + dx},${cy + dy}`) || []) {
+-            if (Math.abs(p[0] - x) < spacing && Math.abs(p[1] - y) < spacing) return false;
+-          }
+-        }
+-        return true;
+-      };
+-      const bottom = L.top + L.plotH - 5;
+-      for (const m of sampleMarkers(list, L)) {
+-        const x = L.xOf(Number(m.x));
+-        if (!(x >= L.left - 0.5 && x <= L.left + L.plotW + 0.5)) continue;
+-        const yv = m.y == null ? NaN : Number(m.y);
+-        const y = Number.isFinite(yv) ? L.yOf(yv) : bottom;
+-        if (y < L.top - 1 || y > L.top + L.plotH + 1 || !free(x, y)) continue;
+-        const key = `${Math.floor(x / spacing)},${Math.floor(y / spacing)}`;
+-        if (!placed.has(key)) placed.set(key, []);
+-        placed.get(key).push([x, y]);
+-        const node = markerNode(used++);
+-        configureMarker(node, m);
+-        const left = `${Math.round(x * dpr) / dpr}px`, top = `${Math.round(y * dpr) / dpr}px`;
+-        if (node.style.left !== left) node.style.left = left;
+-        if (node.style.top !== top) node.style.top = top;
+-        if (node.hidden) node.hidden = false;
+-      }
+-      if (used) drawMarkerMarks(L, used);
+-    }
+-    for (let k = used; k < markerNodes.length; k++) if (!markerNodes[k].hidden) markerNodes[k].hidden = true;
+-    root.dataset.markers = String(used);
+-  }
+-
+-  // One path for every diamond: 3.5px half-diagonal, a panel-coloured rim.
+-  function drawMarkerMarks(L, count) {
+-    if (released || !theme) return;
+-    if (!theme.markerFill) theme.markerFill = rgba(color("color-mix(in srgb, var(--text) 82%, transparent)"));
+-    const ctx = baseCtx;
+-    const r = 4.2;
+-    ctx.save();
+-    ctx.beginPath();
+-    ctx.rect(L.left - r, L.top - r, L.plotW + 2 * r, L.plotH + 2 * r);
+-    ctx.clip();
+-    ctx.beginPath();
+-    for (let k = 0; k < count; k++) {
+-      const node = markerNodes[k];
+-      const x = parseFloat(node.style.left), y = parseFloat(node.style.top);
+-      ctx.moveTo(x, y - r);
+-      ctx.lineTo(x + r, y);
+-      ctx.lineTo(x, y + r);
+-      ctx.lineTo(x - r, y);
+-      ctx.closePath();
+-    }
+-    ctx.fillStyle = theme.markerFill;
+-    ctx.strokeStyle = rgba(theme.panel);
+-    ctx.lineWidth = 1.25;
+-    ctx.lineJoin = "miter";
+-    ctx.stroke();
+-    ctx.fill();
+-    ctx.restore();
+-  }
+-
+-  function showMarkerTip(node) {
+-    const m = node._marker;
+-    if (!m || !layout) return;
+-    leaveCursor();
+-    const html = typeof m.tooltip === "function" ? m.tooltip() : esc(m.label || "");
+-    if (!html) return;
+-    tooltipEl.innerHTML = html;
+-    tooltipEl.hidden = false;
+-    tooltipKey = "marker";
+-    const w = tooltipEl.offsetWidth, h = tooltipEl.offsetHeight;
+-    const L = layout;
+-    const x = L.xOf(Number(m.x));
+-    const yv = m.y == null ? NaN : Number(m.y);
+-    const y = Number.isFinite(yv) ? L.yOf(yv) : L.top + L.plotH - 5;
+-    let lx = x + 14;
+-    if (lx + w > L.width - 4) lx = x - 14 - w;
+-    lx = Math.max(4, lx);
+-    const ty = Math.max(0, Math.min(L.height - h, y - h / 2));
+-    tooltipEl.style.transform = `translate(${Math.round(lx)}px, ${Math.round(ty)}px)`;
+-  }
+-
+-  function hideMarkerTip() {
+-    if (tooltipKey !== "marker") return;
+-    tooltipEl.hidden = true;
+-    tooltipKey = "";
+-  }
+-
+-  function bindMarkers() {
+-    const target = (ev) => (ev.target instanceof Element ? ev.target.closest(".chartCore__marker") : null);
+-    markerLayer.addEventListener("pointerover", (ev) => { const node = target(ev); if (node) showMarkerTip(node); });
+-    markerLayer.addEventListener("pointerout", (ev) => {
+-      const node = target(ev);
+-      if (node && !(ev.relatedTarget instanceof Node && node.contains(ev.relatedTarget))) hideMarkerTip();
+-    });
+-    markerLayer.addEventListener("focusin", (ev) => { const node = target(ev); if (node) showMarkerTip(node); });
+-    markerLayer.addEventListener("focusout", hideMarkerTip);
+-    markerLayer.addEventListener("click", (ev) => {
+-      const node = target(ev);
+-      if (node && typeof opts.onMarkerClick === "function") opts.onMarkerClick(node._marker, ev);
+-    });
+-  }
++    return ev.ctrlKey || ev.metaKey;
++  }
++
++  // hune: E17. The exemplar markers are removed: Hune never sets the option `markers` and never calls `setMarkers`.
+ 
+   // --- lifecycle -------------------------------------------------------------------------
+ 
+@@ -2802,7 +2710,7 @@
+     for (const canvas of [baseCanvas]) { canvas.width = 0; canvas.height = 0; }
+     sizeW = 0;
+     leaveCursor();
+-    cancelBox();
++    // hune: E18, no box of the 2-D brush to cancel.
+   }
+ 
+   // Every change draws once, on the next animation frame. Several setData calls in a frame
+@@ -2844,6 +2752,10 @@
+     draw(true);
+   }
+ 
++  // hune: E13. The label widths are measured at the axis font. When the page font arrives after the first draw, measure again (a gutter of the right size).
++  const onFonts = () => { if (destroyed) return; widths.clear(); boldWidths.clear(); axisStamp++; scheduleDraw(); };
++  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", onFonts);
++
+   function themeChanged() {
+     theme = null;
+     axisStamp++;
+@@ -2857,30 +2769,23 @@
+     destroyed = true;
+     live.delete(api);
+     if (opts.syncKey && syncGroups.has(opts.syncKey)) syncGroups.get(opts.syncKey).delete(api);
+-    if (member) {
+-      const group = alignGroups.get(alignKey);
+-      if (group) {
+-        group.delete(member);
+-        if (!group.size) alignGroups.delete(alignKey);
+-      }
+-      settleGroup();
+-    }
+     if (resizeObserver) resizeObserver.disconnect();
+     if (sizeObserver) sizeObserver.disconnect();
+     if (dprQuery) dprQuery.removeEventListener("change", onDpr);
+     document.removeEventListener("keydown", onKey, true);
++    if (document.fonts && document.fonts.removeEventListener) document.fonts.removeEventListener("loadingdone", onFonts);
+     if (drawRaf) cancelAnimationFrame(drawRaf);
+     overlayFrame.cancel();
+     moveFrame.cancel();
+-    destroyExtras();
++    // hune: E18, the 2-D brush has no listener to remove.
+     release();
+     root.remove();
+   }
+ 
+   // --- Extensions: own-x and per-point marks, picking, heatmap cells, custom /
+-  // log y axes, annotation markers, regions, 2-D brush (first used by the
+-  // Traces charts). Every option is optional. Without them, the chart behaves
+-  // as described above.
++  // log y axes, regions (first used by the Traces charts). Every option is
++  // optional. Without them, the chart behaves as described above.
++  // hune: E17 to E19 remove the exemplar markers, the engine annotations and the 2-D brush.
+   //
+   //   series[k].type        "line" | "area" | "points" | "bar": the series' own mark
+   //                         (a line over bars, points over lines).
+@@ -2896,60 +2801,45 @@
+   //                         ({ key, x, px, py, r } all optional) or null.
+   //   pickTooltip(hit)      { title, rows: [{ label, value, color, className }], footer }.
+   //   onPick(hit)           a click on a hit (the pointer shows it is clickable).
+-  //   xReadout(i)           text of x index i (x badge, and the tooltip title
+-  //                         without tooltipTitle).
++  //   xReadout(i)           text of x index i (x badge, and the tooltip title).
+   //   yTickFormat(v, step)  y tick labels.
+-  //   yAxis(min, max, plotH) -> { min, max, ticks: [{ v, label }], step }: the y
+-  //                         domain and ticks from the data extent.
++  //   yAxis(min, max, plotH, raw) -> { min, max, ticks: [{ v, label }], step }: the y
++  //                         domain and ticks from the data extent. hune: E30, raw: the data ends of yAxisOf.
+   //   yBounds: [min, max]   fixed y edges (null: the data's own; a pair with max <= min is ignored).
+   //   interpolation         "linear" | "smooth" | "stepBefore" | "stepAfter": the shape of line and area paths.
+   //   lineWidth             px (default 1.5, an area's top 1.25); fillOpacity 0..1: the fill under every line.
+   //   showPoints            "auto" | "always" | "never": the marks on a line; pointSize px (diameter, default 5.2).
+   //   stackMode             "percent": a stack shows shares out of 100 (default: the values add up).
++  //   stackSign: "series"   hune: E32, a series with more values below 0 stacks down from 0 in a group of its own (Grafana). E33: and a
++  //                         series of another `type`.
+   //   yScale: "log"         log y (positive values; ticks 1-2-5 per decade).
+   //   cells: { x0, x1, y0, y1: Float64Array, level: Uint8Array, palette: [CSS colours] }
+   //                         heatmap cells: one rect each, palette[level - 1] (0: none).
+-  //   annotations: [{ x, label, title, className }]   vertical annotation lines
+-  //                         with a label (releases); markers are the exemplar links.
++  // hune: E18, E19, the options `annotations` and `brush` are removed.
+   //   regions: [{ id, x0, x1, y0, y1, className, hidden }]   persistent boxes in data
+   //                         units (no y0 / y1: the plot height); setRegions(list).
+-  //   brush: "xy"           a drag (or a click) selects a box instead of zooming:
+-  //                         brushSnap(range) -> range, brushTooltip(range) -> tooltip,
+-  //                         onBrush(range) on release, range = { x0, x1, y0, y1 };
+-  //                         brushClass styles the box.
+   //   keyboard: false       no keyboard cursor (the host element handles keys).
+-  // (The x domain, the y readout and the NULL rows are the xDomain, formatY
+-  // and tooltipNulls options above.)
++  // (The x domain and the y readout are the xDomain and formatY options above.)
+   // API: setRegions(list), showTooltip(content, px, py), hideTooltip(),
+   // points(id) -> [{ index, x, y, r }] (plot px), toClient(x, y) -> { x, y }.
+ 
+-  const annotationsEl = document.createElement("div");
+-  annotationsEl.className = "chartCore__annotations";
+-  annotationsEl.setAttribute("aria-hidden", "true");
+-  plotEl.appendChild(annotationsEl);
++  // hune: E18, E19. No layer of engine annotations and no box of the 2-D brush.
+   const pickRing = document.createElement("i");
+   pickRing.className = "chartCore__pick";
+   pickRing.hidden = true;
+   cursorEl.appendChild(pickRing);
+-  const boxEl = document.createElement("i");
+-  boxEl.className = "chartCore__box";
+-  boxEl.hidden = true;
+-  cursorEl.appendChild(boxEl);
+-  const annotationEls = [];
+   const regionEls = new Map();
+   const pickPoints = new Map(); // series id -> { index, px, py, r } arrays of the last draw
+   let pickHit = null;
+-  let boxDrag = null;
+-  const boxFrame = util.rafOnce((p) => updateBox(p));
+   let press = null;
+   if (opts.keyboard === false) overCanvas.removeAttribute("tabindex");
+-  if (opts.brush === "xy") overCanvas.style.touchAction = "none";
+ 
+   const pointsMark = (s) => s.type === "points" || (!!s.xs && !s.type);
+   function ownMark(s) {
+-    if (opts.yScale === "log" || s.xs) return true;
++    if (scaleOpts(scaleOf(s)).yScale === "log" || s.xs) return true;
+     if (s.type === "points") return s.radius != null || typeof s.pointColor === "function" || !!s.pickable;
+-    return opts.type === "bar" && !!s.type && s.type !== "bar";
++    // hune: E14. A chart that draws in series order (opts.drawOrder === "series") draws a line between bars in its turn, not after the bars.
++    return opts.type === "bar" && !!s.type && s.type !== "bar" && opts.drawOrder !== "series";
+   }
+ 
+   function ownRange(s, lo, hi) {
+@@ -2963,21 +2853,21 @@
+     return c;
+   }
+ 
+-  function yTickLabel(v, step, unit) {
+-    return typeof opts.yTickFormat === "function" ? opts.yTickFormat(v, step) : formatTick(v, step, unit);
+-  }
+-
+-  // The y domain and ticks of a yAxis hook, or of a log scale.
+-  function customYAxis(dataMin, dataMax, plotH) {
+-    if (typeof opts.yAxis === "function") {
+-      const ax = opts.yAxis(dataMin, dataMax, plotH);
++  function yTickLabel(v, step, unit, so = opts) {
++    return typeof so.yTickFormat === "function" ? so.yTickFormat(v, step) : formatTick(v, step, unit);
++  }
++
++  // The y domain and ticks of a yAxis hook, or of a log scale. hune: E30, raw.
++  function customYAxis(dataMin, dataMax, plotH, so = opts, raw = null) {
++    if (typeof so.yAxis === "function") {
++      const ax = so.yAxis(dataMin, dataMax, plotH, raw);
+       if (ax && ax.max > ax.min && Array.isArray(ax.ticks)) return ax;
+     }
+-    if (opts.yScale !== "log") return null;
++    if (so.yScale !== "log") return null;
+     const lo = dataMin > 0 ? dataMin : dataMax > 0 ? dataMax / 10 : 1;
+     const hi = dataMax > lo ? dataMax : lo * 10;
+     const unit = compactUnitFor(hi);
+-    return { min: lo, max: hi, ticks: logTicks(lo, hi).map((v) => ({ v, label: yTickLabel(v, v, unit) })) };
++    return { min: lo, max: hi, ticks: logTicks(lo, hi).map((v) => ({ v, label: yTickLabel(v, v, unit, so) })) };
+   }
+ 
+   function applyLogScale(L) {
+@@ -2991,7 +2881,7 @@
+       yOf: (y) => base - (Math.log(Math.max(y, lo)) - lmin) * ky,
+       yAt: (py) => Math.exp(lmin + (base - py) / ky),
+       // The same plot linear in log units, for the line / area tracer.
+-      logView: { ...L, yMin: lmin, yMax: lmax, ky, yOf: (v) => base - (v - lmin) * ky },
++      logView: { ...L, yMin: lmin, yMax: lmax, ky, yOf: (v) => base - (v - lmin) * ky, real: L }, // hune: E43, `real` is the view in the units of the values
+     });
+   }
+ 
+@@ -3029,6 +2919,7 @@
+     if (!c || !c.level || !c.level.length) { delete root.dataset.cellsDrawn; return 0; }
+     const palette = c.palette || [];
+     const snap = (v) => Math.round(v * dpr) / dpr;
++    const gap = opts.cellGap >= 0 ? opts.cellGap : 1; // hune: E22, `cellGap` (px)
+     let drawn = 0;
+     for (let step = 1; step <= palette.length; step++) {
+       ctx.beginPath();
+@@ -3037,7 +2928,7 @@
+         if (c.level[k] !== step || !(c.x1[k] > L.xLo && c.x0[k] < L.xHi)) continue;
+         const xa = snap(L.xOf(c.x0[k])), xb = snap(L.xOf(c.x1[k]));
+         const ya = snap(L.yOf(c.y1[k])), yb = snap(L.yOf(c.y0[k]));
+-        const gx = xb - xa > 3 ? 1 : 0, gy = yb - ya > 3 ? 1 : 0;
++        const gx = xb - xa > 3 ? gap : 0, gy = yb - ya > 3 ? gap : 0;
+         ctx.rect(xa, ya, Math.max(0.5, xb - xa - gx), Math.max(0.5, yb - ya - gy));
+         any = true;
+         drawn++;
+@@ -3060,9 +2951,10 @@
+     for (const s of list) {
+       if (bars.includes(s)) continue;
+       let drawn;
+-      if (pointsMark(s)) drawn = drawPoints(ctx, L, s);
+-      else if (L.logY) drawn = drawSeries(ctx, L.logView, logSeries(s));
+-      else drawn = drawSeries(ctx, L, s);
++      const V = viewFor(L, s);
++      if (pointsMark(s)) drawn = drawPoints(ctx, V, s);
++      else if (V.logY) drawn = drawSeries(ctx, V.logView, logSeries(s));
++      else drawn = drawSeries(ctx, V, s);
+       perSeries[s.label] = { points: drawn, runs: pointsMark(s) ? (drawn ? 1 : 0) : runs.length };
+       points = Math.max(points, drawn);
+     }
+@@ -3074,7 +2966,7 @@
+     const xs = own ? s.xs : opts.xs;
+     const category = !own && opts.xKind === "category";
+     const [i0, i1] = own ? ownRange(s, L.xLo, L.xHi) : [L.v0, L.v1];
+-    const values = s.values;
++    const values = drawnValues(s);
+     const radius = s.radius;
+     const alpha = alphaFor(s);
+     const fill = s.fillAlpha == null ? 0.5 : s.fillAlpha;
+@@ -3221,34 +3113,7 @@
+     if (hit) opts.onPick(hit);
+   });
+ 
+-  // --- 2-D brush ---
+-
+-  function clampPoint(p) {
+-    const L = layout;
+-    return { px: Math.max(L.left, Math.min(L.left + L.plotW, p.px)), py: Math.max(L.top, Math.min(L.top + L.plotH, p.py)) };
+-  }
+-
+-  function startBox(p, ev) {
+-    if (opts.brush !== "xy" || !layout) return false;
+-    const at = clampPoint(p);
+-    boxDrag = { a: at, b: at, id: ev.pointerId, range: null };
+-    try { overCanvas.setPointerCapture(ev.pointerId); } catch { /* capture is optional */ }
+-    clearPick();
+-    cursor = null;
+-    cursorIndex = -1;
+-    scheduleOverlay();
+-    updateBox(at);
+-    return true;
+-  }
+-
+-  function boxRange(a, b) {
+-    const L = layout;
+-    const range = {
+-      x0: L.xAt(Math.min(a.px, b.px)), x1: L.xAt(Math.max(a.px, b.px)),
+-      y0: L.yAt(Math.max(a.py, b.py)), y1: L.yAt(Math.min(a.py, b.py)),
+-    };
+-    return typeof opts.brushSnap === "function" ? opts.brushSnap(range) || range : range;
+-  }
++  // hune: E18. The 2-D brush is removed: Hune never sets the option `brush`. placeBox stays for the regions.
+ 
+   function placeBox(el, r, L) {
+     const xa = Math.max(L.left, L.xOf(r.x0)), xb = Math.min(L.left + L.plotW, L.xOf(r.x1));
+@@ -3259,69 +3124,7 @@
+     place(el, xa, ya);
+   }
+ 
+-  function updateBox(p) {
+-    if (!boxDrag || !layout) return;
+-    boxDrag.b = clampPoint(p);
+-    const r = boxRange(boxDrag.a, boxDrag.b);
+-    boxDrag.range = r;
+-    boxEl.className = `chartCore__box${opts.brushClass ? ` ${opts.brushClass}` : ""}`;
+-    placeBox(boxEl, r, layout);
+-    show(boxEl, true);
+-    showContentTooltip(typeof opts.brushTooltip === "function" ? opts.brushTooltip(r) : null, p.px, p.py);
+-  }
+-
+-  function cancelBox() {
+-    if (!boxDrag) return;
+-    const d = boxDrag;
+-    boxDrag = null;
+-    try { overCanvas.releasePointerCapture(d.id); } catch { /* already released */ }
+-    show(boxEl, false);
+-    tooltipEl.hidden = true;
+-    tooltipKey = "";
+-    contentTip = null;
+-    return d;
+-  }
+-
+-  overCanvas.addEventListener("pointermove", (ev) => {
+-    if (!boxDrag) return;
+-    const p = localPoint(ev);
+-    boxFrame(p);
+-  });
+-  overCanvas.addEventListener("pointerup", (ev) => {
+-    if (!boxDrag) return;
+-    updateBox(localPoint(ev));
+-    const d = cancelBox();
+-    if (d && d.range && typeof opts.onBrush === "function") opts.onBrush(d.range);
+-  });
+-  overCanvas.addEventListener("pointercancel", () => cancelBox());
+-  overCanvas.addEventListener("lostpointercapture", () => { if (boxDrag) cancelBox(); });
+-  const onBoxKey = (ev) => { if (ev.key === "Escape" && boxDrag) { ev.preventDefault(); cancelBox(); } };
+-  document.addEventListener("keydown", onBoxKey, true);
+-
+-  // --- annotations and regions (DOM, moved on every draw) ---
+-
+-  function placeAnnotations(L) {
+-    const list = Array.isArray(opts.annotations) ? opts.annotations : [];
+-    while (annotationEls.length < list.length) {
+-      const el = document.createElement("div");
+-      el.appendChild(document.createElement("span"));
+-      annotationsEl.appendChild(el);
+-      annotationEls.push(el);
+-    }
+-    annotationEls.forEach((el, k) => {
+-      const m = list[k];
+-      const x = m ? L.xOf(Number(m.x)) : NaN;
+-      const on = !!m && x >= L.left - 0.5 && x <= L.left + L.plotW + 0.5;
+-      el.hidden = !on;
+-      if (!on) return;
+-      el.className = `chartCore__annotation${m.className ? ` ${m.className}` : ""}`;
+-      el.dataset.label = String(m.label == null ? "" : m.label);
+-      el.firstChild.textContent = el.dataset.label;
+-      el.firstChild.title = String(m.title || el.dataset.label);
+-      el.style.height = `${L.plotH}px`;
+-      place(el, x, L.top);
+-    });
+-  }
++  // hune: E19. The engine annotations are removed. The regions stay (DOM, moved on every draw).
+ 
+   function placeRegions(L) {
+     const list = Array.isArray(opts.regions) ? opts.regions : [];
+@@ -3346,20 +3149,14 @@
+   function publishExtras() {
+     const L = layout;
+     root.dataset.yTicks = JSON.stringify(L.yTicks.map((t) => t.label));
++    if (L.y2) root.dataset.y2Ticks = JSON.stringify(L.y2.yTicks.map((t) => t.label)); else delete root.dataset.y2Ticks;
+     // [label, context, left, right, context left, context right] of each x label drawn.
+     root.dataset.xTicks = JSON.stringify(L.xLabels.map((t) => [t.label, t.context, Math.round(t.left), Math.round(t.right)]
+       .concat(t.context ? [Math.round(t.cleft), Math.round(t.cright)] : [])));
+     if (opts.yScale) root.dataset.yScale = opts.yScale; else delete root.dataset.yScale;
+-    placeAnnotations(L);
++    // hune: E18, E19: no engine annotations, no box of the 2-D brush, and no destroyExtras.
+     placeRegions(L);
+     if (pickHit) clearPick();
+-    if (boxDrag && boxDrag.range) placeBox(boxEl, boxDrag.range, L);
+-  }
+-
+-  function destroyExtras() {
+-    document.removeEventListener("keydown", onBoxKey, true);
+-    boxFrame.cancel();
+-    cancelBox();
+   }
+ 
+   const extraApi = {
+@@ -3411,27 +3208,19 @@
+     // was resized) and the resize observer has not drawn it yet. Until then, layout() and
+     // toClient() describe the last frame drawn.
+     drawPending: () => !destroyed && (!!drawRaf || pendingDraw || (!released && plotWidth() !== sizeW)),
+-    // The mode of the legend, "list" or "table". setLegendMode does not keep it as the preference. The click on the button does.
++    // The mode of the legend, "list" or "table".
+     legendMode: () => legendMode,
+     setLegendMode,
+-    // Markers move with the plot. A replacement needs no plot redraw.
+-    setMarkers(list) { opts.markers = list; scheduleDraw(); },
++    // hune: E17, no setMarkers.
+   };
+   Object.assign(api, extraApi);
+-  instances.set(root, api);
+   live.add(api);
+   watchTheme();
+   if (opts.syncKey) {
+     if (!syncGroups.has(opts.syncKey)) syncGroups.set(opts.syncKey, new Set());
+     syncGroups.get(opts.syncKey).add(api);
+   }
+-  if (member) {
+-    if (!alignGroups.has(alignKey)) alignGroups.set(alignKey, new Set());
+-    alignGroups.get(alignKey).add(member);
+-    // The first draw waits for the frame. So, the charts of a group that are made one after the other are drawn with the gutter of all of
+-    // them. flush() and the readers of the layout draw at once.
+-    scheduleDraw();
+-  } else draw();
++  draw(); // hune: E40
+   return api;
+ }
+ 
+@@ -3442,7 +3231,6 @@
+   layoutXLabels,
+   linearTicks,
+   niceStep,
+-  alignedAxis,
+   compactUnitFor,
+   formatTick,
+   formatExact,
+@@ -3453,18 +3241,11 @@
+   decimalsFor,
+   lowerBound,
+   upperBound,
+-  bridgeGaps,
+   regularStep,
+   logTicks,
+   counters: () => ({ ...counters }),
+   resetCounters,
+-  // The mode of the legend that a chart starts with (the preference): "list" or "table".
+-  legendMode: readLegendMode,
+   // The colour helpers and their batches, for the equivalence tests.
+-  colors: { parseColor, parseColors, rgba, rgbaBatch },
+-  // The chart drawn in (or at) an element: tests and hosts reach its API.
+-  of(el) {
+-    const node = el && (el.classList && el.classList.contains("chartCore") ? el : el.querySelector && $(".chartCore", el));
+-    return (node && instances.get(node)) || null;
+-  },
++  colors: { parseColor, parseColors, rgba }, // hune: E37, no rgbaBatch.
++  // hune: E42. No of(el): Hune keeps the API of each chart that it makes.
+ };
+--- a/js/vendor/chdash/app_highlight.js
++++ b/js/vendor/chdash/app_highlight.js
+@@ -209,6 +209,12 @@
+   return merged;
+ };
+ 
++// hune: E16, F42. A call of `push` with a spread of the tokens passes each token as an argument. A text of about 125,000 tokens (for example
++// "1,1,1,...") then throws RangeError "Maximum call stack size exceeded". This loop has no limit.
++const pushAll = (out, tokens) => {
++  for (let i = 0; i < tokens.length; i++) out.push(tokens[i]);
++};
++
+ const tokenizePlain = (text, base) => {
+   const s = String(text ?? "");
+   const kwSet = getKeywordSet();
+@@ -220,11 +226,11 @@
+     const out = [];
+     let cur = 0;
+     for (const r of patterns) {
+-      if (r.start > cur) out.push(...tokenizePlain(s.slice(cur, r.start), base + cur));
++      if (r.start > cur) pushAll(out, tokenizePlain(s.slice(cur, r.start), base + cur));
+       out.push({ start: base + r.start, end: base + r.end, kind: "kw", html: wrapHtml(s.slice(r.start, r.end), "kw") });
+       cur = r.end;
+     }
+-    if (cur < s.length) out.push(...tokenizePlain(s.slice(cur), base + cur));
++    if (cur < s.length) pushAll(out, tokenizePlain(s.slice(cur), base + cur));
+     return out;
+   }
+ 
+@@ -339,11 +345,11 @@
+     from = span.end;
+     const kind = SPAN_KIND[span.kind];
+     if (!kind) continue;
+-    if (span.start > segStart) out.push(...tokenizePlain(s.slice(segStart, span.start), segStart));
++    if (span.start > segStart) pushAll(out, tokenizePlain(s.slice(segStart, span.start), segStart));
+     out.push({ start: span.start, end: span.end, kind, html: wrapHtml(s.slice(span.start, span.end), kind) });
+     segStart = span.end;
+   }
+-  if (s.length > segStart) out.push(...tokenizePlain(s.slice(segStart), segStart));
++  if (s.length > segStart) pushAll(out, tokenizePlain(s.slice(segStart), segStart));
+   return out;
+ };
+ 
+@@ -454,7 +460,7 @@
+ 
+   // The plain text from segStart to `end` as tokens.
+   const push = (end) => {
+-    if (end > segStart) out.push(...tokenizePlain(s.slice(segStart, end), segStart));
++    if (end > segStart) pushAll(out, tokenizePlain(s.slice(segStart, end), segStart));
+     segStart = end;
+   };
+ 
+--- a/js/vendor/chdash/app_results_sort.js
++++ b/js/vendor/chdash/app_results_sort.js
+@@ -1,14 +1,22 @@
+ // The sort of the rows of a result. A numeric column is sorted as numbers. The text of a Decimal or of a big integer is compared as a number, and NaN goes last.
+-// A text column is sorted as text. The WebAssembly kernel sorts the numeric keys of a long result.
++// A text column is sorted as text.
++// hune: E21. The sort of the rows and its WebAssembly kernel are removed: Hune imports only compareNumericForSort and
++// compareTextForSort (engine-patches.md). The imports app_loader and app_wasm go with them.
+ 
+-import { loader } from "./app_loader.js";
+ import { NUMERIC_RE } from "./app_results_values.js";
+-import { wasm } from "./app_wasm.js";
+ 
+ // The text of a Float value is sent by the API as a string (docs/telemetry.md, "Result values"). The infinities sort as numbers.
+ // NaN sorts with the NULLs, last.
+ const FLOAT_WORDS = new Map([["inf", Infinity], ["+inf", Infinity], ["-inf", -Infinity], ["nan", NaN], ["-nan", NaN], ["+nan", NaN]]);
+-const DECIMAL_TEXT = /^([+-]?)0*(\d*?)(?:\.(\d*?)0*)?$/;
++// hune: E29. String steps replace the pattern /^([+-]?)0*(\d*?)(?:\.(\d*?)0*)?$/, whose time grew with the square of the length.
++function decimalParts(text) {
++  if (!/^[+-]?\d*(?:\.\d*)?$/.test(text)) return null;
++  const sign = /^[+-]/.test(text) ? text[0] : "";
++  const [int, frac] = text.slice(sign.length).split(".");
++  let j = frac ? frac.length : 0;
++  while (j && frac[j - 1] === "0") j--;
++  return [text, sign, int.replace(/^0+/, ""), frac === undefined ? frac : frac.slice(0, j)];
++}
+ 
+ // A double cannot hold these digits. A Decimal(38, 9) text is compared as text (compareDecimalText).
+ function longDecimalText(text) {
+@@ -17,9 +25,8 @@
+ }
+ 
+ // Two decimal texts (digits, one dot, a sign) are compared exactly.
+-function compareDecimalText(a, b) {
+-  const ma = DECIMAL_TEXT.exec(a);
+-  const mb = DECIMAL_TEXT.exec(b);
++// hune: E29. `ma` and `mb` can come from the normalised values (member `p`).
++function compareDecimalText(a, b, ma = decimalParts(a), mb = decimalParts(b)) {
+   if (!ma || !mb) return a < b ? -1 : a > b ? 1 : 0;
+   const zero = (m) => !m[2] && !m[3];
+   const sa = ma[1] === "-" && !zero(ma) ? -1 : 1;
+@@ -46,7 +53,7 @@
+   if (!s) return { t: "z", v: null };
+   const word = FLOAT_WORDS.get(s.toLowerCase());
+   if (word !== undefined) return Number.isNaN(word) ? { t: "z", v: null } : { t: "n", v: word };
+-  if (longDecimalText(s)) return { t: "d", v: s };
++  if (longDecimalText(s)) return { t: "d", v: s, p: decimalParts(s) };
+   if (/^[+-]?\d+$/.test(s)) {
+     try {
+       return { t: "bi", v: BigInt(s) };
+@@ -62,9 +69,11 @@
+ }
+ 
+ function compareNumericForSort(a, b) {
+-  const na = normalizeNumericForSort(a);
+-  const nb = normalizeNumericForSort(b);
++  return compareNormalizedForSort(normalizeNumericForSort(a), normalizeNumericForSort(b));
++}
+ 
++// hune: E29. A sort normalises each row once, then compares the normalised values.
++function compareNormalizedForSort(na, nb) {
+   if (na.t === "z" && nb.t === "z") return 0;
+   if (na.t === "z") return 1;
+   if (nb.t === "z") return -1;
+@@ -76,7 +85,7 @@
+       const text = (x) => (x.t === "bi" ? x.v.toString() : x.t === "n" && Number.isFinite(x.v) && !/e/i.test(String(x.v)) ? String(x.v) : null);
+       const ta = na.t === "d" ? na.v : text(na);
+       const tb = nb.t === "d" ? nb.v : text(nb);
+-      if (ta !== null && tb !== null) return compareDecimalText(ta, tb);
++      if (ta !== null && tb !== null) return compareDecimalText(ta, tb, na.p, nb.p);
+       const an = Number(na.v);
+       const bn = Number(nb.v);
+       return an < bn ? -1 : an > bn ? 1 : 0;
+@@ -124,178 +133,5 @@
+   return 0;
+ }
+ 
+-// ----------------------------------------------------------- numeric sort keys
+-// A numeric column is sorted by compareNumericForSort. This function normalises both values on every comparison (a regular expression and a BigInt).
+-// The sort makes O(n log n) of these comparisons.
+-//
+-// When every value is null, a number, a numeric string, or an integer string of at most 2^53, the comparison uses plain doubles.
+-// This is the usual case. Nulls go last. The values are read once into a Float64Array.
+-//
+-// The rows are then ordered by these keys: orderByKeysJs, or the kernel of src/wasm/rowsort.c (orderByKeysWasm) for long results.
+-// Any other value (text in a numeric column, a huge integer) uses the comparator path. The order is therefore the same for every input.
+-const SORT_WASM_MIN_ROWS = 5000;
+-const SAFE_INTEGER_TEXT = /^[+-]?\d+$/;
+-let sortKernelAsked = false;
+-let sortWasmEnabled = true;
+-
+-function requestSortKernel() {
+-  if (sortKernelAsked || typeof WebAssembly !== "object" || !loader) return;
+-  sortKernelAsked = true;
+-  Promise.resolve(loader.loadGroup("wasm-rowsort"))
+-    .then(() => (wasm && wasm.ops.rowsort ? wasm.load("rowsort") : null))
+-    .catch(() => {});
+-}
+-
+-// { vals: Float64Array, nulls: Uint8Array }, or null when a value needs the comparator.
+-function numericSortKeys(rows, key) {
+-  const n = rows.length;
+-  const vals = new Float64Array(n);
+-  const nulls = new Uint8Array(n);
+-  for (let i = 0; i < n; i++) {
+-    const row = rows[i];
+-    const raw = key === -1 ? row.__chdashRowIndex : row[key];
+-    if (typeof raw === "number") {
+-      if (Number.isFinite(raw)) vals[i] = raw; else nulls[i] = 1;
+-      continue;
+-    }
+-    if (raw === null || raw === undefined) { nulls[i] = 1; continue; }
+-    const text = typeof raw === "string" ? raw.trim() : String(raw).trim();
+-    if (!text) { nulls[i] = 1; continue; }
+-    const word = FLOAT_WORDS.get(text.toLowerCase());
+-    if (word !== undefined) {
+-      if (Number.isNaN(word)) nulls[i] = 1; else vals[i] = word;
+-      continue;
+-    }
+-    if (longDecimalText(text)) return null;
+-    if (SAFE_INTEGER_TEXT.test(text)) {
+-      const v = Number(text);
+-      if (!Number.isSafeInteger(v)) return null;
+-      vals[i] = v;
+-      continue;
+-    }
+-    if (!NUMERIC_RE.test(text)) return null;
+-    const v = Number(text);
+-    if (!Number.isFinite(v)) return null;
+-    vals[i] = v;
+-  }
+-  return { vals, nulls };
+-}
+-
+-// The order (row positions) that rows.sort(compare) gives, from the keys. Values ascend, with nulls last. Equal keys
+-// are ordered by __chdashRowIndex. Descending is the reverse comparison. The ties are included.
+-function orderByKeysJs(rows, keys, desc) {
+-  const { vals, nulls } = keys;
+-  const n = rows.length;
+-  const rank = new Float64Array(n);
+-  for (let i = 0; i < n; i++) rank[i] = rows[i].__chdashRowIndex || 0;
+-  const order = new Uint32Array(n);
+-  for (let i = 0; i < n; i++) order[i] = i;
+-  order.sort((a, b) => {
+-    let cmp = 0;
+-    if (nulls[a] !== nulls[b]) cmp = nulls[a] ? 1 : -1;
+-    else if (!nulls[a]) cmp = vals[a] < vals[b] ? -1 : vals[a] > vals[b] ? 1 : 0;
+-    if (cmp === 0) cmp = rank[a] - rank[b];
+-    return desc ? -cmp : cmp;
+-  });
+-  return order;
+-}
+-
+-function orderByKeysWasm(rows, keys, desc) {
+-  const kernel = wasm && wasm.get("rowsort");
+-  if (!kernel || !wasm.ops.rowsort) return null;
+-  try {
+-    const n = rows.length;
+-    const rank = new Float64Array(n);
+-    for (let i = 0; i < n; i++) rank[i] = rows[i].__chdashRowIndex || 0;
+-    return wasm.ops.rowsort.numeric(kernel, { vals: keys.vals, nulls: keys.nulls, rank, desc });
+-  } catch (error) {
+-    return null;
+-  }
+-}
+-
+-// Sorts rows by one numeric column. The array order is the same as rows.slice().sort(comparator).
+-function sortNumericRows(allRows, key, dir) {
+-  const rows = allRows.slice();
+-  const desc = dir === "desc";
+-  const keys = rows.length > 1 ? numericSortKeys(rows, key) : null;
+-  if (keys) {
+-    if (rows.length >= SORT_WASM_MIN_ROWS) requestSortKernel();
+-    const order = (sortWasmEnabled && rows.length >= SORT_WASM_MIN_ROWS && orderByKeysWasm(rows, keys, desc)) || orderByKeysJs(rows, keys, desc);
+-    const out = new Array(rows.length);
+-    for (let i = 0; i < out.length; i++) out[i] = rows[order[i]];
+-    return out;
+-  }
+-  return sortNumericRowsByComparator(rows, key, desc);
+-}
+-
+-// The reference. Every comparison normalises both values.
+-function sortNumericRowsByComparator(rows, key, desc) {
+-  rows.sort((a, b) => {
+-    const av = key === -1 ? a.__chdashRowIndex : a[key];
+-    const bv = key === -1 ? b.__chdashRowIndex : b[key];
+-    let cmp = compareNumericForSort(av, bv);
+-    if (cmp === 0) cmp = (a.__chdashRowIndex || 0) - (b.__chdashRowIndex || 0);
+-    return desc ? -cmp : cmp;
+-  });
+-  return rows;
+-}
+-
+-// A text column is ordered by compareTextForSort. The order uses the lower-cased text, then the text, then the row number.
+-// The strings are made once. JavaScript lower-cases them, and it knows Unicode. The module orders them by orderTextJs.
+-// This gives the same order as the comparator path (sortTextRowsByComparator), in a third of the time.
+-//
+-// A WebAssembly merge sort of the same strings was measured. It is not faster, because the copy of the strings and the cache misses cost as much as the comparison.
+-// So text columns stay in JavaScript (docs/wasm.md).
+-function orderTextJs(lower, text, rank, desc) {
+-  const n = lower.length;
+-  const order = new Uint32Array(n);
+-  for (let i = 0; i < n; i++) order[i] = i;
+-  order.sort((a, b) => {
+-    let cmp = 0;
+-    if (lower[a] < lower[b]) cmp = -1;
+-    else if (lower[a] > lower[b]) cmp = 1;
+-    else if (text[a] < text[b]) cmp = -1;
+-    else if (text[a] > text[b]) cmp = 1;
+-    if (cmp === 0) cmp = rank[a] - rank[b];
+-    return desc ? -cmp : cmp;
+-  });
+-  return order;
+-}
+-
+-// Sorts rows by the text of one column. textOf(row) gives the text that the comparator would compare.
+-function sortTextRows(allRows, key, dir, textOf) {
+-  const rows = allRows.slice();
+-  const desc = dir === "desc";
+-  const n = rows.length;
+-  if (n < 2) return rows;
+-  const text = new Array(n);
+-  const lower = new Array(n);
+-  const rank = new Float64Array(n);
+-  for (let i = 0; i < n; i++) {
+-    const s = String(textOf(rows[i], key) ?? "");
+-    text[i] = s;
+-    lower[i] = s.toLowerCase();
+-    rank[i] = rows[i].__chdashRowIndex || 0;
+-  }
+-  const order = orderTextJs(lower, text, rank, desc);
+-  const out = new Array(n);
+-  for (let i = 0; i < n; i++) out[i] = rows[order[i]];
+-  return out;
+-}
+-
+-// The reference. Every comparison lower-cases both texts.
+-function sortTextRowsByComparator(rows, key, desc, textOf) {
+-  rows.sort((a, b) => {
+-    let cmp = compareTextForSort(String(textOf(a, key) ?? ""), String(textOf(b, key) ?? ""));
+-    if (cmp === 0) cmp = (a.__chdashRowIndex || 0) - (b.__chdashRowIndex || 0);
+-    return desc ? -cmp : cmp;
+-  });
+-  return rows;
+-}
+-
+-// The tests disable the kernel to compare both paths (tests/frontend/specs/wasm-rowsort.spec.js).
+-function setSortWasm(on) {
+-  sortWasmEnabled = !!on;
+-}
+-
+-export { SORT_WASM_MIN_ROWS, compareNumericForSort, compareTextForSort, numericSortKeys, orderByKeysJs, orderByKeysWasm, requestSortKernel, setSortWasm, sortNumericRows, sortNumericRowsByComparator, sortTextRows, sortTextRowsByComparator };
++// hune: E21, the sort of the rows is removed. E29 exports the two steps of compareNumericForSort.
++export { compareNormalizedForSort, compareNumericForSort, compareTextForSort, normalizeNumericForSort };
+--- a/js/vendor/chdash/app_sql_lex.js
++++ b/js/vendor/chdash/app_sql_lex.js
+@@ -21,10 +21,11 @@
+ //   4. A backslash in a name in backticks is a character (ClickHouse: it escapes).
+ //      For text that the server wrote (the DDL of a table), call spans(text, { clickhouse: true }).
+ //      That call uses the ClickHouse escapes. In that text, a doubled quote is part of the name.
+-// A line comment ends at "\n" only. ClickHouse also ends it at "\r".
++// A line comment ends at "\n" only, as in ClickHouse: a "\r" stays in it. "//" starts a line comment too.
++// hune: E47 ClickHouse 26.8.34.13 reads "//" as a line comment and does not end a comment at "\r" (Hune 7.5).
+ //
+ // The spans follow the order of the text. A position is a UTF-16 index, as in the editor:
+-//   LINE       "--" or "#" to the end of the line. The line break is part of the span.
++//   LINE       "--", "//" or "#" to the end of the line. The line break is part of the span.
+ //   BLOCK      /* ... */
+ //   STRING     'text'. A backslash escapes the next character. '' is one quote.
+ //   DQUOTE     "name". A backslash escapes the next character. "" is two names side by side.
+@@ -76,6 +77,8 @@
+   const c = text.charCodeAt(at);
+   if (c === 45) {
+     if (text.charCodeAt(at + 1) !== 45) return null;
++  } else if (c === 47 && text.charCodeAt(at + 1) === 47) {
++    // hune: E47 "//" starts a line comment. Fall through to the line comment below.
+   } else if (c === 47) {
+     if (text.charCodeAt(at + 1) !== 42) return null;
+     const close = text.indexOf("*/", at + 2);
+@@ -107,7 +110,7 @@
+   while ((match = STARTS.exec(text))) {
+     const found = spanAt(text, match.index, clickhouse);
+     if (found) return { kind: found[0], start: match.index, end: found[1], closed: found[2] };
+-    // A "-" that is not "--", or a "/" that is not "/*", does not start a span. The scan goes on after it.
++    // A "-" that is not "--", or a "/" that is not "/*" or "//" (hune: E47), does not start a span. The scan goes on.
+   }
+   return null;
+ }
+--- a/js/vendor/chdash/app_ui_chart.js
++++ b/js/vendor/chdash/app_ui_chart.js
+@@ -1,15 +1,8 @@
+ // Chart chrome. One component serves every page (css/10-components/chart.css).
+ // The chart engine (app_chart_core.js) draws the plot and its legend. This module
+-// gives every chart the same card. It also gives every trend line the same sparkline.
++// gives every trend line the same sparkline.
++// hune: E39. No chartUi.cardHtml: Hune calls only chartUi.sparkline.draw (panels/stat.js).
+ //
+-//   chartUi.cardHtml({ title, meta, actions, body, legend, className, id,
+-//                      tag, titleTag, titleId, metaId, bodyClass, bodyId,
+-//                      attrs, bodyAttrs })
+-//     <article class="chartCard"><header class="chartCard__head">
+-//       <h3 class="chartCard__title"/> <span class="chartCard__meta"/>
+-//       <span class="chartCard__actions"/></header>
+-//       <div class="chartCard__body"/> [<footer class="chartCard__legend"/>]
+-//     title / meta are text; actions, body and legend are trusted HTML.
+ //   chartUi.sparkline.html(values, { max, min, area, alt, marks, className, label })
+ //     an SVG polyline (and area) in --sparkline-color, viewBox 100 x 24. The
+ //     polyline stretches to its box. alt: a second series (errors) in --danger.
+@@ -20,22 +13,6 @@
+ import { util } from "./app_util.js";
+ 
+ const esc = (value) => util.escapeHtml(value ?? "");
+-
+-function chartCardHtml({
+-  title = "", meta = "", actions = "", body = "", legend = "", className = "", id = "", tag = "article",
+-  titleTag = "h3", titleId = "", metaId = "", bodyClass = "", bodyId = "", attrs = {}, bodyAttrs = {},
+-} = {}) {
+-  const extra = Object.entries(attrs).map(([name, v]) => ` ${name}="${esc(v)}"`).join("");
+-  const bodyExtra = Object.entries(bodyAttrs).map(([name, v]) => ` ${name}="${esc(v)}"`).join("");
+-  return `<${tag} class="chartCard${className ? ` ${esc(className)}` : ""}"${id ? ` id="${esc(id)}"` : ""}${extra}>`
+-    + `<header class="chartCard__head"><${titleTag} class="chartCard__title"${titleId ? ` id="${esc(titleId)}"` : ""}>${esc(title)}</${titleTag}>`
+-    + `<span class="chartCard__meta"${metaId ? ` id="${esc(metaId)}"` : ""}>${esc(meta)}</span>`
+-    + (actions ? `<span class="chartCard__actions">${actions}</span>` : "")
+-    + "</header>"
+-    + `<div class="chartCard__body${bodyClass ? ` ${esc(bodyClass)}` : ""}"${bodyId ? ` id="${esc(bodyId)}"` : ""}${bodyExtra}>${body}</div>`
+-    + (legend ? `<footer class="chartCard__legend">${legend}</footer>` : "")
+-    + `</${tag}>`;
+-}
+ 
+ const W = 100;
+ const H = 24;
+@@ -108,4 +85,4 @@
+   }
+ }
+ 
+-export const chartUi = Object.freeze({ cardHtml: chartCardHtml, sparkline: Object.freeze({ html: sparklineHtml, draw: drawSparkline }) });
++export const chartUi = Object.freeze({ sparkline: Object.freeze({ html: sparklineHtml, draw: drawSparkline }) });
+--- a/js/vendor/chdash/app_ui_table.js
++++ b/js/vendor/chdash/app_ui_table.js
+@@ -9,28 +9,22 @@
+ //               ids and hashes; a cut-off value keeps its full text in title.
+ //   Selection   tr.is-selected: an accent bar on the left plus --row-hover.
+ //   Row numbers td/th.dataTable__rowNum (results and previews only).
+-//   Bars        td.cellBar with --cellBar (0-100 %) and --cell-bar-color:
+-//               barEligible() keeps them off identifier and signed columns.
+-//   Copy        one hover copy button per cell (copyCellHtml / copyCell).
+ //   Sorting     a button in the th, the state in aria-sort only:
+-//               sortHeader(th, ...) for DOM tables, sortHeadHtml(...) plus
+-//               bindSort(root, onSort) for string-rendered ones. The glyph
++//               sortHeader(th, ...) for DOM tables. The glyph
+ //               is CSS: up / down when sorted, the idle glyph on hover.
+ //   Keyboard    rovingRows(container, ...): Up / Down,
+ //               Page Up / Down, Home / End move between rows, Enter / Space
+ //               open one.
+ 
+-import { dom, h, shell } from "./app_dom.js";
+-import { copy } from "./app_ui_copy.js";
+-import { util } from "./app_util.js";
++// hune: E20. The helpers that Hune never calls are removed: the HTML sort header, the cells (bars, shares,
++// copy buttons, title text, row heights), the keyboard menu target and the scroll cues (engine-patches.md).
++// The imports app_ui_copy, app_util, h and shell go with them.
++import { dom } from "./app_dom.js";
+ 
+ const { $, $$ } = dom;
+-
+-const esc = (value) => util.escapeHtml(value ?? "");
+ 
+ const ARIA = { asc: "ascending", desc: "descending" };
+ const ariaSort = (dir) => ARIA[dir] || "none";
+-const dirOf = (th) => ({ ascending: "asc", descending: "desc" })[th?.getAttribute("aria-sort")] || "";
+ 
+ // ------------------------------------------------------------- sorting
+ 
+@@ -68,144 +62,7 @@
+   return button;
+ }
+ 
+-// The same header as an HTML string. sort: { key, dir } of the table (the
+-// header is sorted when sort.key === key). attrs on the th, escaped.
+-function sortHeadHtml({ key, label, title = "", sort = null, className = "", num = false, attrs = {} }) {
+-  const dir = sort && String(sort.key) === String(key) ? sort.dir : "";
+-  const extra = Object.entries(attrs).map(([name, value]) => ` ${name}="${esc(value)}"`).join("");
+-  const cls = ["is-sortable", num ? "num" : "", className].filter(Boolean).join(" ");
+-  return `<th scope="col" class="${esc(cls)}" data-sort-key="${esc(key)}" aria-sort="${ariaSort(dir)}"${extra}><button type="button" class="dataTable__sort"${title ? ` title="${esc(title)}"` : ""}>${esc(label)}</button></th>`;
+-}
+-
+-// Delegated sorting for string-rendered tables: onSort(key, nextDir, event),
+-// nextDir from the clicked header's state ("" -> first, then it flips).
+-function bindSort(root, onSort, { first = "desc" } = {}) {
+-  if (!root || typeof onSort !== "function") return;
+-  root.addEventListener("click", (event) => {
+-    const button = event.target instanceof Element ? event.target.closest(".dataTable__sort") : null;
+-    const th = button?.closest("th[data-sort-key]");
+-    if (!th || !root.contains(th)) return;
+-    const dir = dirOf(th);
+-    const next = dir === "asc" ? "desc" : dir === "desc" ? "asc" : (th.dataset.sortFirst || first);
+-    onSort(th.dataset.sortKey, next, event);
+-  });
+-}
+-
+-// --------------------------------------------------------------- cells
+-
+-// Identifier-like column names: ids, keys, hashes, codes, ports, versions,
+-// calendar parts. A bar on them reads as a magnitude that is not one.
+-const IDENTIFIER = /(?:^|[_\s.-])(?:id|ids|uuid|guid|hash|key|code|port|pid|tid|version|year|month|day|hour|minute|second|number|num|no|index|idx|rank|seq)$|^#$/i;
+-const CAMEL_ID = /[a-z](?:Id|ID|Uuid|Hash|Key)$/;
+-
+-// A column gets in-cell bars only when it is a measure: not an identifier
+-// and never negative (a signed column has no zero to grow from).
+-// barEligible({ name, min }) | barEligible(name, values)
+-function barEligible(nameOrSpec, values = null) {
+-  const spec = typeof nameOrSpec === "object" && nameOrSpec ? nameOrSpec : { name: nameOrSpec };
+-  const name = String(spec.name ?? "").trim();
+-  if (spec.identifier || IDENTIFIER.test(name) || CAMEL_ID.test(name)) return false;
+-  let min = spec.min;
+-  if (min == null && values) {
+-    for (const v of values) {
+-      const n = typeof v === "number" ? v : Number(v);
+-      if (Number.isFinite(n) && (min == null || n < min)) min = n;
+-    }
+-  }
+-  return !(Number(min) < 0);
+-}
+-
+-// The cellBar fill of a cell, 0-100: value over the column maximum.
+-function barPercent(value, max) {
+-  const n = Number(value);
+-  const m = Number(max);
+-  if (!Number.isFinite(n) || !Number.isFinite(m) || m <= 0 || n <= 0) return 0;
+-  return Math.max(0, Math.min(100, (n / m) * 100));
+-}
+-
+-// Gives td its bar (ratio 0-100); color: a CSS colour or var() (the accent
+-// by default). A null ratio removes it.
+-function cellBar(td, percent, { color = "" } = {}) {
+-  if (!td) return;
+-  if (percent == null) {
+-    td.classList.remove("cellBar");
+-    td.style.removeProperty("--cellBar");
+-    return;
+-  }
+-  td.classList.add("cellBar");
+-  td.style.setProperty("--cellBar", `${Math.max(0, Math.min(100, Number(percent) || 0)).toFixed(2)}%`);
+-  if (color) td.style.setProperty("--cell-bar-color", color);
+-}
+-
+-// The row heights of the densities, in px (--row-regular, --row-compact and
+-// --row-card, a two-line record on a phone), for virtual lists that position
+-// their rows.
+-const ROW_TOKENS = { regular: ["--row-regular", 32], compact: ["--row-compact", 26], card: ["--row-card", 52] };
+-function rowHeight(density = "regular") {
+-  const [name, fallback] = ROW_TOKENS[density] || ROW_TOKENS.regular;
+-  const value = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(name));
+-  return Number.isFinite(value) && value > 0 ? value : fallback;
+-}
+-
+-// A share: its text beside a bar on its own track, never under the text
+-// (.shareBar: the Logs patterns, the Explorer Storage list). percent 0-100
+-// sets the fill; text is the label ("10.9%").
+-function shareBarHtml(percent, text) {
+-  const fill = Math.max(0, Math.min(100, Number(percent) || 0)).toFixed(2);
+-  return `<span class="shareBar"><span class="shareBar__text">${util.escapeHtml(String(text ?? ""))}</span><span class="shareBar__track" aria-hidden="true"><span class="shareBar__fill" style="width:${fill}%"></span></span></span>`;
+-}
+-
+-function shareBar(el, percent, text) {
+-  if (!el) return;
+-  const fill = Math.max(0, Math.min(100, Number(percent) || 0)).toFixed(2);
+-  const track = h("span", { class: "shareBar__track", aria: { hidden: "true" } }, h("span", { class: "shareBar__fill", style: { width: `${fill}%` } }));
+-  h.replace(el, h("span", { class: "shareBar" }, h("span", { class: "shareBar__text" }, String(text ?? "")), track));
+-}
+-
+-// The style attribute value of a bar cell, for HTML strings.
+-function cellBarStyle(percent, color = "") {
+-  const fill = `--cellBar:${Math.max(0, Math.min(100, Number(percent) || 0)).toFixed(2)}%`;
+-  return color ? `${fill};--cell-bar-color:${color}` : fill;
+-}
+-
+-// A cell's text with the full value in title when CSS may cut it.
+-function textCell(td, text, { title = null } = {}) {
+-  if (!td) return;
+-  const value = String(text ?? "");
+-  td.textContent = value;
+-  const full = title == null ? value : String(title);
+-  if (full) td.title = full;
+-}
+-
+-// The hover copy button of a cell (shown while the row is hovered or the
+-// button focused); the click goes through copy.text.
+-function copyCellHtml(text, label = "Copy") {
+-  const html = copy.buttonHtml
+-    ? copy.buttonHtml({ label, className: "dataTable__copy", attrs: { "data-copy-text": text } })
+-    : "";
+-  return html;
+-}
+-
+-function copyCell(td, getText, label = "Copy") {
+-  if (!td || !copy.button) return null;
+-  const button = copy.button(null, getText, { label, className: "dataTable__copy" });
+-  td.classList.add("has-copy");
+-  td.appendChild(button);
+-  return button;
+-}
+-
+-// Delegated clicks of copyCellHtml buttons under root.
+-function bindCopy(root) {
+-  if (!root || root.dataset.dataTableCopy) return;
+-  root.dataset.dataTableCopy = "1";
+-  root.addEventListener("click", (event) => {
+-    const button = event.target instanceof Element ? event.target.closest(".dataTable__copy[data-copy-text]") : null;
+-    if (!button || !root.contains(button)) return;
+-    event.preventDefault();
+-    event.stopPropagation();
+-    void copy.text?.(button.getAttribute("data-copy-text") || "", button);
+-  }, true);
+-}
++// hune: E20, sortHeadHtml, bindSort and the cell helpers are removed.
+ 
+ // ------------------------------------------------------------ keyboard
+ 
+@@ -433,26 +290,8 @@
+   };
+ }
+ 
+-// The element a keyboard context menu (Shift+F10, the ContextMenu key)
+-// acts on, and its anchor point: the focused cell or row under root.
+-function keyboardMenuTarget(event, root) {
+-  const isMenuKey = event.key === "ContextMenu" || (event.shiftKey && event.key === "F10");
+-  if (!isMenuKey || event.altKey || event.ctrlKey || event.metaKey) return null;
+-  const el = event.target instanceof Element ? event.target : null;
+-  if (!el || (root && !root.contains(el))) return null;
+-  const box = el.getBoundingClientRect();
+-  return { el, x: Math.round(box.left + Math.min(box.width / 2, 24)), y: Math.round(box.top + box.height / 2) };
+-}
+-
+-// A table that is wider than its box scrolls sideways. No other element shows the columns past its edge. The box
+-// fades the edge that hides content (ns.shell.edgeCues). It returns the wrap.
+-function scrollCues(wrap) {
+-  shell?.edgeCues?.(wrap);
+-  return wrap;
+-}
+-
++// hune: E20, keyboardMenuTarget and scrollCues are removed.
+ export const table = Object.freeze({
+-  ariaSort, setSort, scrollCues, sortHeader, sortHeadHtml, bindSort,
+-  barEligible, barPercent, cellBar, cellBarStyle, shareBar, shareBarHtml, rowHeight, textCell, copyCellHtml, copyCell, bindCopy,
+-  rovingRows, targetIndex, keyboardMenuTarget,
++  ariaSort, setSort, sortHeader,
++  rovingRows, targetIndex,
+ });
+--- a/js/vendor/chdash/app_util.js
++++ b/js/vendor/chdash/app_util.js
+@@ -1,88 +1,5 @@
+-import { format } from "./app_format.js";
+-
+-function setText(el, value) {
+-  if (!el) return;
+-  el.textContent = value;
+-}
+-
+-// A meta line ("5 rows, 4 columns \u00b7 6 ms \u00b7 read 1.9 MB") has one
+-// .metaPart (white-space: nowrap) for each " \u00b7 " part. A narrow window
+-// wraps the line between parts, never between a value and its unit. At
+-// most `max` parts (three: two separators a line) show; the others go to
+-// the element's tooltip (title), joined the same way.
+-const META_SEP = " \u00b7 ";
+-const META_MAX = 3;
+-function setMetaLine(el, value, { max = META_MAX } = {}) {
+-  if (!el) return;
+-  const all = String(value ?? "").split(META_SEP).filter((part, index, list) => part || list.length === 1);
+-  const shown = all.slice(0, max);
+-  const rest = all.slice(max).join(META_SEP);
+-  const text = shown.join(META_SEP);
+-  if (rest) {
+-    el.title = rest;
+-    el.dataset.metaRest = "1";
+-  } else if (el.dataset.metaRest) {
+-    el.removeAttribute("title");
+-    delete el.dataset.metaRest;
+-  }
+-  if (el.textContent === text && (!text || el.firstElementChild)) return;
+-  const nodes = [];
+-  shown.forEach((part, index) => {
+-    if (index) nodes.push(document.createTextNode(META_SEP));
+-    const span = document.createElement("span");
+-    span.className = "metaPart";
+-    span.textContent = part;
+-    nodes.push(span);
+-  });
+-  el.replaceChildren(...(text ? nodes : []));
+-}
+-
+-// Keep the compact magnitude (K/M/B/T or Ki/Mi/Gi/Ti) at the same
+-// typographic size as the numeric value. Split out only the real unit or rate suffix.
+-// For example: 148.9M/s => [148.9M][/s], and ns.format's "1.7 KB/s" => [1.7][ KB/s].
+-// The space before a unit is kept. It is a no-break space, which
+-// the flex layout does not collapse. The text then reads as ns.format wrote it.
+-function setMetricText(el, rawValue) {
+-  if (!el) return;
+-
+-  const text = String(rawValue ?? "").trim();
+-  const match = text.match(/^(-?\d+(?:[.,]\d+)?)(Ki|Mi|Gi|Ti|K|M|B|T)?(\s*)(.*)$/);
+-
+-  if (!match) {
+-    if (el.textContent !== text || el.classList.contains("metricCompact__value--split")) {
+-      el.classList.remove("metricCompact__value--split");
+-      el.replaceChildren(document.createTextNode(text));
+-    }
+-    return;
+-  }
+-
+-  const magnitude = `${match[1]}${match[2] || ""}`;
+-  const unitText = String(match[4] || "").trim();
+-  const unit = unitText && match[3] ? `\u00a0${unitText}` : unitText;
+-  if (!unit) {
+-    if (el.textContent !== magnitude || el.classList.contains("metricCompact__value--split")) {
+-      el.classList.remove("metricCompact__value--split");
+-      el.replaceChildren(document.createTextNode(magnitude));
+-    }
+-    return;
+-  }
+-
+-  let numberEl = el.firstElementChild;
+-  let unitEl = numberEl ? numberEl.nextElementSibling : null;
+-  if (!numberEl || !unitEl || !numberEl.classList.contains("metricCompact__number") ||
+-      !unitEl.classList.contains("metricCompact__unit")) {
+-    numberEl = document.createElement("span");
+-    numberEl.className = "metricCompact__number";
+-    unitEl = document.createElement("span");
+-    unitEl.className = "metricCompact__unit";
+-    el.replaceChildren(numberEl, unitEl);
+-  }
+-
+-  el.classList.add("metricCompact__value--split");
+-  unitEl.className = "metricCompact__unit";
+-  if (numberEl.textContent !== magnitude) numberEl.textContent = magnitude;
+-  if (unitEl.textContent !== unit) unitEl.textContent = unit;
+-}
++// hune: E35. The page and the editor call only escapeHtml (app_chart_core.js, app_ui_chart.js, app_highlight.js) and rafOnce
++// (app_chart_core.js). The other helpers, their constants and the import of app_format.js are removed (engine-patches.md, Removals).
+ 
+ function escapeHtml(text) {
+   return String(text)
+@@ -91,203 +8,6 @@
+     .replace(/>/g, "&gt;")
+     .replace(/"/g, "&quot;")
+     .replace(/'/g, "&#039;");
+-}
+-
+-// The app_ui_copy.js module (ns.copy.text) does the copy action. It has one helper and one feedback.
+-
+-// formatInt and formatBytes keep their "-" for a missing value. They pass
+-// the rest to ns.format (app_format.js, loaded first). ns.format owns the
+-// number and byte formats. formatSeconds ("1.234s") is not a ns.format
+-// duration. It stays as it is.
+-
+-function formatInt(value) {
+-  const n = typeof value === "number" ? value : Number(value);
+-  if (!Number.isFinite(n)) return "-";
+-  return format.count(Math.trunc(n));
+-}
+-
+-function formatSeconds(value) {
+-  const n = typeof value === "number" ? value : Number(value);
+-  if (!Number.isFinite(n)) return "-";
+-  if (n < 1) return `${Math.round(n * 1000)}ms`;
+-  if (n < 10) return `${n.toFixed(3)}s`;
+-  return `${n.toFixed(2)}s`;
+-}
+-
+-// One byte format for the whole app: "0 B", "205 B", "1.7 KB", "10.3 MB"
+-// (ns.format.bytes: one decimal from KB up, 1024 base).
+-function formatBytes(value) {
+-  const n = typeof value === "number" ? value : Number(value);
+-  if (!Number.isFinite(n)) return "-";
+-  return format.bytes(n);
+-}
+-
+-function replaceTextAreaValue(textAreaEl, nextValue) {
+-  if (!textAreaEl) return;
+-  const v = String(nextValue ?? "");
+-
+-  const wasActive = document.activeElement === textAreaEl;
+-  const isMostlyVisible = (() => {
+-    try {
+-      const r = textAreaEl.getBoundingClientRect();
+-      const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+-      if (!(vh > 0) || !(r.height > 0)) return false;
+-      if (r.bottom <= 0 || r.top >= vh) return false;
+-      const visTop = Math.max(0, r.top);
+-      const visBottom = Math.min(vh, r.bottom);
+-      const vis = Math.max(0, visBottom - visTop);
+-      return vis / r.height >= 0.95;
+-    } catch {
+-      return false;
+-    }
+-  })();
+-
+-  const allowFocus = wasActive || isMostlyVisible;
+-
+-  const prevTop = Number.isFinite(textAreaEl.scrollTop) ? textAreaEl.scrollTop : 0;
+-  const prevLeft = Number.isFinite(textAreaEl.scrollLeft) ? textAreaEl.scrollLeft : 0;
+-
+-  const restoreView = () => {
+-    const maxTop = Math.max(0, textAreaEl.scrollHeight - textAreaEl.clientHeight);
+-    const maxLeft = Math.max(0, textAreaEl.scrollWidth - textAreaEl.clientWidth);
+-    textAreaEl.scrollTop = Math.min(Math.max(0, prevTop), maxTop);
+-    textAreaEl.scrollLeft = Math.min(Math.max(0, prevLeft), maxLeft);
+-    if (document.activeElement === textAreaEl) {
+-      const end = textAreaEl.value.length;
+-      try {
+-        textAreaEl.setSelectionRange(end, end);
+-      } catch {
+-        null;
+-      }
+-    }
+-  };
+-
+-  const dispatchInputEvent = () => {
+-    try {
+-      textAreaEl.dispatchEvent(new Event("input", { bubbles: true }));
+-    } catch {
+-      try {
+-        textAreaEl.dispatchEvent(new Event("input"));
+-      } catch {
+-        null;
+-      }
+-    }
+-  };
+-
+-  try {
+-    const before = String(textAreaEl.value ?? "");
+-    if (allowFocus) {
+-      const winX = window.scrollX;
+-      const winY = window.scrollY;
+-      try {
+-        textAreaEl.focus({ preventScroll: true });
+-      } catch {
+-        try {
+-          textAreaEl.focus();
+-        } catch {
+-          null;
+-        }
+-      }
+-      try {
+-        window.scrollTo(winX, winY);
+-      } catch {
+-        null;
+-      }
+-      // The focus can be refused. The editor sits under a modal dialog, so the page is inert. insertText then
+-      // goes to whatever else is focused (the library's search box). It reports success and leaves the editor as it was.
+-      if (document.activeElement === textAreaEl) {
+-        textAreaEl.setSelectionRange(0, before.length);
+-        const ok = document.execCommand && document.execCommand("insertText", false, v);
+-        if ((ok || String(textAreaEl.value ?? "") !== before) && String(textAreaEl.value ?? "") === v) {
+-          restoreView();
+-          return;
+-        }
+-      }
+-    }
+-  } catch {
+-    null;
+-  }
+-  try {
+-    textAreaEl.setRangeText(v, 0, textAreaEl.value.length, "end");
+-    restoreView();
+-    dispatchInputEvent();
+-  } catch {
+-    textAreaEl.value = v;
+-    restoreView();
+-    dispatchInputEvent();
+-  }
+-}
+-
+-function normalizeApiErrorPayload(payload, fallback) {
+-  const fb = fallback && typeof fallback === "object" ? fallback : {};
+-  const p = payload && typeof payload === "object" ? payload : null;
+-
+-  const codeRaw = p && p.error_code != null ? p.error_code : fb.error_code;
+-  const msgRaw = p && p.message != null ? p.message : fb.message;
+-  const error_code = String(codeRaw != null ? codeRaw : "http_error");
+-  const message = String(msgRaw != null ? msgRaw : "Request failed.");
+-
+-  const out = { error_code, message };
+-
+-  const idxRaw = p && p.index != null ? p.index : fb.index;
+-  if (idxRaw != null && Number.isFinite(Number(idxRaw))) out.index = Number(idxRaw) | 0;
+-
+-  const qidRaw = p && p.query_id != null ? p.query_id : fb.query_id;
+-  if (typeof qidRaw === "string" && qidRaw) out.query_id = qidRaw;
+-
+-  const chRaw = p && p.clickhouse && typeof p.clickhouse === "object" ? p.clickhouse : (fb.clickhouse && typeof fb.clickhouse === "object" ? fb.clickhouse : null);
+-  if (chRaw) {
+-    const ch = {};
+-    if (chRaw.code != null && Number.isFinite(Number(chRaw.code))) ch.code = Number(chRaw.code) | 0;
+-    if (chRaw.position != null && Number.isFinite(Number(chRaw.position))) ch.position = Number(chRaw.position);
+-    if (chRaw.line != null && Number.isFinite(Number(chRaw.line))) ch.line = Number(chRaw.line) | 0;
+-    if (chRaw.col != null && Number.isFinite(Number(chRaw.col))) ch.col = Number(chRaw.col) | 0;
+-    if (typeof chRaw.near === "string" && chRaw.near) ch.near = chRaw.near;
+-    if (Object.keys(ch).length) out.clickhouse = ch;
+-  }
+-
+-  return out;
+-}
+-
+-function buildApiErrorText(payload, fallbackText) {
+-  const norm = normalizeApiErrorPayload(payload, { error_code: "http_error", message: fallbackText != null ? String(fallbackText) : "Request failed." });
+-  const code = String(norm.error_code || "").trim();
+-  const msg = String(norm.message || "").trim();
+-  if (!code) return msg;
+-  if (msg.toLowerCase().startsWith(code.toLowerCase() + ":")) return msg;
+-  return `${code}: ${msg}`;
+-}
+-
+-function buildApiErrorFromResponse(responseStatus, payload) {
+-  const st = Number(responseStatus);
+-  const msg = Number.isFinite(st) ? `Request failed with status ${st}` : "Request failed.";
+-  return normalizeApiErrorPayload(payload, { error_code: "http_error", message: msg });
+-}
+-
+-// --- Timing and superseded requests ------------------------------------------
+-
+-// The one delay of typed searches (ns.search.bind) and of other input-driven work.
+-const SEARCH_DEBOUNCE_MS = 200;
+-
+-// fn after `ms` without another call; .cancel() drops the pending call,
+-// .flush() runs it now.
+-function debounce(fn, ms = SEARCH_DEBOUNCE_MS) {
+-  let timer = 0;
+-  let args = null;
+-  const run = () => {
+-    timer = 0;
+-    const pending = args;
+-    args = null;
+-    if (pending) fn(...pending);
+-  };
+-  const debounced = (...next) => {
+-    args = next;
+-    clearTimeout(timer);
+-    timer = setTimeout(run, ms);
+-  };
+-  debounced.cancel = () => { clearTimeout(timer); timer = 0; args = null; };
+-  debounced.flush = () => { if (timer) { clearTimeout(timer); run(); } };
+-  return debounced;
+ }
+ 
+ // fn once on the next animation frame however often it is asked for (the
+@@ -308,175 +28,8 @@
+   return scheduled;
+ }
+ 
+-// Keyboard access to a scrolling element (WCAG 2.1.1, axe scrollable-region-focusable): while its content
+-// overflows it is a focusable region (tabindex 0, role region, `label` as its name); when it fits it is
+-// none of these. A resize, or a change of its content when `mutations` is set, re-reads it once a frame.
+-function scrollFocus(el, { label = "", mutations = false } = {}) {
+-  if (!el || el.hasAttribute("data-scroll-focus-watched")) return;
+-  el.setAttribute("data-scroll-focus-watched", "");
+-  const ownRole = el.hasAttribute("role");
+-  const check = () => {
+-    // Content that overflows a box with overflow hidden does not scroll: only auto and scroll count.
+-    const style = getComputedStyle(el);
+-    const scrolls = (/auto|scroll/.test(style.overflowY) && el.scrollHeight > el.clientHeight + 1)
+-      || (/auto|scroll/.test(style.overflowX) && el.scrollWidth > el.clientWidth + 1);
+-    if (scrolls === el.hasAttribute("data-scroll-focus")) return;
+-    if (scrolls) {
+-      el.setAttribute("data-scroll-focus", "");
+-      el.tabIndex = 0;
+-      if (label && !ownRole) { el.setAttribute("role", "region"); el.setAttribute("aria-label", label); }
+-    } else {
+-      el.removeAttribute("data-scroll-focus");
+-      el.removeAttribute("tabindex");
+-      if (label && !ownRole) { el.removeAttribute("role"); el.removeAttribute("aria-label"); }
+-    }
+-  };
+-  const frame = rafOnce(check);
+-  new ResizeObserver(frame).observe(el);
+-  if (mutations) new MutationObserver(frame).observe(el, { childList: true, subtree: true, characterData: true });
+-  frame();
+-}
+-
+-// The latest request for `key` (e.g. "logs.search"). A new request aborts the
+-// previous request that is still in flight. Its fetch stops, and so does the server work that it
+-// started. The previous request becomes stale.
+-//   const req = util.latest("logs.search");
+-//   const data = await api.getLogs("search", params, { signal: req.signal });
+-//   if (!req.isCurrent()) return;      // superseded: ignore the answer
+-// An aborted request rejects with an AbortError (util.isAbort): check
+-// Check isCurrent() before an error is shown.
+-const latestByKey = new Map();
+-function latest(key) {
+-  latestByKey.get(key)?.controller.abort();
+-  const controller = new AbortController();
+-  const token = {
+-    controller,
+-    signal: controller.signal,
+-    isCurrent: () => latestByKey.get(key) === token,
+-  };
+-  latestByKey.set(key, token);
+-  return token;
+-}
+-// Abort the request in flight for `key` (a view left, a host changed).
+-latest.cancel = (key) => {
+-  const token = latestByKey.get(key);
+-  if (!token) return;
+-  latestByKey.delete(key);
+-  token.controller.abort();
++// hune: E35. The other members of `util` are removed.
++export const util = {
++  rafOnce,
++  escapeHtml,
+ };
+-// Abort every request in flight whose key starts with `prefix` ("traces.": all
+-// the requests of a module, e.g. when the host changed): the answers of the
+-// old host never reach the page.
+-latest.cancelPrefix = (prefix) => {
+-  for (const key of [...latestByKey.keys()]) {
+-    if (key.startsWith(prefix)) latest.cancel(key);
+-  }
+-};
+-
+-// This is the one way to turn an error into a message for the reader. It uses the server's
+-// own sentence, without the "error_code: " prefix of the Error text of app_api.js.
+-// The code stays on error.code. For a network failure, or for an answer that is not JSON,
+-// it uses the sentence of this module. It uses `fallback` when the error says nothing.
+-// Only the Query result shows a server error verbatim, code included.
+-const ERROR_TEXT = {
+-  network_error: "The server could not be reached. Check the connection and retry.",
+-  invalid_api_response: "The server sent an unexpected response. Retry, or reload the page.",
+-};
+-function errorText(error, fallback = "The request failed.") {
+-  const code = String(error?.code || error?.payload?.error_code || "");
+-  if (ERROR_TEXT[code]) return ERROR_TEXT[code];
+-  let text = String(error?.payload?.message ?? (error instanceof Error ? error.message : error ?? "")).trim();
+-  // An Error from app_api.js reads "code: message"; a plain one may too.
+-  if (code && text.toLowerCase().startsWith(`${code.toLowerCase()}:`)) text = text.slice(code.length + 1).trim();
+-  else if (/^[a-z][a-z0-9]*(?:_[a-z0-9]+)+: /.test(text)) text = text.replace(/^[a-z][a-z0-9_]*: /, "");
+-  return text || fallback;
+-}
+-
+-// This is a ClickHouse error, as the Query result shows it. The sentence has no
+-// code prefix ("query_failed: ", "format_failed: "), no "Code: 62.",
+-// no "DB::Exception: ", no "(version ...)" tail and no formatter
+-// "In scope SELECT formatQuery(...) AS query" wrapper. A syntax error reads
+-// "Syntax error, line 1 col 8 near FROM" (`where` is the server's
+-// { line, col, near } when it sent one). The long "Expected one of: ..." list
+-// of the parser goes to `expected`, for a toggle.
+-// The text that the server adds after "while executing 'FUNCTION throwIf(...)'" (the expression it evaluates) goes to
+-// `trace`, for the same toggle. The sentence before it is the one to read.
+-//   -> { summary, expected, trace, name }   (name: "SYNTAX_ERROR", or "")
+-function queryErrorParts(message, where = null) {
+-  let text = String(message ?? "").trim();
+-  text = text.replace(/^[a-z][a-z0-9]*(?:_[a-z0-9]+)+:\s*/, "");
+-  text = text.replace(/^Code:\s*\d+\.\s*/, "").replace(/^(?:DB::)?Exception:\s*/, "");
+-  text = text.replace(/\s*\(version [^()]*\)\.?\s*$/, "");
+-  text = text.replace(/:?\s*In scope SELECT formatQuery\([\s\S]*\) AS query\.?\s*$/, "");
+-  let name = "";
+-  const named = text.match(/\.?\s*\(([A-Z][A-Z0-9_]+)\)\.?\s*$/);
+-  if (named) {
+-    name = named[1];
+-    text = text.slice(0, named.index).trim();
+-  }
+-  let expected = "";
+-  const list = text.match(/\.?\s*Expected one of:\s*([\s\S]*)$/);
+-  if (list) {
+-    expected = list[1].replace(/[.:\s]+$/, "").trim();
+-    text = text.slice(0, list.index).trim();
+-  }
+-  let trace = "";
+-  const executing = text.match(/[:.]?\s*\bwhile executing\s+'/);
+-  if (executing && executing.index > 0) {
+-    trace = text.slice(executing.index).replace(/^[:.]?\s*/, "").trim();
+-    text = text.slice(0, executing.index).trim();
+-  }
+-  const syntax = text.match(/^Syntax error:\s*failed at position (\d+)(?:\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\))?(?:\s*\(line (\d+), col (\d+)\))?/);
+-  if (syntax) {
+-    const line = Number(where?.line) || Number(syntax[3]) || 0;
+-    const col = Number(where?.col) || Number(syntax[4]) || 0;
+-    const near = String(where?.near ?? syntax[2] ?? "").trim();
+-    const at = line > 0 && col > 0 ? `line ${line} col ${col}` : `position ${syntax[1]}`;
+-    const nearText = !near ? "" : /^end of query$/i.test(near) ? " at the end of the query" : ` near ${near}`;
+-    text = `Syntax error, ${at}${nearText}`;
+-  }
+-  return { summary: text.replace(/\s+$/, "") || "The query failed.", expected, trace, name };
+-}
+-
+-function isAbort(error) {
+-  return !!error && (error.name === "AbortError" || error.code === "aborted");
+-}
+-
+-// The page is a phone's (the width of the phone layout of the stylesheets).
+-function isPhoneLayout() {
+-  try {
+-    return window.matchMedia("(max-width: 760px)").matches;
+-  } catch {
+-    return false;
+-  }
+-}
+-
+-// The name of the shortcut key of this platform: the Command sign on Apple devices, else Ctrl.
+-function modifierKeyLabel() {
+-  const platform = String(navigator.userAgentData?.platform || navigator.platform || "");
+-  return /mac|iphone|ipad/i.test(platform) ? "\u2318" : "Ctrl";
+-}
+-
+-export const util = {
+-  SEARCH_DEBOUNCE_MS,
+-  debounce,
+-  rafOnce,
+-  scrollFocus,
+-  latest,
+-  isAbort,
+-  errorText,
+-  queryErrorParts,
+-  setText,
+-  setMetaLine,
+-  setMetricText,
+-  escapeHtml,
+-  formatInt,
+-  formatSeconds,
+-  formatBytes,
+-  replaceTextAreaValue,
+-  isPhoneLayout,
+-  modifierKeyLabel,
+-  normalizeApiErrorPayload,
+-  buildApiErrorText,
+-  buildApiErrorFromResponse,
+-};
