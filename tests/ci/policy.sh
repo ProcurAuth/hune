@@ -42,7 +42,8 @@ for p in d["packages"]:
     if p["id"] in ids and (p.get("source") is not None or p["manifest_path"].startswith(vendor)):
         print("%s %s%s" % (p["name"], p["version"], " (vendor)" if p.get("source") is None else ""))'
         fi
-    done | sort -u
+    # The order is the byte order (LC_ALL=C), so the list is the same on the host and in the builder container.
+    done | LC_ALL=C sort -u
 }
 
 if [ "${1:-}" = "--print-deps" ]; then

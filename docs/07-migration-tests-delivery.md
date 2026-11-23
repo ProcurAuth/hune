@@ -3570,7 +3570,7 @@ The list `ignore` of `[advisories]` has one advisory, which the owner accepted o
 A new licence, an exception or an ignored advisory needs a change of `deny.toml` in a reviewed commit.
 
 `deps.lock.txt` holds one line `<name> <version>` for each crate of the resolved graph of the two targets, outside the
-workspace, sorted. The `policy` job compares it with this output:
+workspace, sorted in byte order (`LC_ALL=C`). The `policy` job compares it with this output:
 
 ```sh
 for t in x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do
@@ -3578,10 +3578,10 @@ for t in x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do
     | jq -r '(.resolve.nodes | map(.id)) as $ids
              | .packages[] | select(.id as $i | $ids | index($i)) | select(.source != null)
              | "\(.name) \(.version)"'
-done | sort -u
+done | LC_ALL=C sort -u
 ```
 
-The script `tests/ci/policy.sh` also lists the packages whose manifest is under `vendor/`, with the tag ` (vendor)` after the version. The line `mongodb 3.10.0 (vendor)` shows that the crate is a local copy. The command `tests/ci/policy.sh --print-deps` prints the list. The rule `wrappers = ["mongodb"]` of `deny.toml` names the package, so it works for the copy.
+The script `tests/ci/policy.sh` also lists the packages whose manifest is under `vendor/`, with the tag ` (vendor)` after the version. The line `mongodb 3.10.0 (vendor)` shows that the crate is a local copy. The command `tests/ci/policy.sh --print-deps` prints the list. The byte order makes the list equal on the host and in the builder container. The rule `wrappers = ["mongodb"]` of `deny.toml` names the package, so it works for the copy.
 
 So each new crate, and each new version, is a visible line in the diff of a commit. The reviewer checks it.
 
