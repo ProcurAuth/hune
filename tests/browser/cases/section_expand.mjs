@@ -102,7 +102,7 @@ const PROBE = `(() => {
       if (charts.has(k) && b.canvas !== a.canvas) problem(at + ": the canvas of " + k + (b.canvas ? " is a new element" : " is not in the page"));
       if (charts.has(k) && b.blank) problem(at + ": the canvas of " + k + " is blank");
       if (b.state === "idle" || b.state === "queued" || b.state === "loading") problem(at + ": the frame " + k + " has the state " + b.state);
-      if (b.wait) problem(at + ": the frame " + k + " shows the skeleton or the dim");
+      if (b.wait) problem(at + ": the frame " + k + " shows the loader or the dim");
     }
   };
   const channel = new MessageChannel();

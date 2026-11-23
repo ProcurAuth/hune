@@ -242,7 +242,7 @@ state("loading", "Dashboard while the queries are in flight", { view: "viewport"
   try {
     await c.page.goto(c.url(`d/types-tour?${RANGE}`));
     await c.page.waitFor(`document.querySelectorAll('[data-testid^="panel-"][data-state="loading"], [data-testid^="panel-"][data-state="queued"]').length > 2`, { timeout: 15000, what: "loading panels" });
-    await sleep(900); // the progress bar of a slow panel shows after a delay
+    await sleep(900); // the loader of a slow panel shows after a delay
     await c.shot("");
   } finally {
     await h.release();
@@ -257,7 +257,7 @@ state("loading-progress", "A slow query: the panel progress while it runs", { vi
     await c.page.waitSel(P(33));
     await c.page.eval(`document.querySelector(${JSON.stringify(P(33))}).scrollIntoView({ block: "center" })`);
     await c.page.waitFor(`document.querySelector(${JSON.stringify(P(33))}).dataset.state === "loading"`, { timeout: 15000, what: "slow panel loading" });
-    await sleep(900); // the progress bar of a slow panel shows after a delay
+    await sleep(900); // the loader of a slow panel shows after a delay
     await c.shot("", { selector: P(33), pad: 24, noGrow: true });
     await c.shot("page", { full: false });
   } finally {

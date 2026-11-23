@@ -1118,7 +1118,7 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 
 ### 9.11 Panel frame
 
-- The frame is a box with a border of 1 px and a radius of 6 px. Its title bar is 40 px high. The bar has the title (14 px, weight 500), the description icon with its tooltip, a state icon and the time note of 9.8b. It also has the menu of the panel links (9.18) and the panel menu. An empty title shows no text. A time series with annotations can also have the annotation note of 9.19d, after the time note.
+- The frame is a box with a border of 1 px and a radius of 6 px. Its title bar is 40 px high. The bar has the title (14 px, weight 500), the description icon with its tooltip and the time note of 9.8b. It also has the menu of the panel links (9.18) and the panel menu. An empty title shows no text. A time series with annotations can also have the annotation note of 9.19d, after the time note.
 - The title and the description show after the replacement of the variables (9.13). The text of a panel link shows in the same way.
 - The icon of the description is 16 px, and it follows the title at 8 px. The title gets an ellipsis when it is too long. The menu button has 16 px of room before it, and this room comes from the title. In a title bar of 184 px, the title next to the icon of the description has 88 px.
 - The button of the panel menu is 20 x 24 px. It shows on hover, on keyboard focus inside the panel and while its menu is open. On a touch screen it always shows.
@@ -1142,7 +1142,7 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 |---|---|
 | `idle` | The empty frame: the panel is not near the viewport, or the variables load. |
 | `queued` | The empty frame: the request waits in the queue. |
-| `loading` | The empty frame, or the earlier content on a refresh. A progress bar under the title bar, 300 ms after the request starts. Nothing moves. |
+| `loading` | The empty frame, or the earlier content on a refresh. Three pulsing dots in the middle of the body, 300 ms after the request starts. Nothing moves. |
 | `ready` | The panel type with the data. |
 | `empty` | "No data": zero rows after the transformations. The text is plain: 18 px, weight 400, muted colour, centred, with no icon. A `stat` with zero rows does not use this state: it draws its own "No data" (9.19). |
 | `error` | A red badge at the left of the title, with the message as its tooltip. The body shows the code and the message of the error, and a "Retry" button. The frame stays neutral. A panel with several queries shows this state when no query gave a frame (9.8d). |
@@ -1158,9 +1158,12 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - A panel with several queries (9.8d) can have the state `ready` and a red badge. The badge lists each failed query. The frame has the attribute `data-failed` with the refs. A table with several queries has a select under the table (9.22a, rule 9). The select is part of the frame: it takes its height from the body, and it does not change the size of the frame.
 - "Inspect" of a panel with several queries shows one block for each query that has an answer, in the order of the queries. Each block has the title "Query <ref>", the facts of the answer and the expanded SQL. Each block has its own button "Copy SQL". The footer has the button "Close" only. A panel with one query shows the dialog of today.
 - The test hooks of a block are `inspect-<id>-meta-<ref>`, `inspect-<id>-sql-<ref>`, `inspect-<id>-none-<ref>` and `inspect-copy-<ref>`. The hooks of a panel with one query do not change.
-- A panel that waits (`idle`, `queued` or `loading`) and has no content shows its empty frame. After 300 ms with no result, the body shows a static grey skeleton (class `panel--wait`). A result that comes sooner replaces the empty frame at once, with no grey block between.
-- A refresh keeps the earlier content on the screen. After 300 ms of `loading`, the page dims the content to 60 % and shows the progress bar (class `panel--progress`). A faster answer changes nothing before the new data shows.
-- The spinner of a panel in the state `loading` is in the room before the menu button. It takes no room from the title, so the title and the icon of the description do not move.
+- A panel that waits (`idle`, `queued` or `loading`) and has no content shows its empty frame. After 300 ms with no result, the body shows the loader: three dots that pulse (class `panel--wait`). A result that comes sooner replaces the empty frame at once, with no loader between.
+- A refresh keeps the earlier content on the screen. After 300 ms of `loading`, the page dims the content to 60 % and shows the loader (class `panel--progress`). A faster answer changes nothing before the new data shows. The text "No data" of an empty panel is hidden while the loader shows.
+- The loader is the only sign of a wait in a panel. The title bar has no spinner, no bar and no other mark. The title and the icon of the description do not move.
+- The loader is an element `panel__loader` in the body, with `aria-hidden="true"`. It is out of the flow (`position: absolute`), has `pointer-events: none`, and takes no room. The overlay of an error, of a hint or of a note covers it.
+- The three dots are circles of 7 px, with 6 px between them. Their colour is the token `--accent-fill`. Each dot pulses for 1 s (the token `--dur-pulse`, the curve `ease-in-out`). Its opacity goes from 0.2 to 1, and its scale from 0.8 to 1. The second dot starts 0.15 s after the first, and the third dot 0.15 s after the second.
+- The page starts no timer for the loader in a panel that is not near the viewport, beyond the timer of the first wait. A print has no loader.
 - "View data" opens a dialog with the fields of the panel after the transformations, as a table. The header is the
   display name, and the cells are the display texts. This table is the text alternative of the chart (9.26).
 - The dialog has a button "Download CSV" (`data-testid="view-data-csv"`). The page builds the file in the browser.
@@ -3606,7 +3609,8 @@ Colours of the chrome (owner request of 2026-11-12, ID-K50):
 - A coloured value text of a stat has 4.5:1 with the panel (9.19). A large text of 24 px or more has 3:1. A coloured text of a table cell has 4.5:1 (9.20).
 - The ink on a stat tile with a background colour has 3:1 or more (9.19). The ink on a table cell with a background colour has 4.5:1 or more (9.20). Where Grafana has less, Hune uses the ink with the better contrast.
 - Notices use `aria-live="polite"`. An error of a form field has `aria-describedby`.
-- No animation is longer than 200 ms. With `prefers-reduced-motion: reduce`, the page has no animation.
+- No animation is longer than 200 ms. With `prefers-reduced-motion: reduce`, the page has no animation. The pulse of the loader of a panel (9.11) is the only exception. It repeats each 1 s and stops when the panel has its result.
+- With `prefers-reduced-motion: reduce`, the loader has no pulse. It shows three still dots at 60 % of their opacity. The dots are decoration, so they have `aria-hidden="true"` and no contrast rule.
 - A copy of a repeat, of a panel or of a section, has the accessible name `<title>` after the replacement of the variables (9.8c). When this title has no placeholder of the repeat variable, the name is the title, a comma and the option text of the copy. Thus a person with a screen reader tells the copies apart.
 - The copies are in the DOM order of the grid: the displayed `y`, then `x`, then the number n (9.8). The Tab order follows this order.
 - The messages of the states `repeat-empty` and `repeat-limit` have `role="note"`. The page does not announce them, because the person changed the selection and sees the result.
@@ -4083,7 +4087,7 @@ The rules are these:
     - The grid is not in the page while the panel editor shows, and the engine then releases its canvas. A chart that returns to the page draws in the task that shows the state. It draws before the page writes the hook `data-hune-view` (9.29).
     - For this, the page sends the event `hune-shown` on `document` just before it writes the hook. Each chart that had no width draws at once. Thus no paint and no script after the change finds a blank canvas (decision ID-K321, owner answer of 2026-11-21).
     - The grid sends the same event at the end of the expand of a section (9.8, decision ID-K325).
-    - These transitions send no query, because no data changed. No frame shows the state `idle`, `queued` or `loading`, the skeleton or the dim (9.11) for them.
+    - These transitions send no query, because no data changed. No frame shows the state `idle`, `queued` or `loading`, the loader or the dim (9.11) for them.
     - The browser case B207 checks this rule in both themes, with a panel and a section that repeat. Its probe reads the frames after each paint and at the end of the task that writes the hook. Its steps wait for states, not for a fixed time.
 
 An invariant covers all the rules. For each state, `parse(render(state))` is that state. For each URL, `render(parse(url))` is the normal form of the URL. The unit tests of 16.10a check this with the vectors `FE-26`.

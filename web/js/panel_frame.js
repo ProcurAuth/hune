@@ -37,8 +37,8 @@ const LOADERS = {
 const VALUE_TYPES = new Set(["stat", "bargauge", "piechart"]);
 const VIEW_DATA_CAP = 5000;
 const PROGRESS_MS = 300;
-// A panel that waits (no result yet, queued or loading) shows its skeleton and, on a refresh, dims its content after this time only:
-// a result that comes sooner replaces the empty frame with no flash of grey.
+// A panel that waits (no result yet, queued or loading) shows the dots of its loader and, on a refresh, dims its content after this time only:
+// a result that comes sooner replaces the empty frame with no flash of the loader.
 const WAIT_MS = 300;
 const WAITING = new Set(["idle", "queued", "loading"]);
 // The icons of the panel menu: the three own items, and the items that the editor adds (found by their label).
@@ -121,7 +121,6 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   // The view of a copy has the key only: the instance of its record (or the key alone while the options load) gives the hooks of 9.11.
   const inst = instArg || (keyArg !== null ? (record() && record().inst ? { ...record().inst, key: keyArg } : { key: keyArg }) : null);
   const titleId = `panel-title-${key}`;
-  const stateIcon = el("span", { class: "panel__state", "aria-hidden": "true" });
   // A query error: a red warning icon left of the title. Its message is the tooltip (filled in showError).
   const statusIcon = el("span", { class: "panel__status" });
   const head = el("header", { class: "panel__head" }, statusIcon);
@@ -139,7 +138,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   const infoEl = panel.description ? el("span", { class: "panel__info", tabIndex: 0, role: "img", "data-tooltip-align": "start" }, icon("info", 16)) : null;
   // The description is the tooltip of the icon (a CSS tooltip: it shows on hover and on keyboard focus, and opens rightwards from the icon).
   if (infoEl) head.append(infoEl);
-  // The links button is a title item (it follows the title and the info icon); the spacer pushes the state and the menu to the right edge.
+  // The links button is a title item (it follows the title and the info icon); the spacer pushes the menu to the right edge.
   if (panel.links && panel.links.length) {
     const linksButton = button("Panel links", { dataset: { testid: `panel-${key}-links` }, "aria-haspopup": "menu", "aria-expanded": "false", "data-tooltip-align": "end" }, "link", { iconOnly: true, variant: "ghost" });
     linksButton.addEventListener("click", () => {
@@ -149,7 +148,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     head.append(linksButton);
   }
   const spacer = el("span", { class: "panel__spacer", "aria-hidden": "true" });
-  head.append(spacer, stateIcon);
+  head.append(spacer);
   // The accessible name names the panel. The tooltip is short.
   const menuButton = button(`Panel menu: ${titleNow() || `panel ${panel.id}`}`, { dataset: { testid: `panel-${key}-menu` }, "aria-haspopup": "menu", "aria-expanded": "false", "data-tooltip": "Menu", "data-tooltip-align": "end" }, "more", { iconOnly: true, variant: "ghost" });
   menuButton.classList.add("panel__menu");
@@ -251,7 +250,10 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   paintTexts();
   const content = el("div", { class: "panel__content" });
   const overlay = el("div", { class: "panel__overlay" });
-  const body = el("div", { class: "panel__body" }, content, overlay);
+  // The loader: three dots in the middle of the body. CSS shows them (dashboard.css, classes `panel--wait` and `panel--progress`). They sit
+  // under the overlay, so an error, a hint or a note hides them. They take no room, take no click and have no accessible name.
+  const loader = el("div", { class: "panel__loader", "aria-hidden": "true" }, el("i"), el("i"), el("i"));
+  const body = el("div", { class: "panel__body" }, content, loader, overlay);
   const root = el("section", {
     class: "panel",
     dataset: frameDataset(panel, inst),
@@ -325,10 +327,8 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
       waitTimer = 0;
       root.classList.remove("panel--wait");
     }
-    clear(stateIcon);
     clear(statusIcon);
     for (const name of ["tabindex", "role", "aria-label", "data-tooltip", "data-tooltip-align", "data-testid"]) statusIcon.removeAttribute(name);
-    if (state === "loading") stateIcon.append(icon("spinner", 16));
     // A partial result (9.8d) has the badge with the state `ready`, `empty` or another state that is not `error`.
     if (badge && state !== "error") paintBadge(badge, badge);
   }
@@ -670,7 +670,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     setRootState(drawn.root ? "ready" : "text-limit");
   }
 
-  // A new frame waits for its first result: its skeleton shows after WAIT_MS (setRootState starts the timer).
+  // A new frame waits for its first result: its loader shows after WAIT_MS (setRootState starts the timer).
   setRootState("idle");
 
   menuButton.addEventListener("click", () => {

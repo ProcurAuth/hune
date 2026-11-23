@@ -6,7 +6,7 @@
 // states (the hook, the frames that the probe samples, the marks), never for a fixed time.
 // While the grid shows (the states `view` and `edit`), each panel frame keeps its plot and its chart canvas (the
 // same elements as before the first switch), each canvas has pixels, and no frame shows a waiting state (idle, queued, loading, the
-// skeleton or the dim). No panel query goes out, because no data changed. Two themes, six panel types (with the heatmap, which has its own fit), a panel that repeats and a section
+// loader or the dim). No panel query goes out, because no data changed. Two themes, six panel types (with the heatmap, which has its own fit), a panel that repeats and a section
 // that repeats. The time series 1 has the mark of an annotation: the edit mode hides it and the view shows it again (9.19d, rule 22).
 import { SQL, doc, panel, section } from "../lib/docs.mjs";
 import { panelQueries, waitPanelsReady } from "../lib/h.mjs";
@@ -114,7 +114,7 @@ const PROBE = `(() => {
       if (charts.has(k) && b.canvas !== a.canvas) problem(at + ": the canvas of " + k + (b.canvas ? " is a new element" : " is not in the page"));
       if (charts.has(k) && b.blank) problem(at + ": the canvas of " + k + " is blank");
       if (b.state === "idle" || b.state === "queued" || b.state === "loading") problem(at + ": the frame " + k + " has the state " + b.state);
-      if (b.wait) problem(at + ": the frame " + k + " shows the skeleton or the dim");
+      if (b.wait) problem(at + ": the frame " + k + " shows the loader or the dim");
     }
   };
   const channel = new MessageChannel();

@@ -91,10 +91,6 @@
 .panel__head .btn--icon { position: relative; flex: 0 0 auto; width: var(--space-24); height: var(--space-24); min-height: 0; border-radius: var(--r-sm); }
 /* A touch target of 32 px around a 24 px button, with no change of the title bar. */
 .panel__head .btn--icon::before { content: ""; position: absolute; inset: calc(-1 * var(--space-4)); }
-/* The spinner of a loading panel hangs in the 16 px of room before the menu button, so it never takes room from the title: the title and the
-   info icon do not move when the panel starts or ends loading. */
-.panel__state { position: absolute; top: 50%; right: calc(var(--space-8) + var(--space-20)); display: inline-flex; transform: translateY(-50%); color: var(--muted); }
-.panel__state:empty { display: none; }
 /* The menu button: 20 x 24, a 14 px icon, a toolbar-style fill, 16 px of room before it (it takes that room from the title, as in Grafana: a 184 px title bar keeps 88 px for the title next to the info icon); it shows on hover, on focus inside the panel and while its menu is open. */
 .panel__head .panel__menu {
   width: var(--space-20); height: var(--space-24); margin-left: var(--space-16); border: 0; border-radius: var(--r-md); background: var(--tb-bg); color: var(--text);
@@ -149,17 +145,20 @@
 .panel__error .btn { flex: 0 0 auto; }
 
 /* Loading: the frame (title bar and box) is the skeleton and has its final size at once. After 300 ms of waiting (panel_frame.js sets the
-   classes) a static grey block fills the body of a panel that has no content, and a thin bar shows under the title bar of a panel
-   that loads. A refresh dims the earlier content after the same time only, so a fast answer changes nothing on the screen.
-   Nothing moves (9.26): reduced motion needs no special case. */
-.panel--progress .panel__head::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
-  background: repeating-linear-gradient(90deg, var(--accent-fill) 0 var(--space-12), transparent var(--space-12) var(--space-16));
-}
+   classes) three pulsing dots show in the middle of the body: for a panel that has no content yet (`panel--wait`), and for a panel that
+   refreshes (`panel--progress`), which also dims its earlier content to 60 %. A fast answer changes nothing on the screen.
+   The dots are in an overlay that is out of the flow (absolute, no pointer events, aria-hidden), so nothing moves (9.26). The overlay of an
+   error, of a hint or of a note covers them. The overlay "No data" hides itself while the panel refreshes, so the dots show alone.
+   Reduced motion: no pulse; the dots stay as three still, dimmed dots (9.26). Print: no dots. */
+.panel__loader { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; gap: var(--space-6); pointer-events: none; }
+.panel--progress .panel__loader, .panel--wait .panel__content:empty ~ .panel__loader { display: flex; }
+.panel__loader i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-fill); opacity: 0.6; animation: panel-pulse var(--dur-pulse) ease-in-out infinite; }
+.panel__loader i:nth-child(2) { animation-delay: 0.15s; }
+.panel__loader i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes panel-pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .panel__loader i { animation: none; opacity: 0.6; transform: none; } }
 .panel--progress .panel__content:not(:empty) { opacity: 0.6; }
-.panel--wait .panel__content:empty::before {
-  content: ""; flex: 1 1 auto; margin-top: var(--space-4); border-radius: var(--r-sm); background: color-mix(in srgb, var(--text) 10%, transparent);
-}
+.panel--progress .panel__overlay[data-kind="empty"] { visibility: hidden; }
 
 /* One panel at full size (viewPanel). The height follows the window; the reserve is the header, the page padding, the
    variables bar and the back button. */
@@ -208,7 +207,7 @@
   :is(.dash__grid, .repeat-band) > .panel[data-span="half"] { grid-column: 1 / -1 !important; }
 }
 
-/* Print: the grid of the screen on a landscape page. No menu, no progress bar. A panel stays on one page. */
+/* Print: the grid of the screen on a landscape page. No menu, no loader. A panel stays on one page. */
 @page dashboard { size: A4 landscape; margin: 10mm; }
 @media print {
   .dash { padding: var(--space-8); }
@@ -216,14 +215,14 @@
   .dash__print-meta { display: block; margin: 0 0 var(--space-8); color: var(--muted); }
   /* The variables bar and the legend mode buttons are controls: the variable values are in the line above. */
   .vars-bar, .chartCore__legendMode { display: none !important; }
-  .panel__menu, .panel__head .btn, .panel__state, .panel__info { display: none !important; }
+  .panel__menu, .panel__head .btn, .panel__info { display: none !important; }
   .panel__head { height: auto; min-height: var(--panel-head-h); padding-block: var(--space-6); }
   .panel__title { overflow: visible; text-overflow: clip; white-space: normal; }
   .panel { break-inside: avoid; page-break-inside: avoid; transition: none; }
   .section__head { break-after: avoid; }
   .section__toggle .icon { display: none; }
   .section__toggle { padding-left: 0; }
-  .panel--progress .panel__head::after { display: none; }
+  .panel__loader { display: none !important; }
 }
 
 /* "Inspect" (9.11, F22): the expanded SQL of a panel query. */

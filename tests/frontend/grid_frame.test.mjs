@@ -66,10 +66,12 @@ test("the menu button shows on hover, on focus and while its menu is open, and a
   assert.match(frameCss, /@media \(hover: none\) \{ \.panel__menu \{ opacity: 1; \} \}/);
 });
 
-test("loading shows a static bar and a static skeleton: no animation in the frame CSS", () => {
-  assert.doesNotMatch(frameCss, /@keyframes|animation:/);
-  assert.match(frameCss, /\.panel--progress \.panel__head::after/);
-  assert.match(frameCss, /\.panel--wait \.panel__content:empty::before/);
+test("loading shows three dots: the only animation of the frame CSS is the pulse of the dots, and it stops under reduced motion", () => {
+  assert.equal((frameCss.match(/@keyframes/g) || []).length, 1);
+  assert.match(frameCss, /@keyframes panel-pulse /);
+  assert.deepEqual(frameCss.match(/animation: [^;]*;/g).filter((a) => !/^animation: none;/.test(a) && !/^animation: panel-pulse /.test(a)), []);
+  assert.match(frameCss, /\.panel--progress \.panel__loader, \.panel--wait \.panel__content:empty ~ \.panel__loader \{ display: flex; \}/);
+  assert.doesNotMatch(frameCss, /\.panel--progress \.panel__head::after|\.panel--wait \.panel__content:empty::before/);
 });
 
 test("readingOrder sorts by y, then x, then id, and keeps the input", () => {

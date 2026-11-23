@@ -76,8 +76,8 @@ test("the controls of the header have fixed widths in every state (9.9)", () => 
   assert.match(css, /\.add-main \{ width: var\(--tb-add-w\);/);
   assert.match(css, /\.add-menu \{ width: var\(--tb-addmenu-w\);/);
   assert.ok(!css.includes("--tb-save-w") && !css.includes("header-edit-slot"), "no reserved slot for Save and Revert (ID-K13)");
-  // The spinner of a panel takes no room from the title.
-  assert.match(read("web/css/dashboard.css"), /\.panel__state \{ position: absolute;/);
+  // The title bar has no spinner of its own: the loader is the three dots of the body (9.11, 9.26).
+  assert.ok(!/panel__state|stateIcon/.test(read("web/css/dashboard.css") + code("web/js/panel_frame.js")), "no spinner in the title bar of a panel");
 });
 
 test("the edit mode has no row of its own and no reserved slot: its group comes after the switch in the controls row (ID-K13)", () => {
@@ -93,15 +93,37 @@ test("the edit mode has no row of its own and no reserved slot: its group comes 
   assert.ok(!/\.header-edit(?!-slot)|\.header-keep|\.header-slot/.test(read("web/css/components.css")));
 });
 
-test("a panel keeps its frame and shows no grey block or dimming before 300 ms (9.11)", () => {
+test("a panel keeps its frame and shows no loader or dimming before 300 ms (9.11)", () => {
   const js = code("web/js/panel_frame.js");
+  assert.match(js, /const PROGRESS_MS = 300;/);
   assert.match(js, /const WAIT_MS = 300;/);
   assert.match(js, /classList\.add\("panel--wait"\)/);
+  assert.match(js, /classList\.add\("panel--progress"\)/);
   const css = read("web/css/dashboard.css");
   assert.match(css, /\.panel--progress \.panel__content:not\(:empty\) \{ opacity: 0\.6; \}/);
-  assert.match(css, /\.panel--wait \.panel__content:empty::before \{/);
-  // The old rules that dimmed and filled the panel at once are gone.
+  // The dots show for a panel with no content (wait) and for a refresh (progress), and only then.
+  assert.match(css, /\.panel__loader \{[^}]*display: none;/);
+  assert.match(css, /\.panel--progress \.panel__loader, \.panel--wait \.panel__content:empty ~ \.panel__loader \{ display: flex; \}/);
+  // The old rules that dimmed and filled the panel at once are gone, and so are the bar and the grey block.
   assert.ok(!/\.panel\[data-state="(queued|loading)"\] \.panel__content/.test(css));
+  assert.ok(!/\.panel--progress \.panel__head::after|\.panel--wait \.panel__content:empty::before/.test(css), "no bar and no grey block");
+});
+
+test("the loader is three pulsing dots in an overlay out of the flow (9.26)", () => {
+  const js = code("web/js/panel_frame.js");
+  assert.match(js, /el\("div", \{ class: "panel__loader", "aria-hidden": "true" \}, el\("i"\), el\("i"\), el\("i"\)\)/);
+  assert.match(js, /el\("div", \{ class: "panel__body" \}, content, loader, overlay\)/, "the overlay of a state covers the dots");
+  const css = read("web/css/dashboard.css");
+  assert.match(css, /\.panel__loader \{ position: absolute; inset: 0; display: none;[^}]*pointer-events: none; \}/);
+  assert.match(css, /\.panel__loader i \{ width: 7px; height: 7px; border-radius: 50%; background: var\(--accent-fill\);[^}]*animation: panel-pulse var\(--dur-pulse\) ease-in-out infinite; \}/);
+  assert.match(css, /\.panel__loader i:nth-child\(2\) \{ animation-delay: 0\.15s; \}/);
+  assert.match(css, /\.panel__loader i:nth-child\(3\) \{ animation-delay: 0\.3s; \}/);
+  assert.match(css, /@keyframes panel-pulse /);
+  // Reduced motion: three still, dimmed dots. Print: no dots.
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{ \.panel__loader i \{ animation: none; opacity: 0\.6; transform: none; \} \}/);
+  assert.match(css.slice(css.indexOf("@media print")), /\.panel__loader \{ display: none !important; \}/);
+  // The dots take no room: the loader never has a size in the flow, and the "No data" overlay leaves them alone.
+  assert.match(css, /\.panel--progress \.panel__overlay\[data-kind="empty"\] \{ visibility: hidden; \}/);
 });
 
 test("Hune has no Share feature: no button, no menu item, no copy code, no CSS, no route", () => {
