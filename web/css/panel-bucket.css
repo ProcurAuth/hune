@@ -1,0 +1,30 @@
+/* The heatmap and the histogram panels (9.19e, 9.19f): the message of the state bucket-limit and the glyph of the type list.
+   The colours are tokens. The heatmap rules come after the histogram rules. */
+.bucket__note { margin: 0; padding: var(--space-16); color: var(--muted); font-size: var(--fs-md); }
+
+/* The histogram: the engine draws the bars, so the panel has no own box. The glyph is a bar chart whose bars touch. */
+.tglyph--histogram { align-items: flex-end; gap: 1px; padding: var(--space-4) var(--space-6) 0; }
+.tglyph--histogram i { flex: 1 1 0; background: currentColor; opacity: 0.75; }
+.tglyph--histogram i:nth-child(1) { height: 35%; }
+.tglyph--histogram i:nth-child(2) { height: 85%; }
+.tglyph--histogram i:nth-child(3) { height: 60%; }
+.tglyph--histogram i:nth-child(4) { height: 25%; }
+
+/* The heatmap (9.19e): the plot of the engine, the colour bar, the note of the skipped values and the cell under the pointer.
+   The sizes are the sizes that Grafana 12.4.2 draws (19.20g): the bar is 25 px from the left and 10 px under the top of the legend, 46 px high. */
+.heat { display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0; color: var(--text); font-size: var(--fs-sm); }
+.heat [hidden] { display: none !important; }
+.heat__main { position: relative; flex: 1 1 0; min-width: 0; min-height: 0; }
+.heat__legend { flex: 0 0 46px; box-sizing: border-box; align-self: flex-start; height: 46px; padding: 10px 0 0 25px; overflow: hidden; }
+.heat__bar { display: block; height: 9px; }
+.heat__labels { display: flex; justify-content: space-between; margin-top: 4px; font-size: 11px; line-height: 14px; color: color-mix(in srgb, var(--text) 61%, transparent); }
+.heat__skip { flex: 0 0 auto; margin: 0; padding: var(--space-4) var(--space-8); color: var(--muted); font-size: var(--fs-sm); }
+.chartCore__region.heat__hover { background: rgb(255 255 255 / 0.3); border: 0; pointer-events: none; }
+
+/* The editor: the glyph of the heatmap is a grid of cells of five levels. */
+.tglyph--heatmap { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; padding: var(--space-6); }
+.tglyph--heatmap i { background: currentColor; }
+.tglyph--heatmap i:nth-child(1) { opacity: 0.25; }
+.tglyph--heatmap i:nth-child(2) { opacity: 0.6; }
+.tglyph--heatmap i:nth-child(3) { opacity: 0.9; }
+.tglyph--heatmap i:nth-child(4) { opacity: 0.4; }

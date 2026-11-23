@@ -1,0 +1,33 @@
+/* The frame of a placed variable control (4.7a, 9.10, 9.11): the control of one variable in the grid. The control is the one of the bar (components.css,
+   .var, .select, .textvar); the host has the class `vars-bar` so that its popup has the styles of the popup of the bar. */
+
+/* No title and no description: no title bar. The bar is a strip of 8 px, the handle of the drag in edit mode (editor/drag.js). */
+.panel--variable .panel__head--bare { position: absolute; top: 0; right: 0; left: 0; z-index: 1; height: var(--space-8); padding: 0; }
+.panel--variable .panel__head--bare .panel__menu { position: absolute; top: var(--space-4); right: var(--space-4); margin: 0; }
+.panel--var-edit .panel__content { padding-right: calc(var(--space-24) + var(--space-8)); }
+
+/* The body holds the control, centred on the vertical axis. A body that is too low scrolls (the margin keeps the top reachable). */
+.panel--variable .panel__content { overflow: auto; }
+.panel-var { display: flex; flex: 0 0 auto; flex-wrap: nowrap; align-items: center; gap: 0; width: 100%; min-width: 0; margin-block: auto; }
+.panel-var[hidden] { display: none; }
+.panel-var .var { flex: 1 1 auto; width: 100%; }
+.panel-var .var > .select, .panel-var .var > .textvar { flex: 1 1 auto; min-width: 0; }
+.panel-var .select__button, .panel-var .textvar > .input { width: 100%; min-width: 0; }
+.panel-var .select__value { flex: 1 1 auto; max-width: none; text-align: left; }
+.panel-var .var__label { max-width: 40%; padding: 0 var(--space-10); overflow: hidden; text-overflow: ellipsis; }
+.panel-var .textvar .field-error, .panel-var .select__error { max-width: 100%; }
+.panel-var__note { align-self: center; }
+
+/* The preview of the panel editor is a large area: the control keeps a reasonable width in the middle of it. */
+.panel--editing.panel--variable .panel-var { max-width: 520px; margin-inline: auto; }
+
+/* The error state of a draft: an icon and a text, in a live region. */
+.panel--variable .panel__overlay[data-kind="error"] { align-items: center; }
+
+/* The flow of a narrow screen: no floor, the height is the formula of the rows only (9.8). */
+@media screen and (max-width: 768px) {
+  .dash__grid > .panel[data-type="variable"] { --panel-floor: 0px; }
+}
+
+/* Print: the panels of type `variable` do not print. The line of the values shows the selections (9.8). */
+@media print { .panel--variable { display: none; } }

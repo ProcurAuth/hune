@@ -1,0 +1,428 @@
+/* Hune: styles of panel-chart (time series, bar chart, xy chart). Owner: the charts worker.
+   The copied chart engine (css/vendor/chdash/chart.css, js/vendor/chdash/app_chart_core.js) is edited only with marked
+   `// hune:` blocks (9.24). This file changes its look with rules that name the tokens of tokens.css. The canvas
+   reads --text, --muted, --panel and the series colours from the page when it draws, so a theme change draws it again
+   (common.js, createChart). Wave G: the look follows Grafana 12 (12 px text, a 14x4 pill for each series). */
+
+/* ---- Frame ------------------------------------------------------------------------------------------------------ */
+
+.panel__plot > .chartCore { height: 100%; }
+
+/* ---- Legend: shared look ---------------------------------------------------------------------------------------- */
+
+.panel__plot .chartCore__legend {
+  align-items: flex-start;
+  gap: 0;
+  padding: var(--space-8) var(--space-4) var(--space-4);
+  color: var(--text);
+  font-size: var(--fs-sm);
+}
+
+/* No scroll area: the list wraps and the panel keeps its height. */
+.panel__plot .chartCore__legendList {
+  gap: var(--space-4) 0;
+  max-height: none;
+  overflow: visible;
+}
+
+/* A table legend sits flush under the plot, as in Grafana. */
+.panel__plot .chartCore__legend[data-mode="table"] { padding: 0; }
+
+/* One item: the pill, 8 px of space, the name at 12 px / 400 in the text colour, 10 px before the next item. */
+.panel__plot .chartCore__legendItem {
+  gap: var(--space-8);
+  padding: 0 var(--space-10) 0 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  font-weight: var(--fw-regular);
+  line-height: 1.5714;
+}
+
+.panel__plot .chartCore__legendTable .chartCore__legendItem { padding-right: 0; }
+
+/* The mark of a series: a 14x4 pill. */
+.panel__plot .chartCore__legendItem i { width: 14px; height: 4px; border-radius: var(--r-pill); }
+
+/* A hidden series: the name is muted and struck through, the mark is grey (a swatch of the colour would still say "drawn"). */
+.panel__plot .chartCore__legendItem:not(.chartCore__legendItem--total, .chartCore__legendItem--filter)[aria-pressed="false"] i { opacity: 0.3; }
+
+.panel__plot .chartCore__legendItem:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; box-shadow: none; }
+
+/* The engine has no button "Values" or "List" since the edit E41 (9.24). This rule hides it if an engine update brings it back.
+   The mode is the document option. */
+.panel__plot .chartCore__legendMode { display: none; }
+
+/* ---- Legend: table mode (Grafana 12: a sortable head in the link colour, rows with a rule, a scroll area of 35 % of the panel) ----------- */
+
+/* The colour of the heads of the table: the link blue of Grafana. The page has no token for it (request: a token --link, #6e9fff dark, #1f62e0 light).
+   Until then it is the primary colour of the theme, a little lighter in the dark theme. */
+.panel__plot { --legend-head: var(--link); }
+
+html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
+
+@media (prefers-color-scheme: light) {
+  html:not([data-theme="dark"]) .panel__plot { --legend-head: var(--primary); }
+}
+
+/* The legend keeps at most 35 % of the height of the panel (common.js, fitHeight, sets --legend-max in px). It scrolls beyond it. */
+.panel__plot .chartCore__legendTableWrap { max-height: var(--legend-max, 8rem); scrollbar-gutter: stable; }
+
+.panel__plot .chartCore__legendList { max-height: var(--legend-max, none); overflow-y: auto; }
+
+.panel__plot .chartCore__legendTable { font-size: var(--fs-sm); }
+
+.panel__plot .chartCore__legendTable th,
+.panel__plot .chartCore__legendTable td { padding: var(--space-2) var(--space-8); line-height: 1.5714; }
+
+.panel__plot .chartCore__legendTable td { color: var(--text); font-weight: var(--fw-regular); }
+
+.panel__plot .chartCore__legendTable tbody tr { border-bottom: 1px solid var(--border); }
+
+.panel__plot .chartCore__legendTable tbody th { padding: var(--space-2) var(--space-8); font-weight: var(--fw-regular); }
+
+/* The name button fills its line box, so a row is 23.8 px high as in Grafana (a baseline gap would add 1 px). */
+.panel__plot .chartCore__legendTable tbody th .chartCore__legendItem { display: flex; vertical-align: top; }
+
+.panel__plot .chartCore__legendTable thead th {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-raised);
+  background: var(--panel);
+  box-shadow: inset 0 -1px 0 var(--border);
+  color: var(--legend-head);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+}
+
+/* Each head has a gutter of 30 px at the left: the sort arrow sits in it, and the name column lines up with the names of the series. */
+.panel__plot .chartCore__legendTable thead th { padding: var(--space-2) var(--space-8) 2.5px 30px; }
+
+.panel__plot .chartCore__legendSort {
+  position: static;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.panel__plot .chartCore__legendSort:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+
+/* The arrow of the sorted head: up for ascending, down for descending. */
+.panel__plot .chartCore__legendTable thead th[aria-sort="ascending"],
+.panel__plot .chartCore__legendTable thead th[aria-sort="descending"] { background-repeat: no-repeat; background-position: 12px center; }
+
+.panel__plot .chartCore__legendTable thead th[aria-sort="ascending"] .chartCore__legendSort::before,
+.panel__plot .chartCore__legendTable thead th[aria-sort="descending"] .chartCore__legendSort::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  margin-top: -3px;
+  border: 4px solid transparent;
+}
+
+.panel__plot .chartCore__legendTable thead th[aria-sort="ascending"] .chartCore__legendSort::before { border-bottom: 5px solid currentColor; border-top-width: 0; }
+
+.panel__plot .chartCore__legendTable thead th[aria-sort="descending"] .chartCore__legendSort::before { border-top: 5px solid currentColor; border-bottom-width: 0; }
+
+.panel__plot .chartCore__legendTable thead th { position: sticky; }
+
+.panel__plot .chartCore__legendTable tbody tr:hover { background: var(--row-hover); }
+
+.panel__plot .chartCore__legendTable tr.is-off td { color: var(--muted); }
+
+/* ---- Legend: placement right ------------------------------------------------------------------------------------ */
+
+/* The legend takes a column at the right. The plot keeps the rest and the whole height. The legend scrolls. */
+.panel__plot[data-legend-placement="right"] > .chartCore {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) fit-content(34%);
+  grid-template-rows: minmax(0, 1fr);
+  column-gap: var(--space-8);
+  align-items: start;
+}
+
+/* The table keeps all its columns: its column is as wide as the table. When the host is too narrow for it, common.js sets
+   data-legend-fallback and the legend moves under the plot. */
+.panel__plot[data-legend-placement="right"] > .chartCore:has(> .chartCore__legend[data-mode="table"]) {
+  grid-template-columns: minmax(0, 1fr) max-content;
+}
+
+.panel__plot[data-legend-placement="right"] > .chartCore > .chartCore__plot { grid-column: 1; grid-row: 1; }
+
+.panel__plot[data-legend-placement="right"] > .chartCore > .chartCore__legend {
+  grid-column: 2;
+  grid-row: 1;
+  flex-direction: column;
+  align-self: stretch;
+  align-items: stretch;
+  max-width: none;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-top: var(--space-4);
+}
+
+.panel__plot[data-legend-placement="right"] > .chartCore > .chartCore__legend[hidden] { display: none; }
+
+.panel__plot[data-legend-placement="right"] .chartCore__legendList {
+  flex: 0 0 auto;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: flex-start;
+  max-height: none;
+  overflow: visible;
+}
+
+.panel__plot[data-legend-placement="right"] .chartCore__legendItem { max-width: 100%; }
+
+.panel__plot[data-legend-placement="right"] .chartCore__legendTableWrap { flex: 0 0 auto; max-height: none; overflow: visible; }
+
+/* Too narrow for the legend and a plot (common.js sets data-legend-fallback): the legend goes under the plot, as with "bottom". */
+.panel__plot[data-legend-fallback] > .chartCore,
+.panel__plot[data-legend-fallback] > .chartCore:has(> .chartCore__legend[data-mode="table"]) {
+  display: block;
+}
+
+.panel__plot[data-legend-fallback] > .chartCore > .chartCore__legend {
+  flex-direction: row;
+  overflow: visible;
+  scrollbar-gutter: auto;
+}
+
+.panel__plot[data-legend-fallback] .chartCore__legendList {
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-height: none;
+  overflow: visible;
+}
+
+/* The table fills the row, and the cells are tighter so that no column is cut at 390 px. */
+.panel__plot[data-legend-fallback] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
+
+.panel__plot[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: 8rem; overflow-y: auto; overflow-x: hidden; }
+
+.panel__plot[data-legend-fallback] .chartCore__legendTable th,
+.panel__plot[data-legend-fallback] .chartCore__legendTable td { padding-inline: var(--space-4); }
+
+.panel__plot[data-legend-fallback] .chartCore__legendTable th:first-child { padding-left: 0; }
+
+.panel__plot[data-legend-fallback] .chartCore__legendTable th:last-child,
+.panel__plot[data-legend-fallback] .chartCore__legendTable td:last-child { padding-right: 0; }
+
+/* A phone: the legend at the bottom gets the same tight table. */
+@media (max-width: 600px) {
+  .panel__plot[data-legend-placement="bottom"] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
+
+  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTableWrap { flex: 1 1 100%; overflow-x: hidden; }
+
+  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable th,
+  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable td { padding-inline: var(--space-4); }
+
+  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable th:first-child { padding-left: 0; }
+
+  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable th:last-child,
+  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable td:last-child { padding-right: 0; }
+
+}
+
+/* ---- Cursor: crosshair, badges, dots ---------------------------------------------------------------------------- */
+
+/* The cursor lines of Grafana (measured, both themes): 1 px dashed, a mid grey at 50 %, a vertical line and a horizontal line that follow
+   the pointer over the whole plot. The text colour at 28 % gives the same grey on the panel in both themes (within 7 of 255). */
+.panel__plot { --chart-cursor-line: color-mix(in srgb, var(--text) 28%, transparent); }
+.panel__plot .chartCore__xline { border-left-color: var(--chart-cursor-line); }
+.panel__plot .chartCore__yline { border-top-color: var(--chart-cursor-line); }
+
+/* The pills of the cursor on the axes (the exact x and y) hide the tick labels. The tooltip head already gives the x. */
+.panel__plot .chartCore__xbadge,
+.panel__plot .chartCore__ybadge { display: none; }
+
+.panel__plot .chartCore__badge {
+  background: var(--text);
+  color: var(--panel);
+  border-radius: var(--r-sm);
+  font-weight: var(--fw-semibold);
+}
+
+.panel__plot .chartCore__dot { border-color: var(--panel); }
+
+/* A time series shows one dot, on the series nearest to the pointer: 4 px, in the colour of the series at 50 % (Grafana). The other
+   charts keep the dots of the engine. */
+.panel__plot[data-chart="timeseries"] .chartCore__dot:not(.is-nearest) { display: none; }
+.panel__plot[data-chart="timeseries"] .chartCore__dot.is-nearest {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -1px;
+  border: 0;
+  opacity: 0.5;
+}
+
+/* ---- Tooltip: the card of Grafana (head band, one rule, rows of 18.86 px) ---------------------------------------- */
+
+.panel__plot .chartCore__tooltip {
+  gap: var(--space-2);
+  min-width: 0;
+  padding: 0 var(--space-8) var(--space-8);
+  border-color: var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-menu);
+  box-shadow: var(--shadow-tooltip);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  line-height: 1.5714;
+}
+
+/* The head is the time or the category: 12 px / 500 in the text colour in a band of 30 px, a 1 px rule under it. */
+.panel__plot .chartCore__tooltip strong {
+  margin: 0 calc(var(--space-8) * -1) var(--space-6);
+  padding: var(--space-8) 30px var(--space-8) var(--space-8);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  line-height: 1.2;
+  font-variant-numeric: normal;
+}
+
+.panel__plot .chartCore__tipRow { grid-template-columns: 14px minmax(0, 1fr) auto; gap: var(--space-2) 10px; padding: 0; }
+
+/* The colour mark: a 14x4 pill, as in the legend. */
+.panel__plot .chartCore__tipRow i { width: 14px; height: 4px; border-radius: var(--r-pill); }
+
+/* The name at 65 % (muted) and 400; the value at 500 in the text colour. The row under the cursor has a name at 500 in the strong
+   text colour. No fill behind a row. */
+.panel__plot .chartCore__tipRow em { color: var(--muted); font-weight: var(--fw-regular); }
+
+.panel__plot .chartCore__tipRow b { color: var(--text); font-weight: var(--fw-medium); font-variant-numeric: normal; }
+
+.panel__plot .chartCore__tipRow.is-nearest em { color: var(--text-strong); font-weight: var(--fw-medium); }
+
+.panel__plot .chartCore__tipRow.is-nearest b { color: var(--text); font-weight: var(--fw-medium); }
+
+.panel__plot .chartCore__tipRow.is-empty b,
+.panel__plot .chartCore__tipRow.is-empty em { color: var(--muted); }
+
+/* ---- Empty state ------------------------------------------------------------------------------------------------ */
+
+.panel[data-type="timeseries"] .panel__overlay[data-kind="empty"] .panel__empty,
+.panel[data-type="barchart"] .panel__overlay[data-kind="empty"] .panel__empty,
+.panel[data-type="xychart"] .panel__overlay[data-kind="empty"] .panel__empty,
+.panel[data-type="histogram"] .panel__overlay[data-kind="empty"] .panel__empty {
+  color: var(--muted);
+  font-size: var(--fs-md);
+  text-align: center;
+}
+
+/* ---- Horizontal bar chart (barchart_h.js) ------------------------------------------------------------------------ */
+/* One row for each category: the name, then the track with the bars. The axis of the values is at the bottom. The plot has
+   Grafana margins: 8 px above and at the right, a band of 21 px for the axis under it. */
+
+.hbar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 0;
+  color: var(--text);
+  font-size: var(--fs-sm);
+}
+.hbar[data-legend-placement="right"] { flex-direction: row; }
+
+.hbar__plot { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; min-height: 0; padding-top: var(--space-8); }
+.hbar__body { position: relative; flex: 1 1 auto; min-height: 0; margin-right: var(--space-8); }
+.hbar__rows { position: absolute; inset: 0; display: flex; flex-direction: column; }
+
+.hbar__row { flex: 1 1 0; min-height: 0; display: flex; align-items: stretch; }
+.hbar__name {
+  flex: 0 0 var(--hbar-label, 120px);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 16px 0 var(--space-6);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text);
+}
+.hbar__track { position: relative; flex: 1 1 auto; min-width: 0; }
+/* A bar: the fill at `fill_opacity` (--fa, default 80 %) and a line of `line_width` (--lw, default 1 px) in the colour of the series,
+   inside the box of the bar (Grafana draws both, 4.30). */
+.hbar__bar { position: absolute; box-sizing: border-box; border: var(--lw, 1px) solid var(--c); border-radius: 0; background: color-mix(in srgb, var(--c) var(--fa, 80%), transparent); }
+.hbar__row:hover .hbar__bar { background: color-mix(in srgb, var(--c) 90%, transparent); }
+.hbar__value {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  margin-left: 8px;
+  white-space: nowrap;
+  font-weight: var(--fw-regular);
+  line-height: 1;
+  pointer-events: none;
+}
+.hbar__value[hidden] { display: none; }
+.hbar__value.is-inside { transform: translateX(-100%); margin-left: -8px; color: var(--bg); }
+
+.hbar__grid { position: absolute; top: 0; bottom: 0; left: var(--hbar-label, 120px); right: 0; pointer-events: none; }
+/* The thresholds of the value axis (thresholds_style): a band that fills the height of the plot, and a line of 2 px (dashes of 10 px and gaps of 10 px). */
+.hbar__band { position: absolute; top: 0; bottom: 0; }
+
+.hbar__thr { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: var(--thr); }
+
+.hbar__thr.is-dashed { background: repeating-linear-gradient(to bottom, var(--thr) 0 10px, transparent 10px 20px); }
+
+.hbar__line { position: absolute; top: 0; bottom: 0; width: 1px; background: color-mix(in srgb, var(--text) 9%, transparent); }
+.hbar__axis { position: relative; flex: 0 0 21px; margin-left: var(--hbar-label, 120px); margin-right: var(--space-8); color: var(--text); }
+.hbar__axisTitle { flex: 0 0 28px; margin-left: var(--hbar-label, 120px); margin-right: var(--space-8); text-align: center; line-height: 28px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hbar__tick { position: absolute; top: 7px; transform: translateX(-50%); white-space: nowrap; line-height: 14px; }
+
+/* The legend: a column at the right (placement "right") or a row under the plot, as the legend of the time series. */
+.hbar__legend { display: flex; flex-wrap: wrap; gap: var(--space-4) 0; align-items: flex-start; padding: var(--space-4); }
+.hbar[data-legend-placement="right"] .hbar__legend { flex-direction: column; flex: 0 0 auto; max-width: 30%; }
+.hbar[data-legend-placement="bottom"] .hbar__legend { padding-top: var(--space-8); }
+.hbar__legendItem { display: inline-flex; align-items: center; gap: var(--space-8); padding: 0 var(--space-10) 0 0; min-width: 0; line-height: 1.5714; }
+.hbar__legendItem > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hbar__legendItem > i { flex: 0 0 auto; width: 14px; height: 4px; border-radius: var(--r-pill); }
+
+/* The tooltip: the card of the time series (head band, rule, rows). */
+.hbar__tip {
+  position: absolute;
+  z-index: 3;
+  max-width: 320px;
+  padding: 0 var(--space-8) var(--space-8);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-menu);
+  color: var(--text);
+  box-shadow: var(--shadow-tooltip);
+  font-size: var(--fs-sm);
+  line-height: 1.5714;
+  pointer-events: none;
+}
+.hbar__tip[hidden] { display: none; }
+.hbar__tipHead {
+  margin: 0 calc(var(--space-8) * -1) var(--space-8);
+  padding: var(--space-8) 30px var(--space-8) var(--space-8);
+  border-bottom: 1px solid var(--border);
+  font-weight: var(--fw-medium);
+  line-height: 1.2;
+}
+.hbar__tipRow { display: flex; align-items: center; gap: 10px; margin-top: var(--space-2); }
+.hbar__tipRow:first-of-type { margin-top: 0; }
+.hbar__tipRow > i { flex: 0 0 auto; width: 14px; height: 4px; border-radius: var(--r-pill); }
+.hbar__tipRow > span { color: var(--muted); }
+.hbar__tipRow > b { margin-left: auto; padding-left: var(--space-8); font-weight: var(--fw-medium); }
+
+/* ---- Right y axis (wave 2, F16; Grafana 12.4.2, paper 10.8 V2) -------------------------------------------------------- */
+
+/* A list legend puts the items of the right scale after the others, at the right end of the row. */
+.panel__plot .chartCore__legendItem.is-right-first { margin-left: auto; }
+
+/* A table legend ends the name of a series of the right scale with " (right y-axis)": 12 px, in the muted colour. */
+.panel__plot .chartCore__axisMark { color: var(--muted); font-size: var(--fs-sm); }

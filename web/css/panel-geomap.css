@@ -1,0 +1,42 @@
+/* The map panel (9.19i): the canvas, the two zoom buttons, the attribution of the tile source, the notes and the card of a marker.
+   The colours are tokens. The sizes of the zoom buttons are the sizes that Grafana 12.4.2 draws: two squares of 19.25 px, 8 px from the
+   top left corner of the map, on the fill of a toolbar button, with a radius of 2 px on the outer corners. */
+.geo { position: relative; width: 100%; height: 100%; min-height: 0; overflow: hidden; color: var(--text); font-size: var(--fs-sm); }
+.geo [hidden] { display: none !important; }
+.geo__canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; touch-action: none; }
+.geo__canvas:active { cursor: grabbing; }
+.geo__canvas:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.geo__zooms { position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; }
+.geo__zoom {
+  width: 19.25px; height: 19.25px; padding: 0; border: 0; background: var(--tb-bg); color: var(--text);
+  font: 14px/19.25px var(--font-sans); text-align: center; cursor: pointer;
+}
+.geo__zoom:first-child { border-radius: 2px 2px 0 0; }
+.geo__zoom:last-child { border-radius: 0 0 2px 2px; }
+.geo__zoom:hover:not(:disabled) { background: var(--tb-bg-hover); }
+.geo__zoom:disabled { color: var(--muted); cursor: default; }
+.geo__zoom:focus-visible { outline: 2px solid var(--primary); outline-offset: 1px; }
+/* The attribution shows at the bottom right while the tiles show. It is text: it has no link. */
+.geo__attribution {
+  position: absolute; right: 6px; bottom: 6px; max-width: calc(100% - 12px); margin: 0; padding: 1px 4px; border-radius: 2px;
+  background: color-mix(in srgb, var(--panel) 80%, transparent); color: var(--text); font-size: 12px; line-height: 16px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; pointer-events: none;
+}
+.geo__notes { position: absolute; left: 8px; bottom: 6px; display: flex; flex-direction: column; gap: 2px; max-width: 60%; pointer-events: none; }
+.geo__note { margin: 0; padding: 1px 4px; border-radius: 2px; background: color-mix(in srgb, var(--panel) 80%, transparent); color: var(--muted); font-size: var(--fs-sm); }
+.geo__limit { margin: 0; padding: var(--space-16); color: var(--muted); font-size: var(--fs-md); }
+/* The card of a marker: one row for each field, the name and the display text of the value (Grafana: the hover view of the data). */
+.geo__card {
+  position: absolute; z-index: var(--z-float); display: grid; gap: 2px; min-width: 120px; max-width: 340px; padding: var(--space-8);
+  border: 1px solid var(--button-border); border-radius: var(--r-md); background: var(--surface-menu); box-shadow: var(--shadow-tooltip);
+  pointer-events: none;
+}
+.geo__row { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: var(--space-12); align-items: baseline; line-height: 20px; }
+.geo__name { overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; }
+.geo__value { overflow: hidden; font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
+.geo__more { color: var(--muted); }
+
+/* The editor: the glyph of the map is a circle on a line of latitude. */
+.tglyph--geomap { position: relative; }
+.tglyph--geomap::before { content: ""; position: absolute; left: 15%; right: 15%; top: 55%; border-top: 1px solid currentColor; opacity: 0.5; }
+.tglyph--geomap::after { content: ""; position: absolute; left: 40%; top: 30%; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }

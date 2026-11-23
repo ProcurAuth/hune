@@ -1,0 +1,131 @@
+/* Hune: styles of panel-stat (stat, bar gauge, pie chart). They load after dashboard.css and replace its rules. */
+
+/* ---------- Stat ---------- */
+/* The layout is the layout of Grafana 12.4.2 (measured). stat.js sizes each tile (a box with a padding of 12 px, 8 px under 100 px of
+   height) and each text. A wide tile (width above 2.5 times its height) has the name at the left and the value at the right; a stacked
+   tile has the name above the value. A tile with no name centres its value. The grid bleeds to the four edges of the panel content (the
+   content has 8 px of padding), so that a background colour fills the whole panel. */
+.stat {
+  position: absolute; inset: calc(-1 * var(--space-8));
+  display: flex; overflow: auto; scrollbar-width: thin;
+  flex-direction: column;
+}
+.stat__item {
+  position: relative; display: flex; box-sizing: border-box; align-items: center; overflow: hidden;
+  transition: background-color var(--motion-base) var(--ease);
+}
+.stat__box { position: relative; z-index: 1; display: flex; flex: 1 1 auto; flex-flow: wrap; align-items: center; min-width: 0; }
+.stat__item[data-layout="wide"][data-align="start"] .stat__box { justify-content: space-between; }
+.stat__item[data-align="center"] .stat__box { justify-content: center; gap: 0.75ch; }
+.stat__item[data-layout="stacked"] .stat__box { flex-flow: column wrap; }
+.stat__item[data-layout="stacked"][data-align="center"] .stat__box { align-items: center; }
+/* auto with a name (9.19): the name and the value start at the left of a stacked tile, as Grafana. */
+.stat__item[data-layout="stacked"][data-align="start"] .stat__box { align-items: flex-start; }
+.stat__title { font-weight: var(--fw-regular); line-height: 1.2; }
+/* The value: Inter 500, line height 1.2, proportional digits (measured in Grafana 12.4.2). The sizes come from stat.js. */
+.stat__item .stat__value {
+  position: relative; z-index: 1; min-width: auto; margin: 0; overflow: visible; color: inherit; letter-spacing: inherit; font-family: var(--font-sans); font-weight: var(--fw-medium); line-height: 1.2;
+  font-variant-numeric: normal; font-feature-settings: normal;
+}
+.stat__item[data-align="center"] .stat__value { text-align: center; }
+.stat__text { display: inline-block; white-space: pre; }
+.stat__unit { font-size: var(--stat-unit, 0.6em); font-weight: var(--fw-medium); }
+.stat__title-text { display: inline-block; }
+/* The percent change (4.29, wave H item P11): weight 500, line height 1.2, the arrow at the left. stat.js sets the sizes and the colour.
+   In a wide tile it stands on the base line, with a line height of 3 (Grafana 12.4.2, measured). */
+.stat__pct { position: relative; z-index: 1; display: flex; align-items: center; font-weight: var(--fw-medium); line-height: 1.2; white-space: pre; }
+.stat__item[data-layout="wide"] .stat__pct { align-items: baseline; line-height: 3; }
+.stat__pct .icon { width: var(--stat-arrow); height: var(--stat-arrow); stroke-width: 2.5; }
+/* stat.js measures the texts at the full size, with the unit at the full size too: the size of the value then leaves room as Grafana does. */
+.stat--measure .stat__unit { font-size: 1em; }
+.stat__graph { position: absolute; right: 0; bottom: 0; pointer-events: none; opacity: 0.85; }
+.stat__item--filled .stat__graph { opacity: 0.45; }
+.stat__graph svg { display: block; width: 100%; height: 100%; --sparkline-color: var(--stat-line, var(--accent-text)); }
+
+/* ---------- Bar gauge ---------- */
+/* The layout is the layout of Grafana 12.4.2 (measured). bargauge.js sizes each item and each text. A horizontal item has the name above
+   the bar from 40 px of height, else at the left of the bar; the value is at the right. The bar fills the height that the name leaves. */
+.bargauge {
+  --bar-off: color-mix(in srgb, var(--text) 6%, transparent);
+  position: absolute; inset: 0; display: flex; overflow: auto; scrollbar-width: thin;
+}
+.bargauge--horizontal { flex-direction: column; }
+.bargauge--vertical { flex-direction: row; }
+.bargauge__item { position: relative; flex: 0 0 auto; min-width: 0; min-height: 0; display: grid; }
+.bargauge__probe { position: absolute; top: 0; left: 0; height: 0; overflow: hidden; visibility: hidden; white-space: nowrap; pointer-events: none; }
+.bargauge__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text); line-height: 1.5; font-weight: var(--fw-regular); }
+.bargauge__value {
+  display: flex; align-items: center; justify-content: flex-end; box-sizing: border-box; padding: 0 10px; min-width: 0; overflow: hidden;
+  line-height: 1; font-weight: var(--fw-regular); white-space: nowrap; color: var(--text);
+}
+.bargauge__text { display: inline-block; white-space: pre; }
+.bargauge__unit { font-size: var(--bargauge-unit, 0.6em); }
+.bargauge--measure .bargauge__unit { font-size: 1em; }
+.bargauge__track { position: relative; display: flex; min-width: 0; min-height: 0; overflow: hidden; border-radius: 4px; }
+.bargauge__track--unfilled { background: var(--bar-off); }
+.bargauge__fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 4px; }
+
+.bargauge--horizontal .bargauge__item[data-place="top"] { grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto var(--bargauge-bar-h, 24px); }
+.bargauge--horizontal .bargauge__item[data-place="top"] .bargauge__name { grid-column: 1 / -1; grid-row: 1; align-self: center; }
+.bargauge--horizontal .bargauge__item[data-place="left"] { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-rows: var(--bargauge-bar-h, 16px); }
+.bargauge--horizontal .bargauge__item[data-place="left"] .bargauge__name { align-self: center; padding-right: 10px; text-align: right; box-sizing: border-box; }
+.bargauge--horizontal .bargauge__track { height: var(--bargauge-bar-h, 24px); align-self: stretch; }
+.bargauge--horizontal .bargauge__value { height: var(--bargauge-bar-h, 24px); }
+
+/* Vertical: the value on top, the bars, the name below (centred). */
+.bargauge--vertical .bargauge__item { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; }
+.bargauge--vertical .bargauge__value { grid-row: 1; justify-content: center; padding: 0; }
+.bargauge--vertical .bargauge__track { grid-row: 2; flex-direction: column; justify-content: flex-end; }
+.bargauge--vertical .bargauge__name { grid-row: 3; font-size: var(--fs-md); text-align: center; line-height: 22px; }
+.bargauge--vertical .bargauge__fill { top: auto; bottom: 0; left: 0; width: 100%; }
+/* LCD cells: 10 px with a gap of 2 px; a lit cell is a soft disc of its colour, an unlit cell the same colour at a low opacity. */
+.bargauge[data-mode="lcd"] .bargauge__track { gap: 2px; border-radius: 0; background: none; }
+.bargauge--horizontal[data-mode="lcd"] .bargauge__track { flex-direction: row; justify-content: flex-start; }
+.bargauge--vertical[data-mode="lcd"] .bargauge__track { flex-direction: column-reverse; justify-content: flex-start; }
+.bargauge__cell { flex: 0 0 10px; border-radius: 2px; background-color: color-mix(in srgb, var(--cell, var(--viz-green)) 18%, transparent); }
+.bargauge--vertical .bargauge__cell { width: 100%; }
+.bargauge--horizontal .bargauge__cell { height: 100%; }
+.bargauge__cell.is-lit { background-color: transparent; background-image: radial-gradient(color-mix(in srgb, var(--cell, var(--viz-green)) 95%, transparent) 10%, color-mix(in srgb, var(--cell, var(--viz-green)) 55%, transparent)); }
+
+/* ---------- Pie ---------- */
+.pie { position: absolute; inset: 0; display: flex; gap: var(--space-12); }
+.pie--bottom { flex-direction: column; gap: var(--space-4); }
+.pie__plot { position: relative; flex: 1; min-width: 0; min-height: 0; }
+.pie__canvas { width: 100%; height: 100%; display: block; }
+.pie__tip {
+  position: absolute; z-index: 2; pointer-events: none; padding: var(--space-4) var(--space-8); border: 1px solid var(--border-strong);
+  border-radius: var(--r-md); background: var(--tooltip-bg); color: var(--tooltip-fg); box-shadow: var(--shadow-overlay);
+  font-size: var(--fs-sm); white-space: nowrap;
+}
+.pie__legend { margin: 0; padding: 0; list-style: none; overflow: auto; max-height: 100%; font-size: var(--fs-sm); }
+.pie--right .pie__legend {
+  align-self: center; flex: 0 1 auto; min-width: 72px; max-width: 52%;
+  display: grid; grid-template-columns: var(--legend-cols, var(--swatch) minmax(0, 1fr)); column-gap: var(--space-8); row-gap: var(--space-4); align-items: center;
+}
+.pie--right .pie__legend-item { display: contents; }
+.pie--bottom .pie__legend { flex: 0 0 auto; max-height: 42%; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2) var(--space-16); }
+.pie--bottom .pie__legend-item { display: flex; align-items: center; gap: var(--space-6); min-width: 0; }
+.pie__swatch { width: var(--swatch); height: var(--swatch); border-radius: var(--r-xs); flex: 0 0 auto; }
+.pie__legend-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pie__legend-value { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; color: var(--muted); }
+.pie--bottom .pie__legend-value { margin-left: var(--space-2); }
+
+/* ---------- Print ---------- */
+/* The page is narrow on paper: the pie keeps a size that reads, and the legend goes under it and wraps. */
+@media print {
+  .pie { flex-direction: column; gap: var(--space-4); }
+  .pie__plot { min-height: 120px; }
+  .pie--right .pie__legend, .pie--bottom .pie__legend {
+    align-self: stretch; flex: 0 0 auto; max-width: none; max-height: none; overflow: visible;
+    display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2) var(--space-12);
+  }
+  .pie--right .pie__legend-item, .pie--bottom .pie__legend-item { display: flex; align-items: center; gap: var(--space-6); min-width: 0; }
+  .pie__legend-name { overflow: visible; text-overflow: clip; white-space: nowrap; }
+  .bargauge { overflow: visible; }
+}
+
+/* ---------- Gauge ---------- */
+/* gauge.js places each cell, its canvas and its title (9.19g). The canvas holds the arcs and the texts of the values. */
+.gauge { position: absolute; inset: 0; overflow: hidden; scrollbar-width: thin; }
+.gauge__item, .gauge__item > canvas, .gauge__title { position: absolute; left: 0; }
+.gauge__title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center; line-height: var(--lh-base); color: var(--text); }

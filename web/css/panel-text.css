@@ -1,0 +1,61 @@
+/* The text panel (9.19b): the Markdown that panels/text.js builds. The root `div.md` is the scroll box of the body. The sizes come from the
+   measure of Grafana 12.4.2 (19.20c). The colours are tokens. The CSS has no `style` attribute and no value that is not a token, except these sizes. */
+.md {
+  box-sizing: border-box; flex: 1 1 auto; min-width: 0; min-height: 0; overflow: auto;
+  color: var(--text); font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 22px; letter-spacing: var(--letter-spacing-body);
+  overflow-wrap: anywhere;
+}
+.md:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+
+.md :is(h1, h2, h3, h4, h5, h6) { margin: 0 0 0.45em; font-weight: 400; }
+.md h1 { font-size: 28px; line-height: 32px; }
+.md h2 { font-size: 24px; line-height: 28px; }
+.md h3 { font-size: 22px; line-height: 24px; }
+.md h4 { font-size: 18px; line-height: 22px; }
+.md h5 { font-size: 16px; line-height: 22px; }
+.md h6 { font-size: 14px; line-height: 22px; font-weight: 500; }
+
+.md :is(p, ul, ol, blockquote, pre, table) { margin: 0 0 16px; }
+.md strong { font-weight: 500; }
+.md em { font-style: italic; }
+
+.md :is(ul, ol) { padding-left: 24px; }
+.md ul { list-style: disc; }
+.md ul ul { list-style: circle; }
+.md ul ul ul { list-style: square; }
+.md ol { list-style: decimal; }
+.md li > :is(ul, ol) { margin: 0; }
+
+.md blockquote { padding-left: 16px; border-left: 5px solid var(--muted); }
+.md hr { height: 0; margin: 16px 0; border: 0; border-top: 1px solid var(--grid-line); }
+
+.md code {
+  margin: 0 2px; padding: 2px 5px; border: 1px solid var(--grid-line); border-radius: var(--r-md); background: var(--panel);
+  font-family: var(--font-mono); font-size: 12px;
+}
+.md pre {
+  padding: 10px; overflow: auto; border: 1px solid var(--grid-line); border-radius: var(--r-md); background: var(--panel);
+  font-family: var(--font-mono); font-size: 12px; line-height: 18.86px; white-space: pre-wrap; overflow-wrap: normal;
+}
+.md pre code { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; font-size: inherit; }
+
+/* A wide table scrolls in the box: a cell breaks a word only when the word is longer than the box. */
+.md table { border-collapse: collapse; }
+.md :is(th, td) { padding: 4px 8px; border: 1px solid var(--grid-line); overflow-wrap: break-word; }
+.md th { background: var(--surface-raised); font-weight: 500; }
+.md :is(th, td).md-c { text-align: center; }
+.md :is(th, td).md-r { text-align: right; }
+
+/* A link has the colour of the token and an underline: the colour alone fails WCAG 1.4.1 (9.26). */
+.md a { color: var(--link); text-decoration: underline; }
+
+/* The flow of a narrow screen and the print show the whole text. */
+@media print {
+  .panel[data-type="text"] .panel__content { overflow: visible; }
+  .md { overflow: visible; }
+}
+
+/* The editor of a text panel (10.3): the picture of the type and the field "Content". editor.css loads on demand, so these rules are here. */
+.tglyph--text { align-items: center; justify-content: center; }
+.tglyph--text::before { content: ""; width: 60%; height: 55%; background: repeating-linear-gradient(to bottom, currentColor 0 2px, transparent 2px 6px); opacity: 0.7; }
+.text-content { display: block; width: 100%; min-height: 12lh; resize: vertical; line-height: 1.4; }

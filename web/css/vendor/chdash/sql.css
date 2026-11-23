@@ -1,0 +1,217 @@
+/* Read-only SQL (app_ui_sql.js): .sqlBlock, and the highlighter tokens (.tok-*). */
+
+.tok-str {
+  color: var(--sql-string);
+}
+
+.tok-com {
+  color: var(--sql-comment);
+}
+
+.tok-kw {
+  color: var(--sql-keyword);
+}
+
+.tok-fn {
+  color: var(--sql-function);
+}
+
+.tok-num {
+  color: var(--sql-number);
+}
+
+.tok-null {
+  color: var(--sql-null);
+}
+
+.tok-type {
+  color: var(--sql-type);
+}
+
+.tok-err {
+  text-decoration: underline wavy var(--danger);
+  text-decoration-thickness: 0.08rem;
+  text-underline-offset: 0.2rem;
+}
+
+.functionDoc__code .tok-kw,
+.functionDoc__code .tok-fn,
+.functionDoc__code .tok-str,
+.functionDoc__code .tok-num,
+.functionDoc__code .tok-null,
+.functionDoc__code .tok-type,
+.functionDoc__code .tok-com,
+.functionDoc__code .tok-err {
+  font-family: inherit;
+}
+
+.qlSql {
+  flex: 0 1 auto;
+  min-height: 0;
+  margin: 0;
+  overflow: hidden;
+  padding: var(--space-8) var(--space-10);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--editor-solid-bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+  tab-size: 4;
+}
+
+.sqlBlock {
+  --sql-line: 20px;
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--editor-solid-bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+}
+
+.sqlBlock__body {
+  display: flex;
+  min-width: 0;
+  overflow: auto;
+}
+
+/* Clamped: the lines past the limit are hidden, a long line still scrolls sideways (a clamp that hid
+   it too left the end of a long first line unreadable). */
+.sqlBlock.is-clamped:not(.is-expanded) .sqlBlock__body {
+  max-height: calc(var(--sql-lines, 12) * var(--sql-line) + 16px);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.sqlBlock.is-clamped.is-scroll .sqlBlock__body {
+  overflow: auto;
+}
+
+.sqlBlock__gutter {
+  margin: 0;
+  padding: var(--space-8) var(--space-10);
+  font: inherit;
+  line-height: var(--sql-line);
+  flex: 0 0 auto;
+  min-width: var(--sql-gutter, 3ch);
+  padding-right: var(--space-8);
+  border-right: 1px solid var(--border);
+  color: var(--muted);
+  text-align: right;
+  user-select: none;
+}
+
+.sqlBlock__pre {
+  margin: 0;
+  padding: var(--space-8) var(--space-10);
+  font: inherit;
+  line-height: var(--sql-line);
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: pre;
+  tab-size: 4;
+}
+
+.sqlBlock--wrap .sqlBlock__pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* The copy button sits left of the body's scrollbar (about 15 px), not over it. */
+.sqlBlock--copy .sqlBlock__pre {
+  padding-right: var(--space-48);
+}
+
+.sqlBlock__copy {
+  position: absolute;
+  top: 6px;
+  right: 22px;
+  background: var(--editor-solid-bg);
+}
+
+/* The Formatted switch (sqlBlock.formatSwitch): a result's statement and the Save dialog's SQL use it. */
+.sqlMode {
+  height: 22px;
+  padding: 0 var(--space-8);
+  border: 1px solid var(--button-border);
+  border-radius: var(--r-md);
+  background: var(--editor-solid-bg);
+  color: var(--muted);
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+}
+
+.sqlMode:hover:not(:disabled) { border-color: var(--button-border-hover); color: var(--text); }
+
+.sqlMode[aria-pressed="true"] { border-color: var(--selected-edge); background: var(--selected-bg); color: var(--text); }
+
+.sqlMode:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.sqlMode:focus-visible { box-shadow: var(--ring); }
+
+/* In a result's block it sits left of the copy button. */
+.sqlBlock__mode {
+  position: absolute;
+  top: 6px;
+  right: 54px;
+}
+
+.sqlBlock__expand {
+  display: block;
+  width: 100%;
+  padding: var(--space-4) var(--space-10);
+  border: 0;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent-text);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.sqlBlock__expand:hover {
+  background: var(--hover-tint);
+}
+
+.sqlBlock--inline {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: var(--space-2) var(--space-6);
+  border-color: transparent;
+  background: transparent;
+  font-size: var(--fs-sm);
+  line-height: 18px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sqlBlock--inline .sqlBlock__code {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sqlBlock--inline:hover {
+  border-color: var(--border);
+}
+
+.sqlBlock--inline.is-expanded {
+  border-color: var(--border);
+  background: var(--editor-solid-bg);
+}
+
+.sqlBlock--inline.is-expanded .sqlBlock__code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

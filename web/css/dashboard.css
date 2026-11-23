@@ -1,0 +1,241 @@
+/* Grid, sections, panel frames and the colour tokens of 9.16 (9.2). The panel types have their own files: panel-chart.css, panel-stat.css, panel-table.css. */
+@import url("vendor/chdash/chart.css");
+@import url("vendor/chdash/stat.css");
+@import url("vendor/chdash/table.css");
+
+:root {
+  /* The named colours of Grafana (9.16). A token has the same value in both themes. */
+  --viz-super-light-red: #FFA6B0; --viz-light-red: #FF7383; --viz-red: #F2495C; --viz-semi-dark-red: #E02F44; --viz-dark-red: #C4162A;
+  --viz-super-light-orange: #FFCB7D; --viz-light-orange: #FFB357; --viz-orange: #FF9830; --viz-semi-dark-orange: #FF780A; --viz-dark-orange: #FA6400;
+  --viz-super-light-yellow: #FFF899; --viz-light-yellow: #FFEE52; --viz-yellow: #FADE2A; --viz-semi-dark-yellow: #F2CC0C; --viz-dark-yellow: #E0B400;
+  --viz-super-light-green: #C8F2C2; --viz-light-green: #96D98D; --viz-green: #73BF69; --viz-semi-dark-green: #56A64B; --viz-dark-green: #37872D;
+  --viz-super-light-blue: #C0D8FF; --viz-light-blue: #8AB8FF; --viz-blue: #5794F2; --viz-semi-dark-blue: #3274D9; --viz-dark-blue: #1F60C4;
+  --viz-super-light-purple: #DEB6F2; --viz-light-purple: #CA95E5; --viz-purple: #B877D9; --viz-semi-dark-purple: #A352CC; --viz-dark-purple: #8F3BB8;
+  --viz-text: var(--text);
+  --viz-transparent: transparent;
+}
+
+/* Sections and grid (9.8): 24 columns, a row unit of --grid-row (30 px) and a gap of --grid-gap (8 px).
+   A panel is placed with inline grid numbers (panel_frame.js). Do not change this geometry: the browser cases B02 and B27 read it. */
+.dash { page: dashboard; }
+/* The dashboard title shows in print only: the header of the page is not printed. */
+.dash__print-title, .dash__print-meta { display: none; }
+.section { margin-bottom: var(--grid-gap); }
+.section:last-child { margin-bottom: 0; }
+.dash__grid { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); grid-auto-rows: var(--grid-row); gap: var(--grid-gap); }
+/* The panels of a section with a header start one gutter (24 px) to the right of the header, as in Grafana. The right edges are equal. */
+.section__head ~ .dash__grid { margin-left: var(--space-24); }
+/* The guide of an expanded section (Grafana): a 1 px line 16 px left of the panels, from the foot of the header to the foot of the grid (8 px above the first panel, 0 below the last). */
+.section__head ~ .dash__grid { position: relative; }
+.section__head ~ .dash__grid:not([hidden])::before {
+  content: ""; position: absolute; top: calc(-1 * var(--grid-gap)); bottom: 0; left: calc(-1 * var(--space-16)); width: 1px; background: var(--border); pointer-events: none;
+}
+
+/* Repeat (4.13a, 9.8c). A band holds the copies of a panel with direction h: c equal columns, rows of 30 px, the gap of 8 px. It is one item of the grid
+   of its section (the inline style gives its columns and rows). The message of a repeat that has no copy is plain muted text. */
+.repeat-band { display: grid; grid-auto-rows: var(--grid-row); gap: var(--grid-gap); min-width: 0; }
+.section__note { grid-column: 1 / -1; margin: 0; padding: var(--space-8) 0; color: var(--muted); }
+.panel__overlay[data-kind="note"] { align-items: flex-start; justify-content: flex-start; padding: var(--space-4) var(--space-12) var(--space-12); }
+.panel__note { margin: 0; color: var(--muted); font-size: var(--fs-md); overflow-wrap: anywhere; }
+
+/* The section header, in the style of a Grafana row: 30 px (4 px padding, one 22 px line), then 8 px to the first panel.
+   A collapsed section has no gap below the header: the 8 px of .section separates it from the next header. */
+.section__head {
+  display: flex; align-items: center; gap: var(--space-8); min-height: var(--grid-row); margin: 0 0 var(--grid-gap); padding: var(--space-4) var(--space-4) var(--space-4) 0;
+  font-size: var(--fs-xl); font-weight: var(--fw-medium); line-height: 22px;
+}
+.section__head:has(> .section__toggle[aria-expanded="false"]) { margin-bottom: 0; }
+.section__toggle {
+  display: inline-flex; align-items: center; gap: var(--space-8); min-height: 22px; min-width: 0; max-width: 100%;
+  padding: 0; border: 0; border-radius: var(--r-sm); background: none; color: var(--text);
+  font: inherit; text-align: left; cursor: pointer;
+}
+.section__toggle .icon { flex: 0 0 auto; width: var(--icon-md); height: var(--icon-md); color: var(--text); }
+.section__toggle[aria-expanded="false"] .section__title { color: var(--muted); }
+.section__toggle:focus-visible { outline-offset: 2px; }
+.section__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Grafana shows no count: the muted title and the chevron say that the section is collapsed. The count stays in the page for a screen reader only. */
+.section__count { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Panel frame: a title bar of 40 px on a bordered box. The menu button shows on hover and on focus. The border does not change on hover. */
+.panel {
+  position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 0;
+  border: 1px solid var(--border); border-radius: var(--panel-radius); background: var(--surface-panel);
+}
+/* A transparent panel (the switch of the panel editor, the import, a document): no fill, no edge at rest, the edge shows on hover and on focus. The preview of the panel editor is a frame like another one. */
+.panel[data-transparent] { border-color: transparent; background: transparent; }
+.panel[data-transparent]:hover, .panel[data-transparent]:focus-within { border-color: var(--border); }
+.panel[data-transparent] .panel__overlay, .panel[data-transparent] .vtable__scroll { background: transparent; }
+.panel__head { position: relative; display: flex; align-items: center; flex: 0 0 auto; height: var(--panel-head-h); padding: 0 var(--space-8) 0 var(--space-12); }
+.panel__title { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin: 0; font-size: var(--fs-md); font-weight: var(--fw-medium); line-height: 22px; }
+/* The title does not stretch: the info icon follows it at 8 px, and the spacer pushes the menu to the right edge. */
+.panel__spacer { flex: 1 1 auto; min-width: 0; }
+.panel__info, .panel__status { position: relative; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: var(--space-32); height: var(--space-32); border-radius: var(--r-md); }
+.panel__info { margin-left: var(--space-8); color: var(--muted); cursor: help; }
+.panel__head .icon { width: var(--icon-md); height: var(--icon-md); }
+/* The note of the time override (9.8b): 14 px, weight 400, the link colour, a clock icon of 14 px and a gap of 8 px. It follows the title at 8 px
+   and shrinks before the title does (the title keeps its room). Its tooltip is the range of the panel. */
+.panel__time-note { position: relative; display: inline-flex; align-items: center; flex: 0 100 auto; gap: var(--space-8); min-width: 0; margin-left: var(--space-8); color: var(--link); font-size: var(--fs-md); font-weight: var(--fw-regular); line-height: 22px; white-space: nowrap; cursor: help; }
+.panel__head .panel__time-note .icon { flex: none; width: 14px; height: 14px; }
+.panel__time-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.panel__time-note:focus-visible { outline-offset: 2px; }
+.panel__time-note[data-tooltip]::after { width: max-content; max-width: min(var(--dialog-w), 80vw); white-space: pre-line; text-align: left; }
+.panel__info:hover, .panel__info:focus-visible { color: var(--text); }
+.panel__info:focus-visible, .panel__status:focus-visible { outline-offset: 0; }
+/* A query error: a 32 px red button-like box with a white warning icon, left of the title (8 px before it), as in Grafana.
+   Its message is the tooltip (it opens rightwards from the left edge). The fill is --status-error-bg when the tokens define it. */
+.panel__status { margin-right: var(--space-8); border-radius: var(--r-md); background: var(--status-error-bg, var(--danger-fill)); color: var(--on-primary); cursor: help; }
+.panel__status:empty { display: none; }
+/* The description and the error message are the tooltips of their icons: they wrap, and the description opens leftwards from the right edge of its icon. */
+.panel__info[data-tooltip]::after, .panel__status[data-tooltip]::after { width: max-content; max-width: min(var(--dialog-w), 80vw); white-space: pre-line; text-align: left; }
+.panel__head .btn--icon { position: relative; flex: 0 0 auto; width: var(--space-24); height: var(--space-24); min-height: 0; border-radius: var(--r-sm); }
+/* A touch target of 32 px around a 24 px button, with no change of the title bar. */
+.panel__head .btn--icon::before { content: ""; position: absolute; inset: calc(-1 * var(--space-4)); }
+/* The spinner of a loading panel hangs in the 16 px of room before the menu button, so it never takes room from the title: the title and the
+   info icon do not move when the panel starts or ends loading. */
+.panel__state { position: absolute; top: 50%; right: calc(var(--space-8) + var(--space-20)); display: inline-flex; transform: translateY(-50%); color: var(--muted); }
+.panel__state:empty { display: none; }
+/* The menu button: 20 x 24, a 14 px icon, a toolbar-style fill, 16 px of room before it (it takes that room from the title, as in Grafana: a 184 px title bar keeps 88 px for the title next to the info icon); it shows on hover, on focus inside the panel and while its menu is open. */
+.panel__head .panel__menu {
+  width: var(--space-20); height: var(--space-24); margin-left: var(--space-16); border: 0; border-radius: var(--r-md); background: var(--tb-bg); color: var(--text);
+  opacity: 0; transition: opacity var(--motion-quick) var(--ease), background-color var(--motion-quick) var(--ease);
+}
+.panel__head .panel__menu .icon { width: 14px; height: 14px; }
+.panel__head .panel__menu:hover, .panel__head .panel__menu[aria-expanded="true"] { background: var(--tb-bg-hover); color: var(--text); }
+.panel:hover .panel__menu, .panel:focus-within .panel__menu, .panel__menu:focus-visible, .panel__menu[aria-expanded="true"] { opacity: 1; }
+@media (hover: none) { .panel__menu { opacity: 1; } }
+
+/* Variables bar (9.10): it has its own row under the header (components.css, .dash-toolbar). The variables wrap inside the row.
+   The controls of the page are in the header since the owner decision of 2026-11-11 (9.6, 9.9). */
+/* The list of a select variable, as the list of Grafana: a 170 px minimum, rows of 38 px with 8 px of padding, a checkbox of 16 px
+   and the option in 14 px/500. The search field of 9.10 stays above the rows. */
+.vars-bar .select__popup { min-width: 170px; max-width: min(420px, calc(100vw - 2 * var(--space-8))); padding: 0; }
+/* The field takes the width of the list (inline-size 0 with a minimum), so its own width does not widen the popup. */
+.vars-bar .select__search { box-sizing: border-box; inline-size: 0; min-inline-size: calc(100% - var(--space-16)); display: block; margin: var(--space-8) var(--space-8) var(--space-4); }
+.vars-bar .listbox { max-height: min(320px, calc(var(--popup-avail, 70vh) - 96px)); }
+.vars-bar .listbox__item, .vars-bar .select__all {
+  display: flex; align-items: center; gap: var(--space-16); width: 100%; min-height: 38px; padding: var(--space-8); border: 0; border-radius: var(--r-md);
+  background: none; color: var(--text); font: inherit; font-weight: var(--fw-medium); text-align: left; cursor: pointer;
+}
+.vars-bar .listbox__item:hover, .vars-bar .listbox__item:focus-visible, .vars-bar .select__all:hover, .vars-bar .select__all:focus-visible { background: var(--menu-item-hover); }
+.vars-bar .select__all:focus-visible { outline-offset: -2px; }
+.vars-bar .listbox__mark { width: 16px; height: 16px; border-radius: 4px; }
+.vars-bar .select__all .listbox__mark { flex: none; border: 1px solid var(--control-border); background: var(--surface-inset); }
+.vars-bar .select__all[aria-pressed="true"] .listbox__mark { border-color: var(--accent-fill); background: var(--accent-fill) var(--check-mark) center / 12px no-repeat; }
+.vars-bar .listbox:not([aria-multiselectable="true"]) .listbox__item[aria-selected="true"] { background: var(--selected-bg); box-shadow: inset 0 0 0 1px var(--selected-edge); }
+.vars-bar .listbox__empty { padding: var(--space-8); }
+
+/* The body clips its content. The title bar does not, so that the tooltips of the title bar can open over the body. */
+.panel__body { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; border-radius: 0 0 var(--panel-radius) var(--panel-radius); }
+.panel__content { position: absolute; inset: 0; display: flex; flex-direction: column; padding: var(--panel-pad); overflow: hidden; }
+.panel__plot { position: relative; flex: 1 1 auto; min-height: 0; min-width: 0; }
+.panel__overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: var(--panel-pad); background: var(--surface-panel); }
+.panel__overlay:empty { display: none; }
+.panel__warning { flex: 0 0 auto; padding: var(--space-2) 0; color: var(--warning); font-size: var(--fs-sm); }
+
+/* No data (the inline empty state of the design system) and a panel that waits for an action (the editor). */
+.panel__overlay[data-kind="empty"] .empty { flex-direction: row; gap: var(--space-8); max-width: 100%; margin: 0; padding: 0; }
+.panel__overlay[data-kind="empty"] .empty__icon { width: var(--space-24); height: var(--space-24); }
+.panel__overlay[data-kind="empty"] .empty__title { color: var(--muted); font-size: 18px; font-weight: var(--fw-regular); line-height: 28px; }
+.panel__empty { color: var(--muted); }
+.panel__hint { display: flex; flex-direction: column; align-items: center; gap: var(--space-8); text-align: center; }
+
+/* Error: the code, the message (it scrolls when it is long) and Retry. The frame also takes a red edge. */
+.panel__overlay[data-kind="error"] { align-items: flex-start; justify-content: flex-start; padding: var(--space-4) var(--space-12) var(--space-12); }
+.panel__error { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-6); width: 100%; max-height: 100%; min-height: 0; }
+.panel__error-head { display: flex; align-items: center; gap: var(--space-6); flex: 0 0 auto; color: var(--danger); font-weight: var(--fw-semibold); }
+.panel__error-code { font-family: var(--font-mono); font-size: var(--fs-sm); }
+.panel__error-text { min-height: 0; overflow: auto; overflow-wrap: anywhere; color: var(--text); font-size: var(--fs-sm); user-select: text; }
+.panel__error .btn { flex: 0 0 auto; }
+
+/* Loading: the frame (title bar and box) is the skeleton and has its final size at once. After 300 ms of waiting (panel_frame.js sets the
+   classes) a static grey block fills the body of a panel that has no content, and a thin bar shows under the title bar of a panel
+   that loads. A refresh dims the earlier content after the same time only, so a fast answer changes nothing on the screen.
+   Nothing moves (9.26): reduced motion needs no special case. */
+.panel--progress .panel__head::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+  background: repeating-linear-gradient(90deg, var(--accent-fill) 0 var(--space-12), transparent var(--space-12) var(--space-16));
+}
+.panel--progress .panel__content:not(:empty) { opacity: 0.6; }
+.panel--wait .panel__content:empty::before {
+  content: ""; flex: 1 1 auto; margin-top: var(--space-4); border-radius: var(--r-sm); background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+
+/* One panel at full size (viewPanel). The height follows the window; the reserve is the header, the page padding, the
+   variables bar and the back button. */
+.view-panel { --view-min-h: calc(var(--space-80) * 4); --view-reserve: calc(var(--header-h) + var(--page-pad) * 2 + var(--space-80)); display: flex; flex-direction: column; gap: var(--space-8); }
+.view-panel__bar { display: flex; }
+.panel--view { height: max(var(--view-min-h), calc(100vh - var(--view-reserve))); height: max(var(--view-min-h), calc(100dvh - var(--view-reserve))); }
+
+/* View data: the table of the panel fields after the transformations, in a wide dialog. */
+.dialog[open]:has(.view-data) { display: flex; flex-direction: column; overflow: hidden; }
+.dialog:has(.view-data) .dialog__body { display: flex; flex: 1 1 auto; flex-direction: column; min-height: 0; max-height: none; padding: 0; overflow: hidden; }
+.dialog:has(.view-data) .dialog__head, .dialog:has(.view-data) .dialog__footer { flex: 0 0 auto; }
+.view-data__meta { flex: 0 0 auto; padding: var(--space-8) var(--space-16); border-bottom: 1px solid var(--border); color: var(--muted); font-size: var(--fs-sm); }
+.view-data { flex: 1 1 auto; min-height: 0; max-height: none; overflow: auto; }
+.view-data table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.view-data table th { z-index: var(--z-sticky-top); padding: var(--space-6) var(--space-12); border-bottom: 1px solid var(--border); font-weight: var(--fw-semibold); white-space: nowrap; }
+.view-data table td { max-width: calc(var(--space-80) * 4); padding: var(--space-6) var(--space-12); overflow-wrap: anywhere; vertical-align: top; }
+.view-data table :is(th, td):first-child { padding-left: var(--space-16); }
+.view-data table :is(th, td):last-child { padding-right: var(--space-16); }
+.view-data th.num, .view-data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.view-data tbody tr:hover td { background: var(--row-hover); }
+
+/* Narrow screens (a deviation from 9.8, recorded in the report): up to 768 px the grid of 24 columns gives way to a
+   flow. From 481 to 768 px it has two columns: a panel of up to 12 grid columns (data-span "half") takes one column and a
+   wider one takes both. Up to 480 px it has one column. Each panel keeps its height in rows (--panel-h) as a floor, so it
+   stays as tall as in the grid, and chart panels get a taller floor. The inline grid numbers lose to the !important
+   rules. Print and wide screens keep the grid. */
+@media screen and (max-width: 768px) {
+  .dash__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: auto; }
+  .section__head ~ .dash__grid { margin-left: 0; }
+  /* The band of a repeat gives its frames to the flow of the grid. */
+  .repeat-band { display: contents; }
+  :is(.dash__grid, .repeat-band) > .panel {
+    --panel-floor: calc(var(--space-80) * 2);
+    grid-column: 1 / -1 !important; grid-row: auto !important;
+    min-height: max(var(--panel-floor), calc(var(--panel-h, 4) * var(--grid-row) + (var(--panel-h, 4) - 1) * var(--grid-gap)));
+  }
+  :is(.dash__grid, .repeat-band) > .panel[data-span="half"] { grid-column: span 1 !important; }
+  :is(.dash__grid, .repeat-band) > .panel[data-type="timeseries"], :is(.dash__grid, .repeat-band) > .panel[data-type="barchart"],
+  :is(.dash__grid, .repeat-band) > .panel[data-type="piechart"], :is(.dash__grid, .repeat-band) > .panel[data-type="xychart"],
+  :is(.dash__grid, .repeat-band) > .panel[data-type="histogram"], :is(.dash__grid, .repeat-band) > .panel[data-type="heatmap"] { --panel-floor: calc(var(--space-80) * 3 + var(--space-40)); }
+  :is(.dash__grid, .repeat-band) > .panel[data-type="table"] { --panel-floor: calc(var(--space-80) * 3); }
+  .panel--view { height: max(var(--view-min-h), calc(100dvh - var(--view-reserve) - var(--space-40))); }
+}
+@media screen and (max-width: 480px) {
+  .dash__grid { grid-template-columns: minmax(0, 1fr); }
+  :is(.dash__grid, .repeat-band) > .panel[data-span="half"] { grid-column: 1 / -1 !important; }
+}
+
+/* Print: the grid of the screen on a landscape page. No menu, no progress bar. A panel stays on one page. */
+@page dashboard { size: A4 landscape; margin: 10mm; }
+@media print {
+  .dash { padding: var(--space-8); }
+  .dash__print-title { display: block; margin: 0 0 var(--space-8); font-size: var(--fs-xl); font-weight: var(--fw-semibold); }
+  .dash__print-meta { display: block; margin: 0 0 var(--space-8); color: var(--muted); }
+  /* The variables bar and the legend mode buttons are controls: the variable values are in the line above. */
+  .vars-bar, .chartCore__legendMode { display: none !important; }
+  .panel__menu, .panel__head .btn, .panel__state, .panel__info { display: none !important; }
+  .panel__head { height: auto; min-height: var(--panel-head-h); padding-block: var(--space-6); }
+  .panel__title { overflow: visible; text-overflow: clip; white-space: normal; }
+  .panel { break-inside: avoid; page-break-inside: avoid; transition: none; }
+  .section__head { break-after: avoid; }
+  .section__toggle .icon { display: none; }
+  .section__toggle { padding-left: 0; }
+  .panel--progress .panel__head::after { display: none; }
+}
+
+/* "Inspect" (9.11, F22): the expanded SQL of a panel query. */
+.inspect__meta { margin: 0 0 var(--space-8); color: var(--muted); font-size: var(--fs-sm); }
+.inspect__none { margin: 0; }
+.inspect__sql { max-height: 60dvh; margin: 0; padding: var(--space-12); overflow: auto; border: 1px solid var(--border); border-radius: var(--r-md); background: var(--editor-solid-bg); font-family: var(--font-mono); font-size: var(--fs-md); white-space: pre-wrap; overflow-wrap: anywhere; tab-size: 2; user-select: text; }
+
+/* A table with several queries (9.22a, rule 9): the select "Query" under the table is part of the body and keeps the size of the frame. */
+.panel__frames { display: flex; flex: 0 0 auto; align-items: center; gap: var(--space-8); padding-top: var(--space-4); color: var(--muted); font-size: var(--fs-sm); }
+.panel__frames .input { min-width: 0; max-width: 12em; min-height: var(--control-h-sm); font-size: var(--fs-sm); }
+
+/* "Inspect" of a panel with several queries (9.11): one block for each query. */
+.inspect__block + .inspect__block { margin-top: var(--space-16); padding-top: var(--space-12); border-top: 1px solid var(--border); }
+.inspect__ref { margin: 0 0 var(--space-4); font-size: var(--fs-md); font-weight: var(--fw-medium); }
+.inspect__block .btn { margin-top: var(--space-8); }

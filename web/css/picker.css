@@ -1,0 +1,112 @@
+/* The time picker and the refresh picker (9.9). The rules of the popup of the time range are here; the sizes of the header are in components.css.
+   The popup follows the range picker of ClickHouse Dash (decisions ID-K60 to ID-K66, owner request of 2026-11-12). */
+
+.picker { position: relative; display: flex; align-items: center; min-width: 0; }
+
+/* The time group: back, the range button (clock, text, chevron), forward, zoom out. The range button has one width for every range text (9.9):
+   the text takes the room between the clock and the chevron, and a long text (an absolute range) ends with an ellipsis. The tooltip and
+   the accessible name hold the whole text. */
+.picker__button { min-width: 0; max-width: 100%; }
+.picker--time > .picker__button { flex: none; width: var(--tb-range-w); }
+.picker__text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-align: left; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.picker__chevron { display: inline-flex; flex: none; margin-left: var(--space-6); }
+
+/* The refresh group: the run button ("Refresh", with a spinner while the queries run) and the interval button. Each button has one width in all
+   its states (9.9): the spinner has the size of the icon, and the interval button has the room of its longest text ("30m") also when it
+   has no text (Off). */
+.picker__run-icon { display: inline-flex; flex: none; }
+.picker__interval { width: var(--tb-int-w); justify-content: space-between; gap: var(--space-4); }
+
+/* The popup: the absolute range at the left, the search and the lists at the right, the zone in the footer. It is closed (hidden, 6 px
+   up, a little flat) until the class is-open comes; both ways take 160 ms. Reduced motion has no fade. */
+.picker__popup {
+  display: flex; flex-direction: column; width: min(604px, calc(100vw - 2 * var(--space-8))); padding: 0; overflow: hidden;
+  border: 1px solid var(--border-strong); border-radius: var(--r-lg); background: var(--surface-menu); box-shadow: var(--shadow-menu);
+  color: var(--text); font: var(--fw-medium) var(--fs-xs)/1.35 var(--font-sans); text-align: left;
+  transform-origin: top; will-change: transform, opacity;
+  opacity: 0; transform: translateY(-6px) scaleY(0.98); visibility: hidden; pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease), visibility 0s linear var(--dur-base);
+}
+.picker__popup.is-open { opacity: 1; transform: none; visibility: visible; pointer-events: auto; transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease), visibility 0s; }
+@media (prefers-reduced-motion: reduce) { .picker__popup { transition: none; transform: none; } }
+.picker__body { display: grid; flex: 1 1 auto; grid-template-columns: minmax(0, 1fr) 216px; min-height: 0; overflow: auto; }
+.picker__heading { margin: 0; color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--ls-eyebrow); text-transform: uppercase; }
+
+/* The absolute range: the title, the two fields side by side, the hint, the calendar, the error and the button. */
+.picker__abs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: var(--space-8); padding: var(--space-12); }
+.picker__abs > :is(.picker__heading, .picker__hint, .picker__cal, .picker__error, .picker__apply) { grid-column: 1 / -1; }
+.picker__field { display: grid; align-content: start; gap: var(--space-4); min-width: 0; }
+.picker__field > label { color: var(--muted); font-size: var(--fs-sm); font-weight: var(--fw-medium); }
+.picker__field.is-active > label { color: var(--text); }
+.picker__field .input { width: 100%; min-width: 0; font-size: var(--fs-xs); font-variant-numeric: tabular-nums; }
+.picker__field.is-active .input:not([aria-invalid="true"]) { border-color: color-mix(in srgb, var(--accent-fill) 72%, var(--control-border)); }
+.picker__field .field-error { margin: 0; font-size: var(--fs-xs); line-height: 1.3; }
+.picker__error { margin: 0; padding: var(--space-8) var(--space-10); border: 1px solid color-mix(in srgb, var(--danger) 32%, var(--border)); border-radius: var(--r-md); background: var(--danger-bg); font-size: var(--fs-xs); line-height: 1.3; }
+.picker__error[hidden], .picker__field .field-error[hidden] { display: none; }
+.picker__hint { margin: var(--space-2) 0 0; color: var(--muted); font-size: var(--fs-xs); }
+.picker__apply { justify-self: end; }
+
+/* The calendar: a header with four navigation buttons (year, month), the weekdays, and 6 weeks of 7 days. The days of the range are tinted,
+   its first and last day have the accent fill. The week starts on Monday. */
+.picker__cal { padding: var(--space-8); border: 1px solid var(--border); border-radius: var(--r-lg); background: color-mix(in srgb, var(--input-bg) 55%, transparent); }
+.picker__cal-head { display: grid; grid-template-columns: 26px 26px minmax(0, 1fr) 26px 26px; align-items: center; margin-bottom: var(--space-6); }
+.picker__cal-title { text-align: center; font-size: var(--fs-sm); font-weight: var(--fw-semibold); }
+.picker__nav {
+  display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; padding: 0; border: 0; border-radius: var(--r-md);
+  background: transparent; color: var(--muted); cursor: pointer;
+}
+.picker__nav:hover, .picker__nav:focus-visible { color: var(--text); }
+.picker__nav:focus-visible, .picker__day:focus-visible { outline-offset: -1px; }
+.picker__nav--flip .icon { transform: rotate(180deg); }
+.picker__days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--space-2) 0; }
+.picker__weekday { padding: var(--space-2) 0 var(--space-4); color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--ls-eyebrow); text-align: center; text-transform: uppercase; }
+.picker__day {
+  position: relative; height: 27px; padding: 0; border: 1px solid transparent; border-radius: 0; background: transparent; color: var(--text);
+  font: var(--fw-semibold) var(--fs-xs)/1 var(--font-sans); font-variant-numeric: tabular-nums; cursor: pointer;
+}
+.picker__day:hover { border-color: var(--button-border-hover); border-radius: var(--r-md); }
+.picker__day.is-outside { color: var(--muted); }
+.picker__day.is-today::after { content: ""; position: absolute; bottom: 3px; left: 50%; width: 3px; height: 3px; margin-left: -2px; border-radius: 50%; background: currentColor; opacity: 0.7; }
+.picker__day.is-inside { background: color-mix(in srgb, var(--accent-fill) 18%, transparent); }
+.picker__day.is-preview { background: color-mix(in srgb, var(--accent-fill) 10%, transparent); }
+.picker__day.is-start, .picker__day.is-end { background: var(--accent-fill); color: var(--on-fill); }
+.picker__day.is-start { border-radius: var(--r-md) 0 0 var(--r-md); }
+.picker__day.is-end { border-radius: 0 var(--r-md) var(--r-md) 0; }
+.picker__day.is-single, .picker__day.is-start.is-end { border-radius: var(--r-md); }
+.picker__day:focus-visible { border-color: var(--text); border-radius: var(--r-md); }
+
+/* The right column: the search, then "Recently used" (up to two ranges) and "Quick ranges". Its height follows the left column, and the
+   lists scroll. */
+.picker__col { position: relative; min-width: 0; border-left: 1px solid var(--border); }
+.picker__col-in { position: absolute; inset: 0; display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-12) var(--space-8) var(--space-12) var(--space-12); }
+.picker__search { position: relative; flex: none; }
+.picker__search > .icon { position: absolute; top: 50%; left: var(--space-8); transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.picker__search-input { width: 100%; padding-left: calc(var(--space-8) + var(--icon-md) + var(--space-4)); font-size: var(--fs-xs); }
+.picker__lists { flex: 1 1 0; min-height: 0; padding-right: var(--space-4); overflow-y: auto; scrollbar-width: thin; }
+.picker__lists > .picker__heading { padding: var(--space-8) var(--space-8) var(--space-4); }
+.picker__lists > .picker__heading:first-child { padding-top: 0; }
+.picker__group { display: grid; gap: 1px; }
+.picker__quick-item {
+  display: block; width: 100%; min-height: 27px; padding: 0 var(--space-8); overflow: hidden; border: 0; border-radius: var(--r-md); background: transparent;
+  color: var(--text); font: var(--fw-semibold) var(--fs-xs)/27px var(--font-sans); text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;
+}
+.picker__quick-item:hover, .picker__quick-item:focus-visible { background: var(--row-hover); }
+.picker__quick-item:focus-visible { outline-offset: -2px; }
+.picker__quick-item[aria-current="true"] { background: var(--selected-bg); }
+.picker__none { margin: 0; padding: var(--space-6) var(--space-8); color: var(--muted); }
+.picker__footer { flex: none; padding: var(--space-6) var(--space-12); border-top: 1px solid var(--border); color: var(--muted); font-size: var(--fs-xs); }
+.picker__zone { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* A touch screen: the targets have the size --hit. */
+@media (pointer: coarse) {
+  .picker__quick-item, .picker__nav, .picker__day { min-height: var(--hit); }
+  .picker__cal-head { grid-template-columns: var(--hit) var(--hit) minmax(0, 1fr) var(--hit) var(--hit); }
+  .picker__nav { width: var(--hit); }
+}
+
+/* Up to 768 px the popup is one column: the absolute range, then the search and the lists (a list of 280 px that scrolls). */
+@media (max-width: 768px) {
+  .picker__body { grid-template-columns: minmax(0, 1fr); }
+  .picker__col { border-top: 1px solid var(--border); border-left: 0; }
+  .picker__col-in { position: static; height: 280px; }
+}

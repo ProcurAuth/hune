@@ -1,0 +1,353 @@
+/* Hune: styles of panel-table (9.20). Owner: the worker of this area (see web/css/tokens.css).
+   The rules sit on top of the copied engine table (css/vendor/chdash/table.css, never edited) and of the older rules of
+   dashboard.css. A rule here repeats the class of the older rule and adds one level, so that it wins. */
+
+/* Grafana parity (wave G, R1, R2, R4). The grid has the geometry that was measured on Grafana 12.4.2: the table sits inside
+   the panel padding (8 px), a header row of 34 px and body rows of 36 px (the 1 px rule is inside these heights), a cell
+   padding of 6 px, a 1 px rule on the right and at the bottom of every cell (not at the right of the last column), a header
+   in 14 px/500 at the muted colour, and a grey row hover. The columns are laid out by table.js (equal shares, 150 px at least). */
+.vtable__scroll,
+.panel .vtable__scroll {
+  --vt-head: 34px;
+  --vt-row: 36px;
+  --vt-pad: var(--space-6);
+  --vt-sb: 255 255 255;
+  --vt-link: #6e9fff; /* the link colour of Grafana 12.4.2, dark theme (measured) */
+  position: absolute;
+  inset: 0;
+  overflow: auto;
+  border: 0;
+  border-radius: 0;
+  background: var(--panel);
+  color: var(--text);
+  overscroll-behavior: contain;
+  /* Grafana draws a thin native scrollbar with a thumb at 33 % and a track at 6.7 % of one ink. */
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--vt-sb) / 0.333) rgb(var(--vt-sb) / 0.067);
+}
+html[data-theme="light"] .vtable__scroll { --vt-sb: 0 0 0; --vt-link: #1f62e0; }
+@media (prefers-color-scheme: light) {
+  html:not([data-theme]) .vtable__scroll { --vt-sb: 0 0 0; --vt-link: #1f62e0; }
+}
+.panel .vtable__scroll:focus-visible { outline-offset: -2px; }
+
+.vtable {
+  table-layout: fixed;
+  width: auto;
+  --dt-row: var(--vt-row);
+  --dt-pad-x: var(--vt-pad);
+  --vtable-view: 100%;
+  font-size: var(--fs-md);
+  line-height: 22px;
+}
+
+/* --- header ------------------------------------------------------------------------------------------------------ */
+
+/* Grafana lays the header as a group: the label button with its sort arrow, then 4 px of gap and the filter button (16 x 22, a 16 px
+   icon). The group ends where the figures end: at the left of a left-aligned column, at the right of a right-aligned one. The group
+   sits on the bottom edge of the cell (6 px up). */
+.vtable.dataTable > thead > tr > th {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  height: var(--vt-head);
+  padding: 0 var(--vt-pad) var(--vt-pad);
+  border-right: 1px solid var(--grid-line);
+  border-bottom: 1px solid var(--grid-line);
+  background: var(--panel);
+  color: var(--muted);
+  font-size: var(--fs-md);
+  font-weight: var(--fw-medium);
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: bottom;
+}
+.vtable > thead > tr > th:last-child { border-right: 0; }
+
+.vtable .dataTable__sort {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  max-width: 100%;
+  height: 22px;
+  min-height: 0;
+  overflow: hidden;
+  gap: 0;
+  padding: 0;
+  vertical-align: bottom;
+  color: inherit;
+  line-height: 20px;
+}
+.vtable > thead > tr > th.has-filter > .dataTable__sort { max-width: calc(100% - 20px); }
+.vtable .vtable__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Grafana underlines the label under the pointer; the colour does not change. */
+.vtable .dataTable__sort:hover { color: inherit; }
+.vtable .dataTable__sort:hover .vtable__label { text-decoration: underline; }
+.vtable .dataTable__sort:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+
+/* The sort mark: none while the column is not sorted (no mark on hover either); an 18 px arrow after the label when it is,
+   in the colour of the label. It adds its width to the label only while it shows. */
+.vtable .dataTable__sort::after { display: none; flex: 0 0 auto; width: 18px; height: 18px; font-size: inherit; opacity: 1; }
+.vtable th[aria-sort="ascending"] > .dataTable__sort::after,
+.vtable th[aria-sort="descending"] > .dataTable__sort::after { display: block; color: inherit; }
+/* The arrows of Grafana have a heavier stroke than the engine arrows (1.5), so the mark is drawn with a stroke of 2. */
+.vtable th[aria-sort="ascending"] > .dataTable__sort::after {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5l0 14'/%3E%3Cpath d='M18 11l-6 -6'/%3E%3Cpath d='M6 11l6 -6'/%3E%3C/svg%3E");
+}
+.vtable th[aria-sort="descending"] > .dataTable__sort::after {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 5l0 14'/%3E%3Cpath d='M18 13l-6 6'/%3E%3Cpath d='M6 13l6 6'/%3E%3C/svg%3E");
+}
+.vtable th[aria-sort="ascending"] > .dataTable__sort,
+.vtable th[aria-sort="descending"] > .dataTable__sort { color: inherit; }
+
+/* The column filter button shows at all times in a filterable column (as in Grafana), after the label and its mark. */
+.vtable__filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 22px;
+  margin: 0 0 0 4px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-sm);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  vertical-align: bottom;
+  transition: background-color var(--motion-quick) var(--ease), color var(--motion-quick) var(--ease);
+}
+.vtable__filter:hover { background: var(--hover-tint); color: var(--text); }
+.vtable__filter:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+.vtable__filter.is-filtered,
+.vtable__filter[aria-pressed="true"] {
+  background: var(--selected-bg);
+  color: var(--accent-text);
+  box-shadow: inset 0 0 0 1px var(--selected-edge);
+}
+
+/* --- cells ------------------------------------------------------------------------------------------------------- */
+
+/* A long text is cut with an ellipsis (the cell keeps the full text in its title). */
+.vtable > tbody > tr > td {
+  height: var(--vt-row);
+  padding: var(--vt-pad);
+  border-right: 1px solid var(--grid-line);
+  border-bottom: 1px solid var(--grid-line);
+  background: var(--panel);
+  color: var(--text);
+  font-weight: var(--fw-regular);
+}
+.vtable > tbody > tr > td:last-child { border-right: 0; }
+.vtable > tbody > tr:last-child > td { border-bottom-color: var(--grid-line); }
+/* The figures keep the proportional digits of the font, as in Grafana. */
+.vtable > tbody > tr > td.num { font-variant-numeric: normal; }
+
+/* Row hover and focus. */
+.vtable > tbody > tr:hover > td,
+.vtable > tbody > tr:focus-within > td { background-color: var(--row-hover); }
+.vtable > tbody > tr:focus-visible > td { background-color: var(--row-hover); }
+.vtable > tbody > tr:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+.vtable > tbody > tr > td:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+
+/* A coloured background (an inline style of the cell) keeps its colour on hover, as in Grafana: only the cells with no fill get the grey of the row. */
+
+/* Data links: the accent colour with an underline (colour is never the only sign). On a coloured text or a coloured
+   background the link keeps the colour of the cell, which is chosen to be legible. */
+.cell-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+.vtable .cell-link {
+  max-width: 100%;
+  color: var(--vt-link);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.vtable .cell-link:hover { text-decoration: underline; }
+.vtable .cell-link:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; border-radius: var(--r-xs); }
+.vtable td.cell--text .cell-link,
+.vtable td.cell--bg .cell-link { color: inherit; }
+button.cell-link { display: inline-block; max-width: 100%; }
+
+/* --- cell types gauge and json, wrapped text, footer (F04, F14) ---------------------------------------------------- */
+
+/* A gauge cell: the bar fills the inner box of the cell, the display text sits over it (a copy in the ink of the fill is clipped to the
+   filled part by table.js). */
+.vtable__scroll { --vt-bar-off: color-mix(in srgb, var(--text) 6%, transparent); }
+.cell-gauge { position: relative; height: 22px; min-width: 0; }
+.cell-gauge__bar { position: absolute; inset: 0; overflow: hidden; border-radius: 4px; background: var(--vt-bar-off); }
+.cell-gauge__fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 4px; }
+.cell-gauge__bar--lcd { display: flex; gap: 2px; border-radius: 0; background: none; }
+.cell-gauge__cell { flex: 0 0 10px; border-radius: 2px; background-color: color-mix(in srgb, var(--cell, var(--viz-green)) 18%, transparent); }
+.cell-gauge__cell.is-lit { background-color: transparent; background-image: radial-gradient(color-mix(in srgb, var(--cell, var(--viz-green)) 95%, transparent) 10%, color-mix(in srgb, var(--cell, var(--viz-green)) 55%, transparent)); }
+.cell-gauge__text { position: relative; z-index: 1; display: block; overflow: hidden; padding: 0 var(--vt-pad); line-height: 22px; text-overflow: ellipsis; white-space: nowrap; text-align: inherit; }
+.cell-gauge__text--on { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.vtable .cell-gauge .cell-link { color: inherit; }
+
+/* A json cell: the value as one line of compact text. */
+.vtable > tbody > tr > td.cell--json { font-family: var(--font-mono); font-size: var(--fs-sm); }
+
+/* The button "Inspect value" of a column with `inspect` (9.20, measured on Grafana 12.4.2): at the right edge of the cell (the left edge of
+   a cell with the alignment right), full height, on a fill of the panel colour at 70 %. It shows on hover and on focus of the cell, so the
+   key Tab on a focused cell reaches it. The target is 32 px wide and as high as the row (24 px at least). */
+.vtable > tbody > tr > td:has(> .cell-inspect) { position: relative; }
+.cell-inspect {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  min-height: 24px;
+  padding: 0 4px 0 8px;
+  border: 0;
+  background: color-mix(in srgb, var(--panel) 70%, transparent);
+  color: var(--text);
+  cursor: pointer;
+}
+.cell-inspect--left { right: auto; left: 0; padding: 0 8px 0 4px; }
+.vtable > tbody > tr > td:hover > .cell-inspect,
+.vtable > tbody > tr > td:focus-within > .cell-inspect { display: flex; }
+.cell-inspect:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+
+/* The text of the drawer "Inspect value": the line ends stay, in the muted colour on the panel colour, as in Grafana. */
+.inspect__value {
+  min-height: 42px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--panel);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--fs-md);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}
+
+/* Wrapped text (option wrap): the text breaks at spaces, a long word breaks anywhere, the row grows with its tallest cell (36 px at least).
+   A header text never wraps. */
+.vtable--wrap > tbody > tr > td { overflow-wrap: anywhere; text-overflow: clip; white-space: normal; vertical-align: top; }
+.vtable--wrap .cell-gauge__text { white-space: normal; }
+
+/* The footer: one line of 22 px for each calculation, 6 px of padding above and below, at the bottom of the view. */
+.vtable > tfoot > tr > td {
+  position: sticky;
+  bottom: 0;
+  z-index: var(--z-sticky);
+  padding: var(--vt-pad);
+  border-top: 1px solid var(--grid-line);
+  border-right: 1px solid var(--grid-line);
+  background: var(--panel);
+  color: var(--text);
+  font-weight: var(--fw-medium);
+  overflow: hidden;
+  vertical-align: top;
+  white-space: nowrap;
+}
+.vtable > tfoot > tr > td:last-child { border-right: 0; }
+.vtable__foot-line { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); height: 22px; line-height: 22px; }
+.vtable__foot-name { flex: 0 0 auto; overflow: hidden; color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-regular); text-overflow: ellipsis; text-transform: uppercase; }
+.vtable__foot-value { min-width: 0; margin-left: auto; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- no row ------------------------------------------------------------------------------------------------------ */
+
+.vtable > tbody > tr.vtable__empty > td,
+.vtable > tbody > tr.vtable__empty:hover > td {
+  height: auto;
+  padding: var(--space-24) var(--space-16);
+  border-right: 0;
+  border-bottom: 0;
+  background: none;
+  overflow: visible;
+  white-space: normal;
+}
+.vtable__none-inner {
+  position: sticky;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  box-sizing: border-box;
+  width: calc(var(--vtable-view) - 2 * var(--space-16));
+  text-align: center;
+}
+.vtable__none-title { color: var(--text); font-weight: var(--fw-semibold); }
+.vtable__none-text { color: var(--muted); font-size: var(--fs-sm); }
+
+/* --- column filter popup ----------------------------------------------------------------------------------------- */
+
+.filter-popup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 248px;
+  max-width: calc(100vw - 2 * var(--space-8));
+  padding: var(--space-8);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface-menu);
+  color: var(--text);
+  box-shadow: var(--shadow-menu);
+}
+.filter-popup .input { width: 100%; margin: 0; }
+.filter-list {
+  max-height: 220px;
+  margin: 0;
+  padding: var(--space-2) 0;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--input-bg);
+}
+.filter-list li { margin: 0; }
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  padding: var(--space-4) var(--space-8);
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+.filter-item:hover { background: var(--hover-tint); }
+.filter-summary { color: var(--muted); font-size: var(--fs-xs); }
+.filter-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-6); }
+
+/* --- narrow panels and touch ------------------------------------------------------------------------------------- */
+
+@media (pointer: coarse) {
+  .vtable__filter { width: var(--hit); height: var(--hit); }
+  .vtable > thead > tr > th.has-filter > .dataTable__sort { max-width: calc(100% - var(--hit) - 4px); }
+}
+
+@media print {
+  .panel .vtable__scroll { position: static; overflow: visible; }
+}
+
+/* The state "no row" has its own padding and no rule. */
+.vtable > tbody > tr.vtable__empty > td:first-child,
+.vtable > tbody > tr.vtable__empty > td:last-child { padding-left: var(--space-16); padding-right: var(--space-16); }
+
+/* The hook of a transparent panel (F6 of the defect list): the page shows through the grid; the sticky header
+   keeps the page colour so that the rows do not show under it. */
+.panel[data-transparent] .vtable__scroll { background: transparent; }
+.panel[data-transparent] .vtable > thead > tr > th { background: var(--bg); }
+.panel[data-transparent] .vtable > tbody > tr > td:not(.cell--bg) { background: transparent; }
+.panel[data-transparent] .vtable > tbody > tr:hover > td:not(.cell--bg),
+.panel[data-transparent] .vtable > tbody > tr:focus-within > td:not(.cell--bg) { background-color: var(--row-hover); }

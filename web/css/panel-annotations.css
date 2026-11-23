@@ -1,0 +1,85 @@
+/* Hune: styles of the annotations on a time series (9.19d): the marks layer, the card, the keys and the note of the title bar.
+   The picture is a canvas that the page draws (js/panels/annotate.js). The card uses the tokens of the menus. */
+
+/* The marks canvas covers the chart and takes no event, so the chart keeps its cursor and its drag zoom. */
+.annot__marks { position: absolute; top: 0; left: 0; display: block; pointer-events: none; }
+
+/* The card of one mark: head, body, tags. It stays inside the plot, which clips it. */
+.annot__card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--z-float);
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 300px;
+  max-width: 420px;
+  padding: var(--space-8) var(--space-12);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface-menu);
+  box-shadow: var(--shadow-menu);
+  color: var(--text);
+  pointer-events: none;
+}
+
+.annot__card[hidden] { display: none; }
+
+.annot__head { padding-bottom: var(--space-4); font-size: var(--fs-md); font-variant-numeric: tabular-nums; }
+
+/* The body is plain text: a line end shows, a long word breaks, and 12 lines at most show. */
+.annot__body {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 12;
+  line-clamp: 12;
+}
+
+.annot__body:empty { display: none; }
+
+.annot__tags { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+
+.annot__tags:not(:empty) { padding-top: var(--space-8); }
+
+.annot__tag { padding: 0 var(--space-8); border: 1px solid var(--border-strong, var(--border)); border-radius: 999px; color: var(--muted); font-size: var(--fs-sm); line-height: 18px; }
+
+/* The keys element covers the plot and takes no pointer event. Its focus ring has 3:1 contrast. */
+.annot__keys { position: absolute; inset: 0; pointer-events: none; outline: none; }
+
+.annot__keys:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
+
+/* The note of the title bar: the cap, or the annotations that failed. It follows the time note. */
+.panel__annot-note {
+  position: relative;
+  display: inline-flex;
+  flex: 0 100 auto;
+  align-items: center;
+  gap: var(--space-8);
+  min-width: 0;
+  margin-left: var(--space-8);
+  color: var(--warning, var(--text));
+  font-size: var(--fs-md);
+  line-height: 22px;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.panel__head .panel__annot-note .icon { flex: none; width: 14px; height: 14px; }
+
+.panel__annot-note[data-tooltip]::after { width: max-content; max-width: min(var(--dialog-w), 80vw); white-space: pre-line; text-align: left; }
+
+/* The second table of "View data". */
+.annot__table { margin-top: var(--space-16); }
+
+.annot__table h4 { margin: 0 0 var(--space-8); font-size: var(--fs-md); }
+
+/* Print shows the lines, the regions and the triangles, and hides the card and the keys. */
+@media print {
+  .annot__card, .annot__keys { display: none; }
+}
