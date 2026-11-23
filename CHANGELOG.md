@@ -6,6 +6,10 @@ The section `## Unreleased` holds the changes that no release has yet.
 
 ## Unreleased
 
+## 0.1.1 - 2026-11-23
+
+This release changes the loader of a panel. It is a private release. GitHub Actions did not verify this commit. The checks ran on a local machine with `tests/ci/all.sh`. It has the `amd64` archive only.
+
 ### Added
 
 - The script `tests/ci/all.sh` runs the jobs of the merge gate in order and stops at the first failure. The option `--from` continues a run after a fix.
@@ -14,6 +18,9 @@ The section `## Unreleased` holds the changes that no release has yet.
 
 ### Changed
 
+- The loader of a panel is now three small dots that pulse in the middle of the body. They show 300 ms after the request starts. The old loader was a dashed bar under the title bar.
+- A panel that refreshes still dims its earlier content to 60 %. The spinner in the title bar and the grey block of a panel that waits are removed.
+- With `prefers-reduced-motion: reduce`, the dots do not pulse. A print has no dots.
 - The workflows in `.github/workflows` stay as an option. They run the CI and the release on GitHub. Hune does not depend on them.
 - The script `tests/conformance/run.sh` takes the commit of ProcurAuth from `Cargo.toml` only. No second pin exists.
 - The job `policy` scans `tests/compose`, `tests/conformance` and the deployment files for image pushes, in addition to the workflows.

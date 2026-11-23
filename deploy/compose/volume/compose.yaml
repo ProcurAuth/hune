@@ -3,7 +3,7 @@
 name: hune-volume
 services:
   hune:
-    image: hune:0.1.0
+    image: hune:0.1.1
     pull_policy: never
     user: "65532:65532"
     read_only: true

@@ -7,7 +7,7 @@ This folder holds the specification and the code.
 
 ## Status
 
-Hune 0.1.0 of 2026-11-22 is the first release. It is a private release. Version 1.0.0 comes after the exit criteria of the milestone M7.
+Hune 0.1.1 of 2026-11-23 is the latest release. Hune 0.1.0 of 2026-11-22 was the first release. Both are private releases. Version 1.0.0 comes after the exit criteria of the milestone M7.
 
 The specification is version 0.1 of 2026-11-09, with later changes. All items are DECIDED, except the open items of section 19.
 The owner chose the name "Hune" on 2026-11-12. The script `tools/rename-hune.py` made the rename. See `CHANGELOG.md`.

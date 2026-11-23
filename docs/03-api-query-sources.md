@@ -274,7 +274,7 @@ valid identity token (11). The page calls it one time at load (9.6).
   "repeat_limits": { "panel": 24, "section": 12, "dashboard": 120 },
   "transform_max_cells": 10000000,
   "geomap": null,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "build": "3f2a9c1e5b7d4a60",
   "refresh_choices": ["10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"],
   "limits": {
@@ -2761,7 +2761,7 @@ X-ClickHouse-User: hune
 X-ClickHouse-Key: <the password>
 Content-Type: text/plain; charset=utf-8
 Content-Length: 412
-User-Agent: hune/0.1.0
+User-Agent: hune/0.1.1
 
 SELECT toStartOfInterval(toDateTime(event_time), INTERVAL 20 second) AS t, ...
 ```

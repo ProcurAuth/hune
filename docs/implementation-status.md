@@ -2,7 +2,7 @@
 
 This document uses ASD-STE100 Simplified Technical English.
 
-This document is not normative. It gives the state of the code against the specification 0.1. The rows up to F2 give the state of 2026-11-10. The rows of wave K and of the later work give the state of 2026-11-15. The rows of wave H and of the release 0.1.0 give the state of 2026-11-22.
+This document is not normative. It gives the state of the code against the specification 0.1. The rows up to F2 give the state of 2026-11-10. The rows of wave K and of the later work give the state of 2026-11-15. The rows of wave H and of the release 0.1.0 give the state of 2026-11-22. The rows of the loader and of the release 0.1.1 give the state of 2026-11-23.
 
 The specification stays the reference. Where the code differs from a paragraph, the table "Differences from the specification" names the paragraph and the decision.
 
@@ -15,7 +15,7 @@ The work started without the milestone M0 and without the parity spike of 18.3a.
 These items are outside the scope of this work:
 
 - M0, the spike, the verification V1 to V5 and the cutover. They need the real data and the go of the owner.
-- The push of the repository and the publication of a release. The work makes local commits only. The coordinator pushes the repository and runs the release workflow for 0.1.0 (ID-K335).
+- The push of the repository and the publication of a release. The work makes local commits only. The coordinator pushes the repository and runs the release workflow for 0.1.0 (ID-K335). The releases after 0.1.0 use `tests/ci/release.sh` (ID-K361).
 - A deployment of the mode `authzen` with a real PDP. The code is in 0.1.0 (see the row M6). The tests use the ProcurAuth tools of a pinned commit, built offline (19.28).
 
 ## State of each milestone
@@ -62,6 +62,8 @@ These items are outside the scope of this work:
 | Wave H, step B | Done in code. ID-K328 and ID-K329 are arbitrated; ID-K346 to ID-K349, ID-K351 and ID-K352 are to re-read | The panel types `gauge` (ID-K348), `logs` (ID-K352) and `geomap` (ID-K349). The map is off by default: only the closed block `geomap` gives a tile source, and without the block the CSP does not change. The percent change and the text sizes of a stat (ID-K347). The gradient modes and the series options of a time series and a bar chart, with the engine edits E43 to E46 (ID-K346). Ad hoc filters with `=` and `!=` on the columns of the key `adhoc_columns` (ID-K351). Browser cases B218 to B227. | The ad hoc operators `<`, `>`, `IN`, `=~` and `!~` wait for the owner (ID-K329). |
 | Page budget | Applied. The owner accepted ID-K211j on 2026-11-22 | The limit of 9.30 is 1,018 KB (1,042,432 bytes) for a measure of 1,037,796 bytes. It is above the ceiling of 1,000 KB and under the cap of 1,100 KB of the owner. | The owner can refuse the raise and give back the cost of the geomap, the series options or the gauge (ID-K211j). |
 | Release 0.1.0 | Prepared. The owner decided ID-K335; ID-K344 is to re-read | The version 0.1.0 is in `Cargo.toml`, `Cargo.lock`, `hune version`, the page and the session. Each image of `tests/images.lock` has a digest. Two release builds of x86_64 give the same archive, byte for byte. The release workflow has the input `arm64` (17.3). `CHANGELOG.md` has the section of 0.1.0. | No aarch64 build was made. The coordinator pushes the repository and runs the release workflow. |
+| Loader of a panel | Done in code. The owner chose the look (three pulsing dots); ID-K362 is to re-read | A panel that waits shows three dots in the middle of the body, 300 ms after the request starts (9.11, 9.26). A refresh still dims the earlier content to 60 %. The bar under the title bar, the spinner in the title bar and the grey block are removed. Reduced motion gives three still, dimmed dots. A print has no dots. The page JS grows by 200 bytes. | The choice of the still dots under reduced motion, and the removal of the grey block, wait for the owner (ID-K362). |
+| Release 0.1.1 | Prepared. ID-K363 is to re-read | The version 0.1.1 is in `Cargo.toml`, `Cargo.lock`, `fuzz/Cargo.lock`, `hune version`, the page, the session and the deployment examples. The release is private. It has the `amd64` archive only. GitHub Actions did not verify it: the jobs of `tests/ci/all.sh` ran on a local machine. The list `deps.lock.txt` is now in byte order (ID-K364). | No arm64 build was made. |
 | Security review of 2026-11-22 | Done. All high and medium findings are fixed with tests (ID-K353 and ID-K356, to re-read) | Three independent reviewers examined the new surface of wave H: the server; the page and the engine; the importer, the format and the SQL properties P, PG, PM and PQ. A second reviewer verified each finding. One high finding: the ClickHouse lexer of Hune did not know the comments that start with `//`, the line ends of ClickHouse and the heredoc tags that start with a digit, so a value could leave its string. Medium findings: the place rule of `$__adhocFilters`, a second request for a failed map tile, and the tile bytes in the cache of the page. | Low and info findings that stay open for the owner: the display of hidden characters in the ad hoc chips, tiles that two large maps push out of the cache, and a `$__conditionalAll` condition with an open end beside `$__adhocFilters` (ID-K356). |
 | Other browsers | Done for Firefox. ID-K309 is decided, to re-read | Firefox ESR 153 runs 14 cases through WebDriver BiDi (`HUNE_BROWSER=firefox`). | B170 and B171 are manual checks in Firefox. WebKit is a manual check: the host has no WebKit driver (16.19). |
 
@@ -99,6 +101,9 @@ The owner is not yet on record for the rows below. The project arbitrated or dec
 | ID-K344 | The technical preparation of the release 0.1.0 |
 | ID-K353 | The page fixes of the security review of 2026-11-22 |
 | ID-K361 | The workflows stay as an option; `tests/ci/all.sh` and `tests/ci/release.sh` run the jobs and the release with no GitHub Actions |
+| ID-K362 | The loader of a panel: three pulsing dots |
+| ID-K363 | The release 0.1.1 |
+| ID-K364 | The list `deps.lock.txt` in byte order (`LC_ALL=C`) |
 
 Three arbiters decided these rows on 2026-11-15, in the absence of the owner: ID-K80, ID-K81, ID-K82, ID-K85, ID-K87, ID-K88, ID-K89, ID-K91, ID-K92, ID-K95, ID-K96 and ID-K97 (F23). The owner must re-read them. The rows ID-K83, ID-K84, ID-K86, ID-K90, ID-K93, ID-K94, ID-K176, ID-K177 and ID-K6 to ID-K66 have the owner's answer.
 
