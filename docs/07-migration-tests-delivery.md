@@ -2752,6 +2752,14 @@ The script `tests/ci/release.sh` does the steps 1 and 5 to 9 above, with `gh` th
 `dist/SHA256SUMS` and the notes (`tools/changelog-section.sh`). It makes the draft, checks it, and publishes it with one call.
 It deletes the draft when a step fails before the publish call. After that call it never deletes anything.
 
+The option `--partial-gate "<text>"` of `tests/ci/release.sh` replaces the check of `target/ci-all.ok`. Use it only when the owner
+decides that a partial gate is enough. The text MUST NOT be empty, and the script refuses a text of blanks.
+
+The text names each job
+that ran on the commit and each job that did not run. It also says that GitHub Actions did not run. The script prints the text,
+and it writes the text in the release notes under the heading "Checks". All other checks of step 1 stay. The script never writes
+`target/ci-all.ok` itself.
+
 ### 17.4 Artefacts and SHA256SUMS
 
 | File | Content |
