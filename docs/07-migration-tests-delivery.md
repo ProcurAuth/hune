@@ -2505,7 +2505,7 @@ refuses a commit that this file does not name.
 | `mongosource` | push | `tests/ci/mongosource.sh` | The cases of 16.9b on MongoDB 7.0 and 8.x, with the compose project `tests/compose/mongosource.yaml`. A build with no `mongo-driver` feature runs only the cases of the first part. |
 | `frontend` | push | `tests/ci/frontend.sh` | Build the browser test image; `node --test tests/frontend/` in it (16.10a). |
 | `browser` | push | `tests/ci/browser.sh` | Build the test image; `npx playwright test` in it. |
-| `import` | push | `tests/ci/import.sh` | `cargo test -p hune-grafana --locked`; the CLI cases of 16.13 on the release binary; the expansion vectors from `tests/compose/grafana.yaml`. |
+| `import` | push | `tests/ci/import.sh` | `cargo test -p hune-grafana --locked`; the CLI cases of 16.13 on the release binary; the expansion vectors from `tests/compose/grafana.yaml`. The job runs the service `import-tests` with `docker compose run` (`ci_compose_exec`), because the service `plugin-fetch` ends early with the code 0. A time limit of 25 minutes ends the run. |
 | `image` | push | `tests/ci/image.sh` | The musl builds of 17.2 on an amd64 and an arm64 runner; the cases of 16.15; the case I14. |
 | `procurauth` | pull request that changes `crates/hune/src/access/`, the configuration code (`crates/hune/src/config/`, `crates/hclconf/`), `tests/conformance/` or the ProcurAuth commit (11.32); nightly; release | `tests/conformance/run.sh` | 16.12. |
 | `failover` | pull request that changes `crates/hune-store/`; nightly; release | `tests/failover/run.sh kill` then `tests/failover/run.sh partition` | 16.11. |

@@ -56,6 +56,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - In the forced colors mode of the system, the mask glyphs show in the system text colour. These glyphs are the sort mark of a table, the check mark of a list and the resize mark of a panel. The type glyphs of the editor keep their own colours.
 - `check-config` names `access.identity.clock_skew` for a PEP error on the clock skew. Hune sets some PEP values from constants. A PEP error on such a value is now an internal error, not an error on a key of the file. With the pinned PEP, no output changes.
+- The job `import` no longer hangs on a runner. The service `plugin-fetch` ends with the code 0 at the start. `docker compose up --abort-on-container-exit` then stopped ClickHouse, 5 of the 323 expansion vectors differed, and the project did not end. The job now uses `docker compose run`, shows the output at once, and has a time limit of 25 minutes.
 
 ### Removed
 

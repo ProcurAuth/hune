@@ -29,6 +29,7 @@ elif grep -q '^grafana-clickhouse-plugin .*digest: TO-PIN' tests/images.lock; th
     # digest it refuses to run. The committed vectors still run in the unit tests of hune-core.
     echo "import: skipped the expansion vectors (the plugin archive has no pinned digest in tests/images.lock)"
 else
-    ci_compose_run tests/compose/grafana.yaml import-tests import
+    # Not ci_compose_run: the service plugin-fetch ends with the code 0 at the start, and that stops the project (ci_compose_exec).
+    ci_compose_exec tests/compose/grafana.yaml import-tests import 1500
 fi
 echo "import: ok"

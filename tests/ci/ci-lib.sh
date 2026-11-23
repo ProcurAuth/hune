@@ -201,6 +201,39 @@ ci_compose_run() {
     return "$ci_rc"
 }
 
+# ci_compose_exec FILE SERVICE JOB [SECONDS] : run SERVICE of a compose project with `docker compose run`.
+# Compose starts the services that SERVICE needs and waits for their conditions. The exit code is the code of SERVICE.
+# Use this function when a service of the project ends with the code 0 before the others, for example a download.
+# With `up --abort-on-container-exit`, that early end stops the whole project, and the run does not end.
+# The output shows at once and goes to target/ci-JOB.log. A time limit (default 1800 seconds) ends the run with code 124.
+# The function prints the last 200 log lines of each container on failure and removes only this project.
+ci_compose_exec() {
+    ci_file=$1
+    ci_service=$2
+    ci_job=$3
+    ci_limit=${4:-1800}
+    ci_proj=$(ci_compose_project "$ci_job")
+    ci_log=$ROOT/target/ci-$ci_job.log
+    ci_rcfile=$ROOT/target/ci-$ci_job.rc
+    mkdir -p "$ROOT/target"
+    ci_export_images
+    {
+        ci_x=0
+        timeout "$ci_limit" docker compose -p "$ci_proj" -f "$ci_file" run --rm "$ci_service" || ci_x=$?
+        echo "$ci_x" >"$ci_rcfile"
+    } 2>&1 | tee "$ci_log"
+    ci_rc=$(cat "$ci_rcfile")
+    rm -f "$ci_rcfile"
+    if [ "$ci_rc" -eq 124 ]; then
+        echo "ci: the service $ci_service did not end in $ci_limit seconds" >&2
+    fi
+    if [ "$ci_rc" -ne 0 ]; then
+        docker compose -p "$ci_proj" -f "$ci_file" logs --tail 200 || true
+    fi
+    docker compose -p "$ci_proj" -f "$ci_file" down -v --remove-orphans >/dev/null 2>&1 || true
+    return "$ci_rc"
+}
+
 # ---- The merge gate (16.17) ----
 
 CI_MILESTONES="M0 M1 M2 M3a M3b M4 M5 M6 M7 MPG MMG"
