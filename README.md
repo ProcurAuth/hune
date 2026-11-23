@@ -51,6 +51,8 @@ The decision ids in the documents and in the code (for example `ID-K335`) are la
 
 ## Tools
 
+The workflows in `.github/workflows` run the CI and the release on GitHub. They are optional. The owner can run every job and the release with `tests/ci/all.sh` and `tests/ci/release.sh`, with no GitHub Actions and no GitHub billing.
+
 Run `python3 -I tools/ste_lint.py docs/*.md` to check the machine-checkable rules of ASD-STE100. The final result MUST be zero errors.
 
 ## Decisions that the owner keeps

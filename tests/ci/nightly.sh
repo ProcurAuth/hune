@@ -1,5 +1,7 @@
 #!/bin/sh
-# Job `nightly` (16.17, 16.4, 16.16): 1,000 random seeds, the fuzz targets, the `source`, `pgsource` and `mongosource` jobs again.
+# Job `nightly` (16.17, 16.4, 16.16). The workflow nightly.yaml runs it. The owner can run it by hand:
+# tests/ci/all.sh does not run it.
+# 1,000 random seeds, the fuzz targets, the `source`, `pgsource` and `mongosource` jobs again.
 # Use: tests/ci/nightly.sh [--local]
 #   (default) runs cargo in the builder image. It runs no fuzz target (step 2).
 #   --local   runs the same commands on the host.

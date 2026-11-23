@@ -2481,6 +2481,17 @@ Pass criteria:
 The workflows are `.github/workflows/ci.yaml` (each push and pull request), `nightly.yaml`, `conformance.yml` and
 `release.yaml` (17.3). Each job calls one script of `tests/ci/`. Each script uses Docker only.
 
+The workflows in `.github/workflows` run the CI and the release on GitHub. They are optional. The owner can run every job and
+the release with `tests/ci/all.sh` and `tests/ci/release.sh`, with no GitHub Actions and no GitHub billing.
+
+The script `tests/ci/all.sh` runs the jobs of the merge gate in this order, and it stops at the first failure: `policy`,
+`rust`, `store`, `pgsource`, `mongosource`, `api`, `source`, `frontend`, `browser`, `import`, `image`, `procurauth` and
+`failover`. Its option `--from <job>` continues a run after a fix. It runs `procurauth` and `failover` on each full run, with no
+path filter. The job `failover` is a stub until M5. The jobs `nightly` and `load` stay by hand.
+
+A full run of `all.sh` on a clean work tree writes the commit in `target/ci-all.ok`. The script `tests/ci/release.sh` (17.3)
+refuses a commit that this file does not name.
+
 | Job | When | Command | Main steps |
 |---|---|---|---|
 | `policy` | push | `tests/ci/policy.sh` | The checks of 16.18. |
@@ -2519,6 +2530,7 @@ The file `tests/ci/gate-cases.txt` holds this table as data: one line `<mileston
 file `tests/ci/milestone` holds the last milestone that passed, for example `M2`. The jobs `store` and `api` run every
 case on each push. They fail only when a case of the gate list of that milestone, or of an earlier one, fails. A job or a
 case that the gate does not run yet gives a result for information only.
+The owner can run the whole gate with `tests/ci/all.sh`.
 
 ### 16.18 Policy checks
 
@@ -2527,7 +2539,7 @@ are split with `''` where they would match the policy script itself.
 
 | Check | Command |
 |---|---|
-| No image push | `grep -rnE 'ghcr''\.io\|docker/login''-action\|packages: *wr''ite\|push: *tr''ue' .github/workflows` |
+| No image push | `grep -rnE --exclude=policy.sh 'ghcr''\.io\|docker/login''-action\|packages: *wr''ite\|push: *tr''ue' .github/workflows tests/ci tests/compose tests/conformance build tools deploy` prints nothing. A second check does the same for `docker push`, `docker login`, `buildx --push` and `imagetools create`. |
 | No environment read outside the engine (3.4, R2) | `grep -rnE --include='*.rs' '(^\|[^[:alnum:]_])env::(var\|var_os\|vars\|vars_os\|set_var\|remove_var)\b' crates \| grep -vE '^crates/hclconf/src/env\.rs:\|/build\.rs:\|/tests/'` prints nothing. Only `crates/hclconf/src/env.rs` is exempt; tests and `build.rs` are exempt too. |
 | No environment read in the MongoDB driver copy (13.2 rule 5, 8b.15) | The check searches the Rust files of `vendor/mongodb` (the test files excepted) for `env::var`, `var_os`, `vars`, `option_env!`, `getenv`, `/.dockerenv` and `resolv.conf`, and `crates/` for the names of the platform variables. It skips comment lines. A finding is accepted only when the list `tests/ci/env-read-allow.txt` holds it. The list is empty. |
 | Local copy of the MongoDB driver (8b.2) | `tools/check-vendor-lock.sh --mongodb`: each file of `vendor/mongodb` is in `vendor/mongodb.lock.json` with its SHA-256, each changed Rust file holds `// hune:`, the reverse of `vendor/mongodb.patch` gives the upstream hashes of the lock, `Cargo.toml` and `fuzz/Cargo.toml` hold the `[patch.crates-io]` line, and `Cargo.lock` has the crate with no source |
@@ -2607,7 +2619,7 @@ hune/
     Dockerfile               the FROM scratch image (17.5)
   tests/
     images.lock              every test image and archive, with its digest
-    ci/                      one script for each CI job (16.17)
+    ci/                      one script for each CI job, `all.sh` (the merge gate) and `release.sh` (16.17, 17.3)
     compose/                 the compose projects of the test layers
     fixtures/                synthetic data: grafana/, dashboards/, clickhouse/, sql-lex-vectors.json
     golden/                  expansion vectors, reports, documents
@@ -2719,6 +2731,26 @@ gh release edit "v$V" --draft=false --latest
 
 The release job has the permission `contents: write` only. No workflow has `packages: write`, logs in to a registry or
 pushes an image (16.18).
+
+#### Release with no GitHub Actions
+
+The workflows in `.github/workflows` run the CI and the release on GitHub. They are optional. The owner can run every job and
+the release with `tests/ci/all.sh` and `tests/ci/release.sh`, with no GitHub Actions and no GitHub billing.
+
+The owner makes a local release by hand, on `main`, with these steps:
+
+1. Run `tests/ci/all.sh` on the commit. Every job of 16.17 must pass. A full run on a clean work tree writes the commit in
+   `target/ci-all.ok`.
+2. Run `tests/ci/release-build.sh <version>` on a machine of each architecture. It does the steps 3 to 5 above and makes the
+   archive in `dist/`.
+3. Copy the archive of the other architecture into `dist/` of the machine that makes the release.
+4. Push `main`. The target commit of the release must be on `origin`.
+5. Run `tests/ci/release.sh <version>`. Add `--amd64-only` when no arm64 machine exists.
+
+The script `tests/ci/release.sh` does the steps 1 and 5 to 9 above, with `gh` that the owner has logged in. It checks that
+`main` and `origin/main` are at the commit, that the work tree is clean, and that `target/ci-all.ok` names the commit. It makes
+`dist/SHA256SUMS` and the notes (`tools/changelog-section.sh`). It makes the draft, checks it, and publishes it with one call.
+It deletes the draft when a step fails before the publish call. After that call it never deletes anything.
 
 ### 17.4 Artefacts and SHA256SUMS
 

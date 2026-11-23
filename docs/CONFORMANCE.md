@@ -79,6 +79,7 @@ The script needs Docker for ClickHouse.
 The script writes `target/conformance/report.txt`. The last line of the report gives the counts.
 
 The CI job `procurauth` runs the script. It runs on each change to `crates/hune/src/access/`, to the configuration code, to the conformance files, and before each release.
+The workflow `conformance.yml` calls it on GitHub. The owner can run it with `tests/ci/all.sh`, with no GitHub Actions. The script reads the pinned commit of the runner from the `rev` of `procurauth-pep` in `Cargo.toml`.
 
 ## What the cases show
 

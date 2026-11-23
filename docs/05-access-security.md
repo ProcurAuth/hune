@@ -258,7 +258,7 @@ Hune builds its PEP on the reference library of ProcurAuth. It does not copy the
 | Place | Only the crate `hune` (module `access`) depends on them. The pure crates never do. |
 | Lock | `Cargo.lock` records the commit. Each build runs with `--locked`. |
 | `cargo deny` | The section `[sources]` permits crates.io and this one git URL, and nothing else (12.17). |
-| Conformance | The conformance job checks out the same commit of the ProcurAuth repository (11.32). |
+| Conformance | The script `tests/conformance/run.sh` checks out the same commit of the ProcurAuth repository (11.32). It reads the commit from the `rev` of `Cargo.toml`, so no second place holds it. |
 
 The lines in the file `crates/hune/Cargo.toml`:
 
@@ -270,17 +270,16 @@ procurauth-pep  = { git = "https://github.com/SCcagg5/procurauth", rev = "<40 he
 The commit of `rev` is chosen at M6 (section 18). Until then, the figures of 11.32 come from the ProcurAuth commit
 `058563cfbc3536b9b850255d953568ef0a5cabbe`.
 
-The CI job `policy` fails in three cases. A `rev` is not 40 hexadecimal characters. The two `rev` values differ. The
-`ref` of the conformance workflow differs from them.
+The script `tests/conformance/run.sh` stops when its checkout of ProcurAuth is not at the `rev` of `Cargo.toml`. The CI job
+`policy` fails when a `rev` is not 40 hexadecimal characters, or when the two `rev` values differ.
 
 To change the commit, do these steps in one change:
 
 1. Write the new full SHA in both lines of `crates/hune/Cargo.toml`.
 2. Run `cargo update -p procurauth-pep -p procurauth-core` in the builder container.
 3. Update the committed file `deps.lock.txt` (12.17).
-4. Write the same SHA in the `ref` of the conformance workflow.
-5. Run the series U (11.32) and update its expected numbers.
-6. Add one line to `CHANGELOG.md` with the old and the new SHA.
+4. Run the series U (11.32). The script `tests/conformance/run.sh` takes the new SHA from `Cargo.toml`. Update the expected numbers.
+5. Add one line to `CHANGELOG.md` with the old and the new SHA.
 
 Hune builds the PEP one time at start with these values:
 

@@ -5,6 +5,7 @@
 #   (default) builds the musl binary in the builder image (17.2, stage 1 with network, stage 2 without),
 #             then runs the cases below with Docker. The runner builds for its own architecture
 #             (ubuntu-24.04 for amd64, ubuntu-24.04-arm for arm64): no build crosses an architecture.
+#             The same job has a local script: tests/ci/all.sh runs this script on the machine of the owner.
 #   --local   runs the cases that need no Docker, on the host: the build (when musl-gcc exists, else the
 #             host binary is used and G01 is skipped), G01, G02, G08 (when kubeconform exists) and G09
 #             with the host binary and the paths rewritten under target/. Cases that need Docker are skipped.

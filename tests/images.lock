@@ -1,7 +1,7 @@
 # Pins of every image, tool version and archive that the tests and the build use (16.1).
 # One line: <name> <reference>@sha256:<digest>.
 # Each image line holds the multi-architecture index digest of `docker buildx imagetools inspect <tag>` (2026-11-22).
-# A new image line needs its digest before a release: the release workflow refuses a line that has none.
+# A new image line needs its digest before a release: the release workflow and the script tests/ci/release.sh refuse a line that has none.
 # The test scripts export each line as IMAGE_<NAME> (upper case, "-" and "." become "_").
 rust rust:1.99.1-trixie@sha256:8a4e90c7946b74626488b1446f712c0fe0ed1a596cbd3d871684bc9c5433ae07
 cargo-deny-version 0.22.0

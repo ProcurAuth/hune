@@ -1,5 +1,5 @@
 #!/bin/sh
-# Job `policy` (16.17, 16.18): the policy checks.
+# Job `policy` (16.17, 16.18): the policy checks. The workflow ci.yaml and tests/ci/all.sh both call this script.
 # Use: tests/ci/policy.sh [--local]
 #      tests/ci/policy.sh --print-deps        print the dependency list of 17.9 (to update deps.lock.txt)
 #   (default) runs the checks in the builder image of 17.2, so the runner needs only Docker.
@@ -67,7 +67,7 @@ failed=0
 # The maintainer keeps the word list outside the repository. The script reads it from the environment
 # variable HUNE_POLICY_WORDS (a secret of the CI; the words are separated by line ends or commas) or, out of
 # the CI, from the untracked file private/policy-words.txt (one word on each line; .gitignore holds /private/).
-# With no list, the two checks fail. A finding gives the file and the line number, never the word.
+# With no list, the two checks fail (fail-closed). A finding gives the file and the line number, never the word.
 POLICY_WORDS_FILE=private/policy-words.txt
 
 policy_words() {
@@ -140,11 +140,13 @@ run_check() {
 }
 
 # --- 1 No image push, and no registry login in the scripts (16.18) ---
+# The patterns are split with '' so that they do not match this script. The check scans the workflows and
+# the other files that could push an image.
 run_check "No image push" \
-    "grep -rnE 'ghcr''\\.io|docker/login''-action|packages: *wr''ite|push: *tr''ue' .github/workflows"
+    "grep -rnE --exclude=policy.sh 'ghcr''\\.io|docker/login''-action|packages: *wr''ite|push: *tr''ue' .github/workflows tests/ci tests/compose tests/conformance build tools deploy"
 # Extra check: no script pushes an image or logs in either.
 run_check "No docker push or login in scripts (extra)" \
-    "grep -rnE --exclude=policy.sh 'docker[[:space:]]+(pus''h|logi''n)|buildx[^#]*--pus''h|imagetools[[:space:]]+crea''te' .github tests/ci build tools deploy"
+    "grep -rnE --exclude=policy.sh 'docker[[:space:]]+(pus''h|logi''n)|buildx[^#]*--pus''h|imagetools[[:space:]]+crea''te' .github tests/ci tests/conformance build tools deploy"
 
 # --- 2 No environment read outside the engine (3.4, R2) ---
 # The pattern holds the short form `env::var` too (after `use std::env;`).

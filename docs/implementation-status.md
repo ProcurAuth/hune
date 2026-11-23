@@ -98,6 +98,7 @@ The owner is not yet on record for the rows below. The project arbitrated or dec
 | ID-K350 | The engine savings of wave H |
 | ID-K344 | The technical preparation of the release 0.1.0 |
 | ID-K353 | The page fixes of the security review of 2026-11-22 |
+| ID-K361 | The workflows stay as an option; `tests/ci/all.sh` and `tests/ci/release.sh` run the jobs and the release with no GitHub Actions |
 
 Three arbiters decided these rows on 2026-11-15, in the absence of the owner: ID-K80, ID-K81, ID-K82, ID-K85, ID-K87, ID-K88, ID-K89, ID-K91, ID-K92, ID-K95, ID-K96 and ID-K97 (F23). The owner must re-read them. The rows ID-K83, ID-K84, ID-K86, ID-K90, ID-K93, ID-K94, ID-K176, ID-K177 and ID-K6 to ID-K66 have the owner's answer.
 
@@ -121,6 +122,8 @@ Use these commands from the root of the repository. The toolchain file selects R
 6. Run `tests/ci/policy.sh --local`.
 7. Run `python3 -I tools/ste_lint.py docs/*.md README.md CHANGELOG.md`.
 
+The workflows in `.github/workflows` run the CI and the release on GitHub. They are optional. The owner can run every job and the release with `tests/ci/all.sh` and `tests/ci/release.sh`, with no GitHub Actions and no GitHub billing. The script `tests/ci/all.sh` runs every job of the merge gate in order and stops at the first failure (16.17).
+
 These scripts need Docker. Each one starts local containers on `127.0.0.1` and removes them at the end.
 
 | Script | Tests |
@@ -133,6 +136,7 @@ These scripts need Docker. Each one starts local containers on `127.0.0.1` and r
 | `tests/conformance/run.sh --local` | The series U of ProcurAuth; it needs a ProcurAuth checkout |
 | `tests/load/run.sh` | The load test of 16.16 |
 | `tests/ci/fuzz.sh` | The fuzz targets; it needs the nightly toolchain and cargo-fuzz |
+| `tests/ci/nightly.sh` | The random seeds, and the jobs `source`, `pgsource` and `mongosource` again; `all.sh` does not run it |
 
 ## How to run Hune
 

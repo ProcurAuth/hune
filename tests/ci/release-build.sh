@@ -1,8 +1,11 @@
 #!/bin/sh
 # Steps 3 to 5 of the release workflow (17.3, 17.4): build one target two times, check, make the archive.
+# The workflow release.yaml calls this script on a runner of each architecture. The owner can run it by hand
+# on a machine of each architecture, with no GitHub Actions: then tests/ci/release.sh makes the release.
 # Use: tests/ci/release-build.sh VERSION [--local]
 #   VERSION is x.y.z. The script builds for the architecture of this machine (a release runner builds
-#   its own architecture). The output is dist/hune_<VERSION>_linux_<arch>.tar.gz.
+#   its own architecture). The output is dist/hune_<VERSION>_linux_<arch>.tar.gz. In a local release, copy
+#   the archive of the other machine into dist/ too.
 # Steps:
 #   1. Build the musl binary two times, in two new containers and two target directories (17.2).
 #      The two binaries must have the same SHA-256.
@@ -10,7 +13,7 @@
 #   3. Make the directory hune_<VERSION>_linux_<arch>/ with the files of 17.4 and the deterministic archive.
 #   LICENSE-THIRD-PARTY comes from tools/third-party.sh. config.reference.hcl is the output of
 #   `hune print-reference --format hcl --profile local`.
-# The script never pushes anything. SHA256SUMS is made by the release job, which sees both archives.
+# The script never pushes anything. SHA256SUMS is made by the release job of release.yaml, or by tests/ci/release.sh, which see both archives.
 set -eu
 . "$(dirname "$0")/ci-lib.sh"
 [ "$#" -ge 1 ] || { echo "use: tests/ci/release-build.sh VERSION [--local]" >&2; exit 2; }

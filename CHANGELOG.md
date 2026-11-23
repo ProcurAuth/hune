@@ -6,6 +6,18 @@ The section `## Unreleased` holds the changes that no release has yet.
 
 ## Unreleased
 
+### Added
+
+- The script `tests/ci/all.sh` runs the jobs of the merge gate in order and stops at the first failure. The option `--from` continues a run after a fix.
+- The script `tests/ci/release.sh` makes the release from a local machine. It checks the input, makes `SHA256SUMS`, makes and checks the draft release with `gh`, and publishes it. The option `--amd64-only` releases the `amd64` archive only.
+- With these two scripts, the owner can run every job and the release with no GitHub Actions and no GitHub billing.
+
+### Changed
+
+- The workflows in `.github/workflows` stay as an option. They run the CI and the release on GitHub. Hune does not depend on them.
+- The script `tests/conformance/run.sh` takes the commit of ProcurAuth from `Cargo.toml` only. No second pin exists.
+- The job `policy` scans `tests/compose`, `tests/conformance` and the deployment files for image pushes, in addition to the workflows.
+
 ## 0.1.0 - 2026-11-22
 
 This is the first release of Hune. It is a private release. It holds the work of the milestones that exists on this date. Version 1.0.0 comes after the exit criteria of the milestone M7.
