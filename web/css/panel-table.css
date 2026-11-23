@@ -1,8 +1,8 @@
-/* Hune: styles of panel-table (9.20). Owner: the worker of this area (see web/css/tokens.css).
+/* Hune: styles of panel-table (9.20). (see web/css/tokens.css).
    The rules sit on top of the copied engine table (css/vendor/chdash/table.css, never edited) and of the older rules of
    dashboard.css. A rule here repeats the class of the older rule and adds one level, so that it wins. */
 
-/* Grafana parity (wave G, R1, R2, R4). The grid has the geometry that was measured on Grafana 12.4.2: the table sits inside
+/* Grafana parity (R1, R2, R4). The grid has the geometry that was measured on Grafana 12.4.2: the table sits inside
    the panel padding (8 px), a header row of 34 px and body rows of 36 px (the 1 px rule is inside these heights), a cell
    padding of 6 px, a 1 px rule on the right and at the bottom of every cell (not at the right of the last column), a header
    in 14 px/500 at the muted colour, and a grey row hover. The columns are laid out by table.js (equal shares, 150 px at least). */

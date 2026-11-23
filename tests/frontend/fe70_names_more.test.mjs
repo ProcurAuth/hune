@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-70: names. organize, filter_fields_by_name and rename_by_regex (9.21a, rules 1, 2, 10 and 11), and the threats T86 and T87.
 import test from "node:test";
 import assert from "node:assert/strict";

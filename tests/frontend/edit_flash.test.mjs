@@ -1,4 +1,5 @@
-// The transfer of the frames between the base grid and the draft grid (10.2a, rule 17; decision ID-K301, owner bug of 2026-11-15).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The transfer of the frames between the base grid and the draft grid (10.2a, rule 17).
 // The switch "Edit" and the panel editor keep the frames of the panels that the draft does not change: the draft grid takes the element of
 // the base frame, with its chart and its last result, and returns it. The runtime keeps its records, and the page sends no query.
 import test from "node:test";
@@ -202,7 +203,7 @@ test("the page code of the transfer: the frame follows its page, and a chart tha
   assert.match(editor, /noMarks: true/);
 });
 
-// ID-K321 (owner answer of 2026-11-21): the page wrote the hook `data-hune-view` while the charts that came back from the panel editor had
+// The page wrote the hook `data-hune-view` while the charts that came back from the panel editor had
 // no pixels; they drew at the next resize callback. A task between the two (a script, or the probe of B207 under load) read blank canvases.
 test("a chart that returns to the page draws in the task of the event hune-shown, before any resize callback (10.2a, rule 17)", async () => {
   const { fitHeight } = await import("../../web/js/panels/common.js");

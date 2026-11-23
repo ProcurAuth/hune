@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The limits of the HTTP server (6.27, 12.16, 14.2, 14.14). They are constants, not keys.
 
 use std::time::Duration;

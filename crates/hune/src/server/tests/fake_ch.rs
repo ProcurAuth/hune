@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A fake ClickHouse HTTP server for the tests: it speaks enough HTTP/1.1 and the format
 //! `JSONCompactEachRowWithNamesAndTypes` to test the routes of the queries.
 //! Tests are not product code: they can use trait objects.

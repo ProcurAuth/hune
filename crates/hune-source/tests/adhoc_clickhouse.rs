@@ -1,4 +1,5 @@
-//! The ad hoc filters on a real ClickHouse (F36, decision ID-K329; 7.10a, 16.9).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The ad hoc filters on a real ClickHouse (F36; 7.10a, 16.9).
 //!
 //! The values of the filters are always string literals. ClickHouse converts the literal to the type of the column for
 //! the comparison. This test measures that comparison for numeric, date, `Decimal`, `Enum`, `LowCardinality` and

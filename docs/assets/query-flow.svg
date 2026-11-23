@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 550" width="1100" height="550" role="img" aria-label="The query flow of Hune: the request, the dashboard document, the expander, the query engine with its limits, and the data source, with the access check on top and the frame that returns to the browser below">
+  <title>The query flow</title>
+  <desc>The browser sends the etag, the time range and the variable values, never SQL. The server finds the saved query in the catalog. The expander puts the macros and the escaped values in the text. The query engine checks the statement and applies the limits. The data source runs the read. The rows come back as a stream, and the server builds a columnar frame for the browser. In the mode authzen, the PDP decides first and can lower the limits.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#a5b4fc"/></marker>
+    <marker id="arg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#34d399"/></marker>
+  </defs>
+  <rect width="1100" height="550" rx="20" fill="#12142a"/>
+  <g font-family="Inter, 'Segoe UI', -apple-system, Helvetica, Arial, sans-serif">
+    <text x="40" y="52" font-size="24" font-weight="700" fill="#ffffff">One panel query: the server builds the SQL</text>
+    <text x="40" y="82" font-size="15" fill="#9ca3d4">The browser asks for a panel by id. Hune finds the saved text, expands it, checks it and runs it with limits.</text>
+
+    <rect x="40" y="170" width="188" height="140" rx="12" fill="#1c1f3d" stroke="#2c3070" stroke-width="2"/>
+    <text x="134" y="200" font-size="16" font-weight="700" fill="#e0e7ff" text-anchor="middle">1. Request</text>
+    <text x="134" y="222" font-size="12" fill="#c7d2fe" text-anchor="middle" font-style="italic">the browser sends</text>
+    <text x="134" y="252" font-size="13" fill="#c7d2fe" text-anchor="middle">etag, time range,</text>
+    <text x="134" y="272" font-size="13" fill="#c7d2fe" text-anchor="middle">variable values</text>
+    <text x="134" y="292" font-size="13" fill="#c7d2fe" text-anchor="middle">and no SQL</text>
+    <rect x="248" y="170" width="188" height="140" rx="12" fill="#1c1f3d" stroke="#2c3070" stroke-width="2"/>
+    <text x="342" y="200" font-size="16" font-weight="700" fill="#e0e7ff" text-anchor="middle">2. Dashboard</text>
+    <text x="342" y="222" font-size="12" fill="#c7d2fe" text-anchor="middle" font-style="italic">the saved document</text>
+    <text x="342" y="252" font-size="13" fill="#c7d2fe" text-anchor="middle">panel query text</text>
+    <text x="342" y="272" font-size="13" fill="#c7d2fe" text-anchor="middle">variables, macros</text>
+    <text x="342" y="292" font-size="13" fill="#c7d2fe" text-anchor="middle">(from the catalog)</text>
+    <rect x="456" y="170" width="188" height="140" rx="12" fill="#4338ca" fill-opacity="0.45" stroke="#818cf8" stroke-width="2"/>
+    <text x="550" y="200" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">3. Expander</text>
+    <text x="550" y="222" font-size="12" fill="#e0e7ff" text-anchor="middle" font-style="italic">puts values in the SQL</text>
+    <text x="550" y="252" font-size="13" fill="#e0e7ff" text-anchor="middle">macros like</text>
+    <text x="550" y="272" font-size="13" fill="#e0e7ff" text-anchor="middle">$__timeFilter,</text>
+    <text x="550" y="292" font-size="13" fill="#e0e7ff" text-anchor="middle">escape by place</text>
+    <rect x="664" y="170" width="188" height="140" rx="12" fill="#4338ca" fill-opacity="0.45" stroke="#818cf8" stroke-width="2"/>
+    <text x="758" y="200" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">4. Query engine</text>
+    <text x="758" y="222" font-size="12" fill="#e0e7ff" text-anchor="middle" font-style="italic">checks and limits</text>
+    <text x="758" y="252" font-size="13" fill="#e0e7ff" text-anchor="middle">one statement,</text>
+    <text x="758" y="272" font-size="13" fill="#e0e7ff" text-anchor="middle">size, permit, time,</text>
+    <text x="758" y="292" font-size="13" fill="#e0e7ff" text-anchor="middle">rows and bytes</text>
+    <rect x="872" y="170" width="188" height="140" rx="12" fill="#0ea5e9" fill-opacity="0.28" stroke="#38bdf8" stroke-width="2"/>
+    <text x="966" y="200" font-size="16" font-weight="700" fill="#e0f2fe" text-anchor="middle">5. Data source</text>
+    <text x="966" y="222" font-size="12" fill="#bae6fd" text-anchor="middle" font-style="italic">runs a read</text>
+    <text x="966" y="252" font-size="13" fill="#bae6fd" text-anchor="middle">ClickHouse,</text>
+    <text x="966" y="272" font-size="13" fill="#bae6fd" text-anchor="middle">PostgreSQL</text>
+    <text x="966" y="292" font-size="13" fill="#bae6fd" text-anchor="middle">or MongoDB</text>
+    <path d="M230 240H246" stroke="#a5b4fc" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+    <path d="M438 240H454" stroke="#a5b4fc" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+    <path d="M646 240H662" stroke="#a5b4fc" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+    <path d="M854 240H870" stroke="#a5b4fc" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+
+    <rect x="248" y="104" width="604" height="44" rx="10" fill="none" stroke="#2c3070" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="550" y="124" font-size="13" font-weight="700" fill="#a5b4fc" text-anchor="middle">Mode authzen: the PDP decides first (dashboard.read)</text>
+    <text x="550" y="140" font-size="12" fill="#c7d2fe" text-anchor="middle">Its ceilings max_rows and max_duration lower the limits of the source.</text>
+    <path d="M550 148V168" stroke="#a5b4fc" stroke-width="1.5" fill="none" stroke-dasharray="4 4" marker-end="url(#ar)"/>
+
+    <path d="M966 312V344H134V316" stroke="#34d399" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#arg)"/>
+    <text x="550" y="372" font-size="13" fill="#a7f3d0" text-anchor="middle">rows as a stream, then one columnar frame; the browser draws the panel and computes the transforms</text>
+
+    <text x="40" y="420" font-size="13" font-weight="700" fill="#a5b4fc" letter-spacing="0.8">RULES</text>
+    <text x="40" y="444" font-size="12.5" fill="#c7d2fe">A stale etag gives 409 and the page reloads. A free text value becomes a literal. An identifier comes from a closed list.</text>
+    <text x="40" y="464" font-size="12.5" fill="#c7d2fe">Only one read statement passes. Hune takes a permit for the source and the person, or waits at most queue_wait.</text>
+    <text x="40" y="484" font-size="12.5" fill="#c7d2fe">A result above a limit is an error with a code. Hune never cuts a result and shows it as complete.</text>
+    <text x="40" y="518" font-size="12.5" fill="#9ca3d4">When the browser aborts the request, Hune closes the connection and the source cancels the query.</text>
+  </g>
+</svg>

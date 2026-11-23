@@ -1,4 +1,5 @@
-//! The `hello` of the MongoDB driver sends no value of the process environment (13.2 rule 5, 8b.15, ID-MG25).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The `hello` of the MongoDB driver sends no value of the process environment (13.2 rule 5, 8b.15).
 //!
 //! The crate `mongodb` 3.10.0 of the registry puts the name of a FaaS platform and values of the variables
 //! `AWS_REGION`, `AWS_EXECUTION_ENV`, `K_SERVICE`, `VERCEL`, `FUNCTIONS_WORKER_RUNTIME` and
@@ -208,7 +209,7 @@ async fn child_stub_hello() {
     assert!(with_client > 0, "no hello holds the metadata of the driver");
 }
 
-/// ID-MG25: with the variables of each platform set, the `hello` that a stub server receives holds no value of them.
+/// With the variables of each platform set, the `hello` that a stub server receives holds no value of them.
 #[test]
 fn hello_with_platform_variables_sends_none() {
     for (scenario, vars) in scenarios() {
@@ -232,7 +233,7 @@ async fn child_container_hello() {
     assert!(with_client > 0, "no hello holds the metadata of the driver");
 }
 
-/// ID-MG25: the same with a real MongoDB server: the proxy of the container tests records the `hello` between the
+/// The same with a real MongoDB server: the proxy of the container tests records the `hello` between the
 /// driver and the server, with the variables of every platform set.
 #[test]
 #[ignore = "needs a MongoDB container: run tests/ci/mongosource.sh"]

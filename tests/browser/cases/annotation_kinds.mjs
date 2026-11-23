@@ -1,4 +1,5 @@
-// Browser case B217 (4.5b, 7.37, 9.19d, 10.3b, 10.3c; decisions ID-K142 and ID-K333): the annotations from a PostgreSQL
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B217 (4.5b, 7.37, 9.19d, 10.3b, 10.3c): the annotations from a PostgreSQL
 // source and a MongoDB source. A dashboard has a time series on the ClickHouse source of the run and one annotation on each
 // other kind. The page sends one annotation request for each annotation, and the test hook `data-annotations` of the panel
 // holds the marks of both with the colour of each annotation. The hover card shows the texts of each kind. The tab

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers for the unit tests of the configuration.
 
 use std::io::Write;

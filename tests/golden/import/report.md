@@ -108,7 +108,7 @@
 | `monitor:/refresh` | changed |  | `refresh` | refresh 5s is not a choice of 4.6: the next larger choice is 10s |  | yes |
 | `monitor:/style` | unsupported |  | `style` | unknown member | member removed | yes |
 | `monitor:/tags/2` | changed |  | `tags.2` | two equal tags are changed to one tag |  | yes |
-| `monitor:/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | yes |
+| `monitor:/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | yes |
 | `monitor:/templating/list/3/query` | changed |  | `templating.list.3.query` | the variable top_n stands in code: value_type is number |  | yes |
 | `monitor:/templating/list/3/skipUrlSync` | dropped |  | `templating.list.3.skipUrlSync` | skipUrlSync has no meaning in Hune |  | yes |
 | `monitor:/templating/list/4/description` | dropped |  | `templating.list.4.description` | format 1 has no description of a variable (4.7) |  | yes |
@@ -162,7 +162,7 @@
 | `monitor-v2a:/spec/layout/spec/rows/3/spec/title` | changed |  | `spec.layout.spec.rows.3.spec.title` | an empty title becomes the text Row |  | yes |
 | `monitor-v2a:/spec/tags/2` | changed |  | `spec.tags.2` | two equal tags are changed to one tag |  | yes |
 | `monitor-v2a:/spec/timeSettings/autoRefresh` | changed |  | `spec.timeSettings.autoRefresh` | refresh 5s is not a choice of 4.6: the next larger choice is 10s |  | yes |
-| `monitor-v2a:/spec/variables/1/spec/allowCustomValue` | changed |  | `spec.variables.1.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | yes |
+| `monitor-v2a:/spec/variables/1/spec/allowCustomValue` | changed |  | `spec.variables.1.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | yes |
 | `monitor-v2a:/spec/variables/3/spec/query` | changed |  | `spec.variables.3.spec.query` | the variable top_n stands in code: value_type is number |  | yes |
 | `monitor-v2a:/spec/variables/3/spec/skipUrlSync` | dropped |  | `spec.variables.3.spec.skipUrlSync` | skipUrlSync has no meaning in Hune |  | yes |
 | `monitor-v2a:/spec/variables/4/spec/description` | dropped |  | `spec.variables.4.spec.description` | format 1 has no description of a variable (4.7) |  | yes |
@@ -268,7 +268,7 @@
 | `monitor-wrapped:/dashboard/refresh` | changed |  | `refresh` | refresh 5s is not a choice of 4.6: the next larger choice is 10s |  | yes |
 | `monitor-wrapped:/dashboard/style` | unsupported |  | `style` | unknown member | member removed | yes |
 | `monitor-wrapped:/dashboard/tags/2` | changed |  | `tags.2` | two equal tags are changed to one tag |  | yes |
-| `monitor-wrapped:/dashboard/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | yes |
+| `monitor-wrapped:/dashboard/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | yes |
 | `monitor-wrapped:/dashboard/templating/list/3/query` | changed |  | `templating.list.3.query` | the variable top_n stands in code: value_type is number |  | yes |
 | `monitor-wrapped:/dashboard/templating/list/3/skipUrlSync` | dropped |  | `templating.list.3.skipUrlSync` | skipUrlSync has no meaning in Hune |  | yes |
 | `monitor-wrapped:/dashboard/templating/list/4/description` | dropped |  | `templating.list.4.description` | format 1 has no description of a variable (4.7) |  | yes |

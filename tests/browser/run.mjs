@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser suite of 16.10, against the real server and a real ClickHouse.
 // Use: node tests/browser/run.mjs [--only B01,B05] [--keep-going]
 //

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The JSON output of a frame (7.16).
 
 use hune_core::frame::{Frame, FrameBuilder, FrameStats, write_json_string};

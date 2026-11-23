@@ -1,4 +1,5 @@
-//! Tests of the key `clickhouse "<id>".adhoc_columns` (13.12, 13.13, decision ID-K329): optional with no default, a closed
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Tests of the key `clickhouse "<id>".adhoc_columns` (13.12, 13.13): optional with no default, a closed
 //! list of plain column names, no duplicate, the value form only, the reference and `print-config`.
 
 use super::*;

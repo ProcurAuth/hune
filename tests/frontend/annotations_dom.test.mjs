@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-37 (9.19d, rules 11, 12 and 15, and T61): the card, the status text, the keys and the second table of "View data" with a fake DOM.
 // A hostile title, text or tag must stay a text node. No element, no attribute and no style comes from data.
 import test from "node:test";

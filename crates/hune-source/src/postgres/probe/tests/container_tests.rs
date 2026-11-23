@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Container tests of the probe and of the error map (8a.8, 8a.12, 16.9a).
 //!
 //! The tests are `#[ignore]`. The script `tests/ci/pg-probe.sh` starts a disposable PostgreSQL on
@@ -123,7 +124,7 @@ async fn pg_probe_dangerous_memberships_fail_r2() {
     for (role, group) in [
         ("probe_member_pg_read_all_data", "pg_read_all_data"),
         ("probe_member_pg_execute", "pg_execute_server_program"),
-        // A NOINHERIT member can still use `SET ROLE` (ID-PG3).
+        // A NOINHERIT member can still use `SET ROLE`.
         ("probe_member_noinherit", "pg_monitor"),
         // A role with a write attribute.
         ("probe_member_attr", "grp_createdb"),

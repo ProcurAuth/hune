@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `document_parse` (16.16, 4.36, 4.38, 4.39, 4.41).
 //!
 //! Property: for any bytes, `validate` and `parse_folder_file` do not panic. A valid document

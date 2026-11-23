@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The bounded lists of the checks at save (6.13, 7.18): the faults and the warnings.
 //!
 //! The checks of 7.18 and 7.36 and the warnings 6 put their items into one [`SaveReport`]. Each list has a

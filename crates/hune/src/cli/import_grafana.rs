@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The subcommand `hune import-grafana` (section 15).
 //!
 //! The command reads the exported Grafana files, calls the pure importer of `hune-grafana`,

@@ -238,7 +238,7 @@ A call cannot stop early. When the client leaves, the call ends and gives back i
 | `access.ceiling_refused` | A query is above a ceiling. |
 | `access.options` | A request to the options route. |
 | `access.no_rule` | A route has no line in the access table. |
-| `access.prepass_mismatch` | A create or a save names a source that the first read of the document did not find, so Hune asked no question for it. Hune gives 500 and writes nothing (decision ID-K312). |
+| `access.prepass_mismatch` | A create or a save names a source that the first read of the document did not find, so Hune asked no question for it. Hune gives 500 and writes nothing. |
 
 The metrics `hune_pdp_requests_total`, `hune_pdp_duration_seconds`, `hune_pdp_questions_total`, `hune_pdp_cache_hits_total` and `hune_pdp_pool_in_use` describe the PDP traffic. No log line holds a token or the credential of the PDP.
 

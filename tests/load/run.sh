@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Load test of 16.16 (job `load`): a local ClickHouse, the release binary of Hune, a synthetic 45-panel
 # dashboard and the Node driver `dashboard.mjs`. The script stops the server and removes the container on
 # every path.

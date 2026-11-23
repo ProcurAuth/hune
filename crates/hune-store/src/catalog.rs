@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The catalog (5.8): the copy of the store in the memory of the instance.
 
 use std::collections::BTreeMap;

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The ClickHouse source. It has the HTTP client of 8.3 and 8.4 and the pool of 8.7.
 //! It has the admission of 8.8, the deadlines and the cancellation of 8.9, and the probe of 8.11.
 

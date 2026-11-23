@@ -1,4 +1,4 @@
-// The routes that only the editor calls: the history, the sources, the write routes and the preview (decision ID-K211a).
+// The routes that only the editor calls: the history, the sources, the write routes and the preview.
 // The page does not load this file. A static test refuses these names outside editor/ (9.30). The read routes and the
 // request function stay in ../api.js.
 

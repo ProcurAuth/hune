@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! One session to a PostgreSQL server (8a.4, 8a.5).
 //!
 //! A [`Session`] wraps one `tokio-postgres` client and the task of its connection. The
@@ -245,7 +246,7 @@ impl Connector {
 
 /// Opens one TCP connection to `host` and `port`, as the client crate does: each address in turn, `TCP_NODELAY`
 /// and keepalive on. The caller bounds the time. The idle time of the keepalive is the one of the system
-/// (ID-25).
+///.
 ///
 /// # Errors
 ///

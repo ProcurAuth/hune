@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The verdict rule of the audit B153 (10.3h, rule 14; FE-79): one synthetic result for each verdict.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -11,7 +12,7 @@ const entry = (over = {}) => ({ pointer: "options.draw", types: ["timeseries"], 
 
 test("a control with an effect passes", () => assert.deepEqual(run([ok()]), []));
 
-test("verdict: no effect on the preview (the class of defect of ID-K179)", () => {
+test("verdict: no effect on the preview", () => {
   const f = run([ok({ preview: false })]);
   assert.equal(f.length, 1);
   assert.match(f[0], /the preview does not change/);

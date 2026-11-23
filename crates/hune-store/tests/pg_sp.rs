@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The PostgreSQL tests of 5.36 (SP-01 to SP-19), the start checks of 5.29 and `migrate-store`
 //! of 5.28. Each test makes its own databases on the server of the test run.
 //!

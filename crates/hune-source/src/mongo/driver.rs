@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The driver of a MongoDB source (8b.2, 8b.4, 8b.5, 8b.16).
 //!
 //! This is the only module that names the crates `mongodb` and `bson` (8b.2, policy check of 16.18). It
@@ -31,7 +32,7 @@
 //!   secondary ends by the idle timeout of the server. A direct connection has one server, so it is not
 //!   affected.
 //! - The driver reads no environment variable. The crate `mongodb` is a local copy in `vendor/mongodb`
-//!   (8b.2, decision `ID-MG25`) without the reads of the original. The metadata of `hello` thus holds no
+//!   (8b.2) without the reads of the original. The metadata of `hello` thus holds no
 //!   name of a platform or a container. The test `mongosource_hello` makes sure of this.
 
 use std::collections::HashMap;

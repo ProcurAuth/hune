@@ -1,4 +1,5 @@
-// The expand of a section (9.8, 10.2a rule 17; decision ID-K325, owner answer of 2026-11-22). A collapsed section is out of the layout, so
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The expand of a section (9.8, 10.2a rule 17). A collapsed section is out of the layout, so
 // the engine releases the canvases of its charts. The charts drew again only at the next resize callback, and a task between the expand and
 // that callback read blank canvases. The grid now sends the event "hune-shown" at the end of the expand, after the section shows: each chart
 // that had no width draws in that task (common.js fitHeight, heatmap.js, timeline.js, piechart.js).

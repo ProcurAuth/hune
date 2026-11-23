@@ -1,4 +1,4 @@
-// The option table of the type `table` (10.3h, F43; 4.27, 4.18). Owner: the worker of group C.
+// The option table of the type `table` (10.3h, F43; 4.27, 4.18).
 // The members under `fields.defaults` are the members of 4.18 that apply to each column. The form value of the footer is a list of
 // calculations and the member is `{ reducers }` (`wrap` and `unwrap` of rows.js). The sort list has its builder in `forms/sort_list.js` (DOM code).
 // The cell type is an old control (10.3a): the renderer places it.

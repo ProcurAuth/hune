@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `hune copy-store`, `hune export` and `hune import` (5.37 to 5.39).
 //!
 //! The functions read through the `Store` trait and write through the importer of the target.

@@ -1,4 +1,5 @@
-//! Wave H, item P02 (decision ID-K326): the data link tokens of Grafana 12 (9.18) and the two links of the table
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Items P02: the data link tokens of Grafana 12 (9.18) and the two links of the table
 //! "Traces table" of the dashboard "Simple ClickHouse OTel Dashboard" of the ClickHouse plugin 4.5.1 (15.6).
 
 mod common;

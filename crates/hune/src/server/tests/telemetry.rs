@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The OTLP exporter in the server (M7, 14.9, 14.10): a fake collector on `127.0.0.1`, a server with
 //! `telemetry.enabled = true`, and the JSON that the collector received.
 //! Tests are not product code: they can use trait objects.

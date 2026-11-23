@@ -1,4 +1,5 @@
-//! Wave H, item P12 (decision ID-K326; I41): the importer maps the classic gauge of Grafana 12.4.2 (15.6, 4.33e).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Items P12: the importer maps the classic gauge of Grafana 12.4.2 (15.6, 4.33e).
 //! The options of the gauge map to the optional members of 4.33e, `custom.neutral` of the defaults becomes the option `neutral`,
 //! the sizes are read with `sizing` = `manual` only, and a member that no row names is an item.
 

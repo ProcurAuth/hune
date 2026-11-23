@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Checks of the copied chart engine (9.24): the lock file, the hashes, the imports and the shim exports.
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -126,7 +127,7 @@ test("the shim NUMERIC_RE, wasm and loader behave as 9.24 says", async () => {
   assert.equal(storage.pref(storage.KEYS.chartLegend, "list").get(), "list");
 });
 
-// The edits of milestone F and of the parity waves of the chart engine (docs/engine-patches.md): each one has a `// hune:` mark.
+// The edits of the Grafana-parity work and of the parity waves of the chart engine (docs/engine-patches.md): each one has a `// hune:` mark.
 test("the engine edits E7 to E12 are marked", () => {
   const core = readFileSync(join(web, "js/vendor/chdash/app_chart_core.js"), "utf8");
   const marks = [
@@ -143,7 +144,7 @@ test("the engine edits E7 to E12 are marked", () => {
   assert.match(core, /opts\.tooltipHideZeros === true/);
 });
 
-// The edits 13 to 15 of wave 2 (F16, F17): the right y scale, the style of one series, the titles of the axes and the soft ends.
+// The edits 13 to 15 of the second set (F16, F17): the right y scale, the style of one series, the titles of the axes and the soft ends.
 test("the engine edits E13 to E15 are marked and the options exist", () => {
   const core = readFileSync(join(web, "js/vendor/chdash/app_chart_core.js"), "utf8");
   const marks = [

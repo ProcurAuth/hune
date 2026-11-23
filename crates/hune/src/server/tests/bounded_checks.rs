@@ -1,5 +1,6 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The work before and after the decision is bounded (6.27, 11.20, 12.16). Findings NEW-PLACE, N2, D3 and D4 of the
-//! security review of 2026-11-16, and the arbitrated decision ID-K312: the validation never runs on an async worker,
+//! security review of 2026-11-16, and the rule that the validation never runs on an async worker,
 //! a place stays taken until its work ends, the decision comes before the validation, and a subject has its own caps.
 
 use super::api::{JSON, NODES, ZERO_ETAG, doc_text, etag_of, fill, key, post_body, put_body};
@@ -287,7 +288,7 @@ async fn the_lists_of_errors_and_warnings_stop_at_max_errors_with_a_last_item() 
     assert!(r.body.len() < 64 * 1024 + doc.len() * 2, "{}", r.body.len());
 }
 
-// ---- ID-K312: the decision comes before the validation (mode `authzen`) ---------------------------------------
+// ---- The decision comes before the validation (mode `authzen`) ---------------------------------------
 
 /// The grants of a subject: `(action, node below the service)`. A grant covers each node below it.
 fn grants(list: Vec<(&'static str, &'static str)>) -> impl Fn(&Q) -> Ans + Send + Sync + 'static {
@@ -347,7 +348,7 @@ fn preview_body(sql: &str) -> Vec<u8> {
 
 /// A subject with no grant sends an invalid document and a document of 4 MiB to the create, the save, the two
 /// `validate_only` routes, the preview and the restore. Each answer is `403`, the validator never runs, and the
-/// restore reads no version. Before ID-K312, the document was validated first (`422`, or seconds of work).
+/// restore reads no version. Before this rule, the document was validated first (`422`, or seconds of work).
 #[tokio::test]
 async fn k312_a_subject_with_no_grant_gets_403_and_the_validator_never_runs() {
     let pdp = Pdp::start(grants(vec![("dashboard.read", "")])).await;

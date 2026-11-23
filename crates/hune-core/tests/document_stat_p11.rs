@@ -1,4 +1,5 @@
-//! The members of wave H, item P11 (decision ID-K326): the options `percent_change`, `percent_change_color`, `title_size` and
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The members (P11): the options `percent_change`, `percent_change_color`, `title_size` and
 //! `value_size` of a `stat` (4.29).
 //!
 //! Each member is optional. An absent member has its default value, and the canonical writer leaves out a member that has its

@@ -1,4 +1,5 @@
-//! Decision ID-K325, point 1 (owner answer of 2026-11-22): a uid or a folder that exists and one that does not exist
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! A uid or a folder that exists and one that does not exist
 //! cost the same PDP requests on each write route.
 //!
 //! For each write route, with `cache_ttl` of 0 s and of 30 s, a subject with no grant and a subject with

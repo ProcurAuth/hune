@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The migrations of the document format (4.42).
 //!
 //! Each migration is a pure function. It reads the bytes of a document of an older format,

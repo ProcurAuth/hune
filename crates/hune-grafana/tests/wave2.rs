@@ -1,4 +1,5 @@
-//! Milestone F, wave 2: the importer rows of 15.6 for format 3 (cases I30, I31 and I32). Each case
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Milestone F, the second set: the importer rows of 15.6 for format 3 (cases I30, I31 and I32). Each case
 //! runs in the four input forms: v1 raw, v1 wrapped, v2alpha1 and v2beta1.
 
 mod common;
@@ -486,7 +487,7 @@ fn i31_colour_modes() {
                 assert_eq!(override_set(r)["color"], json!({"mode": mode, "fixed": null}), "{form} {ptype} {id}");
             });
         }
-        // Each Grafana palette mode gives the one series palette, with one `changed` item (ID-K74).
+        // Each Grafana palette mode gives the one series palette, with one `changed` item.
         for id in ["palette-classic-by-name", "palette-saturated"] {
             let mut parts = Parts::new(ptype);
             parts.defaults = json!({"color": {"mode": id, "fixedColor": "green", "seriesBy": "last"}});
@@ -724,7 +725,7 @@ fn i31_line_style() {
             });
         }
     }
-    // An array that is not the default gives `line_dash_array` (wave H, item P14). An array out of the range of 4.18 keeps the fill and
+    // An array that is not the default gives `line_dash_array`. An array out of the range of 4.18 keeps the fill and
     // gives an item.
     let mut parts = Parts::new("timeseries");
     parts.defaults = json!({"custom": {"lineStyle": {"fill": "dash", "dash": [5, 5]}}});

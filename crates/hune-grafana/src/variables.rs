@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The variables (4.7 to 4.11) and the variable table of 15.6.
 
 use std::collections::{BTreeSet, HashSet};
@@ -55,7 +56,7 @@ pub(crate) enum VarKind {
     Constant {
         value: String,
     },
-    /// The kind `adhoc` (4.10c, decision ID-K329): the source and the keys. The document holds no filter.
+    /// The kind `adhoc` (4.10c): the source and the keys. The document holds no filter.
     Adhoc {
         source: String,
         keys: Vec<String>,
@@ -717,7 +718,7 @@ fn convert_variable(
             };
             let sql = prepare(ctx, sql_node, text, names, Fallback::DashboardNotImported, dialect)?;
             let default = default_list(ctx, current, multi, include_all, None, false);
-            // Grafana reads an absent member as `true`. A `query` variable is a rule of the page only (ID-K200).
+            // Grafana reads an absent member as `true`. A `query` variable is a rule of the page only.
             let allow_custom_value = allow_custom_of(ctx, allow_custom.as_ref(), true);
             VarKind::Query {
                 source,
@@ -750,10 +751,10 @@ fn convert_variable(
             if options.is_some() && !uses_options {
                 ctx.meta();
             }
-            // A closed `custom` variable is a check of the server (ID-K200): an absent member stays closed.
+            // A closed `custom` variable is a check of the server: an absent member stays closed.
             let allow_custom_value = allow_custom_of(ctx, allow_custom.as_ref(), false);
             if allow_custom.as_ref().is_none_or(Node::is_null) {
-                let reason = "Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200)";
+                let reason = "Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check";
                 ctx.changed(&allow_pointer, None, reason);
             } else if allow_custom_value {
                 open_pointers = Some((allow_pointer, current_pointer));
@@ -856,7 +857,7 @@ fn adhoc_grafana_keys(nodes: &[Option<&Node>]) -> GrafanaKeys {
     out
 }
 
-/// An `adhoc` variable (15.6, 4.10c, decision ID-K329). The variable keeps its kind, with a `changed` item: Hune applies
+/// An `adhoc` variable (15.6, 4.10c). The variable keeps its kind, with a `changed` item: Hune applies
 /// the filters only where a query has `$__adhocFilters`, with the operators `=` and `!=`, and it never wraps a query.
 /// Its source comes from the source map and MUST be a ClickHouse source. Its keys are the keys that Grafana names, kept
 /// when they are plain column names and, with `-c`, when the configured list of the source holds them. With no key,

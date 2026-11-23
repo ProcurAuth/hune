@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The history, restore and move routes (6.17 to 6.19).
 
 use super::dashboards::{path_uid, refresh, write_answer};

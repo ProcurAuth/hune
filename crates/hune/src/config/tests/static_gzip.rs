@@ -1,4 +1,5 @@
-//! Tests of the key `server.compress_static` (13.8, 9.3, decision ID-K304): an optional boolean with the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Tests of the key `server.compress_static` (13.8, 9.3): an optional boolean with the
 //! default `true`, a value in the file only, and no coercion.
 
 use super::*;

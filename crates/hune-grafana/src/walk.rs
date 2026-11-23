@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Read access to a Grafana JSON value with its JSON pointer. The walk of an object reports
 //! each member that no row of 15.6 names.
 

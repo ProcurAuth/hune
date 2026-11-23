@@ -97,7 +97,7 @@ export function buildDom(doc, tree, expand = (text) => text) {
 export function createText(panel) {
   const content = panel.options && Array.isArray(panel.options.content) && panel.options.content.every((l) => typeof l === "string") ? panel.options.content : [];
   const parsed = parseMarkdown(content);
-  // The placeholders that the text holds. The key reads them and never expands the whole text (ID-K108).
+  // The placeholders that the text holds. The key reads them and never expands the whole text.
   const refs = [...new Set(content.join("\n").match(/\$\{[A-Za-z0-9_]+(?::[A-Za-z0-9_]+)?\}|\$[A-Za-z0-9_]+/g) || [])];
   const limit = (key) => ({ limit: key, message: MD_MESSAGES[key] });
   return {

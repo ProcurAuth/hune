@@ -1,4 +1,5 @@
-//! Decision ID-K321, point 2 (owner answer of 2026-11-21): a `403` does not show whether a uid or a folder exists.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! A `403` does not show whether a uid or a folder exists.
 //!
 //! For each route that names a uid or a folder, a subject without the right sends the same request for a uid (or a
 //! folder) that exists and for one that does not exist. The two answers are equal byte for byte: the status, each

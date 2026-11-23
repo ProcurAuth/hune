@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `server` (not in 16.17): the ignored tests of the crate hune against a real ClickHouse.
 # Use: tests/ci/server.sh [--local] [TAG ...]
 # Each TAG is a tag of the image `clickhouse/clickhouse-server`. The default is `26.8.34.13`.

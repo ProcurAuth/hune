@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The variables, the macros and the expansion of 7.34 and 7.35, with the property PM.
 
 mod mongo_common;

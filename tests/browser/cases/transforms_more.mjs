@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B180 to B189 (4.25a, 9.21a, 9.22a, 10.3a, 15.6): the eleven more transforms (F28).
 // B180: organize, sort_by, limit. B181: calculate_field. B182: merge. B183: join_by_field. B184: partition_by_values.
 // B185: the caps. B186: the forms of the editor. B187: the import. B188: a reuse panel. B189: hostile names.
@@ -128,7 +129,7 @@ export const cases = [
   },
   {
     id: "B182",
-    name: "merge: a table with two queries shows one frame with no select, and a merge of a panel with one query does nothing (9.21a, rule 6; ID-K174)",
+    name: "merge: a table with two queries shows one frame with no select, and a merge of a panel with one query does nothing (9.21a, rule 6)",
     async run(t) {
       const a = values("host String, x Int32", [["a", 1], ["b", 2]]);
       const b = values("host String, y Int32", [["b", 20], ["c", 30]]);

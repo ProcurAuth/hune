@@ -272,7 +272,7 @@ impl Callback {
                 async move {
                     // hune: the original reads AZURE_FEDERATED_TOKEN_FILE and
                     // AWS_WEB_IDENTITY_TOKEN_FILE. Hune reads no environment variable
-                    // (ID-MG25): the path is the Kubernetes default.
+                    //: the path is the Kubernetes default.
                     let path = "/var/run/secrets/kubernetes.io/serviceaccount/token".to_string();
                     let access_token = tokio::fs::read_to_string(path).await?;
                     Ok(IdpServerResponse {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-84: the gauge panel (9.19g, 4.33e). The vectors are the measures of the classic gauge of Grafana 12.4.2 (58 gauges of 34 panels,
 // dark theme): the cells, the canvas boxes, the arcs, the text sizes and places, the threshold labels and the titles.
 import test from "node:test";

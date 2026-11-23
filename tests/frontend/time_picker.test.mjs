@@ -1,4 +1,5 @@
-// The time picker of 9.9 (decisions ID-K60 to ID-K66, owner request of 2026-11-12): the pure parts of time_calendar.js, and checks of the files
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The time picker of 9.9: the pure parts of time_calendar.js, and checks of the files
 // of web/ that hold the rules of the popup. The browser cases B07, B69 and B92 check the behaviour in a real page.
 import test from "node:test";
 import assert from "node:assert/strict";

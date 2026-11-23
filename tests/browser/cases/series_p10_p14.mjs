@@ -1,4 +1,5 @@
-// Browser cases B223 and B224 (4.18, 4.28, 4.30, 9.19; wave H, items P10 and P14): the gradient modes and the cosmetic series options of a time
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B223 and B224 (4.18, 4.28, 4.30, 9.19): the gradient modes and the cosmetic series options of a time
 // series and a bar chart, against the probes of Grafana 12.4.2 of 2026-11-22 (the canvas calls of 83 panels in temporary dashboards, dpr 1 and 2,
 // both themes; the values are in tests/frontend/vectors/FE-83-series-options.json):
 //   opacity fill 50 of #73BF69: a gradient from the top of the plot (alpha 0.5) to its bottom (alpha 0), the plain line;

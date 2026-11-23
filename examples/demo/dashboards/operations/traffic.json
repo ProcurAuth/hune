@@ -1,0 +1,436 @@
+{
+  "format_version": 3,
+  "uid": "traffic",
+  "title": "Traffic",
+  "description": "Request volume, status classes and sizes.",
+  "tags": [
+    "demo",
+    "traffic"
+  ],
+  "time": {
+    "from": "now-24h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "crosshair",
+  "links": [],
+  "variables": [
+    {
+      "kind": "query",
+      "name": "service",
+      "label": "Service",
+      "hide": "none",
+      "source": "demo",
+      "sql": [
+        "SELECT DISTINCT service",
+        "FROM demo.requests",
+        "WHERE $__timeFilter(ts)",
+        "ORDER BY service"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "name": "Deployments",
+      "source": "demo",
+      "sql": [
+        "SELECT ts AS time, concat(service, ' ', version) AS title, kind AS text, concat(service, ',', kind) AS tags",
+        "FROM demo.deployments",
+        "WHERE $__timeFilter(ts)"
+      ],
+      "color": "blue",
+      "panels": [
+        1
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "Requests per 5 minutes",
+          "description": "The dashed lines show the capacity thresholds: 200 and 230 requests.",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 16,
+            "h": 9
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(ts) AS t, count() AS requests",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND service IN (${service})",
+                "GROUP BY t",
+                "ORDER BY t"
+              ],
+              "min_interval": "5m",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "fixed",
+                "fixed": "blue"
+              },
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "transparent"
+                  },
+                  {
+                    "value": 200,
+                    "color": "orange"
+                  },
+                  {
+                    "value": 230,
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "smooth",
+            "line_width": 2,
+            "fill_opacity": 20,
+            "show_points": "never",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": false,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "multi"
+            },
+            "thresholds_style": "dashed_area"
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "barchart",
+          "title": "Requests by service and status class",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 16,
+            "y": 0,
+            "w": 8,
+            "h": 9
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT service,",
+                "  countIf(status < 300) AS ok,",
+                "  countIf(status >= 300 AND status < 400) AS redirect,",
+                "  countIf(status >= 400 AND status < 500) AS client_error,",
+                "  countIf(status >= 500) AS server_error",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND service IN (${service})",
+                "GROUP BY service",
+                "ORDER BY service"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "ok"
+                },
+                "set": {
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "green"
+                  },
+                  "display_name": "2xx"
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "redirect"
+                },
+                "set": {
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "blue"
+                  },
+                  "display_name": "3xx"
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "client_error"
+                },
+                "set": {
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "yellow"
+                  },
+                  "display_name": "4xx"
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "server_error"
+                },
+                "set": {
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "red"
+                  },
+                  "display_name": "5xx"
+                }
+              }
+            ]
+          },
+          "options": {
+            "orientation": "vertical",
+            "x_field": "service",
+            "stacking": "normal",
+            "show_values": "never",
+            "bar_width": 70,
+            "group_width": 80,
+            "x_tick_rotation": 0,
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "piechart",
+          "title": "Traffic by service",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 9,
+            "w": 8,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT service, count() AS requests",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND service IN (${service})",
+                "GROUP BY service",
+                "ORDER BY service"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "pie_type": "donut",
+            "reduce": {
+              "calc": "last",
+              "fields": "/^requests$/",
+              "values": true
+            },
+            "labels": [],
+            "legend": {
+              "show": true,
+              "placement": "right",
+              "mode": "table",
+              "values": [
+                "value",
+                "percent"
+              ]
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 4,
+          "type": "timeseries",
+          "title": "Server errors per hour",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 8,
+            "y": 9,
+            "w": 8,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "time_series",
+              "sql": [
+                "SELECT toStartOfInterval(ts, INTERVAL 1 hour) AS t, service, countIf(status >= 500) AS errors",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND service IN (${service})",
+                "GROUP BY t, service",
+                "ORDER BY t"
+              ],
+              "min_interval": "1h",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "draw": "bars",
+            "interpolation": "linear",
+            "line_width": 1,
+            "fill_opacity": 70,
+            "show_points": "never",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "normal",
+            "y_scale": "linear",
+            "legend": {
+              "show": false,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 5,
+          "type": "histogram",
+          "title": "Response size (KB)",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 16,
+            "y": 9,
+            "w": 8,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT bytes / 1024 AS response_kb",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND service IN (${service}) AND bytes < 60000"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "fixed",
+                "fixed": "purple"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "bucket_count": 40,
+            "bucket_size": null,
+            "bucket_offset": 0,
+            "combine": false,
+            "stacking": "none",
+            "line_width": 1,
+            "fill_opacity": 80,
+            "legend": {
+              "show": false,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

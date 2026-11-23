@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B80 to B86 (4.7a, 9.10, 9.26, 10.3b, 10.6): the placement of a variable in the grid.
 // B80: the controls of three variables in the grid, the bar with the rest, the same URL and effects as the bar.
 // B81: the toolbar row has no height when no variable is left, and nothing moves at the first frame.

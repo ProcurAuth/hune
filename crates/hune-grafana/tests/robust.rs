@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The importer never panics on input JSON: each value of a fixture is replaced by other values
 //! of another type, and the import runs again.
 

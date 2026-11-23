@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `GET /api/sources` (6.22): the ids, the labels and the kinds from the configuration.
 
 use super::gate;

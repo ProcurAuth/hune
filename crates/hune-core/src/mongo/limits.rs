@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The limits of the MongoDB query parser (7.28). They are constants, not keys of the configuration.
 //!
 //! A text is valid on every instance. A breach gives `422 sql_invalid` at run time and

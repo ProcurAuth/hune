@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The time model (7.3), the interval rule (7.4) and the interval argument of a group macro (7.23).
 
 use std::fmt;

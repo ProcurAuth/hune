@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-68 (9.5, 9.10, 9.13, 4.10a, 4.10b): the selection of the kinds `interval` and `constant`: 40 vectors. The expected values are written by hand from
 // the rules of the spec, not computed by the code under test.
 // FE-69 (T92): 40 hostile texts as an item, as a value and as a URL value. The page writes each of them as text only.

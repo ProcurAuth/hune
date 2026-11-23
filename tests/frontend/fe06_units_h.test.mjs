@@ -1,4 +1,5 @@
-// FE-06, wave H (P01): the 30 units of 4.20 that wave H adds, against the texts of Grafana 12.4.2 (9.15). The vector file holds the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-06, the later options (P01): the 30 units of 4.20 that the later options adds, against the texts of Grafana 12.4.2 (9.15). The vector file holds the
 // measure as it is: `expect` is the text of the page, and `grafana` is there only where the page differs on purpose (19.20n).
 import test from "node:test";
 import assert from "node:assert/strict";

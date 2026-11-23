@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The MongoDB source in the API with the real driver and a real server: the cases MS13, MS16 and MS17 of
 //! 16.9b.
 //!
@@ -371,8 +372,7 @@ fn ms20_annotations() -> Value {
     ])
 }
 
-/// MS20 (16.9b): annotations on a `mongodb` source through the server with the real driver (7.37; decisions
-/// ID-K142 and ID-K333). The route, the frame rules, the cap of 1,000 rows and the log line are those of the
+/// MS20 (16.9b): annotations on a `mongodb` source through the server with the real driver (7.37). The route, the frame rules, the cap of 1,000 rows and the log line are those of the
 /// other kinds. An empty result has no column and gives no mark (rule 13).
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 #[ignore = "needs a MongoDB container: run tests/ci/mongosource.sh"]

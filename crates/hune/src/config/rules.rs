@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The contradiction checks C5 to C12, C14 to C18, C20 to C24 and C26 to C29 (stage 3 of 13.19) and the
 //! warnings W1 to W9 (13.15).
 //!
@@ -571,7 +572,7 @@ pub fn warnings(c: &Checked, stage: &Stage2) -> Vec<Warning> {
             out.push(warning(&key, format!("{key} is disable for a host that is not a loopback address.")));
         }
     }
-    // W9: the block `geomap` (13.12c, decision ID-K328). Each viewer contacts the tile host.
+    // W9: the block `geomap` (13.12c). Each viewer contacts the tile host.
     if let Some(tile) = &stage.geomap_tile {
         out.push(warning("geomap.tile_url", super::geomap::w9_message(tile)));
     }

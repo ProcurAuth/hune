@@ -398,5 +398,5 @@
  "gradient": {
   "#73BF69": "linear-gradient(120deg, rgb(77, 172, 73), #73BF69)"
  },
- "palette_note": "`palette` is the classic palette of Grafana 12.4.2 (reference of the difference, 19.20a). The mode `palette` draws the one series palette of ClickHouse Dash (ID-K70, ID-K74): see `modes` and FE-23."
+ "palette_note": "`palette` is the classic palette of Grafana 12.4.2 (reference of the difference, 19.20a). The mode `palette` draws the one series palette of ClickHouse Dash: see `modes` and FE-23."
 }

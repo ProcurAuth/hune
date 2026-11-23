@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The frame of a PostgreSQL result (7.16, 7.16a, 7.16b, 8a.6).
 //!
 //! This module reads the column types of the Describe answer (8a.5, step 6). It refuses a type
@@ -20,7 +21,7 @@ use hune_core::frame::{Frame, FrameBuilder, FrameStats, FrameValue, Kind};
 
 use crate::postgres::decode::{ColumnType, DecodeError, Scalar, decode, raw_values};
 
-/// A column of a type that 7.16a does not list (ID-PG12). The error is `422 query_error` with
+/// A column of a type that 7.16a does not list. The error is `422 query_error` with
 /// `sqlstate = null`, built by `errors::unsupported_type`.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct UnsupportedColumn {
@@ -524,7 +525,7 @@ mod tests {
         }
     }
 
-    // ---- The frame of an annotation query on a `postgres` source (7.37, decisions ID-K142 and ID-K333) ----
+    // ---- The frame of an annotation query on a `postgres` source (7.37) ----
 
     /// The binary form of a one-dimension `text[]` (element type 25). `None` is a NULL element.
     fn text_array(items: &[Option<&str>]) -> Vec<u8> {

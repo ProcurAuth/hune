@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `GET /api/session` (6.10).
 
 use crate::server::build_info;

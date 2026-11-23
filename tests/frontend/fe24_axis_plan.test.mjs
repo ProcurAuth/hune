@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-24: the axis plan (9.19, F16), the style of a series (F17) and the axis hook of a scale.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -81,7 +82,7 @@ test("FE-24 the range of all the number fields together", () => {
   assert.deepEqual(sharedRange([{ kind: "number", values: Float64Array.of(1, 99), nulls: Uint8Array.of(0, 1) }]), { min: 1, max: 1 });
 });
 
-test("FE-24 the axis hook of a scale: automatic, hard ends, soft ends, percent and log (ID-K316)", () => {
+test("FE-24 the axis hook of a scale: automatic, hard ends, soft ends, percent and log", () => {
   const base = { binary: false, tickText: tickLabel, plainTick: tickLabel, percent: false, log: false };
   const ends = (set) => ({ min: null, max: null, softMin: null, softMax: null, ...set });
   const auto = scaleAxis({ ...base, ends: ends({}) });

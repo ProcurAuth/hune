@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The mapping of one panel: the panel members of 15.6 for the v1 and the v2 forms.
 
 use std::collections::BTreeSet;

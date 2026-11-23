@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Helpers of the tests of bucket_model.js (FE-42 to FE-46): vectors, fields and the data of the measure.
 import { readFileSync } from "node:fs";
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Generate the reference files from the key table (13.21): a complete configuration file
 //! for a profile, and the reference document in Markdown.
 

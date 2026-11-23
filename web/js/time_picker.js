@@ -1,5 +1,5 @@
 // The time picker (9.9): the range button and its popup. The popup has the absolute range at the left (From, To, a calendar, "Apply time
-// range") and the search and the lists at the right. Its look, keys and labels follow the range picker of ClickHouse Dash (ID-K60 to ID-K66).
+// range") and the search and the lists at the right. Its look, keys and labels follow the range picker of ClickHouse Dash.
 
 import { QUICK_RANGES, formatRangeText, parseAbsoluteInput, wallClock, zoneLabel, zoneName, zoneOffsetLabel } from "./time.js";
 import { addDays, addMonths, dayText, keyOf, monthGrid, parseRecent, pushRecent, typedRange, weekday } from "./time_calendar.js";

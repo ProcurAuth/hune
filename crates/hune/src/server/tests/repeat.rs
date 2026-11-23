@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The repeat of a panel (4.13a, 9.8c) at the server: no code runs for it. These tests check that a copy is
 //! the ordinary panel query of 6.20 with one value for the repeat variable. The answers are those of 7.7, the
 //! properties P, PG and PM, and the admission of 8.8. The route table (6.9) has no new route.

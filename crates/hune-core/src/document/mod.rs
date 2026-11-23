@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Document format 3 (section 4): types, closed parse, validation, canonical bytes and etag.
 //!
 //! [`validate`], [`migrate_2_to_3`] and [`migrate_1_to_3`] are the only functions that make a

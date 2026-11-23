@@ -1,4 +1,5 @@
-// Browser cases B220 and B221 (4.33f, 7.16e, 9.19h, T104; decision ID-K326, items P05 and D06): the logs panel.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B220 and B221 (4.33f, 7.16e, 9.19h, T104): the logs panel.
 // B220: the lines in both themes (the time, the level colours of Grafana 12.4.2, the gaps), the order, the option wrap, the details row
 //       with the mouse and with the keys.
 // B221: hostile lines stay text, the caps of lines and of characters, "No data", a frame with no text column, and the save refuses the

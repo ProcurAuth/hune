@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-12: filter_by_value (9.21).
 import test from "node:test";
 import assert from "node:assert/strict";

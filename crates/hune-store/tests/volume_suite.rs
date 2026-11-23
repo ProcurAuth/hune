@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The volume tests of 5.35 (SV-01 to SV-29) and the case SX-01 of 16.7.
 #![cfg(feature = "conformance")]
 

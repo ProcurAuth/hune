@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Check `access.identity.public_keys` (11.9): PEM text or a JWK Set with 1 to 16 keys.
 //!
 //! The check has the structure rules of 11.9. It uses no signature library. It reads the

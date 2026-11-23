@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Check the URLs of the configuration by hand (13.13). The rules are narrow: a scheme, a
 //! host, an optional port and, for one key, a path.
 

@@ -1,0 +1,81 @@
+{
+  "format_version": 3,
+  "uid": "welcome",
+  "title": "Welcome",
+  "description": "Start here: what the demo shows and what to try.",
+  "tags": [
+    "demo"
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "crosshair",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "text",
+          "title": "Welcome to the Hune demo",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 14,
+            "h": 8
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "This demo shows a Hune server that reads a local ClickHouse database with synthetic data.",
+              "",
+              "Hune stores each dashboard as one JSON file. The data are five services on six hosts, for the last 24 hours.",
+              "",
+              "## Dashboards",
+              "",
+              "- [Service overview](/d/service-overview): stat panels, a table, a bar chart and annotations.",
+              "- [Traffic](/d/traffic): time series with thresholds, bars, a pie chart and a histogram.",
+              "- [Latency](/d/latency): gauges, a heatmap, a state timeline and logs.",
+              "- [Server inventory](/d/servers): a table with coloured cells, links and a footer."
+            ]
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "text",
+          "title": "Things to try",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 14,
+            "y": 0,
+            "w": 10,
+            "h": 8
+          },
+          "options": {
+            "mode": "markdown",
+            "content": [
+              "1. Change the time range in the top right corner.",
+              "2. Select a host or a region in the variables.",
+              "3. Open the menu of a panel, then choose Edit or Inspect.",
+              "4. Open the menu of the dashboard to see the history of versions.",
+              "",
+              "",
+              "All values in this demo are synthetic."
+            ]
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

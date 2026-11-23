@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Vectors of the editor fixes (10.3): a valid macro is never an error in the editor, and the text areas switch the spell check off.
 // The editor marks no macro by itself. The server judges a macro (7.10, 7.22), and the editor shows its message.
 import { test } from "node:test";

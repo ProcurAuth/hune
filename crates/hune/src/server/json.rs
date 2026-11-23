@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The check of a JSON request body (6.2).
 //!
 //! `serde_json` accepts a duplicate member and a deep value without a report. This module adds

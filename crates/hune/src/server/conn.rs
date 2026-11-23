@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Connections: the accept loop of the main listener and the activity clock of a connection.
 //! The clock holds the idle time and the header time. This module also refuses a connection above
 //! `server.max_connections` (6.27, 12.16).

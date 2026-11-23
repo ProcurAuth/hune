@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // F42 fixes (10.3c): the highlighter has no stack limit, the node cap of the SQL tree is exact, and the folded view draws only the rows near the visible rows.
 // The tree is never a security check: a fault of the colours or of the tree never stops a draft change (the DOM test of this rule is in sql_editor_dom.test.mjs).
 import test from "node:test";

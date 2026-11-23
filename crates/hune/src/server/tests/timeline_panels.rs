@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The state timeline and the status history (4.33b, 6.20) at the server: the save and the read keep the
 //! canonical bytes, the validation gives the codes of 4.33b, the panel query is the ordinary panel query, and a
 //! `reuse` of such a panel works as for a time series. The route table (6.9) has no new route.

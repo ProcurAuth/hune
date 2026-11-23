@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Base64 for the public keys (11.9): the standard form with padding (PEM) and the URL form
 //! with no padding (JWK, RFC 7515).
 

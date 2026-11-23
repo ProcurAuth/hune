@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The write side of the volume backend (5.13 to 5.15, 5.18).
 
 use hune_core::document::folder_file_bytes;

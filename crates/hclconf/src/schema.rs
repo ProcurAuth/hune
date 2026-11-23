@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The key table: descriptors of the blocks and the keys (13.7 to 13.12).
 //!
 //! The table is data. The engine checks a file against it, and it generates the reference

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Pure functions of the parity capture tool (15.14a). This module has no browser, no network and no file access
 // (except `insideGitCheckout`), so that a unit test can run each function.
 //

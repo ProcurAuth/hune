@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Container tests of the MongoDB source (16.9b, the job `mongosource`).
 //!
 //! Each test is `#[ignore]` and starts with its case id. The script `tests/ci/mongosource.sh` runs them on

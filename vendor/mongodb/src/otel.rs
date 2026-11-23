@@ -82,7 +82,7 @@ impl ClientOptions {
 
     fn otel_enabled(&self) -> bool {
         // hune: the original reads OTEL_RUST_INSTRUMENTATION_MONGODB_ENABLED. Hune reads no
-        // environment variable (ID-MG25): the default is "off".
+        // environment variable: the default is "off".
         static ENABLED_ENV: LazyLock<bool> = LazyLock::new(|| false);
 
         self.tracing
@@ -93,7 +93,7 @@ impl ClientOptions {
 
     fn otel_query_text_max_length(&self) -> usize {
         // hune: the original reads OTEL_RUST_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH.
-        // Hune reads no environment variable (ID-MG25): the default is 0.
+        // Hune reads no environment variable: the default is 0.
         static MAX_LENGTH_ENV: LazyLock<usize> = LazyLock::new(|| 0);
 
         self.tracing

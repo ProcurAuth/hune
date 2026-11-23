@@ -1,4 +1,5 @@
-// The colour theme of the chrome is the theme of ClickHouse Dash (9.25, ID-K50). The CSS is read as text: the page has no DOM here.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The colour theme of the chrome is the theme of ClickHouse Dash (9.25). The CSS is read as text: the page has no DOM here.
 // The browser case B91 reads the computed colours.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -42,7 +43,6 @@ const OWNED = ["--bg", "--panel", "--raised", "--text", "--muted", "--border", "
 
 test("tokens.css leaves the surfaces, the text, the borders, the states and the accent to the copied tokens", () => {
   for (const name of OWNED) assert.doesNotMatch(tokens, new RegExp(`^\\s*${name}:`, "m"), `${name} is set in tokens.css`);
-  assert.ok(tokens.includes("ID-K50"), "the file names the decision");
 });
 
 test("the Hune roles are names of copied tokens, not values", () => {

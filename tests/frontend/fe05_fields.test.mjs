@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-05: field configuration and matchers (9.14).
 import test from "node:test";
 import assert from "node:assert/strict";

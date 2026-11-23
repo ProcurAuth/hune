@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The MongoDB source in the API: the cases A52 to A56 of 16.8, the dispatch by the kind of the
 //! source, the errors of 6.8 and the log line of a query.
 //!

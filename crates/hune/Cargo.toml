@@ -9,7 +9,7 @@ publish = false
 build = "build.rs"
 
 [features]
-# The MongoDB driver (8b.2, ID-MG2 granted). On by default (ID-MG20, pending owner): the release has the driver.
+# The MongoDB driver (8b.2). On by default: the release has the driver.
 # A build with `--no-default-features` has no driver and refuses a `mongodb` block at start.
 default = ["mongo-driver"]
 mongo-driver = ["hune-source/mongo-driver"]

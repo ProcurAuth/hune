@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The SQL text of a query: the lines (4.16), the rewrite of `[[name]]` (15.6) and the
 //! placeholders that stand in code.
 
@@ -148,7 +149,7 @@ struct Group {
 }
 
 /// The `(` and `)` punctuation tokens of a whole token list, matched in one pass, as `Parens` of `hune-core`
-/// does (ID-K313). The engine counts only the `(`, `)` and `,` punctuation tokens. The groups are in the order
+/// does. The engine counts only the `(`, `)` and `,` punctuation tokens. The groups are in the order
 /// of their `(`, so a call finds its group with a binary search. Thus a text with many calls stays linear.
 struct Groups(Vec<Group>);
 

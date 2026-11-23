@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B110 to B118 (4.33b, 9.19c, 10.3, 15.6): the state timeline and the status history.
 // B110: the look of a state timeline. B111: the look of a status history. B112: the states, the colours, the legend, hostile texts.
 // B113: the data cases. B114: the caps and the time. B115: the card, the hover and the keyboard. B116: the editor and the format.

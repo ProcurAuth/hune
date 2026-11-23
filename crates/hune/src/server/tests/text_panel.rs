@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The text panel (4.33a, 6.20, 6.22) at the server: the save and the read keep the canonical bytes, the
 //! routes of the query and of the preview refuse the panel, and the text never reaches a log. The server
 //! reads the lines only: it never parses the Markdown. The route table (6.9) has no new route.

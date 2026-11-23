@@ -1,0 +1,438 @@
+{
+  "format_version": 3,
+  "uid": "servers",
+  "title": "Server inventory",
+  "description": "Six servers with CPU, memory and disk. The table shows cell colours, links and a footer.",
+  "tags": [
+    "demo",
+    "infrastructure"
+  ],
+  "time": {
+    "from": "now-24h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "crosshair",
+  "links": [],
+  "variables": [],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "table",
+          "title": "Server inventory",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 10
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT host, region, role, cpu_pct, mem_pct, disk_pct, uptime_days, state,",
+                "  concat('/d/service-overview?var-host=', host) AS link",
+                "FROM demo.servers",
+                "ORDER BY host"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "align": "auto",
+              "filterable": true
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "host"
+                },
+                "set": {
+                  "width": 100,
+                  "links": [
+                    {
+                      "title": "Traffic of this host",
+                      "url": "/d/service-overview?var-host=${__value.raw}",
+                      "target_blank": false
+                    }
+                  ],
+                  "footer": {
+                    "reducers": [
+                      "count"
+                    ]
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "cpu_pct"
+                },
+                "set": {
+                  "display_name": "CPU",
+                  "unit": "percent",
+                  "decimals": 1,
+                  "min": 0,
+                  "max": 100,
+                  "width": 190,
+                  "color": {
+                    "mode": "thresholds",
+                    "fixed": null
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 60,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 75,
+                        "color": "orange"
+                      },
+                      {
+                        "value": 90,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "cell": {
+                    "type": "gauge",
+                    "mode": "gradient"
+                  },
+                  "footer": {
+                    "reducers": [
+                      "mean"
+                    ]
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "mem_pct"
+                },
+                "set": {
+                  "display_name": "Memory",
+                  "unit": "percent",
+                  "decimals": 1,
+                  "width": 120,
+                  "align": "right",
+                  "color": {
+                    "mode": "thresholds",
+                    "fixed": null
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 60,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 75,
+                        "color": "orange"
+                      },
+                      {
+                        "value": 90,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "basic"
+                  },
+                  "footer": {
+                    "reducers": [
+                      "mean"
+                    ]
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "disk_pct"
+                },
+                "set": {
+                  "display_name": "Disk",
+                  "unit": "percent",
+                  "decimals": 1,
+                  "width": 110,
+                  "align": "right",
+                  "color": {
+                    "mode": "thresholds",
+                    "fixed": null
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 60,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 75,
+                        "color": "orange"
+                      },
+                      {
+                        "value": 90,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "cell": {
+                    "type": "color_text",
+                    "mode": null
+                  },
+                  "footer": {
+                    "reducers": [
+                      "max"
+                    ]
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "uptime_days"
+                },
+                "set": {
+                  "display_name": "Uptime",
+                  "unit": "suffix: d",
+                  "decimals": 0,
+                  "align": "right",
+                  "width": 100,
+                  "footer": {
+                    "reducers": [
+                      "mean"
+                    ]
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "state"
+                },
+                "set": {
+                  "display_name": "State",
+                  "width": 120,
+                  "align": "center",
+                  "mappings": [
+                    {
+                      "kind": "value",
+                      "value": "ok",
+                      "text": "OK",
+                      "color": "green"
+                    },
+                    {
+                      "kind": "value",
+                      "value": "degraded",
+                      "text": "Degraded",
+                      "color": "orange"
+                    },
+                    {
+                      "kind": "value",
+                      "value": "critical",
+                      "text": "Critical",
+                      "color": "red"
+                    }
+                  ],
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "basic"
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "link"
+                },
+                "set": {
+                  "hidden": true
+                }
+              }
+            ]
+          },
+          "options": {
+            "show_header": true,
+            "sort": [
+              {
+                "field": "CPU",
+                "desc": true
+              }
+            ]
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "bargauge",
+          "title": "CPU by host",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 10,
+            "w": 12,
+            "h": 7
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT host, cpu_pct FROM demo.servers ORDER BY host"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 1,
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 60,
+                    "color": "yellow"
+                  },
+                  {
+                    "value": 75,
+                    "color": "orange"
+                  },
+                  {
+                    "value": 90,
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last",
+              "fields": "/^cpu_pct$/",
+              "values": true
+            },
+            "orientation": "vertical",
+            "display_mode": "gradient",
+            "show_unfilled": true
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "bargauge",
+          "title": "Disk by host",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 10,
+            "w": 12,
+            "h": 7
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT host, disk_pct FROM demo.servers ORDER BY host"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 0,
+              "min": 0,
+              "max": 100,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 60,
+                    "color": "yellow"
+                  },
+                  {
+                    "value": 75,
+                    "color": "orange"
+                  },
+                  {
+                    "value": 90,
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last",
+              "fields": "/^disk_pct$/",
+              "values": true
+            },
+            "orientation": "vertical",
+            "display_mode": "lcd",
+            "show_unfilled": false
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,60 +1,62 @@
-# Part 8: Roadmap, open items, glossary and references
+# Part 8: Roadmap, open questions, glossary and references
 
 Part 8 of the Hune specification (see `01-overview.md`).
 
-This part has three sections. Section 18 gives the milestones, the effort, the cutover point and the rule to add a feature.
-Section 19 lists the items that are still open. Section 20 gives the glossary and the references.
+This part has three sections. Section 18 gives the milestones, the state of each one, the criteria to move from Grafana and the rule to add a feature.
+Section 19 lists the open questions and the differences from Grafana. Section 20 gives the glossary and the references.
+The file `implementation-status.md` gives the state of the code in more detail.
 
-## 18. Roadmap, milestones and effort
+## 18. Roadmap and milestones
 
 ### 18.1 Principles
 
-- The work has the milestones M0 to M7. M3 has two parts, M3a and M3b. A parity spike of three weeks comes after M0 and
-  before M1 freezes the format and the expander (18.3a). Each milestone has content, exit criteria and an effort.
-- The risky parts come first. M0 measures the real use, and the spike tests the riskiest Grafana rules on real
+- The work has the milestones M0 to M7. M3 has two parts, M3a and M3b. A parity spike comes after M0 and
+  before M1 freezes the format and the expander (18.3a). Each milestone has content and exit criteria.
+- The risky parts come first. M0 measures the real use of Grafana, and the spike tests the riskiest Grafana rules on real
   dashboards. M1 fixes the store contract, M2 the SQL expansion, and M3a the verified import.
-- The reference deployment moves from Grafana to Hune after M4 (18.12). M5, M6 and M7 come after the cutover.
-- Releases: the first release is 0.1.0 (decision ID-K335). It holds the work of the milestones that exists on its date.
-  Version 1.0.0 comes after the exit criteria of M7 (17.10). The release of the cutover has no version number yet. The
-  parity tools of M3a stay private (15.18).
+- An installation can move from Grafana to Hune after M4 (18.12). M5, M6 and M7 come after M4.
+- Releases: the first release is 0.1.0. It holds the work of the milestones that exists on its date.
+  Version 1.0.0 comes after the exit criteria of M7 (17.10). The parity tools of M3a are in `tools/parity/`.
+  Their inputs and outputs stay outside the repository (15.18).
 - A milestone is complete only when all its exit criteria pass. Each milestone names only the cases that it can pass. The
   tests are in section 16, and 16.17 gives the jobs of the merge gate from each milestone.
+- The state of a milestone is `Done`, `Partial` or `Planned`. `Done` means that the code exists and its tests pass on
+  synthetic data. `Partial` means that some exit criteria are not met. `Planned` means that nothing of it exists in the
+  repository.
 
 ### 18.2 Milestones
 
-The effort is the bottom-up estimate of the written specification for one experienced engineer (18.11). One
-person-month is 20 business days of one person.
+The column "State" gives the state at version 0.1.1. The file `implementation-status.md` gives the details.
 
-| M | Name | Content (details in 18.3 to 18.10) | Exit criteria (summary) | Effort (person-months) | Range |
-|---|---|---|---|---|---|
-| M0 | Measure | Copy of `grafana.db` and exports; counts | Each measure has a count; each feature is mapped or out | 0.4 | 0.3 to 0.5 |
-| Spike | Parity spike, three weeks | Two real dashboards: import, SQL against `executedQueryString`, one large table | A written result for each check of 18.3a | in M2, M3a and M3b | |
-| M1 | Foundations and volume read | Workspace, configuration, listeners, format, volume read, CI, image, release dry run | Gate of M1 green; synthetic volume served | 2.0 | 1.6 to 2.5 |
-| M2 | Query engine | ClickHouse client, frames, limits, cancellation, lexer, macros, variables, query routes | Random tests and ClickHouse cases green | 2.0 | 1.6 to 2.5 |
-| M3a | Importer and SQL verification | `import-grafana`, parity tools, expansion vectors, V1 to V3 | Importer tests green; V1 to V3 signed | 1.25 | 1.0 to 1.6 |
-| M3b | Viewer and visual verification | Front end of section 9, front-end units, V4 and V5 | Browser and front-end units green; V4 and V5 signed | 3.75 | 2.9 to 4.7 |
-| M4 | Editor and volume writes | Volume writes, history, editor of section 10, conflicts, restore | Volume conformance and editor tests green | 2.75 | 2.1 to 3.5 |
-| Cutover | Cutover of the reference deployment | The plan of 15.15 | T + 14 d without rollback; Grafana stopped | 0.5 | 0.4 to 0.6 |
-| M5 | PostgreSQL backend and failover test | PostgreSQL store, `migrate-store`, `copy-store`, failover test, compose and Kubernetes examples | Conformance on PostgreSQL 15 and 18; failover F1 to F9 | 1.5 | 1.2 to 1.9 |
-| M6 | ProcurAuth | Mode `authzen`, PEP, action document, options route, display filter, ceilings | Series U clean | 1.25 | 1.0 to 1.6 |
-| M7 | Hardening and 1.0.0 | OTLP exporter, audit lines, fuzz, load test, CloudNativePG drill, documentation | Fuzz, load and drill pass; release 1.0.0 | 1.25 | 1.0 to 1.6 |
-| | Total | | | 16.65 (about 16.6) | 13 to 21 |
-| MPG | PostgreSQL data source | Dialect, client, role checks, block, importer rows and tests (18.10a) | `pgsource` job and the cases of 18.10a green | 1.1 (not in the total) | 0.9 to 1.5 |
-| MMG | MongoDB data source | Query language, client behind a narrow interface, user checks, block, importer rows and tests (18.10b) | `mongosource` job and the cases of 18.10b green | 1.2 (not in the total) | 1.0 to 1.7 |
-
-The cutover comes after M0 to M4 and the cutover work: about 12.6 person-months for one engineer.
+| M | Name | Content (details in 18.3 to 18.10) | Exit criteria (summary) | State |
+|---|---|---|---|---|
+| M0 | Measure | Copy of the Grafana database and exports; counts | Each measure has a count; each feature is mapped or out | Planned. The checks on real dashboards are not done. |
+| Spike | Parity spike | Two real dashboards: import, SQL against `executedQueryString`, one large table | A written result for each check of 18.3a | Planned |
+| M1 | Foundations and volume read | Workspace, configuration, listeners, format, volume read, CI, image, release dry run | Gate of M1 green; synthetic volume served | Done. The release dry run built `amd64` only. |
+| M2 | Query engine | ClickHouse client, frames, limits, cancellation, lexer, macros, variables, query routes | Random tests and ClickHouse cases green | Done. The load run of 16.16 at full length is not done. |
+| M3a | Importer and SQL verification | `import-grafana`, parity tools, expansion vectors, V1 to V3 | Importer tests green; V1 to V3 pass | Partial. The importer, the tools and 300 expansion vectors exist. V1 to V3 are not done. |
+| M3b | Viewer and visual verification | Front end of section 9, front-end units, V4 and V5 | Browser and front-end units green; V4 and V5 pass | Partial. The viewer exists. V4 and V5 are not done. |
+| M4 | Editor and volume writes | Volume writes, history, editor of section 10, conflicts, restore | Volume conformance and editor tests green | Done |
+| Cutover | Cutover from Grafana | The criteria of 18.8 and the plan of 15.15 | T + 14 d without rollback; Grafana stopped | Planned. Each operator runs it. |
+| M5 | PostgreSQL backend and failover test | PostgreSQL store, `migrate-store`, `copy-store`, failover test, compose and Kubernetes examples | Conformance on PostgreSQL 15 and 18; failover F1 to F9 | Partial. The failover test is not done. |
+| M6 | ProcurAuth | Mode `authzen`, PEP, action document, options route, display filter, ceilings | Series U clean | Done |
+| M7 | Hardening and 1.0.0 | OTLP exporter, audit lines, fuzz, load test, CloudNativePG drill, documentation | Fuzz, load and drill pass; release 1.0.0 | Partial. The fuzz campaigns, the 30-minute load run and the drill are not done. |
+| MPG | PostgreSQL data source | Dialect, client, role checks, block, importer rows and tests (18.10a) | `pgsource` job and the cases of 18.10a green | Done |
+| MMG | MongoDB data source | Query language, client behind a narrow interface, user checks, block, importer rows and tests (18.10b) | `mongosource` job and the cases of 18.10b green | Done |
 
 ### 18.3 M0: Measure
 
-The measure of 1.3 gives the use of Grafana, but not the content of the queries. M0 measures it before the design of M2, M3a
-and M3b becomes final.
+M0 and the parity spike (18.3a) are the verification on real dashboards. The measure of 20.3 gives the use of one Grafana
+instance, but not the content of its queries. M0 is the plan to measure the use of a Grafana instance before the design of
+M2, M3a and M3b becomes final. An operator can run M0 on a copy of the Grafana database and on an export of the dashboards (15.3).
+
+State: Planned. No measure of this paragraph is done in the repository. All tests use synthetic data.
 
 Content:
 
-1. Get the explicit approval of the owner for a new copy of `grafana.db` and for the export of 15.3 (19.3).
-2. The operator makes the copy and the export, with the go of the owner for each run.
-3. Measure on the copy and on the export, on the owner's machine:
-   - the place and the format of each of the 306 variable uses (literal, code, `IN (...)`, `${v:format}`, `[[v]]`);
+1. Make a copy of the Grafana database and the export of 15.3. Keep both in a private folder (15.18).
+2. Measure on the copy and on the export:
+   - the place and the format of each variable use in the SQL: literal, code, `IN (...)`, `${v:format}` or `[[v]]` (20.3 counts 306 uses);
    - each query variable that the SQL uses as an identifier, which v1 refuses (19.11);
    - each other `$__` name in the SQL, and each use of `dictGet` (19.6);
    - the field defaults and the panel options of each type: `legend`, `tooltip`, `stacking`, axis side, threshold style,
@@ -62,38 +64,41 @@ Content:
    - the legend placement `right`, the legend mode of each panel (list or table), and the tooltip mode `none` that maps
      to `hidden` (19.20);
    - the `filterByValue` matchers outside the measured set, among them `substring` and `notSubstring` (15.6);
-   - the 88 cell types of the overrides that the measure of 1.3 does not classify (19.15);
+   - the cell types of the overrides that the measure of 20.3 does not classify (19.15);
    - the units of the real panels (19.16), and the real use of `displayName` and `hidden` (19.19);
    - the use of table footers, pages and column filters (19.21);
    - panel time overrides, repeats, panel links, dashboard links, and the tokens of data links (19.21);
    - the regex of the variables with its flags, the sort with the natural modes, the hide and the chains (19.18);
    - the use of a UTC time axis, horizontal bars, threshold lines and a right y axis (19.20);
-   - what the 138 saves changed, from a diff of each version with the version before;
-   - the number of queries of each panel (the expected total is 142 ClickHouse, 2 MongoDB and 17 reuse queries);
+   - what each save changed, from a diff of each version with the version before;
+   - the number of queries of each panel, and the number of panels that reuse another panel;
    - the stored form of each dashboard (v1 or v2) and the v2 API version (15.3);
    - the Grafana version and the plugin version.
-4. With the go of the owner, run two read-only queries on the production ClickHouse: `SELECT version()`, and the rows and
+3. Run two read-only queries on the ClickHouse server that Grafana reads: `SELECT version()`, and the rows and
    bytes of each query of the Grafana account over two weeks from `system.query_log`.
-5. Write the results to the private evidence directory (15.18). Update this specification with a new version.
+4. Write the results to the private evidence directory (15.18). Update this specification with a new version.
 
 Exit criteria:
 
-- Each measure of item 3 and item 4 has a count.
+- Each measure of item 2 and item 3 has a count.
 - Each feature that M0 finds is a `mapped` row of 15.6 by the rule of 18.14, or an `unsupported` row.
 - A new version of section 4 holds the classified cell types and the complete unit list. Its option sets hold no option
   that no real panel uses.
-- The items 19.3, 19.4, 19.7, 19.15 to 19.19 and 19.21 are closed. The effort of 18.11 has a new estimate (19.5).
+- The questions 19.4, 19.7, 19.15 to 19.19 and 19.21 are closed for the measured instance.
 
 ### 18.3a The parity spike
 
-The spike comes after M0 and takes three weeks. M1 does not freeze the document format (section 4) or the expander
-(section 7) before the spike ends. It tests early the Grafana rules that the reviews found most at risk.
+The spike comes after M0. M1 should not freeze the document format (section 4) or the expander
+(section 7) before the spike ends. It tests early the Grafana rules that are most at risk.
+
+State: Planned. M1 and M2 were done without the spike. The format of section 4 and the expander of section 7 are thus
+not verified against real dashboards.
 
 Content:
 
-1. Import two real dashboards with a first version of the importer: one in the v2 form and the dashboard in the v1 form.
-2. Expand their SQL and compare it with `executedQueryString`, with a first version of the capture tool (15.14a). This
-   run needs the go of the owner.
+1. Import two real dashboards with a first version of the importer: one in the v2 form and one in the v1 form.
+2. Expand their SQL and compare it with `executedQueryString`, with a first version of the capture tool (15.14a). The
+   capture tool reads the Grafana and the ClickHouse of the operator.
 3. Render one large table panel of a real dashboard with its overrides, in a prototype page.
 
 The checks:
@@ -101,12 +106,13 @@ The checks:
 - the pattern form of `byRegexp` and of `reduce.fields` (19.29);
 - the rule of `max_data_points` (19.31);
 - the v2 variable sort names and the transformation items of 15.6, and the matcher `between`;
-- a sample of the 306 variable uses (19.11).
+- a sample of the variable uses (19.11).
 
-Exit criteria: each check has a written result, and the specification has a new version with the fixes before M1 freezes
-the format. The work of the spike is a first part of M2, M3a and M3b, so its effort counts in these milestones.
+Exit criteria: each check has a written result, and the specification has a new version with the fixes.
 
 ### 18.4 M1: Foundations and volume read
+
+State: Done.
 
 Content:
 
@@ -126,9 +132,11 @@ Exit criteria:
 - The jobs of the merge gate of M1 pass (16.17).
 - `hune serve` serves the synthetic volume in mode `open`: the cases A01, A02 and A33 pass.
 - The cases K01 to K13, K15 on the `local` output, G01 to G05, and G09 on the volume example pass.
-- A dry run of the release gives the two archives and `SHA256SUMS`.
+- A dry run of the release gives the two archives and `SHA256SUMS`. The dry run in Docker built the `amd64` archive only.
 
 ### 18.5 M2: Query engine
+
+State: Done. The load test of 16.16 at full length is not done.
 
 Content:
 
@@ -142,7 +150,7 @@ Content:
 Exit criteria:
 
 - The random tests pass on the seeds 1 to 64.
-- The cases C01 to C13 pass on the production version and on the latest LTS release.
+- The cases C01 to C13 pass on the ClickHouse versions that 16.9 names.
 - The cancellation case C05 passes within 2 s (19.23).
 - The cases A18 to A24 and K14a (the mode `open` part of K14) pass.
 - The p95 of the server overhead is below 50 ms on the synthetic 45-panel dashboard. The load script of 16.16 measures it
@@ -150,26 +158,31 @@ Exit criteria:
 
 ### 18.6 M3a: Importer and SQL verification
 
+State: Partial. The importer, the capture tool and 300 expansion vectors from a pinned Grafana 12.4.2 exist.
+The verification V1 to V3 on real dashboards is not done. The compose project `tests/compose/grafana.yaml` exists.
+
 Content:
 
 - `hune import-grafana` with its report, its acceptance file and its nginx map (section 15).
 - The capture tool and the test `parity_private` of `tools/parity/` (15.14a).
 - The expansion vectors from the pinned Grafana (16.13).
-- The verification V1 to V3 on the 10 real dashboards (15.14), with the go of the owner for each production run.
+- The verification V1 to V3 on real dashboards (15.14). Each run reads the Grafana and the ClickHouse of the operator.
 
 Exit criteria:
 
 - The importer cases I01 to I19 pass. The expansion vectors equal the output of the pinned Grafana.
-- V1 to V3 pass. The owner signs the acceptance file and the list of explained SQL differences.
+- V1 to V3 pass. The operator signs the acceptance file and the list of explained SQL differences.
 
 ### 18.6a M3b: Viewer and visual verification
+
+State: Partial. The viewer, the front-end units and the vectors exist. V4 and V5 on real dashboards are not done.
 
 Content:
 
 - The front end of section 9:
   - shell, list, grid and sections, panels that load when visible;
   - time picker, refresh, URL state, variables bar;
-  - the 7 panel types, the table features, field configuration, units, mappings, data links;
+  - the panel types, the table features, field configuration, units, mappings, data links;
   - transformations, long-to-wide, panel reuse;
   - themes, accessibility and "View data".
 - The changes of the chart engine that M0 finds in use (19.20).
@@ -180,9 +193,11 @@ Exit criteria:
 
 - The browser cases B01 to B13, B14 on the list and dashboard pages, B15, and B24 to B27 pass.
 - The front-end units of 16.10a pass.
-- V4 and V5 pass. The owner signs the list of explained differences and the visual review.
+- V4 and V5 pass. The operator signs the list of explained differences and the visual review.
 
 ### 18.7 M4: Editor and volume writes
+
+State: Done.
 
 Content:
 
@@ -198,22 +213,27 @@ Exit criteria:
 - On the volume, the common tests of 5.34 pass, except SC-44 and SC-47, which need PostgreSQL. The volume tests of 5.35
   and the case SX-01 of 16.7 pass.
 - The browser cases B14 on the editor, history and conflict pages, and B16 to B22 pass. G07 passes for the volume example.
-- The preconditions of 15.15 are met. The release of the cutover has no version number yet.
+- The preconditions of 15.15 are met.
 
-### 18.8 Cutover
+### 18.8 Cutover from Grafana
 
-Content: the plan of 15.15. The preprod environment goes first. Then come these steps:
+State: Planned. Each operator runs the cutover on their own installation. The repository has no cutover of its own.
+
+Content: the plan of 15.15. A test environment goes first. Then come these steps:
 
 - the parallel run of 14 days and the edit freeze;
-- the final import and the nginx switch;
+- the final import and the proxy switch;
 - Grafana read-only for 14 days, and the rollback window of 30 days.
 
 Exit criteria:
 
 - T + 14 d passes with no rollback trigger. Grafana is stopped.
-- At T + 30 d, the owner decides the item 19.10.
+- At T + 30 d, the operator decides what happens to the Grafana service and to the archive of its database.
 
 ### 18.9 M5: PostgreSQL backend and failover test
+
+State: Partial. The PostgreSQL store, the commands, the conformance tests and the restore drill are done on PostgreSQL 15 and 18.
+The failover test with Patroni (16.11) is not done. The compose cases G07 pass in `tests/ci/image.sh`.
 
 Content:
 
@@ -233,23 +253,29 @@ Exit criteria:
 
 ### 18.10 M6: ProcurAuth and M7: hardening
 
+M6 state: Done.
+
 M6 content: the mode `authzen` of section 11. It holds the PEP on `procurauth-pep` and `procurauth-core`, and the check of
 the identity token. It holds the rustls `PdpTransport` on a bounded pool of threads for synchronous calls. It also holds the
 action document, the options route, the display filter, the ceilings, `docs/ACCESS.md` and `docs/CONFORMANCE.md`.
 
 M6 exit criteria:
 
-- The series U run of 16.12 passes, with the counts of 11.32 at the commit of 19.28. Its expected file is empty, or the
-  owner accepts each line.
+- The series U run of 16.12 passes, with the counts of 11.32 at the commit of 19.28. Its expected file is empty, or each
+  line has an accepted reason. The run gives 110 cases: 60 passed, 0 failed and 50 skipped. `docs/CONFORMANCE.md` explains
+  the difference from 11.32.
 - The cases A39 to A45, K14b (the mode `authzen` part of K14) and B23 pass.
+
+M7 state: Partial. The OTLP exporter, the audit lines, nine fuzz targets and the load driver exist.
+The fuzz campaigns, the 30-minute load run, the CloudNativePG drill and the release 1.0.0 are not done.
 
 M7 content:
 
 - the audit log lines (section 14);
 - the fuzz targets, the load test and the CloudNativePG drill;
 - the documentation in ASD-STE100: README, configuration, access, and the generated reference;
-- the own OTLP exporter of the `telemetry` block (section 14). It is part of 1.0.0. A build before M7 has no exporter: it
-  stops at start with `telemetry.enabled: this build has no OTLP exporter` when `telemetry.enabled = true`. The value
+- the own OTLP exporter of the `telemetry` block (section 14). It is part of 1.0.0. A build with no exporter stops at
+  start with `telemetry.enabled: this build has no OTLP exporter` when `telemetry.enabled = true`. The value
   `telemetry.enabled = false` is valid in every build.
 
 M7 exit criteria:
@@ -261,7 +287,9 @@ M7 exit criteria:
 
 ### 18.10a MPG: PostgreSQL data source
 
-MPG is outside the milestones M0 to M7 and their total effort. It needs the work of M1 to M6. It does not need M7. It follows the rule of 18.14 and the steps of 8.14.
+State: Done.
+
+MPG is outside the milestones M0 to M7. It needs the work of M1 to M6. It does not need M7. It follows the rule of 18.14 and the steps of 8.14.
 
 Content:
 
@@ -276,15 +304,17 @@ Exit criteria:
 - The unit tests of the dialect pass, and the random tests R1 to R9 pass for the dialect `postgres`.
 - The `pgsource` job passes: PS01 to PS15 on PostgreSQL 15 and 18. The cases A47 to A51, K16, I22, B44 and B45 pass.
 - The vectors of `tests/golden/expansion-pg/` agree with the pinned Grafana, or each difference is recorded.
-- The owner has answered the items of 19.32, or has accepted their defaults.
+- The security choices of 19.32 are settled, or their defaults apply.
 
 ### 18.10b MMG: MongoDB data source
 
-MMG comes after MPG. It is outside the milestones M0 to M7 and their total effort. It needs the work of M1 to M6. It also needs the generic parts of MPG: the variant of the source type, the admission, the probe loop and the access rules. It does not need M7.
+State: Done. The driver is the crate `mongodb` behind the feature `mongo-driver`.
+
+MMG comes after MPG. It is outside the milestones M0 to M7. It needs the work of M1 to M6. It also needs the generic parts of MPG: the variant of the source type, the admission, the probe loop and the access rules. It does not need M7.
 
 It follows the rule of 18.14 and the steps of 8.14. The query fits the member `sql` (4.15), so item 7 of 18.14 needs no new `format_version`.
 
-The work has two parts, so that the code can start before the owner decides on the driver crates (`ID-MG2`):
+The work has two parts, so that the code can start before the choice of the driver crates:
 
 - Part 1 needs no MongoDB crate. Its parts are:
   - the query language in `hune-core` (7.27 to 7.36), the value model and the frame types (7.16c, 7.16d);
@@ -296,7 +326,6 @@ The work has two parts, so that the code can start before the owner decides on t
   - the module `crates/hune-source/src/mongo/driver.rs` behind the feature `mongo-driver`;
   - the change of `Cargo.toml`, `Cargo.lock`, `deps.lock.txt` and `deny.toml`;
   - the cases of 16.9b that need a server.
-  - Nothing of it starts before the owner answers `ID-MG2`.
 
 Content:
 
@@ -309,82 +338,44 @@ Exit criteria:
 - The unit tests and the golden vectors of the language pass, and the random tests R10 pass.
 - The `mongosource` job passes: MS01 to MS18 on MongoDB 7.0 and on the newest 8.x release. The cases A52 to A56, K18, I23, B47 and B48 pass.
 - The macro vectors of `tests/golden/expansion-mongo/` agree with the pinned plugin, or each difference is recorded.
-- The owner has answered the items of 19.33, or has accepted their defaults.
+- The security choices of 19.33 are settled, or their defaults apply.
 
-### 18.11 Effort and assumptions
+### 18.11 Assumptions of the roadmap
 
-The total effort is about 16.6 person-months for one experienced engineer, with a range of 13 to 21 person-months. The
-cutover comes after about 12.6 person-months. This is a bottom-up estimate of the written sections. The first design
-estimates gave about 10 person-months (9.5, 10 and 9.8): they were made before the specification existed.
+This paragraph gives the assumptions of the roadmap. It gives no effort and no schedule.
 
-The written scope is larger. It holds about 230 named test cases and 17 vector sets of the front end. The cases are SC
-52, SV 28, SP 19, SX 1, A 46, C 13, B 27, I 19, K 15 and G 9: 229 in total.
+The scope holds an own router and an own ClickHouse client. The client streams rows and cancels queries. It also holds a synchronous TLS
+transport to the PDP and an importer of four input forms. It holds a parity harness against Grafana, and a Patroni test in two failure modes.
 
-It also holds an own router, and an own ClickHouse client with `streaming` and cancellation. It also holds a synchronous TLS transport to the PDP and an importer of four input forms.
-It also holds a parity harness against Grafana, and a Patroni test in two failure modes.
+The roadmap holds only with these assumptions:
 
-| M | Effort | Main reason |
-|---|---|---|
-| M0 | 0.4 | M0 also classifies options, units and cell types (18.3). |
-| M1 | 2.0 | Closed parser with pointers and positions, about 150 rules, canonical writer; configuration with modes; router, logs, metrics. |
-| M2 | 2.0 | Lexer, placeholders, escape rules, the property P, macros; own HTTP client with streaming, types, errors, admission, cancellation. |
-| M3a | 1.25 | Importer of four input forms (0.75); capture tool, compare test and V1 to V3 (0.5). |
-| M3b | 3.75 | Viewer (1.0), table (0.75), six other types and the engine changes (1.0), field rules and transformations (0.75), harness and V4, V5 (0.25). |
-| M4 | 2.75 | Volume writes and recovery (0.75), editor (1.25), conflicts, history, diff, import and export (0.5), conformance (0.25). |
-| Cutover | 0.5 | Preprod, a parallel run of 14 days with daily imports, fixes. |
-| M5 | 1.5 | PostgreSQL store, roles, TLS, copy and export, Patroni harness in two modes, examples. |
-| M6 | 1.25 | TLS transport, questions, one flight, action document, options route, display filter, series U. |
-| M7 | 1.25 | OTLP exporter, fuzz, load, CloudNativePG drill, documentation in ASD-STE100. |
-
-The coordinator of the specification made an earlier estimate for the same scope, and it was higher than the first design
-estimates. So the owner SHOULD plan with the upper half of the range: about 17 to 21 person-months.
-
-The estimate holds only with these assumptions:
-
-1. One experienced engineer works full time on Hune. The engineer knows Rust (tokio, hyper), native JavaScript and
-   ClickHouse.
-2. The owner reviews each delivery within 2 business days. The owner signs the acceptance file of M3a and the visual
-   review of M3b.
-3. The work uses these parts as they are: `procurauth-pep` and `procurauth-core`, the lexer vectors of ClickHouse Dash
+1. The work uses these parts as they are: `procurauth-pep` and `procurauth-core`, the lexer vectors of ClickHouse Dash
    and the conformance cases of ProcurAuth. `hclconf` has only the three rules of 13.1. The chart engine gets only the
-   changes of 19.20 that M0 finds in use, and M3b counts them.
-4. M0 finds no feature outside the measured set. Each feature that M0 adds follows 18.14 and adds its own effort.
-5. The owner approves the copy of `grafana.db` and each production run in time for M0, the spike, M3a, M3b and the
-   cutover.
-6. An account of the ClickHouse HTTPS interface, with a CA file, exists for Hune at the start of M3a (19.6).
-7. The scope of this specification does not change during the work.
-8. The effort does not include the time of the owner's reviews. It does not include the calendar time of the parallel run
-   and of the rollback window. It does not include the operation work on the hosts of the reference deployment.
+   changes of 19.20 that M0 finds in use.
+2. M0 finds no feature outside the measured set. Each feature that M0 adds follows 18.14.
+3. An account of the ClickHouse HTTPS interface, with a CA file, exists for Hune before the verification of M3a (19.6).
+4. The scope of this specification does not change during the work.
 
-Effort is not calendar time. The cutover adds about 3 weeks of calendar time before T: 7 days of preprod and 14 days of
-parallel run. The work of M5 can start during the parallel run.
+The largest risks are in M3b and M4. They are the table panel with many overrides, the display-name
+rules of Grafana, the gaps of the chart engine, and the editor.
 
-Calendar with one engineer: the cutover at about month 13, and 1.0.0 at about month 17 to 18.
-
-Calendar with two engineers, the plan that the owner SHOULD use. After M1, one engineer takes the front end: M3b and the
-editor of M4. The other takes the back end: M2, M3a, the volume writes of M4, then M5 and M6, which do not block the
-cutover. The cutover then comes at about month 7, and 1.0.0 at about month 9 to 10.
-
-The largest risks of the estimate are in M3b and M4. They are the table panel with its 332 overrides, the display-name
-rules of Grafana, the gaps of the chart engine, and the editor. Their ranges are the widest.
-
-These choices lower the cost where no requirement needs the work:
+These choices keep the scope small where no requirement needs more:
 
 - The Kubernetes examples hold one Deployment, one Job and the CloudNativePG objects (17.8).
-- M0 removes the panel options that no real panel uses before M1 freezes the format (19.17).
+- M0 removes the panel options that no real panel uses before the format is frozen (19.17).
 
 ### 18.12 The cutover point
 
-The reference deployment moves from Grafana to Hune after M4, with a release that has no version number yet. Hune then runs in volume storage and in mode `open`,
-behind the nginx login of the reference deployment. The conditions:
+An installation can move from Grafana to Hune after M4, in volume storage and in mode `open`, behind a proxy that checks
+the login. The conditions:
 
 - The verification V1 to V3 of M3a and V4 to V5 of M3b passed (15.14).
 - The exit criteria of M4 passed.
 - The preconditions of 15.15 are met.
 
-Reason: people edit the dashboards (138 saves), so the editor must exist before the cutover. The reference deployment needs neither
-PostgreSQL nor ProcurAuth. The cutover is not after M3b, because there is no editor then. It is not after M7, because M5 to
-M7 give the reference deployment nothing that it uses.
+Reason: people edit the dashboards, so the editor must exist before the cutover. An installation that needs neither
+PostgreSQL nor ProcurAuth needs nothing from M5 to M7. The cutover is not after M3b, because there is no editor then.
+It is not after M7, because M5 to M7 give such an installation nothing that it uses.
 
 ### 18.13 Out of scope
 
@@ -393,7 +384,8 @@ These features are not in Hune 1.0. Each one needs the rule of 18.14 to enter:
 - alerts, alert rules and contact points;
 - data sources other than ClickHouse, PostgreSQL and MongoDB (milestones MPG and MMG): Kafka;
 - the built-in annotations of Grafana (its stored events and alerts), and the annotations that a person writes with the mouse. Annotations from a saved query on a ClickHouse, a PostgreSQL or a MongoDB source are in scope (4.5b);
-- library panels, playlists, snapshots, correlations, Explore, ad hoc filters;
+- library panels, playlists, snapshots, correlations and Explore;
+- ad hoc filters with an operator other than `=` and `!=`;
 - organisations, teams, users, roles and a login page inside Hune (identity comes from the edge or from ProcurAuth);
 - plugins, and panel types other than the types of 9.19, 9.19b, 9.19c, 9.19e, 9.19f and 9.19h;
 - public dashboards and short links;
@@ -406,16 +398,16 @@ These features are not in Hune 1.0. Each one needs the rule of 18.14 to enter:
 - a result cache shared between users or instances;
 - folders inside folders;
 - WebAssembly kernels before a measure shows a gain (section 9).
-- controls of the Grafana editor that have no member in the closed format of 4.27 to 4.33d (19.20m). A new member needs a new decision. It also needs a row in the table of 10.3h and a control that the audit B153 can prove.
+- controls of the Grafana editor that have no member in the closed format of 4.27 to 4.33d (19.20m). A new member needs the rule of 18.14. It also needs a row in the table of 10.3h and a control that the audit B153 can prove.
 
 ### 18.14 The rule to add a feature later
 
 A feature enters Hune only when all these conditions are true:
 
-1. A measure shows its use at the reference deployment (`grafana.db`, access logs, `system.query_log`), or the owner writes a decision. A
-   feature never enters because Grafana has it.
-2. The specification gets a new written decision. It is a new row in the decisions table of section 2, and a new numbered
-   section or paragraph with the status DECIDED.
+1. A measure shows its use on a real Grafana instance (the Grafana database, access logs, `system.query_log`), or a
+   written rule gives another reason. A feature never enters because Grafana has it.
+2. The specification gets a new written rule. It is a new row in the decisions table of section 2, and a new numbered
+   section or paragraph.
 3. Its configuration keys are in the key table of section 13, with a closed schema and a generated reference. An optional
    feature has a mode key.
 4. Its tests in the layers of section 16 and its documentation in ASD-STE100 come in the same change.
@@ -428,85 +420,81 @@ A feature enters Hune only when all these conditions are true:
 
 ### 18.15 The v1.1 list
 
-Decided for v1.1 (section 10). Drag and resize of the panels on the grid is done in the work of 0.1 (ID-98, 10.5a). Wave 2 of milestone F did the visual editors (10.3a, 10.3b). They edit the overrides, the mappings, the data links, the transformations, the variables and the dashboard settings. They are no longer v1.1 items.
+Drag and resize of the panels on the grid are done (10.5a). The visual editors are done (10.3a, 10.3b). They edit the
+overrides, the mappings, the data links, the transformations, the variables and the dashboard settings. They are no longer
+v1.1 items. The ClickHouse query parameters (`{name:Type}`) are done in the strict form of section 7.
 
-Candidates from the design papers. They are not decided, and each one needs the rule of 18.14:
+Candidates for v1.1. They are not decided, and each one needs the rule of 18.14:
 
 - the upload of a Grafana JSON file in the user interface;
 - a list of the deleted dashboards in the user interface;
 - SQL autocomplete in the editor;
-- ClickHouse query parameters (`{name:Type}`) next to the substitution of section 7;
-- a first WebAssembly kernel, when a measure on the real dashboards shows a gain, with the rules of ClickHouse Dash
+- a first WebAssembly kernel, when a measure on real dashboards shows a gain, with the rules of ClickHouse Dash
   `docs/wasm.md`.
 
-## 19. Open items
+## 19. Open questions
 
 ### 19.1 Rules
 
-Each item below is open. Each item has an owner and a milestone or a date by which it MUST be closed. A closed item becomes
-a decision in a new version of the specification, and its number stays. The other parts of this specification hold no open
-point.
+Each paragraph below is an open question, a difference from Grafana, a requirement, or a paragraph that is not used. An open
+question gives its options and the default that the code applies today. A closed question becomes a rule in a new version of the
+specification, and its number stays. The other parts of this specification hold no open point.
 
-| Item | Subject | Owner | Close by |
-|---|---|---|---|
-| 19.2 | Who uses the public dashboard and the short links | The owner, with the team of the reference deployment | T − 14 d |
-| 19.3 | The content of the 142 queries | The owner (approval), the engineer (measure) | M0 exit |
-| 19.4 | The ClickHouse version in production | The owner (go), the operator | M0 exit |
-| 19.5 | The effort range | The owner | M0 exit, then M3b exit |
-| 19.6 | The ClickHouse account, CA and `dictGet` grants for the HTTPS interface | The owner, with the team of the reference deployment | M3a start |
-| 19.7 | The stored form and the v2 API version of the dashboards | The engineer | M0 exit |
-| 19.8 | The product name | The owner | M1 exit (before 0.1.0) |
-| 19.9 | The dashboards of the preprod Grafana | The owner, with the team of the reference deployment | M4 exit |
-| 19.10 | The removal of Grafana and the archive of `grafana.db` | The owner | T + 30 d |
-| 19.11 | Variable uses that put free text or a query variable in code | The owner (decision for each use), the engineer | M3a exit |
-| 19.12 | The retention of the private evidence | The owner | T + 30 d |
-| 19.13 | The production limits of the ClickHouse source at the reference deployment | The engineer, the owner | M4 exit |
-| 19.14 | The memory allocator of the musl binary | The engineer | M2 exit |
-| 19.15 | The 88 cell types that the measure of 1.3 does not classify | The engineer | M0 exit |
-| 19.16 | The complete unit list | The engineer | M0 exit |
-| 19.17 | The panel options that no real panel uses | The engineer | M0 exit |
-| 19.18 | Regex flags and natural sort modes of the variables | The engineer (measure), the owner (decision) | M0 exit |
-| 19.19 | The real use of `displayName` and `hidden` | The engineer | M0 exit |
-| 19.20 | The gaps of the chart engine | The engineer (measure and change), the owner (review of the change in ClickHouse Dash) | M0 exit for the measure, M3b exit for the change |
-| 19.21 | Data-link tokens, table footer, pages and the other panel features of M0 | The engineer | M0 exit |
-| 19.22 | Unused: the checks moved to 15.14b | none | none |
-| 19.23 | The detection of a client close by hyper on HTTP/1.1 | The engineer | M2 exit |
-| 19.24 | `ceiling_exceeded` for `max_rows` after a byte overflow | The owner (decision), the engineer | M6 exit |
-| 19.25 | No durable audit record for a folder change | The owner | M4 exit |
-| 19.26 | The three rules of `hclconf` | Closed (ID-01) | M1 exit |
-| 19.27 | The token rules of `procurauth-core`: whole-number `iat` and `exp`, `kid` with two keys or more | The owner (maintainer of ProcurAuth) | M6 start |
-| 19.28 | The pinned commit of ProcurAuth and the series U figures | The engineer | M6 exit |
-| 19.29 | The pattern form of `byRegexp` and of `reduce.fields` | The engineer | Spike exit (18.3a) |
-| 19.30 | The common subset of the regular expressions | The engineer, with the writer of section 4 | Spike exit |
-| 19.31 | The rule of `max_data_points` | The engineer, with the writer of section 9 | Spike exit |
-| 19.32 | The security choices of the PostgreSQL source | The owner, the engineer | MPG exit |
-| 19.33 | The security choices of the MongoDB source | The owner, the engineer | MMG exit |
-| 19.34 | The query model of the MongoDB plugin, the two real queries, and the MongoDB version | The engineer | MMG start |
+| Item | Subject | State |
+|---|---|---|
+| 19.2 | Unused | Unused |
+| 19.3 | Unused | Unused |
+| 19.4 | The ClickHouse versions of the tests | Open question |
+| 19.5 | Unused | Unused |
+| 19.6 | The ClickHouse account, CA and `dictGet` grants for the HTTPS interface | Requirement of the operator |
+| 19.7 | The stored form and the v2 API version of the dashboards | Measure of M0 |
+| 19.8 | Unused | Unused |
+| 19.9 | Unused | Unused |
+| 19.10 | Unused | Unused |
+| 19.11 | Variable uses that put free text or a query variable in code | Open question |
+| 19.12 | Unused | Unused |
+| 19.13 | Unused | Unused |
+| 19.14 | The memory allocator of the musl binary | Open question |
+| 19.15 | The cell types that the measure of 20.3 does not classify | Measure of M0 |
+| 19.16 | The complete unit list | Measure of M0 |
+| 19.17 | The panel options that no real panel uses | Measure of M0 |
+| 19.18 | Regex flags and natural sort modes of the variables | Open question |
+| 19.19 | The real use of `displayName` and `hidden` | Measure of M0 |
+| 19.20 | The gaps of the chart engine, and the differences from Grafana (19.20a to 19.20n) | Differences from Grafana |
+| 19.21 | Data-link tokens, table footer, pages and the other panel features of M0 | Measure of M0 |
+| 19.22 | Unused: the checks moved to 15.14b | Unused |
+| 19.23 | The detection of a client close by hyper on HTTP/1.1 | Open question |
+| 19.24 | `ceiling_exceeded` for `max_rows` after a byte overflow | Open question |
+| 19.25 | No durable audit record for a folder change | Open question |
+| 19.26 | The three rules of `hclconf` | Closed |
+| 19.27 | The token rules of `procurauth-core`: whole-number `iat` and `exp`, `kid` with two keys or more | Open question |
+| 19.28 | The pinned commit of ProcurAuth and the series U figures | Fact |
+| 19.29 | The pattern form of `byRegexp` and of `reduce.fields` | Open question |
+| 19.30 | The common subset of the regular expressions | Rule of 4.24 |
+| 19.31 | The rule of `max_data_points` | Open question |
+| 19.32 | The security choices of the PostgreSQL source | Open question |
+| 19.33 | The security choices of the MongoDB source | Open question |
+| 19.34 | The query model of the MongoDB plugin and the MongoDB version | Open question |
 
-### 19.2 Who uses the public dashboard and the short links
+### 19.2 Unused
 
-Grafana holds one public dashboard and 7 short links. Section 18.13 removes both from v1. The nginx login guards all of
-`/grafana/`, so the public dashboard is not public today. The owner asks the team of the reference deployment who uses them.
+This paragraph held an item for one installation. It is not used. Section 18.13 removes public dashboards and short links from v1.
 
-During the parallel run, the operator reads the nginx log for `/grafana/public-dashboards/` and `/grafana/goto/`. A use from
-outside the login of the reference deployment needs a new decision by 18.14. Without such a use, the item closes as "not used".
+### 19.3 Unused
 
-### 19.3 The content of the 142 queries
+This paragraph held an item for one installation. It is not used. M0 (18.3) measures the content of the queries of a Grafana instance.
 
-The measure of 1.3 does not give what the 142 queries and the 9 variable queries do. M0 measures them (18.3). The measure needs a
-new copy of `grafana.db`. The copy is an action on the production server. It needs the explicit approval of the owner
-before it starts. Without the approval, M0 cannot end, and the verification of M3a cannot start.
+### 19.4 The ClickHouse versions of the tests
 
-### 19.4 The ClickHouse version in production
+The ClickHouse cases of 16.9 run on the versions that 16.9 names. The image of `tests/images.lock` pins one version with a digest.
+An operator can run `SELECT version()` to compare the version of their server with the tested versions.
 
-The ClickHouse cases of 16.9 run on the production version and on the latest LTS release. M0 reads the production version
-with `SELECT version()`, with the go of the owner. The version goes into `tests/images.lock` with a digest.
+Open question: which ClickHouse versions does Hune support? The options are the pinned version and the latest LTS release only,
+or every version that passes the cases of 16.9. Default today: the tests cover the pinned version and the latest LTS release.
 
-### 19.5 The effort range
+### 19.5 Unused
 
-The estimate is about 16.6 person-months, with a range of 13 to 21 (18.11). The owner plans with the upper half and with
-two engineers. The engineer makes a new estimate at the exit of M0 and of the spike, with the measures. The engineer
-makes another at the exit of M3b, with the real cost of the front end.
+This paragraph held an item for one installation. It is not used.
 
 ### 19.6 The ClickHouse account and CA for the HTTPS interface
 
@@ -517,75 +505,77 @@ Hune uses the HTTP interface of ClickHouse with TLS (section 8). The operator of
 - the CA file of the certificate of port 8443;
 - the name in that certificate, for `tls.server_name`.
 
-The case C09 checks the grants of the account. Without this item, Hune cannot query the production ClickHouse for V4.
+The case C09 checks the grants of the account. Without this item, Hune cannot query the ClickHouse server over HTTPS.
 
 ### 19.7 The stored form and the v2 API version of the dashboards
 
-The export of 15.3 needs the stored form of each dashboard (one is v1). It also needs the v2 API version that Grafana
-serves. M0 reads both from the copy of `grafana.db` and from Grafana.
+The export of 15.3 needs the stored form of each dashboard (v1 or v2). It also needs the v2 API version that Grafana
+serves. M0 reads both from the copy of the Grafana database and from Grafana.
 
-### 19.8 The product name
+### 19.8 Unused
 
-The owner chose the name Hune on 2026-11-12. The name is in the binary, the crates, the metric prefix and the log events.
+This paragraph held an item for one installation. It is not used. Decision D1 gives the name Hune. The name is in the binary, the crates, the metric prefix and the log events.
 It is also in the HTTP header, the `localStorage` keys and the tables of the PostgreSQL backend. A rename after 0.1.0 is a change
-of the contract (17.10). The crate name `hune` is free on crates.io, and no notable GitHub repository has the name.
-The script `tools/rename-hune.py` made the rename.
+of the contract (17.10).
 
-### 19.9 The dashboards of the preprod Grafana
+### 19.9 Unused
 
-A preprod Grafana exists. The plan of 15.15 moves preprod first. The
-owner asks the team of the reference deployment if the preprod Grafana holds dashboards that must move, or only copies of production.
+This paragraph held an item for one installation. It is not used.
 
-### 19.10 The removal of Grafana and the archive of `grafana.db`
+### 19.10 Unused
 
-At T + 30 d the rollback window ends (15.15). The owner decides when the Grafana service leaves the compose file of the
-production host. The owner also decides where the archive of `grafana.db` stays, and for how long.
+This paragraph held an item for one installation. It is not used. Section 15.15 gives the rollback window and the end of a cutover.
 
 ### 19.11 Variable uses that put free text or a query variable in code
 
-Section 7 refuses free text outside a literal. Some of the 306 uses can put a text box value in code on purpose. In v1,
-section 7 also refuses the value of a query variable as an identifier. M0 lists each such use. For each use, the owner
-chooses one of two changes: a `custom` variable with fixed options, or a change of the SQL. The verification V3 shows that
+Section 7 refuses free text outside a literal. Some variable uses of a real dashboard can put a text box value in code on purpose. In v1,
+section 7 also refuses the value of a query variable as an identifier. M0 lists each such use. For each use, the operator
+has two options: a `custom` variable with fixed options, or a change of the SQL. The verification V3 shows that
 no such use is left.
 
-### 19.12 The retention of the private evidence
+Open question: does Hune need a third option, a typed identifier variable? Default today: no. Section 7 refuses these uses, and the importer lists each one.
 
-The exports, captures, screenshots and reports of 15.14 hold confidential data (15.18). The owner decides how long they stay
-on the owner's machine after T + 30 d, and when they are deleted.
+### 19.12 Unused
 
-### 19.13 The production limits of the ClickHouse source at the reference deployment
+This paragraph held an item for one installation. It is not used. Section 15.18 gives the rules for the private evidence.
 
-The values of `max_result_rows`, `max_result_bytes` and `max_execution_time` for the reference deployment come from the M0 measure of rows
-and bytes for each query. They go into the configuration of the cutover (17.6).
+### 19.13 Unused
+
+This paragraph held an item for one installation. It is not used. The keys `max_result_rows`, `max_result_bytes` and `max_execution_time` of a source set its limits (13.12).
+The M0 measure of rows and bytes for each query can help an operator to choose them.
 
 ### 19.14 The memory allocator of the musl binary
 
-The binary uses the allocator of musl. Under many threads, this allocator can be slow. The engineer measures the overhead
+The binary uses the allocator of musl. Under many threads, this allocator can be slow. The load script measures the overhead
 in the M2 criterion of 18.5. When the measure fails because of the allocator, another allocator is a new dependency, and it
 follows 18.14.
 
-### 19.15 The 88 cell types that the measure of 1.3 does not classify
+Open question: does Hune need another allocator? Default today: the allocator of musl. The code sets no other allocator.
 
-The measure of 1.3 classifies 73 of the 161 cell-type overrides (auto 64, color-background 9). M0 classifies the other 88. Each
+### 19.15 The cell types that the measure of 20.3 does not classify
+
+The measure of 20.3 classifies 73 of the 161 cell-type overrides of one instance (auto 64, color-background 9). M0 classifies the other 88. Each
 cell type in use becomes a value of the property set of 4.18, or an `unsupported` row of 15.6 with an accepted fallback.
-Milestone F, wave 1, adds the cell types `gauge` and `json` (decision D4 of ID-87). M0 classifies the others.
+Hune has the cell types `gauge` and `json`. M0 classifies the others.
 
 ### 19.16 The complete unit list
 
-The unit list of 4.20 holds the units that the measure of 1.3 names. M0 reads the unit of each field default and of each override.
+The unit list of 4.20 holds the units that the measure of 20.3 names, and more. M0 reads the unit of each field default and of each override.
 A new version of section 4 adds each unit in use. A unit that stays outside the list is `unsupported` in 15.6.
-Milestone F, wave 1, adds 21 units (decision D5 of ID-87). M0 closes the list.
+M0 closes the list.
 
 ### 19.17 The panel options that no real panel uses
 
-The option sets of 4.26 to 4.33 hold the options of the design papers. M0 reads the options of each real panel. A new
+The option sets of 4.26 to 4.33 hold the options of the Grafana panel types. M0 reads the options of each real panel. A new
 version of section 4 removes each option that no real panel uses, so the closed schema stays small.
 
 ### 19.18 Regex flags and natural sort modes of the variables
 
 Grafana accepts a variable regex with flags (`/x/i`) and the natural sort modes. M0 counts their use in the 21 real
-variables. The owner then decides, by 18.14, which flags and modes format 2 keeps (4.8, 4.24). A flag or a mode outside
-format 2 is `unsupported` in 15.6.
+variables of one instance. The rule of 18.14 then decides which flags and modes the format keeps (4.8, 4.24). A flag or a mode outside
+the format is `unsupported` in 15.6.
+
+Open question: which flags and modes does the format keep? Default today: the flags and the modes that 4.8 and 4.24 list.
 
 ### 19.19 The real use of `displayName` and `hidden`
 
@@ -594,86 +584,89 @@ panel uses leaves the property set of 4.18 in a new version of section 4.
 
 ### 19.20 The gaps of the chart engine
 
-The copied chart engine has these gaps (9.24):
+The copied chart engine had these gaps (9.24):
 
 - no UTC time axis: a dashboard with `timezone = "utc"` needs it;
 - no horizontal bars in the engine: this is not a gap of Hune, because the module `barchart_h.js` draws them (9.19);
-- milestone F, wave 1, closes the UTC axis and the threshold lines with marked edits (9.24, edits 7 and 8). Wave 2 of milestone F closes three gaps with the edits 13 to 15 of 9.24. They are the right y axis, the style of each series and the title of the right axis;
+- Hune closes the UTC axis and the threshold lines with marked edits (9.24, edits 7 and 8). It closes three more gaps with the edits 13 to 15 of 9.24. They are the right y axis, the style of each series and the title of the right axis.
+
+These gaps stay:
+
 - no legend placement `right`: the legend is always under the plot;
 - no legend mode for each panel: the list or table mode is a stored preference of the viewer;
 - the tooltip modes `single`, multi and `none`: the `hidden` of format 2 maps to `none`.
 
-### 19.20a Differences of milestone F, wave 2
+### 19.20a Differences from Grafana: scales, time and colours
 
-Milestone F, wave 2, records these differences from Grafana. A chart has two y scales at most, so a third unit shares the right scale (9.19, decision D17). In a `timeseries`, a `barchart`, a `piechart` and an `xychart`, a continuous colour mode follows the rule of the mode `thresholds`. A time zone name that the browser does not know gives the zone `browser` and a notice. The time shift of a panel has no round to a unit, so `1d/d` is `unsupported`.
+Hune has these differences from Grafana. A chart has two y scales at most, so a third unit shares the right scale (9.19). In a `timeseries`, a `barchart`, a `piechart` and an `xychart`, a continuous colour mode follows the rule of the mode `thresholds`. A time zone name that the browser does not know gives the zone `browser` and a notice. The time shift of a panel has no round to a unit, so `1d/d` is `unsupported`.
 
-The checks on Grafana of 9.8b, 9.16 and 9.19 are done (paper, 10.8). They add these differences:
+Checks on Grafana of 9.8b, 9.16 and 9.19 give these differences:
 
 - A `left` series and an `auto` series of another unit share the left scale. Grafana draws two left axes.
 - A `hidden` series and a series that sets its own `min`, `max` or soft ends share the scale of their unit. Grafana gives each set its own scale and its own axis.
 - `now/w` starts on Monday (9.9). Grafana starts on Sunday by default, and follows the member `weekStart` of the dashboard.
 - A `time_from` of `now/s`, `now/m` or `now/h` is valid. Grafana gives the note `invalid time override` and uses the range of the dashboard.
 - The note of a shift writes the unit `M` as it is. Grafana writes `m`.
-- A local time that occurs two times has the earlier instant (9.9). Grafana gives the later instant (decision ID-F2-V8).
+- A local time that occurs two times has the earlier instant (9.9). Grafana gives the later instant.
 - A dashboard link keeps 50 items at most, and a dropdown with no item shows no button. Grafana has no cap of 50 and shows the button.
 - In the light theme, a named colour on a mark of a chart can differ from the colour of Grafana by a few levels (9.16). For example, `dark-orange` is `#DD5100` and Grafana gives `#E55400`.
 - A dashboard link adds no `timezone` to the URL, puts the added names before a fragment, and breaks a tie of titles by uid. Grafana adds `timezone`, puts them after the fragment and breaks a tie by the order of creation.
-- The series colours are a wanted difference (decision ID-K70, owner request of 2026-11-12). A series with no explicit colour draws the 18 colours of ClickHouse Dash (9.16), in the light and the dark theme. The mode `palette` does the same, and it is the one series palette (decision ID-K74, owner decision of 2026-11-13). Grafana draws its classic palette of 64 colours.
+- The series colours are a wanted difference. A series with no explicit colour draws the 18 colours of ClickHouse Dash (9.16), in the light and the dark theme. The mode `palette` does the same, and it is the one series palette. Grafana draws its classic palette of 64 colours.
 - The importer maps each Grafana palette mode to `palette`. A Grafana `palette-classic` gives `palette` with no item. The modes `palette-classic-by-name` and `palette-saturated` give a `changed` item. A named colour, a threshold step, a value mapping, an override with a fixed colour and a continuous mode keep their colour.
 - A series has the slot of its place, as in ClickHouse Dash. Grafana can colour a series by its name (`palette-classic-by-name`): Hune cannot, and the importer lists it. After the 18th series, the colours repeat. Grafana has 64 colours.
 
-The measure of the y ticks of a time series on 2026-11-16 (decision ID-K311) found four differences of the y range. The owner keeps the canvas of Hune for ID-K311a (decision ID-K315). For the other three, Hune follows Grafana since decision ID-K316 (9.19). The tick rule itself is the rule of Grafana (9.19).
+A measure of the y ticks of a time series found four differences of the y range. Hune keeps its own canvas for the first one. For the other three, Hune follows Grafana (9.19). The tick rule itself is the rule of Grafana (9.19).
 
-- ID-K311a. A panel of height 3 has a plot of 19 px in Grafana, in a canvas of 48 px. Hune keeps a canvas of 60 px and a plot of 40 px at least, on purpose. The ticks then differ.
-- ID-K311b. Hune follows Grafana. A time series with `draw = bars` uses the automatic range. For data from -50 to 80, both show -70 to 100. Bars do not start at 0 when the data stays far from 0: for data from 1,000 to 1,010, both show 999 to 1,011.
-- ID-K311c. Hune follows Grafana. A stack (`stacking = normal`) uses the automatic range of the tops of the stack, with the tick rule of 9.19. For the same data, both show 0 to 160. The tops 1,000 to 2,017 give 800 to 2,200. A stack with `percent` shows 0 % to 100 %, with labels such as "20%".
-- ID-K311d. Hune follows Grafana. With `axisSoftMax = 200` and data from 5 to 95, the axis ends at the soft end, 200. A soft end inside the data has no effect on its side, and then the room can cross 0. For example, `axisSoftMin = 10` gives -4 to 104 (9.19, y axes, rule 7).
+- Small panel. A panel of height 3 has a plot of 19 px in Grafana, in a canvas of 48 px. Hune keeps a canvas of 60 px and a plot of 40 px at least, on purpose. The ticks then differ.
+- Bars. Hune follows Grafana. A time series with `draw = bars` uses the automatic range. For data from -50 to 80, both show -70 to 100. Bars do not start at 0 when the data stays far from 0: for data from 1,000 to 1,010, both show 999 to 1,011.
+- Stack. Hune follows Grafana. A stack (`stacking = normal`) uses the automatic range of the tops of the stack, with the tick rule of 9.19. For the same data, both show 0 to 160. The tops 1,000 to 2,017 give 800 to 2,200. A stack with `percent` shows 0 % to 100 %, with labels such as "20%".
+- Soft ends. Hune follows Grafana. With `axisSoftMax = 200` and data from 5 to 95, the axis ends at the soft end, 200. A soft end inside the data has no effect on its side, and then the room can cross 0. For example, `axisSoftMin = 10` gives -4 to 104 (9.19, y axes, rule 7).
 
-The second measure of 2026-11-16 (100 panels, decision ID-K316) found two more facts:
+A second measure on 100 panels found two more facts:
 
 - In Grafana, a hard end with no soft end on its side is also the data end of that side. Thus `min = 0` with data from 5 to 95 gives 0 to 105. Hune follows it (9.19, y axes, rule 6).
-- Hune follows Grafana since decision ID-K321 (owner answer of 2026-11-21). A series with more values below 0 than above 0 stacks down from 0, in a group of its own (9.19, stacks). The measure of 2026-11-21 found the same ticks on 100 panels, and the same lines within 1 px.
+- Hune follows Grafana. A series with more values below 0 than above 0 stacks down from 0, in a group of its own (9.19, stacks). A later measure found the same ticks on 100 panels, and the same lines within 1 px.
 
 These differences of the stacks stay:
 
 - On a log scale, Hune keeps the rule of the engine (9.19, log scale), and it does not stack. Grafana stacks there, ignores the soft ends and writes the labels of a percent stack with `%`.
 - Grafana also puts two lines with another `lineInterpolation` in two groups. Hune has the interpolation of the whole panel only (4.28), and the importer removes a `lineInterpolation` of an override. Thus these lines stack in one group in Hune. The measure of 2026-11-22 found 3 such panels of 24.
 
-Hune follows Grafana since decision ID-K325 (owner answer of 2026-11-22, point 3) for these items. The measure of 2026-11-22 used temporary dashboards in the folder `hune-parity` of Grafana 12.4.2, and the worker deleted them.
+Hune follows Grafana for these items. The measure used temporary dashboards on Grafana 12.4.2. They were deleted after the measure.
 
-- A series of another `draw` stacks in a group of its own (9.19, stacks, rule 7). In Grafana the key of a group holds the draw style, and the bar alignment or the line interpolation (`getStackingGroups`). Before, Hune stacked a line and bars of one chart together: up to 318 px apart on 21 of 24 panels.
-- The vertical `barchart` stacks with the rules of the time series. A series goes in the group of the sign of most of its values, and each value adds with its sign. Before, a value below 0 stacked down from 0 alone: up to 153 px apart.
-- The value axis of the `barchart` is the automatic axis of Grafana with the soft end 0 (9.19). Before, it had 10 % of the range as room, and a whole range of room with value labels: up to 186 px apart. Grafana gives no room for the value labels. A percent stack shows shares of 1 in the unit of the field.
+- A series of another `draw` stacks in a group of its own (9.19, stacks, rule 7). In Grafana the key of a group holds the draw style, and the bar alignment or the line interpolation (`getStackingGroups`).
+- The vertical `barchart` stacks with the rules of the time series. A series goes in the group of the sign of most of its values, and each value adds with its sign.
+- The value axis of the `barchart` is the automatic axis of Grafana with the soft end 0 (9.19). Grafana gives no room for the value labels. A percent stack shows shares of 1 in the unit of the field.
 
-These differences of the `barchart` stay. Each one is open for the owner (to re-read):
+These differences of the `barchart` stay. Each one is an open question. The default is the behaviour of Hune today:
 
 - A stack shows no value. Grafana 12.4.2 shows the value of each part over its top when it fits (`showValue` = `auto`). For example, it shows 14 values on a stack of 8 bars on a plot of 237 px.
 - The horizontal `barchart` is Hune code (9.19), and it keeps its rules. A value below 0 stacks down from 0, the axis has 10 % of room, and a percent stack has the axis 0 % to 100 %. Grafana 12.4.2 draws the stack of the vertical chart there. For the series 10 to 59 and -25 to 40, it shows the axis -20 to 100 with the step 20. For a percent stack, it shows shares from 0 to 1.
 - The band under the plot of a vertical bar chart is 21 px, and the labels are 9 px under the plot. In Grafana 12.4.2 the band is 31 px. It holds the gap of 15 px, a tick of 4 px that does not show, and the text of 12 px. Thus its plot is 10 px lower, and its labels are 15 px under the plot. On 3 of 45 panels, the other height gives another tick step. A change needs a measure of the turned labels too (E25).
 
-The gradient modes and the cosmetic series options of wave H (items P10 and P14, decision ID-K326) follow Grafana 12.4.2 (9.19). The measure of 2026-11-22 found these differences, and they stay:
+The gradient modes and the cosmetic series options follow Grafana 12.4.2 (9.19). A measure found these differences, and they stay:
 
-- The mode `scheme` with the colour mode `palette` spreads the 18 colours of the series palette (decision ID-K70). Grafana spreads its classic palette of 64 colours.
+- The mode `scheme` with the colour mode `palette` spreads the 18 colours of the series palette. Grafana spreads its classic palette of 64 colours.
 - A horizontal `barchart` (Hune code) paints the fill of a bar with the gradient, and the line of the bar with the plain colour. Grafana also paints the line with the gradient of `hue` and `scheme`.
 - A log scale of base 2 with no value above 0 has the range 1 to 2. Grafana draws no axis there. A value of 0 or below has no point, where Grafana draws its line out of the plot.
-- The symmetric log scale of Grafana (`symlog`) is not in wave H. The importer keeps it `unsupported` (15.6).
+- The symmetric log scale of Grafana (`symlog`) is not in Hune. The importer keeps it `unsupported` (15.6).
 
-M0 finds which gaps the real panels use (18.3). Each gap in use is a change in ClickHouse Dash first, then a new copy with
-a new lock (9.24). The effort of M3b counts the changes (18.11).
+M0 finds which gaps the real panels use (18.3). Each gap in use is a marked edit of the copied engine, with a new lock (9.24,
+`docs/engine-patches.md`).
 
-### 19.20b Differences of milestone F, wave 3: the repeat
+### 19.20b Differences from Grafana: the repeat
 
-Milestone F, wave 3, adds the repeat of a panel and of a section (4.13a, 9.8c, decisions ID-K80 to ID-K97). The measure is on Grafana 12.4.2. These differences are on purpose.
+Hune has the repeat of a panel and of a section (4.13a, 9.8c). The measure is on Grafana 12.4.2. These differences are on purpose.
 
 - The order of the copies is the order of the options of the variable. Grafana uses the order of the selection: the URL `var-n=3&var-n=1&var-n=2` gives 3, 1, 2 in Grafana. With "All", both use the order of the options.
 - A selection with no value shows a message in Hune. Grafana shows the panel one time (the panel keeps its place and runs its query), and hides a repeated row with its panels.
 - Hune has limits: by default 24 copies of a panel, 12 copies of a section and 120 copies in a dashboard. The three keys `server.repeat_max_per_panel`, `server.repeat_max_per_section` and `server.repeat_max_per_dashboard` set them (13.8), up to 200, 50 and 200. Above a limit nothing repeats, and the page shows a message. Grafana has no limit. A test on Grafana made 200 copies.
 - Hune has one level of repeat. Grafana multiplies a repeated panel in a repeated row: 2 rows of 3 copies gave 6 panels, and a panel that repeats by the variable of its row gave one copy for each row. The importer removes the repeat of the inner panel.
 - A panel with direction `h` needs its own rows in Hune. Grafana moves the other panels. The result in Grafana depends on the order of the panels. The importer removes the repeat when another panel shares a row unit, and lists it as `unsupported`.
-- Hune needs a `multi` variable for a repeat. Grafana accepts a variable with one value: it makes one copy, and for direction `h` this copy has the full width. The importer refuses such a repeat and lists it as `unsupported`: it never changes the variable (decision ID-K94).
-- Hune makes no copy from a value that is not an option. This is a value of the URL, or a typed value of an open `custom` variable (ID-K203). Grafana repeats on any value of the selection. The member `all_value` has no effect on a repeat in both. In Grafana, a copy gets the option value, not the value of "All".
+- Hune needs a `multi` variable for a repeat. Grafana accepts a variable with one value: it makes one copy, and for direction `h` this copy has the full width. The importer refuses such a repeat and lists it as `unsupported`: it never changes the variable.
+- Hune makes no copy from a value that is not an option. This is a value of the URL, or a typed value of an open `custom` variable. Grafana repeats on any value of the selection. The member `all_value` has no effect on a repeat in both. In Grafana, a copy gets the option value, not the value of "All".
 - Hune writes `<id>` for the first copy and `<id>-r<n>` for the copy n. Hune reads `<id>`, `panel-<id>`, `<id>-r<n>`, `panel-<id>-r<n>` and the form `<x>$panel-<id>` of Grafana. Hune never reads `panel-<id>-clone-<n>`, which is a key of the page of Grafana and not a form of the URL.
-- Grafana writes `<x>$panel-<id>` for the view of a copy. The text `<x>` is the value of the copy, not its index. The parity captures of 2026-11-15 on Grafana 12.4.2 measured these facts (ID-K92):
+- Grafana writes `<x>$panel-<id>` for the view of a copy. The text `<x>` is the value of the copy, not its index. Parity captures on Grafana 12.4.2 measured these facts:
   - With the text values `a` to `e`, the item "View" writes `a$panel-1`, `b$panel-1` and so on to `e$panel-1`. The first copy has the prefix too. A repeated section gives `a$panel-2`, `b$panel-2` and so on.
   - With the values `10`, `20` and `30`, the item "View" writes `10$panel-1`, `20$panel-1` and `30$panel-1`.
   - A load of `b$panel-1` or of `20$panel-1` shows the correct copy. With the values `10`, `20` and `30`, `0$panel-1`, `1$panel-1` and `2$panel-1` show nothing.
@@ -681,13 +674,13 @@ Milestone F, wave 3, adds the repeat of a panel and of a section (4.13a, 9.8c, d
 - Hune reads `<x>$panel-<id>` in the same way (10.2a, rule 1). Where Grafana shows an empty view, Hune removes `viewPanel` with a notice and shows the dashboard (rule 4). While the values load, Hune keeps the URL and waits (rule 16). Hune writes `<id>` or `<id>-r<n>`, never the form of Grafana.
 - Grafana does not read `panel-<id>-clone-<n>`. It does not read `panel-<id>` for a panel that repeats.
 - A panel with a repeat and no direction has a layout of its own in Grafana: the copies share the width of the panel. The importer gives direction `h` and lists the change.
-- The header of a copy of a repeated section (decision ID-K310). In Grafana 12.4.2 the copies 2 to n of a repeated row have a title of 14 px at weight 400. Their header is 27.25 px. The first copy and the other rows have 16 px at weight 500 and 30 px. Hune treats this as a fault of Grafana. Each section heading of Hune has one look, and each copy has the header of 30 px of 9.8.
+- The header of a copy of a repeated section. In Grafana 12.4.2 the copies 2 to n of a repeated row have a title of 14 px at weight 400. Their header is 27.25 px. The first copy and the other rows have 16 px at weight 500 and 30 px. Hune treats this as a fault of Grafana. Each section heading of Hune has one look, and each copy has the header of 30 px of 9.8.
   - Thus a copy of Hune is 2.75 px lower for each copy 2 to n above it, its own header included. A panel under the section is 2.75 px lower for each copy 2 to n.
   - The visual capture of 15.14c documents a box only when its offset is this sum, within 0.5 px (rule `copy-header`). Any other offset stays a fault.
 
-### 19.20c Differences of milestone F, wave 3: the text panel
+### 19.20c Differences from Grafana: the text panel
 
-Milestone F, wave 3, adds the text panel (4.33a, 9.19b, decisions ID-K100 to ID-K118). The measure is on Grafana 12.4.2, on the local instance. The worker made four temporary dashboards in a folder `hune-f29` and deleted them. These differences are on purpose, except the last two.
+Hune has the text panel (4.33a, 9.19b). The measure is on Grafana 12.4.2, on a local instance, with four temporary dashboards. They were deleted after the measure. These differences are on purpose, except the last two.
 
 The facts of Grafana:
 
@@ -721,9 +714,9 @@ The differences:
 - Known difference: a loose list shows the paragraphs in `p` elements only when an item has more than one paragraph. Grafana shows `p` in each item of a loose list.
 - Known difference: the headings are `h1` to `h6` as written, and Grafana does the same. A panel title is `h3` in Hune and `h2` in Grafana (9.26).
 
-### 19.20d Differences of milestone F, wave 3: the state timeline and the status history
+### 19.20d Differences from Grafana: the state timeline and the status history
 
-Milestone F, wave 3, adds the two panels (4.33b, 9.19c, decisions ID-K120 to ID-K136). The measure is on Grafana 12.4.2, on the local instance, with the data source `clickhouse` and synthetic queries. The worker made 8 temporary dashboards in the folder `hune-f30` (the uids `hune-f30-a`, `-b`, `-c`, `-e`, `-f`, `-g`, `-h` and `-i`) and deleted them. The worker read the options and the draw rules in the plugin code that the instance serves, and checked each rule on a picture. These differences are on purpose.
+Hune has the two panels (4.33b, 9.19c). The measure is on Grafana 12.4.2, on a local instance, with the data source `clickhouse` and synthetic queries. It used 8 temporary dashboards. They were deleted after the measure. The options and the draw rules come from the plugin code that the instance serves, and each rule was checked on a picture. These differences are on purpose.
 
 The facts of Grafana:
 
@@ -755,10 +748,10 @@ The facts of Grafana:
 
 The differences:
 
-- Hune merges by state (the text and the colour), not by the raw value. A range mapping on many numbers gives one segment for a run of one state (decision ID-K124).
-- Hune applies a mapping before the step state of the colour mode `thresholds` (decision ID-K123).
+- Hune merges by state (the text and the colour), not by the raw value. A range mapping on many numbers gives one segment for a run of one state.
+- Hune applies a mapping before the step state of the colour mode `thresholds`.
 - The ink has 4.5:1 with the fill (9.26). Grafana takes white at 3:1. Hune writes black on `green` where Grafana writes white.
-- Hune has a cap of 10,000 segments, and it draws nothing above it. Grafana draws 100,000. The status history keeps the Grafana rule of half the width (decision ID-K126).
+- Hune has a cap of 10,000 segments, and it draws nothing above it. Grafana draws 100,000. The status history keeps the Grafana rule of half the width.
 - Hune has no `perPage`, no `insertNulls` and no time threshold for `spanNulls`. It has no pinned tooltip, no data link on a box, no annotation, no sort or hide-zero of the tooltip and no table legend.
 - A row name shows only when the pitch of the rows is 12 px or more. Grafana draws names that overlap.
 - `show_labels` equal to `false` hides the names and keeps the time axis. Grafana hides the time axis too, because the setting is in the defaults.
@@ -768,9 +761,9 @@ The differences:
 - The text is cut at a whole character and never in a pair of surrogates.
 - The Hune tooltip, the legend and the colours use the tokens and the shades of the theme (9.25). The sizes and the positions are those that this section lists.
 
-### 19.20e Differences of milestone F, wave 3: the annotations
+### 19.20e Differences from Grafana: the annotations
 
-Milestone F, wave 3, adds the annotations from a query (4.5b, 6.21a, 7.37, 9.19d, decisions ID-K140 to ID-K157). The measure is on Grafana 12.4.2, on the local instance, with the plugin ClickHouse 4.5.1 (`annotations` true in its `plugin.json`) and synthetic queries. The worker made 11 temporary dashboards in the folder `hune-f25` (the uids `hune-f25-a` to `hune-f25-k`) and deleted the dashboards and the folder. The plugin has no annotation editor of its own, so the rules of the columns are those of Grafana.
+Hune has the annotations from a query (4.5b, 6.21a, 7.37, 9.19d). The measure is on Grafana 12.4.2, on a local instance, with the plugin ClickHouse 4.5.1 (`annotations` true in its `plugin.json`) and synthetic queries. It used 11 temporary dashboards. They were deleted after the measure. The plugin has no annotation editor of its own, so the rules of the columns are those of Grafana.
 
 The facts of Grafana:
 
@@ -795,27 +788,27 @@ The facts of Grafana:
 
 The differences:
 
-- Hune runs the saved query on a ClickHouse, a PostgreSQL or a MongoDB source (decisions ID-K142 and ID-K333). Grafana runs it with the plugin of the data source. The query is in the document and not in a data source setting.
+- Hune runs the saved query on a ClickHouse, a PostgreSQL or a MongoDB source. Grafana runs it with the plugin of the data source. The query is in the document and not in a data source setting.
 - Hune reads each number in a time column as epoch milliseconds, for each kind of source (7.37, rule 4). A query that gives Unix seconds gives marks in January 1970 in Hune. The result of Grafana for such a number is not measured for the PostgreSQL and MongoDB plugins.
 - Hune reads the roles `time`, `timeend`, `title`, `text` and `tags` and ignores the others. It has no role `id`, no `mappings` and no `color` column. It has no fallback to the first time field when a column is named `time`. It has no fallback of `text` to the first text column.
 - A `NULL` or 0 in `timeEnd` gives a point, also in a Nullable column. Grafana loses the region of such a column. An end below the time gives an error in Hune. Grafana draws a region.
 - The text is plain text. Grafana renders HTML. A text with the form of an HTML tag gives the error `annotation_invalid` with the reason `bad_chars`, and no mark shows. A control character and a bidirectional control give the same error.
 - The tags are trimmed, the empty tags are removed and the first of equal tags stays. An `Array(String)` is read from its JSON text.
 - Hune has caps: 8 annotations, 1,000 rows for each query (an error above it) and 2,000 marks for each panel (no mark above it). Grafana has none.
-- The marks show on the `timeseries` only. Grafana also draws them on the state timeline and on the status history (decision ID-K148).
+- The marks show on the `timeseries` only. Grafana also draws them on the state timeline and on the status history.
 - The marks are on a canvas of the page, over the series. The line and the triangle have the measured sizes. The hit zone is 24 px high and 8 px wide on each side, and Grafana has the triangle of 10 px by 5 px. The card appears for a point and for a region in the zone.
 - The card has no "Edit" and no "Delete", because Hune has no stored annotation. The tags have one neutral colour. The text has a clamp of 12 lines. The card has no pin.
 - The keyboard reads the marks. Grafana has no keyboard access. "View data" has a table of the marks.
 - The SQL of an annotation cannot use the macros that need the interval. Grafana can. A query that has one is not imported.
 - A failed annotation shows a note in the title bar of the panel, and the cap shows a note. Grafana shows nothing.
-- The page has no switch for an annotation. `enabled` is a member of the document (decision ID-K157).
+- The page has no switch for an annotation. `enabled` is a member of the document.
 - The built-in item "Annotations & Alerts" is not imported. Hune has no alert and no stored annotation.
 - The import of `filter` with `exclude` equal to `true` is a list of panel ids at the time of the import.
 - The card, the lines and the colours use the tokens and the shades of the theme (9.25). The sizes of the marks are those that this section lists.
 
-### 19.20f Differences of milestone F, wave 3: several queries
+### 19.20f Differences from Grafana: several queries
 
-Milestone F, wave 3, adds several queries in one panel (4.15a, 9.8d, 9.22a, decisions ID-K160 to ID-K175). The measure is on Grafana 12.4.2 with the plugin ClickHouse. The worker made 4 temporary dashboards in the folder `hune-f24` and deleted them. These differences are on purpose.
+Hune has several queries in one panel (4.15a, 9.8d, 9.22a). The measure is on Grafana 12.4.2 with the plugin ClickHouse. It used 4 temporary dashboards. They were deleted after the measure. These differences are on purpose.
 
 Facts of Grafana that Hune follows:
 
@@ -827,7 +820,7 @@ Facts of Grafana that Hune follows:
 
 Differences:
 
-- Hune sends one request for each visible query. Grafana sends one for each panel and data source. A dashboard of 10 panels with 19 visible targets made 10 requests in Grafana and makes 19 in Hune. The reason is decision D43 and the bound of 8.8: a request runs one query.
+- Hune sends one request for each visible query. Grafana sends one for each panel and data source. A dashboard of 10 panels with 19 visible targets made 10 requests in Grafana and makes 19 in Hune. The reason is the bound of 8.8: a request runs one query.
 - The server of Hune refuses a hidden query with `400`. The backend of Grafana runs it.
 - Hune keeps the prefix `A a` when a query fails, because the rule counts the visible queries. Grafana drops the prefix of a time series when only one frame answers (`b`), and it keeps `A n` in a table. Hune never changes a name because of an outage, so an override by name stays valid.
 - When all the queries of a panel fail, Hune shows the error state with the first error and "Retry". Grafana shows "No data" with the badge.
@@ -835,17 +828,17 @@ Differences:
 - Hune lists each failed query in the badge, with its ref, its code and its message. Grafana shows one message.
 - A bar chart shows the first frame only in Grafana (measured: the legend had `A a` and no `B b`). Hune refuses extra queries for a `barchart` and an `xychart`, and the importer keeps the first query. The `xychart` of Grafana did not load in the measure.
 - The join needs a sorted time. Hune sorts each frame and drops the rows with a `null` time, as its long-to-wide does. Equal times in one frame give the last row. A frame with no time column is an error in Hune.
-- A transform applies to each frame alone, as in Grafana for the transforms of 9.21. The transforms that read more than one frame (`merge`, `join`, `concatenate`, `series to columns`) stay `unsupported` until F28.
+- A transform applies to each frame alone, as in Grafana for the transforms of 9.21. The transforms that read more than one frame follow 19.20j.
 - A panel of Hune has 8 queries at most, and a document 400. Grafana has no limit.
-- A query of Hune has its own source. A query of Grafana in a Mixed panel can use the data source `-- Dashboard --` or `-- Grafana --`: the importer removes it and lists it. A panel with `repeat` and several queries is refused in Hune. The importer removes the repeat and keeps the queries (decision ID-K165).
+- A query of Hune has its own source. A query of Grafana in a Mixed panel can use the data source `-- Dashboard --` or `-- Grafana --`: the importer removes it and lists it. A panel with `repeat` and several queries is refused in Hune. The importer removes the repeat and keeps the queries.
 - A panel members group (`maxDataPoints`, `interval`, `timeFrom`, `timeShift`) lives in `data.query` in Hune. The first query can be hidden and the members still apply.
 - The importer writes no `ref` for a panel with one query, whatever its refId. Thus a document with one query per panel keeps its bytes (4.42). A refId that breaks the grammar, or that two targets share, gets a new letter and the item is `changed`. A matcher `byFrameRefID` follows the new letter.
 - A section with `repeat` that holds a panel with several queries loses the `repeat` of the section in the import. A `barchart` or an `xychart` that reuses a panel with several queries is removed.
 - The capture of the parity harness pairs the requests by ref. The visual capture reads the legend, the headers of a table and the select of the frames. It compares them with the display names of Hune (15.14c).
 
-### 19.20g Differences of milestone F, wave 3: the heatmap and the histogram
+### 19.20g Differences from Grafana: the heatmap and the histogram
 
-Milestone F, wave 3, adds the two panels (4.33c, 4.33d, 9.19e, 9.19f, decisions ID-K180 to ID-K195). The measure is on Grafana 12.4.2, on the local instance, with the data source `clickhouse` and synthetic queries. The worker made 8 temporary dashboards in the folder `hune-f31` (the uids `hune-f31-a` to `hune-f31-h`) and deleted them. The worker read the options and the bucket maths in the plugin code that the instance serves, and checked each rule on a picture. These differences are on purpose. Two of them are faults of Grafana that Hune does not copy: one bucket and a bucket offset (decision ID-K310).
+Hune has the two panels (4.33c, 4.33d, 9.19e, 9.19f). The measure is on Grafana 12.4.2, on a local instance, with the data source `clickhouse` and synthetic queries. It used 8 temporary dashboards that were deleted after the measure. The options and the bucket maths come from the plugin code that the instance serves, and each rule was checked on a picture. These differences are on purpose. Two of them are faults of Grafana that Hune does not copy: one bucket and a bucket offset.
 
 The facts of Grafana, heatmap:
 
@@ -879,37 +872,37 @@ The facts of Grafana, histogram:
   - The line of a bar is inside the bar at its top and at its bottom. The box loses half the line width at each end. A line of 3 px gave a fill 3 px lower than the count. The x and the width do not change. The clip of the bars is the plot with half the line width more on each side.
   - With a `bucketOffset` that is not a multiple of `bucketSize`, the x range starts after the low edge of the first bucket. Thus a part of the first bucket is cut, and the ticks mark no bar edge. The range ends at the high edge of the last bucket. The ticks are multiples of `bucketSize`, and Grafana also writes the label `-25` outside the canvas.
   - That measure used the size 25 with the offsets 5 and 10 on two sets of data. The range started at -25 for the values of -30 to 30, and at 0 for the values of 0 to 360. The first multiple of `bucketSize` at or above the low edge of the first bucket fits both, but the measure does not exclude other rules.
-- Facts of Grafana that Hune follows (9.19f, section 3, decision ID-K310):
+- Facts of Grafana that Hune follows (9.19f, section 3):
   - The y axis starts at 0. Its end is the end of the range rule of a time series for the lowest count above 0 and the highest count. The room is 10 % of the range of the counts, rounded up to a tenth of its decade. One bucket gives an axis from 0 to 2 times the count.
   - The ticks are 30 px apart at least, or 15 px on a plot of 150 px or less. The code that the instance serves has this rule for the y axis (`calculateSpace`). The rule gave the ticks of Grafana on the 15 panels of the fixtures `histogram_f` and `histogram_h`. It also gave the ticks on 28 plots of 19 to 481 px (temporary dashboards of 2026-11-15) and on the fixture `parity_axes`.
 - The card has the row `Bucket` with `low - high` and the rows of the series. A result of 100,000 rows draws in 1.1 s. A result of 500,000 rows shows "No histogram found in response", and a result of 200,000 rows shows no heatmap.
 
 The differences:
 
-- A cell with a count of 0 or less is not drawn, and `hide_le` has the default 0 (Grafana: 1e-9). A count between 0 and 1e-9 shows in Hune and not in Grafana (decision ID-K184).
+- A cell with a count of 0 or less is not drawn, and `hide_le` has the default 0 (Grafana: 1e-9). A count between 0 and 1e-9 shows in Hune and not in Grafana.
 - Hune skips a `null` and a `NaN` value. Grafana counts a `null` as 0 on a linear scale and a `NaN` breaks the grid. Hune ignores a value with a time outside the range.
-- A value of 0 or less on a log scale is skipped in Hune, as in Grafana. Hune shows a note that gives the count of the skipped values, and the table "View data" shows it too. Grafana skips them with no message (decision ID-K183).
-- Hune has caps (500,000 values, 250,000 cells, 4,000 buckets). Grafana has none, but it shows no data above about 100,000 rows with this data source (decision ID-K182).
+- A value of 0 or less on a log scale is skipped in Hune, as in Grafana. Hune shows a note that gives the count of the skipped values, and the table "View data" shows it too. Grafana skips them with no message.
+- Hune has caps (500,000 values, 250,000 cells, 4,000 buckets). Grafana has none, but it shows no data above about 100,000 rows with this data source.
 - The frame that is already bucketed has the shape of a time field and number fields only. Grafana also reads cells with the names `xMin`, `yMin`, `count` and the layouts `le` and `ge`. The labels stay at the middle of the row. A `yBucketScale` and a unit of the names are not read.
 - The value axis has the places `left` and `hidden`. Hune has no right axis, no `axisWidth` and no `axisLabel` for the heatmap.
-- Hune has 10 schemes of the 38 of Grafana. The scheme `viridis` is a sample of 17 colours with a difference of 7 or less in one channel. A scheme that Hune has not is `changed` on import (decision ID-K181).
-- The card of a heatmap has no histogram of the column, no colour bar and no exemplar. The plot has no selection by drag and no card that stays after a click (decision ID-K187).
+- Hune has 10 schemes of the 38 of Grafana. The scheme `viridis` is a sample of 17 colours with a difference of 7 or less in one channel. A scheme that Hune has not is `changed` on import.
+- The card of a heatmap has no histogram of the column, no colour bar and no exemplar. The plot has no selection by drag and no card that stays after a click.
 - The labels of a log axis have the short form of the engine (`0.001`). Grafana writes `0.00100` and `0.100`.
 - A cell of 3 px or less has no gap (E16). The sizes are not rounded for a gap of 4 px or more. A cell is 0.5 px at least, and Grafana has 1 device pixel.
 - A bar of a histogram is its slot less 1 px (the engine), so two bars have a gap of 1 px. The bars of Grafana touch.
 - A frame with one time row gives an error in Hune ("A heatmap needs two time rows at least."). Grafana draws nothing.
-- The cells are colour data. The lowest colour of a scheme can have less than 3:1 with the panel in the light theme, as in Grafana (decision ID-K188).
+- The cells are colour data. The lowest colour of a scheme can have less than 3:1 with the panel in the light theme, as in Grafana.
 - The histogram has no gradient mode. Hune has no `noValue` for the values.
-- One bucket: all the values equal, one value, or `bucketCount` 1. Grafana draws no bar and no x label, because its canvas gets a rectangle with an x of `NaN`. This is a fault of Grafana. Hune draws the bar with its two edges and their labels (decision ID-K310). The y axis of both ends at 2 times the count. The visual capture keys this difference on the rectangle of Grafana with no x (rule `one-bucket`).
-- A `bucketOffset` that is not a multiple of `bucketSize`. The x axis of Hune runs from the low edge of the first bucket. Its labels are the edges of the buckets (9.19f, section 3). Grafana cuts a part of the first bucket, and its labels mark no bar edge. This is a fault of Grafana (decision ID-K310). The visual capture pairs the bars by their x value, so their heights and their colours still compare (rule `bucket-offset`).
+- One bucket: all the values equal, one value, or `bucketCount` 1. Grafana draws no bar and no x label, because its canvas gets a rectangle with an x of `NaN`. This is a fault of Grafana. Hune draws the bar with its two edges and their labels. The y axis of both ends at 2 times the count. The visual capture keys this difference on the rectangle of Grafana with no x (rule `one-bucket`).
+- A `bucketOffset` that is not a multiple of `bucketSize`. The x axis of Hune runs from the low edge of the first bucket. Its labels are the edges of the buckets (9.19f, section 3). Grafana cuts a part of the first bucket, and its labels mark no bar edge. This is a fault of Grafana. The visual capture pairs the bars by their x value, so their heights and their colours still compare (rule `bucket-offset`).
 - The bars are drawn by the engine. The number of buckets is the number of the span, empty buckets included. Grafana draws only the buckets that have a count, and it has no cap.
-- Hune follows Grafana for the y axis of a stack since decision ID-K325 (owner answer of 2026-11-22). With `percent`, the axis shows shares of 1, for example 0 to 1.1. In a stack, the axis uses the lowest drawn top. It is 0 when only a later series has a count in a bucket (9.19f, section 3). Before, the percent axis was 0 to 100, and a stack could end 10 counts lower. The marks were up to 14 px apart on 12 of 24 panels.
-- The old heatmap of Grafana 7 to 9 is not imported (decision ID-K186).
+- Hune follows Grafana for the y axis of a stack. With `percent`, the axis shows shares of 1, for example 0 to 1.1. In a stack, the axis uses the lowest drawn top. It is 0 when only a later series has a count in a bucket (9.19f, section 3).
+- The old heatmap of Grafana 7 to 9 is not imported.
 - The Hune card, the legend and the colours use the tokens and the shades of the theme (9.25). The sizes and the positions are those that this section lists.
 
-### 19.20h Differences of milestone F, wave 3: custom values of a variable
+### 19.20h Differences from Grafana: custom values of a variable
 
-The figures are from Grafana 12.4.2, with 4 temporary dashboards (`hune-f41-a` to `hune-f41-d`, in the folder `hune-f41`). The worker deleted them. The code of the front end that the instance serves is the second source: the files `8060.*.js` and `4652.*.js` of the build.
+The figures are from Grafana 12.4.2, with 4 temporary dashboards. They were deleted after the measure. The code of the front end that the instance serves is the second source: the files `8060.*.js` and `4652.*.js` of the build.
 
 Facts about Grafana:
 
@@ -924,9 +917,9 @@ Facts about Grafana:
 - An empty list of options gives an empty value (`var-x=` in the URL) and an empty control, with `false`. A URL value stays at the first load with an empty list. With "All", the control shows "All".
 - The synthetic exports of the repository: the exports `monitor` (v1), `monitor-wrapped` and `monitor-v2a` have no `allowCustomValue`. The export `monitor-v2b` has `allowCustomValue: true` on its 5 variables, the two text variables included. The 8 export fixtures for PostgreSQL and MongoDB, and `text_panels.json`, have none. The export "stream" (45 panels) has no variable: its list `variables` is empty in the fixture and in the generator output. The repository has no file of the v2 schema.
 
-The differences that Hune keeps (decision ID-K212):
+The differences that Hune keeps:
 
-- An absent member means closed in Hune and open in Grafana. The importer writes `true` for a `query` variable when Grafana says `true` or says nothing, so an imported dashboard behaves as in Grafana (15.6). For a `custom` variable it writes `true` only when Grafana says `true` and a free value is valid in each query that names the variable. An absent member of a `custom` variable stays closed, with a `changed` item, because a closed `custom` variable is a check of the server (ID-K206). The editor creates a new variable closed.
+- An absent member means closed in Hune and open in Grafana. The importer writes `true` for a `query` variable when Grafana says `true` or says nothing, so an imported dashboard behaves as in Grafana (15.6). For a `custom` variable it writes `true` only when Grafana says `true` and a free value is valid in each query that names the variable. An absent member of a `custom` variable stays closed, with a `changed` item, because a closed `custom` variable is a check of the server. The editor creates a new variable closed.
 - A closed variable of Hune replaces a URL value at the load, with a notice. Grafana keeps it at the first load and shows no notice.
 - An open variable of Hune keeps a typed value after each reload of the options. Grafana loses it. This is the value of the feature for a variable that reloads with the time range.
 - A closed `custom` variable is a rule of the server in Hune (7.7). A closed `query` variable is a rule of the page, as in Grafana. Grafana has no rule on the server.
@@ -935,9 +928,9 @@ The differences that Hune keeps (decision ID-K212):
 - A typed value makes no copy of a repeat in Hune (4.13a, 9.8c). Grafana repeats on any value of the selection.
 - The editor of Hune has a menu of SQL examples and a preview of the options. Grafana has neither.
 
-### 19.20i Differences of F42: the minimal tree of the query editor
+### 19.20i Differences from Grafana: the minimal tree of the query editor
 
-F42 adds a format on request, folds, a bracket pair and a current block to the SQL area (10.3c to 10.3g, decisions ID-K220 to ID-K233). Grafana 12.4.2 edits SQL in Monaco. Hune keeps its text area with two layers.
+Hune has a format on request, folds, a bracket pair and a current block in the SQL area (10.3c to 10.3g). Grafana 12.4.2 edits SQL in Monaco. Hune keeps its text area with two layers.
 
 Facts of Grafana that Hune does not copy:
 
@@ -947,18 +940,18 @@ Facts of Grafana that Hune does not copy:
 
 Differences:
 
-- Hune has no multi-cursor, no minimap, no find and replace and no completion of names (10.16). The reason is the size and the dependency: Monaco is a large library, and the owner asked for a minimal tree that Hune writes (decision ID-K220).
+- Hune has no multi-cursor, no minimap, no find and replace and no completion of names (10.16). The reason is the size and the dependency: Monaco is a large library, and the project chose a minimal tree that Hune writes.
 - The folds of Hune follow the brackets of the tree of the dialect, not the indent. A fold hides a pair of brackets of two lines or more.
-- The format of Hune changes only blanks and never the case of a keyword (decision ID-K224). A formatter library of Grafana can write the keywords in upper case.
+- The format of Hune changes only blanks and never the case of a keyword. A formatter library of Grafana can write the keywords in upper case.
 - The format of Hune refuses a text with an error and says where. A formatter library often formats a partial text.
 - The fold state is not saved. Monaco keeps it in a view state that Grafana does not save in the dashboard either.
 - The tree is not a security check and has no effect on the save or the run. Grafana has no such check in the editor either, and its server is the authority, as the server of Hune is.
 - The structure of a `postgres` source follows the lexer of PostgreSQL, but the colours still follow the ClickHouse lexer (10.3). This is the known limit of 10.3.
-- The tabs "JSON" of the panel and of the dashboard have no tree (decision ID-K233).
+- The tabs "JSON" of the panel and of the dashboard have no tree.
 
-### 19.20j Differences of milestone F, wave 3: more transforms
+### 19.20j Differences from Grafana: more transforms
 
-Milestone F, wave 3, adds eleven transforms (4.25a, 9.21a, decisions ID-K240 to ID-K254). The measure is on Grafana 12.4.2 with the plugin ClickHouse. The worker made 243 temporary dashboards in the folder `hune-f2827`, read each result in "Inspect, JSON, Panel data", and deleted the folder at the end. The prototype matches Grafana on 177 of 237 cases. These are the differences, and the cases are in `tests/frontend/vectors/measure-f28.json`.
+Hune has eleven more transforms (4.25a, 9.21a). The measure is on Grafana 12.4.2 with the plugin ClickHouse. It used 243 temporary dashboards. Each result was read in "Inspect, JSON, Panel data", and the dashboards were deleted at the end. A prototype matched Grafana on 177 of 237 cases. These are the differences, and the cases are in `tests/frontend/vectors/measure-f28.json`.
 
 Facts of Grafana that Hune follows:
 
@@ -989,11 +982,11 @@ Differences:
   - A time to text is an ISO text in UTC with `Z`. Grafana uses the zone of the browser. A text to text does nothing. Grafana puts quote marks around the value.
 - The kinds have fewer members than the Grafana options (15.6): no `includeByName`, no `%`, no cumulative and window modes, no variable in `limit`.
 - The page gives an error when a result is above the caps (9.21a, rule 13). Grafana has no cap.
-- The import keeps the first 16 transformations of a panel and lists the others as `unsupported` (15.6). Before milestone F, the dashboard was not imported in this case.
+- The import keeps the first 16 transformations of a panel and lists the others as `unsupported` (15.6).
 
-### 19.20k Differences of milestone F, wave 3: interval and constant variables
+### 19.20k Differences from Grafana: interval and constant variables
 
-Milestone F, wave 3, adds the variable kinds `interval` and `constant` (4.10a, 4.10b, 7.4a, decisions ID-K260 to ID-K270). The measure is on Grafana 12.4.2. The worker made 4 temporary dashboards in the folder `hune-f2827` and deleted them at the end.
+Hune has the variable kinds `interval` and `constant` (4.10a, 4.10b, 7.4a). The measure is on Grafana 12.4.2. It used 4 temporary dashboards. They were deleted at the end.
 
 Facts of Grafana that Hune follows:
 
@@ -1003,7 +996,7 @@ Facts of Grafana that Hune follows:
 
 Differences:
 
-- The server of Hune checks the value of an `interval` against the list of the document. Grafana accepts a URL value that is not an option, and it puts the text in the SQL. This difference is the security choice of decision ID-K263.
+- The server of Hune checks the value of an `interval` against the list of the document. Grafana accepts a URL value that is not an option, and it puts the text in the SQL. This difference is a security choice.
 - Hune checks each item of the list. An item is digits and one unit of `ms`, `s`, `m`, `h`, `d`, `w` or `y`, at most 365 days. Grafana does not check the items (`abc`, `5x`, `0m`, `1M` are options). The importer removes the items that Hune refuses.
 - Grafana splits the list at each character that is not a letter, a digit or `_` (`1.5h` gives `1` and `5h`, `-1m` gives `1m`). Hune splits the editor text at a comma and at a line end. The importer follows Grafana for a file that it imports.
 - The minimum of "Auto" is one of the 30 texts of the table. Grafana takes any text, and `90s` gave `1m`. The importer maps such a text to the largest table text that is not above it. A step count of 0 and a bad minimum together made the page of Grafana fail. Hune refuses them at save.
@@ -1012,9 +1005,9 @@ Differences:
 - A constant is always hidden in Hune. Grafana shows a constant with `hide` 0. The importer lists this change.
 - The member `$__auto_interval_<name>` in a SQL is not a variable in either product (Grafana leaves it as text, Hune refuses `$__name` in code, 7.10).
 
-### 19.20m Differences of F43: the option forms of the panel editor
+### 19.20m Differences from Grafana: the option forms of the panel editor
 
-The worker measured the editor of Grafana 12.4.2 with a headless Chrome. It opened 13 temporary dashboards in the folder `hune-f43`, one for each type, with the data source `clickhouse`. It read the groups, the labels and the controls, and it changed each choice to find the controls that show and hide. The dashboards and the folder were deleted after the measure.
+A headless Chrome measured the editor of Grafana 12.4.2. It opened 13 temporary dashboards, one for each type, with the data source `clickhouse`. It read the groups, the labels and the controls, and it changed each choice to find the controls that show and hide. The dashboards were deleted after the measure.
 
 The order of the groups in Grafana is this. A group of Hune has the same name where it has a member.
 
@@ -1089,11 +1082,11 @@ The controls of Grafana with no member in the closed format have no control in H
 | `histogram`, `state-timeline`, `status-history` | Gradient mode, Page size (enable pagination), the Axis group |
 | `text` | The modes HTML and Code, and their controls |
 
-The xychart panel of Grafana did not load in the editor for a panel that had no `options.series` member. The migration code of the panel threw an exception. The worker added `options.series = []` to its temporary dashboard to measure it.
+The xychart panel of Grafana did not load in the editor for a panel that had no `options.series` member. The migration code of the panel threw an exception. The measure added `options.series = []` to its temporary dashboard.
 
-### 19.20n Differences of P01: the units of wave H
+### 19.20n Differences from Grafana: the units
 
-The worker measured the value formatter of Grafana 12.4.2 on 2026-11-22. A headless Chrome loaded `@grafana/data` from the served page. It called `getValueFormat` and `getDisplayProcessor` for the 30 new units of 4.20, and for 15 units that Hune had already. The measure made no dashboard. The texts are the vectors `FE-06-units-h.json` of FE-06. The page gives these texts, with the differences below.
+The value formatter of Grafana 12.4.2 was measured. A headless Chrome loaded `@grafana/data` from the served page. It called `getValueFormat` and `getDisplayProcessor` for the 30 new units of 4.20, and for 15 units that Hune had already. The measure made no dashboard. The texts are the vectors `FE-06-units-h.json` of FE-06. The page gives these texts, with the differences below.
 
 | Case | Grafana 12.4.2 | Hune |
 |---|---|---|
@@ -1101,22 +1094,24 @@ The worker measured the value formatter of Grafana 12.4.2 on 2026-11-22. A headl
 | `Infinity` with `dthms` or `dtdhms` | `Infinity:0NaN:0NaN` | `∞` |
 | A text value with a count unit, for example `abc` with `rowsps` | The formatter gives `abcundefined rows/s`. The display shows `abc`. | `abc`, as for each unit. |
 | A text that holds a number, for example `12` with `rowsps` or `0` with `bool` | The display reads the number: `12 rows/s`, `False`. | The text as it is: `12`, `0`. This applies to each unit (9.15). |
-| A `bool` value with `bool_yes_no` | `true` or `false` | `Yes` or `No`, the rule of 9.15 since milestone F (to re-read by the owner). |
+| A `bool` value with `bool_yes_no` | `true` or `false` | `Yes` or `No`, the rule of 9.15. |
 | The colour of a number with the unit `string` | The colour of the base step, because the display reads no number. | The colour of the number by the thresholds. |
 | The y axis of a time series with `kbytes`, `mbytes`, `gbytes`, `tbytes`, `bits` or `binBps` | The steps are powers of 2: the time series of Grafana has a list of binary units. | The steps are 1, 2, 2.5 or 5 times a power of ten. Only `bytes` has steps that are powers of 2 (9.19). |
 
-The measure also changed two rules of units that Hune had already:
+The measure also gives two rules of units that Hune follows:
 
-- `decbytes` is the SI scale of Grafana (`SIPrefix`). Thus `0.5` gives `500 mB`. Before, the page gave `0.500 B`.
-- The three bool units give `NaN` for `NaN`, as the display of Grafana does. Before, `bool_yes_no` gave `No`.
+- `decbytes` is the SI scale of Grafana (`SIPrefix`). Thus `0.5` gives `500 mB`.
+- The three bool units give `NaN` for `NaN`, as the display of Grafana does.
 
 ### 19.21 Data-link tokens, table footer, pages and the other panel features of M0
 
 M0 measures the tokens of the data links (9.18), the table footer and pages (9.20), panel time overrides, repeats, and
 panel and dashboard links. Each feature in use is a `mapped` row of 15.6 by 18.14, or an `unsupported` row with an accepted
-fallback. Milestone F, wave 1, adds the table footer (9.20). Hune v1 has no pages. Milestone F, wave 2, adds the panel time override (9.8b) and the dashboard links (9.8a).
+fallback.
 
-Milestone F, wave 3, adds the repeat of a panel and of a section (4.13a, 9.8c). M0 counts the real use, to confirm the limits of 4.35 (13.8).
+Hune has the table footer (9.20), the panel time override (9.8b) and the dashboard links (9.8a). It also has the repeat of a panel and of a section (4.13a, 9.8c). Hune v1 has no pages.
+
+M0 counts the real use, to confirm the limits of 4.35 (13.8).
 
 ### 19.22 Unused
 
@@ -1126,48 +1121,52 @@ The checks of this item are a test list, not an open point. They moved to 15.14b
 
 The cancellation of 8.9 needs the server to see that the browser closed its connection. The case C05 of 16.9 MUST prove it:
 the query leaves `system.processes` within 2 s after the close, through an HTTP/1.1 proxy. When hyper does not detect the
-close in time, the engineer changes the design of 8.9 before the M2 exit.
+close in time, the design of 8.9 must change.
+
+Open question: is the design of 8.9 enough? Default today: the design of 8.9, with the case C05 as its check.
 
 ### 19.24 `ceiling_exceeded` for `max_rows` after a byte overflow
 
 ClickHouse gives the error 396 (`TOO_MANY_ROWS_OR_BYTES`) for both the row limit and the byte limit. When the ceiling
 `max_rows` lowered `max_result_rows`, Hune answers `ceiling_exceeded`, also when the cause was the byte limit (8.5, 11.24).
-The owner accepts this message, or asks for a check of the row count before the answer.
+Open question: keep this message, or check the row count before the answer? Default today: Hune answers `ceiling_exceeded`.
 
 ### 19.25 No durable audit record for a folder change
 
 A change of a dashboard writes a history version before the effect: the durable audit (14.11). A change of a folder writes
-only the log line `folder.changed`. The owner decides if a folder change needs a durable record. A durable record changes
-the store of section 5, so the decision comes before the volume writes of M4.
+only the log line `folder.changed`.
+
+Open question: does a folder change need a durable record? A durable record changes the store of section 5. Default today: the log line only.
 
 ### 19.26 The three rules of `hclconf`
 
-Closed. The crate `hclconf` is written in Hune from section 13 (decision ID-01). It is not a copy of another HCL engine of
-the maintainer, and its `PROVENANCE` file records the comparison. It has three rules (13.1): a duration with exactly one
-unit, modes on blocks, and boolean mode keys. No other engine gets these rules from this work.
+Closed. The crate `hclconf` is written in Hune from section 13. It is not a copy of another HCL engine, and its
+`PROVENANCE` file records the comparison. It has three rules (13.1): a duration with exactly one
+unit, modes on blocks, and boolean mode keys.
 
 ### 19.27 The token rules of `procurauth-core`
 
 `procurauth-core` accepts only whole numbers for `iat` and `exp`. It needs a `kid` when the key set has two keys or more.
-Hune follows the library (11.8, 11.9). Issue 1 of the repository `SCcagg5/procurauth` holds the open question of the
-protocol. The owner answers it as the maintainer of ProcurAuth, before the engineer chooses the commit of 19.28.
+Hune follows the library (11.8, 11.9). A change of these rules belongs to the ProcurAuth protocol
+(https://github.com/ProcurAuth/procurauth).
+
+Open question: must the protocol accept fractional `iat` and `exp`, and an absent `kid` with two keys? Default today: no. The library refuses both.
 
 ### 19.28 The pinned commit of ProcurAuth and the series U figures
 
-The engineer chooses the `rev` of the git dependencies `procurauth-pep` and `procurauth-core` at M6 (11.10, 17.9). The
-profile and the counts are those of 11.32. At the commit `058563cfbc3536b9b850255d953568ef0a5cabbe`, the run gives 110
-cases: 61 passed, 0 failed and 49 skipped. At the exit of M6, `docs/CONFORMANCE.md` records the counts of the chosen
-commit.
+The `rev` of the git dependencies `procurauth-pep` and `procurauth-core` is chosen at M6 (11.10, 17.9). The
+profile and the counts are those of 11.32. At the commit `058563cfbc3536b9b850255d953568ef0a5cabbe`, the profile gives 110
+cases. The specification expects 61 passed, 0 failed and 49 skipped. The run gives 60 passed, 0 failed and 50 skipped,
+because the runner skips the case U67. `docs/CONFORMANCE.md` records the counts of the chosen commit.
 
 ### 19.29 The pattern form of `byRegexp` and of `reduce.fields`
 
-A review shows that Grafana most likely reads the `byRegexp` matcher and the `reduceOptions.fields` of the stat, pie and
+Grafana most likely reads the `byRegexp` matcher and the `reduceOptions.fields` of the stat, pie and
 bar gauge panels with `stringToJsRegex`. In that form a text `/^Total$/` is a pattern with slashes, and a plain text `t`
 means `^t$`. 15.6 copies the Grafana text as it is (the Grafana form of 4.24), and the fixtures of I01 and B04 use
-`/^Total$/`. The spike (18.3a) checks the rule in the source and the behaviour of the pinned Grafana. Sections 4 and 9
-then use the form that the check confirms.
+`/^Total$/`. The spike (18.3a) checks the rule in the source and the behaviour of the pinned Grafana.
 
-Owner: the engineer. Close by: the exit of the spike, before M1 freezes the format.
+Open question: is this form right? The check is not done. Default today: the code reads the Grafana form of 4.24.
 
 ### 19.30 The common subset of the regular expressions
 
@@ -1175,8 +1174,6 @@ Hune checks a pattern with the Rust crate `regex` (4.24) and runs it with the `R
 differ: `\d`, `\w`, `\s` and `\b` are Unicode in Rust and ASCII in JavaScript, and `[[:alpha:]]`, `\A`, `\z` and `\pL`
 are valid in Rust only. Section 4 defines one subset that both engines read the same way, and `hune-core` refuses a
 pattern outside it. The vectors of 16.10a check it.
-
-Owner: the engineer, with the writer of section 4. Close by: the exit of the spike.
 
 ### 19.31 The rule of `max_data_points`
 
@@ -1186,11 +1183,11 @@ with the rule of 9.8. A difference near a bound of the interval table (7.4) give
 
 The case B27 and the check of 15.14b test the rule after the spike.
 
-Owner: the engineer, with the writer of section 9. Close by: the exit of the spike.
+Open question: does the rule match Grafana on real panels? Default today: the rule of 9.8.
 
 ### 19.32 The security choices of the PostgreSQL source
 
-The design of section 8a has choices that the owner has not validated. Each choice has a default, and the code follows the default. The table below gives each choice. Each one is a decision marked `PENDING OWNER` (`ID-PG1` to `ID-PG17`). The owner answers each choice, or accepts its default, before the exit of MPG.
+The design of section 8a has choices that no review of real use has validated. Each choice has a default, and the code follows the default. The table below gives each choice. Each one is an open question, and a review can change a default.
 
 | Choice | Default | Where |
 |---|---|---|
@@ -1208,18 +1205,17 @@ The design of section 8a has choices that the owner has not validated. Each choi
 | The errors | The page shows the first line of the server message. The logs hold the SQLSTATE only. | 8a.8, 12.15 |
 | The attribution | A comment before the SQL and the `application_name` of each query. | 8a.11 |
 | The accepted limits | One large row, `statement_timeout` for each message, the trust in the functions of the administrator, and the foreign tables. | 8a.15 |
-| The other choices | The types of 7.16a, the `null` for a numeric NaN, the rule of 7.16b, no fill of gaps, the interval units of 7.23, PostgreSQL 15 to 18, the first release 0.1.0 (ID-K335), and the scanner of the page. | 7.16a to 7.23, 8a.14, 9.10 |
+| The other choices | The types of 7.16a, the `null` for a numeric NaN, the rule of 7.16b, no fill of gaps, the interval units of 7.23, PostgreSQL 15 to 18, the first release 0.1.0, and the scanner of the page. | 7.16a to 7.23, 8a.14, 9.10 |
 
-Owner: the owner, with the engineer. Close by: the exit of MPG.
 
 ### 19.33 The security choices of the MongoDB source
 
-The design of section 8b and of 7.27 to 7.36 has choices that the owner has not validated. Each choice has a default, and the code follows the default. The table below gives each choice. Each one is a decision marked `PENDING OWNER` (`ID-MG1` to `ID-MG16`). The owner answers each choice, or accepts its default, before the exit of MMG.
+The design of section 8b and of 7.27 to 7.36 has choices that no review of real use has validated. Each choice has a default, and the code follows the default. The table below gives each choice. Each one is an open question, and a review can change a default.
 
 | Choice | Default | Where |
 |---|---|---|
 | The place of the query in the format | The member `sql` holds one JSON text. No new member, no new `format_version`. | 4.15 |
-| The driver crate | The crate `mongodb` and the crate `bson` from crates.io, with `rustls` and `ring`, behind the feature `mongo-driver`. The crate `mongodb` is a local copy with no environment read in `vendor/mongodb` (`ID-MG25`). | 8b.2, 17.9 |
+| The driver crate | The crate `mongodb` and the crate `bson` from crates.io, with `rustls` and `ring`, behind the feature `mongo-driver`. The crate `mongodb` is a local copy with no environment read in `vendor/mongodb`. | 8b.2, 17.9 |
 | The read-only rule | Three sides: the user, the closed commands with a wire guard, and the closed grammar. | 8b.3 |
 | The user | The role `read` on the listed databases and no other role. The probe refuses a user with another role, a cluster privilege or a write action. | 8b.12, 8b.13 |
 | The grammar | A closed allowlist of stages and operators, and the refused list of 7.32. `$expr` is checked with the operators of the allowlist. | 7.31, 7.32 |
@@ -1232,23 +1228,22 @@ The design of section 8b and of 7.27 to 7.36 has choices that the owner has not 
 | The limits | The stage `$limit` of `R + 1`, `maxTimeMS`, a deadline of 5 s above it, `allowDiskUse: false`, a kill of the cursor, the read concern `local`. | 8b.5 to 8b.7 |
 | The errors | Mapping by the server code. The page shows the first line of the message. The logs hold the code only. | 8b.8, 12.15 |
 | The accepted limits | One large reply, a command that runs to `maxTimeMS` after the client leaves, the server setting for JavaScript that Hune cannot read, and the role actions `collStats` and `dbStats`. | 8b.15 |
-| The other choices | The versions 7.0 and newer, the first release 0.1.0 (ID-K335), the importer rows and the frame with no column. | 8b.14, 15.6, 7.16c |
+| The other choices | The versions 7.0 and newer, the first release 0.1.0, the importer rows and the frame with no column. | 8b.14, 15.6, 7.16c |
 
-Owner: the owner, with the engineer. Close by: the exit of MMG.
 
-### 19.34 The query model of the MongoDB plugin, the two real queries, and the MongoDB version
+### 19.34 The query model of the MongoDB plugin and the MongoDB version
 
-The rows of 15.6 for the plugin `haohanyang-mongodb-datasource` 0.5.0 follow the memory of the author. The author did not check these items against the real plugin:
+The rows of 15.6 for the plugin `haohanyang-mongodb-datasource` 0.5.0 follow the documentation of the plugin. They were not checked against a live plugin:
 
 - the members `queryText`, `queryType`, `database` and `collection`;
 - the form of the time macros;
 - the form of the text.
 
-The reference deployment has 2 MongoDB queries. M0 or the start of MMG reads them from the export of 15.3. It records, for each query, the members of the target, the stages that it uses, its macros and its variables. It also records the version and the topology of the MongoDB server that the reference deployment reads. It records the privileges of the account that Grafana uses too.
+M0 or the verification of MMG reads the MongoDB queries of a Grafana export (15.3). It records, for each query, the members of the target, the stages that it uses, its macros and its variables. It also records the version and the topology of the MongoDB server that Grafana reads. It records the privileges of the account that Grafana uses too.
 
-The result can change the rows of 15.6, the macros of 7.34 and the supported versions of 8b.14. Each such change is a new decision with an id, and the vectors of 16.13 follow it.
+The result can change the rows of 15.6, the macros of 7.34 and the supported versions of 8b.14. Each such change is a new rule, and the vectors of 16.13 follow it.
 
-Owner: the engineer. Close by: the start of MMG.
+Open question: do the rows of 15.6 match the real plugin? Default today: the rows of 15.6 as written.
 
 ## 20. Glossary and references
 
@@ -1267,7 +1262,7 @@ Owner: the engineer. Close by: the start of MMG.
 | class | The result of the importer for one Grafana member: `mapped`, `changed`, `dropped` or `unsupported` (15.5). |
 | CloudNativePG | A Kubernetes operator for PostgreSQL. The reference for high availability (17.8). |
 | conformance suite | The store tests that run on each backend with the same expected results (16.6). |
-| cutover | The move of the reference deployment from Grafana to Hune (15.15). |
+| cutover | The move of an installation from Grafana to Hune (15.15). |
 | data link | A link in a cell or a point that a panel builds from the values. |
 | dialect | The SQL rules of one kind of source: the lexer, the escape rules, the macros and the statement check (7.19). |
 | display filter | The rule that hides items without a right. It never lets an operation run. |
@@ -1295,7 +1290,6 @@ Owner: the engineer. Close by: the start of MMG.
 | Patroni | A high-availability manager for PostgreSQL. The failover test uses it (16.11). |
 | PDP | Policy decision point: the server that answers the questions of a PEP. |
 | PEP | Policy enforcement point: the service that asks the PDP before each operation. |
-| person-month | 20 business days of one person. |
 | readiness | The state of `/readyz`. It fails only until the catalog has loaded one time (section 14). |
 | reuse | A panel that shows the result of another panel, the Grafana "-- Dashboard --" source. |
 | `save_id` | The UUID of one save attempt, sent as `Idempotency-Key`. |
@@ -1305,7 +1299,7 @@ Owner: the engineer. Close by: the start of MMG.
 | SQLSTATE | The five-character error code of PostgreSQL. Hune maps it to a code of section 6 (8a.8). |
 | store | The place of the documents, behind the `Store` trait (section 5). |
 | subject | The person or key of a request. In mode `open`, the subject is `-`. |
-| T | The day of the nginx switch of the cutover (15.15). |
+| T | The day of the proxy switch of the cutover (15.15). |
 | tombstone | The history version that a delete writes. |
 | uid | The id of a dashboard. It is also its file stem or its row key. |
 | variable | A dashboard control whose values go into the SQL (section 7). |
@@ -1316,10 +1310,10 @@ Owner: the engineer. Close by: the start of MMG.
 
 | Id | Document | Place |
 |---|---|---|
-| PROTOCOL | ProcurAuth Protocol, version 1.0 | `SCcagg5/procurauth`, `protocol/procurauth-protocol.md` |
-| CONFORMANCE-DATA | The conformance cases and the runner `access-conformance` | `SCcagg5/procurauth`, `conformance/` and `crates/access-conformance/` |
-| PEP | The crates `procurauth-pep` (with the trait `PdpTransport` in `transport.rs`) and `procurauth-core` | `SCcagg5/procurauth`, `crates/` |
-| FAKE-PDP | The test PDP | `SCcagg5/procurauth`, `crates/fake-pdp/` |
+| PROTOCOL | ProcurAuth Protocol, version 1.0 | `ProcurAuth/procurauth`, `protocol/procurauth-protocol.md` |
+| CONFORMANCE-DATA | The conformance cases and the runner `access-conformance` | `ProcurAuth/procurauth`, `conformance/` and `crates/access-conformance/` |
+| PEP | The crates `procurauth-pep` (with the trait `PdpTransport` in `transport.rs`) and `procurauth-core` | `ProcurAuth/procurauth`, `crates/` |
+| FAKE-PDP | The test PDP | `ProcurAuth/procurauth`, `crates/fake-pdp/` |
 | AUTHZEN | AuthZEN Authorization API 1.0, OpenID Foundation | `openid/authzen` |
 | RFC 2119, RFC 8174 | Key words for requirement levels | IETF |
 | RFC 6901 | JSON Pointer | IETF |
@@ -1339,9 +1333,9 @@ Owner: the engineer. Close by: the start of MMG.
 | CNPG-DOCS | CloudNativePG 1.30 documentation: `Cluster`, `Database`, managed roles | `cloudnative-pg.io` |
 | PATRONI | Patroni documentation: REST API, synchronous mode | `patroni.readthedocs.io` |
 
-### 20.3 Measured use of the Grafana of the reference deployment
+### 20.3 Measured use of one Grafana instance
 
-These facts come from the measure of 2026-11-09. Sections 15 and 18 use them.
+These facts come from the measure of one Grafana instance that queries ClickHouse. Sections 1, 15 and 18 use them.
 
 | Fact | Value |
 |---|---|

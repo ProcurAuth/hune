@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Fuzz targets (16.16, 16.17). Called by the job `nightly` and by hand.
 # Use: tests/ci/fuzz.sh [seconds] [target ...]
 #   seconds  the run time of each target. The default is 600 (10 minutes).

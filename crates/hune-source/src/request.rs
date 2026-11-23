@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The request of 8.3: the URL parameters, the headers and the body.
 
 use bytes::Bytes;

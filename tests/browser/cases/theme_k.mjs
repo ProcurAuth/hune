@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B91 (9.25, 9.26): the colour theme of the chrome is the theme of ClickHouse Dash, in the dark, the light and the system mode.
 // The expected values come from the copied file css/vendor/chdash/00-tokens.css (a byte copy of the tokens of ClickHouse Dash), read at
 // the start of the case. The case reads the computed colours of the chrome tokens on the page, and it checks the contrast of the text,

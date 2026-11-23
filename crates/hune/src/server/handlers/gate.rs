@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The questions of each route in the mode `authzen` (11.21, 11.23, 11.25).
 //!
 //! Each function asks the PDP through `crate::access::Access` and gives the grant or the error of
@@ -241,7 +242,7 @@ pub async fn preview(ctx: &Ctx, source: &str, draft: Draft<'_>) -> Result<Grant,
     Ok(Grant { ceilings: allowed.ceilings().clone() })
 }
 
-/// The right to see the expanded SQL of a query (`server.query_inspect`, D8 of ID-87). The mode
+/// The right to see the expanded SQL of a query (`server.query_inspect`). The mode
 /// `open` asks nothing: the key is the control. In the mode `authzen`, the subject needs the same two
 /// permissions as the preview of a saved dashboard: `source.query` on `S(source)` and
 /// `dashboard.write` on `N(uid)`. This is stricter than `dashboard.read`: a viewer gets the data, and

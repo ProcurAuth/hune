@@ -1,4 +1,4 @@
-// The pure model of the map panel (9.19i, 4.33g, decision ID-K328): the tile URL grammar of 13.13, Web Mercator, the tiles of a
+// The pure model of the map panel (9.19i, 4.33g): the tile URL grammar of 13.13, Web Mercator, the tiles of a
 // view, the caps, the positions of the rows, the size of a marker, the fit of a view, the queue of the tile requests and the cache of
 // the tiles. No DOM access: the Node tests load it (FE-85).
 

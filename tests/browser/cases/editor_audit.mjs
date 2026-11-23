@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B152 and B153 (4.13, 9.8, 10.3, 15.6): the switch "Transparent background" and the audit of the options of the panel editor.
 // B152: the switch changes the frame. For each of the 10 panel types, in the editor and in the saved view, in both themes, the computed
 //       background and edge of the frame are opaque before and transparent after the switch. The title stays readable on the page.

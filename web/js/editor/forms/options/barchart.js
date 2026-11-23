@@ -1,8 +1,8 @@
-// The option table of the type `barchart` (10.3h, F43; 4.30). Owner: group A.
+// The option table of the type `barchart` (10.3h, F43; 4.30).
 import { SHOW_VALUES, STACKING, displayNameRow, legendRows, oldRow, row, thresholdsStyleRow, tooltipRows } from "./rows.js";
 import { axisLookRows, gradientRow } from "./timeseries.js";
 
-// Wave H, item P14: a bar chart has no log scale, so "Centered zero" always shows.
+// Items P14: a bar chart has no log scale, so "Centered zero" always shows.
 const look = axisLookRows({});
 
 export default {
@@ -16,7 +16,7 @@ export default {
     row("stacking", "options.stacking", "radio", "Stacking", "bars", { items: STACKING, default: "none" }),
     row("group-width", "options.group_width", "slider", "Group width", "bars", { min: 10, max: 100, default: 70, when: (o) => o.stacking === "none", whenText: "`stacking` is `none`" }),
     row("bar-width", "options.bar_width", "slider", "Bar width", "bars", { min: 10, max: 100, default: 97 }),
-    // Wave H, item P03 (4.30): optional members; the default value removes the member.
+    // Items P03 (4.30): optional members; the default value removes the member.
     row("line-width", "options.line_width", "slider", "Line width", "bars", { min: 0, max: 10, optional: true, absent: 1, default: undefined }),
     row("fill-opacity", "options.fill_opacity", "slider", "Fill opacity", "bars", { min: 0, max: 100, optional: true, absent: 80, default: undefined }),
     gradientRow("bars"),

@@ -16,7 +16,7 @@ Three cases have a letter: B101p, B145a and B145b. These numbers are reserved an
 - The debug binary. Build it with `cargo build -p hune --locked`.
 - For the cases B23, B35, B108, B124 and B214: `openssl`, and the tools `fake-pdp` and `access-token` of ProcurAuth. B23, B35 and B214 test the mode `authzen`. B108 and B124 test the access to the text panel and to the annotations in this mode. Without the tools, the runner reports these five cases as `skip`.
 - The default folder of the tools is `target/procurauth`. Set `PROCURAUTH_DIR` to use another checkout. The tools must be in `target/release/` of this folder.
-- Build the tools from the committed revision that Hune pins in `Cargo.toml` (`rev = "058563cf..."`). Do not touch the work tree of ProcurAuth. Run `mkdir -p target/procurauth`. Then run `git archive <revision> | tar -x -C <Hune>/target/procurauth` in the repository of ProcurAuth. Then run `cargo build --release --locked --offline -p fake-pdp -p access-token` in `target/procurauth`. The build needs no network when the dependencies are in the local cache.
+- Build the tools from the committed revision that Hune pins in `Cargo.toml` (`rev = "058563cf..."`). Do not change the work tree of ProcurAuth. Run `mkdir -p target/procurauth`. Then run `git archive <revision> | tar -x -C <Hune>/target/procurauth` in the repository of ProcurAuth. Then run `cargo build --release --locked --offline -p fake-pdp -p access-token` in `target/procurauth`. The build needs no network when the dependencies are in the local cache.
 
 Each case has a time limit. The default is 120 seconds. A case that needs more time sets `timeout` (in milliseconds) in its definition. The runner fails the case with "timeout of <n> ms" when the limit passes.
 
@@ -46,7 +46,7 @@ Build the binary again after each change in `web/`. The binary embeds the files 
 
 ## Run in an isolated copy
 
-The runner takes its paths from the place of its own file. The binary is `target/debug/hune`. The work folder is `target/browser/`. Two runs in one tree use the same binary and the same work folder, and they disturb each other. A worker that edits `web/` or the Rust code while another run is active uses an isolated copy.
+The runner takes its paths from the place of its own file. The binary is `target/debug/hune`. The work folder is `target/browser/`. Two runs in one tree use the same binary and the same work folder, and they disturb each other. A person who edits `web/` or the Rust code while another run is active uses an isolated copy.
 
 1. Make a copy of the repository in `target/ws/<name>/`. Include the files that are not in git yet. Do not copy `target/` and `.git/`.
 2. Run `cargo build -p hune --locked` in the copy. Add `--offline` when the host has no network. The copy has its own `target/debug/hune`. A build in a copy takes a full compile, because the copy has no cache.
@@ -69,7 +69,7 @@ Build the binary of the copy again after each change in `web/` or in the Rust co
 
 The cases B28 to B35 test the entry redirect of the list page (9.7). Each case starts a server with its own volume. The volumes hold 0, 1 (in a folder or not) or 2 or more dashboards. Other cases use one item that is not valid, a lost access (an injected `403`), or a search text `q`. B35 tests the mode `authzen` with the subjects `solo`, `nobody` and `reader`.
 
-The cases B36 to B42 test the features of wave 1 of milestone F. They use synthetic SQL only (`numbers(...)` or the seed table).
+The cases B36 to B42 test the first set of Grafana-parity features. They use synthetic SQL only (`numbers(...)` or the seed table).
 
 - B36: the option `justify` of a `stat`. The test reads `data-align` of each item, the computed style and the position of the texts.
 - B37: hidden series. The matchers `names` (`include` and `exclude`) with `hide_from`. The test counts the pixels of the series colour on the canvas, and it reads the legend, the tooltip and the y axis. A legend click must change the page only: the document and its etag stay the same.
@@ -101,7 +101,7 @@ The module `cases/mongo.mjs` asks the binary first. It runs `hune check-config` 
 
 A build with the driver gets a disposable container from `startMongo`. The container has the name `hune-test-browser-mongo-<pid>`, with TLS made by `openssl`, and its port is bound to 127.0.0.1. The module starts it only when the run selects B47 or B48, and it removes the container at exit.
 
-The cases B69 to B71 and B90 test the header of wave K (9.6, 9.9, 10.2). They use synthetic dashboards, and B70 and B71 also start a server with `server.editing = false`.
+The cases B69 to B71 and B90 test the header (9.6, 9.9, 10.2). They use synthetic dashboards, and B70 and B71 also start a server with `server.editing = false`.
 
 - B69: the joined time control. The groups, the buttons that join, no second refresh button, and the keyboard.
 - B70: the Edit switch (`role="switch"`, `aria-checked`, Space and Enter, the right to write). "Add", "Save" and "Revert" in edit mode. The confirmation of "Revert". "Save" that is not active with no change.
@@ -139,14 +139,14 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/*.mjs` | The cases. Each case has an id, a name and one function. |
 | `cases/home.mjs` | The cases B28 to B35: the entry redirect of the list page (9.7). |
 | `cases/entry_one.mjs` | The case B214: the entry redirect in mode `authzen`, with the list of the display filter (9.7, 11.25). |
-| `cases/features_f1.mjs` | The cases B36 to B42: the features of wave 1 of milestone F. |
+| `cases/features_f1.mjs` | The cases B36 to B42: the first set of Grafana-parity features. |
 | `cases/editor_drag.mjs` | The case B43: drag and resize in edit mode (10.5a). |
 | `cases/pgsource.mjs` | The cases B44 and B45: the PostgreSQL source in the page. |
 | `cases/states.mjs` | The cases B72 to B79 and B87 to B89: the states of the page and their transitions (10.2a). |
 | `cases/inspect.mjs` | The case B46: the item "Inspect" and the key `server.query_inspect` (9.11). |
 | `cases/inspect_value.mjs` | The case B213: the drawer "Inspect value" of a table cell, its keys and its targets (9.20, 4.18). |
 | `cases/mongo.mjs` | The cases B47 and B48: the MongoDB source in the page. |
-| `cases/header_k.mjs` | The cases B69 to B71, B90, B150 and B151: the header of wave K (9.6, 9.9, 10.2). |
+| `cases/header_k.mjs` | The cases B69 to B71, B90, B150 and B151: the header (9.6, 9.9, 10.2). |
 | `cases/var_panel.mjs` | The cases B80 to B86: the placement of a variable in the grid (4.7a, 9.10). |
 | `cases/theme_k.mjs` | The case B91: the colour theme of the chrome (9.25, 9.26). |
 | `cases/picker_k.mjs` | The case B92: the time range picker of ClickHouse Dash (9.9). |
@@ -157,7 +157,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/shell.mjs` | The cases B49 to B54: the header bar, the theme selector and the version line. |
 | `cases/zoom.mjs`, `cases/flash.mjs` | The case B55 (browser zoom), and the cases B58 and B59 (one stable render, fixed button sizes). |
 | `cases/editor_fix.mjs` | The cases B56 and B57: fixes of the query editor. |
-| `cases/charts_axes.mjs`, `cases/charts_colors.mjs`, `cases/charts_zone.mjs` | The cases B60 to B63: the y axes, the series style, the colour modes and the zone names (wave 2 of milestone F). |
+| `cases/charts_axes.mjs`, `cases/charts_colors.mjs`, `cases/charts_zone.mjs` | The cases B60 to B63: the y axes, the series style, the colour modes and the zone names. |
 | `cases/time_override.mjs`, `cases/time_links.mjs` | The cases B64 and B65: the time override of a panel and the dashboard links. |
 | `cases/editor_forms.mjs` | The cases B66 to B68: the forms of the panel editor and of the settings view. |
 | `cases/repeat.mjs` | The cases B93 to B101 and B101p: the repeat of panels and sections by a variable (F23). B101p is the parity capture of the copies. |
@@ -175,7 +175,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/section_expand.mjs` | The case B210: the charts of a section draw in the task that expands it (9.8, 10.2a, rule 17). |
 | `cases/url_time.mjs` | The case B212: a link of Grafana 12 with an ISO range and `timezone` opens with that range and that zone (9.5). |
 | `cases/adhoc.mjs` | The cases B218 and B219: the ad hoc filters of an `adhoc` variable, the bar control, the address of Grafana and the refusals (9.10a). A server of the case has `adhoc_columns` (option `chLines` of `startServer`). |
-| `cases/units_h.mjs` | The case B215: the units of wave H in a stat and in a table, with the texts of Grafana 12.4.2 (4.20, 9.15). |
+| `cases/units_h.mjs` | The case B215: the added units in a stat and in a table, with the texts of Grafana 12.4.2 (4.20, 9.15). |
 | `cases/barchart_p03.mjs` | The case B216: the fill, the line, the grid lines and the orientation `auto` of a bar chart, with the values of Grafana 12.4.2 (4.18, 4.30, 9.19). |
 | `cases/annotation_kinds.mjs` | The case B217: the annotations from a PostgreSQL source and a MongoDB source (4.5b, 9.19d, 10.3c). It starts its own containers with the tag `an217`. |
 | `cases/gauge.mjs` | The case B225: the gauge, with the rules of the classic gauge of Grafana 12.4.2, at three sizes and in both themes (4.33e, 9.19g). |

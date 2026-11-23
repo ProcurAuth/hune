@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-01: date math (9.9), in three zones.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -108,7 +109,7 @@ test("FE-01 V8: a local time that does not exist uses the offset before the chan
   assert.equal(new Date(havana.ms).toISOString(), "2026-03-08T05:00:00.000Z");
 });
 
-test("FE-01 V8: a local time that occurs two times has the earlier instant (Grafana gives the later one, ID-F2-V8)", () => {
+test("FE-01 V8: a local time that occurs two times has the earlier instant (Grafana gives the later one)", () => {
   assert.equal(new Date(wallToEpoch({ year: 2026, month: 10, day: 25, hour: 2, minute: 30, second: 0 }, "Europe/Paris")).toISOString(), "2026-10-25T00:30:00.000Z");
   // Havana, 2026-11-01: midnight occurs two times (04:00Z and 05:00Z). Grafana gives 05:00Z, Hune gives 04:00Z.
   const havana = parseTimeText("now/d", { now: Date.parse("2026-11-01T15:00:00.000Z"), zone: "America/Havana" });

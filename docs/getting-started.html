@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Run a local ClickHouse, load the demo data, and open the demo dashboards in Hune.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hune">
+<meta property="og:title" content="Getting started | Hune">
+<meta property="og:description" content="Run a local ClickHouse, load the demo data, and open the demo dashboards in Hune.">
+<meta property="og:url" content="https://procurauth.github.io/hune/getting-started.html">
+<meta property="og:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB. One static binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Getting started | Hune">
+<meta name="twitter:description" content="Run a local ClickHouse, load the demo data, and open the demo dashboards in Hune.">
+<meta name="twitter:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta name="twitter:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB.">
+<link rel="canonical" href="https://procurauth.github.io/hune/getting-started.html">
+<title>Getting started | Hune</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#fafafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html" aria-current="page">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="access.html">Access</a></li><li><a href="security.html">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main id="main">
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.1.1</span> A test in five minutes</p><h1>Getting started</h1><p class="lede">Run a local ClickHouse, load the demo data, and open the demo dashboards in Hune.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#1-get-the-demo-files">1. Get the demo files</a></li><li><a href="#2-start-clickhouse-and-load-the-data">2. Start ClickHouse and load the data</a></li><li><a href="#3-download-hune">3. Download Hune</a></li><li><a href="#4-check-the-configuration">4. Check the configuration</a></li><li><a href="#5-run-hune">5. Run Hune</a></li><li><a href="#6-stop-and-clean-up">6. Stop and clean up</a></li><li><a href="#next-steps">Next steps</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/GETTING-STARTED.md"><code>docs/GETTING-STARTED.md</code></a> in the repository.</p><p>This test takes five minutes. It runs a local ClickHouse with synthetic data, then it runs Hune with the demo dashboards. Everything stays on <code>127.0.0.1</code>. You need Docker, <code>git</code> and <code>curl</code>. The test pushes no image.</p>
+<h2 id="1-get-the-demo-files"><a class="self" href="#1-get-the-demo-files">1. Get the demo files</a></h2>
+<p>The folder <code>examples/demo/</code> of the repository holds the demo data, a configuration and the demo dashboards.</p>
+<div class="code-wrap"><span class="label">sh</span><pre data-copy tabindex="0" aria-label="Code example: sh"><code>git clone --depth 1 https://github.com/ProcurAuth/hune.git</code></pre></div>
+<h2 id="2-start-clickhouse-and-load-the-data"><a class="self" href="#2-start-clickhouse-and-load-the-data">2. Start ClickHouse and load the data</a></h2>
+<div class="code-wrap"><span class="label">sh</span><pre data-copy tabindex="0" aria-label="Code example: sh"><code>docker run -d --rm --name hune-demo-ch -p 127.0.0.1:8123:8123 clickhouse/clickhouse-server:26.8.34.13
+sleep 15
+docker exec -i hune-demo-ch clickhouse-client --multiquery &lt; hune/examples/demo/init.sql</code></pre></div>
+<p>The script <code>init.sql</code> makes the database <code>demo</code> with synthetic tables. It also makes the user <code>hune_reader</code>. This user is read-only: it has the profile <code>readonly = 2</code>, <code>MAX</code> limits and <code>SELECT</code> grants only. The password of the user is a public demo value.</p>
+<h2 id="3-download-hune"><a class="self" href="#3-download-hune">3. Download Hune</a></h2>
+<p>The release has a static binary for Linux amd64. Check the archive against <code>SHA256SUMS</code>.</p>
+<div class="code-wrap"><span class="label">sh</span><pre data-copy tabindex="0" aria-label="Code example: sh"><code>curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.1.1/hune_0.1.1_linux_amd64.tar.gz
+curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.1.1/SHA256SUMS
+sha256sum --check --ignore-missing SHA256SUMS
+tar -xzf hune_0.1.1_linux_amd64.tar.gz</code></pre></div>
+<p>The archive also holds <code>config.reference.hcl</code> (a complete configuration file), the folder <code>deploy/</code> and a <code>Dockerfile</code> for a local image.</p>
+<h2 id="4-check-the-configuration"><a class="self" href="#4-check-the-configuration">4. Check the configuration</a></h2>
+<p>The demo configuration uses the volume store in <code>/tmp/hune-demo/dashboards</code>. Copy the demo dashboards there. The password comes from the environment variable that the key <code>password_env</code> names.</p>
+<div class="code-wrap"><span class="label">sh</span><pre data-copy tabindex="0" aria-label="Code example: sh"><code>mkdir -p /tmp/hune-demo &amp;&amp; cp -R hune/examples/demo/dashboards /tmp/hune-demo/dashboards
+export HUNE_DEMO_CH_PASSWORD=hune-demo-password
+hune_0.1.1_linux_amd64/hune check-config -c hune/examples/demo/hune.hcl
+hune_0.1.1_linux_amd64/hune print-config -c hune/examples/demo/hune.hcl</code></pre></div>
+<p><code>check-config</code> finds each error and sends nothing on the network. <code>print-config</code> shows the value that applies for each key and the source of the value. A secret shows as <code>&lt;hidden&gt;</code>.</p>
+<h2 id="5-run-hune"><a class="self" href="#5-run-hune">5. Run Hune</a></h2>
+<div class="code-wrap"><span class="label">sh</span><pre data-copy tabindex="0" aria-label="Code example: sh"><code>hune_0.1.1_linux_amd64/hune serve -c hune/examples/demo/hune.hcl</code></pre></div>
+<p>Open <code>http://127.0.0.1:8080/</code>. The list shows the demo folders. Open a dashboard and change the time range. Pick a value of a variable. Open the inspect view of a panel to see the SQL that the server sent. The page can write: the switch Edit opens the editor.</p>
+<p>The ops port <code>127.0.0.1:9090</code> serves <code>/livez</code>, <code>/readyz</code> and <code>/metrics</code>.</p>
+<h2 id="6-stop-and-clean-up"><a class="self" href="#6-stop-and-clean-up">6. Stop and clean up</a></h2>
+<p>Press Ctrl+C to stop Hune. Then remove the container and the files.</p>
+<div class="code-wrap"><span class="label">sh</span><pre data-copy tabindex="0" aria-label="Code example: sh"><code>docker stop hune-demo-ch
+rm -rf /tmp/hune-demo</code></pre></div>
+<h2 id="next-steps"><a class="self" href="#next-steps">Next steps</a></h2>
+<ul><li>Read the <a href="configuration.html">configuration</a> and write your own file with <code>hune print-reference --format hcl --profile local</code>.</li><li>Use a read-only account for each source. <a href="security.html">Security model</a> tells why.</li><li>Import dashboards from Grafana with <code>hune import-grafana</code>. Section 15 of the <a href="specification.html">specification</a> has the steps.</li><li>Add access control with <a href="access.html">ProcurAuth</a>, or put a reverse proxy that signs users in in front of Hune.</li></ul></article></div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>Hune</h2>
+        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="configuration.html">Configuration</a></li>
+          <li><a href="architecture.html">Architecture</a></li>
+          <li><a href="specification.html">Specification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Run</h2>
+        <ul>
+          <li><a href="access.html">Access and ProcurAuth</a></li>
+          <li><a href="security.html">Security model</a></li>
+          <li><a href="operations.html">Operations</a></li>
+          <li><a href="reference.html">Configuration reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/ProcurAuth/hune">Repository</a></li>
+          <li><a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a></li>
+          <li><a href="changelog.html">Changelog</a></li>
+          <li><a href="status.html">Status</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="conformance.html">Conformance</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>Hune, version 0.1.1.</p>
+      <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
+      <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

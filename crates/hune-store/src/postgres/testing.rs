@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fault injection of the PostgreSQL backend for the conformance suite (5.33, item 3).
 //! This module is compiled only for the tests and with the feature `conformance`.
 

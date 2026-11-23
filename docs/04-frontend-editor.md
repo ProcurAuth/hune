@@ -143,7 +143,7 @@ web/
     vendor/chdash/           copied modules, shim modules, LICENSE, chdash.lock.json (9.24)
 ```
 
-The editor loads the files `forms/option_form.js` and `forms/options/` with the other modules of `js/editor/`, on demand (decision ID-K297).
+The editor loads the files `forms/option_form.js` and `forms/options/` with the other modules of `js/editor/`, on demand.
 
 A paragraph of section 9 or 10 can need a new module. This module MAY go in `js/` or in one of its directories. Each
 file of `web/` stays in one of the directories of this layout.
@@ -157,12 +157,11 @@ file of `web/` stays in one of the directories of this layout.
   build hash is the first 16 hexadecimal characters of the SHA-256 of the build list.
 - A static file has the URL `static/<build-hash>/<path>`, relative to the `<base href>` of the shell (9.6). A relative
   import in a module names a file under the same prefix, so no import is rewritten.
-- `GET /static/...` answers with `Cache-Control: private, max-age=31536000, immutable` (6.25). The browser keeps each file, and a shared cache does not (decision ID-K315). The shell answers with
+- `GET /static/...` answers with `Cache-Control: private, max-age=31536000, immutable` (6.25). The browser keeps each file, and a shared cache does not. The shell answers with
   `Cache-Control: no-cache`.
 - The binary holds no compressed copy. The key `server.compress_static` (13.8) has the default `true`. With `true`,
   the server makes a gzip copy of each static file of a text type at start. These files are `.html`, `.js`, `.css`,
-  `.svg`, `.json` and `LICENSE`. A font gets no copy. A copy that is not smaller than its file is not kept (decision
-  ID-K304, to re-read by the owner).
+  `.svg`, `.json` and `LICENSE`. A font gets no copy. A copy that is not smaller than its file is not kept.
 - The encoder is code of Hune (RFC 1951 and RFC 1952), with no crate. It is deterministic, and its memory and its time
   for each byte have a limit. Its output is 0.04 % larger than the output of `gzip -6` (measure of 2026-11-15).
 - A request gets the copy only when its `Accept-Encoding` accepts gzip (RFC 9110, 12.5.3). The header names `gzip` or
@@ -250,7 +249,7 @@ An `interval` variable writes one `var-<name>` with the text of the option, or `
   The rules of 10.2a say which change uses `push`, `replace` or `pop`. The browser "Back" returns to the previous view.
 - The page writes the names in this order: `from`, `to`, `timezone`, the `var-<name>` in document order, `refresh`, then the view
   names. It ignores an unknown name and drops it when it writes the URL. Grafana writes `orgId=1`: the page drops it.
-- Hune has no "Share" button and no "Share" menu item (decision ID-UI-SHARE). The URL of the browser holds the whole
+- Hune has no "Share" button and no "Share" menu item. The URL of the browser holds the whole
   view: the time range, the variables, the refresh and, for one panel, `viewPanel`. A user copies it from the address bar.
   Hune has no short link and no public dashboard.
 - During 6 months after the cutover, an nginx `map` sends `/grafana/d/<old uid>/...` to the new prefix (15). The query
@@ -263,7 +262,7 @@ A link of the page is an `<a href>` with a relative URL. A click with no modifie
 The names `viewPanel`, `edit`, `editPanel` and `editview` can be in one URL. Then rule 1 of 10.2a gives one state, and the page removes the names that this state does not use.
 A `viewPanel`, an `editPanel` or an `editview` with an unknown value is removed in the same way, with a notice.
 
-The time forms of Grafana (gap paper H02, step D02). Grafana 12.4.2 writes each absolute time of a URL in ISO 8601 in UTC, for example
+The time forms of Grafana. Grafana 12.4.2 writes each absolute time of a URL in ISO 8601 in UTC, for example
 `from=2026-11-09T08:00:00.000Z`. The nginx map of 15.17 keeps the query, so an old link can hold these forms. The page reads
 these three forms of `from` and `to` as UTC:
 
@@ -349,7 +348,7 @@ The page starts in this order:
 4. Another failure gives the full page "Hune does not answer." with a "Retry" button.
 5. The page waits for the font, for 1 s at most, and for the icons. Then the router shows the page of the URL (9.5). A font that does not load changes nothing else. When the first view is complete, the page releases the first paint.
 
-The header is one bar. It is opaque, and it has a line of 1 px below it. The bar is one row at every width, also in edit mode (decision ID-K1, owner request of 2026-11-12). Its height is 44 px with the line. It has five parts, in this order:
+The header is one bar. It is opaque, and it has a line of 1 px below it. The bar is one row at every width, also in edit mode. Its height is 44 px with the line. It has five parts, in this order:
 
 1. The brand: a logo of 20 px, the product name "Hune" and the version line. The brand is a link to the list.
 2. The crumbs: the folder title and the dashboard title. The text is 12 px high, with a line of 16 px. A thin chevron of 12 px is between two crumbs. The last crumb is muted. A crumb that is too long ends with an ellipsis, and its tooltip gives the whole text.
@@ -365,7 +364,7 @@ When the window is narrow, the controls get smaller in steps. The last steps mov
 |---|---|
 | Above 1280 px | The version line shows beside the name. |
 | 1100 px or less | The labels of "Edit" and "Save" hide. The range button is 156 px wide. |
-| 900 px or less | The buttons "Shift the time range back" and "Shift the time range forward" and "Zoom out" move into the menu "More actions" (decision ID-K13a, owner request of 2026-11-12). The button "Add" of the edit mode shows its icon only (decision ID-K177, owner request of 2026-11-14). |
+| 900 px or less | The buttons "Shift the time range back" and "Shift the time range forward" and "Zoom out" move into the menu "More actions". The button "Add" of the edit mode shows its icon only. |
 | 768 px or less | The range button shows its clock and its chevron only. It is 52 px wide. |
 | 640 px or less | The product name hides. The button "Revert" of the edit mode is not in the header. The menu "More actions" has it (10.2). |
 | 560 px or less | The range button is 40 px wide and the switch "Edit" is 36 px wide. The menu part of "Add" is 20 px wide. The interval button shows its chevron only. The gaps of the time control and of the edit group are 4 px. |
@@ -375,24 +374,24 @@ The edit mode adds a group of controls at the left of the time control (9.9, 10.
 
 The header sticks to the top of the window at every width. The header scrolls with the page in one case. This case is a window that is 760 px wide or less and 600 px high or less. A name or a line that hides for the eye stays for assistive technology.
 
-This bar replaces the controls row below the header of Grafana. It is a decision of the owner (2026-11-11, ID-UI-HDR): ClickHouse Dash also has its actions in the header. The deviation from the Grafana parity of 9.8 and 9.9 is on purpose.
+This bar replaces the controls row below the header of Grafana. ClickHouse Dash also has its actions in the header. The deviation from the Grafana parity of 9.8 and 9.9 is on purpose.
 
 The edit mode has no row of its own: its actions are in the header or in the menu "More actions" (10.2). The header of Grafana 12.4.2 is 48 px high, and the header of Hune is 44 px high. The variables bar (9.10) keeps its own row under the header. Some views add a last crumb: "View panel" (9.8) and "Edit panel" (10.3).
 
-The content of each view starts under the header with a gap of one token, `--page-pad`. The token is 16 px, and 12 px at 600 px or less. The view of the dashboard, the settings, the JSON, the history and the panel editor use the same token (decision ID-K302, owner request of 2026-11-15). In the panel editor, the preview and the top of the options pane start at this gap. The row of the variables starts there too. The browser case B208 measures the gap.
+The content of each view starts under the header with a gap of one token, `--page-pad`. The token is 16 px, and 12 px at 600 px or less. The view of the dashboard, the settings, the JSON, the history and the panel editor use the same token. In the panel editor, the preview and the top of the options pane start at this gap. The row of the variables starts there too. The browser case B208 measures the gap.
 
-The version line is the text `<version>:<checksum>`, for example `0.1.0:1f2e3d4c5`. It is 12 px high text in the muted colour, with `data-testid="app-version"`. It is beside the name, on the same line, so the brand needs no second line (decision ID-K1). The rules are these:
+The version line is the text `<version>:<checksum>`, for example `0.1.0:1f2e3d4c5`. It is 12 px high text in the muted colour, with `data-testid="app-version"`. It is beside the name, on the same line, so the brand needs no second line. The rules are these:
 
 - The version is `CARGO_PKG_VERSION`. It is the member `version` of `GET api/session` (6.10).
 - The checksum is the first 9 hexadecimal characters of the commit of the release build. The release job gives the commit to the build in `HUNE_BUILD_COMMIT`, and `build.rs` fixes it. This is the SHA-1 that git computed. Hune never computes it at run time.
-- A development build has no commit (`unknown`). The checksum is then the first 9 characters of the build hash of 9.3. The owner has not yet decided this default (ID-UI-VER).
+- A development build has no commit (`unknown`). The checksum is then the first 9 characters of the build hash of 9.3.
 - The `title` of the line gives the full value and its source. For a commit it reads `Hune <version>, commit <40 characters>`. For a build hash it reads `Hune <version>, build <hash> (the hash of the web files; this build has no commit)`.
 - The line holds no file path, no secret and no value of the environment. The server reads nothing at run time for it.
 - The server puts the text and the title in the boot block of the shell, as `{{version_text}}` and `{{version_title}}` (9.3). The line shows on every page, also on the pages of an error and before `GET api/session` answers.
 - The line is never cut. It sets the width of the brand. The link of the brand has the accessible name "Hune, the list of dashboards", and the line is its description (`aria-describedby`).
 - The line shows above 1280 px. At 1280 px or less it hides for the eye and stays for assistive technology. The link of the brand has a `title` with the full version text. Thus the tooltip of the brand gives the version at each width.
 
-The first paint is held (decision ID-UI-FLASH, owner request of 2026-11-11). A reload then shows one stable render:
+The first paint is held. A reload then shows one stable render:
 
 - `shell.html` sets `data-hune-hold` on `<html>`. While the attribute is present, `base.css` sets `visibility: hidden` on each child of `<body>`, except `<noscript>`. The layout stays, so `main.js` can measure the real sizes.
 - The browser then has no text and no image to paint. On a reload, it keeps the old page on the screen until the new page is complete. On a first visit, it shows the page colour of the theme.
@@ -495,7 +494,7 @@ Grid:
 - The section header is 30 px high, with 8 px between it and its first panel. It has the title (16 px, weight 500), and a button with `aria-expanded` and a chevron of 16 px. The title of a collapsed section is muted. The title shows after the replacement of the variables (9.13).
 - The number of panels of a collapsed section is hidden from the eye, and a screen reader keeps it. In view mode, a collapse changes only the page, not the document and not the URL.
 - A collapsed section is out of the layout, so the chart engine releases the canvas of each chart in it. The charts of a section that expands draw in the task of the expand, not at the next resize callback.
-  - For this, the grid sends the event `hune-shown` of 10.2a, rule 17, after the section shows. Thus no paint and no script after the expand finds a blank canvas (decision ID-K325, owner answer of 2026-11-22).
+  - For this, the grid sends the event `hune-shown` of 10.2a, rule 17, after the section shows. Thus no paint and no script after the expand finds a blank canvas.
   - The rule applies to each copy of a section that repeats (9.8c), and to the draft grid of 10.2. An expand sends no query when the data did not change.
   - A section that is collapsed at the load has no data, because it sends no query (see below). Its first expand shows the empty frames of the states `idle`, `queued` and `loading` (9.11).
   - It then sends one query for each panel near the viewport, and its charts draw when the data comes.
@@ -626,9 +625,9 @@ The note is a text of 14 px at weight 400 in the link colour of the theme. It ha
 
 ### 9.8c Repeat of panels and sections
 
-A panel or a section that has the member `repeat` (4.13a) shows one copy for each value of its variable. The page makes the copies. The document, the draft and the saved bytes never hold a copy. The pure module `repeat.js` (9.2) holds the rules of this section. It has no DOM access. The decisions are ID-K80 to ID-K97 (owner request of 2026-11-13).
+A panel or a section that has the member `repeat` (4.13a) shows one copy for each value of its variable. The page makes the copies. The document, the draft and the saved bytes never hold a copy. The pure module `repeat.js` (9.2) holds the rules of this section. It has no DOM access.
 
-The limits are keys of the server configuration (owner decision of 2026-11-13). The page reads them from the member `repeat_limits` of the session (6.10): `{ panel, section, dashboard }`. Each function of `repeat.js` takes the limits as an argument.
+The limits are keys of the server configuration. The page reads them from the member `repeat_limits` of the session (6.10): `{ panel, section, dashboard }`. Each function of `repeat.js` takes the limits as an argument.
 
 The constants `MAX_REPEAT_PER_PANEL`, `MAX_REPEAT_PER_SECTION` and `MAX_REPEAT_PER_DASHBOARD` (4.35) are the defaults. The page uses them only when the session has no such member, as with an older server. A member that is present fails closed when it is not a whole number from 1 to its hard bound. The bounds are 200 for a panel, 50 for a section and 200 for a dashboard. 
 
@@ -649,7 +648,7 @@ The values:
 | 1 to the limit | k copies. A repeat with k = 1 shows one copy. It is a normal panel, with the width rule of the direction. |
 | Above the limit | One frame with the state `repeat-limit`. It has the message below. The panel sends no query. No copy shows. |
 
-The limit of a panel is `repeat_limits.panel`, and the limit of a section is `repeat_limits.section`. The page never cuts the list to the limit (decision ID-K86). This rule is in one function of `repeat.js` (`classify`), so a change of the decision is small.
+The limit of a panel is `repeat_limits.panel`, and the limit of a section is `repeat_limits.section`. The page never cuts the list to the limit. This rule is in one function of `repeat.js` (`classify`), so a change of this rule is small.
 
 The budget of the dashboard:
 
@@ -741,7 +740,7 @@ Print, focus and the line of the values:
 
 A panel can have several queries (4.15a). The runtime gives each instance of a panel (9.8c) one entry for each visible query. The entry is a slot. A slot has the ref, the query, a frame, an error and its own controller. Its state is `idle`, `queued`, `loading`, `ready` or `error`. A hidden query has no slot.
 
-The pure module `queries.js` (9.2) holds the rules of this section that need no DOM. The decisions are ID-K160 to ID-K175 (owner order of 2026-11-13).
+The pure module `queries.js` (9.2) holds the rules of this section that need no DOM.
 
 The requests:
 
@@ -773,7 +772,7 @@ The state of the panel is a function of its slots. The page computes it after ea
 - The panel draws when all its slots ended, not before. During a refresh, the earlier content stays until then (9.11). A slow query thus makes the panel wait for it, as in Grafana.
 - In the state `error`, the body shows the error of the first slot in the order of the queries, with its code. The message starts with "Query <ref>: " when the panel has `extra_queries`. The message of a panel with one query does not change. "Retry" runs all the visible queries.
 - A partial result is a `ready` panel with at least one slot in `error`. The panel draws the frames of the slots that have one. The title bar shows the red badge (9.11). Its tooltip and its accessible name are the text "Error:" and then one line for each failed slot: "Query <ref>: <code>: <message>". The attribute `data-failed` of the frame has the refs, separated by `,`. It is absent when no slot failed.
-- A partial result is not an error state, and "Retry" does not show. The failed slots run again at the next trigger that marks them. This is the behaviour of Grafana, which draws the other frames and shows a badge (measured, 19.20f). The decision is ID-K166.
+- A partial result is not an error state, and "Retry" does not show. The failed slots run again at the next trigger that marks them. This is the behaviour of Grafana, which draws the other frames and shows a badge (measured, 19.20f).
 - A request error that has no relation to one query gives the same error to all the slots. The page aborts the other requests of the panel. These errors have the status `401`, `403`, `404`, `409` or `413`, or the code `pdp_unavailable`. A `409 dashboard_changed` has the effect of 9.8 for the whole page. The other errors are the errors of one query. A time override with an unusable range (9.8b) is an error of all the slots too.
 - A frame is never partial. A slot has a whole frame (7.16) or an error. The server never cuts a frame (8.5).
 - The names of the series do not change when a slot fails. The prefix rule counts the visible queries, not the answers (9.22a, rule 5). A matcher or an override by name stays valid in an outage of one query.
@@ -790,8 +789,8 @@ The controls of the dashboard page are in the header (9.6), in one row. The vari
 
 The controls come in this order, from the left:
 
-1. The group of the edit mode (10.2): the button "Add" with its menu, "Save" and "Revert". It is in the page in edit mode only. It takes its room from the crumbs, so no button of the view moves (decision ID-K177, owner request of 2026-11-14).
-2. The time control, which is one joined control (decision ID-K2, owner request of 2026-11-12).
+1. The group of the edit mode (10.2): the button "Add" with its menu, "Save" and "Revert". It is in the page in edit mode only. It takes its room from the crumbs, so no button of the view moves.
+2. The time control, which is one joined control.
 3. The switch "Edit" (10.2). It shows only with `editing` true and `access.write` (10.2).
 4. The theme selector (9.25).
 5. The button "More actions" (`data-testid="dashboard-menu"`).
@@ -813,7 +812,7 @@ The time control has two groups, and its buttons touch. Only the outer corners a
 
 A header button is 32 px high. It has a text of 14 px (weight 500), an icon of 18 px and a radius of 6 px. The header is 44 px high (9.6). The range button shows the quick range text, or the absolute range.
 
-Each button of the header has one place and one size in each state (decision ID-UI-FIXED, accepted by the owner on 2026-11-11). Above 1100 px, the sizes are these:
+Each button of the header has one place and one size in each state. Above 1100 px, the sizes are these:
 
 - The range button is 220 px wide. The text takes the room between the clock and the chevron. A longer text, such as an absolute range, ends with an ellipsis. The tooltip and the accessible name give the whole text.
 - The refresh button is an icon button of 36 px. The spinner has the size of the icon. The accessible name and the tooltip stay "Refresh".
@@ -834,7 +833,7 @@ The sizes change in steps on a narrow window (9.6):
 
 Tooltips and accessible names stay at each width. The header sticks to the top at each width (9.6). The browser case B59 checks the places, the sizes and the sticky header. The case B71 checks the one row.
 
-The height and the size of each button are fixed (decision ID-UI-FIXED). No button of the view changes its place when the edit mode starts or ends (decision ID-K177, owner request of 2026-11-14). This replaces the moves of the decisions ID-K13 and ID-K13a. These rules apply:
+The height and the size of each button are fixed. No button of the view changes its place when the edit mode starts or ends. These rules apply:
 
 - The time control, the switch "Edit", the theme selector and "More actions" keep their x and y between the view and the edit mode. The browser case B150 measures this at 1920, 1280, 900, 768 and 390 px, in the light and the dark theme.
 - The group of the edit mode is at the left of the time control, one gap from it. Its width pushes only the crumbs.
@@ -894,15 +893,15 @@ Quick ranges of the picker:
 - A shift moves `[from, to]` by half of the span `d = to - from`. The step is `floor(d / 2)`, and it is negative for "back". The result is absolute and keeps the span `d`. A shift that passes 0 or the last time of 4.4 stops at that limit and keeps the span.
 - "Zoom out" changes `[from, to]` to `[from - d / 2, to + d / 2]` with `d = to - from`. The result is absolute.
 - At each refresh, the page computes a relative range again with a new `t`. An absolute range stays the same.
-- Zone names (decision D15). `time.js` has the function `isKnownZone(name)`. It is true for `browser`, `utc` and each name that `Intl.DateTimeFormat` accepts.
+- Zone names. `time.js` has the function `isKnownZone(name)`. It is true for `browser`, `utc` and each name that `Intl.DateTimeFormat` accepts.
 - When the dashboard loads with a name that is not known, the page uses the zone `browser`. It shows the notice "The time zone <name> is not known to this browser. The page uses the browser zone." The notice has the level `warning` and the attribute `data-notice="zone"`. It shows one time for each name in one page mount. The document does not change.
 - A known name in the URL name `timezone` replaces the zone of the document for the view, and `Z` is then that zone (9.5). An unknown name in the URL gives the notice of 9.5.
 - The calendar rules of a named zone are those of `Intl.DateTimeFormat`. A local time that occurs two times has the earlier instant. A local time that does not exist uses the offset before the change (`wallToEpoch` of `time.js`).
-- Grafana agrees for a local time that does not exist (Paris, 2026-03-29, 02:30 gives 01:30Z). For a local time that occurs two times, Grafana gives the later instant (Paris, 2026-10-25, 02:30 gives 01:30Z, and Havana, 2026-11-01, `now/d` gives 05:00Z). This is a known difference (decision ID-F2-V8, paper V8).
+- Grafana agrees for a local time that does not exist (Paris, 2026-03-29, 02:30 gives 01:30Z). For a local time that occurs two times, Grafana gives the later instant (Paris, 2026-10-25, 02:30 gives 01:30Z, and Havana, 2026-11-01, `now/d` gives 05:00Z). This is a known difference (paper V8).
 - The same rules apply to `now/d` on a day of a clock change. The end of a day is the last millisecond of the local day, so a day has 23 or 25 hours. The units `h`, `m` and `s` are fixed, and `24h` is 24 hours. The units `d`, `w`, `M` and `y` are calendar units (paper, V8).
 - For a named zone, the zone label of the popup is the name. The footer shows the name and the offset, for example `Europe/Paris UTC+01:00`. The tooltip and the accessible name of the range button hold the name.
 
-The range button opens a popup. The popup is the range picker of ClickHouse Dash (decisions ID-K60 to ID-K66, owner request of 2026-11-12). It is 604 px wide, or the width of the window less 16 px when this is smaller. It has a border of 1 px (`--border-strong`) and a radius of 8 px. Its right edge is the right edge of the time group, 5 px below it. It has two columns and a footer:
+The range button opens a popup. The popup is the range picker of ClickHouse Dash. It is 604 px wide, or the width of the window less 16 px when this is smaller. It has a border of 1 px (`--border-strong`) and a radius of 8 px. Its right edge is the right edge of the time group, 5 px below it. It has two columns and a footer:
 
 - The left column is the absolute range. It has the title "Absolute time range" and the fields "From" and "To" side by side. It has a hint, a calendar, an error text and the button "Apply time range".
 - A field accepts `YYYY-MM-DD HH:mm:ss` in `Z`, or date math. A field with an error shows the error under it, and the first field with an error gets the focus. A range that the page refuses, for example `From` after `To`, shows one error text above the button. The earlier range stays.
@@ -926,7 +925,7 @@ Hune keeps these points, which ClickHouse Dash does not have:
 
 - The quick ranges are the table above.
 - The fields accept the grammar of 4.4 and the zone of the dashboard. A bare date is not a time (4.4).
-- The back, forward and zoom out buttons are in the time group (decision ID-K12), not in the footer of the popup.
+- The back, forward and zoom out buttons are in the time group, not in the footer of the popup.
 - A range has no maximum span, only the bounds of 4.4.
 - The popup has no copy button, no paste button and no link to time settings. Hune does not have these features.
 
@@ -962,7 +961,7 @@ Refresh:
   `value_type = "number"`, a value that breaks the number grammar of 7.7 shows an error and does not apply.
 - The select shows the selected texts joined by " + ", the first three only, then " + <n> more". Its popup has a list
   with `role="listbox"` and a search field. The search keeps the texts that hold it, with letters folded to lower case.
-- The cost of a large selection (owner order of 2026-11-16). The select finds the texts of the three values that it shows only, in one pass over the options. The popup keeps the selected values in a set. Thus a paint of the select and a key in the search field take a time that is linear in the count of options. With 10,000 selected values of 1,005 characters and 10,000 options, each one takes 100 ms or less (`page_security_v3_low`).
+- The cost of a large selection. The select finds the texts of the three values that it shows only, in one pass over the options. The popup keeps the selected values in a set. Thus a paint of the select and a key in the search field take a time that is linear in the count of options. With 10,000 selected values of 1,005 characters and 10,000 options, each one takes 100 ms or less (`page_security_v3_low`).
 - The popup of a `multi` variable that has options has a row "Selected (n)" before the list. The number n is the count of
   the selected values, and "All" counts as 1. A click on the row selects all options: this is "All" when the variable has
   `include_all`, else every option. When all options are already selected, a click keeps the first option only.
@@ -972,18 +971,18 @@ Refresh:
   and `Escape` closes with no change. A change of a `multi` variable applies when the popup closes. A Tab out of the popup closes it, and a `multi` selection applies. These keys are the keys of a closed variable. An open variable has the keys of the combobox (below).
 - The URL holds the selection (9.5): one `var-<name>` for each value, or `var-<name>=$__all` for "All". A typed value stays in the URL while the variable is open.
 
-Placed controls (4.7a, decisions ID-K6 and ID-K5, owner request of 2026-11-12):
+Placed controls (4.7a):
 
 - A variable with a `placement` has its control in the grid, in the frame of the section that the `placement` names. The bar never shows it, with the exceptions below.
-- The page computes the place of each control before the first frame, from the document. Thus the grid does not move when the options load (decision ID-UI-FLASH, case B58).
+- The page computes the place of each control before the first frame, from the document. Thus the grid does not move when the options load (case B58).
 - The control is the same code as the control of the bar (`vars.js`). It has the same popup, the same keys, the same search field and the same option rules. A `custom` or a `query` variable has the select of this section. A `text` variable has the text field.
 - The control has one selection for each variable (`rt.selections`). A change in the grid has the same effects as a change in the bar. It writes the URL value `var-<name>` and reloads the options of the variables below it. It also runs the panels whose SQL names it. A change of a variable that a `repeat` names also makes the copies again (9.8c). The values of the copies come from the options that this variable loaded.
 - The frame has the place and the size of the `placement` in the grid of its section (4.14). The label follows `hide`: `none` shows the label chip at the left of the control, as in the bar. `label` shows the control only. The chip has an ellipsis when the width is short, and the control takes the rest of the frame.
 - The control keeps its hooks `variable-<name>`, `variable-<name>-button`, `variable-<name>-input` and `variable-<name>-search` (9.29). A variable has one control in the page, so each hook occurs one time.
 - The bar has zero height when it has no control: no margin, no border and no gap. The row under the header (9.9) has `display: none` when the bar and the group of the dashboard links (9.8a) are both empty. When the dashboard has links, the row stays for the links, and the bar part of the row has zero width.
 - A variable with no `placement` stays in the bar. A new variable has no `placement`, so it shows in the bar until a person places it (10.3b, 10.6).
-- A placed control in a collapsed section (4.12) is hidden with the section. The variable stays out of the bar, so the person opens the section to change the value. The value still applies and shows in the print line (9.8). This is decision ID-K4, which the owner must confirm. The other choice shows in the bar each variable whose frame is not visible.
-- When one panel (`viewPanel`, 10.2a) or the panel editor takes the main area, the grid is not visible. The bar then shows each variable that has no `hide = "variable"`, also the variables that have a `placement`. Each variable has one control in the page at all times (decision ID-K5, accepted by the owner on 2026-11-12). The grid view shows the bar as above again.
+- A placed control in a collapsed section (4.12) is hidden with the section. The variable stays out of the bar, so the person opens the section to change the value. The value still applies and shows in the print line (9.8). The other choice, which Hune does not use, shows in the bar each variable whose frame is not visible.
+- When one panel (`viewPanel`, 10.2a) or the panel editor takes the main area, the grid is not visible. The bar then shows each variable that has no `hide = "variable"`, also the variables that have a `placement`. Each variable has one control in the page at all times. The grid view shows the bar as above again.
 - In edit mode (10.2), the draft grid draws the placements of the draft. The control of a variable that the saved document has works on the selection of the page. The control of a variable that only the draft has (new or renamed) works on a selection that lives in the editor only.
 
 Options of a `query` variable. The page takes the answer of 7.14 and does these steps (`FE-02`):
@@ -1015,7 +1014,7 @@ Selection:
 - The page never sends a typed value to the server before the person applies it. A typed value starts no options query and no panel query.
 - The check uses a set of the option values. The time is in proportion to the count of the requested values and of the options, not to their product (T78, FE-48).
 
-Notice of a replaced value (decision ID-K202):
+Notice of a replaced value:
 
 - The page shows one notice for a variable when it drops at least one requested value and the variable has an option. An open variable drops only a text that is not a typed value. The level is `info`. The hook is `data-notice="variable"`. The key of the notice is `variable-` and the name of the variable, so a new notice of this variable replaces the old one.
 - The text is: `This value is not an option of <label>: "<value>". The page used "<text>".` With more than one value, the first words are "These values are", and the list has 3 values and then "and <n> more". A value of more than 40 characters is cut, with `...`. The text after "used" is the text of the first 3 selected options, or "All", or "no value".
@@ -1027,9 +1026,9 @@ No options:
 
 - A `query` variable whose options loaded with no row has no value. The button shows the muted text "No options". Its name for assistive technology is `<label>: no options`. The popup shows "No options" for a closed variable and "No options. Type a value." for an open variable.
 - With `include_all`, the variable has "All" and the control shows "All".
-- A panel that names the variable runs with the empty value of 7.7. The page adds no new error. The panel shows what the query gives, for example no data (decision ID-K208).
+- A panel that names the variable runs with the empty value of 7.7. The page adds no new error. The panel shows what the query gives, for example no data.
 
-Free entry (decisions ID-K203 and ID-K207):
+Free entry:
 
 - The popup of an open variable has the parts of the popup of a closed variable. They are the field, the row "Selected (n)" of a `multi` variable, and the list. The field is a combobox with the placeholder "Search or type a value".
 - The field has `role="combobox"`, `aria-expanded="true"`, `aria-controls` (the list), `aria-autocomplete="list"` and `aria-activedescendant`.
@@ -1040,14 +1039,14 @@ Free entry (decisions ID-K203 and ID-K207):
 - A variable that is not `multi` applies the choice and closes the popup. A `multi` variable keeps the popup open, empties the field and toggles the value. `Enter` in an empty field closes the popup and applies the selection. `Enter` on a text that is not a typed value does nothing.
 - `Space` types a space. `Escape` closes the popup with no change. `Tab` and a click outside close the popup, and a `multi` selection applies, as for a closed variable. `Home` and `End` move the cursor in the field. The row "Selected (n)" is not in the Tab order of an open variable.
 - The value is in the URL as `var-<name>`, one for each value, in the order of the selection. It is in the selection of the page and in the selection of the editor draft (10.2). It shows in the select as the text of the value.
-- A repeat by an open variable makes one copy for each selected option. A typed value makes no copy, as a value that is not an option never does (4.13a, ID-K84).
+- A repeat by an open variable makes one copy for each selected option. A typed value makes no copy, as a value that is not an option never does (4.13a).
 - The request holds the typed value as a free value (7.7). For a `custom` variable, the server accepts it only when the variable is open.
 
 Variable graph:
 
 - The parents of a `query` variable are the variables that its SQL names (7.14). The page does not read a query text. The server gives the
   names in the member `names` of the answer of 6.14, which it makes with the dependency scan of 7.19. The page needs no lexer. It does not
-  need the kind of the source, which a viewer cannot read (decision ID-K176, owner request of 2026-11-14).
+  need the kind of the source, which a viewer cannot read.
 - The page reads the member `names` in three places. `names.variables.<name>` gives the parents of a `query` variable. `names.panels.<id>` gives
   the variables that the queries of a panel name: the union of its lists. `names.annotations[i]` gives the variables of an annotation.
   A reuse panel and a text panel have no key, and the reuse panel follows its source (9.23).
@@ -1086,7 +1085,7 @@ Variable graph:
 
 ### 9.10a The control of an `adhoc` variable
 
-An `adhoc` variable (4.10c) has a control in the variables bar. The control shows the filters of the viewer and lets the viewer add and remove filters (decision ID-K329, measure of Grafana 12.4.2 on 2026-11-22). The code is in `web/js/adhoc.js`.
+An `adhoc` variable (4.10c) has a control in the variables bar. The control shows the filters of the viewer and lets the viewer add and remove filters (measure of Grafana 12.4.2 on 2026-11-22). The code is in `web/js/adhoc.js`.
 
 - The control is the label chip (9.10), then one chip for each filter, then a button with a plus icon. The chip shows the text `<key> <op> <value>`, as Grafana does, for example `host = web-1`. A long text has an ellipsis, and the attribute `title` holds the full text.
 - Each chip has a remove button with the name `Remove filter with key <key>`, as in Grafana. A click removes the filter and gives the focus to the plus button.
@@ -1167,7 +1166,7 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - "View data" opens a dialog with the fields of the panel after the transformations, as a table. The header is the
   display name, and the cells are the display texts. This table is the text alternative of the chart (9.26).
 - The dialog has a button "Download CSV" (`data-testid="view-data-csv"`). The page builds the file in the browser.
-  No server route takes part. The next rules give the file (decision D9 of ID-87).
+  No server route takes part. The next rules give the file.
 - The file of "Download CSV" has these parts:
   - The first row holds the display names of all the fields of the dialog, also the fields with `hidden = true`.
   - Each other row holds the display texts of one row of the data, in the order of the rows and of the fields.
@@ -1185,7 +1184,6 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
   - The type is `text/csv;charset=utf-8`. The page makes a `blob:` URL and a link with the attribute `download`,
     clicks it, and releases the URL. This needs no change of the content security policy (9.4). A browser test checks
     this (16.10).
-  - The rule of the number cell refines decision D9 (decision row ID-92, not yet confirmed by the owner).
   - The button "Download CSV" is in the dialog "View data". The panel menu has the same entry.
 - "Inspect" shows after "View data", and only when `session.query_inspect` is `true` (6.10). It opens a dialog with the expanded SQL of the last answer, the query id, the interval and the number of rows. The dialog has the buttons "Copy SQL" and "Close". The page writes the SQL as text, never as markup.
 - When the answer has no `sql` (6.20), the dialog says that the server does not give the SQL to this subject. It then has no "Copy SQL" button.
@@ -1380,7 +1378,7 @@ The Grafana form is the form of the Grafana function `stringToJsRegex`:
 A `regex` pattern that JavaScript cannot compile matches no field. The panel then shows the warning "The override
 pattern <pattern> is not a valid regular expression.".
 
-The length of the text (T87, owner order of 2026-11-16). The page runs a pattern of the document only on a text of 1,024 code units or fewer. This number is the value of `MAX_VALUE_BYTES` (4.35). A longer text never matches, and the page does not give it to the engine of regular expressions.
+The length of the text (T87). The page runs a pattern of the document only on a text of 1,024 code units or fewer. This number is the value of `MAX_VALUE_BYTES` (4.35). A longer text never matches, and the page does not give it to the engine of regular expressions.
 
 The reason: a name or a cell can hold data of any length. A name of a long-to-wide holds a label value (9.22), and the name of a MongoDB column has no limit. The time of a common pattern such as `(.*)-(.*)` grows with the square of the length of the text. A text of 1,024 bytes or fewer, the limit of a name in the document, has 1,024 code units or fewer. Thus the rule never changes the result for such a text. The effect in each place:
 
@@ -1526,7 +1524,7 @@ positive infinity as `Math.round` does. It adds zeros to `d` decimals. A unit wi
 - A `text` field shows its text. A `bool` field shows `true` or `false`.
 - A `bool` value with the unit `bool_yes_no` shows `Yes` or `No`. With another unit, also `bool` and `bool_on_off`, it
   shows `true` or `false`, as the display of Grafana 12.4.2 does (19.20n).
-- The vectors of the 30 units of wave H are the texts of Grafana 12.4.2, measured on 2026-11-22
+- The vectors of the 30 units are the texts of Grafana 12.4.2, measured on 2026-11-22
   (`tests/frontend/vectors/FE-06-units-h.json`). The differences are in 19.20n.
 - Another unit is not valid in a document (4.20). The importer reports it (15).
 
@@ -1578,7 +1576,7 @@ Light marks:
 
 The gradient of a table cell turns the hue by 5 degrees. In the light theme it raises the lightness by 7 points. In the dark theme it lowers the lightness by 10 points (9.20).
 
-The series palette is the palette of ClickHouse Dash (decision ID-K70, owner request of 2026-11-12). It is the one series palette (decision ID-K74, owner decision of 2026-11-13). The page has no other series palette, and the editor offers no choice between series palettes.
+The series palette is the palette of ClickHouse Dash. It is the one series palette. The page has no other series palette, and the editor offers no choice between series palettes.
 
 The palette has 18 colours, one for each token `--qchart-1` to `--qchart-18` of the copied `00-tokens.css` (9.25). Each theme has its own hex for each slot. The page keeps one copy of the 36 hex values in `colors.js`. A test makes sure that the copy and the tokens are equal. The token `--qchart-other` is the colour of an index that is not a slot.
 
@@ -1611,7 +1609,7 @@ super-light-green, super-light-yellow, super-light-blue, super-light-orange, sup
 #CFFAFF, #F9E2D2, #FCE2DE, #BADFF4, #F9D9F9, #DEDAF7
 ```
 
-What the series palette changes (ID-K70). Only a colour that the page chooses itself changes. This is the mode `palette`. It also is the default of a `timeseries`, a `barchart`, a `piechart` and an `xychart` (9.14).
+What the series palette changes. Only a colour that the page chooses itself changes. This is the mode `palette`. It also is the default of a `timeseries`, a `barchart`, a `piechart` and an `xychart` (9.14).
 
 Each colour that the document states keeps its value. These are a named colour, a hex colour, a threshold step, a value mapping, an override with a fixed colour and the continuous modes. A stat, a gauge, a bar gauge and a table keep the mode `thresholds` as their default. Thus they do not use the series palette, unless the document sets `palette`.
 
@@ -1628,7 +1626,7 @@ Colour modes (the property `color`, an object `{mode, fixed}`):
 
 The page uses a continuous mode where it uses `thresholds` (9.14). In a `timeseries`, a `barchart`, a `piechart` and an `xychart`, a continuous mode keeps the rule that the page has for `thresholds`. A mode that a type does not use gives the default of the type (9.14).
 
-Removed mode (ID-K74). The value `palette_by_name` of format 3 does not exist any more: the series palette has no assignment by name. A series takes the slot of its place, as in ClickHouse Dash. Thus the colour of a series changes when the series order changes. The editor has one entry for the series palette, "Series palette" (10.3).
+Removed mode. The value `palette_by_name` of format 3 does not exist any more: the series palette has no assignment by name. A series takes the slot of its place, as in ClickHouse Dash. Thus the colour of a series changes when the series order changes. The editor has one entry for the series palette, "Series palette" (10.3).
 
 Continuous modes (`FE-23`, paper V5):
 
@@ -1669,7 +1667,7 @@ Vectors of the colours, measured on Grafana 12.4.2. The measure has 23 values fo
 
 The files of `target/ws/f2-facts/` hold the 23 values of each case (`v5-analysis.json`).
 
-The vector set `FE-23` also holds the 36 hex values of the series palette (the tables above, ID-K70).
+The vector set `FE-23` also holds the 36 hex values of the series palette (the tables above).
 
 Thresholds (`{mode, steps}`):
 
@@ -1729,7 +1727,7 @@ Each mapping also has the members `text` and `color`. At least one of them is no
 
 - The tokens of the first eight rows: the page encodes each value with `encodeURIComponent`, except
   `${__url_time_range}` and `${__all_variables}`, which are already encoded. An unknown token stays as it is.
-- The last six rows are the tokens of Grafana 12 (wave H, item P02). They have the encoding of Grafana 12.4.2, which the
+- The last six rows are the tokens of Grafana 12. They have the encoding of Grafana 12.4.2, which the
   measures of 2026-11-22 give:
   - `${<name>:queryparam}` has the form of the Grafana function `urlUtil.toUrlParams`. The page encodes each value with
     `encodeURIComponent`. Then it decodes `@`, `:`, `$`, `,` and `;` again. It writes `!`, `'`, `(`, `)` and `*` as
@@ -1850,7 +1848,7 @@ Thus a fall (a counter reset) removes the first rise after it. Example: `1, 2, 3
 - The engine draws one connected line through these values, in time order. The first and the last value only join the columns.
 - A time series breaks its line only at a `null` value, unless `span_nulls` is `true`. A value between two `null` values draws as a mark. The mark has the width of the line, and it is not a dot. The other charts keep the rule of the engine: a gap of more than 1.5 steps breaks the line.
 
-The automatic y axis applies to each scale of a time series, also to bars, to a stack and to a field with ends (ID-K316). `y_scale = "log"` keeps the rule of the engine (log scale, below). `stacking = "percent"` has its own soft ends (below).
+The automatic y axis applies to each scale of a time series, also to bars, to a stack and to a field with ends. `y_scale = "log"` keeps the rule of the engine (log scale, below). `stacking = "percent"` has its own soft ends (below).
 
 The automatic range is the `rangeNum` rule of uPlot, as Grafana uses it. Let `lo` and `hi` be the lowest and the highest drawn value of the series of the scale, and `d = hi - lo`. In a stack, the drawn values are the tops of the stack. Its base does not count, so a stack far from 0 does not start at 0:
 
@@ -1863,13 +1861,13 @@ The automatic range is the `rangeNum` rule of uPlot, as Grafana uses it. Let `lo
 7. When `max` is not above `min`, `max` is `min + 1`.
 
 - The ticks are the multiples of a step inside the range. The step is the smallest of 1, 2, 2.5 and 5 times a power of ten that puts two ticks 30 px apart or more. On a plot of 150 px or less, two ticks are 15 px apart or more. This rule also applies when the field sets `min` or `max`, and to the axis of bars. The `xychart` keeps 30 px. With the unit `bytes`, the steps are powers of two.
-- Grafana 12.4.2 has this rule in the code that it serves (`calculateSpace`), as for the histogram (9.19f). The measure of 2026-11-16 found the steps of Grafana with this rule on 115 time series panels (decision ID-K311). Their plots were 19 to 817 px high.
-- With `stacking = "percent"`, the axis has the soft ends 0 and 100 % (y axes, rule 7). The ends of the field have no effect on it. Thus it goes from 0 to 100 % when no top is below 0, and the tops -100 % to 100 % give -120 % to 100 %. The ticks follow the rule above. A tick label is the percent with the least digits and the sign `%`, for example "20%", for each unit of the field. Grafana 12.4.2 has this rule (measure of 2026-11-21, decision ID-K321).
-- A second measure of 2026-11-16 found the ranges of Grafana with these rules on 100 panels (decision ID-K316). The panels had bars, stacks, soft ends and hard ends, with plots of 57 to 817 px. For example, bars of the data -50 to 80 give -70 to 100. A stack with the tops 5 to 144 gives 0 to 160, and the tops 1,000 to 2,017 give 800 to 2,200.
+- Grafana 12.4.2 has this rule in the code that it serves (`calculateSpace`), as for the histogram (9.19f). The measure of 2026-11-16 found the steps of Grafana with this rule on 115 time series panels. Their plots were 19 to 817 px high.
+- With `stacking = "percent"`, the axis has the soft ends 0 and 100 % (y axes, rule 7). The ends of the field have no effect on it. Thus it goes from 0 to 100 % when no top is below 0, and the tops -100 % to 100 % give -120 % to 100 %. The ticks follow the rule above. A tick label is the percent with the least digits and the sign `%`, for example "20%", for each unit of the field. Grafana 12.4.2 has this rule (measure of 2026-11-21).
+- A second measure of 2026-11-16 found the ranges of Grafana with these rules on 100 panels. The panels had bars, stacks, soft ends and hard ends, with plots of 57 to 817 px. For example, bars of the data -50 to 80 give -70 to 100. A stack with the tops 5 to 144 gives 0 to 160, and the tops 1,000 to 2,017 give 800 to 2,200.
 - The edges of the range do not move to a tick. A field with `decimals` writes every tick with them, for example "70.0%". Else a tick label has the least digits that show the value, with no zero at the end of its decimals. The ticks 2, 1.5, 1, 0.5 and 0 of the step 0.5 read "2", "1.5", "1", "0.5" and "0". With a unit, the label is the text of 9.15.
 - The cursor shows a dashed vertical line and a dashed horizontal line. It shows one dot of 4 px on the series that is nearest to the pointer. It shows no pill on the axes.
 
-Stacks (`stacking` = `normal` or `percent`; decisions ID-K321 and ID-K325, engine edits E32 and E33 of 9.24). The stacks of a time series and of a vertical `barchart` follow Grafana 12.4.2 for lines, areas and bars:
+Stacks (`stacking` = `normal` or `percent`; engine edits E32 and E33 of 9.24). The stacks of a time series and of a vertical `barchart` follow Grafana 12.4.2 for lines, areas and bars:
 
 1. A series goes in the group below 0 when more of its values are below 0 than above 0. Else it goes in the group above 0. Thus a tie goes above 0.
 2. The count starts at the first value that is not `null` and stops at the last such value. Its step is `floor(n / 100)` values, and 1 at least. `n` is the number of values in that span. A value of 0 does not count. With `transform = "negative_y"`, the series goes in the other group.
@@ -1887,7 +1885,7 @@ Stacks (`stacking` = `normal` or `percent`; decisions ID-K321 and ID-K325, engin
 - The same measure found these rules on 45 vertical bar charts: 15 cases at 3 heights, with stacks, values below 0, percent and soft ends. A series of both signs adds each value with its sign. Thus the bar of the value -25 on a part of 10 goes from 10 to -15.
 - The plot of Grafana is 10 px lower there (19.20a). With the plots at one height, Hune draws the same ticks on 42 panels within 0.5 px, and its bars are within 1.5 px. Before, 3 panels were equal.
 
-Log scale (`y_scale = "log"`, decision ID-K321). A time series keeps the rule of the engine on a log scale. Grafana 12.4.2 has other rules there (19.20a).
+Log scale (`y_scale = "log"`). A time series keeps the rule of the engine on a log scale. Grafana 12.4.2 has other rules there (19.20a).
 
 1. The series do not stack, also with `stacking` = `normal` or `percent`. Each series draws its own values. A value of 0 or below has no point.
 2. The range goes from the lowest to the highest value of the series of the scale, with no room. When a value is 0 or below, the range starts at a tenth of the highest value. When no value is above 0, the range is 1 to 10. When the values are all equal, the range ends at ten times the value.
@@ -1895,7 +1893,7 @@ Log scale (`y_scale = "log"`, decision ID-K321). A time series keeps the rule of
 4. The ticks are 1, 2 and 5 times each power of ten inside the range. When there are more than 7 ticks, only the powers of ten stay. When the highest end is less than 8 times the lowest end, the ticks are those of a linear axis with 4 intervals.
 5. A tick label has the unit of the field (9.15). With no unit, it has the short form of the engine (K, M, B, T). The labels of a percent stack have no sign `%`.
 
-Log scale of base 2 (`log_base` = 2; wave H, item P14). This scale follows Grafana 12.4.2 (uPlot `rangeLog` and `log2AxisValsFilt`). The rules above stay for `log_base` = 10.
+Log scale of base 2 (`log_base` = 2). This scale follows Grafana 12.4.2 (uPlot `rangeLog` and `log2AxisValsFilt`). The rules above stay for `log_base` = 10.
 
 1. The range starts at the power of 2 at or below the lowest value above 0. It ends at the power of 2 at or above the highest value. A value of 0 or below has no point and does not count.
 2. `min` and `max` of the scale replace the data ends, rounded down and up to a power of 2. `soft_min` and `soft_max` have no effect, as in Grafana.
@@ -1906,7 +1904,7 @@ Log scale of base 2 (`log_base` = 2; wave H, item P14). This scale follows Grafa
 
 The measure found these rules on 10 panels. For example, the values 1 to 910 on a plot of 171 px give 11 grid lines. The labels are 1, 4, 16, 64, 256 and 1024.
 
-Time zone of the page (decision F10). The zone of the dashboard is the member `time.timezone` (4.6): `browser`, `utc` or an IANA name. The helper `zone.js` has the function `formatTime(ms, zone, pattern)`. `zone` is `browser`, `utc` or an IANA name that the browser knows (9.9). A name that the browser does not know gives the zone `browser`, also in `formatTime`.
+Time zone of the page. The zone of the dashboard is the member `time.timezone` (4.6): `browser`, `utc` or an IANA name. The helper `zone.js` has the function `formatTime(ms, zone, pattern)`. `zone` is `browser`, `utc` or an IANA name that the browser knows (9.9). A name that the browser does not know gives the zone `browser`, also in `formatTime`.
 
 `pattern` has the tokens `YYYY`, `MM`, `DD`, `HH`, `mm`, `ss` and `SSS`, and the other characters stay as they are.
 
@@ -1915,7 +1913,7 @@ Time zone of the page (decision F10). The zone of the dashboard is the member `t
 - With `utc`, the engine puts the ticks of the x axis at UTC boundaries. The labels have the same patterns as with `browser`. The engine gets the zone as an option (9.24).
 - A `utc` dashboard shows the same times in each browser zone. A test runs the page in two zones and compares the labels (16.10).
 
-Thresholds in the plot (`thresholds_style`, decision F12). The thresholds are those of the first series, in field order (9.14, 9.16). The page draws them under the series, and it does not change the range of the y axis.
+Thresholds in the plot (`thresholds_style`). The thresholds are those of the first series, in field order (9.14, 9.16). The page draws them under the series, and it does not change the range of the y axis.
 
 - `line` and `dashed`: one horizontal line for each step except the first (the base step), at the value of the step. A line is 2 px wide. A `dashed` line has dashes of 10 px and gaps of 10 px.
 - `area`: bands that fill the width of the plot. The band of a step goes from its value to the value of the next step. The first band starts at the bottom of the plot, and the last band ends at the top. A band has the colour of its step.
@@ -1927,7 +1925,7 @@ Thresholds in the plot (`thresholds_style`, decision F12). The thresholds are th
 - In a `barchart`, the lines and bands follow the value axis. They are vertical when `orientation` is `horizontal`.
 - The style has no effect on the legend, the tooltip or the scale. A field with no `thresholds` has the default steps of 9.14, so `line` draws a red line at 80.
 
-Hidden series (`hide_from`, decision F03). The property of 4.18 applies to each field in `timeseries`, `barchart` and `xychart`. The viewer of Grafana hides a series with a click on the legend. Grafana then saves an override that has the matcher `names` and `hide_from` (9.14).
+Hidden series (`hide_from`). The property of 4.18 applies to each field in `timeseries`, `barchart` and `xychart`. The viewer of Grafana hides a series with a click on the legend. Grafana then saves an override that has the matcher `names` and `hide_from` (9.14).
 
 - `viz = true`: the page does not draw the series. It does not count for the range of the axes, and it does not take part in the stack. The legend shows the entry as off, and a click on it shows the series again.
 - `legend = true`: the legend has no entry for the series, in the modes `list` and `table`. A series with `viz = true` and `legend = false` keeps its legend entry, shown as off (half opacity).
@@ -1935,7 +1933,7 @@ Hidden series (`hide_from`, decision F03). The property of 4.18 applies to each 
 - A hidden series stays in the data. "View data" still shows its field, and a calculation of the legend can still use it.
 - A click on a legend entry hides or shows its series for this page only (the engine function). The click never changes the document, and it never changes `hide_from`.
 
-Y axes (`axis_placement`, `axis_label`, `soft_min`, `soft_max`; decision F16). A chart has two scales at most: the left scale and the right scale (decision D17).
+Y axes (`axis_placement`, `axis_label`, `soft_min`, `soft_max`). A chart has two scales at most: the left scale and the right scale.
 
 1. The placement of a series is `axis_placement`. It is `auto` when the member is not set.
 2. `left` puts the series on the left scale. `right` puts it on the right scale.
@@ -1943,7 +1941,7 @@ Y axes (`axis_placement`, `axis_label`, `soft_min`, `soft_max`; decision F16). A
 4. A chart with no series on the right scale has no right scale. A third unit shares the right scale. Grafana makes one scale and one axis for each set of unit, placement, `min`, `max`, soft ends and scale type. So it draws a third axis. It also draws two left axes for a `left` series and an `auto` series of another unit. These are known differences (19.20a).
 5. Each scale has its own range. The range follows the automatic rule of this paragraph (steps 1 to 7) on the series of the scale.
 6. The `min` and `max` of the first series of the scale that sets them are hard ends. A hard end on a side with no soft end is the end of the axis on that side. It also replaces the data end of that side (`lo` or `hi`) in steps 1 to 5. With a soft end on the same side, the hard end is a limit: the end of the axis does not go past it. For example, `min` = 0 with the data 5 to 95 gives 0 to 105.
-7. A soft end applies after step 5 of the automatic rule, in place of step 6 on its side. When `lo` is `soft_min` or more, `min` is `soft_min`, else `min` stays the result of step 5 (also below 0). `soft_max` has the same rule for `hi` and `max`. Thus the axis ends at a soft end when the data stays inside it, and a soft end never cuts the data. With the data 5 to 95, `soft_max` = 200 gives 0 to 200, and 50 gives 0 to 104. `soft_min` = 10 gives -4 to 104 (decision ID-K316).
+7. A soft end applies after step 5 of the automatic rule, in place of step 6 on its side. When `lo` is `soft_min` or more, `min` is `soft_min`, else `min` stays the result of step 5 (also below 0). `soft_max` has the same rule for `hi` and `max`. Thus the axis ends at a soft end when the data stays inside it, and a soft end never cuts the data. With the data 5 to 95, `soft_max` = 200 gives 0 to 200, and 50 gives 0 to 104. `soft_min` = 10 gives -4 to 104.
 8. A scale shows its axis unless every series of the scale has the placement `hidden`. A hidden axis takes no room. The series stays on its scale.
 9. The title of a scale is the `axis_label` of its first series that sets it. It is a text of 12 px at weight 400 in the colour of the axis labels. The title of the left scale turns by -90 degrees, and the title of the right scale turns by 90 degrees. Each title takes 28 px, and its centre is 12 px from the outer edge of the plot area. A title that is longer than the axis ends with an ellipsis.
 10. The left gutter is the width of the widest label of the left scale plus 9 px, rounded up. The labels end 5 px before the plot. The right gutter has the same rule for the right scale. Its labels start 5 px after the plot, and it replaces the margin of 8 px at the right. A title adds 28 px to its gutter. Grafana measures the first of the longest labels, so its gutter can be 1 px less.
@@ -1951,12 +1949,12 @@ Y axes (`axis_placement`, `axis_label`, `soft_min`, `soft_max`; decision F16). A
 12. The stacks of `stacking` work inside one scale. A series stacks only with the series of its own scale.
 13. `y_scale = "log"` applies to each scale. The thresholds of `thresholds_style` draw on the scale of the first series, as before.
 14. The cursor, the tooltip and the legend keep the unit and the decimals of each series. A table legend ends the name of a series on the right scale with ` (right y-axis)`. The mark has 12 px and the colour of the muted text. A list legend has no text mark. The items of the series on the right scale go after the other items, at the right end of the row. The rows of a table legend keep the field order (paper, V2).
-15. A `barchart` has one value axis. `axis_label`, `soft_min` and `soft_max` of its first field that sets them apply to it. `axis_placement` has no effect there (4.18). A soft end of a `barchart` follows rule 7. A side with no soft end and no `min` or `max` has the soft end 0, as in Grafana 12.4.2 (decision ID-K325).
+15. A `barchart` has one value axis. `axis_label`, `soft_min` and `soft_max` of its first field that sets them apply to it. `axis_placement` has no effect there (4.18). A soft end of a `barchart` follows rule 7. A side with no soft end and no `min` or `max` has the soft end 0, as in Grafana 12.4.2.
 16. The test reads the scales in the attribute `data-axes` of `.panel__plot` (9.29).
 
 The rules of steps 3, 4, 9, 10, 11 and 14 follow the check on Grafana 12.4.2 (paper, 10.8, V1 and V2).
 
-Series style (`draw`, `line_width`, `fill_opacity`, `show_points`, `point_size`, `line_dash`, `transform`; decision F17). The rule of 9.14 gives the style of a series. A series can have a style that differs from the style of the panel.
+Series style (`draw`, `line_width`, `fill_opacity`, `show_points`, `point_size`, `line_dash`, `transform`). The rule of 9.14 gives the style of a series. A series can have a style that differs from the style of the panel.
 
 - `draw` sets the series to a line, to bars or to points, with the rules of the option `draw` (4.28). The bars and the lines of one chart draw in field order.
 - `line_width` 0 draws no line. `fill_opacity` above 0 draws an area. `show_points` and `point_size` follow the options of 4.28.
@@ -1966,7 +1964,7 @@ Series style (`draw`, `line_width`, `fill_opacity`, `show_points`, `point_size`,
 - The data of the field, "View data", the values of the legend and the values of the tooltip do not change with `negative_y`. The axis shows the drawn values (`-100%` to `0%`). Grafana does the same (paper, V3).
 - The test reads each style in the attribute `data-series-style` of `.panel__plot` (9.29). Each style also holds `dashArray`, the array that the engine draws, or `null`.
 
-Gradient modes (`gradient_mode`; wave H, item P10, decision ID-K326). The option applies to the fill and to the line of each series of a `timeseries`, and to the bars of a `barchart`. The values are those of Grafana 12.4.2. They come from the code that it serves and from a probe of the canvas calls (83 panels, 2026-11-22). The engine paints a gradient with a function of each series (E43, 9.24).
+Gradient modes (`gradient_mode`). The option applies to the fill and to the line of each series of a `timeseries`, and to the bars of a `barchart`. The values are those of Grafana 12.4.2. They come from the code that it serves and from a probe of the canvas calls (83 panels, 2026-11-22). The engine paints a gradient with a function of each series (E43, 9.24).
 
 - `none` gives the plain colour of the series, as before.
 - `opacity`: the fill is a linear gradient over the plot box, from its top to its bottom. The top has the colour of the series at the alpha `fill_opacity` / 100. The bottom has the alpha 0. The line keeps the plain colour. For the fill 50, Grafana draws `#73BF6980` at the top and `#73BF6900` at the bottom.
@@ -1979,13 +1977,13 @@ The ends of a scheme are `lo` and `hi`. `lo` is `min` of the field, else `soft_m
 
 - The mode `thresholds` gives hard bands: each step starts at its value, and the first step starts at the bottom of the scale. A step of the mode `percentage` is at `lo + (hi - lo) × v / 100`. The colour `transparent` has the alpha 0.
 - A continuous mode spreads its stops (4.19) evenly from `lo` to `hi`, with the shades of the theme. The canvas mixes two stops in a straight line, not with the spline of 9.16.
-- The mode `palette` spreads the 18 colours of the series palette (ID-K70) in the same way. Grafana spreads its classic palette of 64 colours there (19.20a).
+- The mode `palette` spreads the 18 colours of the series palette in the same way. Grafana spreads its classic palette of 64 colours there (19.20a).
 - The gradient of a scale runs from the place of its first stop to the place of its last stop, as uPlot `scaleGradient`. The places are whole device pixels, and the last colour stays above its stop.
 - The points of a line, and a value between two `null` values, take the gradient of the line. The legend and the tooltip keep the plain colour of the series, as in Grafana.
 - A bar chart paints one gradient over the plot for all its bars. A horizontal bar chart (Hune code) paints the fill of each bar with one CSS gradient over the track. The gradient goes from the right end (T) to the left end (B). Its line keeps the plain colour, where Grafana paints the gradient (19.20a).
 - With `fill_opacity` 0, no fill shows. Thus `opacity` changes nothing on a line with no fill, and the audit has an entry for it (10.3h).
 
-Cosmetic series options (wave H, item P14, decision ID-K326). These members follow Grafana 12.4.2. The values come from the same probe and from the code that Grafana serves.
+Cosmetic series options. These members follow Grafana 12.4.2. The values come from the same probe and from the code that Grafana serves.
 
 - Dash array (`line_dash_array`, 4.18). The engine calls `setLineDash` with the array in device pixels, as uPlot does (E45). Thus `[10, 20]` gives dashes of 10 px and gaps of 20 px at dpr 1, and of 5 and 10 CSS px at dpr 2. The cap is round for `dot` and butt for `dash`. The default arrays of `dash` and `dot` follow the same rule. A set with `line_dash` or `line_dash_array` replaces both members of an earlier set (4.18, 9.14).
 - Null threshold (`span_nulls_ms`, 4.28). With `span_nulls` = `false`, a run of `null` values joins when the values on its two sides are less than `span_nulls_ms` apart on the time axis. A run at the start or at the end of a series stays a break. A series that draws bars keeps its gaps.
@@ -1998,9 +1996,9 @@ Cosmetic series options (wave H, item P14, decision ID-K326). These members foll
 - Axis border (`axis_border`, 4.18). The axis gets a line of 1 device pixel on the edge of the plot, from its top to its bottom. Each tick gets a mark of 4 px outside the plot. The labels move to 9 px from the plot, and the gutter does not change. The first series of the scale gives the member.
 - Axis colour (`axis_color`, 4.18). `series` gives the labels, the line and the marks the colour of the first series of the scale. With `gradient_mode` = `scheme` and the colour mode `thresholds`, they take the scheme of that series. `text` keeps the colour of the labels.
 - A horizontal bar chart (Hune code) applies the centred zero to its own range. Its axis band has the height `axis_width`, and the border is a line and marks of 4 px under the bars. A hidden axis has no width, no border and no colour.
-- The symmetric log scale of Grafana (`scaleDistribution` `symlog`) is not in this wave. The importer keeps it `unsupported` (15.6).
+- The symmetric log scale of Grafana (`scaleDistribution` `symlog`) is not in this version. The importer keeps it `unsupported` (15.6).
 
-Legend sort (`sort_by`, `sort_desc`; decision F20). A legend in the mode `table` sorts its rows when `sort_by` is set. A legend in the mode `list` ignores the sort.
+Legend sort (`sort_by`, `sort_desc`). A legend in the mode `table` sorts its rows when `sort_by` is set. A legend in the mode `list` ignores the sort.
 
 - The key of a row is the result of the calculation `sort_by` on the field of the series (9.19 gives each calculation). For `name`, the key is the name of the series. The page computes the calculation even when `values` does not hold it.
 - With `name`, the names compare as `Intl.Collator("en", {sensitivity: "base"}).compare` does. With a calculation, the numbers compare.
@@ -2016,14 +2014,14 @@ Tooltip sort and zeros (`sort`, `hide_zeros`). These members change the rows of 
 Look of the charts (`timeseries`, `barchart`, `xychart`):
 
 - The axis text is 12 px, in the font of the page and in the text colour, at weight 400.
-- Series colours (ID-K70, owner request of 2026-11-12). A series with no explicit colour has the slot of its place in the series palette of 9.16. The place is the index `i` of the series among the number fields, in field order, from 0.
+- Series colours. A series with no explicit colour has the slot of its place in the series palette of 9.16. The place is the index `i` of the series among the number fields, in field order, from 0.
 - The line, the fill, the bar, the point, the legend mark and the tooltip mark use that hex of the theme. A series that has an explicit colour keeps it. This is a fixed colour, a continuous mode, a threshold colour or a value mapping. A hidden series keeps its slot. The page gives each series its colour again when the theme changes.
 - The legend stays readable. The legend text keeps the text colour of the theme, and its name has 4.5:1 with the panel. The mark has 3:1 with the panel (9.16).
 - The axes have no base line, no zero line and no tick marks. The grid lines are the only lines. The exception is a y axis with `axis_border` = `true` (P14, below).
 - The x axis has one row of labels, with no row for the date. Two ticks are the width of a label (in the format of its step) plus 11.5 px apart. The steps are those of Grafana: there is no step of 2 minutes, and there are steps of 4 and 8 hours. A day step starts at the first midnight in the range. A step of 1 minute writes the seconds.
 - A range of more than 24 hours writes `MM/DD HH:mm`. A shorter range writes no date, also at midnight.
 - The plot has a margin of 8 px at the top and at the right. It has a band of 21 px at the bottom. The margin at the left is the width of the widest y label plus 11 px. A y label ends 6 px before the plot.
-- When no y axis shows on either side, the plot has no margin at the top (E27, 9.24, decision ID-K310). This is the rule of Grafana 12.4.2 for a time series whose y axes are all hidden. In that case Grafana also hides the time axis, because the defaults of the panel apply to the time field too. Then its plot fills the canvas. Hune keeps the time axis with its band and its side margins. This is a known difference.
+- When no y axis shows on either side, the plot has no margin at the top (E27, 9.24). This is the rule of Grafana 12.4.2 for a time series whose y axes are all hidden. In that case Grafana also hides the time axis, because the defaults of the panel apply to the time field too. Then its plot fills the canvas. Hune keeps the time axis with its band and its side margins. This is a known difference.
 - A fill keeps the opacity of `fill_opacity`, also where fills of series that do not stack overlap. The fills add up there.
 - The legend text is 12 px at weight 400 in the text colour. The mark of a series is a pill of 14 x 4 px, 8 px before the name. The items are 10 px apart. The legend, in the mode `table` or `list`, scrolls when it is more than 35 % of the inner height of the panel.
 - The legend has no "Values" or "List" button. The option `legend.mode` still sets the mode.
@@ -2063,7 +2061,7 @@ Look of the charts (`timeseries`, `barchart`, `xychart`):
 - A named colour uses the table "Light fills" in the light theme (9.16).
 - The page draws with the copied `app_ui_stat.js` and the line of `app_ui_chart.js` (9.24).
 
-The percent change of a `stat` (`percent_change`; wave H, item P11, decision ID-K326) has the behaviour of Grafana 12.4.2. The rules below come from the bundle and from a measure in both themes (FE-82, B222):
+The percent change of a `stat` (`percent_change`) has the behaviour of Grafana 12.4.2. The rules below come from the bundle and from a measure in both themes (FE-82, B222):
 
 - The change is (last - first) / first x 100. The first value and the last value are the results of `first_not_null` and `last_not_null` for the field. Thus it is the result of `diff_percent`. A field with no such value gives 0.
 - The calculation of the item does not change the change. Only an item with a calculation (`reduce.values = false`) shows a change, as in Grafana.
@@ -2113,10 +2111,10 @@ The options `title_size` and `value_size` (same item) set the font sizes of the 
   `type: "bar"`.
 - A vertical bar chart writes the value of a bar above the bar, with a size that comes from the bar width. A stack shows no value (19.20a).
 - The value axis has the automatic rule of the time series (steps 1 to 7 and the ticks). The rule uses the drawn ends: the values, or the tops of a stack (9.19, stacks). A side with no end has the soft end 0 (y axes, rule 15). Thus the bars start at 0 when the data does not cross 0. The value labels take no room.
-- Grafana 12.4.2 has this rule in the code that it serves. The measure of 2026-11-22 found it on 45 bar charts (decision ID-K325). For example, bars of 5 to 59 give 0 to 65, also with value labels.
+- Grafana 12.4.2 has this rule in the code that it serves. The measure of 2026-11-22 found it on 45 bar charts. For example, bars of 5 to 59 give 0 to 65, also with value labels.
 - With `stacking = "percent"`, the axis shows shares of 1 in the unit of the first field. The labels are "0.2" with no unit, and "20%" with the unit `percentunit`. A group below 0 gives shares below 0.
 - A single bar, or a stack, takes `bar_width` of its band. A group takes `group_width`. The first and the last bar touch the edges of the plot. The chart has no vertical grid line.
-- The fill and the line of the bars (wave H, item P03). The values are those of Grafana 12.4.2. A probe of the canvas calls measured them on 2026-11-22 (16 bar charts in one temporary dashboard of the folder `hune-parity`).
+- The fill and the line of the bars. The values are those of Grafana 12.4.2. A probe of the canvas calls measured them on 2026-11-22 (16 bar charts in one temporary dashboard of the folder `hune-parity`).
   - The fill has the colour of the series at the alpha `fill_opacity` / 100. Grafana draws `rgba(255, 0, 0, 0.61)` for 61 and the plain colour for 100. With 0, the page draws no fill, as Grafana.
   - The line has the plain colour of the series and the width `line_width`. With 0, the page draws no line, as Grafana.
   - The line stays inside the box of the bar on its four sides. The box of the path loses half the line width w at each side. Thus the box is x + w/2, y + w/2, the width less w and the height less w. Grafana drew the boxes 22, 352 (width 0), 23, 351 (width 1) and 24, 348 (width 4) for one bar. The page gives the engine `barInset: "box"` (E34, 9.24).
@@ -2196,7 +2194,7 @@ A panel never shows a scroll bar for a size error. This rule applies to the stat
 
 ### 9.19b Text panel (type `text`)
 
-A panel of the type `text` shows Markdown text (4.33a). The decisions are ID-K100 to ID-K118 (owner request of 2026-11-13). The parser is the pure module `markdown.js` (9.2). It reads the lines of `options.content` and gives a tree. The module `panels/text.js` builds DOM nodes from the tree. The parser is code of Hune with no new dependency.
+A panel of the type `text` shows Markdown text (4.33a). The parser is the pure module `markdown.js` (9.2). It reads the lines of `options.content` and gives a tree. The module `panels/text.js` builds DOM nodes from the tree. The parser is code of Hune with no new dependency.
 
 The security rules. Each rule is a MUST.
 
@@ -2259,13 +2257,13 @@ The inline rules:
 Links. The rules are these:
 
 1. The form is `[text](destination)`, with no space before `(`. The destination has 1 to `MD_MAX_URL_BYTES` characters. Each character is a printable ASCII character (U+0021 to U+007E) and is not `(` or `)`. It has no title and no angle brackets. The text of the link has at least one character. A text that breaks this rule stays as text.
-2. The destination MUST pass the check of 4.23 and 9.18, with the prefixes as the server reads them (decision ID-K119). It starts with `/`, `?`, `#`, `http://` or `https://`. The prefixes are case sensitive: the destination `HTTP://a.example` is not a link. It does not start with `//` or `/\`.
+2. The destination MUST pass the check of 4.23 and 9.18, with the prefixes as the server reads them. It starts with `/`, `?`, `#`, `http://` or `https://`. The prefixes are case sensitive: the destination `HTTP://a.example` is not a link. It does not start with `//` or `/\`.
 3. A link holds no other link. The text of a link holds text, emphasis, strong and code. A `[text]` that holds a link stays as text.
 4. An autolink starts at `http://` or `https://`. The character before MUST NOT be a letter or a digit. The place MUST NOT be in the text of a link, or after a `[` that is still open.
    - It ends before the first character that is not printable ASCII, or is `<`.
    - It loses the last characters `?`, `!`, `.`, `,`, `:`, `;`, `*`, `_`, `~`, `'` and `"`, and each `)` that has no `(`.
    - The result has more than the scheme, and it passes the check of rule 2.
-5. The element is `<a href="<destination>" rel="noopener noreferrer">`. It has no `target`: the link opens in the same tab, as in Grafana (decision ID-K104). It has the underline and the colour `--link` (below).
+5. The element is `<a href="<destination>" rel="noopener noreferrer">`. It has no `target`: the link opens in the same tab, as in Grafana. It has the underline and the colour `--link` (below).
 6. The page never changes a destination. It replaces no placeholder, it adds no encoding and it normalises nothing.
 7. A link that the page refuses is not a link. Its characters show as text. The page writes no warning.
 
@@ -2294,7 +2292,7 @@ Variables. The page parses the lines first. Then it replaces the placeholders in
 | `${name:csv}`, `${name:pipe}`, `${name:glob}` | As in 9.13. |
 
 4. Some placeholders stay as they are written. They are a name that is not a variable of the document and a name that starts with `__`. They are also a format that the table does not list and the form `[[name]]`. The same rule holds in a title (9.13).
-5. The difference to a title. A title shows the option text with `$name`. The content shows the value. The two measures are in 19.20c (decision ID-K106).
+5. The difference to a title. A title shows the option text with `$name`. The content shows the value. The two measures are in 19.20c.
 6. The escape. `\$name` shows `$name`. The escape of a `$` makes a leaf with the flag `lit` (inline rules).
 7. The result is text. The page writes it with `createTextNode`. A value such as `<b>x</b>`, `*x*` or `[x](javascript:alert(1))` shows as these characters. A test builds the tree with a hostile value and with a harmless value. The two trees have the same shape: the same kinds and the same destinations.
 8. The page keeps the tree. A change of a variable that the content names makes the DOM again from the same tree. The parser does not run again.
@@ -2357,7 +2355,7 @@ The frame. The panel follows 9.11 with these changes:
 
 ### 9.19c State timeline and status history (types `state_timeline` and `status_history`)
 
-The two types draw the state of each value field of a frame over time (4.33b). The decisions are ID-K120 to ID-K136 (owner request of 2026-11-13). The pure module `timeline_model.js` (9.2) makes the rows, the states, the segments, the cells and the caps from the fields. It has no DOM access. The module `panels/timeline.js` draws them on a canvas and builds the legend, the tooltip and the text alternative.
+The two types draw the state of each value field of a frame over time (4.33b). The pure module `timeline_model.js` (9.2) makes the rows, the states, the segments, the cells and the caps from the fields. It has no DOM access. The module `panels/timeline.js` draws them on a canvas and builds the legend, the tooltip and the text alternative.
 
 The code is code of Hune. The copied chart engine and its lock do not change. The page reuses `chartCore.timeTicks` and `chartCore.layoutXLabels` for the time axis. The engine exports them for charts that draw their own marks (9.24).
 
@@ -2502,7 +2500,7 @@ The new panel has no mapping and no colour in `fields`, so the default modes of 
 
 ### 9.19d Annotations on a time series
 
-The page draws the marks of the annotations (4.5b) on each panel of the type `timeseries`. It does not draw them on other types. The decisions are ID-K141 to ID-K152 (owner request of 2026-11-13). The measure is on Grafana 12.4.2 (19.20e).
+The page draws the marks of the annotations (4.5b) on each panel of the type `timeseries`. It does not draw them on other types. The measure is on Grafana 12.4.2 (19.20e).
 
 1. The jobs. The module `runtime.js` keeps one result for each annotation index: `idle`, `queued`, `loading`, `ready` or `error`. 9.8 gives the triggers and the queue. The request is the route of 6.21a. It has the etag, the range of the dashboard and the values of the variables (9.10).
    - A panel with a time override uses its own range for its data, and it draws the marks of the dashboard range (9.8b).
@@ -2530,18 +2528,18 @@ The page draws the marks of the annotations (4.5b) on each panel of the type `ti
 16. The note. The title bar of a panel with a problem shows a note (hook `panel-<id>-annot-note`). Its text is the text of rule 5, or "Annotations: <k> failed". The tooltip of the note lists the name of each failed annotation and its message.
     - A failed annotation draws no mark, and the other annotations draw. The state of the panel stays `ready`. The next trigger tries again, and the frame has no "Retry" for it.
 17. The messages. The text of an error comes from `ApiError` (6.7). The page shows the code and the message, never a cell. An aborted request makes no note.
-    - An annotation runs on a ClickHouse, a PostgreSQL or a MongoDB source (decision ID-K142, owner decision ID-K333). The page sends the same request and reads the same answer for the three kinds. The route refuses a kind that a later version adds with `400 bad_request` (6.21a). The page shows this refusal as the note of rule 16, with its message.
-18. Where it draws. A `timeseries` panel with `data.reuse` and each copy of a `repeat` draw the marks that apply to their own id. A panel of another type shows nothing and has no note. The `state_timeline` and the `status_history` of Grafana draw annotations, but Hune does not draw them in this version (decision ID-K148).
+    - An annotation runs on a ClickHouse, a PostgreSQL or a MongoDB source. The page sends the same request and reads the same answer for the three kinds. The route refuses a kind that a later version adds with `400 bad_request` (6.21a). The page shows this refusal as the note of rule 16, with its message.
+18. Where it draws. A `timeseries` panel with `data.reuse` and each copy of a `repeat` draw the marks that apply to their own id. A panel of another type shows nothing and has no note. The `state_timeline` and the `status_history` of Grafana draw annotations, but Hune does not draw them in this version.
 19. The viewPanel shows the picture, the card and the keys at full size.
 20. Print shows the lines, the regions and the triangles. It hides the card and the keys.
 21. The cursor synchronisation (`cursor_sync`) and the drag zoom stay as they are. The canvas of the marks takes no event.
-22. Edit mode. The panels of the draft grid draw no mark, because the route reads the saved document (decision ID-K152). The marks show again after the save.
+22. Edit mode. The panels of the draft grid draw no mark, because the route reads the saved document. The marks show again after the save.
 
 The test hook of the picture is `data-annotations` on `.panel__plot` (9.29).
 
 ### 9.19e Heatmap (type `heatmap`)
 
-A heatmap draws counts in a grid. The columns are time buckets and the rows are value buckets (4.33c). The decisions are ID-K180 to ID-K195 (owner work order of 2026-11-13, F31). The pure module `heat_model.js` (9.2) makes the grid, the cells, the colour scale and the caps from the fields. It has no DOM access. The module `panels/heatmap.js` gives the cells to the chart engine, and it builds the colour bar, the card and the text alternative.
+A heatmap draws counts in a grid. The columns are time buckets and the rows are value buckets (4.33c). The pure module `heat_model.js` (9.2) makes the grid, the cells, the colour scale and the caps from the fields. It has no DOM access. The module `panels/heatmap.js` gives the cells to the chart engine, and it builds the colour bar, the card and the text alternative.
 
 The copied chart engine draws the cells (option `cells`), the axes, the time ticks and the cursor. It has two marked edits for this type (9.24). E22 is the gap of the cells, and E27 is the top of a plot with no y axis.
 
@@ -2557,7 +2555,7 @@ The figures are the figures that Grafana 12.4.2 draws, measured on the local ins
 4. The shape `bucketed`. Each value field is one row of cells. The frame has one column for each time. The page sorts the sample indexes by time, up, with a stable sort. It drops a sample with a `null` time. When two samples have one time, the later one wins.
    - The frame needs two times at least. Else the panel gives the error `A heatmap needs two time rows at least.`
    - The time of a sample is the end of its bucket. A cell spans from `t - step` to `t`. The `step` is the second time less the first time, and it applies to all the columns, also when the steps are not equal.
-   - The names of a long frame. The long-to-wide step (9.22) gives each row the display name `<value field> <label>`, for example `count 8`. The heatmap drops the prefix `<value field> ` when every row has it. Then `count 8` is `8` (decision ID-K195c). A wide frame with real names keeps them. A frame where one row has no prefix keeps all its names.
+   - The names of a long frame. The long-to-wide step (9.22) gives each row the display name `<value field> <label>`, for example `count 8`. The heatmap drops the prefix `<value field> ` when every row has it. Then `count 8` is `8`. A wide frame with real names keeps them. A frame where one row has no prefix keeps all its names.
    - The rows come in the order of the fields. When the display names of all the rows are numbers, the rows come in the order of these numbers, up, with a stable sort. A name is a number when it is a decimal text (an exponent is permitted), `+Inf` or `-Inf`.
    - Row `k` is the band `k - 0.5` to `k + 0.5` of an ordinal axis. Its label is the display name. The label has no unit.
    - A count that is `null` or `NaN` makes no cell. The count of a cell is the value of the field at its time. It can be negative or 0.
@@ -2578,7 +2576,7 @@ The figures are the figures that Grafana 12.4.2 draws, measured on the local ins
 8. The rows. `r0` is `floor(lo / sy)` and `r1` is `floor(hi / sy)`. The page makes `ny = r1 - r0 + 1` rows. Row `j` spans `(r0 + j) * sy` to `(r0 + j + 1) * sy`.
    - The page uses no epsilon: a value on an edge goes to the upper bucket. A size such as 0.1 can put 0.3 in a lower bucket, because 0.3 / 0.1 is 2.9999999999999996. Grafana has the same rule.
 9. The log rows. The base `b` is 2 for `log2` and 10 for `log10`. The split `s` is `y_buckets.value`, or 1 when it is `null`. The index of a value is `floor(log_b(v) * s)`, with `Math.log2` or `Math.log10`. Row `j` spans `b^((r0 + j) / s)` to `b^((r0 + j + 1) / s)`.
-10. The values of 0 or less (decision ID-K183). A value of 0 or less cannot go on a log scale. The page skips it: it is in no cell and not in `lo` and `hi`.
+10. The values of 0 or less. A value of 0 or less cannot go on a log scale. The page skips it: it is in no cell and not in `lo` and `hi`.
    - The panel shows the note `<n> values of 0 or less are not on the log scale.` The note for one value is `1 value of 0 or less is not on the log scale.`
    - The note is a line of the muted colour under the plot (`data-testid="heatmap-<id>-skip"`). "View data" shows it above the table.
    - The page never skips a value with no note. When no value is left, the panel gives the error `The log scale needs values above 0. The data has <n> values of 0 or less.`
@@ -2668,7 +2666,7 @@ Example 2, measured. The same values with `y_buckets` = `log2` and a split of 1 
 3. The head is the end of the time bucket, in the zone of the dashboard, with the pattern `YYYY-MM-DD HH:mm:ss`.
 4. With the shape `raw`, the card of `single` has two rows: `Count` with the count and a dot in the colour of the cell, and `Bucket` with the two edges of the row, as `0.500 ms-1 ms`. The edges use the unit and the decimals of the field. With the shape `bucketed`, the rows are `Value` with the count and a dot, and `Name` with the label of the row.
 5. The card of `multi` has one row for each drawn cell of the column, from the lowest row. A row has the label `Bucket <low>-<high>`, or `Name <label>`, and the count with a dot.
-6. The count is written in the short number form of 9.19. The card has no histogram of the column and no colour bar in this version (decision ID-K187).
+6. The count is written in the short number form of 9.19. The card has no histogram of the column and no colour bar in this version.
 7. The page highlights the cell with the region of the engine. The region has the class `heat__hover`.
 
 **9. The keyboard and the text alternative.**
@@ -2677,7 +2675,7 @@ Example 2, measured. The same values with `y_buckets` = `log2` and a split of 1 
 2. With the focus on the canvas, `ArrowRight` and `ArrowLeft` move the active position by one column. `ArrowUp` and `ArrowDown` move it by one row. `Home` and `End` go to the first and the last column. `Escape` hides the card. The card shows the content of the pointer card at the active position, also for an empty position, with the count 0.
 3. The focus ring is the ring of 9.26. The table of "View data" (9.11) is the full text alternative.
 4. The colour is never the only sign of a count. The count is in the card, in the description and in the table.
-5. The cells are colour data. The lowest colours of a scheme can have less than 3:1 with the panel, as in Grafana. This is the only graphic exception to the rule of 9.26 (decision ID-K188).
+5. The cells are colour data. The lowest colours of a scheme can have less than 3:1 with the panel, as in Grafana. This is the only graphic exception to the rule of 9.26.
 
 **10. The redraw and the time.**
 
@@ -2706,7 +2704,7 @@ The new panel has no mapping and no colour in `fields`.
 
 ### 9.19f Histogram (type `histogram`)
 
-A histogram draws bars. Each bar is the count of the values in one bucket (4.33d). The decisions are ID-K180 to ID-K195. The pure module `bucket_model.js` (9.2) makes the buckets and the caps. It also has the helpers that `heat_model.js` uses. The module `panels/histogram.js` gives them to the chart engine as bars on a number axis.
+A histogram draws bars. Each bar is the count of the values in one bucket (4.33d). The pure module `bucket_model.js` (9.2) makes the buckets and the caps. It also has the helpers that `heat_model.js` uses. The module `panels/histogram.js` gives them to the chart engine as bars on a number axis.
 
 The engine draws the axes, the legend, the card and the keyboard cursor. Three marked edits of the engine serve this type. E23 is the overlap of the bars. E24 is the slot of a bar and the end of the choice of bars. E26 keeps the line of a bar inside the bar (9.24).
 
@@ -2736,9 +2734,9 @@ The engine draws the axes, the legend, the card and the keyboard cursor. Three m
 
 1. The page gives the engine the type `bar`, the axis `xKind` = `number`, and one `xs` item for each bucket: the middle of the bucket. The width ratio is 1, and a bar has no cap of width. The slot of a bar is the bucket size (`barSlot`, E24), so one bucket fills the plot. A bar is its slot less 1 px (the rule of the engine), and 1 px wide at least. Two bars have a gap of 1 px, where the bars of Grafana touch.
 2. The x range is the low edge of the first bucket to the high edge of the last bucket. The ticks are the edges of the buckets. The page keeps every `k`-th edge, with `k = ceil(50 / bucket pitch in px)`. The labels use the unit and the decimals of the first field.
-3. The y axis is the number scale of Grafana 12.4.2 (decision ID-K310, measured on 28 plots of 19 to 481 px). The function `histYAxis` of `panels/series.js` holds the rule.
+3. The y axis is the number scale of Grafana 12.4.2 (measured on 28 plots of 19 to 481 px). The function `histYAxis` of `panels/series.js` holds the rule.
    - The axis starts at 0. Its end is the upper end of the automatic range of the time series (9.19, steps 1 to 7) for two values. These are the lowest and the highest drawn top of the series that show. Without a stack, they are the lowest count above 0 and the highest count. A series that a click on the legend hides does not count.
-   - In a stack, the highest top is the top of the highest stack. The lowest top is the lowest top of the first series that shows, in the buckets where a series has a count. Thus it is 0 when only a later series has a count in a bucket: Grafana draws a bar of no height there (decision ID-K325).
+   - In a stack, the highest top is the top of the highest stack. The lowest top is the lowest top of the first series that shows, in the buckets where a series has a count. Thus it is 0 when only a later series has a count in a bucket: Grafana draws a bar of no height there.
    - One bucket has one count, so the axis ends at 2 times the count.
    - The ticks are the multiples of 1, 2, 2.5 or 5 times a power of ten. Two ticks are 30 px apart at least. On a plot of 150 px or less, they are 15 px apart at least.
    - With `stacking` = `percent`, the tops are shares of 1, and the highest top is 1. The axis shows the shares, for example 0 to 1.1 with the label "0.2". The engine draws them out of 100. The function `histAxis` of `panels/histogram.js` holds the rules of the stack.
@@ -2788,7 +2786,7 @@ The new panel has no mapping and no colour in `fields`, so the default modes of 
 
 ### 9.19g Gauge (type `gauge`)
 
-A gauge draws each value on an arc (4.33e). It is the classic gauge of Grafana 12.4.2: the instance of the parity harness has the flag `newGauge` off (wave H, item P12, decision ID-K326). The module `panels/gauge.js` draws each gauge on its own canvas, with no new dependency. The rules below come from the code that Grafana serves and from the measure of 2026-11-22: 58 gauges of 34 panels, in both themes. The test FE-84 holds these measures.
+A gauge draws each value on an arc (4.33e). It is the classic gauge of Grafana 12.4.2: the instance of the parity harness has the flag `newGauge` off. The module `panels/gauge.js` draws each gauge on its own canvas, with no new dependency. The rules below come from the code that Grafana serves and from the measure of 2026-11-22: 58 gauges of 34 panels, in both themes. The test FE-84 holds these measures.
 
 **1. The values.**
 
@@ -2855,7 +2853,7 @@ A gauge draws each value on an arc (4.33e). It is the classic gauge of Grafana 1
 
 ### 9.19h Logs (type `logs`)
 
-A logs panel shows one line for each row of its frame (4.33f). The module `panels/logs.js` builds a model of the lines first, with no DOM access, and then the DOM. The decision is ID-K326 (items P05 and D06, F33). The measure of 2026-11-22 used the new logs panel of Grafana 12.4.2 (the flag `newLogsPanel` is on) and frames of the ClickHouse plugin 4.5.1.
+A logs panel shows one line for each row of its frame (4.33f). The module `panels/logs.js` builds a model of the lines first, with no DOM access, and then the DOM. The measure of 2026-11-22 used the new logs panel of Grafana 12.4.2 (the flag `newLogsPanel` is on) and frames of the ClickHouse plugin 4.5.1.
 
 A log line is untrusted text (threat T104). The page writes each time, level, body, field name and field value with `textContent` only. The caps of section 4 bound the lines and the characters that the page writes.
 
@@ -2921,7 +2919,7 @@ The sections above list the differences from Grafana 12.4.2 that remain. Grafana
 
 ### 9.19i Map (type `geomap`)
 
-A map draws one layer of markers (4.33g). The decisions are ID-K326 and ID-K328 (wave H, item F37). The pure module `geo_model.js` (9.2) holds the grammar of the tile URL, Web Mercator and the tiles of a view. It also holds the caps, the positions and the sizes, and it has no DOM access. The module `panels/geomap.js` draws on one canvas of Hune: the tiles or the plain background, then the markers. The page uses no map library.
+A map draws one layer of markers (4.33g). The pure module `geo_model.js` (9.2) holds the grammar of the tile URL, Web Mercator and the tiles of a view. It also holds the caps, the positions and the sizes, and it has no DOM access. The module `panels/geomap.js` draws on one canvas of Hune: the tiles or the plain background, then the markers. The page uses no map library.
 
 **1. The tile source.**
 
@@ -2935,7 +2933,7 @@ A map draws one layer of markers (4.33g). The decisions are ID-K326 and ID-K328 
 2. A position field of a kind other than `number` and `number_text` gives the error `The latitude field <name> is not a number field.` (or `longitude`). No such field gives `The data has no latitude field: name it lat or latitude, or choose the field in the options.` A name of the options that no field has gives `No field has the name <name>.`
 3. A value of a `number_text` field MUST match the number grammar of 7.7. A valid position has a finite latitude from -90 to 90 and a finite longitude from -180 to 180. The page skips each other row. The note `<n> rows have no valid position.` shows at the bottom left, and "View data" shows it too.
 4. A frame with no valid position shows "No data".
-5. Grafana also reads a geohash, a name in a gazetteer and the field type `geo`. Hune does not (decision ID-K328).
+5. Grafana also reads a geohash, a name in a gazetteer and the field type `geo`. Hune does not.
 
 **3. The projection and the view.**
 
@@ -2943,7 +2941,7 @@ A map draws one layer of markers (4.33g). The decisions are ID-K326 and ID-K328 
 2. The zoom is a whole number from 0 to the highest zoom. The highest zoom is `geomap.max_zoom` with a tile source, else 22. A start zoom above the highest zoom starts at the highest zoom.
 3. With `mode` = `fixed`, the start view is the centre `lat`, `lon` at `zoom`.
 4. With `mode` = `fit` and no tile source, the page fits the box of the valid positions with a padding of 5 percent. The zoom is the highest whole zoom that fits, up to `zoom`. One position gives the zoom `zoom`.
-5. With a tile source, the page always uses `lat`, `lon` and `zoom`. A fit would tell the tile host the area of the data (decision ID-K328).
+5. With a tile source, the page always uses `lat`, `lon` and `zoom`. A fit would tell the tile host the area of the data.
 6. The map does not repeat the world to the left and to the right. Grafana repeats it.
 7. A drag pans the map. The mouse wheel zooms by 1 at the pointer when `mouse_wheel_zoom` is `true`. The buttons zoom by 1 at the centre.
 8. On the canvas, the arrow keys pan by 64 CSS pixels. The keys `+` and `=` zoom in, `-` zooms out, and Escape closes the card.
@@ -2968,7 +2966,7 @@ A map draws one layer of markers (4.33g). The decisions are ID-K326 and ID-K328 
 3. Grafana adds a header with the name of the layer. Hune has no layer name.
 4. Each text goes in with textContent.
 
-**6. The tiles. The page fails closed (decision ID-K328).**
+**6. The tiles. The page fails closed.**
 
 1. The URL of a tile is the template with `{z}`, `{x}` and `{y}` replaced by three whole numbers in range. The URL holds no other data of the page: no variable, no value, no uid and no title.
 2. The page loads a tile as an `Image` with `crossOrigin` = `anonymous` and `referrerPolicy` = `no-referrer`. The browser sends no cookie, no HTTP authentication and no Referer. It sends the header `Origin` with the origin of Hune. A host that gives no CORS header gives no tile.
@@ -3030,7 +3028,7 @@ These are the defaults of Grafana 12.4.2. The view is "(0°, 0°)" at zoom 1. Th
 - `cell.type = "gauge"`: the cell draws a bar and the display text. The scale of the bar is from `min` to `max` of the field configuration (9.14). The default of 9.14 is the lowest and the highest finite value of the column. The filled part has the width `(v - min) / (max - min)` of the bar, kept between 0 and 1. A `null` value, and a scale with `max` not above `min`, give an empty bar.
 - The `mode` of a `gauge` cell is `basic`, `gradient` or `lcd`, as the `display_mode` of the bar gauge (9.19). `basic` fills the bar with the colour of the value (9.16). `gradient` fills it with the colours of the thresholds up to the value. `lcd` draws cells that have the colour of the step at their place. The display text has a contrast of 4.5:1 with the colour under it: the ink rule of `color_background` applies.
 - `cell.type = "json"`: the cell shows the value as one line of text. The page reads a `text` value as JSON. A valid JSON gives its compact form (`JSON.stringify`). Else the text shows as it is. A `null` value shows `no_value`. The page writes the text with `textContent` and never as HTML (9.1).
-- Inspect (wave H, measured on Grafana 12.4.2): a column with `inspect = true` (4.18) has the button "Inspect value" in each cell, with each cell type. The button has the eye icon and a target of 24 × 24 px.
+- Inspect (measured on Grafana 12.4.2): a column with `inspect = true` (4.18) has the button "Inspect value" in each cell, with each cell type. The button has the eye icon and a target of 24 × 24 px.
   - The button shows when the pointer is on the cell and when the focus is in the cell. Grafana shows it on hover only. It sits at the right edge of the cell, on a fill of the panel colour at 70 %. A cell with the alignment `right` has it at the left edge, as in Grafana.
   - The key `Tab` on a focused cell moves the focus to the button. The key `Enter` on a focused cell opens the drawer, as a click on the button does.
   - The drawer is the form `drawer` of `openDialog`. Its title is "Inspect value", and its subtitle is the name of the column. The body has one block with the value as text. The page writes it with `textContent` only.
@@ -3211,14 +3209,14 @@ The kinds `merge` and `join_by_field` are list transforms. The kind `partition_b
 13. The caps. After each transform, the page checks the frames. A frame has `MAX_TRANSFORM_ROWS` rows and `MAX_TRANSFORM_FIELDS` fields at most. The list has `MAX_TRANSFORM_FRAMES` frames at most. A higher count gives the panel error "The transform <kind> failed: <n> rows, 200,000 at most" (or fields, or frames). The page never cuts, samples or rounds.
    - The query limits of 8.5 bound the input. These caps bound the output of one step. The query limit of a source can be lower than the cap of a frame. A join of three frames of 99,000 rows goes above the cap (case B185).
    - Some steps make new cells: `join_by_field`, `merge`, `grouping_to_matrix` (9.21), the long-to-wide of 9.22 and the join on time of 9.22a. Each one checks its result before it builds a cell. The result has `MAX_TRANSFORM_FIELDS` fields at most, then `MAX_TRANSFORM_CELLS` cells (fields times rows) at most.
-   - `MAX_TRANSFORM_CELLS` is the value of the key `server.transform_max_cells` (13.8). The page reads it from the member `transform_max_cells` of the session (6.10) at each check. It keeps no copy of the number. The default is 10,000,000 (owner order of 2026-11-16).
+   - `MAX_TRANSFORM_CELLS` is the value of the key `server.transform_max_cells` (13.8). The page reads it from the member `transform_max_cells` of the session (6.10) at each check. It keeps no copy of the number. The default is 10,000,000.
    - A higher count gives the panel error "The transform <kind> failed: <n> cells, <max> at most" (or fields). `<max>` is the cap in force with commas, for example `10,000,000`. The long-to-wide gives "The long-to-wide failed: ..." and the join on time gives "The join on time failed: ...".
    - Each of these steps fails without a positive integer in the member `transform_max_cells` of the session. The error is "The transform <kind> failed: the session has no valid transform_max_cells", with the start of the line above. The page never guesses a cap (fail closed).
    - The other steps have no cap of cells. They keep or move the cells, add one field at most (`calculate_field`) or make one row for each field (`reduce`). Thus a frame of 200,000 rows and 60 fields passes through `organize`.
 14. The errors. An error of a transform stops the work of the panel. It shows as the error of the panel (9.11), with the text of rule 3, 6, 7 or 13. The panel keeps the state `error`, and the other panels do not change. The page never shows a half result.
 15. The cost. A transform of 200,000 rows takes 300 ms or less on the main thread. `merge` and `join_by_field` take the same for 200,000 rows in all the frames. A front unit test checks these times (16.10a, `FE-75`).
    - The test takes the best of 7 runs. It MUST run on a machine with a low load. It does not run when the load average of one minute is above half of the cores.
-   - The worker of the prototype measured 520 ms to 960 ms for these steps at a load average of 29. A loop of 200,000 map inserts took 240 ms on the same machine, about 10 times its normal time.
+   - A machine with a high load makes these times longer. At a load average of 29, one measure took 520 ms to 960 ms for these steps.
 16. A `reuse` panel (9.23) applies the transforms of its source and its own to the list of frames, with the same code. `merge` and `join_by_field` read the list of frames of the source panel.
 
 Example. The panel has two queries. `A` gives `host` = `[a, b]` and `x` = `[1, 2]`. `B` gives `host` = `[b, c]` and `y` = `[20, 30]`. The transform `join_by_field` with `field` = `host` and `mode` = `outer` gives `host` = `[a, b, c]`, `x` = `[1, 2, null]` and `y` = `[null, 20, 30]`. The mode `inner` gives `host` = `[b]`, `x` = `[2]` and `y` = `[20]`.
@@ -3290,7 +3288,7 @@ A panel with several visible queries (4.15a) gets one frame for each query that 
    - Then come the other fields of the first frame, then those of the second frame, and so on. A second field of the kind `time` is a value field.
    - A field has one value for each time. This value is the value of its frame at this time, else `null` (`NaN` for the kind `number`).
    - The kind, the configuration and the labels of a field do not change.
-8. The cap of the join. The frames have `MAX_JOIN_ROWS` = 200,000 rows at most in all. A larger set gives the error "The frames have <n> rows. A join takes 200,000 rows at most." and the panel has the state `error`. The check comes before any work, and the page never cuts a frame (decision ID-K167). The join on time also checks the fields and the cells of its output before it builds them (9.21a, rule 13).
+8. The cap of the join. The frames have `MAX_JOIN_ROWS` = 200,000 rows at most in all. A larger set gives the error "The frames have <n> rows. A join takes 200,000 rows at most." and the panel has the state `error`. The check comes before any work, and the page never cuts a frame. The join on time also checks the fields and the cells of its output before it builds them (9.21a, rule 13).
 9. The table. The select (`data-testid="panel-<key>-frames"`) has one option for each frame, with the ref as its text. Its label is "Query". A change draws the table again with the fields of that frame. The choice stays while the ref is in the list, and it goes back to the first frame when the ref leaves. The select shows only when two frames or more answered.
    - A frame from `partition_by_values` has the option text `<ref> <label value> ...`. The label values come from its first field. The choice stays while this text is in the list.
 10. The names that the legend, the tooltip, "View data" and the CSV show are the display names (9.13). The order of the series is the order of the queries, then the order of the fields in the frame. This is the order of Grafana (measured). "View data" and the CSV of a collected list have one column for each field. A field with fewer rows than the longest field has empty cells.
@@ -3324,7 +3322,7 @@ and the MIT notice. Hune owns the copy.
 - Upstream: the ClickHouse Dash repository, tag `v1.3.1`, commit
   `e970694e5e0b17b07cf187f3128af93fa1a82b76`, licence MIT.
 - Hune copies whole files, minus the removals that `docs/engine-patches.md` lists (E17 to E21 and
-  E35 to E42, decision ID-K300). A JavaScript file goes to `web/js/vendor/chdash/` and a CSS file to
+  E35 to E42). A JavaScript file goes to `web/js/vendor/chdash/` and a CSS file to
   `web/css/vendor/chdash/`, with its upstream file name.
 
 | Upstream file | Use in Hune | Its imports |
@@ -3362,19 +3360,19 @@ Later edits:
 - Else Hune MAY edit a copied file. Each changed block has a comment `// hune:` with the reason, and the lock records
   the new hash. The field `upstream_sha256` keeps the hash of the upstream file. Hune code outside `vendor/` never changes the engine at run time.
 - The engine at the commit `e970694e` does not have a UTC time axis. It uses the zone of the browser. It also does not have threshold lines and areas, a sort of the legend, a sort of the tooltip, or a right y axis. A dashboard with `timezone = "utc"` needs the UTC axis. M0 tells which gaps the real panels use (19).
-- Milestone F, wave 1, closes the first four gaps with marked edits of the copy (edits 7 to 9 below). The look of the bars and of the time axis adds the edits 10 to 12. Wave 2 adds the right y axis, the style of each series and the title of the right axis (edits 13 to 15). Edit 16 is in `app_highlight.js`: it pushes the tokens with a loop, because a spread of 125,000 tokens throws (10.3c).
-- The edits 17 to 21 remove code that Hune never calls (decision ID-K300, accepted by the owner). They are the exemplar
+- The first four gaps close with marked edits of the copy (edits 7 to 9 below). The look of the bars and of the time axis adds the edits 10 to 12. The right y axis, the style of each series and the title of the right axis (edits 13 to 15). Edit 16 is in `app_highlight.js`: it pushes the tokens with a loop, because a spread of 125,000 tokens throws (10.3c).
+- The edits 17 to 21 remove code that Hune never calls. They are the exemplar
   markers (17), the 2-D brush (18) and the engine annotations (19) of `app_chart_core.js`. They are also the helpers of
   `app_ui_table.js` that `panels/table.js` does not call (20), and the sort of the rows of `app_results_sort.js` (21).
 - The removals keep each part that a panel type, F31 or F43 can call: the regions, the pick, the cells and the bars.
   `docs/engine-patches.md` gives the proof, the size of each removal and the procedure at an update. The next edit is 48.
-- The edits 35 to 42 also remove code that Hune never calls (ID-K300). Edits 35 and 36 remove the helpers of
+- The edits 35 to 42 also remove code that Hune never calls. Edits 35 and 36 remove the helpers of
   `app_util.js` and the range of a bucket. Edit 37 removes the colour kernel and the copy `app_palette.js`. Edits 38
   and 39 remove the members of the shim `app_ui_state.js` and the card of `app_ui_chart.js`. Edits 40 to 42 remove the
   alignment groups, the filter and totals legends, the button of the legend mode and other options.
 - The test `tests/frontend/engine_removals.test.mjs` fails when a removed name comes back as a call, an option or an
   import in `web/js` (16.10a).
-- Decision D6 of ID-87: milestone F changes the local copy only. No pull request, issue or message goes to the upstream repository from this work. The file `docs/engine-patches.md` holds each change as a proposal. The owner decides what goes upstream.
+- Hune changes the local copy only. No pull request, issue or message goes to the upstream repository from this work. The file `docs/engine-patches.md` holds each change as a proposal.
 - The engine does not have horizontal bars. The module `panels/barchart_h.js` draws them (9.19). It is not an edit of the engine.
 - The engine has more gaps against the options of 4.26:
 
@@ -3400,7 +3398,7 @@ M0 counts the panels that need each change (18, 19). The gaps that Hune code doe
 
 The edits are about 0.4 KB. The engine at `e970694e` has no other gap for these types. The page does not use a log scale of the engine, a reverse axis or a right axis for them. The page gives the engine a plot coordinate (9.19e).
 
-The bar chart turns the labels of its x axis (4.31, 9.19, decision ID-K295a, owner request of 2026-11-15). One marked edit is necessary. It has the comment `// hune: E25`, and the lock records the new hash.
+The bar chart turns the labels of its x axis (4.31, 9.19). One marked edit is necessary. It has the comment `// hune: E25`, and the lock records the new hash.
 
 | Id | What the edit does |
 |---|---|
@@ -3416,7 +3414,7 @@ The histogram keeps the line of a bar inside the bar (9.19f, section 3). One mar
 
 The edit is about 0.3 KB with its comments. The test `tests/frontend/bar_inset.test.mjs` checks the boxes with and without the option (16.10a). The visual capture of 15.14c checks the bars of the fixture `histogram_f` with a line of 3 px.
 
-A plot with no y axis has no margin at the top, as in Grafana 12.4.2 (9.19, 9.19e, decision ID-K310). One marked edit is necessary. It has the comment `// hune: E27`, and the lock records the new hash.
+A plot with no y axis has no margin at the top, as in Grafana 12.4.2 (9.19, 9.19e). One marked edit is necessary. It has the comment `// hune: E27`, and the lock records the new hash.
 
 | Id | What the edit does |
 |---|---|
@@ -3433,7 +3431,7 @@ Review v3 of the page code (2026-11-16) found two patterns whose time grows with
 
 The two edits are about 0.9 KB with their comments. The shim is not a copy, so `vendor/chdash.patch` holds E29 only. The test `tests/frontend/page_security_v3.test.mjs` checks the times, the order and that no file of `web/js` holds a pattern of the quadratic shape (16.10a).
 
-The y range of a time series follows Grafana for bars, a stack and the soft ends (9.19, decision ID-K316). The security review of 2026-11-16 found that the time to cut a long axis title grows with the square of its length (item P6). Two marked edits are necessary. Each one has the comment `// hune:`, and the lock records the new hash.
+The y range of a time series follows Grafana for bars, a stack and the soft ends (9.19). The security review of 2026-11-16 found that the time to cut a long axis title grows with the square of its length. Two marked edits are necessary. Each one has the comment `// hune:`, and the lock records the new hash.
 
 | Id | What the edit does |
 |---|---|
@@ -3442,7 +3440,7 @@ The y range of a time series follows Grafana for bars, a stack and the soft ends
 
 The two edits are about 0.9 KB with their comments. The test `tests/frontend/y_range.test.mjs` checks the data ends of a stack and of a scale with soft ends (16.10a). It also counts the measures for a title of 40,000 characters, and it compares the text of normal titles.
 
-The stacks of a time series follow Grafana 12.4.2: a series below 0 stacks down from 0 (9.19, stacks; decision ID-K321). One marked edit is necessary. It has the comment `// hune: E32`, and the lock records the new hash.
+The stacks of a time series follow Grafana 12.4.2: a series below 0 stacks down from 0 (9.19, stacks). One marked edit is necessary. It has the comment `// hune: E32`, and the lock records the new hash.
 
 | Id | What the edit does |
 |---|---|
@@ -3450,7 +3448,7 @@ The stacks of a time series follow Grafana 12.4.2: a series below 0 stacks down 
 
 The edit is about 1.8 KB with its comments. The test `tests/frontend/stack_sign.test.mjs` checks the ticks of 100 panels and the drawn lines against the measure of Grafana (16.10a). It also checks that the engine keeps its stack without the option, and the rule of a log scale.
 
-The groups of a stack also follow the draw of each series, as in Grafana 12.4.2 (9.19, stacks; decision ID-K325, point 3). One marked edit is necessary. It has the comment `// hune: E33`, and the lock records the new hash.
+The groups of a stack also follow the draw of each series, as in Grafana 12.4.2 (9.19, stacks; point 3). One marked edit is necessary. It has the comment `// hune: E33`, and the lock records the new hash.
 
 | Id | What the edit does |
 |---|---|
@@ -3458,7 +3456,7 @@ The groups of a stack also follow the draw of each series, as in Grafana 12.4.2 
 
 The edit is about 0.3 KB with its comments. The test `tests/frontend/stack_parity.test.mjs` checks the ticks and the drawn marks against the measure of Grafana (16.10a). It also checks the bar chart and the histogram of 9.19f.
 
-The fill and the line of a bar follow the bar chart of Grafana 12.4.2 (9.19, `barchart`; wave H, item P03). One marked edit is necessary. It has the comment `// hune: E34`, and the lock records the new hash.
+The fill and the line of a bar follow the bar chart of Grafana 12.4.2 (9.19, `barchart`). One marked edit is necessary. It has the comment `// hune: E34`, and the lock records the new hash.
 
 | Id | What the edit does |
 |---|---|
@@ -3466,7 +3464,7 @@ The fill and the line of a bar follow the bar chart of Grafana 12.4.2 (9.19, `ba
 
 The edit is about 0.3 KB with its comments. The test `tests/frontend/barchart_p03.test.mjs` checks the boxes, the fill and the line of the canvas calls against the measure of Grafana (16.10a).
 
-The gradient modes and the cosmetic series options follow Grafana 12.4.2 (9.19; wave H, items P10 and P14). Four marked edits are necessary. Each one has the comment `// hune: E<n>`, and the lock records the new hash.
+The gradient modes and the cosmetic series options follow Grafana 12.4.2 (9.19). Four marked edits are necessary. Each one has the comment `// hune: E<n>`, and the lock records the new hash.
 
 | Id | What the edit does |
 |---|---|
@@ -3485,16 +3483,16 @@ The copy of `app_chart_core.js` has these marked edits. Each one follows the loo
 4. A dense line goes through the first, lowest, highest and last value of each pixel column. It is one connected line. A value between two `null` values is a mark of the width of the line.
 5. The tooltip card sits 10 px to the right of the cursor and 10 px under it. It flips at an edge of the plot.
 6. The engine has no "Values" or "List" button (removal E41). The mode is the option of the document.
-7. The zone of the chart (milestone F, decision F10). The option gives `utc`, `browser` or an IANA name. The x axis, the cursor time and the head of the tooltip use this zone, with the patterns of 9.19. The function `formatTime` of `zone.js` makes the texts.
-8. The thresholds of the plot (decision F12). The option holds the steps, the mode, the style and the colours. A hook draws the lines and the bands before the series (9.19). The hook draws nothing for the style `off`.
-9. The legend and the tooltip (decision F20). The options give the sort of the legend table (9.19) and the sort of the rows of a `multi` tooltip. They also remove the rows that equal 0. The series flags of `hide_from` (9.19) hide a series from the plot, the legend or the tooltip.
+7. The zone of the chart. The option gives `utc`, `browser` or an IANA name. The x axis, the cursor time and the head of the tooltip use this zone, with the patterns of 9.19. The function `formatTime` of `zone.js` makes the texts.
+8. The thresholds of the plot. The option holds the steps, the mode, the style and the colours. A hook draws the lines and the bands before the series (9.19). The hook draws nothing for the style `off`.
+9. The legend and the tooltip. The options give the sort of the legend table (9.19) and the sort of the rows of a `multi` tooltip. They also remove the rows that equal 0. The series flags of `hide_from` (9.19) hide a series from the plot, the legend or the tooltip.
 
-10. The bars (wave VF). New options set the fill opacity of a bar and a line around it. They also set the maximum bar width and the share of a bar in its group. One more option is a function that draws the value of each bar. A time axis draws the bars next to the range, cut by the plot. The option `xGrid: false` draws no vertical grid line.
+10. The bars. New options set the fill opacity of a bar and a line around it. They also set the maximum bar width and the share of a bar in its group. One more option is a function that draws the value of each bar. A time axis draws the bars next to the range, cut by the plot. The option `xGrid: false` draws no vertical grid line.
 11. The titles of the axes. The title of the x axis is under the labels, and it takes 20 px. The title of the y axis is turned, at the left, and it takes 28 px. A host can give the ticks of a number axis.
 12. The x ticks. Two ticks are the width of a label plus 11.5 px apart. The steps are those of Grafana, and the label of a range over 24 hours has the date (9.19).
-13. The second y scale (wave 2, decision F16). The option `scales` maps the id of a series to `y` or `y2`. The option `y2` holds the options of the right scale (`yAxis`, `yBounds`, `ySoft`, `yTickFormat`, `yTitle`, `yScale` and `shown`). The plot draws a right axis with its own range, ticks and gutter. The grid and the cursor follow the left scale. The range of a scale takes the hard ends and the soft ends of 9.19.
-14. The style of one series (wave 2, decision F17). A series can hold `type`, `width`, `fill`, `dash`, `dashCap`, `points`, `pointSize` and `negate`. The option `drawOrder` = `series` makes the engine draw the bars and the lines of one chart in field order. The engine draws a dash with `setLineDash` in device pixels (E45), and `dashCap` is the line cap (butt for `dash`, round for `dot`). A series with `negate` draws `-v`, and the range of its scale follows the drawn values.
-15. The titles of the axes (wave 2). Edit 11 gives a title to the left axis. This edit gives a title to the right axis and turns it by 90 degrees. The soft ends of a scale enter the data range of the engine before its rule. A time series applies them in its hook with the data ends of E30 (9.19).
+13. The second y scale. The option `scales` maps the id of a series to `y` or `y2`. The option `y2` holds the options of the right scale (`yAxis`, `yBounds`, `ySoft`, `yTickFormat`, `yTitle`, `yScale` and `shown`). The plot draws a right axis with its own range, ticks and gutter. The grid and the cursor follow the left scale. The range of a scale takes the hard ends and the soft ends of 9.19.
+14. The style of one series. A series can hold `type`, `width`, `fill`, `dash`, `dashCap`, `points`, `pointSize` and `negate`. The option `drawOrder` = `series` makes the engine draw the bars and the lines of one chart in field order. The engine draws a dash with `setLineDash` in device pixels (E45), and `dashCap` is the line cap (butt for `dash`, round for `dot`). A series with `negate` draws `-v`, and the range of its scale follows the drawn values.
+15. The titles of the axes. Edit 11 gives a title to the left axis. This edit gives a title to the right axis and turns it by 90 degrees. The soft ends of a scale enter the data range of the engine before its rule. A time series applies them in its hook with the data ends of E30 (9.19).
 
 The lock file is `web/js/vendor/chdash/chdash.lock.json`:
 
@@ -3550,12 +3548,12 @@ Fonts and type:
 - `font-optical-sizing` is `none`. Else the variable font draws large text with its narrow display cut. The digits of a stat are then 7 % narrower than in Grafana.
 - The page waits for the font before its first render (9.6), and it holds its first paint until the font is ready. Thus the text of the canvas and the measures of text use Inter, and no text moves when the font arrives.
 
-Colours of the chrome (owner request of 2026-11-12, ID-K50):
+Colours of the chrome:
 
 - The chrome has the colour theme of ClickHouse Dash, in the light and the dark theme. The chrome is the header, the menus, the dialogs, the list page and the editor. It is also the forms, the frame of a table and the pages of an error.
 - The values are the tokens of the copied `00-tokens.css`. `css/tokens.css` does not set them again. It names them for the roles that only Hune has (for example `--surface-menu` is `--panel`).
 - The data of the panels keep the values measured on Grafana 12.4.2. These are the thresholds, the colours of a stat and a gauge, the named colours of 9.16 and the continuous modes.
-- The series palette is the exception (decision ID-K70, owner request of 2026-11-12). The mode `palette` draws `--qchart-1` to `--qchart-18` of the copied tokens (9.16). It is the one series palette (ID-K74). This replaces the rule "listed and not applied" of ID-K50.
+- The series palette is the exception. The mode `palette` draws `--qchart-1` to `--qchart-18` of the copied tokens (9.16). It is the one series palette.
 - The link blue `--link` and the text on a coloured stat `--text-strong` also keep the Grafana values.
 
 | Role | Token | Dark | Light |
@@ -3628,7 +3626,7 @@ Colours of the chrome (owner request of 2026-11-12, ID-K50):
 - The messages of the state `timeline-limit` have `role="note"`.
 - The canvas of a `heatmap` has `role="img"`, `tabindex="0"` and a description (9.19e). The arrow keys move a cursor over the cells, and `Escape` hides the card.
 - The colour of a heatmap cell is data. The lowest colours of a scheme can have less than 3:1 with the panel, as in Grafana. The count of each cell is in the card, in the description and in the table "View data". The page never uses the colour as the only sign of a count.
-- The message of the state `bucket-limit` of a `heatmap` has `role="note"`. The note of the values that a log scale skips (decision ID-K183) has `role="note"` too.
+- The message of the state `bucket-limit` of a `heatmap` has `role="note"`. The note of the values that a log scale skips has `role="note"` too.
 - A `histogram` has the chart of the engine with `role="img"` and a description (9.19f). The messages of the state `bucket-limit` have `role="note"`.
 - A `logs` panel is a list (`role="list"`) with one tab stop. Its lines are buttons with `aria-expanded` when the details row is on (9.19h, section 5). The note of a cap has `role="note"`.
 - The root of the gauges of a `gauge` has `role="img"` and a hidden description with each name and value (9.19g). A value text in a colour has 4.5:1 with the panel, or 3:1 from 24 px, as the value of a `stat`.
@@ -3661,7 +3659,7 @@ Colours of the chrome (owner request of 2026-11-12, ID-K50):
   code. The JavaScript code stays the reference and the fallback, with identical results.
 - The kernel loads only on demand, and its failure never breaks a page. A short input stays on the JavaScript path. A
   long call runs in a Web Worker. The binary is committed with a lock, and the tests compare both paths.
-- The release with the first kernel adds `'wasm-unsafe-eval'` to `script-src`, with a written decision.
+- The release with the first kernel adds `'wasm-unsafe-eval'` to `script-src`, with a change that the project reviews.
 
 ### 9.28 Browser support
 
@@ -3772,65 +3770,52 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,018 KB at most (1,042,432 bytes), before compression. This is the close-out of wave H, decision ID-K211j. Three arbiters decided it, and the owner accepted it on 2026-11-22. The savings of decision ID-K350 came first (85,704 bytes), and then the seven features of step B came. The limit is the measure (1,037,796 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,636 bytes of room are for fixes that a test finds, not for a new feature.
-- The limit of decision ID-K211h was 989 KB (1,012,736 bytes), after the y range of Grafana and the fixes of the low findings.
-- The limit of decision ID-K211g was 986 KB (1,009,664 bytes), after the tick rule of Grafana and the fixes of the security review.
-- The limit of decision ID-K211f was 983 KB (1,006,592 bytes), after the edits E25, E26 and E27 and the fixes of the repeat.
-- The limit of decision ID-K211e was 975 KB (998,400 bytes), after F28 and the two types of F31. Between ID-K211e and ID-K211f, the static test used a temporary limit of 1,000 KB.
-- The measure counts the bytes before compression, and it stays so (decision ID-K304, to re-read by the owner). With `server.compress_static = true` (9.3), the browser gets fewer bytes. On 2026-11-15, the 997,047 bytes of the measure gave 333,765 bytes with the gzip of Hune (33.5 %).
-- The step for F28 was 943 KB. The owner's engine patch (decision ID-K300) removed 29,628 bytes before F28. Each feature gets its own step by the same rule, and the limit goes down to the measure plus 4 KB when the step ends.
-- The step of F41 was 946 KB. F41 used 10,407 bytes of it, and the page had 955,718 bytes after it.
-- The limit before was 937 KB for the several queries of a panel (decision ID-K172a). Before that, it was 932 KB (ID-K155) and 910 KB (ID-K132).
-- The measure counts each module that the page can load, also with `import()`, except the editor. The limit was 700 KB in v1, and the header bar and the theme selector of 2026-11-11 added 30 KB to it (ID-UI-HDR). Milestone F, wave 2, adds the two y scales, the colour modes, the panel time and the dashboard links. The page has 787,338 bytes.
-- Wave K, part C, adds the module `view_state.js` and the driver of the states (10.2a): about 21 KB. The page has about 830 KB.
-- The limit was 800 KB after milestone F, wave 2 (788,868 bytes then, decision ID-F2-BUDGET). Wave K (the state machine, the variable placement and the time picker) brought the page to 842,707 bytes. The modules of section 10 load only on demand, with `import()`. The JSON reader of the name scan adds less than 1 KB to this total.
-- Wave K, part E (repeat, decisions ID-K80 to ID-K97), adds the module `repeat.js` and small changes in `runtime.js`, `grid.js`, `dashboard.js`, `view_state.js`, `url_state.js` and `panel_frame.js`. The measure before the change was 841,367 bytes. The measure after the change is 877,404 bytes, which is 36,037 bytes more (the estimate was 15 KB). The page keeps 23,716 bytes of the limit. The forms of the repeat are in the editor (10.3, 10.6), which is not in the measure.
-- Milestone F, wave 3, the text panel (decisions ID-K100 to ID-K119), adds the modules `markdown.js` (15,673 bytes) and `panels/text.js` (4,469 bytes). It also makes small changes in `panel_frame.js` and `runtime.js`. The measure before the change was 877,404 bytes. The measure after it is 900,923 bytes, so 197 bytes of the limit are left.
+- The JavaScript of the dashboard page in view mode is 1,018 KB at most (1,042,432 bytes), before compression. The limit is the measure (1,037,796 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,636 bytes of room are for fixes that a test finds, not for a new feature.
+- The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
+- These ways to stay under the limit are not permitted:
+  - a shorter name;
+  - a joined line;
+  - a shorter or removed documentation comment;
+  - a change of the measure;
+  - a minifier.
+- The measure counts the bytes before compression, and it stays so. With `server.compress_static = true` (9.3), the browser gets fewer bytes. On 2026-11-15, the 997,047 bytes of the measure gave 333,765 bytes with the gzip of Hune (33.5 %).
+- The measure counts each module that the page can load, also with `import()`, except the editor. The modules of section 10 load only on demand.
+- The module `view_state.js` and the driver of the states (10.2a) add about 21 KB.
+- The repeat adds the module `repeat.js` and small changes in `runtime.js`, `grid.js`, `dashboard.js`, `view_state.js`, `url_state.js` and `panel_frame.js`. The forms of the repeat are in the editor (10.3, 10.6), which is not in the measure.
+- The text panel adds the modules `markdown.js` (15,673 bytes) and `panels/text.js` (4,469 bytes). It also makes small changes in `panel_frame.js` and `runtime.js`.
 - The frame imports `panels/text.js` with a static import, because the load on demand needs more code and the measure counts the module in both cases.
 - The parser makes the tree of a text of 65,536 bytes in 50 ms or less on the main thread. A front unit test checks the steps, and the browser case B105 checks the time (16.10a).
 - The functions of `repeat.js` for a document of 200 panels and 120 copies run in 50 ms or less on the main thread. A front unit test checks this time (16.10a).
-- Milestone F, wave 3, the state timeline and the status history (decisions ID-K120 to ID-K136), adds the modules `timeline_model.js` (10,904 bytes) and `panels/timeline.js` (16,303 bytes). It makes small changes in `panel_frame.js`, `fields.js` and `panels/common.js`.
-- The estimate was 17 KB (14 KB to 20 KB). The two modules have 27,207 bytes with the documentation comments, which is 1.6 times the estimate. The new CSS is not in the measure.
-- The page had 900,923 bytes before the feature. The limit was 901,120 bytes, so the page had no room for the feature. The page has 926,608 bytes now.
-- Three independent arbiters chose the limit of 910 KB (931,840 bytes), with the same measure (decision ID-K132). They refused to remove documentation comments, to change the measure and to add a minifier. The margin after the feature is 5,232 bytes.
-- A worker stops and reports when the page goes above 926,720 bytes before the feature is complete. The worker went above this value. It then made its code 621 bytes shorter to stay under it, which the rule does not permit.
-- The orchestrator then put back 2,059 bytes of documentation comments in the two modules. The page has 928,667 bytes after this change.
+- The state timeline and the status history add the modules `timeline_model.js` (10,904 bytes) and `panels/timeline.js` (16,303 bytes). They make small changes in `panel_frame.js`, `fields.js` and `panels/common.js`.
+- The two modules have 27,207 bytes with the documentation comments. The new CSS is not in the measure.
 - The feature already shares what it can. It reuses the time ticks of the engine, the display, the mappings, the colours, the ink of `cellInk`, the zone clock and the legend styles. It does not copy the 175 KB of the engine, and the engine would not draw bands.
 - The measure counts `panels/timeline.js` and `timeline_model.js`, because the page can load them with `import()`. The load on demand does not lower the measure.
 - A front unit test checks the cap and the time of the model for 10,000 and 100,000 samples (16.10a). The browser case B114 checks the time of the draw.
 - The browser tests measure these values on a synthetic dashboard (16).
-- Milestone F, wave 3, the annotations (decisions ID-K140 to ID-K157), adds the modules `annotations.js` (7,142 bytes) and `panels/annotate.js` (9,162 bytes). It makes small changes in `runtime.js`, `api.js`, `panel_frame.js`, `dashboard.js` and `panels/timeseries.js`. The server makes the marks (7.37), so the page does not hold the rules of the columns.
-- The estimate was 13 KB (10 KB to 16 KB). A prototype with no comment has 1.4 KB for the pure part and 3.3 KB for the picture, the card and the keys. It has 0.9 KB for the jobs.
-   - The prototype has no colour parse, no note, no second table of "View data", no variables of the jobs and no glue. They add about 4 KB with no comment. The comments of Hune are about one quarter of the bytes, so they add about one third to the code with no comment. The new CSS is not in the measure.
-- The page had 928,667 bytes before the feature, after the change of F30 above. The limit was 931,840 bytes, so 3,173 bytes were left, and the feature did not fit.
-- Three independent arbiters chose a raise for this feature only, in the absence of the owner (decision ID-K155). The limit is 932 KB (954,368 bytes), with the same measure. The page had 928,667 bytes then.
-   - The size of the earlier features was 1.05 to 2.4 times their estimate, so the limit holds about 1.6 times the estimate of 13 KB. It also holds 4,096 bytes for fixes.
-   - The arbiters refused 940 KB, because it is not the smallest raise. They also refused a version with no card and no keys (about 6 KB, not accessible, and still too large).
-   - They refused the options `annotations` and `regions` of the engine. These options give one colour to all annotations and write labels over the plot (9.24). They also drop dense marks with no sign, and their layer has no text for the screen reader.
-- A worker stops and reports when the page goes above 950,272 bytes before the feature is complete. These ways to stay under it are not permitted: a shorter name, a joined line, a shorter or removed comment, a change of the measure.
-- The measured size of the feature is 23,485 bytes (the two modules and the changes), which is 1.8 times the estimate. Decision ID-K155a then took the page under the guard with a separate reduction of other code. The order of the annotation jobs (9.8) needed a fix of 358 bytes in `runtime.js`. It used the reserve for fixes, as decision ID-K155b says. The page has 950,863 bytes after the feature and its fixes, with the work of other parts of the page in the same measure.
+- The annotations add the modules `annotations.js` (7,142 bytes) and `panels/annotate.js` (9,162 bytes). They make small changes in `runtime.js`, `api.js`, `panel_frame.js`, `dashboard.js` and `panels/timeseries.js`. The server makes the marks (7.37), so the page does not hold the rules of the columns.
+- The page does not use the options `annotations` and `regions` of the engine. These options give one colour to all annotations and write labels over the plot (9.24). They also drop dense marks with no sign, and their layer has no text for the screen reader.
+- The order of the annotation jobs (9.8) needed a fix of 358 bytes in `runtime.js`.
 - A front unit test checks the cap and the time of `marks` and `hitTest` for 2,000 and 10,000 marks (16.10a). The browser case B123 checks the time of the draw.
-- The page does not scan a query text any more (decision ID-K176, owner request of 2026-11-14, 9.10). The server gives the names in the member `names` of the answer of 6.14. `runtime.js` no longer imports `sqlscan.js`, so `sqlscan.js` (5,012 bytes), `sql_lex_pg.js` (8,989 bytes) and `vendor/chdash/app_sql_lex.js` (10,805 bytes) leave the measure: 24,806 bytes. The editor keeps them, and it loads them on demand.
-- The change adds the function `readNames` (the shape check), the method `panelNames` and a few lines to `runtime.js`. It adds the notice of the member `names` to `dashboard.js`. They add 4,555 bytes with their comments. The page had 950,863 bytes before the change. It has 930,612 bytes after it, which is 20,251 bytes less. The limit stays 954,368 bytes, and the page keeps 23,756 bytes of it for F24.
+- The page does not scan a query text any more (9.10). The server gives the names in the member `names` of the answer of 6.14. `runtime.js` no longer imports `sqlscan.js`, so `sqlscan.js` (5,012 bytes), `sql_lex_pg.js` (8,989 bytes) and `vendor/chdash/app_sql_lex.js` (10,805 bytes) leave the measure: 24,806 bytes. The editor keeps them, and it loads them on demand.
+- The function `readNames` (the shape check), the method `panelNames` and a few lines in `runtime.js` add 4,555 bytes with their comments. The notice of the member `names` in `dashboard.js` adds to this. The page has 930,612 bytes after the change, which is 20,251 bytes less.
 - A front unit test checks that `runtime.js` and `dashboard.js` do not name `sqlscan` (16.10a). The golden test of the server checks that no name is lost (7.19).
-- The tree of the query text (F42, decisions ID-K220 to ID-K233) is all under `web/js/editor/`. It loads with the editor and is not in the page measure. No module of the page imports a module of `editor/ast/`, with a quoted path or with a template string. The test `static_rules.test.mjs` checks this (16.10a).
+- The tree of the query text (F42) is all under `web/js/editor/`. It loads with the editor and is not in the page measure. No module of the page imports a module of `editor/ast/`, with a quoted path or with a template string. The test `static_rules.test.mjs` checks this (16.10a).
 - The parse of a text of 262,144 bytes takes 50 ms or less on the reference machine. The parse runs once, after the last input and when the browser is idle (10.3c). It never runs for each key.
-- The colour layer of the SQL area draws only the rows near the visible rows (decision ID-K230a, fixed). A key in a text of 246 KB costs the same as a key in a short text. The script takes about 8 ms on the reference machine. The module is `editor/sql_colour.js`. It is under `editor/` and is not in the page measure.
+- The colour layer of the SQL area draws only the rows near the visible rows (fixed). A key in a text of 246 KB costs the same as a key in a short text. The script takes about 8 ms on the reference machine. The module is `editor/sql_colour.js`. It is under `editor/` and is not in the page measure.
 - The format of a text of 262,144 bytes takes 300 ms or less, and it runs only on request (10.3d). The case B176 measures both times and the longest task of the main thread.
-- Milestone F, wave 3, several queries (decisions ID-K160 to ID-K175), adds the module `queries.js`. It makes changes in `runtime.js`, `panel_frame.js`, `transform.js`, `names.js` and `fields.js`. `api.js` needs no change. The server runs one query for each request. The page thus holds the join and the state of the panel, and no rule of the SQL.
-- The limit is 937 KB (959,488 bytes) by decision ID-K172a. The rule of decision ID-K172 applied to the page after the change of decision ID-K176 (about 20 KB less). The worker stops above 955,392 bytes, which is the limit minus 4,096 bytes. The ways to stay under it that decision ID-K155 refuses stay refused.
-- The page has 950,109 bytes when the feature is complete. The feature adds 19,497 bytes with its comments to the 930,612 bytes of the start. The estimate was 13 KB, so the ratio is 1.5. The editor code (chips, dialogs, `query_ops.js`) and the new CSS are not in the measure.
-- The slots reuse the jobs that F25 added to `runtime.js` (decision ID-K172, arbiter 2). A slot and an annotation share the queue, the abort code and the limit of 6 requests. One code path runs several requests for a panel.
+- The several queries of a panel add the module `queries.js`. They make changes in `runtime.js`, `panel_frame.js`, `transform.js`, `names.js` and `fields.js`. `api.js` needs no change. The server runs one query for each request. The page thus holds the join and the state of the panel, and no rule of the SQL.
+- The editor code of the several queries (chips, dialogs, `query_ops.js`) and the new CSS are not in the measure. The feature adds 19,497 bytes with its comments.
+- The slots reuse the jobs of the annotations in `runtime.js`. A slot and an annotation share the queue, the abort code and the limit of 6 requests. One code path runs several requests for a panel.
 - A front unit test checks the time of the join (16.10a). The browser case B130 checks the draw of a panel with 3 queries.
-- Reduction S1 (decision ID-K211a): the page has 945,311 bytes, which is 4,798 bytes less than the 950,109 bytes before.
+- A reduction of the page: it has 945,311 bytes, which is 4,798 bytes less than the 950,109 bytes before.
    - The routes that only the editor calls go from `api.js` to `editor/api_editor.js`. This saves 3,123 bytes.
    - Four exports that only the editor uses go into `editor/draft.js` and `editor/validators.js`. This saves 830 bytes.
    - The code that no file uses is removed (`confirmDialog`, `relativeUrl`, `track`, `STYLES`). This saves 1,156 bytes.
    - A panel type that the page cannot draw shows a fixed message in the error state. This adds 311 bytes.
    - A static test refuses these routes outside `editor/` (16.10a).
-- The option forms of the data types (F43, decisions ID-K290 to ID-K298) are editor code. They are in `js/editor/forms/` and `js/editor/forms/options/`. The editor loads them on demand, so the measure above does not count them. The test `static_rules.test.mjs` already checks that no file of the measure imports a file of `js/editor/`. The estimate is 50 KB for these files (31 KB of tables, 14 KB of renderer and helpers, and 5 KB of other changes). The test FE-79 fails when the new files of the forms have more than 102,400 bytes.
-- Milestone F, wave 3, the closed or free value of a variable (decisions ID-K201 to ID-K213), makes changes in `var_options.js`, `vars.js`, `runtime.js` and `dashboard.js`. It adds no module to the page. The form, the SQL examples and the preview of the options are in the editor, which is not in the measure.
-- The page has 955,718 bytes when the feature is complete. It had 945,311 bytes at the start, so the feature adds 10,407 bytes with its comments. The estimate was 12,288 bytes. The prototype had 7,856 bytes with a comment share of 18 %.
+- The option forms of the data types (F43) are editor code. They are in `js/editor/forms/` and `js/editor/forms/options/`. The editor loads them on demand, so the measure above does not count them. The test `static_rules.test.mjs` already checks that no file of the measure imports a file of `js/editor/`. The estimate is 50 KB for these files (31 KB of tables, 14 KB of renderer and helpers, and 5 KB of other changes). The test FE-79 fails when the new files of the forms have more than 102,400 bytes.
+- The closed or free value of a variable makes changes in `var_options.js`, `vars.js`, `runtime.js` and `dashboard.js`. It adds no module to the page. The form, the SQL examples and the preview of the options are in the editor, which is not in the measure.
+- The feature adds 10,407 bytes with its comments, so the page has 955,718 bytes after it.
 
 | Module | Bytes added | Bytes now | What it holds |
 |---|---|---|---|
@@ -3839,12 +3824,11 @@ listeners (16).
 | `runtime.js` | 758 | 38,806 | The option `onNotice` and the call at the load and at a reload. |
 | `dashboard.js` | 911 | 46,490 | The notice with its key and its hook, and the new value in the URL. |
 
-- The limit is 946 KB (968,704 bytes) by decision ID-K211b. The worker stops above 964,608 bytes, which is the limit minus 4,096 bytes. The page is 8,890 bytes below this guard. The ways to stay under the limit that decision ID-K155 refuses stay refused.
 - The comment share of the changed modules is 15 % in `vars.js`, 29 % in `var_options.js`, 26 % in `runtime.js` and 24 % in `dashboard.js`.
 - A front unit test checks the time of the selection for 10,000 values and 10,000 options (16.10a, FE-48).
-- The engine patch of decision ID-K300 (accepted by the owner) removes code of the copied engine that Hune never calls (9.24, edits 17 to 21). With the same other modules, the measure goes from 956,700 bytes to 927,072 bytes, which is 29,628 bytes less. The removals take 11,400 bytes from `app_chart_core.js`, 7,801 bytes from `app_ui_table.js` and 7,035 bytes from `app_results_sort.js`. They also take 2,268 bytes from the shim `app_dom.js` and the 1,124 bytes of the shim `app_ui_copy.js`. The next step of the plan of ID-K211a starts from the new measure.
-- Milestone F, wave 3, the variable kinds `interval` and `constant` (decisions ID-K260 to ID-K270), makes small changes in `var_options.js` and `dashboard.js`. It adds no module to the page. The text of "Auto" comes from the server, so the page holds no table of intervals. The forms are in the editor, which is not in the measure.
-- The estimate was 1,229 bytes. The measured code is 982 bytes, which is 0.80 times the estimate. The page had 955,718 bytes before it and 956,700 bytes after it. The guard of 958,464 bytes was not reached.
+- The engine patch removes code of the copied engine that Hune never calls (9.24, edits 17 to 21). With the same other modules, the measure goes from 956,700 bytes to 927,072 bytes, which is 29,628 bytes less. The removals take 11,400 bytes from `app_chart_core.js`, 7,801 bytes from `app_ui_table.js` and 7,035 bytes from `app_results_sort.js`. They also take 2,268 bytes from the shim `app_dom.js` and the 1,124 bytes of the shim `app_ui_copy.js`.
+- The variable kinds `interval` and `constant` make small changes in `var_options.js` and `dashboard.js`. They add no module to the page. The text of "Auto" comes from the server, so the page holds no table of intervals. The forms are in the editor, which is not in the measure.
+- The measured code is 982 bytes. The page had 955,718 bytes before it and 956,700 bytes after it.
 
 | Module | Bytes added | Bytes now | What it holds |
 |---|---|---|---|
@@ -3852,9 +3836,8 @@ listeners (16).
 | `dashboard.js` | 94 | 46,584 | The URL value of a `constant`, which the page ignores |
 
 - The comment share of the changed modules is 30 % in `var_options.js` and 24 % in `dashboard.js`. The modules `vars.js` and `runtime.js` have no change. The control of a `custom` variable serves the `interval` kind. The request body and the display text need no new branch.
-- The engine patch (above) lowered the measure to 927,072 bytes after these changes. The limit stays 940 KB until the orchestrator lowers it.
-- Milestone F, wave 3, more transforms (decisions ID-K240 to ID-K254, F28), adds the module `transform_more.js`. It makes small changes in `transform.js` (the loop over the list of frames) and `fields.js` (the matcher `name`). `names.js` has no change, because the current name is the display name of 9.13. The server runs no code for a transform. The forms are in the editor, which is not in the measure.
-- The page has 951,705 bytes when the feature is complete. It had 927,072 bytes at the start, so the feature adds 24,633 bytes with its comments. The estimate was 22,528 bytes, so the ratio is 1.09. The prototype had 18,000 bytes with a comment share of 12.9 %.
+- The engine patch (above) lowered the measure to 927,072 bytes after these changes.
+- The feature adds 24,633 bytes with its comments to the 927,072 bytes of the start, so the page has 951,705 bytes.
 
 | Module | Bytes added | Bytes now | What it holds |
 |---|---|---|---|
@@ -3864,9 +3847,9 @@ listeners (16).
 | `names.js` | 0 | 5,102 | No change |
 
 - The comment share of the changed modules is 27 % in `transform_more.js`, 23 % in `transform.js` and 25 % in `fields.js`. The bare code of `transform_more.js` is 16.5 KB.
-- The limit is 943 KB (965,632 bytes) by decision ID-K211d. The worker stops above 961,536 bytes, which is the limit minus 4,096 bytes. The page is 9,831 bytes below this guard. The ways to stay under the limit that decision ID-K155 refuses stay refused. All eleven kinds are in the page, so no smaller set was necessary.
+- All eleven kinds are in the page, so no smaller set was necessary.
 - The steps take 47 ms to 263 ms for 200,000 rows. This is the best of 7 runs, at a load average of 8 on 22 cores. A front unit test checks them (16.10a, `FE-75`). The browser case B183 checks the draw of a panel with a `join_by_field`, and the case B185 checks the caps.
-- Milestone F, wave 3, the heatmap (decisions ID-K180 to ID-K195, ID-K211a, ID-K211e). The step adds `panels/heatmap.js` and `heat_model.js`. It makes small changes in `panel_frame.js`, `colors.js` and `queries.js`.
+- The heatmap adds `panels/heatmap.js` and `heat_model.js`. It makes small changes in `panel_frame.js`, `colors.js` and `queries.js`.
 
 | Module | Bytes added | Bytes now | What it holds |
 |---|---|---|---|
@@ -3876,7 +3859,7 @@ listeners (16).
 | `colors.js` | 7 | 16,839 | The export of `basisChannel` |
 | `queries.js` | 11 | 8,066 | `heatmap` joins the frames on time |
 
-- The step adds 28,128 bytes. This is 1.39 times the estimate of 20,173 bytes, and it is under the allowance of 30,260 bytes (1.5 times the estimate). The comment share is 20 % in `panels/heatmap.js` and 28 % in `heat_model.js`.
+- The step adds 28,128 bytes. The comment share is 20 % in `panels/heatmap.js` and 28 % in `heat_model.js`.
 - The editor code is not in the measure (10.3). The glyph and the rules of the panel are in `panel-bucket.css`, which the measure does not count.
 - A front unit test checks the time of the grid for 500,000 values (16.10a). The browser case B146 checks the draw of a grid of 250,000 cells in 700 ms or less. It also checks that no task of the main thread is longer than 800 ms.
 
@@ -3906,12 +3889,12 @@ The forms of 10.3a and 10.3b edit the overrides, the mappings, the data links, t
 
 ### 10.2 Edit mode
 
-- The header (9.9) has the switch "Edit" (`data-testid="edit-toggle"`) when two conditions are true. `editing` is `true` (6.10), and the dashboard has `access.write = true` (6.14). A user without these rights has no switch and no slot for "Save" (decision ID-K3, owner request of 2026-11-12).
+- The header (9.9) has the switch "Edit" (`data-testid="edit-toggle"`) when two conditions are true. `editing` is `true` (6.10), and the dashboard has `access.write = true` (6.14). A user without these rights has no switch and no slot for "Save".
 - The switch is a button with `role="switch"` and `aria-checked`. It is `false` in the view and `true` while the editor holds a draft: the grid, the panel editor, the JSON tab and the settings. The key Space or Enter changes it, as a click does. Its focus is visible. Its name is "Edit".
 - The switch turns the editor on or off. The event `edit-on` adds `edit=1` to the URL and loads the modules of `js/editor/` with `import()`. In the state `panel-view`, it opens the editor of the panel that the view shows (10.2a). Off with no change leaves the edit mode at once. Off with changes opens the dialog "Exit edit mode" (see below).
 - The draft starts as a copy of the loaded document, with its etag and version as the base (10.8).
-- The edit mode has no row of its own. The header stays one row of 44 px (9.6). It has a group of controls for the edit mode (`data-testid="edit-bar"`) just before the time control. The group has no reserved room (decision ID-K177, owner request of 2026-11-14). It is in the page in edit mode only, and no button of the view moves. In this order, it has "Add" (`data-testid="add-button"`, with its menu part `add-menu`), "Save" (`data-testid="save-button"`) and "Revert" (`data-testid="discard-button"`).
-- "Add" is a split button (decision ID-K15, owner request of 2026-11-12). The main part has the icon and the label "Add". Its name and its tooltip are "Add panel". One click on it adds a panel to the last section and opens the panel editor (10.6). The menu part is a chevron with the name "Add menu". It opens a menu with these items, in this order:
+- The edit mode has no row of its own. The header stays one row of 44 px (9.6). It has a group of controls for the edit mode (`data-testid="edit-bar"`) just before the time control. The group has no reserved room. It is in the page in edit mode only, and no button of the view moves. In this order, it has "Add" (`data-testid="add-button"`, with its menu part `add-menu`), "Save" (`data-testid="save-button"`) and "Revert" (`data-testid="discard-button"`).
+- "Add" is a split button. The main part has the icon and the label "Add". Its name and its tooltip are "Add panel". One click on it adds a panel to the last section and opens the panel editor (10.6). The menu part is a chevron with the name "Add menu". It opens a menu with these items, in this order:
   - "Add panel" (`add-panel`). It does the same as the main part.
   - The item "Add panel" has no type choice. The type changes in the panel editor (10.3). The new types are in the choice of the type, and they need a source like each panel with data.
   - "Add text panel" (`add-text`). It adds a text panel to the last section (10.6). It needs no source, so it works when `GET api/sources` is empty.
@@ -3925,12 +3908,12 @@ The forms of 10.3a and 10.3b edit the overrides, the mappings, the data links, t
 - "Add" acts on the draft grid. In the other views of the editor it keeps its place and it is not active, so the header does not change. Up to 900 px, "Add" shows its icon only (9.6, 9.9). A viewer has no "Add".
 - "Save" is the primary button. It opens the dialog of 10.9. The key Ctrl+S or Cmd+S does the same. Above 1100 px it shows the text "Save". Up to 1100 px it shows the icon, and its name stays "Save".
 - "Revert" is an icon button with the name "Revert all changes". Up to 640 px it has no button in the header (9.6). The menu "More actions" has the item "Revert all changes" (`discard-menu`) at its top. It discards all the changes and goes back to the last saved version. It asks first when there are changes, with the dialog "Discard your changes". The dialog says "Discard your changes and show the saved dashboard?" Its buttons are "Stay" and "Discard". "Revert" does not leave the edit mode.
-- The state of the draft has no visible text (decision ID-UF1). The page shows no label, no dot and no pill for it. "Save" and "Revert" show the state. They are active when the draft is not the base document. They are not active when the draft is the base document.
+- The state of the draft has no visible text. The page shows no label, no dot and no pill for it. "Save" and "Revert" show the state. They are active when the draft is not the base document. They are not active when the draft is the base document.
 - "Save" has a `title`. It reads "Save the changes" when the button is active, and "There are no changes to save" when it is not. A live region that only a screen reader can read says "Unsaved changes" or "No changes". The protections do not change: the event `beforeunload` (10.8) and the dialog "Exit edit mode" stay.
 - The other actions of the edit mode are in the menu "More actions" (9.9), at its top. Each keeps its `data-testid`:
   - "Dashboard JSON" (`json-tab`) and "Settings" (`dash-settings`, 10.3b) show in each view of the editor except their own view.
   - The variables and the dashboard links are in "Settings" (10.3b).
-  - The annotations are in "Settings" (10.3b). The marks of a draft show after the save, because the route reads the saved document (decision ID-K152).
+  - The annotations are in "Settings" (10.3b). The marks of a draft show after the save, because the route reads the saved document.
   - "Add panel here" and the menu "Section actions" are in the headers of the sections (10.6).
 - The old buttons "Add panel", "Add section", "Dashboard JSON", "Settings", "Discard" and "Exit edit" are gone. The switch replaces "Exit edit". The button "Add" replaces "Add panel" and "Add section". The menu items replace the others. "Revert" replaces "Discard". "Add panel" and "Add section" are no more in the menu "More actions".
 - Each panel frame in edit mode gets the menu entries "Edit", "Duplicate", "Move up", "Move down" and "Delete" (10.3 to 10.6). It has no item "View" (10.2a, rule 5). In the view modes, the panel menu has "Edit" for a user who can edit.
@@ -4079,14 +4062,14 @@ The rules are these:
     - An `editPanel` names the stored panel by its id only. A value with the form of a key of a copy is a value that the contract does not know. Rule 4 removes it with a notice.
     - A `change` is a `replace` as in rule 12, also when it makes the page remove a `viewPanel`.
     - The vectors `FE-26` and `FE-27` hold the cases (16.10a).
-17. Frames. A change between the states `view` and `edit` keeps the frame of each panel that the draft does not change. The frame keeps its chart, its canvas and its last result (decision ID-K301, owner bug of 2026-11-15).
+17. Frames. A change between the states `view` and `edit` keeps the frame of each panel that the draft does not change. The frame keeps its chart, its canvas and its last result.
     - The draft grid takes the frame from the base grid when the state `edit` opens. It returns the frame to its place when the state `edit` closes. The page moves the frames in one task, so the viewer never sees a frame without its chart.
     - A frame that the draft grid takes keeps the runtime of the base document. It has the panel menu of the edit mode, no zoom by drag and no mark (9.19d, rule 22).
     - A panel that the draft changes gets a new frame. The rules of "Data in edit mode" (10.2) give its data.
     - The same rule applies when the panel editor, the JSON tab, the settings or the history closes, and to "Back" and "Forward" between these states.
     - The grid is not in the page while the panel editor shows, and the engine then releases its canvas. A chart that returns to the page draws in the task that shows the state. It draws before the page writes the hook `data-hune-view` (9.29).
-    - For this, the page sends the event `hune-shown` on `document` just before it writes the hook. Each chart that had no width draws at once. Thus no paint and no script after the change finds a blank canvas (decision ID-K321, owner answer of 2026-11-21).
-    - The grid sends the same event at the end of the expand of a section (9.8, decision ID-K325).
+    - For this, the page sends the event `hune-shown` on `document` just before it writes the hook. Each chart that had no width draws at once. Thus no paint and no script after the change finds a blank canvas.
+    - The grid sends the same event at the end of the expand of a section (9.8).
     - These transitions send no query, because no data changed. No frame shows the state `idle`, `queued` or `loading`, the loader or the dim (9.11) for them.
     - The browser case B207 checks this rule in both themes, with a panel and a section that repeat. Its probe reads the frames after each paint and at the end of the task that writes the hook. Its steps wait for states, not for a fixed time.
 
@@ -4096,12 +4079,12 @@ An invariant covers all the rules. For each state, `parse(render(state))` is tha
 
 `editPanel=<id>` opens the panel editor. The editor fills the window under the header and has no page scroll. At 900 px or less it becomes one column, and the page scrolls. It has these parts:
 
-- The panel editor has no top bar and no row of its own (decision ID-K178, owner request of 2026-11-14). The editor starts at the foot of the header, so it has 48 px more height than before.
-- The box of the editor starts at the foot of the header and has a top padding of `--page-pad` (9.6, decision ID-K302). The preview, the row of the variables and the top of the options pane start at this gap. The preview never touches the header. Without a row of the variables, the top of the options pane and the top of the preview are at the same height. The pane keeps its place at the right edge of the window.
-- The way back is the crumb of the dashboard in the header (see below). The editor has no visible text for the state of the draft, no "Save" and no "Discard". The header has "Save" and "Revert" (10.2, decision ID-K38). The last crumb of the header is "Edit panel". The header keeps all its controls, with the switch "Edit" on.
+- The panel editor has no top bar and no row of its own. The editor starts at the foot of the header, so it has 48 px more height than before.
+- The box of the editor starts at the foot of the header and has a top padding of `--page-pad` (9.6). The preview, the row of the variables and the top of the options pane start at this gap. The preview never touches the header. Without a row of the variables, the top of the options pane and the top of the preview are at the same height. The pane keeps its place at the right edge of the window.
+- The way back is the crumb of the dashboard in the header (see below). The editor has no visible text for the state of the draft, no "Save" and no "Discard". The header has "Save" and "Revert" (10.2). The last crumb of the header is "Edit panel". The header keeps all its controls, with the switch "Edit" on.
 - The time controls are in the header (9.9). The row of the variables bar is under the header, over the preview.
 - The preview shows the panel with the draft and its current result. Under it is the query area, with three tabs of 38 px: "Query", "Panel" and "JSON". The preview and the query area have the same height.
-- The preview is a panel frame like the frame of the view (9.8). It has the fill and the edge of the theme. When the draft has `transparent` = `true`, it has neither of them (decision ID-K179, owner request of 2026-11-14).
+- The preview is a panel frame like the frame of the view (9.8). It has the fill and the edge of the theme. When the draft has `transparent` = `true`, it has neither of them.
 - The options pane is at the right edge of the window, 330 px wide. It has a header of 48 px with the name of the type and the link "Change". The link opens the group "Visualisation", which is the choice of the type. The pane is hidden on the tab "JSON".
 - A control of the editor is 32 px high, with a text of 14 px. A selected segment has a neutral fill.
 
@@ -4113,7 +4096,7 @@ A few controls change the draft and not the picture of the preview. Each one is 
 
 The forms for the options of each type are in 10.3h. The tab "JSON" stays. It edits the whole panel, with the same members as the forms. A change in a form shows in the tab, and a valid change in the tab shows in the forms.
 
-The way back of the panel editor is the crumb of the dashboard in the header (decision ID-K178). These rules apply:
+The way back of the panel editor is the crumb of the dashboard in the header. These rules apply:
 
 - The crumb is a link with an arrow before its text. It has the hook `data-testid="editor-back"`.
 - A click with no modifier key is the event `leave` of 10.2a. It shows the state from which the editor was opened.
@@ -4124,7 +4107,7 @@ The way back of the panel editor is the crumb of the dashboard in the header (de
 - When the crumbs are less than 150 px wide, the crumb of the folder hides.
 - When they are less than 100 px wide, the crumb shows its arrow alone, and the last crumb hides. The name and the tooltip stay. This crumb never hides.
 - The focus goes back as in 10.2a, rule 14. It does not depend on the control that sent the event.
-- The key Escape and the "Back" of the browser do not change (decisions ID-K23 to ID-K25). The browser case B151 checks these rules.
+- The key Escape and the "Back" of the browser do not change. The browser case B151 checks these rules.
 
 Tab "Query": the tab has a strip of chips above its fields. There is one chip for each query of the draft, with its ref: `A`, `B` and so on (`data-testid="query-chip-<ref>"`). A chip is a button. It has an eye button (`query-hide-<ref>`, `aria-pressed`). With two queries or more, it also has a button "Delete" (`query-delete-<ref>`).
 
@@ -4149,7 +4132,7 @@ The preview and "Run" use the range of 9.8b with the values of the draft. The fi
 
 The fields "Minimum interval", "Max data points", "Relative time", "Time shift" and "Hide time info" are fields of the panel. They apply to all the queries. The editor writes them in `data.query` (4.15a, rule 4).
 
-The tab "Query" has one row for the settings of the query (decision ID-K303, owner request of 2026-11-15). The rules of the row are these:
+The tab "Query" has one row for the settings of the query. The rules of the row are these:
 
 - The row is under the chips. It is one element with `role="group"` and the name "Query settings". The tab has no other row of settings.
 - The order of the controls is the order of the DOM and the visual order. The order is: "Source", "Format", "Name", "Min interval", "Max points", "Options" and "Run".
@@ -4193,7 +4176,7 @@ The SQL text area:
 - The text area is transparent, and the layer under it shows the colours. The two layers set each property of the text in the same way. These properties are the font, the size, the line height, `letter-spacing`, `word-spacing`, `tab-size`, `font-kerning`, ligatures, `text-rendering`, padding and border.
 - A text area does not inherit `letter-spacing` and `text-rendering` from the page, so the style sets them in both layers. The colour layer does not scroll by itself. It takes its scroll position from the text area, and it has room for the scroll bars of the text area. The width of the line numbers is a whole number of CSS pixels.
 - The mouse selection and the colours must line up. The gap between the glyphs of the two layers is less than 0.5 px. This holds at the scale factors 1, 0.9, 1.1 and 1.25, in the light and in the dark theme (case B57).
-- The colour layer draws only the rows that are visible and 100 rows above and below, as the gutter does (decision ID-K230a). A gap above and a gap below keep the height of all rows. The scroll height and the width are then the same as for the whole text.
+- The colour layer draws only the rows that are visible and 100 rows above and below, as the gutter does. A gap above and a gap below keep the height of all rows. The scroll height and the width are then the same as for the whole text.
 - A scroll that comes within 30 rows of the border of the drawn rows draws them again. A key draws them again at once, with the scroll position of the last scroll event.
 - The spans of the whole text give the state of a string or of a comment at the first drawn row. A comment that starts above the window keeps its colour. The editor does not change the highlighter of the engine. It gives the highlighter only the plain text between two spans.
 - One difference from a draw of the whole text is known. A name in backticks that holds a pair of keywords, such as `order by`, can show another colour at the border of a window.
@@ -4220,13 +4203,13 @@ The options pane holds the fields of the table below. They are in the groups "Pa
 |---|---|---|
 | Title | `title` | The title rule of 4.13. |
 | Description | `description` | Text on several lines. |
-| Transparent background | `transparent` | A switch (`data-testid="panel-transparent"`). The preview shows its effect at once (10.3, decision ID-K179). |
+| Transparent background | `transparent` | A switch (`data-testid="panel-transparent"`). The preview shows its effect at once (10.3). |
 | Type | `type` | The 11 types of 9.19, 9.19b, 9.19c and 9.19f, `logs` (9.19h) and `geomap` (9.19i). A new type keeps the shared members and takes the "New" options of 9.19. The type `logs` sets the format of the query to `logs`, and another type changes the format `logs` to `table` (4.33f). A logs panel has no extra query, so they leave. |
 | Unit | `fields.defaults.unit` | Text, with a list of the units of 9.15. |
 | Decimals | `fields.defaults.decimals` | Empty (automatic) or 0 to 20. |
 | Min, Max | `fields.defaults.min`, `.max` | Empty or a number. |
 | Thresholds | `fields.defaults.thresholds` | The mode (`absolute`, `percentage`) and a list of steps. The first step is "Base" with no value. Each step has a value and a colour. "Add step" and "Remove" change the list. |
-| Colour | `fields.defaults.color` | The member `mode`: a select of the 13 modes of 9.16 (`color-mode`). The entry "Series palette" is the one series palette. The select has no other entry for a series palette (ID-K74). The member `fixed`: a colour with `fixed`, else `null`. |
+| Colour | `fields.defaults.color` | The member `mode`: a select of the 13 modes of 9.16 (`color-mode`). The entry "Series palette" is the one series palette. The select has no other entry for a series palette. The member `fixed`: a colour with `fixed`, else `null`. |
 | No value | `fields.defaults.no_value` | Empty (not set) or 1 to 256 characters (9.14). |
 | Position | `grid.x`, `grid.y`, `grid.w`, `grid.h` | The ranges of 4.14, with `x + w <= 24`. |
 | Repeat by variable | `repeat.variable` | A select (`repeat-variable`). Its items are "None" and each variable of the draft that has the kind `query` or `custom` and `multi` = `true`. "None" removes the member `repeat`. The group is not active for a panel with `data.reuse`, for the source of a reuse and for a panel in a repeated section, and its tooltip says why (4.13a, rule 4). |
@@ -4257,8 +4240,8 @@ The editor of a text panel (4.33a, 9.19b):
 
 - The type is `text`. The options pane has the groups "Panel options", "Visualisation", "Text", "Panel links" and "Position". It has no "Standard options", "Thresholds", "Colour", "Value mappings", "Data links", "Transformations" or "Overrides".
 - The tab "Query" shows the note "A text panel has no query." (`text-no-query`). It has no "Source", no "Run" and no field. The tab "Panel" shows the type, the place and the number of lines. The tab "JSON" works as for the other types.
-- The group "Text" has the field "Content" (`text-content`). It is a `<textarea>` with 12 rows, in the font `--font-mono`. It grows to the height that the person gives it. It has `spellcheck="true"`, `autocomplete="off"`, `autocapitalize="off"` and `wrap="soft"`. The text is prose, so the wavy line of the browser helps. Decision ID-K112 gives the reason.
-- The field is a plain `<textarea>`. It has no second layer and no colour. The rules of the SQL area for the two layers (ID-UF2) do not apply.
+- The group "Text" has the field "Content" (`text-content`). It is a `<textarea>` with 12 rows, in the font `--font-mono`. It grows to the height that the person gives it. It has `spellcheck="true"`, `autocomplete="off"`, `autocapitalize="off"` and `wrap="soft"`. The text is prose, so the wavy line of the browser helps.
+- The field is a plain `<textarea>`. It has no second layer and no colour. The rules of the SQL area for the two layers do not apply.
 - The key `Tab` moves the focus out of the field. The field never traps the focus (WCAG 2.1.2).
 - The page splits the text at each line end into the lines of `options.content`. It changes each CR LF and each lone CR to LF.
 - A change applies to the draft 300 ms after the last key (10.3). The preview above shows the panel with the draft, so the preview is the Markdown preview.
@@ -4287,7 +4270,7 @@ The editor of a `state_timeline` and of a `status_history` (4.33b, 9.19c):
 
 ### 10.3a Forms of the panel editor
 
-The order of work is in decision D20: overrides, mappings, data links, transformations, then the forms of 10.3b.
+The order of the forms is: overrides, mappings, data links, transformations, then the forms of 10.3b.
 
 Rules for each form:
 
@@ -4430,7 +4413,7 @@ Tab "Variables" (`variables`, 0 to 64 items; hook `settings-variables`):
 - A `query` variable has `source` (a select of `GET api/sources`) and `sql` (the text area of 10.3, with no "Run"). It has `multi`, `include_all`, `refresh`, `sort`, `regex` (the error of 4.24), `default` and the switch of the next bullets.
 - `all_value` of a `query` variable is not active when `include_all` is `false`. `default` is a list of 0 to 10,000 values, with the rules of 4.11.
 - A `custom` variable has a table of 1 to 10,000 options with `text` and `value`. It has `multi`, `include_all`, `all_value` and `default`, as a `query` variable has. A repeated `value` gives the error "This value exists."
-- A `query` or a `custom` variable has the switch `Allow custom values` (`variable-form-allow-custom`, member `allow_custom_value`). It is after the switch `Multi-value`. It is off for a new variable (decision ID-K210). A person turns it on to make the variable open. The switch off removes the member from the draft. The member follows `default` and comes before `placement` (4.38).
+- A `query` or a `custom` variable has the switch `Allow custom values` (`variable-form-allow-custom`, member `allow_custom_value`). It is after the switch `Multi-value`. It is off for a new variable. A person turns it on to make the variable open. The switch off removes the member from the draft. The member follows `default` and comes before `placement` (4.38).
 - The help text under the switch of a `query` variable says: "Off: the value must be one that the query returns. On: a person can also type a value."
 - The help text of a `custom` variable says: "Off: the value must be one of the options. On: a person can also type a value. A typed value is free text: the SQL cannot use it in a quoted name, and in code it must be a number."
 - The switch refers to its help text with `aria-describedby`.
@@ -4458,7 +4441,7 @@ Tab "Variables" (`variables`, 0 to 64 items; hook `settings-variables`):
 - An `adhoc` variable (4.10c) has the select `source` (`variable-form-source`) with the `clickhouse` sources only. It has the text area "Keys" (`variable-form-keys`) with one key on each line. The area refuses no key, more than 64 keys, a key that is not a plain column name and a repeated key. The checks at save compare the keys with the configured list (7.18). An `adhoc` variable has no group "Place in the grid".
 - A new `adhoc` variable has the first `clickhouse` source and no key. The preview of a draft panel with `$__adhocFilters` sends the `adhoc` variable of its source too.
 - A `constant` has a text field "Value" (`variable-form-value`, 0 to 1,024 bytes, no control character). The help text says: "The viewer never sees or changes this value." The field "Hide" shows `Variable` and is read only. A `constant` has no group "Place in the grid". A new `constant` has `hide` = `variable` and the value `""`.
-- The group "Place in the grid" (decision ID-K6, owner request of 2026-11-12) has a switch (`variable-form-placed`). A variable with `hide = "variable"` has no control, so its switch is not active and its tooltip says why. The select `hide` of a placed variable does not offer `variable`. Its tooltip says: "The variable is in the grid. Put it back in the top bar first."
+- The group "Place in the grid" has a switch (`variable-form-placed`). A variable with `hide = "variable"` has no control, so its switch is not active and its tooltip says why. The select `hide` of a placed variable does not offer `variable`. Its tooltip says: "The variable is in the grid. Put it back in the top bar first."
 - The switch on gives the placement of 10.6: the last section, `x = 0`, `y` = the bottom of that section, `w = 6`, `h = 2`. The switch off removes the member `placement`: the variable is back in the top bar.
 - With the switch on, the form shows the select "Section", the text field "Title" and the fields `x`, `y`, `w` and `h` (4.7a). An empty title shows the label of the variable. The title has 256 characters at most. A new section gives the bottom of that section with the same size. A new place that overlaps a panel or a placed control moves the other items, as the grid rules of 10.5 say.
 - A rename of a variable keeps its placement: the placement is a member of the variable. A delete of a variable removes its placement with it.
@@ -4474,11 +4457,11 @@ Tab "Variables" (`variables`, 0 to 64 items; hook `settings-variables`):
 Tab "Annotations" (`annotations`, 0 to 8 items; hook `settings-annotations`):
 
 - A row shows the name, the source and the colour of an annotation. A click opens its form. The button "Add annotation" is not active at 8 items, and its tooltip says "A dashboard has 8 annotations at most.".
-- The form has these controls: `name` (1 to 256 characters, unique: the error is "This name exists.") and `source`. The select `source` lists the sources of `GET api/sources` of the kinds `clickhouse`, `postgres` and `mongodb` (decisions ID-K142 and ID-K333). Its hint is "A ClickHouse, PostgreSQL or MongoDB source.".
+- The form has these controls: `name` (1 to 256 characters, unique: the error is "This name exists.") and `source`. The select `source` lists the sources of `GET api/sources` of the kinds `clickhouse`, `postgres` and `mongodb`. Its hint is "A ClickHouse, PostgreSQL or MongoDB source.".
 - The form also has `sql` (the text area of 10.3, with no "Run") and `color` (the colour control of 10.3a). The syntax tree of `sql` has the dialect of the kind of the source (10.3c). The form has the switch `enabled` and the group "Panels".
 - The group "Panels" has the choice "All time series" (no `panels` member) and the choice "Some panels". The second choice shows the list of the panels of the draft with the type `timeseries` and a check box for each one. It needs 1 panel or more: the last check box stays on, with the message "Choose one panel at least.".
 - A new annotation has the colour `red`, `enabled` equal to `true` and the choice "All time series". Its source is the first ClickHouse source of the list, else the first source of the list. Its SQL template is ClickHouse SQL.
-- The form has no "Run" and no preview, because the route of 6.22 has no annotation (decision ID-K152). The person saves and looks at the panel. The page shows the note of 9.19d for an error.
+- The form has no "Run" and no preview, because the route of 6.22 has no annotation. The person saves and looks at the panel. The page shows the note of 9.19d for an error.
 - The checks of the save show under the form. They are the checks of the kind of the source (7.18, 7.26 or 7.36) and the rules of 4.5b. An error names the line.
 - A delete of a panel that an annotation lists removes its id from `panels` in the same draft change. When the list becomes empty, the change removes `panels` and sets `enabled` to `false`. The page then shows the notice "The annotation <name> had only this panel. It is off.". The dialog of the delete (10.6) lists the annotations that change. The delete of a section does the same for each panel of the section.
 - A rename of a variable does not change the SQL. The notice of the rename also lists the annotations whose SQL still names the old name (the scan of 9.10).
@@ -4487,7 +4470,7 @@ Tab "Annotations" (`annotations`, 0 to 8 items; hook `settings-annotations`):
 
 ### 10.3c The syntax tree of the query text
 
-The SQL area builds a minimal syntax tree of its text. The tree gives structure only. Four functions use it: the format (10.3d), the folds (10.3e), the current block and the bracket pair (10.3f). The owner asked for it on 2026-11-14 (decision ID-K220).
+The SQL area builds a minimal syntax tree of its text. The tree gives structure only. Four functions use it: the format (10.3d), the folds (10.3e), the current block and the bracket pair (10.3f).
 
 Rules:
 
@@ -4563,7 +4546,7 @@ The format changes only the blanks of the query text. The person chooses it. Not
 Entry:
 
 - The button "Format" (`sql-format`) is under the SQL area. The key `Ctrl+Shift+F` (`Cmd+Shift+F` on macOS) does the same (10.3g).
-- With no selection, the format works on the whole text. With a selection, it works on each statement that the selection touches, and the rest of the text stays as it is. The smallest unit is a statement. A selection inside a subquery formats the whole statement of it (decision ID-K232).
+- With no selection, the format works on the whole text. With a selection, it works on each statement that the selection touches, and the rest of the text stays as it is. The smallest unit is a statement. A selection inside a subquery formats the whole statement of it.
 - A JSON text (the kind `mongodb`) formats as one value. A selection is not used for it.
 
 Refusal. The format changes nothing, and the status line says why, when one of these holds:
@@ -4695,7 +4678,7 @@ The keys and the mouse:
 The fold state:
 
 - The fold state is not part of the draft, the document or the URL. It lives in the editor until the first edit, an external `setLines` or the end of the editor.
-- The state is a set of offsets of open brackets. It is valid only while the text is the same. Any change of the text clears it (decision ID-K231).
+- The state is a set of offsets of open brackets. It is valid only while the text is the same. Any change of the text clears it.
 
 Status messages: "Folded 1 block, 12 lines.", "Unfolded 1 block.", "Unfolded all.", "Nothing to fold here." and "Nothing is folded.". They go to the status line (10.3g).
 
@@ -4730,7 +4713,7 @@ The keys work only when the text area has the focus. The editor calls `preventDe
 | `Ctrl+Shift+\` (code `Backslash`, `Ctrl` only) | Jump to the partner of the bracket (10.3f). |
 | `Tab`, `Escape` then `Tab`, `Ctrl+Enter` | As before (10.3). The new keys do not use them. |
 
-- The keys do not take a key of the browser that a page cannot take back: `Ctrl+N`, `Ctrl+T`, `Ctrl+W` and `Ctrl+Tab`. They do not take the single keys of the screen readers (NVDA and JAWS use `Insert` or `CapsLock`, VoiceOver uses `Ctrl+Option`). They have a modifier, so they follow success criterion 2.1.4 of WCAG. `Cmd+Shift+[` and `Cmd+Shift+]` change tabs in the browsers of macOS, so the fold keys use `Ctrl` there too (decision ID-K227).
+- The keys do not take a key of the browser that a page cannot take back: `Ctrl+N`, `Ctrl+T`, `Ctrl+W` and `Ctrl+Tab`. They do not take the single keys of the screen readers (NVDA and JAWS use `Insert` or `CapsLock`, VoiceOver uses `Ctrl+Option`). They have a modifier, so they follow success criterion 2.1.4 of WCAG. `Cmd+Shift+[` and `Cmd+Shift+]` change tabs in the browsers of macOS, so the fold keys use `Ctrl` there too.
 - The case B170 checks in Chrome that each key reaches the page and that `preventDefault` stops the browser. The check in Firefox and in Safari is a manual check before 1.0.0 (16.19).
 - The text area has `aria-keyshortcuts` with `Control+Shift+F Control+Shift+BracketLeft Control+Shift+BracketRight Control+Shift+Backslash`. It has `aria-describedby` for the list of keys (`sql-keys`). This list is a short text under the area, with the keys of the table above.
 
@@ -4763,7 +4746,7 @@ Accessibility. The rules of 9.26 apply. The text area is the only accessible tex
 
 ### 10.3h Option forms of the data types
 
-The panel editor has a form for the options of each type with data (decisions ID-K290 to ID-K298, owner request of 2026-11-14, F43). The types are `timeseries`, `barchart`, `xychart`, `stat`, `bargauge`, `piechart` and `table`. The types `heatmap` and `histogram` get the same kind of form when F31 is built. The type `logs` has a form too (F33). The type `gauge` has its form since wave H (item P12).
+The panel editor has a form for the options of each type with data (F43). The types are `timeseries`, `barchart`, `xychart`, `stat`, `bargauge`, `piechart` and `table`. The types `heatmap` and `histogram` get the same kind of form when F31 is built. The type `logs` has a form too (F33). The type `gauge` has its form too.
 
 The types `state_timeline` and `status_history` keep the form of 10.3, with two small changes (rules 7 and 14). The type `text` keeps its field "Content" and has no other form, because `mode` has one value. The tab "JSON" stays and edits the same members.
 
@@ -4771,7 +4754,7 @@ A form writes only members that 4.18 and 4.27 to 4.33d list. A control of Grafan
 
 1. One table for each type.
    - The code has one table of rows for each type, in `js/editor/forms/options/<type>.js`. One renderer (`js/editor/forms/option_form.js`) reads a table and builds the groups.
-   - The tables below are the authority. The test FE-79 compares them with the code, with the members of 4.27 to 4.33d and with `newOptions` of `draft.js`. The decision is ID-K291.
+   - The tables below are the authority. The test FE-79 compares them with the code, with the members of 4.27 to 4.33d and with `newOptions` of `draft.js`.
 2. The members of a row.
    - `id` is the name of the row, unique in its type. `member` is the path of the member from the panel. `kind` is the kind of control (rule 3). `label` is the visible text. `group` is the key of the group.
    - `items` is the list of values with their texts. `min`, `max` and `step` give a range. `default` is the value of a new panel (9.19).
@@ -4804,7 +4787,7 @@ A form writes only members that 4.18 and 4.27 to 4.33d list. A control of Grafan
    - Each change of a control writes the draft and draws the preview in the same task. The write calls `apply`, which calls `E.change` and `drawTop` (10.3). The frame of the preview is a new element when the event ends. The canvas is drawn in the next two frames.
    - A slider writes at each `input` event, and at most once in each frame (`requestAnimationFrame`). A number field and a text field write 300 ms after the last key, as in 10.3a.
    - The key `Enter`, a blur or a click on another control writes at once. A change is one task of 100 ms or less in the preview of B205.
-   - The attribute `data-draft-writes` counts the writes. The decision is ID-K293.
+   - The attribute `data-draft-writes` counts the writes.
 8. The rules of display.
    - A row with a `when` shows only while the function returns `true`. A row that a rule hides has `hidden`, `data-hidden-by-rule="true"` and no place in the Tab order.
    - A hidden row keeps its member in the draft. The page never removes a member because its row is hidden.
@@ -4837,9 +4820,9 @@ A form writes only members that 4.18 and 4.27 to 4.33d list. A control of Grafan
    - F3, the round trip. After the old value is put back, the print MUST equal the first print. Else B153 fails with the message "the preview is not stable". This closes the case of a print that changes by itself.
    - F4, the closed list. An entry has a member (or a member and a value, `options.tooltip.mode=multi`), the types, a class and a cause of 20 characters or more. The class is `design` (the control cannot change the picture by design) or `data` (the data of the audit does not show the effect).
    - An entry covers its member and the members under it. An entry for a control that changes the preview makes B153 fail (a stale entry). An entry that no control matches makes B153 fail (a dead entry).
-   - The list has 30 entries at most. A new entry needs a decision row of the owner. The first list is in the decision row ID-K295.
+   - The list has 30 entries at most. A new entry needs a reviewed change of the list.
    - F5, the coverage. In each state, the controls of the pane MUST be the rows that the table shows. A row with no control, a control with no row and a control with no `data-option` make B153 fail.
-   - A member of `newOptions(type)`, or an optional member of 4.26, MUST have a row or an entry in NO_CONTROL. Else B153 fails. A page that has no form for a type fails the audit. The audit of ID-K179 had no such rule.
+   - A member of `newOptions(type)`, or an optional member of 4.26, MUST have a row or an entry in NO_CONTROL. Else B153 fails. A page that has no form for a type fails the audit.
    - F6, no skip. A control that the audit cannot try fails with the message "not tried". The only exception is a select with one item.
    - The rule is a pure function in `tests/browser/lib/audit_rules.mjs`. A front test gives it synthetic results (FE-79).
    - The audit data has two series, a null and no zero. So `tooltip.hide_zeros` is in the list as `data`.
@@ -4868,7 +4851,7 @@ The select "Sort by" of a legend has the item "None" (the member leaves the pane
 
 ##### timeseries (4.28)
 
-Groups: Tooltip, Legend, Axis, Graph styles. The group "Thresholds" gets "Show thresholds". The group "Standard options" gets "Display name". The group "Axis" has the old controls "Placement", "Label", "Soft min" and "Soft max", and the new choice "Scale". The group "Graph styles" has the old controls "Line style" and "Transform", and the rows of wave H (notes).
+Groups: Tooltip, Legend, Axis, Graph styles. The group "Thresholds" gets "Show thresholds". The group "Standard options" gets "Display name". The group "Axis" has the old controls "Placement", "Label", "Soft min" and "Soft max", and the new choice "Scale". The group "Graph styles" has the old controls "Line style" and "Transform", and the rows of the notes below.
 
 | Group | Label | Member | Control | Values or range | New | Shown when | Hook |
 |---|---|---|---|---|---|---|---|
@@ -4910,12 +4893,12 @@ Groups: Tooltip, Legend, Axis, Graph styles. The group "Thresholds" gets "Show t
 
 Notes. The width of `fill_opacity` and `line_width` applies to bars as the line and the fill of a bar (9.19). `show_points` and `point_size` have no effect with `draw` = `bars`, because the engine draws marks on a line and on points only.
 
-The rows of wave H, items P10 and P14. Each one writes an optional member, and the value of an absent member removes it. The rows "Width", "Color" and "Show border" come after "Label", as in Grafana. The rows "Log base" and "Centered zero" come after "Scale". The rows "Bar alignment", "Gradient mode" and "Null threshold" follow "Line interpolation", "Fill opacity" and "Connect null values".
+The rows "Width", "Color", "Show border", "Log base", "Centered zero", "Bar alignment", "Gradient mode" and "Null threshold" are new. Each one writes an optional member, and the value of an absent member removes it. The rows "Width", "Color" and "Show border" come after "Label", as in Grafana. The rows "Log base" and "Centered zero" come after "Scale". The rows "Bar alignment", "Gradient mode" and "Null threshold" follow "Line interpolation", "Fill opacity" and "Connect null values".
 
 - The row "Dash array" is a text, as `10, 20`. Grafana offers the arrays `10, 10` to `50, 10` for a dash and `0, 10` to `0, 3, 3` for dots, and the field takes these texts too. An empty field removes the member.
 - The row "Log base" shows only with a log scale, and the row "Centered zero" only with a linear scale. Each one has no effect on the other scale.
 - The row "Null threshold" is a number of ms. It shows when `span_nulls` is `false`, because `true` joins each run of nulls.
-- A new time series has `fill_opacity` 0, so the choice "Opacity" of "Gradient mode" draws no fill there. Thus the closed list of the audit has the entry `options.gradient_mode=opacity` for `timeseries` (class `data`; a decision of the owner to read, rule 14).
+- A new time series has `fill_opacity` 0, so the choice "Opacity" of "Gradient mode" draws no fill there. Thus the closed list of the audit has the entry `options.gradient_mode=opacity` for `timeseries` (class `data`, rule 14).
 
 ##### barchart (4.30)
 
@@ -4955,9 +4938,9 @@ Groups: Bar chart, Tooltip, Legend, Axis. The group "Thresholds" gets "Show thre
 
 Notes. `show_values` has no effect with a stack, because a stack has no value label (9.19). `group_width` has no effect with a stack, because a stack is one group. `x_tick_rotation` has no effect with `orientation` = `horizontal`, because that picture has the category labels at the left. A bar chart has no `axis_placement` (4.18).
 
-The rows of wave H, item P03. "Line width" and "Fill opacity" come after "Bar width", in the order of Grafana. A slider at the default (1 and 80) removes the member. Thus the absent member and the default are one state. "Show grid lines" is a switch, where Grafana has the choice Auto, On and Off. A bar chart has one value axis, so On draws the same picture as Auto. A third item would be a control that changes nothing (rule 14, F2).
+The rows of the bar chart: "Line width" and "Fill opacity" come after "Bar width", in the order of Grafana. A slider at the default (1 and 80) removes the member. Thus the absent member and the default are one state. "Show grid lines" is a switch, where Grafana has the choice Auto, On and Off. A bar chart has one value axis, so On draws the same picture as Auto. A third item would be a control that changes nothing (rule 14, F2).
 
-The rows of wave H, items P10 and P14, have the rules of the time series. The row "Gradient mode" follows "Fill opacity". The rows "Width", "Color", "Show border" and "Centered zero" take the order of Grafana around "Show grid lines". A bar chart has no log scale, so the row "Centered zero" always shows.
+The rows "Gradient mode", "Width", "Color", "Show border" and "Centered zero" have the rules of the time series. The row "Gradient mode" follows "Fill opacity". The rows "Width", "Color", "Show border" and "Centered zero" take the order of Grafana around "Show grid lines". A bar chart has no log scale, so the row "Centered zero" always shows.
 
 The switch is on when the member is absent or `true`. Off writes `false`, and on removes the member. The preview of the audit is wider than it is high, so the choice "Vertical" draws the same picture as the default "Auto". Thus the closed list has the entry `options.orientation=vertical` for `barchart` (class `data`).
 
@@ -5003,7 +4986,7 @@ Groups: Value options, Stat styles, Text size. The group "Standard options" gets
 | Text size | Value | `value_size` | Number | 1 to 200, or empty | absent | always | `opt-value-size` |
 | Standard options | Display name | `defaults.display_name` | Text | 1 to 256, or empty | absent | always | `opt-display-name` |
 
-The rows of wave H, item P11, have the labels and the order of Grafana 12.4.2. The row "Show percent change" shows only with a calculation, as in Grafana, because an item of each row has no change. The row "Percent change color mode" shows only when the change shows. The row "Title" shows only for a text mode that can show a name (rule 14), and Grafana shows it in each mode. An empty field "Title" or "Value" removes the member, and the page fits the size. Grafana also has the field "Percent change" (`text.percentSize`), and Hune has no row for it (15.6).
+The rows of the stat have the labels and the order of Grafana 12.4.2. The row "Show percent change" shows only with a calculation, as in Grafana, because an item of each row has no change. The row "Percent change color mode" shows only when the change shows. The row "Title" shows only for a text mode that can show a name (rule 14), and Grafana shows it in each mode. An empty field "Title" or "Value" removes the member, and the page fits the size. Grafana also has the field "Percent change" (`text.percentSize`), and Hune has no row for it (15.6).
 
 The control "Fields" is a text field. An empty text writes `null`. A text that is not a pattern of 4.24 gives the error "The pattern is not valid." (10.3a).
 
@@ -5043,7 +5026,7 @@ Groups: Value options, Pie chart, Tooltip, Legend. The group "Standard options" 
 | Legend | Sort descending | `legend.sort_desc` | Switch |  | absent | `legend.mode` is `table` and `legend.sort_by` is set | `opt-legend-sort-desc` |
 | Standard options | Display name | `defaults.display_name` | Text | 1 to 256, or empty | absent | always | `opt-display-name` |
 
-A pie chart shows one slice under the pointer, so `tooltip.sort` and `tooltip.hide_zeros` have no row (NO_CONTROL below). The members stay valid in the format. The choice "All" of the tooltip equals "Single" in a pie chart (decision ID-K296).
+A pie chart shows one slice under the pointer, so `tooltip.sort` and `tooltip.hide_zeros` have no row (NO_CONTROL below). The members stay valid in the format. The choice "All" of the tooltip equals "Single" in a pie chart.
 
 ##### table (4.27, 4.18)
 
@@ -5588,11 +5571,11 @@ Example: from `["a", "b", "c"]` to `["a", "x", "c"]`, the diff is one hunk `@@ -
 
 ### 10.16 What is in v1.1
 
-These items are not in v1. Each one needs a written decision before its work starts (18):
+These items are not in v1. Each one needs a reviewed design before its work starts (18):
 
 - upload of a Grafana file in the page;
 - a list of deleted dashboards and their restore in the page;
 - a diff side by side;
 - completion of names in the SQL text.
 
-Drag and resize of the panels on the grid (ID-98, 10.5a) and the forms of 10.3a and 10.3b (milestone F, wave 2) are done. They are not in this list.
+Drag and resize of the panels on the grid (10.5a) and the forms of 10.3a and 10.3b are done. They are not in this list.

@@ -1,0 +1,689 @@
+{
+  "format_version": 3,
+  "uid": "service-overview",
+  "title": "Service overview",
+  "description": "Traffic, errors and latency of five services on six hosts.",
+  "tags": [
+    "demo",
+    "overview"
+  ],
+  "time": {
+    "from": "now-24h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": "1m"
+  },
+  "cursor_sync": "crosshair",
+  "links": [],
+  "variables": [
+    {
+      "kind": "query",
+      "name": "region",
+      "label": "Region",
+      "hide": "none",
+      "source": "demo",
+      "sql": [
+        "SELECT DISTINCT region",
+        "FROM demo.requests",
+        "WHERE $__timeFilter(ts)",
+        "ORDER BY region"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ]
+    },
+    {
+      "kind": "query",
+      "name": "host",
+      "label": "Host",
+      "hide": "none",
+      "source": "demo",
+      "sql": [
+        "SELECT DISTINCT host",
+        "FROM demo.requests",
+        "WHERE $__timeFilter(ts) AND region IN (${region})",
+        "ORDER BY host"
+      ],
+      "multi": true,
+      "include_all": true,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "$__all"
+      ]
+    }
+  ],
+  "annotations": [
+    {
+      "name": "Deployments",
+      "source": "demo",
+      "sql": [
+        "SELECT ts AS time, concat(service, ' ', version) AS title, kind AS text, concat(service, ',', kind) AS tags",
+        "FROM demo.deployments",
+        "WHERE $__timeFilter(ts)"
+      ],
+      "color": "blue",
+      "panels": [
+        5
+      ]
+    },
+    {
+      "name": "Incidents",
+      "source": "demo",
+      "sql": [
+        "SELECT ts AS time, ts_end AS timeEnd, title, text, tags",
+        "FROM demo.events",
+        "WHERE $__timeFilter(ts)"
+      ],
+      "color": "red",
+      "panels": [
+        5
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "stat",
+          "title": "Requests",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(ts) AS t, count() AS requests",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND host IN (${host})",
+                "GROUP BY t",
+                "ORDER BY t"
+              ],
+              "min_interval": "15m",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 1,
+              "color": {
+                "mode": "fixed",
+                "fixed": "blue"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "total",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "area",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "stat",
+          "title": "Error rate",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 6,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT countIf(status >= 500) * 100 / count() AS error_rate",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND host IN (${host})"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "percent",
+              "decimals": 2,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 0.4,
+                    "color": "orange"
+                  },
+                  {
+                    "value": 1,
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "background",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "stat",
+          "title": "p95 latency",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(ts) AS t, quantile(0.95)(latency_ms) AS p95",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND host IN (${host})",
+                "GROUP BY t",
+                "ORDER BY t"
+              ],
+              "min_interval": "15m",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 150,
+                    "color": "yellow"
+                  },
+                  {
+                    "value": 300,
+                    "color": "orange"
+                  },
+                  {
+                    "value": 600,
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "mean",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "area",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 4,
+          "type": "stat",
+          "title": "Deployments",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 18,
+            "y": 0,
+            "w": 6,
+            "h": 4
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT count() AS deployments",
+                "FROM demo.deployments",
+                "WHERE $__timeFilter(ts)"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "none",
+              "decimals": 0,
+              "color": {
+                "mode": "fixed",
+                "fixed": "purple"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last",
+              "fields": null,
+              "values": false
+            },
+            "color_mode": "value",
+            "graph_mode": "none",
+            "text_mode": "auto",
+            "orientation": "auto"
+          },
+          "links": []
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "p95 latency by service",
+          "description": "Blue marks are deployments. The red band is the incident of checkout in eu-west.",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 4,
+            "w": 16,
+            "h": 9
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "time_series",
+              "sql": [
+                "SELECT $__timeInterval(ts) AS t, service, quantile(0.95)(latency_ms) AS p95",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND host IN (${host})",
+                "GROUP BY t, service",
+                "ORDER BY t"
+              ],
+              "min_interval": "15m",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0,
+              "min": 0,
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "draw": "line",
+            "interpolation": "smooth",
+            "line_width": 2,
+            "fill_opacity": 8,
+            "show_points": "never",
+            "point_size": 5,
+            "span_nulls": false,
+            "stacking": "none",
+            "y_scale": "linear",
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "multi",
+              "sort": "desc"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 6,
+          "type": "barchart",
+          "title": "Server errors by service",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 16,
+            "y": 4,
+            "w": 8,
+            "h": 9
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT service, countIf(status >= 500) AS errors",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND host IN (${host})",
+                "GROUP BY service",
+                "ORDER BY errors DESC"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "fixed",
+                "fixed": "red"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "horizontal",
+            "x_field": "service",
+            "stacking": "none",
+            "show_values": "always",
+            "bar_width": 70,
+            "group_width": 70,
+            "x_tick_rotation": 0,
+            "legend": {
+              "show": false,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 7,
+          "type": "table",
+          "title": "Hosts",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 13,
+            "w": 16,
+            "h": 9
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT host, any(region) AS region, count() AS requests,",
+                "  round(countIf(status >= 500) * 100 / count(), 2) AS error_rate,",
+                "  round(quantile(0.95)(latency_ms)) AS p95",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND host IN (${host})",
+                "GROUP BY host",
+                "ORDER BY host"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "align": "auto"
+            },
+            "overrides": [
+              {
+                "match": {
+                  "by": "name",
+                  "value": "host"
+                },
+                "set": {
+                  "width": 110,
+                  "links": [
+                    {
+                      "title": "Server inventory",
+                      "url": "/d/servers?var-host=${__value.raw}",
+                      "target_blank": false
+                    }
+                  ]
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "requests"
+                },
+                "set": {
+                  "unit": "none",
+                  "decimals": 0,
+                  "align": "right",
+                  "color": {
+                    "mode": "fixed",
+                    "fixed": "blue"
+                  },
+                  "cell": {
+                    "type": "color_text",
+                    "mode": null
+                  }
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "error_rate"
+                },
+                "set": {
+                  "unit": "percent",
+                  "decimals": 2,
+                  "align": "right",
+                  "width": 130,
+                  "color": {
+                    "mode": "thresholds",
+                    "fixed": null
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 0.4,
+                        "color": "orange"
+                      },
+                      {
+                        "value": 1,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "cell": {
+                    "type": "color_background",
+                    "mode": "basic"
+                  },
+                  "display_name": "Error rate"
+                }
+              },
+              {
+                "match": {
+                  "by": "name",
+                  "value": "p95"
+                },
+                "set": {
+                  "unit": "ms",
+                  "decimals": 0,
+                  "min": 0,
+                  "max": 500,
+                  "color": {
+                    "mode": "thresholds",
+                    "fixed": null
+                  },
+                  "thresholds": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "value": null,
+                        "color": "green"
+                      },
+                      {
+                        "value": 150,
+                        "color": "yellow"
+                      },
+                      {
+                        "value": 300,
+                        "color": "orange"
+                      },
+                      {
+                        "value": 600,
+                        "color": "red"
+                      }
+                    ]
+                  },
+                  "cell": {
+                    "type": "gauge",
+                    "mode": "gradient"
+                  },
+                  "width": 200,
+                  "display_name": "p95 latency"
+                }
+              }
+            ]
+          },
+          "options": {
+            "show_header": true,
+            "sort": [
+              {
+                "field": "requests",
+                "desc": true
+              }
+            ]
+          },
+          "links": []
+        },
+        {
+          "id": 8,
+          "type": "piechart",
+          "title": "Traffic by region",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 16,
+            "y": 13,
+            "w": 8,
+            "h": 9
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT region, count() AS requests",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND host IN (${host})",
+                "GROUP BY region",
+                "ORDER BY region"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "short",
+              "decimals": 0,
+              "color": {
+                "mode": "palette",
+                "fixed": null
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "pie_type": "donut",
+            "reduce": {
+              "calc": "last",
+              "fields": "/^requests$/",
+              "values": true
+            },
+            "labels": [
+              "percent"
+            ],
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,5 @@
-//! The members that milestone F adds to format 2 (wave 1, in format 3 since wave 2) (gaps F01, F03, F04, F11, F12, F14, F20).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The members that the Grafana-parity work adds to format 2 (the first set, in format 3 since the second set) (gaps F01, F03, F04, F11, F12, F14, F20).
 //!
 //! Each member is optional. An absent member has its default value, and the canonical writer
 //! leaves out a member that has its default value. The base is `all_types.json`, which has none of

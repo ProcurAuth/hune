@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the variable table of 15.6 (I01) for the v1 form.
 
 mod common;

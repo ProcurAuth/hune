@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-07: colours, palette and thresholds (9.16).
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -91,7 +92,7 @@ test("FE-07 gradient of a cell: the light theme raises the lightness by 7 points
   assert.equal(gradientFrom("#F2495C", true), gradientFrom("#F2495C"), "the dark theme is the default");
 });
 
-// ---- The series palette of ClickHouse Dash (ID-K70, owner request of 2026-11-12) ----
+// ---- The series palette of ClickHouse Dash ----
 
 const TOKENS = readFileSync(new URL("../../web/css/vendor/chdash/00-tokens.css", import.meta.url), "utf8");
 const slotsOf = (css) => [...css.matchAll(/--qchart-(\d+|other): (#[0-9a-f]{6});/g)].map((m) => [m[1], m[2]]);
@@ -104,7 +105,7 @@ const panelOf = (name) => /--panel: (#[0-9a-f]{6});/.exec(tokenBlock(name))[1];
 const pageOf = (name) => /--bg: (#[0-9a-f]{6});/.exec(tokenBlock(name))[1];
 const ratio = (a, b) => (Math.max(relativeLuminance(a), relativeLuminance(b)) + 0.05) / (Math.min(relativeLuminance(a), relativeLuminance(b)) + 0.05);
 
-test("ID-K70 the series palette is the 18 tokens --qchart-1 to --qchart-18 of ClickHouse Dash, in both themes", () => {
+test("the series palette is the 18 tokens --qchart-1 to --qchart-18 of ClickHouse Dash, in both themes", () => {
   assert.equal(QCHART_COUNT, 18);
   for (const theme of ["dark", "light"]) {
     const slots = slotsOf(tokenBlock(theme));
@@ -115,7 +116,7 @@ test("ID-K70 the series palette is the 18 tokens --qchart-1 to --qchart-18 of Cl
   }
 });
 
-test("ID-K70 each colour of the series palette has 3:1 with the panel in both themes (and with the page)", () => {
+test("each colour of the series palette has 3:1 with the panel in both themes (and with the page)", () => {
   for (const theme of ["dark", "light"]) {
     const panel = panelOf(theme);
     const page = pageOf(theme);
@@ -127,7 +128,7 @@ test("ID-K70 each colour of the series palette has 3:1 with the panel in both th
   }
 });
 
-test("ID-K70 the mode palette gives slot i mod 18 in the theme of the context, negative gives other, a named colour stays", () => {
+test("the mode palette gives slot i mod 18 in the theme of the context, negative gives other, a named colour stays", () => {
   assert.equal(qchartColor(0), QCHART.dark[0]);
   assert.equal(qchartColor(17, false), QCHART.light[17]);
   assert.equal(qchartColor(18), QCHART.dark[0]);

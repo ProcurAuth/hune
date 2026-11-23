@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! UTC times with millisecond precision (5.2 `UtcMillis`). The text form is
 //! `YYYY-MM-DDTHH:MM:SS.mmmZ` (RFC 3339 in UTC with milliseconds, 6.2).
 //!

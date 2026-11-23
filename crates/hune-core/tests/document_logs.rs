@@ -1,4 +1,5 @@
-//! The panel type `logs` and the query format `logs` (4.33f, 4.15; decision ID-K326, item F33).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The panel type `logs` and the query format `logs` (4.33f, 4.15).
 //!
 //! Each option of the type is optional: an absent member has its default value, and the canonical writer leaves
 //! out a member with its default value. The format `logs` is permitted in a panel of the type `logs` only. A logs

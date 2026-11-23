@@ -1,4 +1,5 @@
-// The percent change and the text sizes of a stat (4.29, 9.19, 10.3h; wave H, item P11; vector set FE-82): the text, the arrow and the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The percent change and the text sizes of a stat (4.29, 9.19, 10.3h; vector set FE-82): the text, the arrow and the
 // colour of each change and each mode in both themes, and the sizes of `tileLayout`, against the measure of Grafana 12.4.2. Also the rows of
 // the option form (write rule, rules of display, the number fields).
 import test from "node:test";

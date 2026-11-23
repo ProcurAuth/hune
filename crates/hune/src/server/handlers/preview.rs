@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `POST /api/sources/{id}/preview` (6.22, 7.17): a draft panel or the options of a draft variable.
 //!
 //! The server checks the draft with section 4 and 7.18. It puts the draft in a document that has

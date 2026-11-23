@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `lexer_pg` (16.16, 7.20, 7.25).
 //!
 //! Property: for any text, the lexer of the dialect `postgres` does not panic. Its tokens cover the

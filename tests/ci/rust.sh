@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `rust` (16.17): format, lint and unit tests.
 # Use: tests/ci/rust.sh [--local]
 #   (default) runs cargo in the builder image of 17.2.

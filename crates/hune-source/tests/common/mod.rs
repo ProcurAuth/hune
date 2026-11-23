@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A fake ClickHouse HTTP server for the tests: it speaks enough HTTP/1.1 to test the client.
 //! Tests are not product code: they can use trait objects and the file system.
 #![allow(dead_code)]

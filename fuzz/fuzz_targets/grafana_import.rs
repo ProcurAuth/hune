@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `grafana_import` (16.16, section 15).
 //!
 //! The input is the text of a Grafana dashboard file. The target parses it as JSON, then runs the

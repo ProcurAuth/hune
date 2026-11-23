@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The properties P1 to P7 of the Markdown of the text panel and the 12 families of hostile texts (9.19b, 16.10a).
 // The tests and the fuzz tool share this file. It is not part of the page.
 import { checkUrl } from "../../web/js/links.js";

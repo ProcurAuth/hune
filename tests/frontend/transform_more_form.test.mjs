@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The forms of the eleven more transforms (10.3a, F28) on a fake DOM: add, edit, move, remove, the error of 4.37 and a hostile text.
 import test from "node:test";
 import assert from "node:assert/strict";

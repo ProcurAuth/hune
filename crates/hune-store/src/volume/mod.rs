@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The volume backend (5.9 to 5.22): dashboards as files in a directory tree.
 //!
 //! Only this module creates, writes, renames or removes files and directories (R4).

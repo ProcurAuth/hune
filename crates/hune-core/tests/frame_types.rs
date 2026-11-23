@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The mapping of ClickHouse type texts to kinds (7.16, first table).
 
 use hune_core::frame::{Kind, ValueForm, kind_of_type, map_type, strip_wrappers};

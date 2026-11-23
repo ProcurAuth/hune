@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The cases A39 to A45 of 16.8, and the other rules of section 11, with an in-process fake PDP.
 //! Each test name starts with its case id when it has one.
 
@@ -182,7 +183,7 @@ async fn a39_each_rule_of_the_token_has_its_reason() {
     // The pages and the files need a token and ask nothing.
     assert_eq!(rget(&h, "/", "user:alice").await.status, 200);
     assert_eq!(rget(&h, "/d/nodes/x", "user:alice").await.status, 200);
-    // A static file needs the token too, so no shared cache may keep it: `private` (decision ID-K315).
+    // A static file needs the token too, so no shared cache may keep it: `private`.
     let file = crate::web_assets::FILES.iter().find(|f| f.path.ends_with(".js")).expect("a js file in web/");
     let r = rget(&h, &format!("/static/{}/{}", crate::web_assets::BUILD_HASH, file.path), "user:alice").await;
     assert_eq!(r.status, 200);

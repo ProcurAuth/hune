@@ -1,4 +1,5 @@
-//! The panel type `gauge` of wave H, item P12 (decision ID-K326; 4.13, 4.33e): the classic gauge of Grafana 12.4.2.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The panel type `gauge` (P12) (4.13, 4.33e): the classic gauge of Grafana 12.4.2.
 //!
 //! The type is a new value of the enum `type` (4.42, rule 3). Its `options` has the member `reduce` (4.26) and nine optional members.
 //! An absent optional member has its default value, and the canonical writer leaves out a member that has its default value.

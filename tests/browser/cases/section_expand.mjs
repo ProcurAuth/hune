@@ -1,4 +1,5 @@
-// Browser case B210 (9.8, 10.2a rule 17): the charts of a section draw in the task that expands it (owner answer of 2026-11-22, ID-K325).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B210 (9.8, 10.2a rule 17): the charts of a section draw in the task that expands it.
 // A collapsed section is out of the layout, so the chart engine releases its canvases. Before the fix the charts drew again only in the
 // resize callback of the next rendering step: a task between the expand and that callback read blank canvases. The probe samples each frame
 // just after its paint (requestAnimationFrame, then a message), at the end of the task of each click on a section toggle (a click listener

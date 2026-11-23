@@ -1,4 +1,5 @@
-//! The rows of 15.6 for the variable kinds `interval` and `constant` (F27, ID-K267, A111 of 16.8): the forms v1,
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The rows of 15.6 for the variable kinds `interval` and `constant` (F27, A111 of 16.8): the forms v1,
 //! v2alpha1 and v2beta1.
 
 mod common;

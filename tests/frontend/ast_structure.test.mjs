@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-66 (10.3e, 10.3f): the structure functions of the query text: folds, bracketPartner, blockAt, and the model of the folded view.
 // The tree is never a security check: these tests only look at the structure.
 import test from "node:test";

@@ -10,7 +10,7 @@ The git dependencies `procurauth-pep` and `procurauth-core` use one full commit.
 
 | Item | Value |
 |---|---|
-| Repository | `https://github.com/SCcagg5/procurauth` |
+| Repository | `https://github.com/ProcurAuth/procurauth` |
 | Commit | `058563cfbc3536b9b850255d953568ef0a5cabbe` |
 | Runner | `access-conformance`, role `pep`, series U |
 | Cases | U01 to U110 |
@@ -36,7 +36,7 @@ The file `tests/conformance/expected.txt` is empty. The script exits with 0 only
 | U04, U19, U21, U22, U24, U32 to U35, U58, U62, U63, U67, U68 | 14 | No action declares a budget. |
 | U84 | 1 | The profile has no operation `use_service`. |
 
-The specification expects 61 passed cases and 49 skipped cases. The difference is the case U67. Its only step names the operation `use_budget`, and the runner skips it when no action declares a budget. The specification counts U67 as a case that runs. Section 11.32, section 16.12 and section 19.28 need a correction. The owner decides.
+The specification expects 61 passed cases and 49 skipped cases. The difference is the case U67. Its only step names the operation `use_budget`, and the runner skips it when no action declares a budget. The specification counts U67 as a case that runs. Section 11.32, section 16.12 and section 19.28 need a correction. This is an open question.
 
 ## The profile
 
@@ -50,7 +50,7 @@ The files of the run are in `tests/conformance/`.
 | `jwks.json` | The public keys of the test edge of ProcurAuth. |
 | `fixture/conf/conf-dash.json` | The fixture dashboard. It has one table panel (id 1) on the source `conf`. |
 | `init-conf.sql` | The table `analytics.conf_rows` with the rows 1 to 10. |
-| `expected.txt` | The failed cases that the owner accepts. It is empty. |
+| `expected.txt` | The failed cases that the project accepts. It is empty. |
 
 The profile has these operations.
 
@@ -66,7 +66,7 @@ The profile has no `use_budget`, no `use_service`, no `mcp` and no `approvals`. 
 
 Section 11.32 gives the request `GET /api/dashboards/conf-dash` for `use_plain`. This request asks two questions: `dashboard.read` for the use, and `dashboard.write` for the flag `access.write` (section 11.25). Cases such as U01 count the questions of the subject and expect one. With this request, 10 cases fail.
 
-The run uses `GET /api/dashboards/conf-dash?download=true`. Section 11.21 says that this request asks the same use question. It gives no flag, so it asks one question. The owner decides if section 11.32 follows the run or the run follows section 11.32.
+The run uses `GET /api/dashboards/conf-dash?download=true`. Section 11.21 says that this request asks the same use question. It gives no flag, so it asks one question. It is an open question if section 11.32 follows the run or the run follows section 11.32.
 
 ## How to run
 
@@ -79,7 +79,7 @@ The script needs Docker for ClickHouse.
 The script writes `target/conformance/report.txt`. The last line of the report gives the counts.
 
 The CI job `procurauth` runs the script. It runs on each change to `crates/hune/src/access/`, to the configuration code, to the conformance files, and before each release.
-The workflow `conformance.yml` calls it on GitHub. The owner can run it with `tests/ci/all.sh`, with no GitHub Actions. The script reads the pinned commit of the runner from the `rev` of `procurauth-pep` in `Cargo.toml`.
+The workflow `conformance.yml` calls it on GitHub. A maintainer can run it with `tests/ci/all.sh`, with no GitHub Actions. The script reads the pinned commit of the runner from the `rev` of `procurauth-pep` in `Cargo.toml`.
 
 ## What the cases show
 
@@ -101,4 +101,4 @@ The 60 cases that pass show these properties of Hune.
 
 ## A failed case
 
-A later commit of the runner can add cases. A case that fails MUST have a line in `expected.txt` with its reason. The owner approves each line. At the exit of M6, the list is empty.
+A later commit of the runner can add cases. A case that fails MUST have a line in `expected.txt` with its reason. A maintainer approves each line. At the exit of M6, the list is empty.

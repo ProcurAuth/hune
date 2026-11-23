@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The state that the handlers share: the configuration, the logger, the metrics, the shell,
 //! the stop phase, the health and the services of the store.
 

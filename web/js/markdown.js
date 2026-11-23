@@ -45,7 +45,7 @@ const URL_CHAR = /[\x21-\x3b\x3d-\x7e]/; // a character of an autolink: printabl
 const ind = (s) => /^ */.exec(s)[0].length;
 const blank = (s) => s.trim() === "";
 
-/** True for a destination of 9.19b: the check of 4.23 with case-sensitive prefixes (ID-K119), printable ASCII, 2,048 characters at most. */
+/** True for a destination of 9.19b: the check of 4.23 with case-sensitive prefixes, printable ASCII, 2,048 characters at most. */
 export function isSafeHref(url) {
   return typeof url === "string" && url.length > 0 && url.length <= MD_MAX_URL_BYTES && /^([/?#]|https?:\/\/)[\x21-\x7e]*$/.test(url) && checkUrl(url);
 }

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B201 (10.3h, F43): the option forms of `stat`, `bargauge` and `piechart`. For each control, the test changes it like a person does and
 // reads the draft (the member of the control, with a valid value) and the DOM of the preview (the proof that the picture changed).
 // The rows that a rule hides, the error of a bad pattern in "Fields", and the optional members that leave the draft are checked too.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Container tests of the PostgreSQL client of the source (16.9a: PS04, PS05, PS09, PS12 to PS15).
 //!
 //! The tests are `#[ignore]`. The script `tests/ci/pgsource.sh` starts a disposable PostgreSQL on

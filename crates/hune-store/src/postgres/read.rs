@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The read side of the PostgreSQL backend: `load`, `poll`, `get`, `history`, `version` and the
 //! probes (5.27, 5.30).
 

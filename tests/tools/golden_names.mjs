@@ -1,4 +1,5 @@
-// Generator of the golden files tests/golden/names/*.json (decision ID-K176, 7.19, 6.14).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Generator of the golden files tests/golden/names/*.json (7.19, 6.14).
 //
 // The files hold the names that the CURRENT scan of the page (web/js/sqlscan.js, `variableNamesOfLines`) finds for
 // each query text and each document of the repository. The Rust test crates/hune-core/tests/names_golden.rs checks

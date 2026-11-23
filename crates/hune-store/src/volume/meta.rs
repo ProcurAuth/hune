@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The history metadata file (5.11) and the names of the version files (5.9).
 
 use hune_core::time::UtcMillis;

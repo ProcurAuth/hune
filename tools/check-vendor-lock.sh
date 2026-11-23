@@ -1,18 +1,19 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Check the copied files against their locks (16.18, "Copied chart engine" and "Lexer vectors").
 # Use: tools/check-vendor-lock.sh [--chdash | --lexer | --mongodb]      (default: all three)
 #   --chdash: each file of web/js/vendor/chdash/ and web/css/vendor/chdash/ is in
 #             web/js/vendor/chdash/chdash.lock.json with its SHA-256 (9.24). The lock file itself is exempt.
 #             A file whose sha256 differs from upstream_sha256 holds a `// hune:` comment. Each relative
 #             import of a copied JavaScript file names a file of the lock. The reverse of vendor/chdash.patch,
-#             applied to the copies, gives the upstream hashes of the lock (ID-K300).
+#             applied to the copies, gives the upstream hashes of the lock.
 #   --chdash-update DIR: write vendor/chdash.patch and the sha256 values of the chart engine lock again. DIR is a
 #             ClickHouse Dash checkout. The tool reads each upstream file at the commit of the lock with
 #             `git show`, and it changes no file of DIR. A changed upstream hash is printed. The file list of the
 #             lock stays a manual edit. It is not part of the default checks. Run it after an edit of a copy,
 #             then read the patch and run --chdash.
 #   --lexer:  the SHA-256 of tests/fixtures/sql-lex-vectors.json equals its line in tests/images.lock.
-#   --mongodb: the local copy of the crate mongodb (ID-MG25, 8b.15). The lock vendor/mongodb.lock.json holds the
+#   --mongodb: the local copy of the crate mongodb (8b.15). The lock vendor/mongodb.lock.json holds the
 #             SHA-256 of each file of vendor/mongodb/. A file that is not in the lock, a file that the lock lists
 #             and the copy lacks, and a file with a changed hash are errors. Each changed Rust file holds a
 #             `// hune:` comment. The reverse of vendor/mongodb.patch, applied to the copy, gives the upstream
@@ -40,7 +41,7 @@ import difflib, hashlib, json, os, re, subprocess, sys
 MODE = sys.argv[1]
 UPSTREAM = sys.argv[2]
 LOCK = "web/js/vendor/chdash/chdash.lock.json"
-# The readable diff of the edits of the copies (9.24, ID-K300). It is outside web/: the build refuses a file of web/ with an
+# The readable diff of the edits of the copies (9.24). It is outside web/: the build refuses a file of web/ with an
 # extension that 9.3 does not list.
 PATCH = "vendor/chdash.patch"
 DIRS = ["web/js/vendor/chdash", "web/css/vendor/chdash"]
@@ -255,7 +256,7 @@ ORIGINAL_ARG = sys.argv[2]
 LOCK = "vendor/mongodb.lock.json"
 PATCH = "vendor/mongodb.patch"
 DIR = "vendor/mongodb"
-# Files that the copy adds to the original: the standard Apache-2.0 text of the repository (the package of
+# Files that the copy adds to the original: the standard Apache-2.0 text (the package of
 # the crate holds no licence file). A new file holds no `// hune:` comment, and the patch does not list it.
 ADDED_ALLOWED = {"LICENSE"}
 errors = []
@@ -435,8 +436,12 @@ for p in sorted(set(spec) & set(entries) & set(current)):
     if sha(old.encode()) != up:
         errors.append("%s: the reverse of the patch gives sha256 %s, the lock says upstream %s" % (p, sha(old.encode()), up))
 
-if os.path.isfile("LICENSE") and "LICENSE" in current and sha(current["LICENSE"]) != sha(open("LICENSE", "rb").read()):
-    errors.append("LICENSE of the copy is not the LICENSE of the repository")
+if os.path.isfile("LICENSE-APACHE") and "LICENSE" in current:
+    # LICENSE-APACHE has the notice of the project on line 190. The standard text has the template line.
+    repo_lines = open("LICENSE-APACHE", "rb").read().split(b"\n")
+    repo_lines[189] = b"   Copyright [yyyy] [name of copyright owner]"
+    if sha(current["LICENSE"]) != sha(b"\n".join(repo_lines)):
+        errors.append("LICENSE of the copy is not the standard Apache-2.0 text of LICENSE-APACHE")
 
 # 3 The wiring: the patch section of the two manifests and the two Cargo.lock files.
 for path, want in (("Cargo.toml", 'mongodb = { path = "vendor/mongodb" }'), ("fuzz/Cargo.toml", 'mongodb = { path = "../vendor/mongodb" }')):

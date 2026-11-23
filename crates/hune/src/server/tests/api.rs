@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The API cases of 16.8 that need the store and no ClickHouse. Each test name starts with its case id.
 
 use super::harness::*;

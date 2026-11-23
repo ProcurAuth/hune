@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the expansion (7.6 to 7.13): macros, placeholders, contexts, formats, refusals and P.
 
 use hune_core::sql::{

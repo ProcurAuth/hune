@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """Helper of the restore drill (16.14). The script tests/ci/restore-drill.sh calls it.
 
 Run it with `python3 -I`. It uses the standard library only. It has four commands:

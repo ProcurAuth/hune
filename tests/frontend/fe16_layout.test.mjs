@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-16: layout normalization (10.5).
 import test from "node:test";
 import assert from "node:assert/strict";

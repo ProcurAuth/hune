@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The Huffman codes of DEFLATE (RFC 1951, 3.2.2): code lengths with a length limit, and canonical codes.
 //!
 //! Each code that this module makes is complete: the Kraft sum of its lengths is exactly 1. Every inflater

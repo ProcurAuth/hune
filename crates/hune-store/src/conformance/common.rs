@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The common tests of 5.34. Each function is one test and gets a new empty store from the
 //! backend. A failed check panics with the id of the test.
 

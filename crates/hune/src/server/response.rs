@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The response type and its builders.
 
 use super::error::ApiError;

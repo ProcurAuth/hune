@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the client against a fake HTTP server: request, answer, errors, limits, pool, state.
 
 mod common;

@@ -1,4 +1,5 @@
-//! The attribution of a query (8a.11, ID-PG13).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The attribution of a query (8a.11).
 //!
 //! This module makes the block comment `/*hune {json}*/` that goes before the SQL, and the value
 //! `hune/<kind>/<query_id>` of `application_name` for the transaction.
@@ -209,7 +210,7 @@ mod tests {
 
     #[test]
     fn an_annotation_query_names_its_index_in_place_of_the_panel() {
-        // 8a.11: the kind `annotation` and the member `annotation` (decisions ID-K142 and ID-K333).
+        // 8a.11: the kind `annotation` and the member `annotation`.
         let mut l = panel(None);
         l.kind = LogKind::Annotation;
         l.panel = Some(7);

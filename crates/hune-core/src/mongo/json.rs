@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The strict JSON parser of the profile J (7.28, rules J1 to J6) for the text of an author query.
 //!
 //! The text is the SQL lines of a panel, joined with one LF between two lines. The parser needs no

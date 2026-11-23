@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Golden vectors of the kind `mongodb` (16.13): `tests/golden/pipeline-mongo/` and
 //! `tests/golden/expansion-mongo/`.
 //!

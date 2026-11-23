@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The verdict rule of the audit B153 (10.3h, rule 14, F43). It is a pure function: it reads the results of the probes and the closed list, and it
 // gives the list of failures. A front test (`tests/frontend/editor_audit_rule.test.mjs`) gives it synthetic results, one for each verdict.
 //

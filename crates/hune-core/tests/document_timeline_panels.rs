@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The panel types `state_timeline` and `status_history` (4.33b): the fixtures and their canonical form, the
 //! boundaries of the options, one refusal for each error, the rules of the legend and of the tooltip, and the
 //! refusal of an unknown type. The types join format 3 with no change of the version (4.42).

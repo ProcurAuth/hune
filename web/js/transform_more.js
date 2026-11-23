@@ -112,7 +112,7 @@ export const TITLES = {
   delta: "Delta", distinct_count: "Distinct Count", change_count: "Change Count",
 };
 
-// The doubles of a field for an arithmetic. A null cell counts as 0 and a `bool` as 0 or 1, as JavaScript does in Grafana (ID-K243).
+// The doubles of a field for an arithmetic. A null cell counts as 0 and a `bool` as 0 or 1, as JavaScript does in Grafana.
 function doubles(f, kind) {
   if (f.kind === "bool") return f.values.map((v) => (v ? 1 : 0));
   if (!isNum(f)) fail(kind, `the field ${f.name} is not a number`);

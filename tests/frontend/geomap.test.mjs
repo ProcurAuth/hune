@@ -1,4 +1,5 @@
-// FE-85 (9.19i, 4.33g, 13.13, decision ID-K328): the map panel. The grammar of the tile URL (the list that the Rust test of the configuration
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-85 (9.19i, 4.33g, 13.13): the map panel. The grammar of the tile URL (the list that the Rust test of the configuration
 // reads too), Web Mercator and its clamp, the tiles of a view and their cap, the URL of a tile, the queue of the requests, the cache, the rows
 // with no valid position, MAX_GEO_POINTS, the size of a marker, and a render with a fake DOM: hostile names stay text, and the tile requests
 // carry only z, x and y, with crossOrigin "anonymous" and referrerPolicy "no-referrer".

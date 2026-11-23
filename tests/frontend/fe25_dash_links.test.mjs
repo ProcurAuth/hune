@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-25: the URLs and the lists of the dashboard links (9.8a, F19).
 import test from "node:test";
 import assert from "node:assert/strict";

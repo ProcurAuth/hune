@@ -1,4 +1,5 @@
-//! The cancel request (8a.7, ID-PG9).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The cancel request (8a.7).
 //!
 //! A [`Canceller`] sends a CancelRequest on a new connection to the same host and port, with the
 //! same TLS rules as the session (the name check of `tls.server_name` included). It never calls

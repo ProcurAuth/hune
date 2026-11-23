@@ -21,7 +21,7 @@ export function parseFields(text) {
 /**
  * The rows "Show", "Calculation" and "Fields".
  * The row "Calculation" shows only while `reduce.values` is `false`: `values` = `true` gives one item for each row, with no reduction (4.26).
- * The row "Fields" is a text field with a pattern, not a select of names (decision ID-K290c).
+ * The row "Fields" is a text field with a pattern, not a select of names.
  */
 export function reduceRows() {
   return [

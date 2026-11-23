@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Typed values and their text forms (13.4, 13.20).
 
 /// A value that passed the check of its key.

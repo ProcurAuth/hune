@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // F15 (10.16): the pixel rules of drag.js. The values are measures of Grafana 12.4.2 on a grid of 1498 px (24 columns, 8 px gap, 30 px rows).
 import test from "node:test";
 import assert from "node:assert/strict";

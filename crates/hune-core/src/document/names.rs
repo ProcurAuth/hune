@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The variable names that the saved queries of a document name (6.14, 7.19).
 //!
 //! The server is the authority for these names. The page reads them in the answer of `GET /api/dashboards/{uid}`

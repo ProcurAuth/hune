@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B16, B17, B18 (16.10): the editor against the real server.
 import { readdirSync } from "node:fs";
 import { join } from "node:path";

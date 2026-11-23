@@ -1,4 +1,4 @@
-/* Hune: styles of panel-chart (time series, bar chart, xy chart). Owner: the charts worker.
+/* Hune: styles of panel-chart (time series, bar chart, xy chart).
    The copied chart engine (css/vendor/chdash/chart.css, js/vendor/chdash/app_chart_core.js) is edited only with marked
    `// hune:` blocks (9.24). This file changes its look with rules that name the tokens of tokens.css. The canvas
    reads --text, --muted, --panel and the series colours from the page when it draws, so a theme change draws it again
@@ -419,7 +419,7 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 .hbar__tipRow > span { color: var(--muted); }
 .hbar__tipRow > b { margin-left: auto; padding-left: var(--space-8); font-weight: var(--fw-medium); }
 
-/* ---- Right y axis (wave 2, F16; Grafana 12.4.2, paper 10.8 V2) -------------------------------------------------------- */
+/* ---- Right y axis (the second set, F16; Grafana 12.4.2, paper 10.8 V2) -------------------------------------------------------- */
 
 /* A list legend puts the items of the right scale after the others, at the right end of the row. */
 .panel__plot .chartCore__legendItem.is-right-first { margin-left: auto; }

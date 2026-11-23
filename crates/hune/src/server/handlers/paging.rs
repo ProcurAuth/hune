@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The cursors and the page rules of 6.24.
 
 use crate::server::error::ApiError;

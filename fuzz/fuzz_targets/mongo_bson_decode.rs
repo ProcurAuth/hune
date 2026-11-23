@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `mongo_bson_decode` (16.16, 8b.16, 7.28, 7.16c).
 //!
 //! The first byte of the input selects a reader, and the rest is its input.

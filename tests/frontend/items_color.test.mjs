@@ -1,4 +1,5 @@
-// The items of a stat, a bar gauge or a pie chart give the mode palette the place of the field (9.16, ID-K74), and a
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The items of a stat, a bar gauge or a pie chart give the mode palette the place of the field (9.16), and a
 // continuous colour mode the range of all number fields together.
 import test from "node:test";
 import assert from "node:assert/strict";

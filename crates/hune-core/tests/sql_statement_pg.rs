@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the PostgreSQL statement check (7.25, test PS-statement of 16.9a).
 //!
 //! The file has every example of the table of 7.25 and the bypass attempts: comments between

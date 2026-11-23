@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The fuzz tool of the syntax tree of the query editor (F42, job `nightly`). It runs the properties of ast_props.test.mjs on mutations of the corpus.
 // Use: node tools/ast_fuzz.mjs --target sql_ch|sql_pg|json|format [--seconds N] [--seed S] [--failures K] [--file PATH]
 //   --target   the parser to test: sql_ch (ClickHouse), sql_pg (PostgreSQL), json (the MongoDB pipeline), or format (the formatters).

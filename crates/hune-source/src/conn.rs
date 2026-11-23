@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Connections (8.6, 8.7): TCP, TLS with the configured CA, and the pool of idle connections.
 
 use std::io;

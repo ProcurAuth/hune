@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The annotation route (6.21a, 7.37): the stored query of one annotation gives time marks.
 //!
 //! The route has the same guarantees as a panel query. The body has no SQL. The server reads the SQL from the
@@ -47,7 +48,7 @@ fn not_found() -> ApiError {
     ApiError::not_found("No such annotation.")
 }
 
-/// Tells if an annotation can run on a source of this kind (4.5b, decisions ID-K142 and ID-K333). The match
+/// Tells if an annotation can run on a source of this kind (4.5b). The match
 /// has no default arm, so a kind that 8.2 adds later is not valid for an annotation until its own decision
 /// (8.14). The save (7.18) and the route (6.21a) use this function.
 pub(crate) fn annotation_kind(kind: SourceKind) -> bool {
@@ -95,7 +96,7 @@ pub async fn annotation_query(ctx: Ctx, req: Request) -> Result<Response, ApiErr
     let source_id = annotation.source.as_str();
     let cfg = block(&ctx.state, source_id)
         .ok_or_else(|| ApiError::not_found("The source of the annotation is not in the configuration."))?;
-    // The three kinds of 8.2 run annotations (decisions ID-K142 and ID-K333). The expansion and the source follow
+    // The three kinds of 8.2 run annotations. The expansion and the source follow
     // the kind: 7.5 to 7.13, 7.24 and 8a for `postgres`, 7.35 and 8b for `mongodb`.
     if !annotation_kind(cfg.kind) {
         return Err(ApiError::bad_request("An annotation cannot run on a source of this kind."));

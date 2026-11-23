@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The field configuration (4.17 to 4.23): defaults, overrides, properties, thresholds,
 //! colours, mappings and links. The rows are those of the field table of 15.6.
 
@@ -355,7 +356,7 @@ fn series_property(
         "axisLabel" if axis_type => axis_label(ctx, node, props),
         "axisSoftMin" | "axisSoftMax" if axis_type => soft_limit(ctx, name, node, props),
         "axisGridShow" if fcx.ptype == Pt::Barchart => axis_grid(ctx, node, props),
-        // Wave H, item P14 (4.18): the look of the y axis.
+        // Items P14 (4.18): the look of the y axis.
         "axisCenteredZero" | "axisBorderShow" | "axisWidth" | "axisColorMode" if axis_type => {
             axis_look(ctx, name, node, in_defaults, props)
         }
@@ -400,7 +401,7 @@ fn axis_label(ctx: &mut Ctx, node: &Node, props: &mut Props) {
     }
 }
 
-/// Maps `custom.axisGridShow` of a `barchart` (4.18, wave H item P03): `true` (On) and `false` (Off) map. `null`
+/// Maps `custom.axisGridShow` of a `barchart` (4.18): `true` (On) and `false` (Off) map. `null`
 /// is Auto, the state of an absent member: metadata.
 fn axis_grid(ctx: &mut Ctx, node: &Node, props: &mut Props) {
     match node.v.as_bool() {
@@ -413,7 +414,7 @@ fn axis_grid(ctx: &mut Ctx, node: &Node, props: &mut Props) {
     }
 }
 
-/// Maps `custom.axisCenteredZero`, `axisBorderShow`, `axisWidth` and `axisColorMode` (4.18, wave H item P14). The Grafana default in
+/// Maps `custom.axisCenteredZero`, `axisBorderShow`, `axisWidth` and `axisColorMode` (4.18). The Grafana default in
 /// `defaults` (`false`, `text`) and `null` are metadata; an override keeps an explicit value, so it can undo the defaults.
 fn axis_look(ctx: &mut Ctx, name: &str, node: &Node, in_defaults: bool, props: &mut Props) {
     if node.v.is_null() {
@@ -457,7 +458,7 @@ fn soft_limit(ctx: &mut Ctx, name: &str, node: &Node, props: &mut Props) {
     ctx.ok();
 }
 
-/// Maps `custom.lineStyle`: `fill` gives `line_dash` and `dash` gives `line_dash_array` (wave H, item P14). Grafana draws `[10, 10]` when
+/// Maps `custom.lineStyle`: `fill` gives `line_dash` and `dash` gives `line_dash_array` . Grafana draws `[10, 10]` when
 /// `dash` is absent, also for `dot` (whose default in Hune is `[0, 10]`), and draws dashes for a `dash` with no `fill`. An array that is not 1 to 8
 /// integers from 0 to 100 (one above 0) is `unsupported`, and the default of the fill stays.
 fn line_style(ctx: &mut Ctx, node: &Node, in_defaults: bool, props: &mut Props) {
@@ -711,7 +712,7 @@ fn bucket_custom(fcx: &FieldCx<'_>, ctx: &mut Ctx, name: &str, node: &Node, in_d
 /// A `false` or a `0` of a `custom` member that turns off a feature that Grafana has on by default (15.5). The rule
 /// of 15.5 does not make it metadata: the item gives the reason. The other values keep the rule of their row.
 fn turns_default_off(ptype: Pt, name: &str, value: &Value) -> Option<&'static str> {
-    // A `barchart` maps `axisGridShow`, `fillOpacity` and `lineWidth` (4.18, 4.30: wave H, item P03).
+    // A `barchart` maps `axisGridShow`, `fillOpacity` and `lineWidth` (4.18, 4.30: the later options, item P03).
     let axes = matches!(ptype, Pt::Timeseries | Pt::Histogram | Pt::Xychart);
     match name {
         "axisGridShow" if axes && value == &Value::Bool(false) => {
@@ -735,7 +736,7 @@ fn series_default(name: &str, value: &Value) -> bool {
     table.iter().any(|(n, d)| *n == name && d == value)
 }
 
-/// The member `log` of `custom.scaleDistribution` (15.6). The bases 10 and 2 have an equal (`log_base`, wave H item P14): the base 2 of a log
+/// The member `log` of `custom.scaleDistribution` (15.6). The bases 10 and 2 have an equal (`log_base`): the base 2 of a log
 /// scale goes to the options. A `log` of a linear scale is metadata. Another base is an unsupported value.
 fn log_base<'a>(ctx: &mut Ctx, w: &mut Walk<'a>, customs: &mut Customs<'a>) {
     let Some(base) = w.take("log") else { return };
@@ -766,7 +767,7 @@ fn point_size_range(ctx: &mut Ctx, w: &mut Walk<'_>) {
 }
 
 /// Tells if a `custom` member has the Grafana default of 15.5. The pointer test fits both forms. The members
-/// `fillOpacity` and `lineWidth` of a bar chart are options of 4.30 (wave H, item P03), so they do not come here.
+/// `fillOpacity` and `lineWidth` of a bar chart are options of 4.30 , so they do not come here.
 fn custom_default(_ptype: Pt, key: &str, node: &Node) -> bool {
     crate::item::is_grafana_default(&format!("/fieldConfig/defaults/{}", key.replace('.', "/")), node.v)
 }

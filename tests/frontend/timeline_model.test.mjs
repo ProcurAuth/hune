@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-31, FE-32 and FE-34 (9.19c): the states, the segments, the cells, the geometry, the caps, the duration text and the legend.
 import test from "node:test";
 import assert from "node:assert/strict";

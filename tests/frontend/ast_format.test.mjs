@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The formatter of the query editor (F42): the vectors of the three dialects, the token property, idempotence, the range mode, the refusals and the time.
 import test from "node:test";
 import assert from "node:assert/strict";

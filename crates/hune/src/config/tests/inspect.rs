@@ -1,4 +1,5 @@
-//! Tests of the key `server.query_inspect` (13.8, D8 of ID-87): the only key with a default.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Tests of the key `server.query_inspect` (13.8): the only key with a default.
 
 use super::*;
 

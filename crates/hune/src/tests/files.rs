@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! File writes for unit tests: thin wrappers of `std::fs`.
 
 use std::path::Path;

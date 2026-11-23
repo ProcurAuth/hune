@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The session member `transform_max_cells` (6.10) for the front tests. The page keeps no copy of the cap of the cells: it reads
 // `app.session` (9.21a, rule 13). This helper gives the session the default of the key `server.transform_max_cells`, read from the
 // key table of the server (crates/hune/src/config/keys.rs), so the tests and the server share one source.

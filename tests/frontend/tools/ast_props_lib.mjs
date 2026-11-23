@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The shared part of the property tests and of the fuzz tool of the syntax tree of the query editor (F42).
 // It holds the corpus loader, the seeded random source, the mutations and the checks of the properties.
 // A check returns a list of faults. An empty list means that the property holds. A check never throws:

@@ -1,4 +1,4 @@
-// The option table of the type `heatmap` (10.3h, F43; 4.33c, 9.19e). Owner: the worker of group C. The page does not draw this type yet: the
+// The option table of the type `heatmap` (10.3h, F43; 4.33c, 9.19e). The page does not draw this type yet: the
 // table is data, and the pure rules (the grammar of the buckets, the writes of a mode and of a scale) are tested in Node (FE-78).
 // The hooks are those of F31 (`heat-*`). The rows "Exponent", "Color" and "Scale" write members that the format needs in each mode.
 

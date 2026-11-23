@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The queries of a panel in the draft (10.3): add, delete, rename, hide, and the dialogs' rules (4.15a).
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The logger of `serve` (14.6, 14.7).
 //!
 //! The logger writes one JSON object for each line on the standard output. Each line starts with

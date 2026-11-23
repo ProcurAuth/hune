@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The check of `SHOW GRANTS` of 8.11 and 8.12.
 
 /// Finds the byte positions of `pat` that are outside quotes and outside parentheses.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B72 to B79 and B87 to B89 (10.2a): the states of the page and their transitions.
 // B72 panel editor from a panel view. B73 panel editor from the dashboard. B74 panel view. B75 dashboard edit. B76 Back and Forward.
 // B77 reload. B78 deep links (the vectors FE-26). B79 rights. B87 leave warnings. B88 entry redirect and states. B89 a walk of events.
@@ -367,7 +368,7 @@ export const cases = [
       const p = await openPage(t, t.dash(uid));
       await ready(p);
       // The walk by controls, with no leave: each step pushes an entry. V, PV, V (the crumb of the dashboard), E, PE, JSON, settings, history.
-      // The crumb of the dashboard in the panel editor is a leave (a pop, ID-K178), so the walk reaches E from the view.
+      // The crumb of the dashboard in the panel editor is a leave (a pop), so the walk reaches E from the view.
       const steps = [
         () => panelMenuItem(p, 2, "view"),
         () => p.eval(`(() => { const links = [...document.querySelectorAll(".crumbs a.crumbs__item--link")]; links[links.length - 1].click(); })()`),

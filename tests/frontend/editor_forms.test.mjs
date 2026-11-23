@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The rules and the data of the forms (10.3a, 10.3b): grammars, limits, new items, lists, variables. Each new item uses members of section 4 only.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -363,7 +364,7 @@ test("a new annotation has the colour red, is enabled and draws on all the time 
   assert.equal(LIMITS.annotations, 8);
 });
 
-test("the editor offers the ClickHouse, PostgreSQL and MongoDB sources, and no other kind (ID-K142, ID-K333)", () => {
+test("the editor offers the ClickHouse, PostgreSQL and MongoDB sources, and no other kind", () => {
   const list = [{ id: "a", kind: "clickhouse" }, { id: "b", kind: "postgres" }, { id: "c", kind: "mongodb" }, { id: "d", kind: "clickhouse" }, { id: "e", kind: "prometheus" }, { id: "f" }];
   assert.deepEqual(annotationSources(list).map((s) => s.id), ["a", "b", "c", "d"]);
 });

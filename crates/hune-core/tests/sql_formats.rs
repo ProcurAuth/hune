@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the variable formats that are valid only inside a string literal (7.9, 7.11, D7).
 //!
 //! The injection cases: a hostile value goes through each format inside a string, and the string

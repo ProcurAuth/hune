@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Print the differences between the copy of the ClickHouse Dash chart engine and an upstream checkout (9.24).
 # Use: tools/update-chdash.sh UPSTREAM_CHECKOUT
 # This tool is read-only: it changes no file of the repository and no file of the checkout.
@@ -6,7 +7,7 @@
 # diff between the copy in web/ and the upstream file at the path upstream_path. It also says when the
 # commit of the checkout differs from the commit of the lock. Update the copy by hand, then the lock.
 # The copies hold the marked edits E1 to E21 (docs/engine-patches.md), with the removals of the code
-# that Hune never calls (E17 to E21, ID-K300). vendor/chdash.patch holds them as one diff. An update applies it again:
+# that Hune never calls (E17 to E21). vendor/chdash.patch holds them as one diff. An update applies it again:
 #   1. Copy each upstream file of the lock at the new commit over its copy. Write the new commit and tag in the lock.
 #   2. Run: patch -p1 -d web < vendor/chdash.patch. Do each rejected hunk by hand with docs/engine-patches.md.
 #   3. Look for new upstream calls of the removed code. A new call changes the removal or cancels it.

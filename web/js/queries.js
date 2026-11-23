@@ -5,7 +5,7 @@ import { checkShape } from "./transform_more.js";
 /** The queries of one panel at most (4.35). The document validation checks it: the page only reads it. */
 export const MAX_QUERIES_PER_PANEL = 8;
 
-/** The rows that the frames of one panel have at most for a join (9.22a, rule 8, decision ID-K167). */
+/** The rows that the frames of one panel have at most for a join (9.22a, rule 8). */
 export const MAX_JOIN_ROWS = 200000;
 
 // The panel types that join their frames on time. The other types that take several frames collect them (9.22a, rule 4).

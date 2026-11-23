@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The fuzz tool of the Markdown of the text panel (16.10a, job `nightly`). It runs the properties P1 to P7 on random texts.
 // Usage: node tests/frontend/tools/markdown_fuzz.mjs [seed] [count] [seconds]
 // The seed and the count come from the arguments. A third argument gives a time in seconds: the tool then runs again with the next seed

@@ -1,4 +1,5 @@
-// Browser cases B190 to B199 (4.10a, 4.10b, 7.4a, 7.7, 9.5, 9.10, 9.13, 10.3b, 15.6): the variable kinds `interval` and `constant` (F27, decisions ID-K260 to ID-K270).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B190 to B199 (4.10a, 4.10b, 7.4a, 7.7, 9.5, 9.10, 9.13, 10.3b, 15.6): the variable kinds `interval` and `constant` (F27).
 // B190: an interval control (the options with "Auto" first, a choice, the URL, the keys, a reload).
 // B191: "Auto" in the SQL of two panels: the text follows the time range and is the same for both panels.
 // B192: an interval with a placement (the control is in the grid, the bar does not show it).

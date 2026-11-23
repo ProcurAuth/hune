@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The automatic y axis of the time series panel (9.19): the Grafana range rule.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -88,7 +89,7 @@ test("tickLabel writes the least digits of a tick, with no trailing zero", () =>
 test("barAxis draws the bars from 0 with room above the highest value", async () => {
   const { barAxis } = await import("../../web/js/panels/barchart_h.js");
   // The stream dashboard, panel 6: 19549 is the highest value. The axis ends 10 % above it (21503.9), where the room ends,
-  // and the last tick is the last multiple of the step inside it (Grafana, wave G).
+  // and the last tick is the last multiple of the step inside it (Grafana).
   const a = barAxis([19549, 4358, 8936], 1400);
   assert.equal(a.min, 0);
   assert.ok(Math.abs(a.max - 19549 * 1.1) < 1e-6);
@@ -103,14 +104,14 @@ test("barAxis draws the bars from 0 with room above the highest value", async ()
   assert.deepEqual([d.min, d.max], [0, 1]);
 });
 
-test("yTickSpace is 30 px, or 15 px on a plot of 150 px or less (Grafana 12.4.2 calculateSpace, decision ID-K311)", () => {
+test("yTickSpace is 30 px, or 15 px on a plot of 150 px or less (Grafana 12.4.2 calculateSpace)", () => {
   assert.deepEqual([19, 57, 150, 151, 171, 817, 1207].map(yTickSpace), [15, 15, 15, 30, 30, 30, 30]);
   // The steps that Grafana chose for the data 16.7 to 74.8 (range 10 to 80): 10 at a plot of 227 and 327 px, 5 at 467 and 607, 2.5 at 907.
   const steps = [134, 227, 327, 467, 607, 907].map((h) => autoYAxis(16.7, 74.8, h, yTickSpace(h)).step);
   assert.deepEqual(steps, [10, 10, 10, 5, 5, 2.5]);
 });
 
-test("the y steps of a time series are those that Grafana 12.4.2 drew on the panels of h 4 to 24 (measure of 2026-11-16, decision ID-K311)", () => {
+test("the y steps of a time series are those that Grafana 12.4.2 drew on the panels of h 4 to 24 (measure of 2026-11-16)", () => {
   // The data of the panels: 61 values sin(n / 6) * a + b. The plot heights of both products for h 4, 5, 6, 7, 8, 10, 12, 16, 20 and 24.
   const data = (a, b) => Array.from({ length: 61 }, (_, n) => Math.sin(n / 6) * a + b);
   const plots = [57, 95, 133, 171, 209, 285, 361, 513, 665, 817];

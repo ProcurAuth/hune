@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The error model of the API: the closed code table of 6.8 and the error body of 6.7.
 
 use http::StatusCode;

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """Tests of tools/parity/to_grafana.py (Hune document, format 2, to Grafana classic JSON).
 
 Use: python3 -I tests/tools/test_to_grafana.py -v
@@ -702,7 +703,7 @@ class RoundTrip(unittest.TestCase):
     def test_annotations(self):
         """The importer reads back the annotations that the converter writes (4.5b, 15.6): the same members.
 
-        It lists two items for each annotation: `hide` equal to `false` (ID-K157) and the warning that it
+        It lists two items for each annotation: `hide` equal to `false` and the warning that it
         runs no query on the SQL (7.37). Nothing else.
         """
         # The fixture `annotations.json` is not here: its `panels` names a stat and a table, which the importer
@@ -1291,7 +1292,7 @@ class Annotations(unittest.TestCase):
 
 
 class StatPercentChange(unittest.TestCase):
-    """The percent change and the text sizes of a stat (4.29; wave H, item P11) get the names of Grafana 12.4.2."""
+    """The percent change and the text sizes of a stat (4.29) get the names of Grafana 12.4.2."""
 
     BASE = {"reduce": {"calc": "last_not_null", "fields": None, "values": False}, "color_mode": "value", "graph_mode": "none", "text_mode": "auto", "orientation": "auto"}
 

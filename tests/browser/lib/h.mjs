@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Small helpers shared by the cases.
 
 /** `{ "1": "ready", ... }` from the `data-state` of each panel frame. */

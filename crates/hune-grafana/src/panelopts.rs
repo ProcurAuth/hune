@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The panel types and their options (4.26 to 4.33b), with the value tables of 15.6.
 
 use hune_core::document::{PatternForm, check_pattern};
@@ -687,7 +688,7 @@ fn timeseries_options(ctx: &mut Ctx, options: Option<Node>, customs: &Customs) -
     let fill = int_opt(ctx, custom(customs, "fillOpacity"), 0, 100, 0);
     let points = enum_opt(ctx, custom(customs, "showPoints"), &same(&["auto", "always", "never"]), "auto");
     let size = int_opt(ctx, custom(customs, "pointSize"), 1, 40, 5);
-    // `spanNulls` as a number of ms is `span_nulls_ms` (wave H, item P14). 0 and below join no run (Grafana); a threshold above the cap joins
+    // `spanNulls` as a number of ms is `span_nulls_ms` . 0 and below join no run (Grafana); a threshold above the cap joins
     // each run, as `true` does. Grafana compares `gap < ms`, so a fraction rounds up for the times in whole ms.
     let mut span_ms = None;
     let span = match custom(customs, "spanNulls") {
@@ -723,7 +724,7 @@ fn timeseries_options(ctx: &mut Ctx, options: Option<Node>, customs: &Customs) -
         ("tooltip", tooltip(ctx, tooltip_node)),
     ];
     thresholds_style(ctx, customs, &mut members);
-    // The optional members of wave H, items P10 and P14 (4.28).
+    // The optional members (P10 and P14) (4.28).
     gradient_mode(ctx, customs, &mut members);
     if log2 {
         members.push(("log_base", Out::Int(2)));
@@ -743,7 +744,7 @@ fn timeseries_options(ctx: &mut Ctx, options: Option<Node>, customs: &Customs) -
     Out::members(members)
 }
 
-/// The value of `custom.gradientMode` as the option `gradient_mode` (4.28, 4.30; wave H, item P10). `null` is the default `none`.
+/// The value of `custom.gradientMode` as the option `gradient_mode` (4.28, 4.30). `null` is the default `none`.
 fn gradient_mode(ctx: &mut Ctx, customs: &Customs, members: &mut Vec<(&'static str, Out)>) {
     if let Some(n) = custom(customs, "gradientMode").filter(|n| !n.is_null()) {
         members.push(("gradient_mode", enum_opt(ctx, Some(n), &same(&["none", "opacity", "hue", "scheme"]), "none")));
@@ -822,7 +823,7 @@ fn barchart_options(ctx: &mut Ctx, options: Option<Node>, customs: &Customs) -> 
     let legend_node = w.take("legend");
     let tooltip_node = w.take("tooltip");
     w.finish(ctx);
-    // `auto` has its equal (4.30, wave H item P03). An absent orientation is `auto`, the default of the Grafana panel.
+    // `auto` has its equal (4.30). An absent orientation is `auto`, the default of the Grafana panel.
     let mut members = vec![
         ("orientation", enum_opt(ctx, orient.as_ref(), &same(&["vertical", "horizontal", "auto"]), "auto")),
         ("x_field", text_or_null(ctx, x_field.as_ref())),

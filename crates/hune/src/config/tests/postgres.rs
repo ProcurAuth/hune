@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Case K16 of 16.5: the block `postgres "<id>"` (13.12a), the contradictions C14 to C20, the
 //! warning W7, the output of `print-config` and the reference document.
 //!

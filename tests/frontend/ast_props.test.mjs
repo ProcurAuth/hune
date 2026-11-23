@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The property tests of the syntax tree of the query editor (F42): parseSql (two dialects), parseJson and the formatter.
 // The inputs are the shared corpus in tests/fixtures/ast/ (the real queries of the repository and the hostile cases)
 // and seeded random mutations of it. The seeds are fixed, so a failure repeats. The tree is never a security check:

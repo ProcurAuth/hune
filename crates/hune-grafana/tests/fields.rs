@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the field table, the matchers, the mapping rules and the transformation table of 15.6 (I01).
 
 mod common;
@@ -40,7 +41,7 @@ fn simple_properties() {
         no_items(&r);
         assert_eq!(set["unit"], u);
     }
-    // The units that milestone F adds (F11).
+    // The units that the Grafana-parity work adds (F11).
     for u in [
         "ns",
         "\u{b5}s",
@@ -68,7 +69,7 @@ fn simple_properties() {
         no_items(&r);
         assert_eq!(set["unit"], u);
     }
-    // The units that wave H adds (P01).
+    // The units that the later options adds (P01).
     for u in [
         "string",
         "bool",
@@ -246,7 +247,7 @@ fn table_wrap_text() {
     assert_eq!(r.items.len(), 1);
 }
 
-/// P09 (wave H): `custom.inspect` gives the property `inspect` of a table (4.18, 15.6).
+/// P09: `custom.inspect` gives the property `inspect` of a table (4.18, 15.6).
 #[test]
 fn table_cell_inspect() {
     let (r, set) = set_of(json!({"custom": {"inspect": true}}));
@@ -328,7 +329,7 @@ fn old_table_footer() {
         json!({"showHeader": true, "footer": {"show": false, "reducer": ["sum"], "fields": "", "countRows": false}});
     let r = run_plain(&dash(vec![p], vec![]));
     assert!(r.items.is_empty(), "{:#?}", r.items);
-    // A footer that is shown moves to the property `footer`, as Grafana 12 moves it (P06, wave H).
+    // A footer that is shown moves to the property `footer`, as Grafana 12 moves it (P06, the later options).
     let mut p = panel(1, "table", 0);
     p["options"] = json!({"footer": {"show": true, "reducer": ["sum"], "fields": ""}});
     let r = run_plain(&dash(vec![p], vec![]));
@@ -960,7 +961,7 @@ fn custom_members_with_grafana_defaults_are_metadata() {
     let (r, _) = defaults_of("timeseries", defaults);
     no_items(&r);
     assert!(r.metadata > 0);
-    // A non-default value keeps its item. `axisColorMode` and `gradientMode` map since wave H (items P10 and P14).
+    // A non-default value keeps its item. `axisColorMode` and `gradientMode` map since the later options (items P10 and P14).
     for (member, value) in [("barWidthFactor", json!(0.8)), ("insertNulls", json!(60000))] {
         let (r, _) = defaults_of("timeseries", json!({"custom": {member: value}}));
         assert_eq!(r.items.len(), 1, "{member}");
@@ -978,7 +979,7 @@ fn custom_members_with_grafana_defaults_are_metadata() {
     no_items(&r);
     let (r, _) = defaults_of("barchart", json!({"custom": {"fillOpacity": 50}}));
     no_items(&r);
-    // In an override the member is not a default of the panel: it keeps its item. (`axisColorMode` maps since wave H, item P14.)
+    // In an override the member is not a default of the panel: it keeps its item. (`axisColorMode` maps since the later options, item P14.)
     let mut p = panel(1, "timeseries", 0);
     p["fieldConfig"] = json!({"defaults": {}, "overrides": [
         {"matcher": {"id": "byName", "options": "a"}, "properties": [{"id": "custom.barWidthFactor", "value": 0.6}]}]});
@@ -1002,8 +1003,8 @@ fn options_with_grafana_defaults_are_metadata() {
         json!({"tooltip": {"mode": "multi", "sort": "none"}, "annotations": {"clustering": -1, "multiLane": false}});
     let r = run_plain(&dash(vec![p], vec![]));
     assert!(r.items.is_empty(), "{:#?}", r.items);
-    // Another value stays an item. `wideLayout` = `false` turns a Grafana default off: an item too (P04, wave H).
-    // `percentChangeColorMode` = `inverted` maps to a member since wave H, item P11 (4.29): no item.
+    // Another value stays an item. `wideLayout` = `false` turns a Grafana default off: an item too (P04, the later options).
+    // `percentChangeColorMode` = `inverted` maps to a member since the later options, item P11 (4.29): no item.
     let mut p = panel(1, "stat", 0);
     p["options"] = json!({"justifyMode": "auto", "percentChangeColorMode": "inverted", "wideLayout": false});
     let r = run_plain(&dash(vec![p], vec![]));
@@ -1045,7 +1046,7 @@ fn panel_with_options(ptype: &str, options: Value) -> Value {
     p
 }
 
-/// P01 (wave H): the unit overrides of the ClickHouse plugin examples (measure M2 of wave H): `string` on the column
+/// P01: the unit overrides of the ClickHouse plugin examples (measure M2 of the later options): `string` on the column
 /// "Version" of a stat, and `bool` on the columns "Is completed" and "Mutation" of a table. They map as they are, with no item.
 #[test]
 fn unit_overrides_of_the_plugin_examples() {

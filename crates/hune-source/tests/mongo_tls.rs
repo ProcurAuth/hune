@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The trust of the MongoDB driver (8b.4, case MS10): the CA file of the block is the only trust root.
 //!
 //! The tests need no MongoDB server. A server that only speaks TLS stands in: it accepts a connection, ends the

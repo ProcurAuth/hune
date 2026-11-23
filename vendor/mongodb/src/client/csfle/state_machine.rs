@@ -381,7 +381,7 @@ impl CryptExecutor {
 
                                     let http_client = HttpClient::default();
                                     // hune: the original reads GCE_METADATA_HOST. Hune reads
-                                    // no environment variable (ID-MG25): the host is the default.
+                                    // no environment variable: the host is the default.
                                     let host = "metadata.google.internal".to_string();
                                     let uri = format!(
                                         "http://{host}/computeMetadata/v1/instance/service-accounts/default/token"

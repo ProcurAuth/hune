@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Hune store. It holds the `Store` trait (5.3), the volume backend (5.9 to 5.22) and the
 //! catalog (5.8). It also holds the PostgreSQL backend (5.23 to 5.32), `copy_store` (5.37) and
 //! the conformance suite (5.33 to 5.36, feature `conformance`).

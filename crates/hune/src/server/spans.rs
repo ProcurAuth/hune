@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The SERVER span of a request of `server.listen` (14.10).
 //!
 //! The span has the name `<METHOD> <route template>`. It is a child of a valid incoming

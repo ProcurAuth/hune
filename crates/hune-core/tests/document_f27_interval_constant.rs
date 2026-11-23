@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The variable kinds `interval` and `constant` in the document (F27, 4.7, 4.10a, 4.10b, 4.34, 4.35, 4.38, 4.42):
 //! the fixture with its golden canonical form, one refusal for each error, the bounds and the closed schema.
 
@@ -282,7 +283,7 @@ fn the_members_of_another_kind_are_unknown_members() {
 
 #[test]
 fn the_kinds_are_new_values_of_format_3() {
-    // The fixture says `format_version` 3, and there is no format 4 (decision ID-K260).
+    // The fixture says `format_version` 3, and there is no format 4.
     assert_eq!(base()["format_version"], json!(3));
     let mut v = base();
     v["format_version"] = json!(4);

@@ -1,0 +1,370 @@
+{
+  "format_version": 3,
+  "uid": "latency",
+  "title": "Latency",
+  "description": "Latency distribution, service health and logs.",
+  "tags": [
+    "demo",
+    "latency"
+  ],
+  "time": {
+    "from": "now-12h",
+    "to": "now",
+    "timezone": "utc",
+    "refresh": null
+  },
+  "cursor_sync": "crosshair",
+  "links": [],
+  "variables": [
+    {
+      "kind": "query",
+      "name": "service",
+      "label": "Service",
+      "hide": "none",
+      "source": "demo",
+      "sql": [
+        "SELECT DISTINCT service",
+        "FROM demo.requests",
+        "WHERE $__timeFilter(ts)",
+        "ORDER BY service"
+      ],
+      "multi": false,
+      "include_all": false,
+      "all_value": null,
+      "refresh": "time_change",
+      "sort": "alpha_asc",
+      "regex": null,
+      "default": [
+        "checkout"
+      ]
+    }
+  ],
+  "sections": [
+    {
+      "title": null,
+      "collapsed": false,
+      "panels": [
+        {
+          "id": 1,
+          "type": "gauge",
+          "title": "p95 latency by service",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT service, quantile(0.95)(latency_ms) AS p95",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts)",
+                "GROUP BY service",
+                "ORDER BY service"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0,
+              "min": 0,
+              "max": 600,
+              "color": {
+                "mode": "thresholds",
+                "fixed": null
+              },
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "value": null,
+                    "color": "green"
+                  },
+                  {
+                    "value": 150,
+                    "color": "yellow"
+                  },
+                  {
+                    "value": 300,
+                    "color": "orange"
+                  },
+                  {
+                    "value": 600,
+                    "color": "red"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "reduce": {
+              "calc": "last",
+              "fields": "/^p95$/",
+              "values": true
+            },
+            "orientation": "auto",
+            "show_threshold_markers": true
+          },
+          "links": []
+        },
+        {
+          "id": 2,
+          "type": "heatmap",
+          "title": "Latency distribution of ${service}",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 0,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT ts AS time, latency_ms",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND service = '${service}'"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0
+            },
+            "overrides": []
+          },
+          "options": {
+            "calculate": true,
+            "x_buckets": {
+              "mode": "count",
+              "value": 60
+            },
+            "y_buckets": {
+              "mode": "size",
+              "value": 2,
+              "scale": "log2"
+            },
+            "y_axis": "left",
+            "y_reverse": false,
+            "y_min": null,
+            "y_max": null,
+            "color": {
+              "mode": "scheme",
+              "scheme": "spectral",
+              "fill": "dark-orange",
+              "scale": "exponential",
+              "exponent": 0.5,
+              "steps": 64,
+              "reverse": false,
+              "min": null,
+              "max": null
+            },
+            "cell_gap": 1,
+            "hide_le": 0,
+            "hide_ge": null,
+            "show_legend": true,
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 3,
+          "type": "histogram",
+          "title": "Latency histogram of ${service}",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT latency_ms",
+                "FROM demo.requests",
+                "WHERE $__timeFilter(ts) AND service = '${service}' AND latency_ms < 1000"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "unit": "ms",
+              "decimals": 0,
+              "color": {
+                "mode": "fixed",
+                "fixed": "orange"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "bucket_count": 45,
+            "bucket_size": null,
+            "bucket_offset": 0,
+            "combine": false,
+            "stacking": "none",
+            "line_width": 1,
+            "fill_opacity": 70,
+            "legend": {
+              "show": false,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 4,
+          "type": "state_timeline",
+          "title": "Health of each service (error rate per 15 minutes)",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 12,
+            "y": 8,
+            "w": 12,
+            "h": 8
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "table",
+              "sql": [
+                "SELECT time,",
+                "  maxIf(state, service = 'auth') AS auth,",
+                "  maxIf(state, service = 'catalog') AS catalog,",
+                "  maxIf(state, service = 'checkout') AS checkout,",
+                "  maxIf(state, service = 'payments') AS payments,",
+                "  maxIf(state, service = 'search') AS search",
+                "FROM (",
+                "  SELECT $__timeInterval(ts) AS time, service,",
+                "    multiIf(countIf(status >= 500) * 100 / count() >= 5, 2, countIf(status >= 500) * 100 / count() >= 1.5, 1, 0) AS state",
+                "  FROM demo.requests",
+                "  WHERE $__timeFilter(ts)",
+                "  GROUP BY time, service",
+                ")",
+                "GROUP BY time",
+                "ORDER BY time"
+              ],
+              "min_interval": "15m",
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {
+              "mappings": [
+                {
+                  "kind": "value",
+                  "value": "0",
+                  "text": "OK",
+                  "color": "green"
+                },
+                {
+                  "kind": "value",
+                  "value": "1",
+                  "text": "Degraded",
+                  "color": "yellow"
+                },
+                {
+                  "kind": "value",
+                  "value": "2",
+                  "text": "Failing",
+                  "color": "red"
+                }
+              ]
+            },
+            "overrides": []
+          },
+          "options": {
+            "merge_values": true,
+            "show_values": "never",
+            "align_values": "left",
+            "row_height": 80,
+            "line_width": 0,
+            "fill_opacity": 75,
+            "span_nulls": false,
+            "show_labels": true,
+            "legend": {
+              "show": true,
+              "placement": "bottom",
+              "mode": "list",
+              "values": []
+            },
+            "tooltip": {
+              "mode": "single"
+            }
+          },
+          "links": []
+        },
+        {
+          "id": 5,
+          "type": "logs",
+          "title": "Warnings and errors",
+          "description": "",
+          "transparent": false,
+          "grid": {
+            "x": 0,
+            "y": 16,
+            "w": 24,
+            "h": 10
+          },
+          "data": {
+            "query": {
+              "source": "demo",
+              "format": "logs",
+              "sql": [
+                "SELECT ts AS time, message, level, service, host",
+                "FROM demo.logs",
+                "WHERE $__timeFilter(ts) AND level IN ('error', 'warn') AND service = '${service}'",
+                "ORDER BY ts DESC",
+                "LIMIT 200"
+              ],
+              "min_interval": null,
+              "max_data_points": null
+            }
+          },
+          "transforms": [],
+          "fields": {
+            "defaults": {},
+            "overrides": []
+          },
+          "options": {
+            "show_time": true
+          },
+          "links": []
+        }
+      ]
+    }
+  ]
+}

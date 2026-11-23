@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The options of a Grafana `gauge` (15.6, 4.33e): the classic gauge of Grafana 12.4.2 (the flag `newGauge` is off).
 //!
 //! Grafana reads `minVizWidth` and `minVizHeight` only with `sizing` = `manual` (the function `calculateGaugeSize`): with `auto`

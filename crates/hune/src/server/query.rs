@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The strict query string of an API route (6.2): an unknown or repeated parameter gives
 //! `400 bad_request`.
 

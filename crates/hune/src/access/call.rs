@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The context of one call of the PEP library, in a thread-local value (11.12).
 //!
 //! The library gives the transport no context of the request. Before each call, the task puts the

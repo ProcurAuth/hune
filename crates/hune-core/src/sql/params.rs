@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The query parameters of ClickHouse (7.6a): the form `{name:Type}` in code.
 //!
 //! ClickHouse puts the value of the URL parameter `param_<name>` in place of each form with that name. The value

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The errors of a source: one variant for each Hune code of 8.5, and the setup error.
 
 use std::fmt;
@@ -157,7 +158,7 @@ pub enum SourceError {
         /// The first line of the ClickHouse message.
         message: String,
     },
-    /// `422 query_error` of a PostgreSQL source (8a.8, ID-PG12). The member `sqlstate` takes the
+    /// `422 query_error` of a PostgreSQL source (8a.8). The member `sqlstate` takes the
     /// place of `clickhouse_code`. It is `None` (JSON `null`) when the error has no SQLSTATE.
     QuerySqlError {
         /// The source id.
@@ -169,7 +170,7 @@ pub enum SourceError {
         /// The first line of the primary message of the server error.
         message: String,
     },
-    /// `422 query_error` of a MongoDB source (8b.8, ID-MG12). The member `mongo_code` takes the place of
+    /// `422 query_error` of a MongoDB source (8b.8). The member `mongo_code` takes the place of
     /// `clickhouse_code` and `sqlstate`. It is `None` (JSON `null`) when the error comes from Hune and
     /// not from the server: a type that 7.16c does not allow, a mix of types, too many columns.
     QueryMongoError {
@@ -185,7 +186,7 @@ pub enum SourceError {
     },
     /// `422 query_error` of a ClickHouse source with `clickhouse_code` = `null` (8.5): a proxy in front of
     /// ClickHouse answered the HTTP status 414 or 431 with no ClickHouse code. The state of the source does not
-    /// change, so long values cannot mark a source down (7.6a, ID-K330).
+    /// change, so long values cannot mark a source down (7.6a).
     ProxyRefused {
         /// The source id.
         source: SourceId,

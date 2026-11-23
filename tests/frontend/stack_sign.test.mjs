@@ -1,4 +1,5 @@
-// The stacks of a time series as Grafana 12.4.2 draws them (9.19, decision ID-K321 point 3, engine edit E32): a series with more values below 0
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The stacks of a time series as Grafana 12.4.2 draws them (9.19, engine edit E32): a series with more values below 0
 // stacks down from 0 in a group of its own, its values add as they are, and a NULL takes the top of its group. The expected values are those that
 // the worker y-stackneg measured on Grafana 12.4.2 on 2026-11-21: 100 time series panels (20 cases at 5 heights, plots of 57 to 817 px), the tick
 // labels and the drawn points of the lines. The engine runs here on a small fake of the DOM and of the canvas, which records the lines.

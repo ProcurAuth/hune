@@ -1,4 +1,5 @@
-// Browser case B216 (4.18, 4.30, 9.19; wave H, item P03): the fill, the line, the grid lines and the orientation `auto` of a bar chart, against
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B216 (4.18, 4.30, 9.19): the fill, the line, the grid lines and the orientation `auto` of a bar chart, against
 // the probe of Grafana 12.4.2 of 2026-11-22 (the canvas calls of 16 bar charts, the data `a` = 10 and `b` = 5, the colour #FF0000):
 //   fillOpacity 61: the fill rgba(255, 0, 0, 0.61) and a line #ff0000 of 1 px; fillOpacity 0 and lineWidth 4: no fill, a line of 4 px;
 //   fillOpacity 100 and lineWidth 0: the fill #ff0000 and no line; the box of a bar loses half the line at each side;

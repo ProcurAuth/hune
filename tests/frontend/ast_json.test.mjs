@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The JSON tree of the query editor (F42): the vectors, the tolerance, the coverage of the tokens and of the brackets, the caps and the time.
 import test from "node:test";
 import assert from "node:assert/strict";

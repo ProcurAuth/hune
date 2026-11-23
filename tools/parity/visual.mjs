@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Capture tool for the visual parity of a dashboard (15.14c): the canvas calls, the display names and the boxes.
 //
 // What it does for one Grafana dashboard file and the same dashboard in Hune:

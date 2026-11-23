@@ -23,8 +23,7 @@ file names it with `_env` (13.5). Hune reads a file other than the configuration
 Hune reads the file one time, at start, into one typed structure. The rest of the code reads only this structure. A
 change of the file has an effect only after a restart (13.26).
 
-The engine is `hclconf`, a crate of this workspace with a `PROVENANCE` file. It is written in Hune from this section
-(decision ID-01). It is not a copy of another HCL engine of the maintainer. It has these three rules:
+The engine is `hclconf`, a crate of this workspace with a `PROVENANCE` file. It is written for Hune from this section. It has these three rules:
 
 1. A duration has exactly one integer and one unit (13.4). The texts `1m 30s`, `us` and `ns` are not valid.
 2. A block can depend on a mode key, as an attribute can.
@@ -191,12 +190,11 @@ With the document limit of 4 MiB of section 4, the lowest `server.max_request_by
 | `telemetry.service_name` | Text of 1 to 64 bytes of printable ASCII. The resource attribute `service.name`. | no | V | `telemetry.enabled = true` | `telemetry.enabled = false` | `"hune"` |
 | `telemetry.export_interval` | Duration, 1s to 5m. | no | V | `telemetry.enabled = true` | `telemetry.enabled = false` | `"15s"` |
 
-The OTLP exporter is part of 1.0, and M7 (0.7.0) builds it (14.9). A build before 0.7.0 has no exporter. Stage 2 of the
-checks (13.13, 13.19) of such a build refuses `telemetry.enabled = true` with the error
-`telemetry.enabled: this build has no OTLP exporter`. `telemetry.enabled = false` is valid in each build.
+The OTLP exporter is part of Hune (14.9, M7). With `telemetry.enabled = true`, the three other keys of the block are
+necessary. `telemetry.enabled = false` is valid in each build.
 
-Thus both reference files (13.16, 13.17) have `enabled = false`. The reference values of the three other keys are the
-values of the example of 14.9, which needs 0.7.0 or later.
+Both reference files (13.16, 13.17) have `enabled = false`. The reference values of the three other keys are the
+values of the example of 14.9.
 
 ### 13.10 Key table: storage
 
@@ -351,7 +349,7 @@ The block `mongodb "<id>"` declares one MongoDB server or one replica set for pa
 | `mongodb "<id>".queue_wait` | Duration, 0s to 60s. The longest wait for a place (12.16). | no | V | always | never | `"5s"` |
 | `mongodb "<id>".max_concurrent_per_subject` | Integer, 1 to 256, at most `max_concurrent`. The most queries at one time for one subject on this source. | no | V | `access.mode = "authzen"` | `access.mode = "open"` | `6` |
 
-Only the six keys of 13.2, rule 7, have a default value. The decision `ID-MG5` records this choice, and the choice of no default for `read_preference`, `collections` and `topology`. The reference values appear in `docs/configuration-reference.md` only. The reference files of 13.16 and 13.17 hold no `mongodb` block, so `print-reference` writes none. The generated reference gets its rows for this block from the key table in the code, as for the other blocks.
+Only the six keys of 13.2, rule 7, have a default value. The keys `read_preference`, `collections` and `topology` have no default. The reference values appear in `docs/configuration-reference.md` only. The reference files of 13.16 and 13.17 hold no `mongodb` block, so `print-reference` writes none. The generated reference gets its rows for this block from the key table in the code, as for the other blocks.
 
 An example block, with the keys in the order of the table:
 
@@ -389,7 +387,7 @@ This block gives no warning. It needs `access.mode = "authzen"` for the key `max
 
 The block `geomap` gives the tile source of the panel type `geomap` (4.33g, 9.19i). The file has 0 or 1 such block, with no label. Without the block, the feature is off. The page contacts no tile host, and the map draws its markers on a plain background. The policy of 12.8 is then the value of its table, byte for byte. With the block, each key is necessary, and each key accepts the form V only.
 
-The values are public: the session gives them to each page (6.10). The decision is ID-K328 (to re-read by the owner).
+The values are public: the session gives them to each page (6.10).
 
 | Key | Type and range | Secret | Forms | Necessary when | Forbidden when | Reference value |
 |---|---|---|---|---|---|---|
@@ -444,7 +442,6 @@ The reference files of 13.16 and 13.17 hold no block `geomap`, so `print-referen
 | `server.base_path` | The rule of 13.8. |
 | A URL | `url`, `access.pdp.url` and `telemetry.otlp_endpoint` parse as absolute URLs in canonical form, with the parts that their row permits. |
 | A whole number of seconds | `access.identity.max_age`, `access.identity.clock_skew` and `max_execution_time` of each source block (13.4). |
-| The OTLP exporter of the build | A build before 0.7.0 refuses `telemetry.enabled = true` (13.9). |
 | The PEP configuration and the action document | In the mode `authzen`, Hune builds the `PepConfig` of 11.10 and calls `PepConfig::check`. It builds the action document of 11.18 with `ActionDocumentBuilder::build`. Neither call uses the network. |
 | `geomap.tile_url` | The grammar of 13.12c. The error has the form `expected <rule> (<reason>), found <value>`. The reason names the first fault, for example `the host is an IP address`. Stage 2 parses the text one time, and the policy of 12.8 and the session use the parts. |
 | `geomap.attribution` | 1 to 200 characters, and none of the characters of the list of 7.37, item 9. |
@@ -560,7 +557,7 @@ A loopback address is `localhost`, an address of `127.0.0.0/8`, or `::1`.
 ### 13.16 Example file LOCAL
 
 This is the output of `hune print-reference --format hcl --profile local`: the volume backend, the mode `open` and no
-telemetry. The reference deployment uses the file of 17.6, which starts from this file and sets `server.base_path = "/dashboards/"`.
+telemetry. The file of 17.6 starts from this file and sets `server.base_path = "/dashboards/"`.
 
 ```hcl
 # Hune configuration, profile local: volume storage, access mode open, no telemetry.
@@ -627,7 +624,7 @@ This file gives one warning: W1.
 ### 13.17 Example file DISTRIBUTED
 
 This is the output of `hune print-reference --format hcl --profile distributed`: the PostgreSQL backend, the mode
-`authzen` and no telemetry. From 0.7.0, the block `telemetry` of 14.9 can replace the block of this file. The PostgreSQL names are those of a CloudNativePG cluster `hune-pg` (section 5).
+`authzen` and no telemetry. The block `telemetry` of 14.9 can replace the block of this file. The PostgreSQL names are those of a CloudNativePG cluster `hune-pg` (section 5).
 
 ```hcl
 # Hune configuration, profile distributed: PostgreSQL storage, access mode authzen, no telemetry.
@@ -954,7 +951,7 @@ Hune reads no environment variable that the file does not name. These are the ru
 - The job `policy` searches the sources for the pattern `env::(var|var_os|vars|vars_os|set_var|remove_var)\b`. It
   permits a match only in `crates/hclconf/src/env.rs`, in the tests and in each `build.rs`. The tests and `build.rs`
   are not code of the binary.
-- The crate `mongodb` is a local copy with no environment read (8b.2, `ID-MG25`). The original reads the variables of
+- The crate `mongodb` is a local copy with no environment read (8b.2). The original reads the variables of
   the platforms (for example `AWS_REGION`, `K_SERVICE` and `VERCEL`), `KUBERNETES_SERVICE_HOST` and the file
   `/.dockerenv` to fill the metadata of `hello`. The job `policy` searches the copy and `crates/` for each read. The list
   of the reads that this check accepts is empty (16.18).
@@ -985,7 +982,7 @@ three parts. Each part runs from the milestone that gives the features that it n
 |---|---|---|---|
 | 1 | M2 | Mode `open`, `telemetry.enabled = false`, `log.level = "info"` | `RUST_LOG`, the proxy variables, `SSL_CERT_*` (link to ClickHouse), `PG*`, `TZ`, `HUNE_LOG_LEVEL` |
 | 2 | M6 | Mode `authzen` with the `fake-pdp` of ProcurAuth, `telemetry.enabled = false` | The proxy variables and `SSL_CERT_*` (link to the PDP) |
-| 3 | M7 (0.7.0) | Mode `open`, `telemetry.enabled = true` with collector A | The `OTEL_*` variables |
+| 3 | M7 | Mode `open`, `telemetry.enabled = true` with collector A | The `OTEL_*` variables |
 
 Each part has these steps:
 
@@ -1044,7 +1041,7 @@ current file (14.18).
 - Two listeners: `server.listen` serves the pages and the API. `server.ops_listen` serves the probes and the metrics.
 - Logs are JSON lines on the standard output, each with the field `event`.
 - Metrics use the Prometheus text format and the prefix `hune_`. They are only on `server.ops_listen`.
-- Traces go to an OTLP collector when the block `telemetry` enables them (MCP contract 7.4). Hune has its own small
+- Traces go to an OTLP collector when the block `telemetry` enables them (14.9). Hune has its own small
   exporter.
 - The durable audit is the history of the store. Hune writes it before the effect (14.11).
 - Each queue and each pool is bounded. Each refusal is an explicit answer (14.14).
@@ -1055,7 +1052,7 @@ current file (14.18).
 |---|---|---|
 | Routes | The pages, the static files, the API and the ProcurAuth routes of section 6, below `server.base_path`. | `GET` and `HEAD` of `/livez`, `/readyz` and `/metrics`. No base path. |
 | Token in the mode `authzen` | On each route except the action document (11.29). | None. |
-| Clients | The proxy or the edge. | The orchestrator and the monitoring. |
+| Clients | The proxy or the edge. | The container platform and the monitoring. |
 | Limits | 12.16. | 64 connections, 10 s to read the headers, no body. |
 | Log line `http.request`, metrics `hune_http_*`, spans | Yes. | No. |
 | Headers | 12.8. | `Cache-Control: no-store` and `X-Content-Type-Options: nosniff`. |
@@ -1297,11 +1294,8 @@ output of `/metrics` and checks the label set of each metric against these table
 
 ### 14.9 The telemetry block and the OTLP exporter
 
-The block `telemetry` has the keys of the MCP contract 7.4 (13.9). With `enabled = false`, Hune makes no span and runs
+The block `telemetry` has the keys of 13.9. With `enabled = false`, Hune makes no span and runs
 no exporter. With `enabled = true`, the exporter follows these rules:
-
-- Scope: the exporter is part of 1.0, and M7 (0.7.0) builds it (section 18). A build before 0.7.0 has no exporter. It
-  accepts `telemetry.enabled = false`, and stage 2 of its checks refuses `telemetry.enabled = true` (13.9).
 
 - Protocol: OTLP/HTTP with the JSON encoding. Each export is a `POST` to `<otlp_endpoint>/v1/traces` with
   `Content-Type: application/json` and `User-Agent: hune/<version>`.
@@ -1317,9 +1311,9 @@ no exporter. With `enabled = true`, the exporter follows these rules:
   number to the counter. It never sends them again. The line `telemetry.export_failed` comes one time for each change of
   state.
 - At a stop, Hune exports the queue one last time, for 2 s at most (14.13).
-- An export never delays a request. The telemetry is best effort and is never the audit (MCP contract 7.1, 7.6).
+- An export never delays a request. The telemetry is best effort and is never the audit.
 
-An example of the block, from 0.7.0:
+An example of the block:
 
 ```hcl
 telemetry {
@@ -1413,7 +1407,7 @@ SIGTERM and SIGINT start the stop. The binary is the process 1 of the container,
 is `server.shutdown_grace`. `SHUTDOWN_DRAIN` is a constant of 5 s.
 
 1. Write `server.stopping`. `/readyz` answers 503. `hune_stopping` is 1.
-2. Wait for `SHUTDOWN_DRAIN`. During this time, Hune serves each request as usual. The orchestrator and the proxy
+2. Wait for `SHUTDOWN_DRAIN`. During this time, Hune serves each request as usual. The container platform and the proxy
    remove the instance from their lists, which they do some time after the signal.
 3. Stop the accept on `server.listen`. Close the idle connections. A request that comes on an open connection gets
    `503 server_stopping` with `Connection: close`.

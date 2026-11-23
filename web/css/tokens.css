@@ -1,7 +1,7 @@
 /* Design tokens of Hune (the Hune layer).
    Layer 1 is css/vendor/chdash/00-tokens.css (a byte copy of the ClickHouse Dash tokens: the graphite palette,
    the type, space, radius, motion and z-index scales, the chart palette). The colour theme of the chrome is this layer
-   (ID-K50). This file loads after it, so it can override a value (the font and the type scale only), and it adds the tokens
+. This file loads after it, so it can override a value (the font and the type scale only), and it adds the tokens
    that only Hune needs. A component rule names tokens: it does not
    write a colour, a size or a duration as a literal.
 
@@ -66,7 +66,7 @@
   --check-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5l9 -10'/%3E%3C/svg%3E");
 }
 
-/* --- Themed tokens (T2). The colour theme of the chrome is the theme of ClickHouse Dash (owner request of 2026-11-12, ID-K50):
+/* --- Themed tokens (T2). The colour theme of the chrome is the theme of ClickHouse Dash:
    layer 1 gives the surfaces, the text, the borders, the hover and focus states, the accent, the status colours and the shadow of
    an overlay, in its four contexts. This file does not set them again. It defines the tokens that only Hune has, as roles
    of the layer 1 tokens, so one rule serves both themes. Three tokens differ between the themes and have the four contexts:

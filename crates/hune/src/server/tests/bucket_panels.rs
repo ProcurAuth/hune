@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The heatmap and the histogram (4.33c, 4.33d, 6.20) at the server: the save and the read keep the canonical
 //! bytes, the validation gives the codes of 4.33c and 4.33d, the panel query is the ordinary panel query, and a
 //! `reuse` of such a panel works as for a time series. A `repeat` and `extra_queries` follow 4.13a and 4.15a.

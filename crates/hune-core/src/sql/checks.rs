@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The checks at save (7.18): faults and warnings on the stored SQL of a panel or a variable.
 //!
 //! The functions give data. The caller builds the [`ValidationError`] items of `invalid_document`

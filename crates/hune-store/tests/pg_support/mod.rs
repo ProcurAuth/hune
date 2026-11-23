@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers of the PostgreSQL tests (5.36): the connection data from the environment, the
 //! factories of backends and a TCP proxy that breaks connections.
 //!

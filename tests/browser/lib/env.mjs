@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Test environment of the browser suite (16.10): ClickHouse container, volume, configuration, server.
 // Every resource that this file starts has a stop function, and the runner calls it on every path.
 import { spawn, spawnSync } from "node:child_process";

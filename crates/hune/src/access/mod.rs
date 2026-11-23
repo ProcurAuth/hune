@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The access layer of the mode `authzen` (section 11): the PEP on `procurauth-pep`, the rustls
 //! transport to the PDP, the bounded blocking pool, the single flight of equal questions, and the
 //! mapping of each refusal to the error table of section 6.

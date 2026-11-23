@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The file layer of the volume backend (5.12, 5.13). Every access is relative to a directory
 //! descriptor and uses `O_NOFOLLOW` or `AT_SYMLINK_NOFOLLOW`. This module is the only place
 //! that makes, writes, renames or removes files and directories (R4).

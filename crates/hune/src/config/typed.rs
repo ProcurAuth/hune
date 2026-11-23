@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Build the typed `Config` from the checked keys (13.2, rule 4: typed once).
 
 use std::net::SocketAddr;

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The rows of the heatmap and the histogram in 15.6 (4.33c, 4.33d): one test for each new row in the form v1
 //! and in the forms v2, the boundaries of each range, the 38 schemes, the old heatmap of Grafana 7 to 9, and the
 //! 8 measured dashboards (15.14c).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The router: the table of the routes of 6.9 and the match of a path (6.1, 6.2, 6.25).
 //!
 //! The router has no dependency. It maps a method and a path, relative to `server.base_path`,

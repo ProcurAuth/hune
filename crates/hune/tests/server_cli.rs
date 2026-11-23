@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Black-box test of `hune serve` and `hune health`: the real binary, real sockets, a real SIGTERM.
 
 use std::io::{Read, Write};

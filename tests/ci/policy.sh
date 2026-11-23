@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `policy` (16.17, 16.18): the policy checks. The workflow ci.yaml and tests/ci/all.sh both call this script.
 # Use: tests/ci/policy.sh [--local]
 #      tests/ci/policy.sh --print-deps        print the dependency list of 17.9 (to update deps.lock.txt)
@@ -9,18 +10,18 @@
 #
 # Patterns that would match this script are split with '' (16.18): the shell joins the parts.
 #
-# Exemptions that the orchestrator decided (decisions ID-13 and ID-19):
-#   ID-13: no file of the repository holds a word of the forbidden word list (check "No forbidden word",
-#          over every file outside target/, .git/ and private/). The maintainer keeps the list outside the
+# Exemptions:
+#   no file of the repository holds a word of the forbidden word list (check "No forbidden word",
+#          over every file outside target/, .git/ and private/). The list stays outside the
 #          repository: see words_checks below.
-#   ID-19: "Addresses in tests" accepts the wildcard 0.0.0.0 (tools/check-addresses.sh).
+#   "Addresses in tests" accepts the wildcard 0.0.0.0 (tools/check-addresses.sh).
 #   "No remote load" and "No inline script" skip web/js/vendor/ and web/css/vendor/ only for the lines that
 #          the copied files trigger (they hold data: URLs with http://www.w3.org/...).
 set -eu
 . "$(dirname "$0")/ci-lib.sh"
 
 # The list has each package with a source (the registry and the git dependencies) and each local copy under
-# vendor/ (ID-MG25: the patched crate mongodb has no source). A local copy has the tag " (vendor)", so the
+# vendor/ (the patched crate mongodb has no source). A local copy has the tag " (vendor)", so the
 # list shows that the crate is not the one of the registry. A workspace crate is not in the list.
 deps_list() {
     for t in x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do
@@ -64,8 +65,8 @@ ci_init "$@"
 
 failed=0
 
-# --- The forbidden word list (ID-13): check 16 and the extra check ---
-# The maintainer keeps the word list outside the repository. The script reads it from the environment
+# --- The forbidden word list: check 16 and the extra check ---
+# The word list stays outside the repository. The script reads it from the environment
 # variable HUNE_POLICY_WORDS (a secret of the CI; the words are separated by line ends or commas) or, out of
 # the CI, from the untracked file private/policy-words.txt (one word on each line; .gitignore holds /private/).
 # With no list, the two checks fail (fail-closed). A finding gives the file and the line number, never the word.
@@ -100,16 +101,16 @@ words_checks() {
             wc_why="no word list: write the words in $POLICY_WORDS_FILE (one word on each line) or set HUNE_POLICY_WORDS"
         fi
         words_report "Synthetic fixtures" "$wc_why"
-        words_report "No forbidden word in the repository (ID-13)" "$wc_why"
+        words_report "No forbidden word in the repository" "$wc_why"
         return 0
     fi
     # 16 Synthetic fixtures: a whole word, in any case, under tests/ and deploy/.
     wc_out=$(printf '%s\n' "$wc_words" | grep -rniwF -f - tests deploy 2>&1 | cut -d: -f1,2 || true)
     words_report "Synthetic fixtures" "$wc_out"
-    # Extra (ID-13): any text, in any case, in each file outside target/, .git/ and private/.
+    # Extra: any text, in any case, in each file outside target/,.git/ and private/.
     wc_out=$(printf '%s\n' "$wc_words" |
         grep -rniIF -f - --exclude-dir=target --exclude-dir=.git --exclude-dir=private . 2>&1 | cut -d: -f1,2 || true)
-    words_report "No forbidden word in the repository (ID-13)" "$wc_out"
+    words_report "No forbidden word in the repository" "$wc_out"
 }
 
 if [ "$LOCAL" -eq 0 ]; then
@@ -154,7 +155,7 @@ run_check "No docker push or login in scripts (extra)" \
 run_check "No environment read outside the engine (R2)" \
     "grep -rnE --include='*.rs' '(^|[^[:alnum:]_])env::(var|var_os|vars|vars_os|set_var|remove_var)\\b' crates | grep -vE '^crates/hclconf/src/env\\.rs:|/build\\.rs:|/tests/'"
 
-# --- 2a No environment read in the MongoDB driver copy (13.2 rule 5, 8b.15, ID-MG25) ---
+# --- 2a No environment read in the MongoDB driver copy (13.2 rule 5, 8b.15) ---
 # The copy vendor/mongodb reads no environment variable and no file that tells the platform (/.dockerenv).
 # The list tests/ci/env-read-allow.txt of the reads that this check accepts is EMPTY: a line that is not a
 # comment is a fixed text, and a finding that holds it is accepted. The test code of the crate is not compiled
@@ -162,7 +163,7 @@ run_check "No environment read outside the engine (R2)" \
 # `env!` (the version of the package) is not a read at run time. The check also scans the code of Hune in
 # crates/ (tests and build.rs excepted, as R2 says) for the names of the platform variables.
 grep -vE '^[[:space:]]*(#|$)' tests/ci/env-read-allow.txt >target/ci-policy-env-allow.txt 2>/dev/null || : >target/ci-policy-env-allow.txt
-run_check "No environment read in the MongoDB driver copy (ID-MG25)" '
+run_check "No environment read in the MongoDB driver copy" '
 {
   find vendor/mongodb -name "*.rs" -not -name test.rs -not -name tests.rs -not -path "*/test/*" -not -path "*/tests/*" |
     sort | xargs grep -nE "(^|[^[:alnum:]_])env::(var|var_os|vars|vars_os|set_var|remove_var|args|args_os)\\b|option_env!|getenv|/\\.dockerenv|resolv\\.conf" || true
@@ -182,17 +183,17 @@ run_check "No process spawn (R3)" \
 run_check "No file write outside the volume backend (R4)" \
     "grep -rnE --include='*.rs' 'fs::(write|create_dir|create_dir_all|remove_file|remove_dir|remove_dir_all|rename|hard_link|set_permissions|copy)|File::create|OpenOptions|openat|renameat|unlinkat|mkdirat' crates | grep -vE '^crates/hune-store/src/volume/|^crates/hune/src/cli/output\\.rs:|/build\\.rs:|/tests/'"
 
-# --- 5a No simple protocol for the SQL of a caller (8a.5, 16.18, ID-PG8) ---
+# --- 5a No simple protocol for the SQL of a caller (8a.5, 16.18) ---
 # The names of the simple protocol (and of COPY) appear only in the store and in fixed.rs of the PostgreSQL source.
 run_check "No simple protocol for the SQL of a caller (8a.5)" \
     "grep -rnE --include='*.rs' 'simple_query|batch_execute|copy_in|copy_out' crates | grep -vE '^crates/hune-store/|^crates/hune-source/src/postgres/fixed\\.rs:|/tests/'"
 
-# --- 5b Simple protocol in fixed.rs only with a constant (8a.5, 16.18, ID-PG8) ---
+# --- 5b Simple protocol in fixed.rs only with a constant (8a.5, 16.18) ---
 # Each call of simple_query or batch_execute in fixed.rs takes a constant as its one argument: an upper-case name
 # (also a path such as Self::BEGIN), with or without `&`. A variable, a call, a format! or a text built at run
 # time does not match. A line that holds a call but does not end it (a split call) does not match either.
 # The names copy_in and copy_out are forbidden in the whole directory, fixed.rs too. A comment line is skipped.
-run_check "Simple protocol only with a constant in fixed.rs (ID-PG8)" '
+run_check "Simple protocol only with a constant in fixed.rs" '
 f=crates/hune-source/src/postgres/fixed.rs
 [ -f "$f" ] || exit 0
 grep -nE "(simple_query|batch_execute)[[:space:]]*(\(|::<)" "$f" |
@@ -263,21 +264,21 @@ run_check "No inline script" \
     "grep -rnP '<script(?![^>]*\\bsrc=)(?![^>]*type=\"application/json\")' web | grep -vE '^web/(js|css)/vendor/'"
 
 # --- 9 npm only in test images ---
-# The directory vendor/ holds the local copy of the crate mongodb (ID-MG25): the copy has no package.json.
+# The directory vendor/ holds the local copy of the crate mongodb: the copy has no package.json.
 run_check "npm only in test images" \
     "find . -name package.json -not -path './tests/browser/*' -not -path './tools/parity/*' -not -path './target/*' -not -path './vendor/*' -not -path './.git/*'"
 
 # --- 10 Copied chart engine, 11 Lexer vectors ---
 run_check "Copied chart engine" "tools/check-vendor-lock.sh --chdash"
 run_check "Lexer vectors" "tools/check-vendor-lock.sh --lexer"
-# --- 10a Local copy of the MongoDB driver (ID-MG25) ---
+# --- 10a Local copy of the MongoDB driver ---
 run_check "Local copy of the MongoDB driver (lock and patch)" "tools/check-vendor-lock.sh --mongodb"
 
 # --- 12 Engine hclconf ---
 run_check "Engine hclconf (PROVENANCE)" '
 if [ ! -f crates/hclconf/PROVENANCE ]; then echo "crates/hclconf/PROVENANCE does not exist"; exit 0; fi
 grep -q "not a copy" crates/hclconf/PROVENANCE || echo "PROVENANCE does not say that the engine is not a copy"
-# Decision ID-01: the engine is written in Hune, not
+# The engine is written in Hune, not
 # copied. Then PROVENANCE says so ("not a copy") in place of a source commit.
 grep -qE "\b[0-9a-f]{7,40}\b|not a copy" crates/hclconf/PROVENANCE || echo "PROVENANCE does not name a commit"
 grep -q "2021" crates/hclconf/PROVENANCE || echo "PROVENANCE does not name the edition 2021"
@@ -314,7 +315,7 @@ else
     echo "skipped Dependency list: cargo not installed"
 fi
 
-# --- 16 Synthetic fixtures, and Extra (ID-13): the word list (words_checks) ---
+# --- 16 Synthetic fixtures, and Extra: the word list (words_checks) ---
 # In the Docker mode, the host ran these two checks before the builder container.
 if [ "$WORDS_ON_HOST" -eq 0 ]; then
     words_checks
@@ -327,10 +328,12 @@ run_check "Addresses in tests" "tools/check-addresses.sh"
 run_check "Documentation language" \
     "python3 -I tools/ste_lint.py docs/*.md README.md CHANGELOG.md >target/ci-ste.log 2>&1 || tail -n 40 target/ci-ste.log"
 
-# --- Extra: LICENSE is the standard Apache-2.0 text ---
-run_check "LICENSE is the standard Apache-2.0 text (extra)" '
-got=$(sha256sum LICENSE | cut -d" " -f1)
-[ "$got" = cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30 ] || echo "LICENSE has sha256 $got"
+# --- Extra: LICENSE-APACHE is the standard Apache-2.0 text, and LICENSE-MIT is the MIT text ---
+# LICENSE-APACHE differs from the standard text on line 190 only (the copyright notice of the project).
+run_check "LICENSE-APACHE is the standard Apache-2.0 text, LICENSE-MIT is the MIT text (extra)" '
+got=$(sed "190s/.*/   Copyright [yyyy] [name of copyright owner]/" LICENSE-APACHE | sha256sum | cut -d" " -f1)
+[ "$got" = cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30 ] || echo "LICENSE-APACHE has sha256 $got after the normal notice line"
+head -n 1 LICENSE-MIT | grep -qx "MIT License" || echo "LICENSE-MIT does not start with MIT License"
 '
 
 echo

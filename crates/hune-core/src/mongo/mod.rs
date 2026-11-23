@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The MongoDB query model (sections 7.27 to 7.36 and 8b.16). The module does no I/O and uses no
 //! MongoDB crate (8b.2).
 //!
@@ -24,7 +25,7 @@
 //!
 //! # Status
 //!
-//! This is the skeleton of wave 0. The parser (7.28), the grammar (7.30 to 7.33), the variables
+//! This is the first skeleton. The parser (7.28), the grammar (7.30 to 7.33), the variables
 //! (7.34, 7.35) and the save checks (7.36) come in the next waves and build on these types.
 
 pub mod check;

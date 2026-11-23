@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-46 (9.19e section 3, 9.19f section 4, T69 and T70): the caps (each one fails closed, and no array exists above it), the texts of the
 // messages and of the descriptions with 30 hostile names, and the time of the model for 500,000 values.
 import test from "node:test";

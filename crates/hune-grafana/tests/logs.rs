@@ -1,4 +1,5 @@
-//! The logs panel of Grafana 12.4.2 (case I40 of 16.13; 15.6, 4.33f; decision ID-K326, items P05 and D06).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The logs panel of Grafana 12.4.2 (case I40 of 16.13; 15.6, 4.33f).
 //!
 //! The four options that Hune has map. An option of a new Grafana panel is metadata. Another value of an option
 //! that Hune does not have is `unsupported`. The format 2 of the ClickHouse plugin becomes `logs` on a logs panel,

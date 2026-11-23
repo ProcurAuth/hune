@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-29 (the hostile vectors) and FE-30 (the variables in a text): the DOM that panels/text.js builds from the tree (9.19b, 16.10a).
 import test from "node:test";
 import assert from "node:assert/strict";

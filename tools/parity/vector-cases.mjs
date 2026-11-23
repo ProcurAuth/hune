@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The synthetic cases of the expansion vectors (16.13, case I15).
 //
 // Each case holds only the input of the expansion. The capture tool (vectors.mjs) sends each case to

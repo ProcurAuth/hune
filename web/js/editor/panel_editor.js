@@ -1138,7 +1138,7 @@ export function createPanelEditor(E, id) {
     } } }));
   }
 
-  // The panel editor has no top bar and no row of its own (ID-K178). "Save" and "Revert" are the buttons of the header (10.2). The title
+  // The panel editor has no top bar and no row of its own. "Save" and "Revert" are the buttons of the header (10.2). The title
   // "Edit panel" is the last crumb, and the crumb of the dashboard is the way back (edit_mode.js backCrumb): the event `leave` (10.2a).
   const optionsPane2 = el("aside", { class: "peditor__options", "aria-label": "Panel options" },
     optionsHead, optionsHost);

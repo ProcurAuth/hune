@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the read modes of 13.18: `ReadMode::StoreCommands`, `ImportWrite` and `Nothing`.
 //!
 //! Each test starts from the example file DISTRIBUTED. The files and the variable of the blocks

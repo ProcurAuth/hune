@@ -1,9 +1,10 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The grammars of texts in a document: units (4.20), colours (4.19), link URLs (4.23), zone
 //! names (4.6) and variable names (4.3).
 
 /// The units without a text argument (4.20): the first 8 are the units of the first release, the
-/// next 21 are the Grafana units that milestone F adds, and the last 30 are the Grafana units that
-/// wave H adds (P01).
+/// next 21 are the Grafana units that the Grafana-parity work adds, and the last 30 are the Grafana units that
+/// the later options adds (P01).
 const FIXED_UNITS: [&str; 59] = [
     "none",
     "short",

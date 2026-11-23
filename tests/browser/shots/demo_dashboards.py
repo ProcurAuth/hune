@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """Generate the demo dashboards of Hune (format 1) into target/local/volume.
 
 Each file is written atomically: a temporary name without the .json suffix, then a rename.

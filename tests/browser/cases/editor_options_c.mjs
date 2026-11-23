@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B202 (10.3h, F43): the option forms of `table`, and of `heatmap` and `histogram` when the page has them.
 // The table: the header switch, the wrap, the sort list (add, move, remove, 8 at most), the width, the alignment, the filter, the footer calculations
 // (8 at most) and the cell type with its mode. Each control writes its member and the preview shows the effect. The heatmap and the histogram: the

@@ -1,10 +1,10 @@
 // The repeat of panels and sections by a variable (4.13a, 9.8c): the values, the copies, the keys and the layout.
 // Pure module: no DOM access. The runtime, the grid and the editor call these functions.
 // The four open decisions are closed, each one in one place below:
-//   ID-K83 the caps are server keys (`limitsOf`).  ID-K84 the order of the copies: `orderedValues`.
-//   ID-K86 fail closed, no truncation: `classify`.  ID-K94 a variable that is not multi has no repeat: `canRepeatBy` (the importer rule is in Rust).
+//   The caps are server keys (`limitsOf`).  The order of the copies: `orderedValues`.
+//   Fail closed, no truncation: `classify`.  A variable that is not multi has no repeat: `canRepeatBy` (the importer rule is in Rust).
 
-// The caps are keys of the server configuration (owner decision of 2026-11-13). The page reads them from the session (`repeat_limits`) and gives
+// The caps are keys of the server configuration. The page reads them from the session (`repeat_limits`) and gives
 // them to each function below as `limits`. These three numbers are the defaults of the server: the page uses them when the session has no such member.
 export const MAX_REPEAT_PER_PANEL = 24;
 export const MAX_REPEAT_PER_SECTION = 12;
@@ -36,10 +36,10 @@ export const canRepeatBy = (variable) => !!variable && (variable.kind === "query
 /** The limit of one kind of repeat: `"panel"` or `"section"` (4.35). */
 export const limitFor = (kind, limits = DEFAULT_LIMITS) => (kind === "section" ? limits.section : limits.panel);
 
-// --- the values (ID-K84) ------------------------------------------------------------------------------------------------------------
+// --- the values ------------------------------------------------------------------------------------------------------------
 
 /**
- * The values of a repeat, in the order of the options (ID-K84). `options` is the list of the variable: `[{ value, text }]`.
+ * The values of a repeat, in the order of the options. `options` is the list of the variable: `[{ value, text }]`.
  * With "All" each option is a value. Else the values are the options that the selection holds. A value that is not an option never shows.
  */
 export function orderedValues(options, selection) {
@@ -54,7 +54,7 @@ export function orderedValues(options, selection) {
   return out;
 }
 
-/** The result for k values and a limit (ID-K86): `"empty"`, `"ok"` or `"limit"`. The list is never cut to fit. */
+/** The result for k values and a limit: `"empty"`, `"ok"` or `"limit"`. The list is never cut to fit. */
 export const classify = (k, limit) => (k === 0 ? "empty" : k > limit ? "limit" : "ok");
 
 // --- the messages (9.8c) ------------------------------------------------------------------------------------------------------------
@@ -129,7 +129,7 @@ const byPosition = (a, b) => a.grid.y - b.grid.y || a.grid.x - b.grid.x || a.id 
 
 /**
  * The result of each repeat of a document. `valuesOf(name)` gives the values (`[{ value, text }]`), null while the options load, or
- * undefined when the variable does not exist or cannot repeat: the state is then `"empty"`, with no query (ID-K86). `labelOf(name)` gives the label. It returns `{ panels: Map(id), sections: Map(index) }`.
+ * undefined when the variable does not exist or cannot repeat: the state is then `"empty"`, with no query. `labelOf(name)` gives the label. It returns `{ panels: Map(id), sections: Map(index) }`.
  * An entry is `{ kind, variable, direction, maxPerRow, label, state, scope, values, k, limit, message, cost }`. The state is
  * `"ok"`, `"empty"`, `"limit"` or `"loading"`. The walk follows the order of the document, so the result never depends on the scroll.
  */

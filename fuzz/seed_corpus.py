@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """Make the seed corpora of the fuzz targets (16.16) from the fixtures of the repository.
 
 Use: python3 -I fuzz/seed_corpus.py

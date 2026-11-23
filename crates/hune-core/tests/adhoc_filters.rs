@@ -1,4 +1,5 @@
-//! The ad hoc filters (F36, decision ID-K329): the variable kind `adhoc` in the document (4.10c), the names of 6.14, the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The ad hoc filters (F36): the variable kind `adhoc` in the document (4.10c), the names of 6.14, the
 //! macro `$__adhocFilters` at run time (7.10a, 7.11) and at save (7.18, items 17 to 21).
 //!
 //! The seeded test makes hostile values from the pieces of 7.11 and runs them through the macro. For each value the

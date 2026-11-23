@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Decoding of rows into the types of the store, and the check of a stored document (5.24, item 8).
 
 use std::sync::Arc;

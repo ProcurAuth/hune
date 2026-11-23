@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B28 to B35 (9.7): the entry redirect of the list page.
 // One dashboard that the user can see opens at once, on the entry route of a page load only.
 // Each case starts a server of its own, with a volume that holds exactly the dashboards that it needs.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The panel types `heatmap` and `histogram` (4.33c, 4.33d): the fixtures and their canonical form, the
 //! boundaries of the options, one refusal for each error, the rules across members (4.34) and the refusal of an
 //! unknown type. The types join format 3 with no change of the version (4.42).

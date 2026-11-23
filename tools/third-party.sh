@@ -1,8 +1,9 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Generate LICENSE-THIRD-PARTY (17.4) from `cargo metadata --locked`, with no network.
 # Use: tools/third-party.sh [OUTPUT_FILE]      (default: the standard output)
 # The crates are those of deps.lock.txt: the resolved graph of the two musl targets, outside the workspace.
-# The local copy of a crate under vendor/ (ID-MG25) counts as a third-party crate. Its LICENSE file is in the copy.
+# The local copy of a crate under vendor/ counts as a third-party crate. Its LICENSE file is in the copy.
 # For each crate the file gives the name, the version, the licence expression and the text of its licence
 # files (LICENSE*, COPYING*, UNLICENSE*, NOTICE*). Crates with equal texts share one block.
 # It adds the MIT notice of the copied chart engine and of the copied colour tokens, the notice of the font Inter
@@ -59,7 +60,7 @@ for (name, ver), p in sorted(pkgs.items()):
             texts.append("--- %s ---\n%s" % (fn, open(os.path.join(root, fn), encoding="utf-8", errors="replace").read().rstrip()))
     text = "\n\n".join(texts) if texts else "(no licence file in the crate; the licence expression above applies)"
     if not texts and p.get("license") == "Apache-2.0":
-        text += "\n(the text of the Apache License 2.0 is in the file LICENSE of this release)"
+        text += "\n(the text of the Apache License 2.0 is in the file LICENSE-APACHE of this release)"
     key = hashlib.sha256((str(p.get("license")) + text).encode()).hexdigest()
     blocks.setdefault(key, {"license": p.get("license") or p.get("license_file") or "unknown", "crates": [], "text": text})
     blocks[key]["crates"].append("%s %s" % (name, ver))
@@ -79,9 +80,9 @@ PY
     echo "=============================================================================="
     echo "Copied chart engine of ClickHouse Dash (web/js/vendor/chdash, web/css/vendor/chdash)"
     echo "Licence: MIT"
-    echo "Colour theme of the chrome (ID-K50, owner request of 2026-11-12): the token values of web/css/vendor/chdash/00-tokens.css,"
+    echo "Colour theme of the chrome: the token values of web/css/vendor/chdash/00-tokens.css,"
     echo "copied from src/static/css/00-tokens.css of ClickHouse Dash (tag v1.3.1, commit e970694e5e0b17b07cf187f3128af93fa1a82b76, licence MIT)."
-    echo "Time range picker (ID-K60, owner request of 2026-11-12): the layout, the texts, the keys and the values of web/css/picker.css follow"
+    echo "Time range picker: the layout, the texts, the keys and the values of web/css/picker.css follow"
     echo "src/static/app_timerange.js and its CSS in ClickHouse Dash (same tag and commit, licence MIT). The code of web/js/time_picker.js is new."
     echo "=============================================================================="
     cat web/js/vendor/chdash/LICENSE

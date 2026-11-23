@@ -1,4 +1,5 @@
-// FE-83: the gradient modes (wave H, item P10) and the cosmetic series options (item P14) of a time series and a bar chart (4.18, 4.28, 4.30,
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-83: the gradient modes  and the cosmetic series options (item P14) of a time series and a bar chart (4.18, 4.28, 4.30,
 // 9.19, engine edits E43 to E46 of 9.24). The expected values are those of Grafana 12.4.2 in `vectors/FE-83-series-options.json`, measured on
 // 2026-11-22 with probes of the canvas calls. The pure rules run first. Then the engine and the time series run on a small fake of the DOM and
 // of the canvas, which records each fill, each stroke, each text and each gradient.

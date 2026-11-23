@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `source` (16.9): start a local ClickHouse on 127.0.0.1, run the ignored tests of
 # hune-source against it, and remove the container.
 #

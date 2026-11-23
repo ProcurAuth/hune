@@ -1,4 +1,5 @@
-//! The gzip copies of the static files (9.3, 13.8 `server.compress_static`, decision ID-K304): the headers
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The gzip copies of the static files (9.3, 13.8 `server.compress_static`): the headers
 //! `Content-Encoding`, `Vary` and `Content-Length`, `HEAD`, `Range`, and the answers that stay as they are.
 
 use super::harness::*;

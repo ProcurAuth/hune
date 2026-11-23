@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The migrations of the document format (4.42): golden pairs, errors and purity.
 //!
 //! The golden files are in `tests/fixtures/dashboards/`: `format1/` holds the inputs of the first

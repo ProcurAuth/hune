@@ -1,4 +1,4 @@
-// The cosmetic options of a series (4.18, 4.28, 9.19; wave H, item P14), as Grafana 12.4.2 draws them. Pure module: no DOM access.
+// The cosmetic options of a series (4.18, 4.28, 9.19), as Grafana 12.4.2 draws them. Pure module: no DOM access.
 
 import { niceStepAtLeast, yTickSpace } from "./series.js";
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Golden cases of the placeholder scan (9.10, 7.6).
 import { test } from "node:test";
 import assert from "node:assert/strict";

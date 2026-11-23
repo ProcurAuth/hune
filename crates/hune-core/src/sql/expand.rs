@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The expansion (7.11) in one pass: macros, placeholders and the escape rules. Then the checks
 //! of the property P, of the statement and of the size (steps 9 to 12 of 7.2).
 

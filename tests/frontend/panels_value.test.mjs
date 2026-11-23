@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the pure helpers of the stat, bar gauge and pie chart panels (9.19).
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the engine with a small key table. They cover the nine rules of 13.2 and the
 //! error forms of 13.14 that belong to the engine.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The header bar (9.6) and the theme selector (9.25): the logic with no DOM, the boot script in a fake window, the boot block and the css rules.
 import test from "node:test";
 import assert from "node:assert/strict";

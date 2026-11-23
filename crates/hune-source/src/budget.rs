@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The memory budget of the results in flight (8.4, 8.8, 12.16).
 
 use std::sync::Arc;

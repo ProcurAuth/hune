@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The option forms of `stat`, `bargauge` and `piechart` (10.3h, F43, vector set FE-77): the tables against the format and `newOptions`,
 // the write rule and the rules of display on the vectors, and the grammar of the field "Fields".
 import test from "node:test";

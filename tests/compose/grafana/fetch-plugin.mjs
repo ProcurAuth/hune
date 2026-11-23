@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Download the ClickHouse plugin archive of Grafana, check its SHA-256 and unpack it (16.13).
 // Input: the variable PLUGIN_REF, the line of tests/images.lock: `<url>@sha256:<64 hex digits>`.
 // Argument: the directory for the plugins. The tool fails when the digest is absent or differs.

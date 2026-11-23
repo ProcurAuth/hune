@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `hune health` (14.5): one `GET /livez` on the ops listener, with one deadline of 2 s.
 
 use std::io::{Read, Write};

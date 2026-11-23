@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The Hune value model of MongoDB (8b.16) and the typed leaves of the query tree (7.28).
 //!
 //! The driver module converts each BSON value to [`MongoValue`], one document at a time. This

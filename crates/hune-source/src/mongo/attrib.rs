@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The attribution of a query (8b.11).
 //!
 //! Each command of a query has the member `comment`: a document. MongoDB shows it in the log, in
@@ -177,7 +178,7 @@ mod tests {
 
     #[test]
     fn an_annotation_query_names_its_index_in_place_of_the_panel() {
-        // 8b.11: the kind `annotation` and the integer member `annotation` (decisions ID-K142 and ID-K333).
+        // 8b.11: the kind `annotation` and the integer member `annotation`.
         let mut c = full();
         c.kind = LogKind::Annotation;
         c.panel = Some(5);

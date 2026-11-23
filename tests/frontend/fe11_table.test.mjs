@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-11: table sort and column filter (9.20).
 import test from "node:test";
 import assert from "node:assert/strict";

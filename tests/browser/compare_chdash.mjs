@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-// Side-by-side harness for the chrome: ClickHouse Dash (left) and Hune (right). Owner request of 2026-11-12 (ID-K50, 9.25).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Side-by-side harness for the chrome: ClickHouse Dash (left) and Hune (right).
 //
 // Use:  node tests/browser/compare_chdash.mjs --hune http://127.0.0.1:8196 --out target/ws/f-theme/compare-chdash
 //       node tests/browser/compare_chdash.mjs --only header,theme-menu --themes dark --widths 1280

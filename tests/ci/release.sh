@@ -1,6 +1,7 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Release of Hune (17.3): check, make SHA256SUMS, make the draft release, check the draft, publish it.
-# The workflow release.yaml makes the same release on GitHub, as an option. The owner can run this script
+# The workflow release.yaml makes the same release on GitHub, as an option. A maintainer can run this script
 # instead, on a machine, after tests/ci/all.sh. It needs no GitHub Actions and no GitHub billing.
 # Use: tests/ci/release.sh VERSION [--amd64-only] [--partial-gate TEXT]
 #   VERSION is x.y.z. The archives dist/hune_<VERSION>_linux_<arch>.tar.gz MUST exist: make each one with
@@ -8,7 +9,7 @@
 #   --amd64-only  expects and releases the amd64 archive only (a person with no arm64 machine).
 #   --partial-gate TEXT  replaces the check of target/ci-all.ok. TEXT MUST NOT be empty. It says which jobs ran on the
 #                 commit and which did not. The script writes it in the release notes under "Checks". Use it only when
-#                 the owner decides that a partial gate is enough. Every other check of step 1 stays.
+#                 a partial gate is enough. Every other check of step 1 stays.
 # Steps:
 #   1. Check the input: the branch is main and the commit is on origin; the work tree is clean; VERSION is the
 #      version of Cargo.toml; CHANGELOG.md has `## VERSION - <date>`; the tag v<VERSION> does not exist;
@@ -18,7 +19,7 @@
 #   4. Publish the draft with one call. The publish creates the tag.
 #   When a step before the publish call fails, the script deletes the draft. After the publish call starts,
 #   it never deletes the draft or the release: check the release and the tag by hand.
-# Needs: git, gh (logged in by the owner), sha256sum. The script pushes no image and logs in to no registry.
+# Needs: git, gh (logged in), sha256sum. The script pushes no image and logs in to no registry.
 set -eu
 . "$(dirname "$0")/ci-lib.sh"
 ci_init
@@ -93,7 +94,7 @@ tools/changelog-section.sh "$V" >target/release-notes.md
 if [ "$HAS_PARTIAL" = true ]; then
     {
         printf '\n### Checks\n\n'
-        printf 'The full gate (tests/ci/all.sh) did not run on this commit. The owner chose a partial gate.\n\n'
+        printf 'The full gate (tests/ci/all.sh) did not run on this commit. A partial gate was chosen.\n\n'
         printf '%s\n' "$PARTIAL"
     } >>target/release-notes.md
 fi

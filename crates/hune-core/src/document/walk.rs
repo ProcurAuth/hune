@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The walk of the member tables of section 4: it reads the JSON tree into the typed model and
 //! collects the errors (4.36, step 5). The rules across members are in `cross.rs`.
 
@@ -1456,7 +1457,7 @@ fn property_set(cx: &mut Ctx, f: &Field<'_>, label: &'static str, pc: PropertyCo
     prop!("show_points", TIMESERIES_SET, f => f.en::<ShowPoints>(cx), ps.show_points);
     prop!("point_size", TIMESERIES_SET, f => f.int(cx, 1, 40).and_then(|v| u8::try_from(v).ok()), ps.point_size);
     prop!("transform", TIMESERIES, f => f.en::<SeriesTransform>(cx), ps.transform);
-    // The members of wave H, item P14 (4.18).
+    // The members (P14) (4.18).
     prop!("line_dash_array", TIMESERIES, f => dash_array(cx, &f), ps.line_dash_array);
     prop!("axis_centered_zero", AXIS, f => f.boolean(cx), ps.axis_centered_zero);
     prop!("axis_width", AXIS, f => f.int(cx, 0, 500).and_then(|v| u16::try_from(v).ok()), ps.axis_width);
@@ -2117,7 +2118,7 @@ fn timeseries_options(cx: &mut Ctx, f: &Field<'_>) -> Option<TimeseriesOptions> 
     let legend = obj.get(cx, "legend").and_then(|f| legend(cx, &f, false));
     let tooltip = obj.get(cx, "tooltip").and_then(|f| tooltip(cx, &f));
     let thresholds_style = optional(&mut obj, "thresholds_style", |f| f.en::<ThresholdsStyle>(cx));
-    // The optional members of wave H, items P10 and P14 (4.28): an absent member has its default.
+    // The optional members (P10 and P14) (4.28): an absent member has its default.
     let gradient_mode = optional(&mut obj, "gradient_mode", |f| f.en::<GradientMode>(cx));
     let log_base = optional(&mut obj, "log_base", |f| match f.int(cx, 2, 10)? {
         v @ (2 | 10) => u8::try_from(v).ok(),
@@ -2178,7 +2179,7 @@ fn stat_options(cx: &mut Ctx, f: &Field<'_>) -> Option<StatOptions> {
     let text_mode = obj.en::<TextMode>(cx, "text_mode");
     let orientation = obj.en::<StatOrientation>(cx, "orientation");
     let justify = optional(&mut obj, "justify", |f| f.en::<StatJustify>(cx));
-    // The optional members of wave H, item P11 (4.29): an absent member has the Grafana default.
+    // The optional members (P11) (4.29): an absent member has the Grafana default.
     let percent_change = optional(&mut obj, "percent_change", |f| f.boolean(cx));
     let percent_change_color = optional(&mut obj, "percent_change_color", |f| f.en::<PercentChangeColor>(cx));
     let title_size = optional(&mut obj, "title_size", |f| f.int(cx, 1, 200).and_then(|v| u8::try_from(v).ok()));
@@ -2224,7 +2225,7 @@ fn barchart_options(cx: &mut Ctx, f: &Field<'_>) -> Option<BarchartOptions> {
     let legend = obj.get(cx, "legend").and_then(|f| legend(cx, &f, false));
     let tooltip = obj.get(cx, "tooltip").and_then(|f| tooltip(cx, &f));
     let thresholds_style = optional(&mut obj, "thresholds_style", |f| f.en::<ThresholdsStyle>(cx));
-    // The optional members of wave H, item P03 (4.30): an absent member has the Grafana default.
+    // The optional members (P03) (4.30): an absent member has the Grafana default.
     let fill_opacity = optional(&mut obj, "fill_opacity", |f| f.int(cx, 0, 100).and_then(|v| u8::try_from(v).ok()));
     let line_width = optional(&mut obj, "line_width", |f| f.int(cx, 0, 10).and_then(|v| u8::try_from(v).ok()));
     let gradient_mode = optional(&mut obj, "gradient_mode", |f| f.en::<GradientMode>(cx));

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B170 to B177 (16.10): the minimal syntax tree of the query editor (F42, 10.3c to 10.3g).
 // B170 the folds and their keys. B171 the folded view and the edit (a key, a paste, an IME composition, a drag, the clipboard).
 // B172 the format (the button, the key, the write path, the own undo, the refusals). B173 the band of the current block and the
@@ -628,7 +629,7 @@ async function runB172(t) {
       await p.click(tid("sql-format"));
       await sleep(150);
       t.eq((await state(p)).value, [a, "", "SELECT c, d\nFROM t2;", "", c].join("\n"), `${dialect}: a selection formats its statement only`);
-      // A collapsed caret formats the whole text (ID-K230a).
+      // A collapsed caret formats the whole text.
       await p.eval(`document.querySelector('${SQL}').setSelectionRange(${from}, ${from})`);
       await p.click(tid("sql-format"));
       await sleep(150);
@@ -1330,7 +1331,7 @@ async function runB176(t) {
   t.assert(parse.formatTimes[0] <= 300, `the format of 262,144 bytes takes 300 ms or less (best of 5: ${r2(parse.formatTimes[0])} ms)`);
 
   // The folded view: the time from the click on a marker to the second frame. A text of 19 lines (the usual size) and the big text (262,144 bytes) must draw in 100 ms or less.
-  // The folded view, the gutter, the markers and the colour layer draw only the rows near the visible rows (10.3e, decision ID-K230a). A fold changes no text in the flow of the
+  // The folded view, the gutter, the markers and the colour layer draw only the rows near the visible rows (10.3e). A fold changes no text in the flow of the
   // page and no `hidden` or `display` of a layer, so the browser does not lay out the text area again (about 140 ms for 262,144 bytes). Before the change, one fold took 335 ms.
   const foldDraw = (n) => p.eval(`(async () => {
     const out = [];
@@ -1364,7 +1365,7 @@ async function runB176(t) {
   t.note(`B176 folded view of the big text (262,144 bytes, one fold): handler and handler plus two frames: ${big.map((x) => `${r2(x.handler)} and ${r2(x.total)} ms`).join(", ")}; the least of 7: handler ${r2(bigHandler)} ms, with two frames ${r2(bigBest)} ms (target 100 ms)`);
   t.assert(bigBest <= 100, `the folded view of the big text (262,144 bytes) draws in 100 ms or less (the least of 7: ${r2(bigBest)} ms, handler ${r2(bigHandler)} ms)`);
 
-  // A key: the work of F42 is to clear the marks and to start a timer. The colour layer draws only the rows near the visible rows (decision ID-K230a), so a key in the big
+  // A key: the work of F42 is to clear the marks and to start a timer. The colour layer draws only the rows near the visible rows, so a key in the big
   // text costs the same as a key in a small text. The time of a key is the time from the event to the second frame after it (it has the two frames, about 33 ms, in it).
   await p.eval(`(() => { const i = document.querySelector('${SQL}'); i.focus(); i.setSelectionRange(0, 0); window.__long = []; new PerformanceObserver((l) => { for (const e of l.getEntries()) window.__long.push(Math.round(e.duration)); }).observe({ entryTypes: ["longtask"] }); })()`);
   await sleep(1500);
@@ -1554,7 +1555,7 @@ async function runB177(t) {
 
 export const cases = [
   { id: "B177", name: "F42 the kinds of source: the panel editor of ClickHouse, PostgreSQL and MongoDB sources, a panel with two queries, the SQL of a variable and of an annotation each have the tool row; `#`, `$$`, `x::Int`, a lambda and `$facet` fold and format under the dialect of the source, and a change of the source changes it", timeout: 200000, run: runB177 },
-  { id: "B176", name: "F42 the time and the budget: parse 50 ms and format 300 ms for 262,144 bytes, the folded view 100 ms for 262,144 bytes, a key under 100 ms in a text of 262,144 bytes, the work of F42 and of the colour layer at a key (ID-K230a), no file of editor/ast/ on the view page", timeout: 300000, run: runB176 },
+  { id: "B176", name: "F42 the time and the budget: parse 50 ms and format 300 ms for 262,144 bytes, the folded view 100 ms for 262,144 bytes, a key under 100 ms in a text of 262,144 bytes, the work of F42 and of the colour layer at a key, no file of editor/ast/ on the view page", timeout: 300000, run: runB176 },
   { id: "B175", name: "F42 the access (scripted checks, no axe-core offline): the text area is the only accessible text, folded too, names and tabindex of the markers, the status messages in order, Tab, Escape then Tab, Ctrl+Enter, the focus, no animation, in both themes", timeout: 200000, run: runB175 },
   { id: "B174", name: "F42 the caps and the hostile texts: 262,144 and 262,145 bytes (ASCII, 2, 3 and 4-byte characters), 128 and 129 levels, the nodes, 2,000 and 2,001 blocks, the colours stay, the save and the run send the same bytes, no exception", timeout: 400000, run: runB174 },
   { id: "B173", name: "F42 the band of the block and the pair: the lines of the innermost block, it moves with the caret, both brackets of a pair, the mark of a lone bracket, Ctrl+Shift+\\, no glyph moves at 1, 0.9, 1.1 and 1.25, the contrast, in both themes", run: runB173 },

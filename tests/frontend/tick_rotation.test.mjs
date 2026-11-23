@@ -1,4 +1,5 @@
-// The rotation of the x tick labels of a bar chart (4.31 `x_tick_rotation`, 9.19, E25 of the copied chart engine, decision ID-K295a).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The rotation of the x tick labels of a bar chart (4.31 `x_tick_rotation`, 9.19, E25 of the copied chart engine).
 // The engine runs here on a small fake of the DOM and of the canvas. The fake context follows the transform (save, restore, translate,
 // rotate) and records each `fillText` with its place on the canvas and its angle. A test fails when a label is not drawn turned.
 import test from "node:test";

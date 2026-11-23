@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The start sequence (14.12) and the graceful stop (14.13).
 
 use super::conn;

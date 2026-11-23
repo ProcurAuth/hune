@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the pairing by ref of the parity capture (4.15a, 15.14c): a panel with several queries has one request
 // of Hune for each visible query, and the capture pairs it with the query of Grafana that has the same refId.
 import assert from "node:assert/strict";

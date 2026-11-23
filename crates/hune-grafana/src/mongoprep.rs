@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The query of the MongoDB plugin (15.6, rows of `haohanyang-mongodb-datasource`): the text of the
 //! stages, the member `collection` and the member `database`, and the checks of 7.28 to 7.33.
 //!

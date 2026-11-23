@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The `hune` binary: the server and the command line tools (3.1).
 //!
 //! `main` captures and clears the environment first (3.5, step 1; R2).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Hune core: the document format 1, the ids, the canonical JSON, the etag, the limits,
 //! the ClickHouse dialect (lexer, macros, variables, escape rules, interval rule) and the
 //! frame types.

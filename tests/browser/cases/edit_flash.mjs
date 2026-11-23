@@ -1,8 +1,9 @@
-// Browser case B207 (9.6, 10.2, 10.2a): the charts stay painted across the states of the grid (owner bug of 2026-11-15, ID-K301).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B207 (9.6, 10.2, 10.2a): the charts stay painted across the states of the grid.
 // The switch "Edit" on and off, the panel editor opened from the edit mode and from the view and closed, and Back and Forward over these
 // states. A probe in the page samples each frame just after its paint (requestAnimationFrame, then a message), and once more at the end of
 // the task that writes the hook `data-hune-view` (a MutationObserver): a chart that returns to the page draws in that task, so the check
-// does not depend on the order of the tasks under load (ID-K321). A second MutationObserver records each new canvas. The steps wait on
+// does not depend on the order of the tasks under load. A second MutationObserver records each new canvas. The steps wait on
 // states (the hook, the frames that the probe samples, the marks), never for a fixed time.
 // While the grid shows (the states `view` and `edit`), each panel frame keeps its plot and its chart canvas (the
 // same elements as before the first switch), each canvas has pixels, and no frame shows a waiting state (idle, queued, loading, the

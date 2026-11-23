@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The frame of 7.16: the one columnar JSON answer of a query.
 //!
 //! A data source reads its rows and builds a [`Frame`] with a [`FrameBuilder`]. The builder

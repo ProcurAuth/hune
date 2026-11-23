@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the expansion of the dialect `postgres` (7.21 to 7.25): the 87 vectors of
 //! `tests/golden/expansion-pg/` end to end, the escape rules, the places, the formats, the interval
 //! argument and the property P.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The narrow client interface of a MongoDB source (8b.16).
 //!
 //! The trait [`MongoClient`] is the only way from the logic of the source to a MongoDB server. It

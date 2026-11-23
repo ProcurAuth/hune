@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Stage 2 builds the `PepConfig` and the action document in the mode `authzen` (13.13). Neither call
 //! uses the network. `check-config`, `print-config` and `serve` find the same errors.
 

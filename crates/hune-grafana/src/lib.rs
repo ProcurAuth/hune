@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Hune importer (section 15): Grafana v1 and v2 dashboard JSON to format 1, with the loss
 //! report. Pure functions: no I/O.
 //!

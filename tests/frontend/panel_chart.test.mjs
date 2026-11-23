@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The chart panels (9.19, 9.24): the helpers of web/js/panels and the rules of web/css/panel-chart.css.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -155,7 +156,7 @@ test("a mark colour of a named token is a theme variable, another colour resolve
   assert.equal(markCss("yellow"), "var(--viz-yellow)");
   assert.equal(markCss("#abcdef"), "#abcdef");
   assert.equal(markCss("text"), "var(--text)");
-  // The mode `palette` draws the series palette of ClickHouse Dash (ID-K70): a hex of the theme, from slot i mod 18.
+  // The mode `palette` draws the series palette of ClickHouse Dash: a hex of the theme, from slot i mod 18.
   const cfg = { color: { mode: "palette" } };
   assert.equal(markColor(cfg, 1, { seriesIndex: 1 }), "#e86a34");
   assert.equal(markColor(cfg, 1, { seriesIndex: 1, dark: false }), "#c14802");

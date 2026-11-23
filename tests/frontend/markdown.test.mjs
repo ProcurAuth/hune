@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-28: the grammar of the Markdown of the text panel (9.19b, 16.10a). The vectors have the lines and the expected tree.
 import test from "node:test";
 import assert from "node:assert/strict";

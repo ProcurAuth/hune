@@ -1,5 +1,6 @@
-//! Several queries in one panel (4.15a, 6.20): the cases A70 to A75 of 16.8 and the rules of decisions
-//! ID-K160 to ID-K175 at the server. A request runs one query. The tests check the save of each query, the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Several queries in one panel (4.15a, 6.20): the cases A70 to A75 of 16.8 and the rules of
+//! several queries at the server. A request runs one query. The tests check the save of each query, the
 //! answer for each ref, the refusal of a hidden query, the panel members, the properties P, PG and PM, the
 //! mixed sources, the admission, the preview, the questions of the PDP, the log and the route table.
 

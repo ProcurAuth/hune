@@ -1,4 +1,5 @@
 #![cfg(target_os = "linux")]
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The memory of `params::bind` before the cap of 4,096 bytes refuses a parameter (finding 3 of the security review 3).
 //!
 //! One `Array(String)` of 255 values of 1,024 `'` fits the request body of 6.20 (262,144 bytes). Before the fix, bind

@@ -1,4 +1,5 @@
-// Browser cases B218 and B219 (F36, decision ID-K329; 9.5, 9.10a): the ad hoc filters of an `adhoc` variable. A server of the case has
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B218 and B219 (F36; 9.5, 9.10a): the ad hoc filters of an `adhoc` variable. A server of the case has
 // `clickhouse "prod".adhoc_columns`. The panel with `$__adhocFilters` runs again after each change of the filters, and the panel with no
 // macro does not. The address holds the form of Grafana 12.4.2 (`var-filters=key|op|value`, measure of 2026-11-22).
 import { writeFileSync } from "node:fs";

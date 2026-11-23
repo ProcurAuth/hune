@@ -1,8 +1,9 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The annotation route (6.21a, 7.37) through a fake ClickHouse: the answer, the refusals of the request,
 //! the limits, the seven reasons of `annotation_invalid`, the access rules and the log. The save checks of
 //! 7.18 for an annotation are here too. The tests k15 and k17 to k20 run the same route on a `postgres`
-//! source with no server and on a `mongodb` source with the fake client of 8b.16 (decisions ID-K142 and
-//! ID-K333). The tests with real servers are in `pg_real.rs` (PS17) and `mongo_real.rs` (MS20).
+//! source with no server and on a `mongodb` source with the fake client of 8b.16.
+//! The tests with real servers are in `pg_real.rs` (PS17) and `mongo_real.rs` (MS20).
 
 use super::api::{JSON, NODES, etag_of, fill, key, put_body};
 use super::authzen_pdp::*;
@@ -473,7 +474,7 @@ async fn k13_a_save_with_an_interval_macro_is_refused_and_a_postgres_source_gets
         assert_eq!((r.status, r.code().as_str()), (422, "invalid_document"), "{sql:?} {}", r.text());
         assert_eq!(errors_of(&r), vec![(pointer.to_owned(), "not_permitted".to_owned())], "{sql:?}");
     }
-    // A `postgres` source (ID-K142, ID-K333): the text gets the checks of its dialect (7.26) and is saved.
+    // A `postgres` source: the text gets the checks of its dialect (7.26) and is saved.
     let mut doc = annotation_doc("nodes");
     doc["annotations"][0]["source"] = json!("metrics");
     doc["annotations"][0]["sql"] = json!([
@@ -595,7 +596,7 @@ async fn k15_a_stored_annotation_on_postgres_reaches_its_source_and_an_interval_
     assert!(fake.queries().is_empty());
 }
 
-// ---- The `mongodb` and `postgres` sources (decisions ID-K142 and ID-K333) ------------------------------
+// ---- The `mongodb` and `postgres` sources ------------------------------
 
 /// The annotation 0 of the MongoDB tests: the range, the `custom` variable `env`, the `text` variable `account`
 /// (a free value) and the five roles.

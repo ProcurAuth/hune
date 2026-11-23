@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Helpers of the front-end tests: fields from compact column specs.
 import { framesToFields } from "../../web/js/frame.js";
 import { Runtime } from "../../web/js/runtime.js";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The metrics of 14.8 and the Prometheus text writer (format 0.0.4).
 //!
 //! The metrics are counters, gauges and histograms with a fixed list of label names. The label

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The rows of the text panel in 15.6 (4.33a): one test for each new row in the v1 form and in the v2
 //! forms, and separate tests for the fence of a code block, the line ends, the control characters, the
 //! constructs of the list under the table, the limits and the hostile text.

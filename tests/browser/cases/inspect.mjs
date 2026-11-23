@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B46 (16.10, 9.11): the item "Inspect" of the panel menu and the key `server.query_inspect`.
 // The case starts two servers of its own. With `query_inspect = true` the menu has "Inspect", and its dialog shows
 // the expanded SQL. With `query_inspect = false` the item is absent. All SQL is synthetic.

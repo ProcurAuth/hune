@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Generate the synthetic dashboard of the load test (16.16) as a volume folder.
 // Use: node tests/load/gen.mjs VOLUME_DIR [PANELS]
 // The volume gets `load/_folder.json` and `load/load45.json`. The dashboard has PANELS panels

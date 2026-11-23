@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The typed model of format 3 (4.5 to 4.33).
 //!
 //! Each type has the members of its table, in table order. Only [`super::validate`] makes a
@@ -69,15 +70,15 @@ text_enum! {
     pub enum SeriesTransform { None => "none", NegativeY => "negative_y" }
 }
 text_enum! {
-    /// The property `axis_color` (4.18, wave H item P14): the colour of the y axis.
+    /// The property `axis_color` (4.18): the colour of the y axis.
     pub enum AxisColor { Text => "text", Series => "series" }
 }
 text_enum! {
-    /// The option `gradient_mode` of `timeseries` and `barchart` (4.28, 4.30, wave H item P10).
+    /// The option `gradient_mode` of `timeseries` and `barchart` (4.28, 4.30).
     pub enum GradientMode { None => "none", Opacity => "opacity", Hue => "hue", Scheme => "scheme" }
 }
 text_enum! {
-    /// The option `bar_alignment` of `timeseries` (4.28, wave H item P14): the place of a bar against its time.
+    /// The option `bar_alignment` of `timeseries` (4.28): the place of a bar against its time.
     pub enum BarAlignment { Before => "before", Center => "center", After => "after" }
 }
 text_enum! {
@@ -1113,7 +1114,7 @@ pub struct PropertySet {
     pub point_size: Option<u8>,
     /// The transform of the values. Timeseries only.
     pub transform: Option<SeriesTransform>,
-    /// The dash array: 1 to 8 integers from 0 to 100 (device pixels). Timeseries only (wave H, P14).
+    /// The dash array: 1 to 8 integers from 0 to 100 (device pixels). Timeseries only (P14).
     pub line_dash_array: Option<Vec<u8>>,
     /// `true`: the y axis has 0 in its middle. Timeseries and barchart (P14).
     pub axis_centered_zero: Option<bool>,
@@ -1610,7 +1611,7 @@ pub struct TimeseriesOptions {
     pub tooltip: Tooltip,
     /// How the thresholds show in the chart. Default `Off`.
     pub thresholds_style: ThresholdsStyle,
-    /// The gradient of the fill and of the line. Default `None` (wave H, P10).
+    /// The gradient of the fill and of the line. Default `None` (P10).
     pub gradient_mode: GradientMode,
     /// The base of a log scale: 2 or 10. Default 10 (P14).
     pub log_base: u8,
@@ -1620,7 +1621,7 @@ pub struct TimeseriesOptions {
     pub bar_alignment: BarAlignment,
 }
 
-/// The default of the optional option `log_base` of a `timeseries` (4.28): the base of `y_scale` = `log` before wave H.
+/// The default of the optional option `log_base` of a `timeseries` (4.28): the base of `y_scale` = `log` before the later options.
 pub const LOG_BASE: u8 = 10;
 /// The largest value of the optional option `span_nulls_ms` (4.28): 10^12 ms, about 31.7 years.
 pub const MAX_SPAN_NULLS_MS: i64 = 1_000_000_000_000;
@@ -1640,7 +1641,7 @@ pub struct StatOptions {
     pub orientation: StatOrientation,
     /// The alignment of the items. Default `Auto`.
     pub justify: StatJustify,
-    /// `true`: each reduced item shows its percent change (wave H, item P11). Default `false`.
+    /// `true`: each reduced item shows its percent change. Default `false`.
     pub percent_change: bool,
     /// The colour of the percent change. Default `Standard`.
     pub percent_change_color: PercentChangeColor,
@@ -1682,7 +1683,7 @@ pub struct BarchartOptions {
     pub fill_opacity: u8,
     /// The width of the line around a bar: 0 to 10 CSS pixels. Default 1.
     pub line_width: u8,
-    /// The gradient of the fill and of the line of the bars. Default `None` (wave H, P10).
+    /// The gradient of the fill and of the line of the bars. Default `None` (P10).
     pub gradient_mode: GradientMode,
 }
 

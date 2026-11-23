@@ -127,7 +127,7 @@ pub(crate) struct RuntimeEnvironment {
     pub(crate) container: Option<RawDocumentBuf>,
 }
 
-// hune: no variant is built any more, because the driver reads no environment variable (ID-MG25).
+// hune: no variant is built any more, because the driver reads no environment variable.
 #[allow(dead_code)]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub(crate) enum FaasEnvironmentName {
@@ -234,7 +234,7 @@ impl RuntimeEnvironment {
 
     // hune: the original reads the environment variables of the FaaS platforms, the file
     // /.dockerenv and KUBERNETES_SERVICE_HOST to fill the `env` field of the client metadata.
-    // Hune reads no environment variable (rule 5 of the owner, ID-MG25). The field stays unset.
+    // Hune reads no environment variable (configuration rule 5). The field stays unset.
     fn new() -> Option<Self> {
         None
     }
@@ -243,7 +243,7 @@ impl RuntimeEnvironment {
 impl FaasEnvironmentName {
     // hune: the original reads AWS_EXECUTION_ENV, AWS_LAMBDA_RUNTIME_API, VERCEL,
     // FUNCTIONS_WORKER_RUNTIME, K_SERVICE and FUNCTION_NAME. Hune reads no environment
-    // variable (ID-MG25): there is never a FaaS platform. `is_faas()` is always false, so the
+    // variable: there is never a FaaS platform. `is_faas()` is always false, so the
     // server monitoring mode `auto` always selects the streaming protocol.
     pub(crate) fn new() -> Option<Self> {
         None

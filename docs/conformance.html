@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="How to run the conformance cases of ProcurAuth against Hune, and what the result is.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hune">
+<meta property="og:title" content="Conformance | Hune">
+<meta property="og:description" content="How to run the conformance cases of ProcurAuth against Hune, and what the result is.">
+<meta property="og:url" content="https://procurauth.github.io/hune/conformance.html">
+<meta property="og:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB. One static binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Conformance | Hune">
+<meta name="twitter:description" content="How to run the conformance cases of ProcurAuth against Hune, and what the result is.">
+<meta name="twitter:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta name="twitter:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB.">
+<link rel="canonical" href="https://procurauth.github.io/hune/conformance.html">
+<title>Conformance | Hune</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#fafafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="access.html">Access</a></li><li><a href="security.html">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main id="main">
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.1.1</span> The test of the ProcurAuth runner</p><h1>Conformance</h1><p class="lede">How to run the conformance cases of ProcurAuth against Hune, and what the result is.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#the-pinned-commit">The pinned commit</a></li><li><a href="#the-result">The result</a></li><li><a href="#the-profile">The profile</a></li><li><a href="#how-to-run">How to run</a></li><li><a href="#what-the-cases-show">What the cases show</a></li><li><a href="#a-failed-case">A failed case</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/CONFORMANCE.md"><code>docs/CONFORMANCE.md</code></a> in the repository.</p><p>This document uses ASD-STE100 Simplified Technical English.</p>
+<p>This document tells how Hune shows that it follows the ProcurAuth protocol. The ProcurAuth repository has a runner, <code>access-conformance</code>. The runner sends the cases of the series U to Hune in the mode <code>authzen</code>. Section 11.32 and section 16.12 of the specification own the method.</p>
+<h2 id="the-pinned-commit"><a class="self" href="#the-pinned-commit">The pinned commit</a></h2>
+<p>The git dependencies <code>procurauth-pep</code> and <code>procurauth-core</code> use one full commit. The conformance run uses the same commit.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Item</th><th scope="col">Value</th></tr></thead><tbody><tr><th scope="row">Repository</th><td data-label="Value"><code>https://github.com/ProcurAuth/procurauth</code></td></tr><tr><th scope="row">Commit</th><td data-label="Value"><code>058563cfbc3536b9b850255d953568ef0a5cabbe</code></td></tr><tr><th scope="row">Runner</th><td data-label="Value"><code>access-conformance</code>, role <code>pep</code>, series U</td></tr><tr><th scope="row">Cases</th><td data-label="Value">U01 to U110</td></tr></tbody></table></div>
+<p>To change the commit, follow section 11.10 of the specification. Then run the series U again and update the counts of this file.</p>
+<h2 id="the-result"><a class="self" href="#the-result">The result</a></h2>
+<p>The run on the commit above gave these counts. The last run was on 2026-11-11, with documents of format 2. The fixture <code>tests/conformance/fixture/conf/conf-dash.json</code> and the etag of the profile follow format 2. The run gave the same counts.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Cases</th><th scope="col">Count</th></tr></thead><tbody><tr><th scope="row">Run</th><td data-label="Count">110</td></tr><tr><th scope="row">Passed</th><td data-label="Count">60</td></tr><tr><th scope="row">Failed</th><td data-label="Count">0</td></tr><tr><th scope="row">Skipped</th><td data-label="Count">50</td></tr></tbody></table></div>
+<p>The file <code>tests/conformance/expected.txt</code> is empty. The script exits with 0 only when the set of failed cases equals the ids in that file.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Skipped cases</th><th scope="col">Count</th><th scope="col">Reason</th></tr></thead><tbody><tr><th scope="row">U18, U23, U25 to U31, U85 to U110</th><td data-label="Count">35</td><td data-label="Reason">The service has no MCP endpoint.</td></tr><tr><th scope="row">U04, U19, U21, U22, U24, U32 to U35, U58, U62, U63, U67, U68</th><td data-label="Count">14</td><td data-label="Reason">No action declares a budget.</td></tr><tr><th scope="row">U84</th><td data-label="Count">1</td><td data-label="Reason">The profile has no operation <code>use_service</code>.</td></tr></tbody></table></div>
+<p>The specification expects 61 passed cases and 49 skipped cases. The difference is the case U67. Its only step names the operation <code>use_budget</code>, and the runner skips it when no action declares a budget. The specification counts U67 as a case that runs. Section 11.32, section 16.12 and section 19.28 need a correction. This is an open question.</p>
+<h2 id="the-profile"><a class="self" href="#the-profile">The profile</a></h2>
+<p>The files of the run are in <code>tests/conformance/</code>.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">File</th><th scope="col">Content</th></tr></thead><tbody><tr><th scope="row"><code>run.sh</code></th><td data-label="Content">The script of the run.</td></tr><tr><th scope="row"><code>config.hcl</code></th><td data-label="Content">The configuration of Hune: audience <code>hune-conf</code>, the PDP at <code>127.0.0.1:8181</code>, <code>cache_ttl = "0s"</code>, one source <code>conf</code>.</td></tr><tr><th scope="row"><code>profile.json</code></th><td data-label="Content">The profile of the runner: the service id, the token rules, the three operations.</td></tr><tr><th scope="row"><code>jwks.json</code></th><td data-label="Content">The public keys of the test edge of ProcurAuth.</td></tr><tr><th scope="row"><code>fixture/conf/conf-dash.json</code></th><td data-label="Content">The fixture dashboard. It has one table panel (id 1) on the source <code>conf</code>.</td></tr><tr><th scope="row"><code>init-conf.sql</code></th><td data-label="Content">The table <code>analytics.conf_rows</code> with the rows 1 to 10.</td></tr><tr><th scope="row"><code>expected.txt</code></th><td data-label="Content">The failed cases that the project accepts. It is empty.</td></tr></tbody></table></div>
+<p>The profile has these operations.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Operation</th><th scope="col">Request</th><th scope="col">Action and node</th></tr></thead><tbody><tr><th scope="row"><code>use_plain</code></th><td data-label="Request"><code>GET /api/dashboards/conf-dash?download=true</code></td><td data-label="Action and node"><code>dashboard.read</code> on <code>dashboard:conf-dash</code> below <code>folder:conf</code></td></tr><tr><th scope="row"><code>use_ceiling</code></th><td data-label="Request"><code>POST /api/dashboards/conf-dash/panels/1/query</code></td><td data-label="Action and node"><code>dashboard.read</code>, ceiling <code>max_rows</code>, value 1000</td></tr><tr><th scope="row"><code>use_multi</code></th><td data-label="Request"><code>PUT /api/dashboards/conf-dash</code></td><td data-label="Action and node"><code>dashboard.write</code> on <code>dashboard:conf-dash</code>, other <code>source.query</code> on <code>source:conf</code></td></tr></tbody></table></div>
+<p>The profile has no <code>use_budget</code>, no <code>use_service</code>, no <code>mcp</code> and no <code>approvals</code>. It sets <code>answer_cache</code> to <code>false</code> and <code>options_type</code> to <code>folder</code>.</p>
+<h3 id="a-deviation-from-section-1132">A deviation from section 11.32</h3>
+<p>Section 11.32 gives the request <code>GET /api/dashboards/conf-dash</code> for <code>use_plain</code>. This request asks two questions: <code>dashboard.read</code> for the use, and <code>dashboard.write</code> for the flag <code>access.write</code> (section 11.25). Cases such as U01 count the questions of the subject and expect one. With this request, 10 cases fail.</p>
+<p>The run uses <code>GET /api/dashboards/conf-dash?download=true</code>. Section 11.21 says that this request asks the same use question. It gives no flag, so it asks one question. It is an open question if section 11.32 follows the run or the run follows section 11.32.</p>
+<h2 id="how-to-run"><a class="self" href="#how-to-run">How to run</a></h2>
+<p>The script needs Docker for ClickHouse.</p>
+<ol><li>Run <code>tests/conformance/run.sh --local</code> on a host. The script uses the binary <code>target/debug/hune</code> or <code>target/release/hune</code>. It starts a ClickHouse container on <code>127.0.0.1:8123</code>.</li><li>Set <code>PROCURAUTH_DIR</code> to a checkout of the pinned commit. Without it, the script clones the commit into <code>target/procurauth</code>.</li><li>Run <code>tests/conformance/run.sh</code> for the full method. The script builds the runner and the static musl binary in Docker. It starts Hune with <code>--network none</code> and a read-only root. ClickHouse and the runner join the network namespace of Hune.</li></ol>
+<p>The script writes <code>target/conformance/report.txt</code>. The last line of the report gives the counts.</p>
+<p>The CI job <code>procurauth</code> runs the script. It runs on each change to <code>crates/hune/src/access/</code>, to the configuration code, to the conformance files, and before each release. The workflow <code>conformance.yml</code> calls it on GitHub. A maintainer can run it with <code>tests/ci/all.sh</code>, with no GitHub Actions. The script reads the pinned commit of the runner from the <code>rev</code> of <code>procurauth-pep</code> in <code>Cargo.toml</code>.</p>
+<h2 id="what-the-cases-show"><a class="self" href="#what-the-cases-show">What the cases show</a></h2>
+<p>The 60 cases that pass show these properties of Hune.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Property</th><th scope="col">Cases</th></tr></thead><tbody><tr><th scope="row">The subject, the chain and the questions</th><td data-label="Cases">U01, U02, U07 to U11, U59</td></tr><tr><th scope="row">A <code>subtree</code> answer never lets an operation run</th><td data-label="Cases">U12</td></tr><tr><th scope="row">The action document needs no token and asks no question</th><td data-label="Cases">U13 to U17</td></tr><tr><th scope="row">No usage for an action without a budget</th><td data-label="Cases">U20</td></tr><tr><th scope="row">The ceilings</th><td data-label="Cases">U36 to U39</td></tr><tr><th scope="row">No question for the action <code>access</code></th><td data-label="Cases">U40</td></tr><tr><th scope="row">Each rule of the identity token</th><td data-label="Cases">U03, U41 to U55</td></tr><tr><th scope="row">The PDP credential and the kept answers</th><td data-label="Cases">U56, U57</td></tr><tr><th scope="row">The refusals and the failures</th><td data-label="Cases">U06, U60, U61, U64 to U66</td></tr><tr><th scope="row">The connections to the PDP stay open</th><td data-label="Cases">U69</td></tr><tr><th scope="row">The options route</th><td data-label="Cases">U05, U70 to U83</td></tr></tbody></table></div>
+<h2 id="a-failed-case"><a class="self" href="#a-failed-case">A failed case</a></h2>
+<p>A later commit of the runner can add cases. A case that fails MUST have a line in <code>expected.txt</code> with its reason. A maintainer approves each line. At the exit of M6, the list is empty.</p></article></div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>Hune</h2>
+        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="configuration.html">Configuration</a></li>
+          <li><a href="architecture.html">Architecture</a></li>
+          <li><a href="specification.html">Specification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Run</h2>
+        <ul>
+          <li><a href="access.html">Access and ProcurAuth</a></li>
+          <li><a href="security.html">Security model</a></li>
+          <li><a href="operations.html">Operations</a></li>
+          <li><a href="reference.html">Configuration reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/ProcurAuth/hune">Repository</a></li>
+          <li><a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a></li>
+          <li><a href="changelog.html">Changelog</a></li>
+          <li><a href="status.html">Status</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="conformance.html">Conformance</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>Hune, version 0.1.1.</p>
+      <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
+      <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

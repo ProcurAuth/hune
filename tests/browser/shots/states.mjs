@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The states that the screenshot harness captures.
 //
 // A state has an id, a text, and a function run(c). `c` is the context of one capture: a fresh page (c.page), the

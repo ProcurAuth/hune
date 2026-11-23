@@ -1,4 +1,5 @@
-//! The panel type `geomap` (4.33g, decision ID-K328): the closed options, their ranges, the canonical order, the rule of the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The panel type `geomap` (4.33g): the closed options, their ranges, the canonical order, the rule of the
 //! sizes, the frame of one query, and no tile source in the document.
 
 use hune_core::document::{GeomapOptions, GeomapTooltip, GeomapViewMode, PanelOptions, PanelType, TextEnum, validate};

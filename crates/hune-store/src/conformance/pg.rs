@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The PostgreSQL side of the conformance suite (5.33 to 5.36): the factory of empty stores,
 //! the hooks and the helpers of the tests of 5.36.
 //!

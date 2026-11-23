@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The limits of format 3 (4.35). They are constants, not configuration keys.
 //!
 //! A document that is valid on one instance is valid on all instances and in both backends.

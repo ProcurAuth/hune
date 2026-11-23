@@ -1,5 +1,5 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B43 (16.10, 10.16): drag and resize of the panels in edit mode, against the real server.
-// The case is written for the orchestrator: the worker that wrote it did not run it.
 import { draftOf, enterEdit, makeSeed, saveDialog, waitDraft } from "../lib/ed.mjs";
 import { sleep, waitPanelsReady } from "../lib/h.mjs";
 

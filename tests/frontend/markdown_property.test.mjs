@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The properties P1 to P7 on seeded random texts, and the bound of steps on 12 families of hostile texts at 3 sizes (9.19b, 16.10a).
 import test from "node:test";
 import assert from "node:assert/strict";

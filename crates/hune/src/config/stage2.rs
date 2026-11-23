@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Stage 2 of the checks (13.13, 13.19): the checks of the values after the key table.
 //!
 //! The values from `_env` and `_file` get the same checks as the values of the file. The
@@ -183,7 +184,7 @@ fn check_mongo_list(key: &ResolvedKey) -> Option<String> {
     None
 }
 
-/// Check the items of `clickhouse "<id>".adhoc_columns` (13.13, decision ID-K329): each item is a plain column name
+/// Check the items of `clickhouse "<id>".adhoc_columns` (13.13): each item is a plain column name
 /// `^[A-Za-z_][A-Za-z0-9_]{0,63}$` and no item repeats (exact, case-sensitive). The result is the first problem.
 fn check_adhoc_columns(key: &ResolvedKey) -> Option<String> {
     let Value::List(items) = &key.value else { return None };

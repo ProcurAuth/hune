@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the pure logic of the editor: draft (10.2, 10.6 to 10.9), SQL text (10.3), JSON scan (10.4), save logic (10.9 to 10.13).
 import test from "node:test";
 import assert from "node:assert/strict";

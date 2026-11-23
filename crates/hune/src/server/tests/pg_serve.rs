@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `serve` on the PostgreSQL backend (5.23 to 5.31, 14.12 steps 6 to 8).
 //!
 //! The tests of the option mapping run always. The tests with a server are ignored. Start them
@@ -379,7 +380,7 @@ async fn pg_two_instances_share_the_store_through_the_poll() {
     assert_eq!(b.stop().await, 0);
 }
 
-/// One restore of the API validates its version one time on PostgreSQL too (6.18, decision ID-K321). The handler
+/// One restore of the API validates its version one time on PostgreSQL too (6.18). The handler
 /// validates the version, and the transaction of the store validates nothing. Before the fix: 2 validations.
 #[tokio::test]
 #[ignore = "needs PostgreSQL: tests/ci/pgwire.sh"]

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The `DataSource` trait (8.1) and the enum `AnySource` (R8: enum dispatch, no `dyn`).
 
 use std::future::Future;

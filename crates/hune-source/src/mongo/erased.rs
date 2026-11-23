@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The object-safe form of the client interface, and the connector of a source.
 //!
 //! The trait [`MongoClient`] has methods that return `impl Future`, so it is not object-safe. The

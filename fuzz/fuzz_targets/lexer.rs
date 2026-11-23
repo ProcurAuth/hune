@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `lexer` (16.16).
 //!
 //! Property: for any text, `lex_all` does not panic. Its tokens cover the text with no gap and

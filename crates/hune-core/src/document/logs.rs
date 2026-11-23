@@ -1,4 +1,5 @@
-//! The panel type `logs` (4.33f; decision ID-K326, item F33): the walk of its options, their canonical form and
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The panel type `logs` (4.33f): the walk of its options, their canonical form and
 //! the rule of the query format `logs`.
 //!
 //! Each member of the options is optional, so a new value of the type needs no new format version (4.42). The

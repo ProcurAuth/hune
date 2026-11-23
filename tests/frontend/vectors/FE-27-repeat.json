@@ -2949,7 +2949,7 @@
    "b$panel"
   ],
   "grafana": {
-   "note": "The form <x>$panel-<id> of Grafana names the copy by its value (10.2a, rule 1; the measure of Grafana 12.4.2 of 2026-11-15, ID-K92). The document has the panel 1 that repeats by host (direction h), the panel 3 with no repeat, and the section 1 that repeats by host with the panel 2. key null: no copy has this value, the state is view with the notice no-panel.",
+   "note": "The form <x>$panel-<id> of Grafana names the copy by its value (10.2a, rule 1; the measure of Grafana 12.4.2 of 2026-11-15). The document has the panel 1 that repeats by host (direction h), the panel 3 with no repeat, and the section 1 that repeats by host with the panel 2. key null: no copy has this value, the state is view with the notice no-panel.",
    "options": {
     "text": [
      [

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Check a literal against the type and the range of a key (13.4, 13.6).
 
 use crate::schema::{Kind, TextRule};

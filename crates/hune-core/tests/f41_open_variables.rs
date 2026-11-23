@@ -1,4 +1,5 @@
-//! The security tests of the member `allow_custom_value` (F41, ID-K200, 7.7, 7.8, 7.35, 12.4 T75 to T78).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The security tests of the member `allow_custom_value` (F41, 7.7, 7.8, 7.35, 12.4 T75 to T78).
 //!
 //! The engine is the same for 6.20, 6.21 (also as a parent), 6.21a and the preview, so the cases here run the
 //! engine for ClickHouse, PostgreSQL and MongoDB. The server tests run the four routes.

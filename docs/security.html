@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="The protections of the query engine, the stores, the page and the data source connections. To report a vulnerability, read the security policy.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hune">
+<meta property="og:title" content="Security model | Hune">
+<meta property="og:description" content="The protections of the query engine, the stores, the page and the data source connections. To report a vulnerability, read the security policy.">
+<meta property="og:url" content="https://procurauth.github.io/hune/security.html">
+<meta property="og:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB. One static binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Security model | Hune">
+<meta name="twitter:description" content="The protections of the query engine, the stores, the page and the data source connections. To report a vulnerability, read the security policy.">
+<meta name="twitter:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta name="twitter:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB.">
+<link rel="canonical" href="https://procurauth.github.io/hune/security.html">
+<title>Security model | Hune</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#fafafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="access.html">Access</a></li><li><a href="security.html" aria-current="page">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main id="main">
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.1.1</span> What Hune protects, and how</p><h1>Security model</h1><p class="lede">The protections of the query engine, the stores, the page and the data source connections. To report a vulnerability, read the security policy.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#trust-boundaries">Trust boundaries</a></li><li><a href="#what-hune-protects">What Hune protects</a></li><li><a href="#access-control">Access control</a></li><li><a href="#what-hune-does-not-protect">What Hune does not protect</a></li><li><a href="#test-values">Test values</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/SECURITY-MODEL.md"><code>docs/SECURITY-MODEL.md</code></a> in the repository.</p><p>This document tells what Hune protects and how. Section 12 of the <a href="specification.html">specification</a> has the full threat model. To report a vulnerability, read the <a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">security policy</a>.</p>
+<h2 id="trust-boundaries"><a class="self" href="#trust-boundaries">Trust boundaries</a></h2>
+<p>Hune sits between a browser, a data source and, in the mode <code>authzen</code>, an edge and a PDP.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Party</th><th scope="col">Hune trusts it for</th><th scope="col">Hune does not trust it for</th></tr></thead><tbody><tr><th scope="row">Browser</th><td data-label="Hune trusts it for">Nothing. Each request is checked.</td><td data-label="Hune does not trust it for">The SQL, the document and the values.</td></tr><tr><th scope="row">Proxy or edge</th><td data-label="Hune trusts it for">The identity of the person (the token or the login).</td><td data-label="Hune does not trust it for">The link has no TLS. Keep it on a private network.</td></tr><tr><th scope="row">PDP</th><td data-label="Hune trusts it for">The decision and the ceilings.</td><td data-label="Hune does not trust it for">A grant outside the action document.</td></tr><tr><th scope="row">Data source account</th><td data-label="Hune trusts it for">The boundary of the data.</td><td data-label="Hune does not trust it for">A free choice of statement.</td></tr></tbody></table></div>
+<h2 id="what-hune-protects"><a class="self" href="#what-hune-protects">What Hune protects</a></h2>
+<ul><li><strong>SQL stays on the server.</strong> The server is the only place that builds SQL. A viewer sends no SQL. The server escapes each variable by its place in the text. A free text value becomes a literal. An identifier or a raw fragment comes from a closed list (section 7).</li><li><strong>One read statement.</strong> Hune accepts one statement that starts with <code>SELECT</code> or <code>WITH</code>. PostgreSQL also accepts <code>VALUES</code> and <code>TABLE</code>. A MongoDB query is a JSON tree with a closed list of stages and operators. These checks are not the boundary. The account of the source is the boundary.</li><li><strong>Read-only access.</strong> A ClickHouse account has a dedicated user, the profile <code>readonly = 2</code>, <code>MAX</code> constraints and <code>SELECT</code> grants only (8.12). A PostgreSQL source runs in a read-only transaction with a role that cannot write. A MongoDB source has the role <code>read</code> only. A probe checks each account, and it refuses a PostgreSQL role with extra rights.</li><li><strong>Cross-site writes.</strong> Each <code>POST</code>, <code>PUT</code> and <code>DELETE</code> passes a guard before Hune reads the body. The guard checks <code>Sec-Fetch-Site</code> or <code>Origin</code> and the type <code>application/json</code>. No answer has a CORS header. Hune sets no cookie (12.7).</li><li><strong>Browser isolation.</strong> The page has a strict content security policy with no inline script and no external origin. It renders values with <code>textContent</code> or on a canvas. A text panel is Markdown with no HTML. A link accepts only <code>http</code>, <code>https</code> or a relative URL (12.8).</li><li><strong>Secrets.</strong> A secret accepts only <code>_env</code> and <code>_file</code>. A secret in clear text stops the start. Hune never writes a secret to a log, an error, <code>print-config</code>, a metric or a span.</li><li><strong>Closed configuration.</strong> An unknown block, an unknown key or a duplicate stops the start. Hune reads no environment variable that the file does not name.</li><li><strong>Bounded work.</strong> Each connection, body, queue, pool and cache has a bound. A bound that is reached gives an explicit code, never a silent cut (12.16).</li><li><strong>Path safety.</strong> The volume refuses a path that leaves its folder. It opens files with <code>O_NOFOLLOW</code> and writes a temporary file before a rename (5.12, 5.13).</li><li><strong>Supply chain.</strong> Each dependency has an exact version. <code>cargo deny</code> checks the licences, the sources and the advisories. The release is a static binary with a checksum (12.17).</li></ul>
+<h2 id="access-control"><a class="self" href="#access-control">Access control</a></h2>
+<p>In the mode <code>authzen</code>, Hune asks the PDP before each operation. A refusal gives <code>403</code>. A PDP that does not answer gives <code>503</code>, never a grant. An unknown uid gives the same answer as a dashboard that the person cannot read, so a person learns nothing about names. The ceilings in an answer (<code>max_rows</code>, <code>max_duration</code>) lower the limits of the source. <a href="access.html">Access and ProcurAuth</a> has the rules.</p>
+<h2 id="what-hune-does-not-protect"><a class="self" href="#what-hune-does-not-protect">What Hune does not protect</a></h2>
+<ul><li>In the mode <code>open</code>, each request that reaches the main port is trusted. The proxy is the only access control.</li><li>A grant of <code>dashboard.read</code> gives each row that the stored SQL reads. Hune does not filter rows by person.</li><li>A grant of <code>source.query</code> gives each read that the account of the source permits. The account limits the data. The grammar does not.</li><li>A person with write access to the volume or to the database can change any dashboard and its history. The history is not tamper-evident.</li><li>A compromised edge can sign any identity. A compromised PDP can grant anything.</li><li>Hune does not encrypt the volume or the database at rest.</li><li>The ad hoc filters expose the listed columns to each viewer of a dashboard that uses them (12.9).</li><li>A valid person can load a data source up to the limits. The limits bound the cost. They do not remove it.</li></ul>
+<p>Section 12.18 of the specification has the complete list.</p>
+<h2 id="test-values"><a class="self" href="#test-values">Test values</a></h2>
+<p>The repository holds fixed test keys and certificates in <code>tests/</code> and in <code>crates/*/tests/</code>. They belong to isolated tests. They are public on purpose and they protect nothing.</p></article></div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>Hune</h2>
+        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="configuration.html">Configuration</a></li>
+          <li><a href="architecture.html">Architecture</a></li>
+          <li><a href="specification.html">Specification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Run</h2>
+        <ul>
+          <li><a href="access.html">Access and ProcurAuth</a></li>
+          <li><a href="security.html">Security model</a></li>
+          <li><a href="operations.html">Operations</a></li>
+          <li><a href="reference.html">Configuration reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/ProcurAuth/hune">Repository</a></li>
+          <li><a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a></li>
+          <li><a href="changelog.html">Changelog</a></li>
+          <li><a href="status.html">Status</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="conformance.html">Conformance</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>Hune, version 0.1.1.</p>
+      <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
+      <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

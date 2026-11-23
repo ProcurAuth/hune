@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Golden expansion vectors (16.3, 16.13): synthetic SQL, synthetic values, expected final text.
 //!
 //! Each case of `tests/golden/sql/*.json` gives the SQL lines, the variables, the request values, the

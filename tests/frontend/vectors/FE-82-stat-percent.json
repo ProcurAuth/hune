@@ -1,6 +1,6 @@
 {
  "id": "FE-82",
- "about": "The percent change of a stat (4.29, 9.19; wave H, item P11). Measured on Grafana 12.4.2 (temporary dashboard of the folder hune-parity, an English browser, both themes). `texts`: the values first to last (\"NaN\" is a NaN cell, null a NULL cell), the text, the arrow and the colour of the mode standard. `modes`: the colour of the value and of the change in the other modes. `sizes`: a tile, the widths of its texts at 100 px, and the sizes that Grafana gives.",
+ "about": "The percent change of a stat (4.29, 9.19). Measured on Grafana 12.4.2 (temporary dashboard of the folder hune-parity, an English browser, both themes). `texts`: the values first to last (\"NaN\" is a NaN cell, null a NULL cell), the text, the arrow and the colour of the mode standard. `modes`: the colour of the value and of the change in the other modes. `sizes`: a tile, the widths of its texts at 100 px, and the sizes that Grafana gives.",
  "texts": [
   {
    "id": "P01",

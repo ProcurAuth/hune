@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 500" width="1100" height="500" role="img" aria-label="The two stores of Hune: a volume with one JSON file for each dashboard and a history folder, and PostgreSQL with the tables for folders, dashboards and versions">
+  <title>The two stores</title>
+  <desc>Both stores keep the same canonical bytes of each document. The volume is a folder with one file for each dashboard, a history folder with the versions, and a lock for one writer. PostgreSQL has the tables hune_folders, hune_dashboards, hune_versions and hune_schema, and it serves two or more instances.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#a5b4fc"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="500" rx="20" fill="#12142a"/>
+  <g font-family="Inter, 'Segoe UI', -apple-system, Helvetica, Arial, sans-serif">
+    <text x="40" y="52" font-size="24" font-weight="700" fill="#ffffff">Two stores, one contract</text>
+    <text x="40" y="82" font-size="15" fill="#9ca3d4">Both keep the same canonical bytes and the same history. The etag of a document is the hash of its bytes.</text>
+
+    <rect x="400" y="120" width="300" height="64" rx="12" fill="#4338ca" fill-opacity="0.45" stroke="#818cf8" stroke-width="2"/>
+    <text x="550" y="148" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">Store contract (Store trait)</text>
+    <text x="550" y="168" font-size="12" fill="#e0e7ff" text-anchor="middle">create, save with etag, move, delete, restore, history</text>
+    <path d="M470 184V220" stroke="#a5b4fc" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+    <path d="M630 184V220" stroke="#a5b4fc" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+
+    <rect x="40" y="224" width="500" height="244" rx="14" fill="#171a38" stroke="#34d399" stroke-width="2"/>
+    <text x="60" y="254" font-size="17" font-weight="700" fill="#d1fae5">Volume: a folder</text>
+    <text x="60" y="276" font-size="12.5" fill="#a7f3d0">storage.backend = "volume". One writer process.</text>
+    <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" fill="#dfe3f2" xml:space="preserve">
+      <text xml:space="preserve" x="60" y="308">dashboards/</text>
+      <text xml:space="preserve" x="60" y="328">  .hune/lock         one writer (flock)</text>
+      <text xml:space="preserve" x="60" y="348">  .history/score/1.json, 1.meta.json</text>
+      <text xml:space="preserve" x="60" y="368">  transit/_folder.json</text>
+      <text xml:space="preserve" x="60" y="388">  transit/score.json   one dashboard</text>
+    </g>
+    <text x="60" y="420" font-size="12.5" fill="#c7d2fe">Plain files: work with git, rsync or a backup tool.</text>
+    <text x="60" y="438" font-size="12.5" fill="#c7d2fe">The catalog scans the folder each rescan_interval.</text>
+
+    <rect x="560" y="224" width="500" height="244" rx="14" fill="#171a38" stroke="#38bdf8" stroke-width="2"/>
+    <text x="580" y="254" font-size="17" font-weight="700" fill="#e0f2fe">PostgreSQL: a database</text>
+    <text x="580" y="276" font-size="12.5" fill="#bae6fd">storage.backend = "postgres". Two or more instances.</text>
+    <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13" fill="#dfe3f2" xml:space="preserve">
+      <text xml:space="preserve" x="580" y="308">hune_folders      one row for each folder</text>
+      <text xml:space="preserve" x="580" y="328">hune_dashboards   one row for each dashboard</text>
+      <text xml:space="preserve" x="580" y="348">hune_versions     one row for each version</text>
+      <text xml:space="preserve" x="580" y="368">hune_schema       the version of the schema</text>
+    </g>
+    <text x="580" y="400" font-size="12.5" fill="#c7d2fe">An owner role migrates the schema with hune migrate-store.</text>
+    <text x="580" y="420" font-size="12.5" fill="#c7d2fe">The application role has the rights of the tables.</text>
+    <text x="580" y="440" font-size="12.5" fill="#c7d2fe">Each instance polls the catalog.</text>
+  </g>
+</svg>

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The value checks and the conversions of 7.16 (second table and the three changes).
 
 use hune_core::frame::{FrameBuilder, FrameStats, FrameValue, parse_date};

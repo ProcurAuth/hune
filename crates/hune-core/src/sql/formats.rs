@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The variable formats that are valid only inside a string literal (7.9, D7).
 //!
 //! Each format here copies the Grafana format of the same name (Grafana 12.4.2, the format registry of the

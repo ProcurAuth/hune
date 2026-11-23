@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-38 to FE-40: the queries of a panel, the join of frames, the combination by type and the names (4.15a, 9.8d, 9.22a).
 import test from "node:test";
 import assert from "node:assert/strict";

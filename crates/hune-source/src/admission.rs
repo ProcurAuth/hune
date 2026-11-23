@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Admission control (8.8): the permits of one query before it goes to ClickHouse.
 //!
 //! A query takes three things in this order. It takes a permit of its subject, when the source

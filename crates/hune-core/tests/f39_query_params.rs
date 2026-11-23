@@ -1,4 +1,5 @@
-//! The query parameters of ClickHouse `{name:Type}` (F39, 7.6a, 7.18 items 10 to 16, decision ID-K330).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The query parameters of ClickHouse `{name:Type}` (F39, 7.6a, 7.18 items 10 to 16).
 //!
 //! The tests cover the scan (each loose form refused, the literals left as text), the save checks, the run checks
 //! (the grammar of each type, the shapes, the caps, the second scan of the final text), the property PQ with seeded

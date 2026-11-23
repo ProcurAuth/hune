@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The token stream and the tree of the dialect `postgres` of the minimal syntax tree of the query editor (F42).
 // The vectors are in tests/fixtures/ast/pg_tokens.json (tokens), pg_trees.json (tree summaries) and pg_gaps.json (rules
 // that the tree has since the rules were added; they run as normal tests). The tree is never a security check: no test here reads it as one.
@@ -232,7 +233,7 @@ test("the time is linear for texts with many runs and no dollar sign", () => {
     // Sixteen times the text, best of 7 runs after 2 warm-ups (the policy of the timing tests). A linear time gave a ratio of 25 to 38
     // on 2026-11-21, also with four other runs in parallel (the small text fits the caches, the big text does not). A quadratic time
     // gives 256. The bound 96 keeps a margin of more than 2 on each side; the old bound (24 for eight times the text) failed under the
-    // load of the full front suite (ID-K324 checks).
+    // load of the full front suite.
     assert.ok(big < Math.max(small, 0.5) * 96, `${JSON.stringify(unit)}: ${small.toFixed(2)} ms then ${big.toFixed(2)} ms`);
   }
 });

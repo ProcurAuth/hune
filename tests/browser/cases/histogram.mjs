@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B145 and B145b (4.33d, 9.19f, 16.10): the histogram.
 // B145: the look. The numbers are those of the measure of Grafana 12.4.2 (19.20g): the buckets, the bars, the labels of the x axis and the colours.
 // B145b: the caps and the time of the histogram (the part of B146 that belongs to this type).
@@ -215,7 +216,7 @@ export const cases = [
           const W = await p.eval(`${plot(id)}.getBoundingClientRect().width`);
           t.assert(pic.groups[0].rects[0][2] > W - 100 && pic.groups[0].rects[0][2] < W, `${scheme}: panel ${id}: one bucket fills the plot, got ${pic.groups[0].rects[0][2]} of ${W}`);
         }
-        // The stack in percent: the y axis shows shares of 1, as in Grafana (ID-K325), and the bars of a bucket fill the plot from the top to the bottom.
+        // The stack in percent: the y axis shows shares of 1, as in Grafana, and the bars of a bucket fill the plot from the top to the bottom.
         const pc = await picture(p, 8);
         t.assert(pc.y.length >= 3 && pc.y[0][0] === "0" && ["1", "1.1"].includes(pc.y.at(-1)[0]), `${scheme}: the labels of a stack in percent: ${pc.y.map((y) => y[0])}`);
         // The buckets that the query made: five wide, 12 buckets, and the first bucket has no bar (count 0).

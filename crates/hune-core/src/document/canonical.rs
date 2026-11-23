@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The canonical writer (4.38): one byte sequence for each document.
 
 use super::model::*;
@@ -831,7 +832,7 @@ fn options(o: &PanelOptions) -> Out {
                 ("tooltip", tooltip(&t.tooltip)),
             ];
             thresholds_style(&mut m, t.thresholds_style);
-            // The optional members of wave H (P10, P14) are left out when they have their default (4.38, rule 6).
+            // The optional members of the later options (P10, P14) are left out when they have their default (4.38, rule 6).
             gradient(&mut m, t.gradient_mode);
             if t.log_base != LOG_BASE {
                 m.push(("log_base", Out::Int(i64::from(t.log_base))));
@@ -855,7 +856,7 @@ fn options(o: &PanelOptions) -> Out {
             if t.justify != StatJustify::Auto {
                 m.push(("justify", e(t.justify)));
             }
-            // The optional members of wave H, item P11 (4.29), left out with their defaults (4.38, rule 6).
+            // The optional members (P11) (4.29), left out with their defaults (4.38, rule 6).
             if t.percent_change {
                 m.push(("percent_change", Out::Bool(true)));
             }

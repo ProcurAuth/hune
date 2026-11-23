@@ -1,5 +1,5 @@
 // The SQL text area (10.3): a <textarea> in a monospace font, with line numbers and the colours of the copied app_highlight.js.
-// The colour layer draws only the rows near the visible rows (sql_colour.js, decision ID-K230a): a key costs the same for a text of 262,144 bytes as for a short text.
+// The colour layer draws only the rows near the visible rows (sql_colour.js): a key costs the same for a text of 262,144 bytes as for a short text.
 // F42 adds the minimal syntax tree (10.3c to 10.3g): a format on request, folds, a bracket pair and the current block.
 // The tree is never a security check. A fault of the tree never stops a save, a run, a preview or a change of the draft.
 // The text area keeps the text and the focus for a fold: the folded view is a visual layer (sql_fold_view.js).
@@ -98,7 +98,7 @@ export function createSqlEditor({ lines, label = "SQL", onChange, onRun, dialect
   const info = el("span", { class: "sql__info", dataset: { testid: "sql-info" } });
   // The status line and the text of the block are in an absolute box with a fixed height: a change of their text makes the browser lay out only this box.
   // A change of text in the flow of the page makes it lay out the text area again (about 140 ms for 262,144 bytes). "Unfold all" is the last button and shows
-  // with the style `visibility`, for the same reason: it keeps its place when it is not shown (decision ID-K230a).
+  // with the style `visibility`, for the same reason: it keeps its place when it is not shown.
   const live = el("div", { class: "sql__live" }, status, info);
   const toolsRow = el("div", { class: "sql__tools" }, formatButton, ...tools, undoButton, unfoldButton, live);
   setUnfoldShown(false);
@@ -706,7 +706,7 @@ export function createSqlEditor({ lines, label = "SQL", onChange, onRun, dialect
   // --- the changes of the text ---------------------------------------------------------------------------------------
 
   // A change of the text: the tree is old, the markers, the band and the pair go at once, and the parse is scheduled (10.3c).
-  // The page gets `onChange` 300 ms after the last change. A fold state ends with the change (10.3e, decision ID-K231).
+  // The page gets `onChange` 300 ms after the last change. A fold state ends with the change (10.3e).
   function changed() {
     version += 1;
     if (view.shown || foldedKeys.size) {

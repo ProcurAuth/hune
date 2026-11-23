@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the placement of a variable in the grid (4.20, 9.10, 10.3b, 10.6): the pure rules, the draft, the draft runtime and the static rules.
 import test from "node:test";
 import assert from "node:assert/strict";

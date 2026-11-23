@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Black-box tests of `hune import-grafana` (15, cases I03 to I13, I16 to I19 and I34 of 16.13).
 //!
 //! Each test runs the real binary on the synthetic export of `tests/fixtures/grafana/export`,
@@ -416,7 +417,7 @@ fn the_dry_run_reports_equal_the_golden_files() {
 
 #[test]
 fn exit_code_1_for_a_missing_acceptance_and_for_a_stale_line() {
-    // I04, I10: the owner must accept each loss.
+    // I04, I10: the operator must accept each loss.
     let fx = Fx::new();
     let no_accept = {
         let mut args = fx.base(&fx.export);

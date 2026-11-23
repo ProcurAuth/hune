@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The conversion of one dashboard: the form (15.4), the dashboard and layout members of 15.6,
 //! the assembly of the document and its validation.
 
@@ -142,7 +143,7 @@ pub struct DashboardImport {
     pub result: DashboardResult,
     /// The errors of the validation of the document, when it failed.
     pub validation_errors: Vec<ValidationError>,
-    /// True when the dashboard has a valid document once the owner accepts each item: no item
+    /// True when the dashboard has a valid document once the operator accepts each item: no item
     /// has the fallback "the dashboard is not imported". The redirects use it.
     pub importable: bool,
     /// The data sources that the queries and the variables use, with the dialect that the Grafana
@@ -1529,7 +1530,7 @@ fn variable_defs_closed(vars: &[VarOut]) -> Vec<VariableDef> {
 }
 
 /// Makes closed each `custom` variable that Grafana opens, when a free value would be refused in one of the
-/// queries (15.6, ID-K206): a placeholder in a quoted name, a placeholder in code with the format none, `raw` or
+/// queries (15.6): a placeholder in a quoted name, a placeholder in code with the format none, `raw` or
 /// `csv`, or (MongoDB) an option value that starts with `$`. Each change has a `changed` item. A query uses the
 /// variable when a placeholder of 7.6 names it, in each form. The scan is the placeholder scan of `hune-core`.
 fn restrict_open_custom(ctx: &mut Ctx, vars: &mut [VarOut], queries: &[(crate::sqlprep::Sql, SqlUse)]) {
@@ -1653,7 +1654,7 @@ fn post_checks(
                         format!("SQL: line {}, column {}: {}", fault.line_index + 1, fault.column, fault.message);
                     ctx.unsupported(&sql.pointer, None, &reason, Fallback::PanelRemoved);
                 }
-                // A query on the source of an `adhoc` variable (I39, decision ID-K329): Grafana adds the filters with a
+                // A query on the source of an `adhoc` variable (I39): Grafana adds the filters with a
                 // setting; Hune never changes the SQL, so the query needs `AND $__adhocFilters` in its WHERE clause.
                 if let Some(v) =
                     vars.iter().find(|v| matches!(&v.kind, VarKind::Adhoc { source: s, .. } if s == source))

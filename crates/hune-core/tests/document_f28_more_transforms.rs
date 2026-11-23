@@ -1,4 +1,5 @@
-//! The eleven transforms of milestone F (F28, 4.25a, 4.34, 4.35, 4.38, 4.42): the fixture with its golden canonical
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The eleven transforms of the Grafana-parity work (F28, 4.25a, 4.34, 4.35, 4.38, 4.42): the fixture with its golden canonical
 //! form, one refusal for each error, the bounds, the canonical order and the closed schema. The kinds join format 3
 //! with no change of the version.
 

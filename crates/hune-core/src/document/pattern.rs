@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The common subset of regular expressions (4.24).
 //!
 //! The server only checks a pattern. The browser runs it with `new RegExp(body, flags)`.

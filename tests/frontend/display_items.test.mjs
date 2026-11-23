@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the display of a cell (9.14 to 9.17, 9.20) and of the items of stat, bar gauge and pie (9.19).
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -106,7 +107,7 @@ test("display and fillOf: the stored token stays, the light theme draws its own 
   assert.deepEqual(items.map((i) => fillOf(i.display, false)), ["#56A64B", "#E0B400", "#AD0317"]);
 });
 
-test("ID-K70 the panels that draw series default to the palette of ClickHouse Dash, the panels of one value keep thresholds", () => {
+test("the panels that draw series default to the palette of ClickHouse Dash, the panels of one value keep thresholds", () => {
   const cols = [{ name: "a", kind: "number", values: [1, 2] }];
   const modeOf = (type) => configured(cols, { defaults: {}, overrides: [] }, type)[0].config.color.mode;
   for (const type of ["timeseries", "barchart", "piechart", "xychart"]) assert.equal(modeOf(type), "palette", type);

@@ -1,4 +1,5 @@
-//! The options of the type `logs` (15.6, 4.33f; decision ID-K326, item F33).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The options of the type `logs` (15.6, 4.33f).
 //!
 //! The new logs panel of Grafana 12.4.2 has 16 options. Four of them map: `showTime`, `wrapLogMessage`,
 //! `enableLogDetails` and `sortOrder`. An option at the value of a new Grafana panel is metadata. Another value

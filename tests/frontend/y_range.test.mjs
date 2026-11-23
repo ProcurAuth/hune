@@ -1,4 +1,5 @@
-// The y range of a time series as Grafana 12.4.2 draws it (9.19, decision ID-K316), the data ends that the engine gives to a yAxis hook (E30) and
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The y range of a time series as Grafana 12.4.2 draws it (9.19), the data ends that the engine gives to a yAxis hook (E30) and
 // the cut of a long axis title (E31, item P6 of the security review). The expected values are the ranges and the ticks that the worker y-range
 // measured on Grafana 12.4.2 on 2026-11-16: 100 time series panels with bars, stacks, soft ends and hard ends, with plots of 57 to 817 px.
 // The engine runs here on a small fake of the DOM and of the canvas.
@@ -41,7 +42,7 @@ function axisOf(set, raw, h, percent = false) {
 const range = (ax) => [ax.min, ax.max];
 const labels = (ax) => ax.ticks.map((t) => t.label);
 
-test("ID-K311b: bars use the automatic range of Grafana, and do not start at 0 when the data stays far from 0", () => {
+test("bars use the automatic range of Grafana, and do not start at 0 when the data stays far from 0", () => {
   assert.deepEqual(autoYRange(...ends([A])), [0, 104]); // the bar axis of before gave 0 to 104.5
   assert.deepEqual(autoYRange(...ends([NP])), [-70, 100]); // before: -63 to 93
   assert.deepEqual(autoYRange(...ends([FAR])), [999, 1011]); // before: 0 to 1,111
@@ -53,7 +54,7 @@ test("ID-K311b: bars use the automatic range of Grafana, and do not start at 0 w
   assert.deepEqual(range(axisOf({}, ends([NFAR]), 133)), [-1011, -999]);
 });
 
-test("ID-K311c: a stack uses the automatic range of its tops, with the tick rule of 15 and 30 px", () => {
+test("a stack uses the automatic range of its tops, with the tick rule of 15 and 30 px", () => {
   assert.deepEqual(autoYRange(...ends([A, B], true)), [0, 160]); // the engine gave 0 to 152.7
   assert.deepEqual(autoYRange(...ends([FAR, FARB], true)), [800, 2200]); // the base of the stack does not count
   // h4 (57 px) 0 to 150 by 50; h6 (133 px) by 20; h8 (209 px) by 25; h24 (817 px) by 10.
@@ -63,20 +64,20 @@ test("ID-K311c: a stack uses the automatic range of its tops, with the tick rule
   assert.deepEqual([57, 209, 817].map((h) => axisOf({}, ends([FAR, FARB], true), h).step), [500, 250, 100]);
 });
 
-test("ID-K311c: a percent stack goes from 0 to 100 % with percent labels, for each unit", () => {
+test("a percent stack goes from 0 to 100 % with percent labels, for each unit", () => {
   const p57 = axisOf({}, [5, 100], 57, true);
   assert.deepEqual([range(p57), labels(p57)], [[0, 100], ["0%", "50%", "100%"]]);
   assert.deepEqual(labels(axisOf({}, [5, 100], 133, true)), ["0%", "20%", "40%", "60%", "80%", "100%"]);
   assert.equal(axisOf({}, [5, 100], 361, true).step, 10);
   const p817 = axisOf({}, [5, 100], 817, true);
   assert.deepEqual([p817.step, p817.ticks.length, labels(p817)[1]], [5, 21, "5%"]);
-  // 0 and 100 % are soft ends (ID-K321, measure of 2026-11-21): a group below 0 (tops -100 % to 100 %) gives -120 % to 100 %.
+  // 0 and 100 % are soft ends (measure of 2026-11-21): a group below 0 (tops -100 % to 100 %) gives -120 % to 100 %.
   assert.deepEqual(range(axisOf({}, [-100, 100], 300, true)), [-120, 100]);
   const { hook } = scaleAxis({ ends: none, binary: false, tickText: (v) => `${v} ms`, plainTick: tickLabel, percent: true, log: false });
   assert.equal(hook(0, 100, 57, [5, 100]).ticks[1].label, "50%");
 });
 
-test("ID-K311d: a soft end is the end of the axis when the data stays inside it, and it never cuts the data", () => {
+test("a soft end is the end of the axis when the data stays inside it, and it never cuts the data", () => {
   const data = ends([A]);
   assert.deepEqual(autoYRange(...data, scale({ softMax: 200 })), [0, 200]); // before: 0 to 220
   assert.deepEqual(autoYRange(...data, scale({ softMax: 100 })), [0, 100]); // a soft end in the room: no room above it

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers of the container tests of the PostgreSQL source (16.9a).
 //!
 //! The script `tests/ci/pgsource.sh` starts a disposable PostgreSQL on 127.0.0.1 and sets the

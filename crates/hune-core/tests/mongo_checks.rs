@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The checks at save of 7.36: the items L1 to L9, the pointer of each fault and the warnings 1 to 3.
 
 mod mongo_common;

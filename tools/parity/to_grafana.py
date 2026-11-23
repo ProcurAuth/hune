@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """Convert a Hune dashboard document (format 2) to a Grafana dashboard (classic JSON).
 
 Use:
@@ -44,7 +45,7 @@ KNOWN_LOSSES = (
     "a document that the validation of section 4 refuses (grid-errors): the importer blocks it",
     "the member placement of a variable (4.7a): Grafana has no such member, so the converter drops it with a warning and the importer gives back a variable with no placement",
     "a panel with one query whose ref is not A (4.15a): the importer writes no ref for a panel with one query (4.42), so the ref is lost; the converter writes the refId, and the importer reads it as metadata",
-    "an annotation (4.5b): the importer lists the item hide=false (15.6, ID-K157) and the warning that it runs no query on the SQL (7.37); the document that it gives back is the same",
+    "an annotation (4.5b): the importer lists the item hide=false (15.6) and the warning that it runs no query on the SQL (7.37); the document that it gives back is the same",
     "a convert_field_type or partition_by_values transform (4.25a): the importer lists one item with the class changed, because the rules of the values differ from Grafana (19.20j); the document that it gives back is the same",
 )
 
@@ -452,7 +453,7 @@ def options_out(ptype, o):
         }
         if "justify" in o:
             opts["justifyMode"] = o["justify"]
-        # The percent change and the text sizes (4.29; wave H, item P11).
+        # The percent change and the text sizes (4.29).
         if o.get("percent_change"):
             opts["showPercentChange"] = True
         if "percent_change_color" in o:
@@ -474,7 +475,7 @@ def options_out(ptype, o):
         }
         if o["x_field"]:
             opts["xField"] = o["x_field"]
-        # The optional members of 4.30 (wave H, P03): an absent member is the Grafana default (80 and 1).
+        # The optional members of 4.30 (P03): an absent member is the Grafana default (80 and 1).
         custom = {k: o[n] for n, k in (("fill_opacity", "fillOpacity"), ("line_width", "lineWidth")) if n in o}
         return opts, _thresholds_style(o, custom)
     if ptype == "piechart":

@@ -1,9 +1,10 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Check the IPv4 literals under tests/ and deploy/ (16.18, "Addresses in tests").
 # Use: tools/check-addresses.sh [DIR ...]      (default: tests deploy)
 # A literal passes when it is in 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 or one of the
 # documentation ranges 192.0.2.0/24, 198.51.100.0/24, 203.0.113.0/24.
-# Decision ID-19: the wildcard address 0.0.0.0 passes too (a listen address is not a host address).
+# The wildcard address 0.0.0.0 passes too (a listen address is not a host address).
 # The file tests/images.lock is skipped: it holds image tags, and a tag such as 26.8.34.13 has four numbers.
 # A line that names a tag, a version or an image (the words tag, version, image, clickhouse-server) is read as
 # a version text: its four-number literals are not addresses. (Choice of the delivery worker.)

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The worked example of 4.40 and the folder file of 4.41.
 
 use hune_core::document::{FolderFile, folder_file_bytes, parse_folder_file, validate};

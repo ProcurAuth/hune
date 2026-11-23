@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Request and response headers. This module has the request id (6.3, 14.6), the entity tags (6.5)
 //! and the `Idempotency-Key` (6.6). It also has the write guard (12.7) and the security headers
 //! (12.8, 9.4).
@@ -207,7 +208,7 @@ pub fn cross_site_guard(headers: &HeaderMap) -> Result<(), ApiError> {
     }
 }
 
-/// The content security policy with the tile source of the block `geomap` (12.8, 13.12c, decision ID-K328).
+/// The content security policy with the tile source of the block `geomap` (12.8, 13.12c).
 ///
 /// The source comes from the parsed parts of the template only, after `'self' data:` of `img-src`. No other directive
 /// changes: `connect-src` stays `'self'`, because the page loads a tile as an image. Without the block, the result is

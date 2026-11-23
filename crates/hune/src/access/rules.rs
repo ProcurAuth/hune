@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The access rule of each route (11.21, 11.29).
 //!
 //! The table has one line for each route of the router. A route without a line answers

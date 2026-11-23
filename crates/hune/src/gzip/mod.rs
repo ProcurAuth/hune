@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A gzip encoder (RFC 1952) with DEFLATE (RFC 1951), for the static files of the front end (9.3).
 //!
 //! The server compresses each static file of a text type one time at start, when `server.compress_static`

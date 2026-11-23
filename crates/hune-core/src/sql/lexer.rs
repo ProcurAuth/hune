@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The lexers of the two dialects: ClickHouse (7.5) and PostgreSQL (7.20).
 //!
 //! The rules of ClickHouse are the rules of `src/sql_lexer.hpp` of ClickHouse Dash at the commit

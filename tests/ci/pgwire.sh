@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `pgwire` (5.23 to 5.31, 14.12): the PostgreSQL tests of the crate `hune` on PostgreSQL 15 and 18.
 # Use: tests/ci/pgwire.sh [--versions "15 18"]
 #   For each version, the script starts one container on 127.0.0.1 with TLS, creates the two roles

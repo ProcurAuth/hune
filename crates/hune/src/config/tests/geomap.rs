@@ -1,4 +1,5 @@
-//! Tests of the optional block `geomap` (13.12c, decision ID-K328): the grammar of `tile_url` with each refusal of the shared
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Tests of the optional block `geomap` (13.12c): the grammar of `tile_url` with each refusal of the shared
 //! list FE-85, the attribution, the zoom, the closed block, the derived `img-src` of `print-config` and of the start log, and W9.
 
 use super::*;

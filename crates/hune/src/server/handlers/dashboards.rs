@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The dashboard routes: list, read, create, save and delete (6.12 to 6.16).
 
 use super::gate;

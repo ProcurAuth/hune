@@ -1,4 +1,5 @@
-//! The options of the panel type `geomap` (4.33g, decision ID-K328): the start view and one marker layer.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The options of the panel type `geomap` (4.33g): the start view and one marker layer.
 //!
 //! The document holds no tile source. The tile source comes only from the block `geomap` of the configuration (13.12c),
 //! so a member such as `basemap` or a URL is `unknown_member` (4.36). The walk, the model and the canonical form of the

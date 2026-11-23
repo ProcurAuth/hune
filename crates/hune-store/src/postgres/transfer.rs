@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Export and import of the PostgreSQL backend (5.27, 5.37 to 5.39).
 //!
 //! The exporter reads in one transaction at `REPEATABLE READ`. The importer writes in one

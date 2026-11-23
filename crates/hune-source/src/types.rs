@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The plain types of the `DataSource` contract (8.1): ids, limits, context and state.
 
 use std::fmt;

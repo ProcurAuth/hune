@@ -1,9 +1,10 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B58 and B59 (9.6, 9.8, 9.9, 9.25).
 // B58: a reload (F5) of a dashboard page shows one stable render. The first frame that the viewer sees is already complete (the header
 //      with its controls, the icons, the font, the theme and every panel frame in its final place). Nothing moves or disappears after it.
 // B59: the header sticks to the top of the window when the page scrolls. The height and the size of each button are fixed in every state
 //      (range text, refresh interval, refresh running, Save enabled or not, view, edit mode, each view of the editor, rights). No button of
-//      the view moves when the edit mode starts or ends (ID-K177): the group of the edit mode (Add, Save, Revert) is at the left of the time
+//      the view moves when the edit mode starts or ends: the group of the edit mode (Add, Save, Revert) is at the left of the time
 //      control and takes its room from the crumbs, which get narrower by the width of the group and one gap. The brand, the time control,
 //      the switch, the theme selector and the button More actions do not move (B150 measures the fixed four at five widths). The switch
 //      makes exactly two layouts, with no frame between them. The page has no Share control.
@@ -143,7 +144,7 @@ function judge(frames, final, expectTheme, label) {
   return [...new Set(out)].slice(0, 6);
 }
 
-const EXPECTED_BG = { dark: "rgb(13, 15, 18)", light: "rgb(246, 247, 249)" }; // --bg of the theme of ClickHouse Dash (ID-K50)
+const EXPECTED_BG = { dark: "rgb(13, 15, 18)", light: "rgb(246, 247, 249)" }; // --bg of the theme of ClickHouse Dash
 
 // ----------------------------------------------------------------------------------------------------------------------------
 // B59 helpers
@@ -153,7 +154,7 @@ const EXPECTED_BG = { dark: "rgb(13, 15, 18)", light: "rgb(246, 247, 249)" }; //
 const VIEW_BUTTONS = ["time-back", "time-picker-button", "time-forward", "zoom-out", "refresh-now", "refresh-interval", "edit-toggle", "dashboard-menu"];
 const EDIT_BUTTONS = ["add-button", "add-menu", "save-button", "discard-button"];
 const BUTTONS = [...VIEW_BUTTONS, ...EDIT_BUTTONS];
-// No element of the view moves when the edit mode starts (ID-K177). Only the width of the crumbs changes.
+// No element of the view moves when the edit mode starts. Only the width of the crumbs changes.
 const NEVER_MOVE = ["brand", ...VIEW_BUTTONS, "theme"];
 const RECTS = `(() => {
   const out = {};
@@ -183,7 +184,7 @@ function resized(a, b, keys) {
   return out;
 }
 
-/** The rule of ID-K177 for a reading `before` of the view and a reading `after` of the edit mode: nothing moves, the crumbs give the room. */
+/** The rule for a reading `before` of the view and a reading `after` of the edit mode: nothing moves, the crumbs give the room. */
 function judgeEditMoves(before, after, label) {
   const out = [];
   const bar = after.bar;

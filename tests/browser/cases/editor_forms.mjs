@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B66, B67, B68 (16.10): the forms of the panel editor (10.3a) and the settings view (10.3b).
 import { draftOf, enterEdit, makeSeed, openPanelEditor, waitDraft, waitNotice, moreItem } from "../lib/ed.mjs";
 import { sleep, waitPanelsReady } from "../lib/h.mjs";

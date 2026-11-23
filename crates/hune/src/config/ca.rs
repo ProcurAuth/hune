@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Check a CA file (13.13). It is a regular file of 1 MiB at most. It has 1 to 64 PEM blocks
 //! `CERTIFICATE` and no other text outside the blocks. Each block is an X.509 certificate.
 

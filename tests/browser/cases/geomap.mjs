@@ -1,4 +1,5 @@
-// Browser cases B226 and B227 (9.19i, 12.8, 13.12c; decision ID-K328): the map panel.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B226 and B227 (9.19i, 12.8, 13.12c): the map panel.
 // B226: no block `geomap`. The plain background, the markers, the card of a marker with hostile names as text, the zoom, and no request
 // that leaves the page origin. The header is the header of 12.8, byte for byte.
 // B227: a block `geomap` with a LOCAL https tile server on 127.0.0.1. A Chrome of the case alone maps the test name tiles.hune.test to

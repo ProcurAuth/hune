@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-35 and FE-36 (9.19d, 4.35): the pure module web/js/annotations.js. The vectors are in tests/frontend/vectors/.
 import test from "node:test";
 import assert from "node:assert/strict";

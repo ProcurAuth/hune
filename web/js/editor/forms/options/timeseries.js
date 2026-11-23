@@ -1,4 +1,4 @@
-// The option table of the type `timeseries` (10.3h, F43; 4.28). Owner: group A. A table is data: the renderer `option_form.js` reads it.
+// The option table of the type `timeseries` (10.3h, F43; 4.28). A table is data: the renderer `option_form.js` reads it.
 import { SHOW_VALUES, STACKING, displayNameRow, legendRows, oldRow, row, thresholdsStyleRow, tooltipRows } from "./rows.js";
 
 const draw = (o) => o.draw;
@@ -12,7 +12,7 @@ export function parseDash(text) {
   if (parts.length > 8 || nums.some((n) => !(n <= 100)) || !nums.some((n) => n > 0)) return { error: "Use 1 to 8 whole numbers from 0 to 100, one above 0, as 10, 20." };
   return { value: nums };
 }
-// The rows of wave H, items P10 and P14 (4.18, 4.28). An optional member at its default leaves the panel.
+// The rows (P10 and P14) (4.18, 4.28). An optional member at its default leaves the panel.
 const GRADIENT_MODES = [["none", "None"], ["opacity", "Opacity"], ["hue", "Hue"], ["scheme", "Scheme"]];
 export const gradientRow = (group) => row("gradient-mode", "options.gradient_mode", "radio", "Gradient mode", group, { items: GRADIENT_MODES, optional: true, absent: "none", default: undefined });
 export const axisLookRows = (centredWhen) => ({

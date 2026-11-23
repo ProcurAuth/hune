@@ -1,4 +1,5 @@
-//! The wire guard (8b.5, 8b.3 rule 3, ID-MG3).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The wire guard (8b.5, 8b.3 rule 3).
 //!
 //! The guard is the last check before a command goes to the encoder. The driver module calls
 //! [`check_read_request`] on each [`ReadRequest`], and the source calls it too, as a second barrier.
@@ -13,7 +14,7 @@
 //!   included. Such a value has no form on the wire.
 //! - A key `$graphLookup`. The stage reads a collection that no list names.
 //! - A database or a collection that the lists of the block do not hold.
-//! - A `$lookup` whose `from` is not a name of the list `collections` (ID-MG6), and a `$unionWith` whose
+//! - A `$lookup` whose `from` is not a name of the list `collections`, and a `$unionWith` whose
 //!   collection is not a name of the list. A `from` that is an object is refused too.
 //! - A command whose name is not in the closed list of 8b.5, or is in the list of the names that Hune
 //!   never sends.

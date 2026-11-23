@@ -3,7 +3,7 @@ name = "hune-fuzz"
 description = "Fuzz targets of Hune (16.16). Run them with cargo-fuzz and the nightly toolchain."
 version = "0.0.0"
 edition = "2024"
-license = "Apache-2.0"
+license = "MIT OR Apache-2.0"
 publish = false
 
 [package.metadata]
@@ -26,7 +26,7 @@ serde_json = { version = "=1.0.154", default-features = false, features = ["std"
 # This crate is its own workspace: the workspace of the repository does not hold it.
 [workspace]
 
-# The MongoDB driver is the local copy of the root workspace (ID-MG25, 8b.15).
+# The MongoDB driver is the local copy of the root workspace (8b.15).
 [patch.crates-io]
 mongodb = { path = "../vendor/mongodb" }
 

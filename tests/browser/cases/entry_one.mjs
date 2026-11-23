@@ -1,4 +1,5 @@
-// Browser case B214 (9.7, 11.25): the entry redirect in mode `authzen` (owner decision ID-K326 on F38: no kiosk mode).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B214 (9.7, 11.25): the entry redirect in mode `authzen` (no kiosk mode).
 // A ProcurAuth subject who can see one dashboard of several goes to it by the entry redirect of 9.7. The list of 9.7 is the
 // list that the display filter of 11.25 gives, not the whole catalog. The policy and the volume are those of lib/authzen.mjs:
 // six items in four folders; `solo` reads the dashboard desk-open only; `reader` reads transit and desk-open.

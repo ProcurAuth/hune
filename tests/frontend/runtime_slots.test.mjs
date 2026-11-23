@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-41: the scheduler of the queries of a panel (9.8d). One slot for each visible query, 6 requests at most at the same time, a hidden
 // query never starts, and a change of a variable runs only the slots whose query names it.
 import test from "node:test";

@@ -35,7 +35,7 @@ export function render(host, ctx) {
   const canvas = el("canvas", { class: "timeline__canvas", role: "img", tabindex: 0, "aria-label": `${panel.title || "Untitled"}, ${history ? "status history" : "state timeline"}`, "aria-describedby": descId });
   const tip = el("div", { class: "timeline__tip", role: "tooltip", hidden: true, dataset: { testid: `timeline-${id}-tip` } });
   const main = el("div", { class: "timeline__main" }, canvas, tip);
-  const items = legend.show && !model.over ? legendItems(model) : []; // no legend before the cap check (ID-K146)
+  const items = legend.show && !model.over ? legendItems(model): []; // no legend before the cap check
   const pills = items.map(() => el("i"));
   const legendEl = el("ul", { class: "timeline__legend", role: "list", hidden: !items.length, dataset: { testid: `timeline-${id}-legend` } },
     ...items.map((it, k) => el("li", { class: "timeline__legend-item", role: "listitem" }, pills[k], el("span", { text: it.text }))));

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The statement check (7.12 for `clickhouse`, 7.25 for `postgres`).
 //!
 //! [`check_statement`] is the check of 7.12. It does not change. [`check_statement_postgres`] is

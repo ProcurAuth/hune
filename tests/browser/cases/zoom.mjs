@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B55 (16.10, 9.19a): no scroll bar for a size error at a browser zoom that is not 100 %.
 import { SQL, doc, panel, section } from "../lib/docs.mjs";
 import { enterEdit, openPanelEditor, moreItem } from "../lib/ed.mjs";

@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `store-pg` (5.33 to 5.36, 16.6, 16.14): the PostgreSQL tests of the store on PostgreSQL 15 and 18.
 # Use: tests/ci/store-pg.sh [--versions "15 18"] [--tests "pg_suite pg_transfer pg_sp pg_unit"]
 #   For each version, the script starts one container on 127.0.0.1 with TLS, creates the two roles

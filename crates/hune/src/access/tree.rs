@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The resource tree of 11.15: `service / folder / dashboard` and `service / source`.
 //!
 //! Each node has its chain of ancestors (11.16). The chain comes from the catalog of Hune, never

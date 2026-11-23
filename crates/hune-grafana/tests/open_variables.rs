@@ -1,4 +1,5 @@
-//! The rows of 15.6 for `allowCustomValue` (F41, ID-K200, ID-K206): the forms v1 and v2beta1.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The rows of 15.6 for `allowCustomValue` (F41): the forms v1 and v2beta1.
 
 mod common;
 
@@ -79,7 +80,7 @@ fn a_member_that_is_not_a_boolean_is_unsupported_and_the_variable_stays_closed()
 
 #[test]
 fn a_custom_variable_with_an_absent_member_stays_closed_with_a_changed_item() {
-    // ID-K206: a closed `custom` variable is a check of the server. Grafana reads an absent member as true.
+    // A closed `custom` variable is a check of the server. Grafana reads an absent member as true.
     for member in [None, Some(Value::Null)] {
         let mut v = custom_var(json!({}));
         if let Some(m) = member {

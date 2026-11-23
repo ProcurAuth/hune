@@ -1,4 +1,5 @@
-// The removals E17 to E21 and E35 to E42 of the copied chart engine (decision ID-K300, docs/engine-patches.md, 9.24).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The removals E17 to E21 and E35 to E42 of the copied chart engine (docs/engine-patches.md, 9.24).
 // Hune never calls the removed code. This test fails when a removed name comes back as a call, an option or an import
 // anywhere in web/js. It checks member calls and imports. A bare call counts only in the engine file that held the name,
 // because Hune has its own functions with some of these names (copyCell in transform_more.js, copyText in ui.js).
@@ -100,20 +101,20 @@ test("no removed function of the engine is called in the engine file that held i
   for (const [file, names] of Object.entries(REMOVED)) {
     const f = files.find((x) => x.rel === VENDOR + file);
     assert.ok(f, `${file} exists`);
-    for (const n of names) assert.ok(!bareCall(n).test(f.src), `${file} calls or defines ${n} again (removed, ID-K300)`);
+    for (const n of names) assert.ok(!bareCall(n).test(f.src), `${file} calls or defines ${n} again (removed)`);
   }
 });
 
 test("no file of web/js calls a removed member of the engine (chart API, table helpers)", () => {
-  for (const f of files) for (const n of MEMBERS) assert.ok(!memberCall(n).test(f.src), `${f.rel} calls .${n}() (removed, ID-K300)`);
+  for (const f of files) for (const n of MEMBERS) assert.ok(!memberCall(n).test(f.src), `${f.rel} calls.${n}() (removed)`);
 });
 
 test("the engine reads no removed option, and no panel gives one", () => {
   const core = files.find((x) => x.rel === VENDOR + "app_chart_core.js");
-  for (const n of OPTIONS) assert.ok(!optionRead(n).test(core.src), `app_chart_core.js reads opts.${n} again (removed, ID-K300)`);
+  for (const n of OPTIONS) assert.ok(!optionRead(n).test(core.src), `app_chart_core.js reads opts.${n} again (removed)`);
   // The panels build the options of the engine (createChart in panels/common.js).
   for (const f of files.filter((x) => x.rel.startsWith("panels/"))) {
-    for (const n of OPTIONS) assert.ok(!optionKey(n).test(f.src), `${f.rel} gives the engine option ${n} (removed, ID-K300)`);
+    for (const n of OPTIONS) assert.ok(!optionKey(n).test(f.src), `${f.rel} gives the engine option ${n} (removed)`);
   }
 });
 
@@ -121,12 +122,12 @@ test("no file of web/js imports a removed name, the removed shim app_ui_copy.js,
   for (const f of files) {
     for (const { names, spec } of imports(f.src)) {
       if (!spec) continue;
-      assert.ok(!/(^|\/)app_ui_copy\.js$/.test(spec), `${f.rel} imports app_ui_copy.js (removed, ID-K300)`);
+      assert.ok(!/(^|\/)app_ui_copy\.js$/.test(spec), `${f.rel} imports app_ui_copy.js (removed)`);
       if (!spec.includes("app_") && !f.rel.startsWith(VENDOR)) continue;
-      for (const n of names) assert.ok(!ALL_REMOVED.has(n), `${f.rel} imports ${n} from ${spec} (removed, ID-K300)`);
+      for (const n of names) assert.ok(!ALL_REMOVED.has(n), `${f.rel} imports ${n} from ${spec} (removed)`);
       for (const [shim, gone] of Object.entries(SHIM_NAMES)) {
         if (!spec.endsWith(shim)) continue;
-        for (const n of names) assert.ok(!gone.includes(n), `${f.rel} imports ${n} from ${shim} (removed, ID-K300)`);
+        for (const n of names) assert.ok(!gone.includes(n), `${f.rel} imports ${n} from ${shim} (removed)`);
       }
     }
   }

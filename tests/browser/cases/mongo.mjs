@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B47 and B48 (16.10): the MongoDB source in the page.
 // B47 a table with exact texts (Int64, Decimal128, Date), a time series with `$dateTrunc` and `$__interval_s`, the kind of
 // each source in the source picker, and a refused stage (`$out`) in the editor. B48 an empty result, a nested document,

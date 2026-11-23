@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Print the body of one section of CHANGELOG.md, without its heading (17.3, 17.10).
 # Use: tools/changelog-section.sh VERSION [FILE]
 #   VERSION is x.y.z (the heading "## x.y.z - YYYY-MM-DD") or the word Unreleased.

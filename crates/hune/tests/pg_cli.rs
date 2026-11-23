@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Black-box tests of the PostgreSQL backend through the real binary: `migrate-store`, `serve`,
 //! `copy-store`, `export`, `import` and `restore` (5.25 to 5.29, 5.37 to 5.40).
 //!

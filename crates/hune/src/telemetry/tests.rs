@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the span model, the encoding, the queue and the exporter, with a fake collector on
 //! 127.0.0.1.
 

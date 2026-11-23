@@ -1,4 +1,5 @@
-// A security review of the page code (ID-K108, ID-K146): the bounds that the page keeps before it works on a large input.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// A security review of the page code: the bounds that the page keeps before it works on a large input.
 // Each test failed before the fix. The timing tests use the minimum of 7 runs.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -32,7 +33,7 @@ function hostile(refs, extra = []) {
   return { rt, textPanel };
 }
 
-test("ID-K108: a text with 20,000 references to a large variable gives text-limit, never a thrown error, in under 50 ms", () => {
+test("a text with 20,000 references to a large variable gives text-limit, never a thrown error, in under 50 ms", () => {
   const { rt, textPanel } = hostile(20000);
   const view = createText(textPanel);
   const expand = (t) => rt.interpolateContent(t);
@@ -44,7 +45,7 @@ test("ID-K108: a text with 20,000 references to a large variable gives text-limi
   assert.deepEqual(view.fail().limit, "expanded");
 });
 
-test("ID-K108: the key changes with the selection and stays small", () => {
+test("the key changes with the selection and stays small", () => {
   const { rt, textPanel } = hostile(1);
   textPanel.options.content = ["$v"];
   const view = createText(textPanel);
@@ -55,14 +56,14 @@ test("ID-K108: the key changes with the selection and stays small", () => {
   assert.equal(view.draw(fakeDocument, expand).limit, "expanded");
 });
 
-test("ID-K108: interpolateContent gives null above the budget, the text below it", () => {
+test("interpolateContent gives null above the budget, the text below it", () => {
   const { rt } = hostile(1);
   assert.equal(rt.interpolateContent("$v"), null);
   assert.equal(rt.interpolateContent("${v:csv}"), null);
   assert.equal(rt.interpolateContent("a ${w} b"), "a ${w} b");
 });
 
-test("ID-K108: interpolateText (the description) stops at 65,536 characters and keeps the text as written", () => {
+test("interpolateText (the description) stops at 65,536 characters and keeps the text as written", () => {
   const info = { all: false, allValue: null, values: ["x".repeat(1000)], texts: ["x".repeat(1000)] };
   const text = "${v:csv}".repeat(500);
   assert.equal(expandText(text, () => info, 65536), null);
@@ -71,7 +72,7 @@ test("ID-K108: interpolateText (the description) stops at 65,536 characters and 
   assert.ok(best(() => interpolateText(text, () => info)) < 50);
 });
 
-test("ID-K108: paintText shows text-limit when key or draw throws", () => {
+test("paintText shows text-limit when key or draw throws", () => {
   const js = readFileSync(new URL("../../web/js/panel_frame.js", import.meta.url), "utf8");
   const at = js.indexOf("function paintText(force)");
   const body = js.slice(at, js.indexOf("setRootState(drawn.root", at));
@@ -79,7 +80,7 @@ test("ID-K108: paintText shows text-limit when key or draw throws", () => {
   assert.match(body, /try \{ drawn = textView\.draw\(document, expand\); \} catch \(e\) \{ drawn = textView\.fail\(\); \}/);
 });
 
-test("ID-K146: the formatter stops at the cap of the output: a chain of CASE gives output_too_large in under 300 ms", () => {
+test("the formatter stops at the cap of the output: a chain of CASE gives output_too_large in under 300 ms", () => {
   const k = Math.floor((262144 - 20) / 17);
   const flat = "SELECT " + "CASE WHEN a THEN ".repeat(k) + "1";
   const nest = "SELECT " + "CASE WHEN a THEN ".repeat(k) + "1" + " END".repeat(k);
@@ -92,7 +93,7 @@ test("ID-K146: the formatter stops at the cap of the output: a chain of CASE giv
   }
 });
 
-test("ID-K146: parseSql checks the cap before it tokenizes: 16 MB give too_large in under 50 ms and one token that covers the text", () => {
+test("parseSql checks the cap before it tokenizes: 16 MB give too_large in under 50 ms and one token that covers the text", () => {
   const s = "a ".repeat(8e6);
   let p;
   const ms = best(() => { p = parseSql(s, "clickhouse"); });
@@ -103,7 +104,7 @@ test("ID-K146: parseSql checks the cap before it tokenizes: 16 MB give too_large
   assert.equal(parseSql("SELECT 1", "postgres").tokens.length > 1, true);
 });
 
-test("ID-K146: readAnswer checks the title, the text, the tags and the end again", () => {
+test("readAnswer checks the title, the text, the tags and the end again", () => {
   const ok = ["t", null, "title", "text", ["a"]];
   const answer = (row) => ({ rows: 1, annotations: [[1000, ...row.slice(1)]] });
   const bad = (row) => assert.throws(() => A.readAnswer(answer(row)), { message: "The answer of the annotation is not valid." });

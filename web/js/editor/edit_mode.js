@@ -193,7 +193,7 @@ class Editor {
     });
   }
 
-  // The way back of the panel editor is the crumb of the dashboard in the header (10.3, ID-K178). Its name is the true target of the event
+  // The way back of the panel editor is the crumb of the dashboard in the header (10.3). Its name is the true target of the event
   // `leave` (10.2a): the panel view, the dashboard or the edit mode. A click with no modifier key is the event; the address serves the others.
   backCrumb() {
     const origin = this.api.origin;
@@ -752,7 +752,7 @@ class Editor {
       return;
     }
     const count = section.panels.length;
-    // A placement in this section goes with it: its variable goes back to the top bar (10.6, ID-K10).
+    // A placement in this section goes with it: its variable goes back to the top bar (10.6).
     const placed = (this.doc.variables || []).filter((v) => v.placement && v.placement.section === index).length;
     const placedText = placed ? ` ${placed === 1 ? "One placed control goes" : `${placed} placed controls go`} back to the top bar.` : "";
     openDialog({

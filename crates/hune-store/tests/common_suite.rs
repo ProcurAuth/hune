@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The common tests of 5.34 on the volume backend (5.33, item 4). SC-44 and SC-47 need
 //! PostgreSQL. The tests `transfer_*` in `transfer.rs` run the same round trips on volumes.
 #![cfg(feature = "conformance")]

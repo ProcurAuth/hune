@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Warning 6 of 7.18: a placeholder in a display text whose name is not a variable of the document.
 //!
 //! The texts are the `title` and the `description` of a panel, the `title` of a section, and the

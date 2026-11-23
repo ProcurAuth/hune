@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Load driver of 16.16: the Node equivalent of `tests/load/dashboard.js` (k6 is not available offline).
 //
 // Scenario (16.16): V viewers, each on the synthetic 45-panel dashboard. A viewer loads the panels

@@ -1,4 +1,5 @@
-// Browser case B209 (10.3, owner request of 2026-11-15, ID-K303): the row of the query settings in the tab "Query".
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B209 (10.3): the row of the query settings in the tab "Query".
 // One row at 1280 px: Source, Format, Name, Min interval, Max points, the button "Options" and "Run" have the same top (2 px).
 // At 768 px and 390 px the row wraps and never gives a horizontal scroll. The popover "Query options" holds the choice "Reuse a panel",
 // "Relative time", "Time shift" and "Hide time info". It has a dot while one of them is not at its default. The forms still write the members.

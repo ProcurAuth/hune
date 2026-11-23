@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A size limit on each message of the server (8a.6, 8a.15, finding M4).
 //!
 //! `tokio-postgres` reads a whole `DataRow` message into memory before it gives the row to the code.

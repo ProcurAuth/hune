@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The jobs of the annotations in the runtime (9.8, 9.19d): one query for each annotation, after the panel queries, never for a hover.
 import test from "node:test";
 import assert from "node:assert/strict";

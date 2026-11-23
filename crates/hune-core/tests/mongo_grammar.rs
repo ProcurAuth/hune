@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The grammar of 7.29 to 7.33: the top object, G1 to G10, the allowlists, the refused names.
 
 mod mongo_common;

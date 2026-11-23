@@ -1,4 +1,4 @@
-// The percent change of a stat (4.29, 9.19; wave H, item P11), as Grafana 12.4.2 shows it (measured, FE-82). Pure module.
+// The percent change of a stat (4.29, 9.19), as Grafana 12.4.2 shows it (measured, FE-82). Pure module.
 
 import { reduceField } from "../reduce.js";
 

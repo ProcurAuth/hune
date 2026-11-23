@@ -1,4 +1,5 @@
 #![cfg(target_os = "linux")]
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The memory of the warnings at save (finding D1 of the security review of 2026-11-16). The document `w6_max`
 //! gave 1,228,800 warnings 6: a peak of 451 MiB (counting allocator) and an answer of 140 MB. The walk now makes a
 //! warning only when the list has room. This file holds one test, because the peak of the process is global.

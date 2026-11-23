@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Seeded random tests of the expansion for the kind `mongodb` (16.4, property R10).
 //!
 //! The generator makes query trees from the stages and the operators of 7.31. It puts whole-leaf and

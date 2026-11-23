@@ -1,4 +1,5 @@
-// Browser cases B60 and B61 (16.10): the y axes and the style of a series (milestone F, wave 2: F16, F17).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B60 and B61 (16.10): the y axes and the style of a series (the Grafana-parity work: F16, F17).
 // B60 right y axis, axis label, soft and hard ends, grid, hidden axis, bar chart. B61 `draw`, `line_dash`, `line_width`, `transform`.
 // All SQL is synthetic (`numbers(...)`).
 import { doc, panel, section } from "../lib/docs.mjs";

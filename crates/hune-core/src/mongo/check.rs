@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The checks at save for a MongoDB source (7.36, items L1 to L9) and the warnings 1 to 3.
 //!
 //! The function [`save_checks`] gives data. The caller makes the items of `invalid_document` from it with

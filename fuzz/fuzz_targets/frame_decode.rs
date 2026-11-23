@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `frame_decode` (16.16, 8.4, 7.16).
 //!
 //! The input is the text of an answer of ClickHouse in the format of 8.4: line 1 holds the column

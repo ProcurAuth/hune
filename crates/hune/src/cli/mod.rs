@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The command line (3.1, 13.18 to 13.21).
 //!
 //! The parser is written by hand. A subcommand is one function of `run`. To add a

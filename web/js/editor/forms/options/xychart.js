@@ -1,4 +1,4 @@
-// The option table of the type `xychart` (10.3h, F43; 4.32). Owner: group A. The type has no axis group: the axes have the names of the fields (9.19).
+// The option table of the type `xychart` (10.3h, F43; 4.32). The type has no axis group: the axes have the names of the fields (9.19).
 import { displayNameRow, legendRows, row, tooltipRows } from "./rows.js";
 
 export default {

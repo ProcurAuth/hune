@@ -1,4 +1,4 @@
-// The option table of the type `geomap` (10.3h; 4.33g, 9.19i; decision ID-K328). The form has no row for a tile source: the tile source comes
+// The option table of the type `geomap` (10.3h; 4.33g, 9.19i). The form has no row for a tile source: the tile source comes
 // only from the block `geomap` of the configuration (13.12c), and the document holds none. The hooks are `geo-*`.
 
 import { displayNameRow, row } from "./rows.js";

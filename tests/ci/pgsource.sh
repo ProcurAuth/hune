@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `pgsource` (16.9a, 16.17): the container tests of the PostgreSQL source on PostgreSQL 15 and 18.
 # Use: tests/ci/pgsource.sh [--versions "15 18"] [--keep-going]
 #   For each version, the script does these steps.

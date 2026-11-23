@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the HTTP core: pages, static files, headers, limits, the write guard, the ops
 //! listener, the connection rules and the graceful stop.
 

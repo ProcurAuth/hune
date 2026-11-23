@@ -1,4 +1,5 @@
-// The catalog of the properties (4.18, 10.3a): it agrees with the canonical document of wave 2 and with the rules of the format.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The catalog of the properties (4.18, 10.3a): it agrees with the canonical document of the second set and with the rules of the format.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";

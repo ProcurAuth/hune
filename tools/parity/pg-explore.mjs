@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Helper of pg_vectors.py. It runs PostgreSQL queries in the Explore page of Grafana.
 //
 // The front end of Grafana replaces the built-in variable $__interval and computes the interval. The

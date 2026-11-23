@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The `interval` variable (4.10a): the grammar of an item, the table of the texts of "Auto" and the text of
 //! "Auto" for a request (7.4a).
 //!

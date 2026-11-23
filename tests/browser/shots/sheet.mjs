@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The contact sheet of a run: one index.html with relative image links only. It needs no server.
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";

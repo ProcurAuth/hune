@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The DEFLATE format (RFC 1951): blocks of the three types, with the smallest type for each block.
 //!
 //! The LZ77 step gives at most `BLOCK_TOKENS` tokens for one block. For each block, the writer computes the

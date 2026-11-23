@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // F15 (10.16): the model of drag and resize on the grid. Pure functions of layout.js, and the pixel rules of drag.js.
 // The vectors below are measures of Grafana 12.4.2 in edit mode (the dashboard of the local reference, section "Overview", 24 columns).
 // Each vector gives the panels, the panel that moves, the cells that the pointer crossed (a drag gives one cell after the other, and

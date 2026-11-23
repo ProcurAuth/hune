@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the PostgreSQL lexer (7.20): the vectors, the rules one by one, the seeded random
 //! round trips and the unclosed forms.
 //!

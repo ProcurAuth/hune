@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Black-box tests of the kind of the source in `hune import-grafana` (15.9, case I22 of 16.13).
 //!
 //! Each test runs the real binary on the synthetic export of `tests/fixtures/grafana/export-pg`. The

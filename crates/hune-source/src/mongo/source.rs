@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The type `MongoSource` (8b.2, 8b.9, 8b.10, 8b.12, 8.11).
 //!
 //! A `MongoSource` is a cheap handle (`Clone`) to the shared state of one `mongodb "<id>"` block: its
@@ -7,7 +8,7 @@
 //!
 //! # Two ways to make a source
 //!
-//! - [`MongoSource::new`] makes a source with no client. A build without the driver (8b.2, `ID-MG2`)
+//! - [`MongoSource::new`] makes a source with no client. A build without the driver (8b.2)
 //!   has no network client. The source then stays `misconfigured` with [`NO_DRIVER_MESSAGE`]. A query
 //!   and a probe tell why. It sends nothing on the network.
 //! - [`MongoSource::with_connector`] and [`MongoSource::with_driver`] make a source whose client comes

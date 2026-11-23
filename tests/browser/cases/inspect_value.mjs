@@ -1,4 +1,5 @@
-// Browser case B213 (9.20, 4.18; wave H, P09, ID-K326): the drawer "Inspect value" of a table cell, as measured on Grafana 12.4.2.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B213 (9.20, 4.18; P09): the drawer "Inspect value" of a table cell, as measured on Grafana 12.4.2.
 // The button shows on hover and on focus, a click or the keys open the drawer, the text goes in as text, Escape gives the focus back,
 // and each target is 24 px at least (the rule of B153). All SQL is synthetic.
 import { doc, panel, section } from "../lib/docs.mjs";

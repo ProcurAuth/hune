@@ -31,7 +31,7 @@
 .stat__text { display: inline-block; white-space: pre; }
 .stat__unit { font-size: var(--stat-unit, 0.6em); font-weight: var(--fw-medium); }
 .stat__title-text { display: inline-block; }
-/* The percent change (4.29, wave H item P11): weight 500, line height 1.2, the arrow at the left. stat.js sets the sizes and the colour.
+/* The percent change (4.29): weight 500, line height 1.2, the arrow at the left. stat.js sets the sizes and the colour.
    In a wide tile it stands on the base line, with a line height of 3 (Grafana 12.4.2, measured). */
 .stat__pct { position: relative; z-index: 1; display: flex; align-items: center; font-weight: var(--fw-medium); line-height: 1.2; white-space: pre; }
 .stat__item[data-layout="wide"] .stat__pct { align-items: baseline; line-height: 3; }

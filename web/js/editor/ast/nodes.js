@@ -12,7 +12,7 @@ export const MAX_AST_DEPTH = 128;
 /** The largest number of nodes in one tree. A larger tree stops with the reason `too_many_nodes`. */
 export const MAX_AST_NODES = 100000;
 
-/** The largest number of fold markers that the gutter shows. Above it, the folds stop with a notice (10.3e, decision ID-K222). */
+/** The largest number of fold markers that the gutter shows. Above it, the folds stop with a notice (10.3e). */
 export const MAX_FOLD_MARKERS = 2000;
 
 /** The reasons of a tree that is not complete. The editor shows one notice for each reason. */

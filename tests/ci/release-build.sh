@@ -1,6 +1,7 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Steps 3 to 5 of the release workflow (17.3, 17.4): build one target two times, check, make the archive.
-# The workflow release.yaml calls this script on a runner of each architecture. The owner can run it by hand
+# The workflow release.yaml calls this script on a runner of each architecture. A maintainer can run it by hand
 # on a machine of each architecture, with no GitHub Actions: then tests/ci/release.sh makes the release.
 # Use: tests/ci/release-build.sh VERSION [--local]
 #   VERSION is x.y.z. The script builds for the architecture of this machine (a release runner builds
@@ -54,7 +55,7 @@ name=hune_${V}_linux_${arch}
 rm -rf "dist/$name" "dist/$name.tar.gz"
 mkdir -p "dist/$name"
 cp "$b1" "dist/$name/hune"
-cp build/Dockerfile LICENSE README.md CHANGELOG.md "dist/$name/"
+cp build/Dockerfile LICENSE-MIT LICENSE-APACHE README.md CHANGELOG.md "dist/$name/"
 "$b1" print-reference --format hcl --profile local >"dist/$name/config.reference.hcl"
 cp -R deploy "dist/$name/deploy"
 in_builder tools/third-party.sh "dist/$name/LICENSE-THIRD-PARTY"

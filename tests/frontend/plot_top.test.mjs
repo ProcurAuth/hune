@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The top margin of the plot (9.24 edit 2, E27 of the copied chart engine). A y axis that shows on the left or on the right keeps the margin of
 // 8 px at the top. With no y axis on either side, the plot starts at the top of the canvas, as in Grafana: a heatmap with `y_axis` = `hidden`
 // and a time series whose y axes are all hidden (9.19, 9.19e). The engine runs here on a small fake of the DOM and of the canvas.

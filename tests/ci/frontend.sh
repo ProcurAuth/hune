@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `frontend` (16.17, 16.10a): the pure functions of the browser, with golden vectors.
 # Use: tests/ci/frontend.sh [--local]
 #   (default) runs `node --test` in a container: the browser test image when tests/browser/Dockerfile

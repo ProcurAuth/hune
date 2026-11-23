@@ -1,8 +1,9 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The repeat of a panel and of a row (15.6, 4.13a).
 //!
 //! The reading of the members of the two forms, the mapping to the member `repeat`, and the checks that
-//! need all panels. The decisions that the owner can change are in one place each:
-//! the rule for the variable (ID-K94) is [`variable_fault`], and the default direction is [`DEFAULT_DIRECTION`].
+//! need all panels. The rules that can change are in one place each:
+//! the rule for the variable is [`variable_fault`], and the default direction is [`DEFAULT_DIRECTION`].
 
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -42,7 +43,7 @@ pub(crate) fn repeat_vars(vars: &[VarOut]) -> RepeatVars {
         .collect()
 }
 
-/// The rule for the variable of a repeat (4.13a, rule 1; decision ID-K94). It gives the reason when the
+/// The rule for the variable of a repeat (4.13a, rule 1). It gives the reason when the
 /// repeat is not possible. The importer never changes the variable to make it repeat.
 fn variable_fault(vars: &RepeatVars, name: &str) -> Option<String> {
     match vars.get(name) {
@@ -266,7 +267,7 @@ fn is_reuse(p: &PanelOut) -> bool {
     matches!(p.data, DataOut::Reuse { .. })
 }
 
-/// Tells if a panel has several queries (4.15a). The importer removes its repeat (decision ID-K165).
+/// Tells if a panel has several queries (4.15a). The importer removes its repeat.
 fn has_extra_queries(p: &PanelOut) -> bool {
     matches!(&p.data, DataOut::Query { extra, .. } if !extra.is_empty())
 }

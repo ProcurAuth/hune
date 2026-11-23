@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The canonical form (4.38), the etag (4.39), the worked example (4.40), the folder file
 //! (4.41), the grammars of 4.4 and the typed accessors of the model.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A fake MongoDB client that scripts the answers of a server (8b.16, 16.9b).
 //!
 //! [`FakeMongo`] implements [`MongoClient`]. The unit tests of the logic of the source use it in place

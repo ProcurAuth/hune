@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the runtime of the dashboard page (9.8, 9.10): scheduler, aborts, variable changes, reuse, 409.
 import test from "node:test";
 import assert from "node:assert/strict";

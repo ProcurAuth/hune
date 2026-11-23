@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The query routes through a fake ClickHouse: A18 to A24 of 16.8 and the error mapping of 6.8.
 
 use super::api::{JSON, NODES, doc_text, etag_of, fill};

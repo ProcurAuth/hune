@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B93 to B101 (4.13a, 9.8c, 9.26, 10.2a rule 16, 10.3, 10.6): the repeat of panels and sections by a variable.
 // B93: direction h (the band). B94: direction v and the moves of the grid. B95: a repeated section. B96: empty and too large, with the limits of the server.
 // B97: the bound of the queries. B98: URL forms and rule 16. B99: the editor. B100: layouts and accessibility. B101: hostile values.
@@ -171,7 +172,7 @@ export const cases = [
       t.eq(await p.eval(`[...document.querySelectorAll('section.section')].map((e) => e.dataset.testid)`), ["section-0", "section-1", "section-1-r2", "section-1-r3"], "the section copies, in the order of the options; the first section is never a copy");
       t.eq(await p.eval(`[...document.querySelectorAll('section.section .section__title')].map((e) => e.textContent)`), ["Host Alpha", "Host Bravo", "Host Charlie"], "the header titles have the option texts");
       t.eq(await p.eval(`[...document.querySelectorAll('section.section')].map((e) => e.getAttribute("aria-label"))`), ["Panels", "Host Alpha", "Host Bravo", "Host Charlie"], "the names of the copies: the title holds the option text, so nothing is added (9.26)");
-      // A section title with no placeholder is the same in each copy: the accessible name adds a comma and the option text (ID-K91).
+      // A section title with no placeholder is the same in each copy: the accessible name adds a comma and the option text.
       await ensure(t, doc("rep95n", "Repeat section name", [{ title: "Hosts", collapsed: false, repeat: { variable: "host" }, panels: [plain(1, { x: 0, y: 0, w: 24, h: 3 })] }], { variables: [hostVar(3)] }));
       const named = await t.open(t.dash("rep95n", hostQuery(["c", "a", "b"])));
       await waitPanelsReady(named, [1, "1-r2", "1-r3"]);
@@ -366,7 +367,7 @@ export const cases = [
       const viewOf = (p) => p.eval(`document.documentElement.getAttribute("data-hune-view")`);
       const notices = (p) => p.eval(`[...document.querySelectorAll('[data-testid="notice"] .notice__text')].map((e) => e.textContent)`);
       // (a) The forms of the URL show the copy n at full size, with its query, and the URL goes to the normal form. The form `<x>$panel-<id>`
-      // of Grafana names the copy by its value (ID-K92): `b$panel-1` is the copy 2, and the first copy has the prefix too.
+      // of Grafana names the copy by its value: `b$panel-1` is the copy 2, and the first copy has the prefix too.
       for (const [value, key, vp, host] of [["1-r2", "1-r2", "1-r2", "b"], ["panel-1-r3", "1-r3", "1-r3", "c"], ["b%24panel-1", "1-r2", "1-r2", "b"], ["1", "1", "1", "a"], ["a%24panel-1", "1", "1", "a"], ["c$panel-1", "1-r3", "1-r3", "c"], ["panel-1", "1", "1", "a"]]) {
         const p = await t.open(t.dash("rep98", `viewPanel=${value}`));
         await p.waitFor(`document.querySelector('[data-testid="view-panel"] [data-testid="panel-${key}"]')`, { what: `the view of ${key}` });

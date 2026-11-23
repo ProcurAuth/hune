@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The marks of an annotation query (7.37): the golden vectors of `tests/golden/annotations/`, the hostile
 //! texts, the order of the marks and the fixed messages. The function is pure: it reads a frame only.
 
@@ -153,7 +154,7 @@ fn the_marks_come_in_the_order_of_the_time_then_of_the_row() {
 
 #[test]
 fn a_frame_with_no_column_and_no_row_gives_no_mark_and_with_rows_has_no_time() {
-    // Rule 13 of 7.37 (decision ID-K333): the empty result of a `mongodb` source has no column (7.16c). It is no
+    // Rule 13 of 7.37: the empty result of a `mongodb` source has no column (7.16c). It is no
     // fault. A frame with no column and rows (no source gives one) keeps the reason `no_time` of rule 3.
     let mut f = Frame {
         etag: None,

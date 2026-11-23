@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Helpers of the tests FE-70 to FE-75 (more transforms, 9.21a): fields from compact column specs, and a plain view of the result.
 import { applyMore } from "../../web/js/transform_more.js";
 

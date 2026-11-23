@@ -1,4 +1,5 @@
-//! The members of wave H, item P03 (decision ID-K326): the options `fill_opacity` and `line_width` of a `barchart`,
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The members (P03): the options `fill_opacity` and `line_width` of a `barchart`,
 //! the value `auto` of its `orientation` (4.30), and the property `axis_grid` (4.18).
 //!
 //! Each member is optional. An absent member has its default value, and the canonical writer leaves out a member

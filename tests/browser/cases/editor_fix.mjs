@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B56 and B57 (16.10): fixes of the query editor.
 // B56 a valid macro is never an error in the editor (the SQL area, the error box, the panel JSON tab and the dashboard JSON
 //     tab), a wrong macro gives the message of the server, and the text areas switch the spell check off.

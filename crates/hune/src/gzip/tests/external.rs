@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Round trips through two independent decoders: the system `gzip -d` and `zlib.gunzipSync` of Node.js.
 //!
 //! The inputs are the edge cases, seeded random inputs and each embedded file of a text type, with the

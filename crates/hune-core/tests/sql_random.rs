@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Seeded random tests of the lexer and the substitution (16.4).
 //!
 //! The generator makes SQL templates from keywords, identifiers, quoted names, numbers, strings,
@@ -192,7 +193,7 @@ struct VarCase {
 }
 
 impl VarCase {
-    /// The case of the same values when the `custom` variable is open (F41, ID-K200): each value of the
+    /// The case of the same values when the `custom` variable is open (F41): each value of the
     /// request is free text and the variable stands in no quoted name. The list "All" and `all_value` stay author text.
     fn opened(&self) -> VarCase {
         if !self.custom {
@@ -1423,7 +1424,7 @@ mod pg {
             return;
         }
         let result = expand_with(&sql, &pieces, &hostile);
-        // The member `allow_custom_value` of a `query` variable changes nothing (ID-K200).
+        // The member `allow_custom_value` of a `query` variable changes nothing.
         for open in [false, true] {
             assert_eq!(
                 expand_kind(&sql, &pieces, &hostile, Kind::Query(open)),

@@ -1,4 +1,5 @@
-//! The SQL texts of the probe (8a.12, 8a.13, ID-PG2 to ID-PG4).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The SQL texts of the probe (8a.12, 8a.13).
 //!
 //! This module holds the constant statements of the setup check R0, of the account checks R1 to
 //! R9 and of the advice checks A1 to A4. They read the catalog only. Each text is a constant. No
@@ -34,7 +35,7 @@ current_setting('client_encoding'), current_setting('TimeZone'), current_setting
 pub(crate) const R1: &str = "SELECT rolsuper, rolcreaterole, rolcreatedb, rolreplication, rolbypassrls \
 FROM pg_roles WHERE rolname = current_user";
 
-/// R2: the memberships in a `pg_*` role and in a role with a write attribute (ID-PG3).
+/// R2: the memberships in a `pg_*` role and in a role with a write attribute.
 pub(crate) const R2: &str = "SELECT r.rolname FROM pg_roles r WHERE r.rolname <> current_user \
 AND pg_has_role(current_user, r.oid, 'MEMBER') \
 AND (r.rolname LIKE 'pg\\_%' OR r.rolsuper OR r.rolcreaterole OR r.rolcreatedb OR r.rolreplication OR r.rolbypassrls) \

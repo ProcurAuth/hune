@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The query routes: a panel query (6.20, 7.2), the options of a variable (6.21, 7.14) and the
 //! parts that the preview shares (6.22, 7.17).
 
@@ -945,7 +946,7 @@ pub async fn panel_query(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         }
     };
     // The query that the ref names (6.20, 7.2 step 4). No ref: the first query. An unknown ref gives 404 and a
-    // hidden query gives 400: both come after `dashboard.read` and before any byte to a source (ID-K164).
+    // hidden query gives 400: both come after `dashboard.read` and before any byte to a source.
     let query_ref = body.value.get("ref").and_then(Value::as_str);
     let query = panel_data.find_query(query_ref).ok_or_else(|| ApiError::not_found("This panel has no such query."))?;
     if query.hide {

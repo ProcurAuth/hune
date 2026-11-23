@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The text panel of Grafana (15.6, 4.33a): the members `options.mode`, `options.content` and
 //! `options.code`, and the members that a text panel does not use.
 //!

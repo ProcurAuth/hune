@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The options of the importer: the source map (15.9), the folder map (15.7), the link prefix,
 //! the acceptance list (15.10) and the uid rule (15.8).
 

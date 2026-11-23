@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Builders of synthetic dashboard documents (format 1) for the browser cases.
 // All SQL reads the seed table `analytics.seed` (30 rows, 3 nodes) or runs a literal SELECT.
 

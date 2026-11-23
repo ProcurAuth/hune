@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Container tests of the binary decode (7.16a, PS06).
 //!
 //! The tests are `#[ignore]`. They need a disposable PostgreSQL on 127.0.0.1 and the variables

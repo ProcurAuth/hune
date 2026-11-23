@@ -1,4 +1,5 @@
-//! The error map of a MongoDB source (8b.8, ID-MG12).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The error map of a MongoDB source (8b.8).
 //!
 //! Hune maps an error by the code of the server, never by the message. A [`MongoError`] has a class
 //! and a code. [`map_error`] gives the [`SourceError`] of the table of 8b.8. The messages of

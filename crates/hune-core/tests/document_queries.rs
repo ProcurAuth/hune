@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Several queries in one panel (4.15a): the fixture and its canonical form, one refusal for each error, the
 //! rules across members (4.34), the limits (4.35) and the SQL texts (7.18). The members join format 3 with no
-//! change of the version (4.42, decision ID-K160).
+//! change of the version (4.42).
 
 use hune_core::document::{FORMAT_VERSION, FieldMatcher, PanelData, QueryFormat, SqlOwner, validate};
 use hune_core::error::{ErrorCode, ValidationError};

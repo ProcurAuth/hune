@@ -1,4 +1,5 @@
-//! The eleven transforms of milestone F on the routes (F28, ID-K240, A100 to A102 of 16.8). The server only
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The eleven transforms of the Grafana-parity work on the routes (F28, A100 to A102 of 16.8). The server only
 //! validates and stores the members: it runs no code for a transform (9.21a).
 
 use super::api::{JSON, etag_of, fill, key, post_body, put};

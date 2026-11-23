@@ -18,7 +18,7 @@ on:
         default: true
     secrets:
       HUNE_POLICY_WORDS:
-        description: "The forbidden word list of the job policy. The maintainer keeps it outside the repository."
+        description: "The forbidden word list of the job policy. It is a secret of the repository."
         required: false
 
 permissions:

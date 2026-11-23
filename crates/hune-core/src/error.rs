@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The form of a validation error (4.37). The format validation (4.36), the SQL checks at
 //! save (7.18) and the API errors `invalid_document`, `stored_document_invalid` and
 //! `bad_request` (6.8) use this one form.

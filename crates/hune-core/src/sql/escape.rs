@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The escape rules of 7.8 (ClickHouse) and 7.21 (PostgreSQL).
 //!
 //! The functions with `pg` in their name follow 7.21. A standard string doubles `'` and keeps a

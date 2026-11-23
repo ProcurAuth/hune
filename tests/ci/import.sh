@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `import` (16.17, 16.13): the importer.
 # Use: tests/ci/import.sh [--local]
 # Steps:

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The contexts of a placeholder and the document errors of 7.8.
 //!
 //! The expansion and the checks at save use the same function, so the two agree.

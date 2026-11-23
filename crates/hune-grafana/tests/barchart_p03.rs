@@ -1,5 +1,6 @@
-//! Wave H, item P03 (decision ID-K326): the importer maps the fill, the line, the orientation `auto` and the grid
-//! lines of a Grafana bar chart (4.18, 4.30, 15.6). The rules of decision ID-K334 for the stacks and the axes stay.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Items P03: the importer maps the fill, the line, the orientation `auto` and the grid
+//! lines of a Grafana bar chart (4.18, 4.30, 15.6). The rules for the stacks and the axes stay.
 
 mod common;
 
@@ -115,7 +116,7 @@ fn grid_lines_map_to_axis_grid() {
 
 #[test]
 fn grid_lines_off_stays_an_item_in_the_other_types_with_an_axis() {
-    // P04 (decision ID-K326): only the bar chart has the property of 4.18.
+    // P04: only the bar chart has the property of 4.18.
     for t in ["timeseries", "histogram", "xychart"] {
         let mut p = panel(1, t, 0);
         p["fieldConfig"] = json!({"defaults": {"custom": {"axisGridShow": false}}, "overrides": []});
@@ -127,7 +128,7 @@ fn grid_lines_off_stays_an_item_in_the_other_types_with_an_axis() {
 #[test]
 fn the_bar_charts_of_the_plugin_example_import_with_no_item_for_the_four_members() {
     // The custom members and the options of the two bar charts of the dashboard "Data Analysis" of the ClickHouse
-    // plugin 4.5.1 (measure M1 of wave H). `gradientMode` `hue` maps since wave H, item P10.
+    // plugin 4.5.1 (measure M1 of the later options). `gradientMode` `hue` maps since the later options, item P10.
     let custom = json!({"axisGridShow": false, "axisLabel": "", "axisPlacement": "auto", "axisSoftMin": 0, "fillOpacity": 61,
         "gradientMode": "hue", "hideFrom": {"legend": false, "tooltip": false, "viz": false}, "lineWidth": 1,
         "scaleDistribution": {"type": "linear"}});

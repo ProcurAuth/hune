@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The common tests that need two backends: SC-44 and SC-47 (5.34). Each function takes two
 //! factories and a scratch directory. The tests call it in both directions, for example
 //! volume to PostgreSQL and PostgreSQL to volume.

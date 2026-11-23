@@ -1,11 +1,12 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `image` (16.17, 16.15, 16.13 case I14): the static binary, the image and the deployment examples.
 # Use: tests/ci/image.sh [--local]
 #      tests/ci/image.sh --compare-i14 DIR_AMD64 DIR_ARM64
 #   (default) builds the musl binary in the builder image (17.2, stage 1 with network, stage 2 without),
 #             then runs the cases below with Docker. The runner builds for its own architecture
 #             (ubuntu-24.04 for amd64, ubuntu-24.04-arm for arm64): no build crosses an architecture.
-#             The same job has a local script: tests/ci/all.sh runs this script on the machine of the owner.
+#             The same job has a local script: tests/ci/all.sh runs this script on your machine.
 #   --local   runs the cases that need no Docker, on the host: the build (when musl-gcc exists, else the
 #             host binary is used and G01 is skipped), G01, G02, G08 (when kubeconform exists) and G09
 #             with the host binary and the paths rewritten under target/. Cases that need Docker are skipped.
@@ -283,7 +284,7 @@ fi
 
 # ---- G08 ----
 kube_args="-strict -summary -kubernetes-version 1.32.0 -schema-location default"
-# TO-PIN: pin the catalog of the CloudNativePG schemas to a commit when the owner sets it.
+# TO-PIN: pin the catalog of the CloudNativePG schemas to a commit when a maintainer sets it.
 crd_loc='https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json'
 if have_docker; then
     # shellcheck disable=SC2086

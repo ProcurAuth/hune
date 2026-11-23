@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Read a regular file with a size limit (13.6, 13.25). This module only reads.
 
 use std::fmt;

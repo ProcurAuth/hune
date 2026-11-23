@@ -12,7 +12,7 @@ The concepts of the format are those of the Grafana v2 schema (`dashboard.grafan
 
 The format is not Grafana JSON. A member that Grafana does not have is optional, as `placement` of a variable is (4.7a). A document that does not use such a member has the form that it had before. The import of Grafana never makes such a member, so it stays lossless.
 
-Format 2 added the panel member `transparent` to format 1 (4.13). Format 3 adds six features of milestone F to format 2 (4.5a, 4.6, 4.15, 4.18, 4.19). The table of 4.42 lists them. `hune-core` holds the types, the parser, the validator and the writer of the canonical form. The server, the importer, the checks of the editor and the tests use this one implementation.
+Format 2 added the panel member `transparent` to format 1 (4.13). Format 3 adds six features to format 2 (4.5a, 4.6, 4.15, 4.18, 4.19). The table of 4.42 lists them. `hune-core` holds the types, the parser, the validator and the writer of the canonical form. The server, the importer, the checks of the editor and the tests use this one implementation.
 
 ### 4.2 Types and general rules
 
@@ -145,7 +145,7 @@ Kind `dashboards`: a link to each dashboard that has all the tags.
 
 ### 4.5b Annotations
 
-An annotation is a saved query that gives time marks for the time series panels (9.19d). It is the Grafana "annotation query". The page never sends its SQL: it names the annotation by its index (6.21a). The decisions are ID-K140 to ID-K157 (owner request of 2026-11-13). The source of an annotation can be a ClickHouse, a PostgreSQL or a MongoDB source (ID-K142, owner decision ID-K333 of 2026-11-22).
+An annotation is a saved query that gives time marks for the time series panels (9.19d). It is the Grafana "annotation query". The page never sends its SQL: it names the annotation by its index (6.21a). The source of an annotation can be a ClickHouse, a PostgreSQL or a MongoDB source.
 
 | Member | Type | Rule |
 |---|---|---|
@@ -164,7 +164,7 @@ An annotation is a saved query that gives time marks for the time series panels 
 6. An annotation has no field `id` and no link. The text of its marks is data from the source. It is never markup (9.19d).
 7. The columns of the result and the limits of the marks are in 7.37. A document is valid when the SQL is valid. The check of the columns happens at run time, because the source gives them.
 8. The Grafana built-in item "Annotations & Alerts" has no form here. Hune has no alert and no stored annotation (15.6).
-9. The kind of the source is a fact of the configuration, not of the document. So the format validation does not check it. The save checks of 7.18 check the query with the language of the kind. A kind that a later version adds to 8.2 is not valid for an annotation until its own decision. The save refuses it with `not_permitted`, and the route of 6.21a refuses it again at run time.
+9. The kind of the source is a fact of the configuration, not of the document. So the format validation does not check it. The save checks of 7.18 check the query with the language of the kind. A kind that a later version adds to 8.2 is not valid for an annotation until the specification adds it. The save refuses it with `not_permitted`, and the route of 6.21a refuses it again at run time.
 
 Example (a deploy marker and a maintenance region on the time series 2 and 5):
 
@@ -406,7 +406,7 @@ The fixture `tests/fixtures/dashboards/variable_kinds.json` holds two `interval`
 
 ### 4.10c Variable kind `adhoc`
 
-An `adhoc` variable lets a viewer add filters to the panels of one ClickHouse source (decisions ID-K326 and ID-K329). A filter is a key, an operator and a value. The SQL of a panel takes the filters only through the macro `$__adhocFilters` (7.10a). The kind joins format 3 as a new value of `kind` (4.42, rule 3).
+An `adhoc` variable lets a viewer add filters to the panels of one ClickHouse source. A filter is a key, an operator and a value. The SQL of a panel takes the filters only through the macro `$__adhocFilters` (7.10a). The kind joins format 3 as a new value of `kind` (4.42, rule 3).
 
 | Member | Type | Rule |
 |---|---|---|
@@ -509,9 +509,9 @@ The object `repeat` of a section has one member:
 | `variable` | text | As for a panel. |
 
 1. The variable. An unknown name gives `bad_reference` at `repeat/variable`. The variable MUST have the kind `query` or `custom`, and its `multi` MUST be `true` (`not_permitted` at `repeat/variable`). A `text` variable has one value, so it cannot repeat. A variable with `hide` = `variable` can be the variable of a repeat, and so can a variable that has a `placement`. A repeat reads the selection only.
-2. The values. The copies are the values of the selection that are options of the variable. A value that is not an option makes no copy. Such a value is a value of the URL, or a typed value of an open variable (ID-K203).
+2. The values. The copies are the values of the selection that are options of the variable. A value that is not an option makes no copy. Such a value is a value of the URL, or a typed value of an open variable.
    - With the item "All", each option is a value. The member `all_value` has no effect on a repeat.
-   - The order of the copies is the order of the options of the variable (9.10). The order of the selection does not count (decision ID-K84).
+   - The order of the copies is the order of the options of the variable (9.10). The order of the selection does not count.
 3. The limits. The keys `server.repeat_max_per_panel`, `server.repeat_max_per_section` and `server.repeat_max_per_dashboard` set them (13.8). The constants `MAX_REPEAT_PER_PANEL`, `MAX_REPEAT_PER_SECTION` and `MAX_REPEAT_PER_DASHBOARD` of 4.35 are the defaults of these keys.
    - A repeat of a panel makes `server.repeat_max_per_panel` copies at most. A repeat of a section makes `server.repeat_max_per_section` copies at most.
    - All the repeats of one dashboard make `server.repeat_max_per_dashboard` copies of panels at most.
@@ -528,11 +528,11 @@ The object `repeat` of a section has one member:
    - It MUST NOT hold a panel that has `repeat` (`not_permitted` at the `repeat` of that panel).
    - It MUST NOT hold a panel with `data.reuse` (`not_permitted` at `data/reuse` of that panel).
    - A `placement` MUST NOT name it (4.7a, rule 11).
-   - Thus a repeat has one level only. A repeat in a repeat would multiply the copies, and the count of queries would have no simple bound (decision ID-K88).
-8. Reuse. The source of a `reuse` (4.15) MUST NOT be a panel that has `repeat`. It MUST NOT be a panel of a section that has `repeat` either (`bad_reference` at `data/reuse/panel`). Such a source would have more than one frame (decision ID-K89).
+   - Thus a repeat has one level only. A repeat in a repeat would multiply the copies, and the count of queries would have no simple bound.
+8. Reuse. The source of a `reuse` (4.15) MUST NOT be a panel that has `repeat`. It MUST NOT be a panel of a section that has `repeat` either (`bad_reference` at `data/reuse/panel`). Such a source would have more than one frame.
 9. Rename and delete. The editor changes `repeat.variable` when a person renames the variable. It removes the member `repeat` of each panel and section that names a variable that the person deletes (10.3b). A stored document that names a variable that does not exist is invalid (rule 1).
 10. The server. The server never reads `repeat`. A copy sends the ordinary request of 6.20 with one value for the variable. The property P (7.11), the rules PG (7.24) and PM (7.35), and the admission of 8.8 apply to each copy as to each other panel. Section 7 and section 8 do not change.
-11. The format. `repeat` is an optional member. It joins format 3 with no new version and no migration (decision D2 of ID-87, decision ID-K81). 4.42 gives the effects on an older binary.
+11. The format. `repeat` is an optional member. It joins format 3 with no new version and no migration. 4.42 gives the effects on an older binary.
 
 Examples of the member:
 
@@ -625,9 +625,9 @@ The members `min_interval`, `max_data_points`, `time_from`, `time_shift` and `hi
 
 A panel on a `postgres` source uses the same member `query`. The dialect of its SQL is the dialect of the kind of its source (7.19). Thus the format has no kind member, and `format_version` does not change (4.42).
 
-A panel on a `mongodb` source uses the same member `query`, and the same member `sql`. The lines of `sql` hold one JSON text: the query object of 7.29. The query is a pipeline or a find specification, not SQL text, but it fits the array of lines of 4.16. Thus the format has no new member and no new member kind. This is the decision `ID-MG1`, marked `PENDING OWNER`.
+A panel on a `mongodb` source uses the same member `query`, and the same member `sql`. The lines of `sql` hold one JSON text: the query object of 7.29. The query is a pipeline or a find specification, not SQL text, but it fits the array of lines of 4.16. Thus the format has no new member and no new member kind.
 
-- The change needs no new member and no new `format_version`, and the decision D2 of ID-87 is not used.
+- The change needs no new member and no new `format_version`.
 - The member `format` has the same two values.
 - The collection and the database are in the JSON text, not in the document.
 - A variable of the kind `query` on a `mongodb` source also uses `sql` (7.14).
@@ -659,15 +659,15 @@ An item has no other member. The members `min_interval`, `max_data_points`, `tim
 6. The cap on a document. A document has 400 queries at most in all its panels (`MAX_QUERIES`, 4.35). A hidden query counts. The check gives `too_large` at `/sections`, as the cap of 200 panels does.
 7. The types. A panel of the type `table`, `timeseries`, `stat`, `bargauge`, `piechart`, `state_timeline`, `status_history`, `heatmap` or `histogram` can have `extra_queries`. A panel of the type `barchart`, `xychart`, `logs` or `geomap` MUST NOT have them (`not_permitted` at `data/extra_queries`). Each of these four types draws one frame. A panel of the type `text` has no `data`.
    - A `data` that has `reuse` and `extra_queries` gives `not_permitted` at `data/extra_queries`.
-   - The page applies a different rule to each type that can have them (9.22a). A `heatmap` joins the frames on time, as a time series does. A `histogram` collects the fields of the frames one after the other, as a bar gauge does (decision ID-K185).
-8. The repeat. A panel with `repeat` MUST NOT have `extra_queries`, and a panel of a section with `repeat` MUST NOT have them either (`not_permitted` at `data/extra_queries`). A copy would start one request for each query, so the number of requests of a repeat would be the product of two counts. With this rule, a copy is one request, and the bound of 9.8c does not change (decision ID-K165).
+   - The page applies a different rule to each type that can have them (9.22a). A `heatmap` joins the frames on time, as a time series does. A `histogram` collects the fields of the frames one after the other, as a bar gauge does.
+8. The repeat. A panel with `repeat` MUST NOT have `extra_queries`, and a panel of a section with `repeat` MUST NOT have them either (`not_permitted` at `data/extra_queries`). A copy would start one request for each query, so the number of requests of a repeat would be the product of two counts. With this rule, a copy is one request, and the bound of 9.8c does not change.
 9. The reuse. A `reuse` panel shows the frames of all the visible queries of its source (4.15, rule 6, and 9.23). A query inside a panel cannot be a `reuse` of another panel. The data of a query is always a source and an SQL text.
 10. The server. The server runs one query for each request. A request names the panel and, for a panel with `extra_queries`, the ref (6.20). Section 7 and section 8 do not change.
     - Each query has the checks of a panel query of today.
     - These are the property P (7.11), the rules PG (7.24) and PM (7.35), and the statement check of its source kind.
     - They also include the admission of 8.8 and the question of the PDP.
 11. The save. The checks of 7.18 apply to each query, and the sources of all queries need `source.query` at save (11.21). A hidden query counts, because a save of SQL is the power to run it.
-12. The format. `extra_queries`, `ref` and `hide` are optional members. They join format 3 with no new version and no migration (decision D2 of ID-87, decision ID-K160). 4.42 gives the effects on an older binary.
+12. The format. `extra_queries`, `ref` and `hide` are optional members. They join format 3 with no new version and no migration. 4.42 gives the effects on an older binary.
 
 Examples:
 
@@ -798,7 +798,7 @@ A property set is the only object of the format whose members are all optional. 
 2. When one set has both `min` and `max`, `min` MUST be less than `max`.
 3. The member `no_value` is permitted only in `fields.defaults`. In an override `set`, it gives `not_permitted`.
 4. The members `footer` and `hide_from` are optional, as every member of a property set. The member `hide_from` is permitted in every panel type. It has an effect in the types that draw series (9.14).
-5. A member of the column "Panel types" in a panel of another type gives `not_permitted`. The members `axis_placement`, `line_dash` and `transform` are permitted in `fields.defaults` and in an override `set`. The members of wave H, item P14, are permitted in both places too.
+5. A member of the column "Panel types" in a panel of another type gives `not_permitted`. The members `axis_placement`, `line_dash` and `transform` are permitted in `fields.defaults` and in an override `set`. The members `line_dash_array`, `axis_centered_zero`, `axis_width`, `axis_border` and `axis_color` are permitted in both places too.
 6. The members `draw`, `line_width`, `fill_opacity`, `show_points` and `point_size` are permitted in an override `set` only. In `fields.defaults` they give `not_permitted`, because the panel options of 4.28 hold the default values of these five.
 7. When one set has both `soft_min` and `soft_max`, `soft_min` MUST be less than `soft_max` (`out_of_range`). The members `soft_min` and `soft_max` do not depend on `min` and `max`: 9.19 gives the rule of the axis.
 
@@ -809,7 +809,7 @@ The object `cell` has these members:
 | `type` | enum | `auto`: the text of the value. `color_text`: the text takes the colour of the value (4.19). `color_background`: the cell background takes the colour of the value. `gauge`: the cell draws a bar from `min` to `max`, with the colours of the thresholds. `json`: the cell shows the value as compact JSON text. |
 | `mode` | enum or null | With `color_background`: `gradient` or `basic`. With `gauge`: `basic`, `gradient` or `lcd`. With `auto`, `color_text` and `json`: `null`. |
 
-The 161 measured cell types are 64 `auto`, 9 `color-background` and 88 not classified. M0 classifies the 88 (section 19). The types `gauge` and `json` join in milestone F (decision D4 of ID-87). The importer gives the class "unsupported" to another Grafana cell type (section 15).
+The 161 measured cell types are 64 `auto`, 9 `color-background` and 88 not classified. M0 classifies the 88 (section 19). The types `gauge` and `json` are in format 3. The importer gives the class "unsupported" to another Grafana cell type (section 15).
 
 The object `footer` has one member:
 
@@ -817,7 +817,7 @@ The object `footer` has one member:
 |---|---|---|
 | `reducers` | array of enum | 1 to 8 (`MAX_FOOTER_REDUCERS`) items, no two equal. Each item is a value of `reduce.calc` (4.26). Each item gives one footer row (9.20). |
 
-The member `inspect` (wave H, decision ID-K326) is an optional member of format 3. `true` gives each cell of the column a button that shows the whole value in a drawer (9.20). `false` and an absent member give no button. A document with no `inspect` member does not change.
+The member `inspect` is an optional member of format 3. `true` gives each cell of the column a button that shows the whole value in a drawer (9.20). `false` and an absent member give no button. A document with no `inspect` member does not change.
 
 The object `hide_from` has the members `legend`, `tooltip` and `viz`. Each one is a boolean, and each one is necessary.
 
@@ -827,17 +827,17 @@ The object `hide_from` has the members `legend`, `tooltip` and `viz`. Each one i
 
 Section 9 gives the exact behaviour (9.14, 9.19).
 
-The members of milestone F, wave 2, in a property set (format 3):
+These members are in a property set (format 3):
 
 - `axis_placement`: `auto` lets the page choose the side by the unit of the series (9.19). `left` and `right` put the series on that side. `hidden` draws no axis for the scale of the series, and the series keeps its scale. A `barchart` has one value axis, so it has no `axis_placement`.
 - `axis_label`, `soft_min` and `soft_max` apply to the y axis of the series. In a `barchart`, they apply to the value axis.
-- `axis_grid` (wave H, item P03, decision ID-K326) is an optional member of format 3. It has the three states of the Grafana property `axisGridShow`: absent (Auto), `true` (On) and `false` (Off). A `barchart` has one value axis, so Auto and On draw the same grid lines. Off removes the grid lines of the value axis. The labels of the axis stay (9.19). A document with no `axis_grid` member does not change.
+- `axis_grid` is an optional member of format 3. It has the three states of the Grafana property `axisGridShow`: absent (Auto), `true` (On) and `false` (Off). A `barchart` has one value axis, so Auto and On draw the same grid lines. Off removes the grid lines of the value axis. The labels of the axis stay (9.19). A document with no `axis_grid` member does not change.
 - `draw`, `line_width`, `fill_opacity`, `show_points` and `point_size` give the style of one series. The panel options of 4.28 give the style of the other series.
 - `line_dash`: `solid` is a plain line. `dash` has dashes of 10 px and gaps of 10 px. `dot` has dots that are 10 px apart.
 - `transform`: `negative_y` draws the value with the opposite sign. The values of the data do not change.
 - Section 9 gives the exact behaviour (9.14, 9.19).
 
-The members of wave H, item P14 (decision ID-K326), are optional members of format 3. A document with none of these members does not change.
+The members below are optional members of format 3. A document with none of these members does not change.
 
 - `line_dash_array` is the dash of the line, as `lineStyle.dash` of Grafana. It gives the length of a dash, then of a gap, and so on, in device pixels. An empty array and an array of zeros give `out_of_range`. More than 8 items give `too_large`.
 - The array applies when `line_dash` is `dash` or `dot`, or when the set has no `line_dash`: then the line has dashes. With `solid`, the array has no effect.
@@ -946,9 +946,9 @@ The stop `panel` is the colour of the panel background: `#181B1F` in the dark th
 | `hertz` | Hertz, scaled by 1000 (SI units) |
 | `sishort` | The number with the SI prefix of its scale and no unit, such as `1.23 k` (9.15) |
 
-Another unit is invalid (`bad_format`). M0 measures the units of the real panels. Before release 0.1.0, M0 can add Grafana unit ids to this table (section 19). The 21 units after `suffix:` and `prefix:` join in milestone F (decision D5 of ID-87). Each one has the id of the Grafana unit of the same kind, so the importer maps it as it is (15.6).
+Another unit is invalid (`bad_format`). M0 measures the units of the real panels. Before release 0.1.0, M0 can add Grafana unit ids to this table (section 19). The 21 units after `suffix:` and `prefix:` are in format 3. Each one has the id of the Grafana unit of the same kind, so the importer maps it as it is (15.6).
 
-The last 30 units, from `string` to `sishort`, join in wave H (item P01 of wave H). The first three show a text or a state. The others show the sizes, the rates, the counts and the durations of the system tables of ClickHouse. They are new values of `unit`, so they join with no change of `format_version` (4.42, rule 3). Each one has the id of the Grafana unit, so the importer maps it as it is (15.6). The other Grafana ids and the forms `si:`, `count:`, `currency:`, `time:` and `bool:` stay invalid.
+The last 30 units, from `string` to `sishort`, are the last group of the list. The first three show a text or a state. The others show the sizes, the rates, the counts and the durations of the system tables of ClickHouse. They are new values of `unit`, so they join with no change of `format_version` (4.42, rule 3). Each one has the id of the Grafana unit, so the importer maps it as it is (15.6). The other Grafana ids and the forms `si:`, `count:`, `currency:`, `time:` and `bool:` stay invalid.
 
 ### 4.21 Thresholds
 
@@ -1081,7 +1081,7 @@ No kind exists for the Grafana transforms `prepareTimeSeries` (1 use) and `label
 1. `prepareTimeSeries` in the mode "multi-frame" becomes the long-to-wide of `format = "time_series"`.
 2. `labelsToFields` after long-to-wide becomes `format = "table"`.
 
-### 4.25a The eleven transforms of milestone F
+### 4.25a The eleven more transforms
 
 These kinds join format 3 with no new version (4.42). Each kind has the member `kind` first, then the members of its table, in the order of the table. Each member is necessary. A member of another kind gives `unknown_member`.
 
@@ -1172,7 +1172,7 @@ The members that Grafana has and that these kinds leave out are in 15.6. Section
 
 The member `options` of a panel is a closed object for each type (4.27 to 4.33e). All its members MUST be in it. The tables give the Grafana source of each member for the importer. Section 15 gives the value map of each enum whose Grafana values differ. M0 measures the options of the real panels (section 19). Before release 0.1.0, M0 can remove an option that no real panel uses.
 
-Some members are optional (decision D2 of ID-87). They are `legend.sort_by`, `legend.sort_desc`, `tooltip.sort`, `tooltip.hide_zeros`, the option `thresholds_style` of `timeseries` and `barchart`, the option `justify` of `stat` and the option `wrap` of `table`. The options `fill_opacity`, `line_width` and `gradient_mode` of `barchart` and `gradient_mode`, `log_base`, `span_nulls_ms` and `bar_alignment` of `timeseries` are optional too. An absent optional member means its default value. The writer leaves out an optional member that has its default value (4.38, rule 6). An input that holds such a member with its default value is valid, and its canonical form does not hold the member.
+Some members are optional. They are `legend.sort_by`, `legend.sort_desc`, `tooltip.sort`, `tooltip.hide_zeros`, the option `thresholds_style` of `timeseries` and `barchart`, the option `justify` of `stat` and the option `wrap` of `table`. The options `fill_opacity`, `line_width` and `gradient_mode` of `barchart` and `gradient_mode`, `log_base`, `span_nulls_ms` and `bar_alignment` of `timeseries` are optional too. An absent optional member means its default value. The writer leaves out an optional member that has its default value (4.38, rule 6). An input that holds such a member with its default value is valid, and its canonical form does not hold the member.
 
 The nine optional members of a `gauge` are in 4.33e. Its member `reduce` is necessary.
 
@@ -1238,7 +1238,7 @@ A sort key has the members `field` (text, 1 to 1024 bytes: a display name) and `
 | `span_nulls_ms` | integer, optional | 1 to 1,000,000,000,000: the null threshold in ms. A run of `null` values joins when the values on its two sides are less than this apart (9.19). No default. | `custom.spanNulls` as a number (15.6) |
 | `bar_alignment` | enum, optional | `before`, `center`, `after`: the place of a bar against its time (9.19). Default `center`. | `custom.barAlignment` (15.6) |
 
-The members `gradient_mode`, `log_base`, `span_nulls_ms` and `bar_alignment` (wave H, items P10 and P14, decision ID-K326) are optional members of format 3. A document with no such member does not change. `log_base` has an effect only when `y_scale` is `log`. `span_nulls_ms` has an effect only when `span_nulls` is `false`, and not on a series that draws bars. `bar_alignment` has an effect only on bars.
+The members `gradient_mode`, `log_base`, `span_nulls_ms` and `bar_alignment` are optional members of format 3. A document with no such member does not change. `log_base` has an effect only when `y_scale` is `log`. `span_nulls_ms` has an effect only when `span_nulls` is `false`, and not on a series that draws bars. `bar_alignment` has an effect only on bars.
 
 These options apply to all series of the panel. An override can give one series another `draw`, `line_width`, `fill_opacity`, `show_points` or `point_size` (4.18). Some values need code of Hune around the copied chart engine, for example the legend `placement` `right` and the legend `mode` for each panel. Section 9 (9.19, 9.24) says how the page draws them.
 
@@ -1257,7 +1257,7 @@ These options apply to all series of the panel. An override can give one series 
 | `title_size` | integer, optional | 1 to 200 (CSS pixels): the font size of the name. When the member is absent, the page fits the size (9.19). | `options.text.titleSize` |
 | `value_size` | integer, optional | 1 to 200 (CSS pixels): the font size of the value. When the member is absent, the page fits the size (9.19). | `options.text.valueSize` |
 
-The members `percent_change`, `percent_change_color`, `title_size` and `value_size` (wave H, item P11, decision ID-K326) are optional members of format 3. A document with no such member does not change. The canonical writer leaves out `percent_change` = `false` and `percent_change_color` = `standard` (4.38, rule 6).
+The members `percent_change`, `percent_change_color`, `title_size` and `value_size` are optional members of format 3. A document with no such member does not change. The canonical writer leaves out `percent_change` = `false` and `percent_change_color` = `standard` (4.38, rule 6).
 
 ### 4.30 Options of `barchart`
 
@@ -1277,7 +1277,7 @@ The members `percent_change`, `percent_change_color`, `title_size` and `value_si
 | `line_width` | integer, optional | 0 to 10 (CSS pixels): the width of the line around each bar. Default 1. | `custom.lineWidth` |
 | `gradient_mode` | enum, optional | The gradient of the fill and of the line of the bars (9.19): `none`, `opacity`, `hue`, `scheme`. Default `none`. | `custom.gradientMode` |
 
-The members `fill_opacity` and `line_width` (wave H, item P03, decision ID-K326) are optional members of format 3. A document with no such member does not change. These two values apply to all the bars of the panel. An override cannot give one series another value. The member `gradient_mode` (wave H, item P10) is an optional member of format 3 too, with the rule of 4.28.
+The members `fill_opacity` and `line_width` are optional members of format 3. A document with no such member does not change. These two values apply to all the bars of the panel. An override cannot give one series another value. The member `gradient_mode` is an optional member of format 3 too, with the rule of 4.28.
 
 ### 4.31 Options of `piechart`
 
@@ -1312,7 +1312,7 @@ The members `fill_opacity` and `line_width` (wave H, item P03, decision ID-K326)
 
 ### 4.33a Panel type `text`
 
-A panel of the type `text` shows a text that a person writes in Markdown. It has no query and no data frame. The text is data. The page shows it as DOM nodes and never as HTML (9.19b). This is the text panel of Grafana, in its mode `markdown` only (decisions ID-K100 and ID-K101).
+A panel of the type `text` shows a text that a person writes in Markdown. It has no query and no data frame. The text is data. The page shows it as DOM nodes and never as HTML (9.19b). This is the text panel of Grafana, in its mode `markdown` only.
 
 The members of a panel of this type are:
 
@@ -1336,10 +1336,10 @@ The object `options` has these members:
    - The text is the lines joined with one U+000A between two lines. No line end follows the last line.
    - An empty array is an empty text.
 3. The limits (4.35). A line has `MAX_TEXT_LINE_BYTES` bytes at most. The array has `MAX_TEXT_LINES` lines at most. The joined text has `MAX_TEXT_BYTES` bytes at most. Above a limit the validation gives `too_large` at `options/content` or at `options/content/<i>`.
-4. The mode. A value other than `markdown` gives `bad_format` at `options/mode`. The values `html` and `code` of Grafana are not in the format. A mode `html` would need a sanitiser for a list of tags, and the owner rule says that HTML is text (decision ID-K101). The importer maps `code` to a code block (15.6).
+4. The mode. A value other than `markdown` gives `bad_format` at `options/mode`. The values `html` and `code` of Grafana are not in the format. A mode `html` would need a sanitiser for a list of tags, and the rule of the format says that HTML is text. The importer maps `code` to a code block (15.6).
 5. The Markdown is not checked. The validation reads lines only. It does not parse Markdown. The page reads Markdown, so a text that breaks a limit of the page is a valid document, and the page shows a message (9.19b). The server never renders the text and never reads it for another purpose.
 6. A reuse. A `reuse` MUST NOT name a text panel (4.15, rule 2). A text panel MUST NOT repeat (4.13a, rule 4). The messages of the errors say that "a text panel has no query".
-7. The placeholders of variables. The content can hold placeholders (9.19b). The validation checks none of them, and the save gives no warning for them (decision ID-K117).
+7. The placeholders of variables. The content can hold placeholders (9.19b). The validation checks none of them, and the save gives no warning for them.
 8. The format. The type `text` is a new value of the enum `type`. It joins format 3 with no new version and no migration (4.42).
 
 Example of a valid panel:
@@ -1368,7 +1368,7 @@ The fixture `tests/fixtures/dashboards/text_panel.json` holds this panel and the
 
 ### 4.33b Panel types `state_timeline` and `status_history`
 
-A panel of the type `state_timeline` or `status_history` draws the state of each value field of its frame over time. It has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. The frame needs one field of the kind `time`. 9.19c gives the rules of the data and of the picture. The decisions are ID-K120 to ID-K136 (owner request of 2026-11-13).
+A panel of the type `state_timeline` or `status_history` draws the state of each value field of its frame over time. It has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. The frame needs one field of the kind `time`. 9.19c gives the rules of the data and of the picture.
 
 The object `options` of a `state_timeline` has these members:
 
@@ -1411,7 +1411,7 @@ The fixtures `tests/fixtures/dashboards/state_timeline.json` and `status_history
 
 ### 4.33c Panel type `heatmap`
 
-A panel of the type `heatmap` draws a grid of cells, with a time bucket for each column and a value bucket for each row. The colour of a cell shows its count. The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19e gives the rules of the data, of the bucket maths and of the picture. The decisions are ID-K180 to ID-K195 (owner work order of 2026-11-13, F31).
+A panel of the type `heatmap` draws a grid of cells, with a time bucket for each column and a value bucket for each row. The colour of a cell shows its count. The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19e gives the rules of the data, of the bucket maths and of the picture.
 
 The object `options` has these members:
 
@@ -1473,7 +1473,7 @@ The fixture `tests/fixtures/dashboards/heatmap.json` holds the boundary cases of
 
 ### 4.33d Panel type `histogram`
 
-A panel of the type `histogram` draws bars. Each bar is the count of the values in one bucket. The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19f gives the rules. The decisions are ID-K180 to ID-K195.
+A panel of the type `histogram` draws bars. Each bar is the count of the values in one bucket. The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19f gives the rules.
 
 The object `options` has these members:
 
@@ -1500,7 +1500,7 @@ The fixture `tests/fixtures/dashboards/histogram.json` holds the boundary cases 
 
 ### 4.33e Panel type `gauge`
 
-A panel of the type `gauge` draws each value on a round scale. It is the classic gauge of Grafana 12.4.2, in which the flag `newGauge` is off (wave H, item P12, decision ID-K326). The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19g gives the rules.
+A panel of the type `gauge` draws each value on a round scale. It is the classic gauge of Grafana 12.4.2, in which the flag `newGauge` is off. The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19g gives the rules.
 
 The object `options` has these members:
 
@@ -1527,11 +1527,11 @@ The object `options` has these members:
 
 ### 4.33f Panel type `logs`
 
-A panel of the type `logs` shows one line of text for each row of its frame. A line has the time, the level and the body. A click on a line opens a details row with the other fields of the row. The panel has the members of 4.13, with `data`, `transforms` and `fields`. 9.19h gives the picture, and 7.16e gives the rules that find the time, the body and the level in the frame. The decision is ID-K326 (items P05 and D06 of the gap papers, F33).
+A panel of the type `logs` shows one line of text for each row of its frame. A line has the time, the level and the body. A click on a line opens a details row with the other fields of the row. The panel has the members of 4.13, with `data`, `transforms` and `fields`. 9.19h gives the picture, and 7.16e gives the rules that find the time, the body and the level in the frame.
 
 The query of the panel can have the format `logs`, `table` or `time_series` (4.15). The format `logs` is the logs format of the ClickHouse plugin (its format 2). The server runs it as the format `table`, so the frame stays as the source gives it. The format `logs` is permitted in a panel of the type `logs` only.
 
-The object `options` has these members. Each member is optional (decision D2 of ID-87): an absent member has its default value.
+The object `options` has these members. Each member is optional: an absent member has its default value.
 
 | Member | Type | Rule | Grafana source |
 |---|---|---|---|
@@ -1549,7 +1549,7 @@ The object `options` has these members. Each member is optional (decision D2 of 
 
 ### 4.33g Panel type `geomap`
 
-A panel of the type `geomap` draws one layer of markers on a map. A marker is the position of one row of the frame. The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19i gives the rules of the data, of the map and of the tiles. The decisions are ID-K326 and ID-K328 (wave H, item F37).
+A panel of the type `geomap` draws one layer of markers on a map. A marker is the position of one row of the frame. The panel has the members of 4.13, with `data`, `transforms` and `fields`. The query can have the format `table` or `time_series`. 9.19i gives the rules of the data, of the map and of the tiles.
 
 The document holds no tile source. The tile source comes only from the block `geomap` of the configuration (13.12c). Without the block, the panel draws the markers on a plain background, and the page contacts no host. A member such as `basemap`, `layers` or a URL is `unknown_member` (4.36).
 
@@ -1738,7 +1738,7 @@ The two limits of the queries are constants of the code, not keys. They are limi
 
 The limits `MAX_TRANSFORM_ROWS`, `MAX_TRANSFORM_FIELDS`, `MAX_TRANSFORM_FRAMES` and `MAX_MERGE_STEPS` are constants of the page. They are not limits of the stored document, so the validation does not check them. A test compares the table with the constants of `web/js/transform_more.js` (16.10a).
 
-The map panel has the caps of the table below (9.19i, decision ID-K328). They are constants of `web/js/geo_model.js`. They are not limits of the stored document, so the validation does not check them. The front test FE-85 compares the table with the constants (16.10a).
+The map panel has the caps of the table below (9.19i). They are constants of `web/js/geo_model.js`. They are not limits of the stored document, so the validation does not check them. The front test FE-85 compares the table with the constants (16.10a).
 
 | Constant | Value | Applies to |
 |---|---|---|
@@ -1748,7 +1748,7 @@ The map panel has the caps of the table below (9.19i, decision ID-K328). They ar
 | `GEO_TILE_DELAY_MS` | 200 | The wait in milliseconds after the last pan or zoom, before the first tile request of a view. |
 | `MAX_GEO_TILE_CACHE` | 256 | Decoded tiles that one page keeps. The tile that the page used least recently goes first. |
 
-`MAX_TRANSFORM_CELLS` is not a constant (owner order of 2026-11-16). The key `server.transform_max_cells` sets it, and the page gets the value in force from `GET /api/session` (6.10). The page keeps no copy of the number: a test refuses the number 10,000,000 in the code of `web/js/`. Without a valid value in the session, each step that makes cells fails (9.21a, rule 13). One cell takes 9 bytes or more, so the fixed bound of 100,000,000 cells takes 900 MB or more (13.8). `limits.rs` does not hold `MAX_TRANSFORM_CELLS`, because the server never builds a frame.
+`MAX_TRANSFORM_CELLS` is not a constant. The key `server.transform_max_cells` sets it, and the page gets the value in force from `GET /api/session` (6.10). The page keeps no copy of the number: a test refuses the number 10,000,000 in the code of `web/js/`. Without a valid value in the session, each step that makes cells fails (9.21a, rule 13). One cell takes 9 bytes or more, so the fixed bound of 100,000,000 cells takes 900 MB or more (13.8). `limits.rs` does not hold `MAX_TRANSFORM_CELLS`, because the server never builds a frame.
 
 The limits of an annotation are constants of the code, not keys. The server enforces the three limits of the rows and the texts, and the page enforces `MAX_ANNOTATIONS_PER_PANEL`. A document that has an annotation query with a longer result is valid, and the query gives an error at run time (7.37). A test compares the rows above with `limits.rs`, with the constants of `hune-core` and with `web/js/annotations.js` (16.10a).
 
@@ -2279,7 +2279,7 @@ A folder has one folder file. In a volume, it is `<root>/<folder id>/_folder.jso
 
 1. The binary reads only its own format version. In this version, it is 3.
 2. A stored document of another version has one error `format_version`, with the message `not loadable: format N`. The list shows it, and the server does not serve it. The other documents stay served.
-3. A change of the document schema raises `format_version` by 1. A new necessary member, or a new rule that makes a valid document invalid, is a change. An optional member, and a new value of an enum, join without a change of the version (decision D2 of ID-87). A binary that does not know such a member refuses the document with `unknown_member`. A binary that does not know such a value refuses it with `bad_format`. Both refusals are safe.
+3. A change of the document schema raises `format_version` by 1. A new necessary member, or a new rule that makes a valid document invalid, is a change. An optional member, and a new value of an enum, join without a change of the version. A binary that does not know such a member refuses the document with `unknown_member`. A binary that does not know such a value refuses it with `bad_format`. Both refusals are safe.
 4. A change comes with a pure migration function from N to N+1 in `hune-core`. It also comes with golden fixtures (input N, output N+1) and with the new tables in this section.
 5. To upgrade, stop all `serve` processes. Fix or remove each document of format 1 or 2 that is not valid (item 8). Then run `hune migrate-documents -c <file>`.
 6. Without `--write`, the command is a dry run. It prints each uid, its format version and the result of the migration, and writes nothing. It also prints one warning for each document that it does not migrate (item 8).
@@ -2293,7 +2293,7 @@ A folder has one folder file. In a volume, it is `<root>/<folder id>/_folder.jso
 
 The command exits with code 0 when the run ends without an error. This includes a run in which no document needs a migration. It exits with code 1 after any error.
 
-Format 3 is the second change, and the table below gives its parts. The binary of format 3 keeps the migration from format 1 to format 2 and adds the migration from format 2 to format 3. `migrate-documents` applies them in sequence. A document of format 1 thus becomes a document of format 3 in one run (decision ID-F2-1).
+Format 3 is the second change, and the table below gives its parts. The binary of format 3 keeps the migration from format 1 to format 2 and adds the migration from format 2 to format 3. `migrate-documents` applies them in sequence. A document of format 1 thus becomes a document of format 3 in one run.
 
 | Part | Format 2 | Format 3 |
 |---|---|---|
@@ -2329,14 +2329,14 @@ The properties of the migration:
 
 A binary of format 2 refuses a document of format 3 at step 4 of 4.36, with the error `format_version` ("not loadable: format 3"). It never reaches the member checks, so it never serves such a document. A person can edit a document of format 2 by hand and add a member of format 3. A binary of format 2 refuses it with `unknown_member`. A binary of format 3 refuses it with `format_version`. Both refusals are safe.
 
-The optional member `placement` of a variable (4.7a) joins format 3 with no change of the version (decision D2 of ID-87, decision ID-K6). No object gets a necessary member, and no document that was valid becomes invalid. Thus the rule 3 of this section does not ask for a new version.
+The optional member `placement` of a variable (4.7a) joins format 3 with no change of the version. No object gets a necessary member, and no document that was valid becomes invalid. Thus the rule 3 of this section does not ask for a new version.
 
 - A document with no `placement` keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the member refuses a document that has it, with `unknown_member` at `/variables/<i>/placement`.
 - The refusal is safe. That binary lists the stored document as not valid and never serves it (5.17).
 - The import of Grafana never makes a `placement`. It stays lossless for all that it maps today (section 15).
 
-The optional member `repeat` of a panel and of a section (4.13a) joins format 3 with no new version (decision D2 of ID-87, decision ID-K81). No object gets a necessary member, and no valid document becomes invalid. Rule 3 of this section does not ask for a new version.
+The optional member `repeat` of a panel and of a section (4.13a) joins format 3 with no new version. No object gets a necessary member, and no valid document becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no `repeat` keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the member refuses a document that has it, with `unknown_member` at `/sections/<i>/repeat` or at `/sections/<i>/panels/<j>/repeat`. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2344,7 +2344,7 @@ The optional member `repeat` of a panel and of a section (4.13a) joins format 3 
 - The import of Grafana makes a `repeat` for the cases of 15.6. A document that the import makes with no repeat has the same bytes as before.
 - The server of this version reads and writes the member. It runs no code for it at query time (4.13a, rule 10).
 
-The optional member `annotations` of the top-level object (4.5, 4.5b) joins format 3 with no new version (decision D2 of ID-87, decision ID-K140). No object gets a necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+The optional member `annotations` of the top-level object (4.5, 4.5b) joins format 3 with no new version. No object gets a necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no annotation keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the member refuses a document that has it. It gives `unknown_member` at `/annotations`. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2352,7 +2352,7 @@ The optional member `annotations` of the top-level object (4.5, 4.5b) joins form
 - The import of Grafana makes annotations for the cases of 15.6. A document that the import makes with no annotation has the same bytes as before.
 - The server of this version reads and writes the member. It runs the saved query of an annotation only through the route of 6.21a.
 
-Three optional members join format 3 with no new version (decision D2 of ID-87, decision ID-K160). They are `extra_queries` of `data`, and `ref` and `hide` of a query (4.15a). The value `query` of the member `by` of a matcher (4.17) joins it too. No object gets a necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+Three optional members join format 3 with no new version. They are `extra_queries` of `data`, and `ref` and `hide` of a query (4.15a). The value `query` of the member `by` of a matcher (4.17) joins it too. No object gets a necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no extra query keeps its bytes. Its `data.query` has no `ref` and no `hide`. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the members refuses a document that has them. It gives `unknown_member` at `.../data/extra_queries`, at `.../data/query/ref` or at `.../data/query/hide`. It gives `bad_format` at `.../match/by` for the matcher `query`. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2360,7 +2360,7 @@ Three optional members join format 3 with no new version (decision D2 of ID-87, 
 - The import of Grafana makes these members for the cases of 15.6. A document that the import makes with one query per panel has the same bytes as before.
 - The server of this version reads and writes the members. It runs one query for each request of 6.20.
 
-The value `text` of the member `type` of a panel (4.13, 4.33a) joins format 3 with no new version (decision D2 of ID-87, decision ID-K100). A new value of an enum is not a change of the format, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+The value `text` of the member `type` of a panel (4.13, 4.33a) joins format 3 with no new version. A new value of an enum is not a change of the format, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no text panel keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the value refuses a document that has a text panel. It gives `bad_format` at `/sections/<i>/panels/<j>/type`. It can also give `missing_member` for `data`, `transforms` and `fields` of that panel, because its table needs them. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2368,7 +2368,7 @@ The value `text` of the member `type` of a panel (4.13, 4.33a) joins format 3 wi
 - The import of Grafana makes a text panel for the cases of 15.6. A document that the import makes with no text panel has the same bytes as before.
 - The server of this version reads and writes the type. It runs no query for a text panel (6.20).
 
-The values `state_timeline` and `status_history` of the member `type` (4.13, 4.33b) join format 3 with no new version (decision D2 of ID-87, decision ID-K120). A new value of an enum is not a change of the format. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+The values `state_timeline` and `status_history` of the member `type` (4.13, 4.33b) join format 3 with no new version. A new value of an enum is not a change of the format. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no such panel keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the values refuses a document that has such a panel. It gives `bad_format` at `/sections/<i>/panels/<j>/type`. The panel has `data`, `transforms` and `fields`, so no other error comes from the shared members. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2376,7 +2376,7 @@ The values `state_timeline` and `status_history` of the member `type` (4.13, 4.3
 - The import of Grafana makes these panels for the cases of 15.6. A document that the import makes with no such panel has the same bytes as before.
 - The server of this version reads and writes the types. It runs the ordinary panel query for them (6.20).
 
-The values `heatmap` and `histogram` of the member `type` (4.13, 4.33c, 4.33d) join format 3 with no new version (decision D2 of ID-87, decision ID-K180). A new value of an enum is not a change of the format. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+The values `heatmap` and `histogram` of the member `type` (4.13, 4.33c, 4.33d) join format 3 with no new version. A new value of an enum is not a change of the format. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no such panel keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the values refuses a document that has such a panel. It gives `bad_format` at `/sections/<i>/panels/<j>/type`. The panel has `data`, `transforms` and `fields`, so no other error comes from the shared members. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2384,7 +2384,7 @@ The values `heatmap` and `histogram` of the member `type` (4.13, 4.33c, 4.33d) j
 - The import of Grafana makes these panels for the cases of 15.6. A document that the import makes with no such panel has the same bytes as before.
 - The server of this version reads and writes the types. It runs the ordinary panel query for them (6.20).
 
-Two values of the member `kind` of a variable join format 3 with no new version (decision D2 of ID-87, decision ID-K260). They are `interval` and `constant`. No object gets a new necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+Two values of the member `kind` of a variable join format 3 with no new version. They are `interval` and `constant`. No object gets a new necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no such variable keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know a kind refuses a document that has it. It gives `bad_format` at `/variables/<i>/kind`. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2392,7 +2392,7 @@ Two values of the member `kind` of a variable join format 3 with no new version 
 - The import of Grafana makes these kinds for the cases of 15.6. A document that the import makes with no such variable has the same bytes as before.
 - The server reads and writes the members. It computes the text of "Auto" at query time (7.4a).
 
-Eleven values of the member `kind` of a transform join format 3 with no new version (decision D2 of ID-87, decision ID-K240). They are `organize`, `calculate_field`, `sort_by`, `limit`, `merge`, `reduce`, `partition_by_values`, `join_by_field`, `filter_fields_by_name`, `rename_by_regex` and `convert_field_type`. No object gets a new necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+Eleven values of the member `kind` of a transform join format 3 with no new version. They are `organize`, `calculate_field`, `sort_by`, `limit`, `merge`, `reduce`, `partition_by_values`, `join_by_field`, `filter_fields_by_name`, `rename_by_regex` and `convert_field_type`. No object gets a new necessary member, and no document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no new kind keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know a kind refuses a document that has it. It gives `bad_format` at `/sections/<i>/panels/<j>/transforms/<k>/kind`. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -2400,24 +2400,24 @@ Eleven values of the member `kind` of a transform join format 3 with no new vers
 - The import of Grafana makes these kinds for the cases of 15.6. A document that the import makes with no new kind has the same bytes as before.
 - The server reads and writes the members. It runs no code for them at query time (9.21a).
 
-Two values `logs` join format 3 with no new version (decision D2 of ID-87, decision ID-K326). They are a value of the member `type` (4.13, 4.33f) and a value of the member `format` of a query (4.15). A new value of an enum is not a change of the format. Each member of the options of the new type is optional. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+Two values `logs` join format 3 with no new version. They are a value of the member `type` (4.13, 4.33f) and a value of the member `format` of a query (4.15). A new value of an enum is not a change of the format. Each member of the options of the new type is optional. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no logs panel keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the values refuses a document that has them. It gives `bad_format` at `/sections/<i>/panels/<j>/type` or at the pointer of `format`. The panel has `data`, `transforms` and `fields`, so no other error comes from the shared members. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
 - The import of Grafana makes these values for the cases of 15.6. A document that the import makes with no logs panel has the same bytes as before.
 - The server of this version reads and writes the values. It runs a query of the format `logs` as a query of the format `table` (7.16e).
 
-The value `geomap` of the member `type` (4.13, 4.33g) joins format 3 with no new version (decision D2 of ID-87, decision ID-K328). A new value of an enum is not a change of the format. No document that was valid becomes invalid. A document with no map keeps its bytes, and `migrate-documents` does nothing for it. The import of Grafana makes the value for a `geomap` of 15.6. Rule 3 of this section does not ask for a new version.
+The value `geomap` of the member `type` (4.13, 4.33g) joins format 3 with no new version. A new value of an enum is not a change of the format. No document that was valid becomes invalid. A document with no map keeps its bytes, and `migrate-documents` does nothing for it. The import of Grafana makes the value for a `geomap` of 15.6. Rule 3 of this section does not ask for a new version.
 
 The versions of the history that are in format 2 keep their bytes. After the migration, they follow item 10: a read gives `422 stored_document_invalid`, `download=true` gives the bytes, and a restore gives `NotRestorable`.
 
-The other members of milestone F, wave 3 (the data source variable and transformations) are not in format 3. The ad hoc variable joins format 3 later, as the new value `adhoc` of `kind` (4.10c, decision ID-K329). Three parts join format 3 under decision D2. The first is the repeat of F23, with optional members (4.13a). The second is the panel type `text` of F29, a new value of `type` (4.33a). The third is the variable kinds `interval` and `constant` of F27, new values of `kind` (4.10a, 4.10b).
+The data source variable and the built-in Grafana annotations are not in format 3. The ad hoc variable is the new value `adhoc` of `kind` (4.10c). Three parts join format 3 with no new version. The first is the repeat, with optional members (4.13a). The second is the panel type `text`, a new value of `type` (4.33a). The third is the variable kinds `interval` and `constant`, new values of `kind` (4.10a, 4.10b).
 
-A necessary member of wave 3 needs format 4 once the owner validates format 3. Before this validation, the owner can decide to join an optional member to format 3 (decision D1 of ID-87). The annotations of F25 are an optional member of format 3 (4.5b).
+A necessary member of a later feature needs format 4. An optional member joins format 3. The annotations are an optional member of format 3 (4.5b).
 
-The several queries of F24 are optional members of format 3 (4.15a).
+The several queries of a panel are optional members of format 3 (4.15a).
 
-The optional member `allow_custom_value` of a `query` and of a `custom` variable (4.8, 4.9) joins format 3 with no new version. This follows decision D2 of ID-87 and decision ID-K201. No object gets a necessary member. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
+The optional member `allow_custom_value` of a `query` and of a `custom` variable (4.8, 4.9) joins format 3 with no new version. This follows rule 3 of 4.42. No object gets a necessary member. No document that was valid becomes invalid. Rule 3 of this section does not ask for a new version.
 
 - A document with no such member keeps its bytes. No migration is necessary, and `migrate-documents` does nothing for it.
 - A binary that does not know the member refuses a document that has it. It gives `unknown_member` at `/variables/<i>/allow_custom_value`. The refusal is safe: that binary lists the document as not valid and never serves it (5.17).
@@ -3195,7 +3195,7 @@ In compose, `migrate-store` is a one-shot service with `migrate.hcl`, and `serve
 5. When V is greater than M, stop with exit code 1: `storage.postgres: database schema version V is newer than this binary (M); use a binary of schema version V`.
 6. `serve` only: send P30. When `rolsuper` is true, or when the role owns a table of Hune, stop with exit code 1. The message is `storage.postgres: the role <user> is a superuser or owns the Hune tables; serve needs a role with only SELECT, INSERT, UPDATE and DELETE (5.25, 12.13)`.
 
-A process that waits for PostgreSQL does not stop. Thus a PostgreSQL outage at start causes no restart loop of the pods. A configuration error stops the start at once (owner rule 2).
+A process that waits for PostgreSQL does not stop. Thus a PostgreSQL outage at start causes no restart loop of the pods. A configuration error stops the start at once (section 13).
 
 ### 5.30 PostgreSQL: polling of the catalog
 
@@ -3212,7 +3212,7 @@ The poll of PostgreSQL writes no `dashboard.changed`: the instance that wrote th
 
 ### 5.31 PostgreSQL: failover, step by step
 
-The reference is CloudNativePG with three nodes and synchronous replication `ANY 1`. The owner measured 1 to 2 minutes without a primary after the loss of a node.
+The reference is CloudNativePG with three nodes and synchronous replication `ANY 1`. A measure on such a cluster gave 1 to 2 minutes without a primary after the loss of a node.
 
 1. The primary node is lost. Its connections receive no reset. The keepalive and `tcp_user_timeout` close them in about 25 s. `statement_timeout` bounds a statement that waits.
 2. A save in flight fails. The store returns `Unavailable`, and the server answers 503 `storage_unavailable`. The commit can have occurred or not.

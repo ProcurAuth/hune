@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The option forms of the data types (10.3h, F43): FE-76 (the write rule and the rules of display of timeseries, barchart and xychart) and
 // FE-79 (the tables of 10.3h against the code, the format and `newOptions`; the size of the new files).
 import test from "node:test";
@@ -173,7 +174,7 @@ test("FE-79: the code tables are the tables of 10.3h: rows, order, labels, membe
     });
     assert.equal(table.rows.length, spec.length, `${type}: the number of rows`);
   }
-  assert.equal(total, 198, "the 12 tables have 198 rows (decision ID-K290; the switch inspect of wave H; line width, fill opacity and grid lines of the bar chart, P03; the percent change and the text sizes of the stat, P11; the 14 rows of P10 and P14; the 13 rows of the gauge, P12; the 4 rows of the logs panel, F33; the 17 rows of the map, F37)");
+  assert.equal(total, 198, "the 12 tables have 198 rows (the switch inspect of wave H; line width, fill opacity and grid lines of the bar chart, P03; the percent change and the text sizes of the stat, P11; the 14 rows of P10 and P14; the 13 rows of the gauge, P12; the 4 rows of the logs panel, F33; the 17 rows of the map, F37)");
 });
 
 test("FE-79: each member of a new panel and each optional member has a row or an entry of NO_CONTROL", () => {

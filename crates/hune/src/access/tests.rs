@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Unit tests of the access layer: the action document (11.18, 11.19), the PEP configuration (11.10),
 //! the transport (11.12) with and without TLS, and the start of `Access` (11.6).
 

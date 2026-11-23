@@ -1,4 +1,4 @@
-/* Hune: embedded fonts (decision ID-69). Owner: the tokens worker.
+/* Hune: embedded fonts.
    Inter, the variable file with the weights 100 to 900 (fonts/inter/LICENSE: SIL Open Font License 1.1).
    This file is at static/<build>/css/, so the font URL goes one level up. The CSP allows it (font-src 'self').
    font-display block hides the text until the file arrives (at most 3 s), so no text shows in the system font and then moves.

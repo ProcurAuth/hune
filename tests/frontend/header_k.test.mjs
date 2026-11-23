@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The header of wave K (9.6, 9.9, 10.2): one row, the joined time control, the switch Edit, the group of the edit mode (Add, Save,
 // Revert, no reserved room), and the menu "More actions". The browser cases B69 to B71 check the behaviour in a real page. These tests check the files of web/ and the
 // spec, so a change that breaks a rule fails before the browser suite runs.
@@ -32,7 +33,7 @@ test("the header has, in order: the group of the edit mode, the time control, th
   const dash = code("web/js/dashboard.js");
   assert.match(dash, /header\.setActions\(timeControl\.el, editSwitch\)/);
   assert.match(dash, /header\.setMore\(more\)/);
-  // The group of the edit mode goes before the time control, and only in edit mode (ID-K177): the page has no slot for it.
+  // The group of the edit mode goes before the time control, and only in edit mode: the page has no slot for it.
   assert.match(dash, /setEditBar\(node\) \{[^}]*timeControl\.el\.before\(node\)/s);
   assert.ok(!/editSlot|header-edit-slot/.test(dash));
   const main = code("web/js/main.js");
@@ -66,7 +67,7 @@ test("Add, Save and Revert are the edit controls of the header, and the other ac
   assert.match(edit, /testid: "edit-bar"/);
   assert.match(edit, /this\.api\.setEditBar\(this\.barNode\)/);
   assert.ok(!/editSlot/.test(edit), "no reserved slot");
-  // "Add" is a split button: the main part adds a panel at once, the chevron opens the menu (ID-K15).
+  // "Add" is a split button: the main part adds a panel at once, the chevron opens the menu.
   assert.match(edit, /testid: "add-button" \}, on: \{ click: \(\) => this\.addPanelTo\(/);
   assert.match(edit, /testid: "add-menu"/);
   assert.match(edit, /state, addGroup, saveButton, discard\)/, "the order: Add, Save, Revert");
@@ -81,7 +82,7 @@ test("Add, Save and Revert are the edit controls of the header, and the other ac
   assert.match(edit, /menuItems: \(\) => this\.headerMenuItems\(\)/);
   // Revert asks first, as Discard did.
   assert.match(edit, /confirmDiscard\(\) \{\s*if \(!this\.dirty\(\)\) return;\s*openDialog\(\{\s*title: "Discard your changes"/);
-  // The draft has no visible state text (ID-UF1).
+  // The draft has no visible state text.
   assert.match(edit, /class: "editbar__state visually-hidden"/);
 });
 
@@ -106,7 +107,7 @@ test("the header and the sizes of the controls: 44 px, fixed widths and the step
   const css = read("web/css/components.css");
   // The shift buttons and the zoom out hide up to 900 px (the edit group needs the room), and the range button gets round corners at its left.
   assert.match(css, /@media \(max-width: 900px\) \{\s*\.picker--time > \.btn--tb-nav, \.picker--time > \[data-testid="zoom-out"\] \{ display: none; \}/);
-  // "Add" shows its icon only up to 900 px. "Revert" is in the menu up to 640 px (ID-K177).
+  // "Add" shows its icon only up to 900 px. "Revert" is in the menu up to 640 px.
   assert.match(css, /@media \(max-width: 900px\) \{\s*#app-header \{ --tb-add-w: var\(--tb-icon-w\); \}\s*\.add-main \{ padding: 0; \}\s*\.add-main \.btn__label \{ position: absolute;/);
   assert.match(css, /@media \(max-width: 640px\) \{\s*\.edit-revert \{ display: none; \}/);
   // Up to 560 px the time control, the switch and Add are smaller; a phone has 32 px icon buttons.
@@ -120,11 +121,11 @@ test("the header and the sizes of the controls: 44 px, fixed widths and the step
 
 test("the spec has the new rules and the hooks of the header", () => {
   const spec = read("docs/04-frontend-editor.md");
-  assert.match(spec, /The bar is one row at every width, also in edit mode \(decision ID-K1/);
-  assert.match(spec, /It is a decision of the owner \(2026-11-11, ID-UI-HDR\)/);
-  assert.match(spec, /The time control, which is one joined control \(decision ID-K2/);
-  assert.ok(!spec.includes("header-edit-slot"), "the reserved slot is gone (ID-K13)");
-  assert.match(spec, /no button of the view moves \(decision ID-K177/);
+  assert.match(spec, /The bar is one row at every width, also in edit mode\./);
+  assert.match(spec, /ClickHouse Dash also has its actions in the header/);
+  assert.match(spec, /The time control, which is one joined control\./);
+  assert.ok(!spec.includes("header-edit-slot"), "the reserved slot is gone");
+  assert.match(spec, /no button of the view moves\./);
   assert.match(spec, /The switch is a button with `role="switch"` and `aria-checked`/);
   for (const id of ["time-control", "export-button", "delete-button", "menu-time-back", "menu-zoom-out", "edit-bar", "discard-button", "add-button", "add-menu", "add-variable", "add-panel", "add-section"]) assert.ok(spec.includes(`"${id}"`), `the hook ${id} is in 9.29`);
   // The edit row is gone from the spec.
@@ -132,7 +133,7 @@ test("the spec has the new rules and the hooks of the header", () => {
   assert.ok(!/in the row of the edit mode/.test(spec));
 });
 
-test("the panel editor has no row for the back button: the crumb of the dashboard is the way back (ID-K178)", () => {
+test("the panel editor has no row for the back button: the crumb of the dashboard is the way back", () => {
   const editor = code("web/js/editor/panel_editor.js");
   assert.ok(!/peditor__bar|peditor__id|peditor__sep/.test(editor), "no top bar in the panel editor");
   assert.match(editor, /root\.append\(mainBox\)/);
@@ -150,6 +151,6 @@ test("the panel editor has no row for the back button: the crumb of the dashboar
   const base = read("web/css/base.css");
   assert.match(base, /@container \(max-width: 99px\) \{\s*\.crumbs__item--back \.crumbs__text/);
   const spec = read("docs/04-frontend-editor.md");
-  assert.match(spec, /The panel editor has no top bar and no row of its own \(decision ID-K178/);
+  assert.match(spec, /The panel editor has no top bar and no row of its own\./);
   assert.match(spec, /"Back to edit mode"/);
 });

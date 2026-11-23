@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-33 (9.19c, section 5, and T58): the legend, the card, the description and the message that panels/timeline.js builds, with a fake DOM.
 // A hostile state text, row name or mapping text must stay a text node. No element, no attribute and no style comes from data.
 import test from "node:test";
@@ -330,8 +331,8 @@ test("the groups of the editor have one control for each option, with the hooks 
   }
 });
 
-// ID-K146 (security review of the page): a panel above the cap builds no legend before the check of the cap.
-test("ID-K146 20,000 distinct states with a fixed colour give timeline-limit and no legend item", async () => {
+// Security review of the page: a panel above the cap builds no legend before the check of the cap.
+test("20,000 distinct states with a fixed colour give timeline-limit and no legend item", async () => {
   install();
   try {
     const { render } = await import("../../web/js/panels/timeline.js");
@@ -350,7 +351,7 @@ test("ID-K146 20,000 distinct states with a fixed colour give timeline-limit and
   }
 });
 
-// ID-K321 (10.2a, rule 17): the grid leaves the page while the panel editor shows, and the resize callback draws the canvas at its least
+// 10.2a, rule 17: the grid leaves the page while the panel editor shows, and the resize callback draws the canvas at its least
 // size. When the page shows the grid again, it sends "hune-shown" before it writes the hook of the state: the timeline draws in that task.
 test("a timeline that returns to the page draws in the task of the event hune-shown, before any resize callback", async () => {
   install();

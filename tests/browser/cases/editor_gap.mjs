@@ -1,4 +1,5 @@
-// Browser case B208 (9.6, 10.3; decision ID-K302): the gap under the sticky header.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B208 (9.6, 10.3): the gap under the sticky header.
 // The content of every view that has the page layout starts one token `--page-pad` under the header, and the panel editor too: the preview
 // and the options pane start at least that far under the header, in the editor of each of the 12 panel types, in the settings view, the JSON
 // view and the history view. The view mode of the dashboard is the reference. At 1280, 1024, 768 and 390 px, in both themes, and at the
@@ -113,7 +114,7 @@ async function openAt(t, url, width, scheme, zoom) {
 export const cases = [
   {
     id: "B208",
-    name: "the gap under the header: the view, the panel editor of the 12 types, the settings, the JSON and the history views start one page padding under the header, and the editor still fits (ID-K302)",
+    name: "the gap under the header: the view, the panel editor of the 12 types, the settings, the JSON and the history views start one page padding under the header, and the editor still fits",
     timeout: 480000,
     async run(t) {
       const r = await t.api.create("transit", gapDoc());

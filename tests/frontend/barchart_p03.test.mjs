@@ -1,4 +1,5 @@
-// The fill, the line, the orientation `auto` and the grid lines of a bar chart (wave H, item P03; 4.18, 4.30, 9.19, E34 of the copied
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The fill, the line, the orientation `auto` and the grid lines of a bar chart (the later options, item P03; 4.18, 4.30, 9.19, E34 of the copied
 // chart engine). The panel and the engine run here on a small fake of the DOM and of the canvas. The fake context records each fill and
 // each stroke with its style, its line width, the rects and the line segments of its path. The expected values are those of Grafana
 // 12.4.2, measured on 2026-11-22 with a probe of the canvas calls on 16 bar charts in a temporary dashboard of the folder `hune-parity`:

@@ -15,7 +15,7 @@ export const STEPS = Object.freeze({
   iconsMax: 768,
   // The time shift and the zoom out move into the menu "More actions".
   menuTimeMax: 900,
-  // "Add" shows its icon only (the edit buttons take room from the crumbs, ID-K177).
+  // "Add" shows its icon only (the edit buttons take room from the crumbs).
   addIconMax: 900,
   // "Revert" moves into the menu.
   revertMenuMax: 640,

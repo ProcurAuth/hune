@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The parsed top object of a MongoDB query (7.27 to 7.29).
 //!
 //! The query text is one JSON object. It has the members `collection`, `database` and exactly one

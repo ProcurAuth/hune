@@ -1,5 +1,6 @@
-// FE-23: the colour modes of wave 2 (9.16, F26): the series palette and the 10 continuous modes. The gradients are measured on Grafana 12.4.2.
-// Since ID-K74 (owner decision of 2026-11-13) there is one series palette, the 18 colours of ClickHouse Dash, with a dark and a light variant.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-23: the colour modes of the second set (9.16, F26): the series palette and the 10 continuous modes. The gradients are measured on Grafana 12.4.2.
+// There is one series palette, the 18 colours of ClickHouse Dash, with a dark and a light variant.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -13,7 +14,7 @@ import { sharedRange } from "../../web/js/panels/series.js";
 
 const v = JSON.parse(readFileSync(new URL("./vectors/FE-23-color-modes.json", import.meta.url)));
 
-test("FE-23 the series palette is the 18 colours of ClickHouse Dash in each theme, and the vector file agrees (ID-K74)", () => {
+test("FE-23 the series palette is the 18 colours of ClickHouse Dash in each theme, and the vector file agrees", () => {
   for (const theme of ["dark", "light"]) {
     assert.equal(QCHART[theme].length, 18, theme);
     assert.deepEqual([...QCHART[theme]], v[`palette_${theme}`], theme);
@@ -126,7 +127,7 @@ test("FE-23 the colour of a chart series, with the theme of the page and the ran
   const c = chartColor(fields[0], 50, { index: 0, shared });
   assert.equal(c.color, gradientColor("continuous_gr_yl_rd", 0.5, true), "the range of the two fields, not the range of the field alone");
   assert.equal(c.colorFor(false), gradientColor("continuous_gr_yl_rd", 0.5, false));
-  // The mode `palette` also follows the theme (the series palette of ID-K70 has a hex for each theme), so it has a colorFor.
+  // The mode `palette` also follows the theme (the series palette has a hex for each theme), so it has a colorFor.
   const pal = chartColor(fields[1], 100, { index: 1, shared });
   assert.equal(pal.color, QCHART.dark[1]);
   assert.equal(pal.colorFor(false), QCHART.light[1]);

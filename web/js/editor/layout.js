@@ -80,7 +80,7 @@ export function positionErrors(grid) {
 // --- Drag and resize on the grid (10.16) --------------------------------------------------------------------------------------
 // The functions below are the model of a drag and of a resize. The page gives a target cell, and they give back the layout
 // of the section and the cell of the panel after the compaction (the cell of the placeholder). They change `x`, `y`, `w` and
-// `h` only, and they use the ranges of 4.14. The rules come from measures of Grafana 12.4.2 (gap F15 of milestone F):
+// `h` only, and they use the ranges of 4.14. The rules come from measures of Grafana 12.4.2 (gap F15 of the Grafana-parity work):
 // the layout of a drag depends on the path of the pointer, so the page gives each new cell to `dragPanel` with the layout
 // that the last call returned.
 

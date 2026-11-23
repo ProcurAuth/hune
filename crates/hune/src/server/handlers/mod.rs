@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The handlers of the routes. One function of the form `async fn(Ctx, Request) -> Result<Response, ApiError>`
 //! for each route, and `dispatch` that matches the route identity.
 

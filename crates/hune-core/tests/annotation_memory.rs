@@ -1,4 +1,5 @@
 #![cfg(target_os = "linux")]
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The memory of the tag reader (finding 3 of the review of 2026-11-14). A cell of 10 MB must not cost a copy
 //! of each item. This file holds one test, because the peak of the process is global.
 

@@ -1,4 +1,5 @@
-//! Wave H, step 0 (decision ID-K326, case I47 of 16.13): a `false` or a `0` that turns a Grafana default off (P04),
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Step 0 (case I47 of 16.13): a `false` or a `0` that turns a Grafana default off (P04),
 //! the old footer of a table (P06), `prepareTimeSeries` with the format `many` (P07), and the sizes of a bar gauge
 //! with no manual size (P08).
 
@@ -104,7 +105,7 @@ fn table_footer(footer: Value) -> Value {
     p
 }
 
-/// The member `fields` of the imported panel, after the owner accepts each item.
+/// The member `fields` of the imported panel, after the operator accepts each item.
 fn fields_after(footer: Value) -> (DashboardImport, Value) {
     let d = dash(vec![table_footer(footer)], vec![]);
     let first = run_plain(&d);

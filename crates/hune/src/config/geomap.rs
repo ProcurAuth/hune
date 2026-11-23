@@ -1,4 +1,5 @@
-//! The optional block `geomap` (13.12c, decision ID-K328): the tile source of the panel type `geomap`.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The optional block `geomap` (13.12c): the tile source of the panel type `geomap`.
 //!
 //! The block is off by default. Without it, the page contacts no tile host, and the content security policy is the
 //! header of 12.8, byte for byte. With it, stage 2 parses `tile_url` one time into its parts (13.13). The source of

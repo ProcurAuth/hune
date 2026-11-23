@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Minimal WebDriver BiDi client for the browser suite (16.10), for Firefox.
 // It has the same classes and methods as `cdp.mjs` (Browser, Context, Page) for the subset that the cases
 // B01 to B18, B103, B112, B122, B141, B163 and B170 to B172 use. The runner loads this file when

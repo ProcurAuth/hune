@@ -14,7 +14,7 @@ const INTERPOLATION = { linear: "linear", smooth: "smooth", step_before: "stepBe
 const KIND_OF_DRAW = { bars: "bar", points: "points", line: "line" };
 
 /**
- * The engine hook `yAxis` of one scale (9.19, ID-K316): the automatic range of Grafana for a line, bars and a stack, with the ends of the scale
+ * The engine hook `yAxis` of one scale (9.19): the automatic range of Grafana for a line, bars and a stack, with the ends of the scale
  * (`ends`: `min`, `max`, `softMin`, `softMax`, null when not set). The hook reads the data ends that the engine gives without the soft ends and
  * with the tops of a stack (`raw`, E30). A percent stack has the soft ends 0 and 100 %, and a log scale keeps the axis of the engine.
  * P14: `centred` (`axis_centered_zero`) centres a linear scale; `log2` (`log_base` 2) gives `log2Axis`, with `positive()` the lowest value above 0.

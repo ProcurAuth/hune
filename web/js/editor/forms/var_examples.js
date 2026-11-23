@@ -1,4 +1,4 @@
-// The SQL examples of a `query` variable and the preview of its options (10.3b, ID-K210).
+// The SQL examples of a `query` variable and the preview of its options (10.3b).
 // The menu "Examples" puts one of three ClickHouse texts in the SQL area. The button "Show options" runs the options query of the draft (6.22).
 // This module is in the editor, so it is outside the measure of the page (9.30). It never makes HTML from a string (T79): each text of a
 // value, of an option or of an error goes in the page with `textContent`. It never writes a value to a log.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The grammar of the MongoDB query tree (7.29 to 7.33) and the string leaves of 7.34.
 //!
 //! The grammar is an allowlist. A stage, an operator or a form that the tables of 7.31 do not list is

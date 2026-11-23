@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The HTTP client of the exporter (14.9, R6, R7): one connection for each export, plain HTTP or
 //! HTTPS with `rustls` and the configured CA only. No proxy. No environment variable.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The report (15.11) in its two forms, and the nginx map (15.17).
 
 use std::collections::BTreeMap;
@@ -30,7 +31,7 @@ pub struct ReportMeta {
     pub replace: bool,
 }
 
-/// The two forms of the report: the JSON for programs and the Markdown for the owner.
+/// The two forms of the report: the JSON for programs and the Markdown for a person.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct RenderedReport {
     /// The content of `<path>.json`.

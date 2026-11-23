@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The common tests of 5.34 on PostgreSQL (5.33, item 4). SC-44 and SC-47 are in `pg_transfer.rs`.
 //!
 //! The tests are ignored without a server: run `tests/ci/store-pg.sh`.

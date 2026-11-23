@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The frame of a MongoDB result (7.16c, 7.16d, 8b.6).
 //!
 //! The result of a query is a stream of documents. The server needs all the documents to know the

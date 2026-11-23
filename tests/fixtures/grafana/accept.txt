@@ -40,7 +40,7 @@ monitor-v2a:/spec/layout/spec/rows/3/spec/repeat/value   # unsupported: the vari
 monitor-v2a:/spec/layout/spec/rows/3/spec/title   # changed: an empty title becomes the text Row
 monitor-v2a:/spec/tags/2   # changed: two equal tags are changed to one tag
 monitor-v2a:/spec/timeSettings/autoRefresh   # changed: refresh 5s is not a choice of 4.6: the next larger choice is 10s
-monitor-v2a:/spec/variables/1/spec/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200)
+monitor-v2a:/spec/variables/1/spec/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check
 monitor-v2a:/spec/variables/3/spec/query   # changed: the variable top_n stands in code: value_type is number
 monitor-v2a:/spec/variables/3/spec/skipUrlSync   # dropped: skipUrlSync has no meaning in Hune
 monitor-v2a:/spec/variables/4/spec/description   # dropped: format 1 has no description of a variable (4.7)
@@ -124,7 +124,7 @@ monitor-wrapped:/dashboard/panels/9/transformations/0   # changed: the multi-fra
 monitor-wrapped:/dashboard/refresh   # changed: refresh 5s is not a choice of 4.6: the next larger choice is 10s
 monitor-wrapped:/dashboard/style   # unsupported: unknown member
 monitor-wrapped:/dashboard/tags/2   # changed: two equal tags are changed to one tag
-monitor-wrapped:/dashboard/templating/list/1/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200)
+monitor-wrapped:/dashboard/templating/list/1/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check
 monitor-wrapped:/dashboard/templating/list/3/query   # changed: the variable top_n stands in code: value_type is number
 monitor-wrapped:/dashboard/templating/list/3/skipUrlSync   # dropped: skipUrlSync has no meaning in Hune
 monitor-wrapped:/dashboard/templating/list/4/description   # dropped: format 1 has no description of a variable (4.7)
@@ -166,7 +166,7 @@ monitor:/panels/9/transformations/0   # changed: the multi-frame form is the lon
 monitor:/refresh   # changed: refresh 5s is not a choice of 4.6: the next larger choice is 10s
 monitor:/style   # unsupported: unknown member
 monitor:/tags/2   # changed: two equal tags are changed to one tag
-monitor:/templating/list/1/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200)
+monitor:/templating/list/1/allowCustomValue   # changed: Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check
 monitor:/templating/list/3/query   # changed: the variable top_n stands in code: value_type is number
 monitor:/templating/list/3/skipUrlSync   # dropped: skipUrlSync has no meaning in Hune
 monitor:/templating/list/4/description   # dropped: format 1 has no description of a variable (4.7)

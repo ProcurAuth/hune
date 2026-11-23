@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Durations and time texts (4.4).
 
 /// The largest absolute time in epoch milliseconds (4.4).

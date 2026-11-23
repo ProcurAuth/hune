@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-27: the repeat of panels and sections (4.13a, 9.8c): the values, the states and the limits, the layout, the keys, the request and the queries of a trigger.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -126,7 +127,7 @@ test("FE-27 set 2: the walk of the budget of the dashboard", () => {
   }
 });
 
-test("a repeat that waits for its options is loading, a missing variable is repeat-empty (ID-K86)", () => {
+test("a repeat that waits for its options is loading, a missing variable is repeat-empty", () => {
   const d = doc([custom("host", ["a"])], [{ title: null, collapsed: false, panels: [panel(1, { x: 0, y: 0, w: 24, h: 2 }, { repeat: { variable: "host", direction: "h" } }), panel(2, { x: 0, y: 2, w: 24, h: 2 }, { repeat: { variable: "gone", direction: "h" } })] }]);
   const loading = planRepeats(d, (n) => (n === "host" ? null : undefined), (n) => n);
   assert.equal(loading.panels.get(1).state, "loading");
@@ -255,7 +256,7 @@ test("FE-27 set 4: the keys and the URL forms", () => {
   assert.equal(mentionsVariable("Host", "host"), false);
 });
 
-// The form `<x>$panel-<id>` of Grafana names the copy by its value, not by its number (10.2a, rules 1 and 16; ID-K92, Grafana 12.4.2).
+// The form `<x>$panel-<id>` of Grafana names the copy by its value, not by its number (10.2a, rules 1 and 16; Grafana 12.4.2).
 const grafanaDoc = (options) => doc([{ ...custom("host", []), options }], [
   { title: null, collapsed: false, panels: [panel(1, { x: 0, y: 0, w: 24, h: 2 }, { repeat: { variable: "host", direction: "h" } }), panel(3, { x: 0, y: 2, w: 24, h: 2 })] },
   { title: "S ${host}", collapsed: false, repeat: { variable: "host" }, panels: [panel(2, { x: 0, y: 0, w: 24, h: 2 })] },

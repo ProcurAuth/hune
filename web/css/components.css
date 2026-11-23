@@ -446,7 +446,7 @@ html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { di
 
 /* The switch "Edit" (10.2): a toolbar button with its label and a small track. It has role="switch" and aria-checked. The track shows the
    state: an outline when off, the primary colour when on. The group of the edit mode ("Add", "Save", "Revert") is at the left of the time
-   control, in edit mode only. The time control, the switch, the theme selector and "More actions" never move (9.9, ID-K177). */
+   control, in edit mode only. The time control, the switch, the theme selector and "More actions" never move (9.9). */
 .edit-switch { flex: none; width: var(--tb-edit-w); justify-content: space-between; gap: var(--space-8); padding: 0 var(--space-8) 0 var(--space-12); }
 .edit-switch__track {
   position: relative; display: inline-block; flex: none; width: 28px; height: 16px; border: 1px solid var(--control-border); border-radius: var(--r-pill);
@@ -486,7 +486,7 @@ html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { di
   .picker--time .picker__chevron { margin-left: var(--space-2); }
 }
 /* Up to 900 px the shift buttons and the zoom out hide: the menu "More actions" has them. The range button gets round left corners. The edit
-   group takes its room from the crumbs, so the header needs this room (ID-K177). */
+   group takes its room from the crumbs, so the header needs this room. */
 @media (max-width: 900px) {
   .picker--time > .btn--tb-nav, .picker--time > [data-testid="zoom-out"] { display: none; }
   .picker--time > .picker__button { border-top-left-radius: var(--r-md); border-bottom-left-radius: var(--r-md); }

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The static files of the front end, embedded at build time (9.3).
 //!
 //! `build.rs` makes the table `FILES` and the constant `BUILD_HASH`. This module gives the lookup

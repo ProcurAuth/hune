@@ -1,4 +1,5 @@
-//! The walk of the eleven transforms of milestone F (4.25a). The two older kinds are in `walk.rs`.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The walk of the eleven transforms of the Grafana-parity work (4.25a). The two older kinds are in `walk.rs`.
 //!
 //! Each kind has a closed set of necessary members. A member of another kind is `unknown_member`.
 

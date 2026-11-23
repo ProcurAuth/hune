@@ -1,4 +1,5 @@
-//! The importer and the ad hoc variable (I39; 15.6, 4.10c, decision ID-K329): the variable stays as the kind `adhoc`, and
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The importer and the ad hoc variable (I39; 15.6, 4.10c): the variable stays as the kind `adhoc`, and
 //! each query on its source gets a `changed` row that asks for `AND $__adhocFilters`.
 
 mod common;
@@ -57,7 +58,7 @@ fn the_variable_keeps_its_kind_and_each_query_on_its_source_gets_a_changed_row()
     assert!(rows.iter().any(|i| i.class == Class::Changed && i.pointer.contains("/targets/0")), "{:#?}", r.items);
     // The stored filter of Grafana does not apply in Hune: its key joins `keys`, and a row says so.
     assert!(r.items.iter().any(|i| i.class == Class::Changed && i.pointer.ends_with("/filters")), "{:#?}", r.items);
-    // The SQL is not changed: no automatic wrap (ID-K329).
+    // The SQL is not changed: no automatic wrap.
     assert_eq!(out["sections"][0]["panels"][0]["data"]["query"]["sql"], json!(["SELECT count() FROM t WHERE x = 1"]));
 }
 

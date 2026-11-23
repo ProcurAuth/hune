@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The data sources at start (14.12 steps 4 and 9): the construction from the configuration, the
 //! probe tasks and the watchers of the state (8.11).
 
@@ -41,7 +42,7 @@ pub fn source_config(c: &ClickHouseConfig) -> Result<ClickHouseSourceConfig, Sta
 /// each `mongodb` block, with one shared memory budget. It sends nothing on the network (14.12
 /// step 4). The order is the order of the file in each kind.
 ///
-/// A build with the cargo feature `mongo-driver` (the default, ID-MG20) gives each `mongodb` source the
+/// A build with the cargo feature `mongo-driver` (the default) gives each `mongodb` source the
 /// client of the driver module (8b.2). A build without it gives a source with no client, which stays
 /// `misconfigured` with the fixed text of the source. The configuration refuses such a block at stage 2
 /// before this call, so that case is only a guard. A unit-test build can give a fake client for an id

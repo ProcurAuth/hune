@@ -1,4 +1,5 @@
-//! Decision ID-K321, point 2 (owner answer of 2026-11-21): a restore validates its version one time (6.18).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! A restore validates its version one time (6.18).
 //!
 //! The handler reads the version and validates it in `spawn_blocking`, off the store lock. The store gets the valid
 //! document and only checks `If-Match` and the folder under its lock. Before the fix, the store validated the version

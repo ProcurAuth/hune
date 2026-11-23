@@ -1,5 +1,5 @@
 /* The list page (9.7): head, search, filters, the table of folders and dashboards, the invalid entry and the empty states.
-   Grafana 12.4.2 "Dashboards" page, measured with getComputedStyle (ID-82). Tokens only (css/tokens.css,
+   Grafana 12.4.2 "Dashboards" page, measured with getComputedStyle. Tokens only (css/tokens.css,
    css/vendor/chdash/00-tokens.css); the shared parts (buttons, badges, menus) are in components.css. Sizes in px are measured values. */
 
 /* The page has the surface of the panels (Grafana: the browse page is not on the canvas colour) and a 32 px padding. */

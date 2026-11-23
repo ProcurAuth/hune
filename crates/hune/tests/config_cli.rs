@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Black-box tests of the command line of the configuration: `check-config`,
 //! `print-config`, `print-reference` and `version`, with the exit codes of 14.12.
 

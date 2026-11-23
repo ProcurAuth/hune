@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B200 and B203 to B206 (10.3h, 9.26, F43): the option forms of the data types, group A.
 // B200: the forms of timeseries, barchart and xychart: the groups, the labels, the writes, the effects, the rules of display, the status line.
 // B203: the keyboard and the accessibility tree of the options pane, for one panel of each type.

@@ -1,8 +1,9 @@
-// The closed list of the audit B153 for the types of group A and for the entries that all types share (10.3h rule 14, decision ID-K295).
-// Owner: the worker of group A. An entry: { pointer, types, cls, cause }. `pointer` is a member from the panel ("options.x.y" or "fields.defaults.z"),
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The closed list of the audit B153 for the types of group A and for the entries that all types share (10.3h rule 14).
+// An entry: { pointer, types, cls, cause }. `pointer` is a member from the panel ("options.x.y" or "fields.defaults.z"),
 // or a member and a value ("options.tooltip.mode=multi"). `types` null: all types. `cls` is "design" (the control cannot change the picture by
 // design) or "data" (the data of the audit does not show the effect). `cause` has 20 characters or more. An entry covers its member and the members
-// under it. A stale entry (the preview changes) and a dead entry (no control matches it) fail the audit. A new entry needs a decision row of the owner.
+// under it. A stale entry (the preview changes) and a dead entry (no control matches it) fail the audit. A new entry needs a reviewed decision.
 // The lists of the three groups merge by member, class and cause: the types add up (`mergeExempt` of audit_rules.mjs). The list has 30 entries at most.
 const TIMELINES = ["state_timeline", "status_history"];
 
@@ -25,9 +26,9 @@ export const EXEMPT = [
   { pointer: "fields.defaults.max", types: ["xychart", ...TIMELINES], cls: "data", cause: "no scale, gauge or percent threshold of these types uses the limit with this data" },
   { pointer: "options.show_values=always", types: ["barchart", ...TIMELINES], cls: "data", cause: "the mode Auto already shows each text that fits with this data" },
   { pointer: "options.tooltip.hide_zeros", types: DATA_TYPES, cls: "data", cause: "the audit data has two series, a null and no zero (10.3h, rule 14)" },
-  // Wave H, item P03: the default `auto` of a new bar chart draws vertical bars in the preview, which is wider than it is high (9.19).
+  // Items P03: the default `auto` of a new bar chart draws vertical bars in the preview, which is wider than it is high (9.19).
   { pointer: "options.orientation=vertical", types: ["barchart"], cls: "data", cause: "the preview is wider than it is high, so the default Auto already draws vertical bars" },
-  // Wave H, item P10: a new time series has fill_opacity 0, so the opacity gradient has no fill to paint (10.3h). An owner decision to read.
+  // Items P10: a new time series has fill_opacity 0, so the opacity gradient has no fill to paint (10.3h).
   { pointer: "options.gradient_mode=opacity", types: ["timeseries"], cls: "data", cause: "a new time series has fill_opacity 0, so the opacity gradient has no fill to paint" },
 ];
 

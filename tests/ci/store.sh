@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `store` (16.17, 16.6, 16.14): the store conformance suite and the restore drill.
 # Use: tests/ci/store.sh [--local]
 #   (default) runs the restore drill (tests/ci/restore-drill.sh) on PostgreSQL 15 and 18 with the images

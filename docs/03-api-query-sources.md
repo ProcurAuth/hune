@@ -634,7 +634,7 @@ The route runs one query for each request. A panel with several queries needs on
 
 - `ref` names `data.query` when it equals the `ref` of `data.query`, or `A` when that member is absent. It names an item of `extra_queries` when it equals the `ref` of that item.
 - A `ref` that names no query gives `404 not_found` with the message "This panel has no such query.".
-- A `ref` that names a hidden query gives `400 bad_request` with the message "This query is hidden.". The request with no `ref` for a panel whose first query is hidden gives the same answer. The server never runs a hidden query (decision ID-K164). This check comes with the other checks of step 4 of 7.2, so after the question `dashboard.read`.
+- A `ref` that names a hidden query gives `400 bad_request` with the message "This query is hidden.". The request with no `ref` for a panel whose first query is hidden gives the same answer. The server never runs a hidden query. This check comes with the other checks of step 4 of 7.2, so after the question `dashboard.read`.
 - A `ref` that breaks the grammar of 4.3, and a `ref` that is not a text, give `400 bad_request` with the pointer `/ref`.
 - The query that the `ref` names gives its own `source`, its `format` and its SQL to the steps of 7.2. The members `min_interval`, `time_from`, `time_shift` and `hide_time_override` of `data.query` apply to it (4.15a, rule 4). The body holds `max_data_points` as it did.
 - The answer has the member `ref` (text) when the request has one. It has the value of the request. A request with no `ref` gets an answer with no `ref`, so the answer of today does not change. The member `ref` comes before the member `sql`.
@@ -720,7 +720,7 @@ The members follow 6.21: `etag`, `from_ms`, `to_ms` and `variables` are necessar
 
 - An index that is not a whole number from 0 to 7 gives `404 not_found` with the message "No such annotation.". An index that no annotation has gives the same answer.
 - An annotation with `enabled` equal to `false` gives `400 bad_request` with the message "This annotation is disabled.". The server runs no query for it.
-- The source of an annotation can have the kind `clickhouse`, `postgres` or `mongodb` (decision ID-K142, owner decision ID-K333). The route, the frame shape, the caps and the access question are the same for the three kinds (7.37). Until its own decision, a kind that a later version adds to 8.2 gives `400 bad_request`. The message is "An annotation cannot run on a source of this kind.". The server runs no query for it.
+- The source of an annotation can have the kind `clickhouse`, `postgres` or `mongodb`. The route, the frame shape, the caps and the access question are the same for the three kinds (7.37). Until the specification adds it, a kind that a later version adds to 8.2 gives `400 bad_request`. The message is "An annotation cannot run on a source of this kind.". The server runs no query for it.
 - A source that the configuration does not declare gives `404 not_found`.
 - The answer has no member `sql`. The route has no inspect view.
 - Hune never writes the title, the text or a tag to a log, a span or a metric (14.7).
@@ -818,7 +818,7 @@ options route. Section 11 gives their content, their questions and their errors.
 - `GET /static/{build-hash}/{path}` answers an embedded file of 9.2. `{build-hash}` MUST equal the build hash of the
   binary, and `{path}` MUST name an embedded file other than `shell.html`. Else the answer is `404 not_found`.
 - A static file has the `Content-Type` of 9.3, `Cache-Control: private, max-age=31536000, immutable` and
-  `X-Content-Type-Options: nosniff`. With the value `private`, a shared cache cannot give a file to a client without a token (decision ID-K315).
+  `X-Content-Type-Options: nosniff`. With the value `private`, a shared cache cannot give a file to a client without a token.
 - A static file of a text type has `Vary: Accept-Encoding` while `server.compress_static` is `true`. A request that accepts gzip gets the gzip copy with `Content-Encoding: gzip` (9.3). A static answer has no `ETag`, and the server ignores `Range`.
 - In mode `authzen`, the pages and the static files need a valid identity token and ask the PDP nothing (11).
 - No other page route exists. The editor and the history are states of the dashboard page (9.5).
@@ -959,9 +959,9 @@ For a source of the kind `mongodb`, the steps 8 to 12 are the steps of 7.35. The
 - The dashboard member `timezone` (`browser` or `utc`, 4.6) changes only the display and the date math of the
   browser. The macros use absolute Unix seconds, so the time zone of the browser never changes a filter.
 - The macros `$__dateFilter`, `$__dateTimeFilter` and `$__dt` print calendar dates. They use the UTC date of `from_ms` and of
-  `to_ms`, whatever the member `timezone` says. The ClickHouse plugin of the pinned Grafana does the same. It gets epoch
+  `to_ms`, whatever the member `timezone` says. The ClickHouse plugin of Grafana 12.4.2 does the same. It gets epoch
   milliseconds only, and it prints the date in UTC. A check on Grafana 12.4.2 gave `toDate('2026-11-09')` for a range
-  that starts at 2026-11-09T23:00:00Z (decision D10).
+  that starts at 2026-11-09T23:00:00Z.
 
 Example: the range "Last 6 hours", computed at 2026-11-09T14:00:00.000Z, gives `from_ms = 1794211200000` and
 `to_ms = 1794232800000`.
@@ -974,7 +974,7 @@ The interval rule restates the rule of Grafana `calculateInterval` and `roundInt
   gives it. Else it sends the inner width of the panel frame in CSS pixels, rounded, as Grafana does (9.8). `D` is a
   whole number from 1 to 10,000. Another value gives `400 bad_request`.
 - `L` is the panel member `min_interval` in milliseconds (4.15). For a query that is an item of `extra_queries`, `L` comes from `min_interval` of `data.query` (4.15a, rule 4). When it is `null`, `L` is 1. Grafana also takes the
-  "Min interval" of its data source (`jsonData.timeInterval`) as a floor. M0 reads this setting at the reference deployment (19).
+  "Min interval" of its data source (`jsonData.timeInterval`) as a floor. M0 reads this setting from the export of the Grafana instance (19).
 - `R` is `(to_ms - from_ms) / D`, a real number that the engine does not round.
 - `I = max(L, round_interval(R))`, in milliseconds.
 - `S = max(1, floor(I / 1000))`, in seconds.
@@ -1077,7 +1077,7 @@ The measure of 2026-11-22 on ClickHouse 26.8.34.13 sent each form to the HTTP in
 
 Before this change, the lexer of Hune read `//` as code, ended a comment at CR and refused a tag with a first digit.
 A text with two `//` comments that each hold a `'` then put a free value in code, where Hune saw a string. P, PQ and the
-second scan of 7.6a trust the lexer, so the value became SQL (security review 3, item 1). The ClickHouse
+second scan of 7.6a trust the lexer, so the value became SQL (a security fix). The ClickHouse
 suite now sends the probe table to the server and compares each answer with the lexer of Hune (16.9). A ClickHouse that
 reads a form in another way fails the suite, and the rules of this section must be measured again.
 
@@ -1090,8 +1090,8 @@ Test-vector rule:
   `tests/native/sql_test.cpp` of ClickHouse Dash at the recorded commit. The Hune tests hold a copy of these vectors,
   with the commit and the file name in a comment.
 - When ClickHouse Dash changes its lexer, Hune copies the new vectors and records the new commit in the same change.
-- The browser copy `app_sql_lex.js` (9.24) follows the same rules for `//` and for the end of a line comment (engine
-  edit E47). The page uses it only to find placeholders (9.10)
+- The browser copy `app_sql_lex.js` (9.24) follows the same rules for `//` and for the end of a line comment.
+  The page uses it only to find placeholders (9.10)
   and to colour SQL (10.3). It never makes SQL.
 
 The table below gives a part of the vectors. Each token is one letter:
@@ -1153,7 +1153,7 @@ never spans a comment or a string.
 
 ### 7.6a ClickHouse query parameters
 
-A query parameter of ClickHouse is the form `{name:Type}` in code. ClickHouse puts the value of the URL parameter `param_<name>` in place of the form. The value never becomes SQL text. This form adds to the placeholders of 7.6 and does not replace them (decision ID-K330).
+A query parameter of ClickHouse is the form `{name:Type}` in code. ClickHouse puts the value of the URL parameter `param_<name>` in place of the form. The value never becomes SQL text. This form adds to the placeholders of 7.6 and does not replace them.
 
 The strict form has these parts, with no byte between two parts:
 
@@ -1312,7 +1312,7 @@ The member `allow_custom_value` (4.8, 4.9) has these effects on the server:
 
 ### 7.7a The filters of an `adhoc` variable
 
-The member of an `adhoc` variable (4.10c) in `variables` has another form. It is the closed object `{"filters": [{"key": <string>, "op": <string>, "value": <string>}, ...]}` (decision ID-K329).
+The member of an `adhoc` variable (4.10c) in `variables` has another form. It is the closed object `{"filters": [{"key": <string>, "op": <string>, "value": <string>},...]}`.
 
 ```json
 "filters": { "filters": [ { "key": "host", "op": "=", "value": "web-1" }, { "key": "env", "op": "!=", "value": "dev" } ] }
@@ -1370,7 +1370,7 @@ no other escape applies.
 The table gives the Grafana output for each value that has no `'` and no `\`. For a value with one of them, Hune
 escapes where Grafana breaks the SQL.
 
-The formats of the last group of 7.9 put free text in the SQL (decision D7). After such a format, only the string
+The formats of the last group of 7.9 put free text in the SQL. After such a format, only the string
 escape keeps the text inside its literal. So these formats are valid in a string only. The engine builds the text of the
 format first. Then it applies the string escapes to the whole text.
 
@@ -1391,7 +1391,7 @@ An open `custom` variable has the rows of a `query` variable. A free value in co
 
 In code, another format is a document error (7.18).
 
-The last group of formats is valid in a string only (7.8, decision D7). The engine builds the text of the format from
+The last group of formats is valid in a string only (7.8). The engine builds the text of the format from
 the values, in order. Then it applies the string escape of 7.8 to the whole text.
 
 The table gives the text before this escape. `v` is one value, and `a` and `b` are values of a list. The name of the variable is `name`. A list has 0 or more
@@ -1519,7 +1519,7 @@ ORDER BY t
 
 ### 7.10a The macro `$__adhocFilters`
 
-The macro `$__adhocFilters` puts the filters of the `adhoc` variable of the source in the SQL of a panel (decision ID-K329). The SQL can also write it `${__adhocFilters}`. It takes no argument and no format.
+The macro `$__adhocFilters` puts the filters of the `adhoc` variable of the source in the SQL of a panel. The SQL can also write it `${__adhocFilters}`. It takes no argument and no format.
 
 1. It is permitted in the SQL of a panel and of an extra query (4.15a) of a `clickhouse` source. The document MUST have an `adhoc` variable whose `source` is the source of the query.
 2. It is refused in the SQL of a variable and of an annotation, and inside the argument of another macro. It is refused on a `postgres` or a `mongodb` source.
@@ -1877,7 +1877,7 @@ The rule for another type. A value of one of these BSON types gives `422 query_e
 
 A value that does not decode gives `502 source_bad_response`. A document with a repeated field name, a string that is not valid UTF-8, and a Decimal128 that is not valid are examples. The member `stats` of the frame has `read_rows` and `read_bytes` set to `null`, because the commands give no summary. `result_bytes` holds the count of 8b.6.
 
-Examples: the Int64 value 9223372036854775807 gives the text `"9223372036854775807"`. The Decimal128 value `12.5` stored with the scale 9 gives `"12.500000000"`. The nested value `{"a": 1}` in a column gives the text `{"a":1}`. The decision `ID-MG10` lets the owner choose to refuse nested values.
+Examples: the Int64 value 9223372036854775807 gives the text `"9223372036854775807"`. The Decimal128 value `12.5` stored with the scale 9 gives `"12.500000000"`. The nested value `{"a": 1}` in a column gives the text `{"a":1}`. The choice to refuse nested values is an open question (19.33).
 
 ### 7.16d The time column of a MongoDB time series
 
@@ -1887,7 +1887,7 @@ A `$group` stage gives the key `_id`, whose value is often an object. The column
 
 ### 7.16e Frame rules of the format `logs`
 
-The format `logs` of a panel query (4.15, 4.33f) does not change the request, the expansion or the frame. The server runs it as the format `table`, for each kind of source. The caps of 7.13 and of 8.3 apply to the rows and to the bytes of the result, as for any panel query. The page reads the frame with the rules below. They are the rules of the logs panel of Grafana 12.4.2 for a frame with no `meta.type` (decision ID-K326). The frames of the ClickHouse plugin 4.5.1 have no `meta.type`.
+The format `logs` of a panel query (4.15, 4.33f) does not change the request, the expansion or the frame. The server runs it as the format `table`, for each kind of source. The caps of 7.13 and of 8.3 apply to the rows and to the bytes of the result, as for any panel query. The page reads the frame with the rules below. They are the rules of the logs panel of Grafana 12.4.2 for a frame with no `meta.type`. The frames of the ClickHouse plugin 4.5.1 have no `meta.type`.
 
 1. The time. The time of a line is the first field of the kind `time`. A row with a time that is `null` shows no time, and it comes last in both orders (9.19h).
 2. The body. The body of a line is the first field of the kind `text`. A `null` body is an empty line.
@@ -1967,7 +1967,7 @@ The items 10 to 16 use the same function as the run time (7.6a), so the save and
 
 The items 19 and 20 use the rules of the run time (7.10a), so the save and the run agree. A load of a stored document does not run them: a fault gives `422 sql_invalid` when the panel runs.
 
-For an annotation, the pointer names the line of the member `sql` of the annotation, for example `/annotations/0/sql/2`. Item 5 applies to the SQL of an annotation as it applies to the SQL of a variable: `$__timeInterval`, `$__timeInterval_ms`, `$__interval_s` and `$__interval_ms` give `not_permitted`. The text of an annotation gets the checks of the kind of its source: 7.18 for `clickhouse`, 7.26 for `postgres` and 7.36 for `mongodb` (decisions ID-K142 and ID-K333). A kind that a later version adds to 8.2 gives `not_permitted` at `/annotations/<i>/source`, and no other check runs on the text of that annotation.
+For an annotation, the pointer names the line of the member `sql` of the annotation, for example `/annotations/0/sql/2`. Item 5 applies to the SQL of an annotation as it applies to the SQL of a variable: `$__timeInterval`, `$__timeInterval_ms`, `$__interval_s` and `$__interval_ms` give `not_permitted`. The text of an annotation gets the checks of the kind of its source: 7.18 for `clickhouse`, 7.26 for `postgres` and 7.36 for `mongodb`. A kind that a later version adds to 8.2 gives `not_permitted` at `/annotations/<i>/source`, and no other check runs on the text of that annotation.
 
 The load of a document (5.8) does not run these checks, because the configuration can change and the format does not
 hold them. A fault of a loaded document gives `422 sql_invalid` or `404 not_found` when its panel runs (7.2).
@@ -2294,12 +2294,12 @@ Warning 3 of 7.18 (`FINAL`, `SETTINGS`) does not apply to the dialect `postgres`
 The kind `mongodb` is the third kind of data source. It follows the steps of 8.14. This section and 7.28 to 7.36 give its query language. Section 8b gives its client, its limits, its probe and its account. Section 13 gives its keys (13.12b).
 
 - The query is data, not code. It is one JSON object with a closed grammar. It has no JavaScript, no shell syntax and no text that the server reads as code.
-- The document format does not change (4.15). The member `sql` of a panel query or of a variable holds the lines of the JSON text. There is no new `format_version` and no new optional member. The decision D2 of ID-87 is not used.
+- The document format does not change (4.15). The member `sql` of a panel query or of a variable holds the lines of the JSON text. There is no new `format_version` and no new optional member.
 - The engine selects this language from the kind of the source (7.19). The steps of 7.2 apply, with the changes of 7.35.
 - The grammar is an allowlist. A stage, an operator or a form that 7.31 does not list is refused. 7.32 lists the refused names that matter most, so that each message is exact.
 - The checks of this language are a defence in depth. The boundary is the user of 8b.13 and the read-only connection of 8b.5.
-- The status of this section is DECIDED as a design for the milestone MMG (18.10b). The owner has not validated the security choices. They are the decisions `ID-MG1` to `ID-MG16` of 19.33, marked `PENDING OWNER`. Each decision has the default that this section states.
-- The macros and the formats of 7.34 restate the Grafana plugin `haohanyang-mongodb-datasource` 0.5.0 as the author remembers it. They are NOT checked against the pinned plugin yet. The vectors of 16.13 decide (`ID-MG15`).
+- This section is the design for the milestone MMG (18.10b). The security choices of this section are open questions (19.33). Each open question has the default that this section states.
+- The macros and the formats of 7.34 restate the Grafana plugin `haohanyang-mongodb-datasource` 0.5.0. They are NOT checked against a real plugin yet. The vectors of 16.13 decide.
 
 ### 7.28 The query text and its JSON profile
 
@@ -2479,7 +2479,7 @@ Each name below gives the message `<name> is not permitted in a MongoDB query of
 | `$currentOp`, `$listSessions`, `$listLocalSessions`, `$listSampledQueries`, `$queryStats`, `$planCacheStats` | They show the work of other users, or of the server. |
 | `$collStats`, `$indexStats`, `$listCatalog`, `$listSearchIndexes` | They show the size, the use and the structure of the server. |
 | `$changeStream`, `$changeStreamSplitLargeEvent` | They open a stream that does not end. |
-| `$graphLookup` | It is a recursive join. Decision `ID-MG6`. |
+| `$graphLookup` | It is a recursive join. |
 | `$lookup` or `$unionWith` with a collection that the key `collections` does not list, with `from` as an object (another database), or with no `from` | The query leaves the allowlist (7.33). |
 | `$search`, `$searchMeta`, `$vectorSearch`, `$documents`, `$geoNear`, `$redact`, `$text`, `$jsonSchema` | Not needed, or they need a server feature that the role cannot check. |
 | `$sample`, `$sampleRate`, `$rand` | The result is not the same at each run. |
@@ -2614,10 +2614,10 @@ A warning never stops a save. The checks use the kind of the source of the panel
 
 ### 7.37 Annotation queries
 
-The route of 6.21a runs the SQL of an annotation (4.5b). The pipeline is the pipeline of 7.2 with these changes. The decisions are ID-K141 to ID-K147.
+The route of 6.21a runs the SQL of an annotation (4.5b). The pipeline is the pipeline of 7.2 with these changes.
 
 - There is no panel and no `max_data_points`. The macros that need only the time range use the range of the request (7.14). Placeholders work as in the SQL of a panel (7.6 to 7.11), and the property P applies.
-- Step 4 of 7.2 finds the annotation by its index. The source of the annotation can have the kind `clickhouse`, `postgres` or `mongodb` (decision ID-K142, owner decision ID-K333). The expansion follows the kind: 7.5 to 7.13 and the property P for `clickhouse`, 7.21 to 7.24 and the property P for `postgres`, 7.35 and the property PM for `mongodb`. The statement check of the kind applies (7.12, 7.25, 7.30 to 7.32). The route refuses a kind that a later version adds to 8.2 with `400 bad_request`.
+- Step 4 of 7.2 finds the annotation by its index. The source of the annotation can have the kind `clickhouse`, `postgres` or `mongodb`. The expansion follows the kind: 7.5 to 7.13 and the property P for `clickhouse`, 7.21 to 7.24 and the property P for `postgres`, 7.35 and the property PM for `mongodb`. The statement check of the kind applies (7.12, 7.25, 7.30 to 7.32). The route refuses a kind that a later version adds to 8.2 with `400 bad_request`.
 - The effective `max_result_rows` is the lowest of the source key, the ceiling `max_rows` and `MAX_ANNOTATION_ROWS` (1,000). A result with more rows gives `422 query_limit`, or `403 ceiling_exceeded` when the ceiling lowered the limit (8.5). The page never gets a cut result.
 - The query takes its permits, its reservation and its place in the queue like a panel query (8.8). The log line has `kind` = `annotation` (14.7).
 
@@ -2652,7 +2652,7 @@ The server checks the kind of each column before the first row, and it checks th
 | `too_long` | A title, a text, a tag or the count of tags is above its limit. |
 | `duplicate_column` | Two columns have the same role. |
 
-The roles for each kind of source. The rules read the kinds of 7.16 and not the types of the source. Thus the rules are the same for the three kinds (decisions ID-K142 and ID-K333). The table gives the types that each role accepts, from 7.16, 7.16a and 7.16c.
+The roles for each kind of source. The rules read the kinds of 7.16 and not the types of the source. Thus the rules are the same for the three kinds. The table gives the types that each role accepts, from 7.16, 7.16a and 7.16c.
 
 | Role | `clickhouse` | `postgres` | `mongodb` |
 |---|---|---|---|
@@ -2877,7 +2877,7 @@ Hune maps an error by the ClickHouse code, never by the message.
 - A ceiling of 0 gives `403 ceiling_exceeded` before Hune sends the query, because ClickHouse reads 0 as "no limit"
   (11.24).
 - `source_misconfigured` and `source_unavailable` change the state of the source (8.11).
-- The status 414 or 431 changes no state. Before ID-K330 it gave `503 source_unavailable`, so a viewer with long values could mark a source down. The values of 7.6a stay below the caps, so these statuses come only from a proxy with a smaller limit.
+- The status 414 or 431 changes no state. An earlier version gave `503 source_unavailable`, so a viewer with long values could mark a source down. The values of 7.6a stay below the caps, so these statuses come only from a proxy with a smaller limit.
 
 ### 8.6 TLS
 
@@ -3104,17 +3104,16 @@ When a ClickHouse release gives another name to a source privilege, the test use
 
 - Hune supports each LTS release that ClickHouse still maintains at the date of a Hune release. It also supports
   each newer stable release. At the date of this document, these are 26.3 LTS, 26.8 LTS and the newer releases.
-- The CI tests two versions: the version in production at the reference deployment, and the latest LTS release (16). The production
-  version is not measured yet (19).
+- The CI tests the latest LTS release (16). The ClickHouse version of the Grafana instance in 1.3 is not measured yet (19).
 - Each setting of 8.3 and the statement `CHECK GRANT` exist in each supported release.
-- The probe writes a warning for an older release (8.11). An older production version needs a decision: an upgrade of
+- The probe writes a warning for an older release (8.11). An older version needs an upgrade of
   ClickHouse, or a test of Hune on that version (19).
 
 ### 8.14 How a future source is added
 
 A new kind of source (for example PostgreSQL or MongoDB) needs these changes, in the same release:
 
-1. A written decision and a new section of this specification (2, 18).
+1. A new section of this specification and a new line in the table of 2.
 2. A configuration block kind with its keys (13). Its ids share the id space of 8.2.
 3. A dialect in `hune-core`, with its lexer, its escape rules for each context, its macros and its statement check.
    Each one has test vectors. Sections 7.5 to 7.12 are the model for a SQL dialect.
@@ -3138,7 +3137,7 @@ The kind `postgres` is the second kind of data source. It follows the steps of 8
 - The document format does not change. A panel or a variable of a PostgreSQL source has the same member `data.query` or `query` as a ClickHouse source (4.15). The member `source` holds the id of a `postgres` block. There is no new `format_version` (4.42).
 - A PostgreSQL source reads data. It never writes data, never runs code on the server, and never opens a connection other than the one to its `host` and `port`.
 - This kind is not the PostgreSQL store of section 5. The store has its own role, its own keys and its own pool. A source never shares a connection with the store. On the same server, it never uses the role of the store (13.14, C20).
-- The status of this section is DECIDED as a design for the milestone PG (18.10a). The owner has not validated the security choices yet. They are the decisions `ID-PG1` to `ID-PG17` of 19.32, marked `PENDING OWNER`. Each decision has the default that this section states.
+- This section is the design for the milestone MPG (18.10a). The security choices of this section are open questions (19.32). Each open question has the default that this section states.
 
 ### 8a.2 Declaration and code
 
@@ -3175,7 +3174,7 @@ The read-only rule holds on four sides. The role cannot write. The connection ca
 - With `sslmode = "verify-full"`, the connection uses TLS 1.2 or TLS 1.3 by `rustls` with the provider `ring`. The trust roots are only the certificates of `tls.ca_file`. Hune checks the certificate against `tls.server_name` and sends the same name in SNI. It sets `channel_binding = require`, so the server MUST use SCRAM-SHA-256 with channel binding. No key skips a check, and Hune sends no client certificate.
 - With `sslmode = "disable"`, the connection has no TLS. Hune cannot refuse a weak method then, and `pg_hba.conf` is the only control (12.13). Section 13 gives the warning for a host that is not a loopback address.
 - The connection setup, TLS and authentication must end within `connect_timeout`. Past it, the query gives `503 source_unavailable`.
-- TCP keepalive is on. With `sslmode = "verify-full"` the idle time is 30 s. With `sslmode = "disable"` the idle time is the value of the system (ID-PG17).
+- TCP keepalive is on. With `sslmode = "verify-full"` the idle time is 30 s. With `sslmode = "disable"` the idle time is the value of the system.
 
 The startup packet holds these parameters. The `options` parameter carries the `-c` items. Each value is a constant, a key, or a value that the grammar of 13.13 checks. Thus no value can hold a space or a quote mark.
 
@@ -3483,7 +3482,7 @@ The same test runs the probe against this role and expects the state `up`. It th
 ### 8a.14 Supported PostgreSQL versions
 
 - Hune supports PostgreSQL 15 to 18, the versions of the store (5.31). The CI tests the oldest and the newest of them (16.9a).
-- The probe refuses a server below version 15. The check R0 fails and the source is `misconfigured` (ID-PG17). The check runs before the other checks, at the setup of each connection. A server before 14 also refuses the startup parameter `client_connection_check_interval`.
+- The probe refuses a server below version 15. The check R0 fails and the source is `misconfigured`. The check runs before the other checks, at the setup of each connection. A server before 14 also refuses the startup parameter `client_connection_check_interval`.
 - The client uses no feature of one version only. The `transaction_timeout` setting of PostgreSQL 17 is not used, because the client deadline gives the same bound on each version.
 - A server on a platform that does not support `client_connection_check_interval` refuses the startup value. Its source is `misconfigured`.
 
@@ -3506,8 +3505,8 @@ The kind `mongodb` is the third kind of data source. It follows the steps of 8.1
 
 - The document format does not change. A panel or a variable of a MongoDB source has the same member `data.query` or `query` as the other kinds (4.15). The member `source` holds the id of a `mongodb` block. There is no new `format_version` (4.42).
 - A MongoDB source reads data. It never writes data, never runs code on the server, and never opens a connection to a host that the block does not list.
-- The status of this section is DECIDED as a design for the milestone MMG (18.10b). The owner has not validated the security choices. They are the decisions `ID-MG1` to `ID-MG16` of 19.33, marked `PENDING OWNER`. Each decision has the default that this section states.
-- The code uses the official driver `mongodb` only behind a narrow interface (8b.16). The new dependency is the decision `ID-MG2`. The owner granted it, and the crates are `mongodb` 3.10.0 and `bson` 3.1.0.
+- This section is the design for the milestone MMG (18.10b). The security choices of this section are open questions (19.33). Each open question has the default that this section states.
+- The code uses the official driver `mongodb` only behind a narrow interface (8b.16). The crates are `mongodb` 3.10.0 and `bson` 3.1.0.
 
 ### 8b.2 Declaration and code
 
@@ -3519,9 +3518,9 @@ The code follows the rules of 8.1 and 8.14:
 - The crate `hune-core` gets the query language (7.27 to 7.36), the value model of 8b.16 and the frame types of 7.16c and 7.16d. It does no I/O and it uses no MongoDB crate.
 - The crate `hune-source` holds the interface `MongoClient` (8b.16). It also holds the logic of the source: the steps of 8b.5, the limits, the error map, the probe and the pool. This logic is generic over the interface. It uses no MongoDB crate.
 - The driver is in one module, `crates/hune-source/src/mongo/driver.rs`, behind the cargo feature `mongo-driver`. This module is the only file that names the crates `mongodb` and `bson`. A build with `--no-default-features` has no driver. It refuses a `mongodb` block at start with the error `mongodb "<id>": this build has no MongoDB driver`. The unit tests use a fake client.
-- The crate `mongodb` is a local copy of the release 3.10.0 in `vendor/mongodb` (decision `ID-MG25`). The root `Cargo.toml` and `fuzz/Cargo.toml` select it with `[patch.crates-io]`. The copy reads no environment variable. It also does not read the file `/.dockerenv`. The original reads them to fill the metadata of `hello` (8b.15). Each edit holds a comment `// hune:`.
+- The crate `mongodb` is a local copy of the release 3.10.0 in `vendor/mongodb`. The root `Cargo.toml` and `fuzz/Cargo.toml` select it with `[patch.crates-io]`. The copy reads no environment variable. It also does not read the file `/.dockerenv`. The original reads them to fill the metadata of `hello` (8b.15). Each edit holds a comment `// hune:`.
 - The file `vendor/mongodb.patch` holds the edits as a readable diff against the original. The file `vendor/mongodb.lock.json` holds the checksum of the original crate and the SHA-256 of each file. The command `tools/check-vendor-lock.sh --mongodb` finds a changed file, a file that is not in the lock and a patch that does not match (16.18).
-- The crate `hune` has the cargo feature `mongo-driver`, and it is on by default (`ID-MG20`). It turns on the feature `mongo-driver` of `hune-source`. The release build has the driver.
+- The crate `hune` has the cargo feature `mongo-driver`, and it is on by default. It turns on the feature `mongo-driver` of `hune-source`. The release build has the driver.
 - The trait `DataSource` has no method that writes data. The interface has no function that sends a command document of a caller (8b.5).
 
 ### 8b.3 The security model
@@ -3544,9 +3543,9 @@ The read-only rule holds on three sides. The user cannot write. The connection s
 ### 8b.4 Connection and session
 
 - Hune reads no environment variable, no `mongorc` file and no connection string of a file. It builds the options of the driver in code, from the keys of the block only (13.23). It never builds a connection string, so a value of a key cannot add an option.
-- The scheme `mongodb+srv` does not exist. Hune makes no SRV lookup and no TXT lookup. The decision `ID-MG7` records this default.
+- The scheme `mongodb+srv` does not exist. Hune makes no SRV lookup and no TXT lookup.
 - With `topology = "direct"`, the connection goes to the `host` and the `port` of the block, with the option `directConnection`. The driver makes no discovery and it follows no other host. A DNS name resolves at each new connection.
-- With `topology = "replica_set"`, the connection goes to the hosts of `hosts`, with the replica set name of `replica_set`. These hosts MUST be all the members of the set, because the driver connects to each member that the set announces. The probe refuses a set that announces another host (8b.12, check M4). The decision `ID-MG8` records this rule.
+- With `topology = "replica_set"`, the connection goes to the hosts of `hosts`, with the replica set name of `replica_set`. These hosts MUST be all the members of the set, because the driver connects to each member that the set announces. The probe refuses a set that announces another host (8b.12, check M4).
 - TLS with `tls_mode = "verify-full"` uses TLS 1.2 or TLS 1.3 by `rustls`. The trust roots are only the certificates of `tls.ca_file`. The driver checks the certificate against the host name of the address that it connects to. No key sets another name, and no key skips a check. Hune sends no client certificate.
 - With `tls_mode = "disable"`, the connection has no TLS. Hune cannot refuse a weak method then. Section 13 gives the warning for a host that is not a loopback address.
 - The login uses the mechanism SCRAM-SHA-256 and the database `auth_database`. Hune never offers another mechanism, so a server cannot make it send a password in clear text.
@@ -3815,11 +3814,11 @@ A user with a role other than `read` fails M2. A user that holds `read` and a cu
 - Hune supports MongoDB 7.0, 8.0 and newer releases, for a standalone server and for a replica set. The CI tests the oldest and the newest of them (16.9b).
 - The probe writes `source.version_unsupported` for a version below 7.0. The queries still run, and an operator that the server does not know gives `422 query_error` (8b.8).
 - The client uses no feature of one release only. It sends no `serverApi` version.
-- The reference deployment runs a MongoDB whose version is not measured yet (19.34).
+- The MongoDB version of the target of the migration is not measured yet (19.34).
 
 ### 8b.15 Known limits
 
-- The `hello` of the driver holds the metadata of the client. These are the name and version of the driver, the system, the architecture, the compiler and `appName`. It holds no value of the process environment and no name of a platform or a container. The local copy of the crate reads no variable and no file for it (8b.2, `ID-MG25`). The copy never sees a FaaS platform, so the monitoring mode `auto` of the driver always selects the stream protocol. The test of 16.9b makes sure of this.
+- The `hello` of the driver holds the metadata of the client. These are the name and version of the driver, the system, the architecture, the compiler and `appName`. It holds no value of the process environment and no name of a platform or a container. The local copy of the crate reads no variable and no file for it (8b.2). The copy never sees a FaaS platform, so the monitoring mode `auto` of the driver always selects the stream protocol. The test of 16.9b makes sure of this.
 - A reply of the server can hold 16 MiB of documents. The memory budget does not count this one reply. The author limits the fields, for example with `$project`. The cap on bytes stops the query after the batch.
 - MongoDB does not stop a command when the client leaves. A command that has no cursor yet goes on until `maxTimeMS` (8b.7).
 - The setting `security.javascriptEnabled` cannot be read by the user. The grammar refuses each JavaScript form. A server that runs with the setting on is still safe from Hune, but a plain client of the same user can run `$where`.

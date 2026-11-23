@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The routes that other parts of the product fill. Each gives `500 internal_error` for now.
 
 use crate::access::{Access, OptionChild, Who, cut_label, parse_options_query, walk_options};

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fault injection for the tests (16.7, SX-01). A build without the feature `conformance`
 //! has an empty stub here. The stub never fails.
 

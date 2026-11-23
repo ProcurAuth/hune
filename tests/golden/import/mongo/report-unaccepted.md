@@ -54,8 +54,8 @@
 | `mongo-main:/panels/7/targets/0/queryText` | unsupported | 8: Lookup outside the list | `targets.0.queryText` | MongoDB query: line 4, column 24: /aggregate/0/$lookup/from: the collection is not in the key collections of the source (7.33) | panel removed | no |
 | `mongo-main:/panels/8/targets/0/queryText` | unsupported | 9: Shell syntax | `targets.0.queryText` | queryText is not a JSON text of the profile of 7.28 (Hune reads no shell syntax and no JavaScript): an unexpected byte, line 1, column 1 | panel removed | no |
 | `mongo-main:/panels/9/targets/0/queryText` | unsupported | 10: Binary form | `targets.0.queryText` | MongoDB query: line 4, column 21: /aggregate/0/$match/b/$binary: $binary is not permitted in a MongoDB query of Hune | panel removed | no |
-| `mongo-main:/templating/list/0/allowCustomValue` | changed |  | `templating.list.0.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
-| `mongo-main:/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
+| `mongo-main:/templating/list/0/allowCustomValue` | changed |  | `templating.list.0.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
+| `mongo-main:/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
 
 ### `mongo-v2a`: MongoDB panels
 
@@ -79,8 +79,8 @@
 | `mongo-v2a:/spec/elements/panel-7/spec/data/spec/queries/0/spec/query/spec/queryText` | unsupported | 7: Refused stage | `queries.0.spec.query.spec.queryText` | MongoDB query: line 5, column 6: /aggregate/1/$out: $out is not permitted in a MongoDB query of Hune: They write to a collection. | panel removed | no |
 | `mongo-v2a:/spec/elements/panel-8/spec/data/spec/queries/0/spec/query/spec/queryText` | unsupported | 8: Lookup outside the list | `queries.0.spec.query.spec.queryText` | MongoDB query: line 4, column 24: /aggregate/0/$lookup/from: the collection is not in the key collections of the source (7.33) | panel removed | no |
 | `mongo-v2a:/spec/elements/panel-9/spec/data/spec/queries/0/spec/query/spec/queryText` | unsupported | 9: Shell syntax | `queries.0.spec.query.spec.queryText` | queryText is not a JSON text of the profile of 7.28 (Hune reads no shell syntax and no JavaScript): an unexpected byte, line 1, column 1 | panel removed | no |
-| `mongo-v2a:/spec/variables/0/spec/allowCustomValue` | changed |  | `spec.variables.0.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
-| `mongo-v2a:/spec/variables/1/spec/allowCustomValue` | changed |  | `spec.variables.1.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
+| `mongo-v2a:/spec/variables/0/spec/allowCustomValue` | changed |  | `spec.variables.0.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
+| `mongo-v2a:/spec/variables/1/spec/allowCustomValue` | changed |  | `spec.variables.1.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
 
 ### `mongo-v2b`: MongoDB panels
 
@@ -104,8 +104,8 @@
 | `mongo-v2b:/spec/elements/panel-7/spec/data/spec/queries/0/spec/query/spec/queryText` | unsupported | 7: Refused stage | `queries.0.spec.query.spec.queryText` | MongoDB query: line 5, column 6: /aggregate/1/$out: $out is not permitted in a MongoDB query of Hune: They write to a collection. | panel removed | no |
 | `mongo-v2b:/spec/elements/panel-8/spec/data/spec/queries/0/spec/query/spec/queryText` | unsupported | 8: Lookup outside the list | `queries.0.spec.query.spec.queryText` | MongoDB query: line 4, column 24: /aggregate/0/$lookup/from: the collection is not in the key collections of the source (7.33) | panel removed | no |
 | `mongo-v2b:/spec/elements/panel-9/spec/data/spec/queries/0/spec/query/spec/queryText` | unsupported | 9: Shell syntax | `queries.0.spec.query.spec.queryText` | queryText is not a JSON text of the profile of 7.28 (Hune reads no shell syntax and no JavaScript): an unexpected byte, line 1, column 1 | panel removed | no |
-| `mongo-v2b:/spec/variables/0/spec/allowCustomValue` | changed |  | `spec.variables.0.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
-| `mongo-v2b:/spec/variables/1/spec/allowCustomValue` | changed |  | `spec.variables.1.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
+| `mongo-v2b:/spec/variables/0/spec/allowCustomValue` | changed |  | `spec.variables.0.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
+| `mongo-v2b:/spec/variables/1/spec/allowCustomValue` | changed |  | `spec.variables.1.spec.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
 
 ### `mongo-wrapped`: MongoDB panels
 
@@ -129,8 +129,8 @@
 | `mongo-wrapped:/dashboard/panels/7/targets/0/queryText` | unsupported | 8: Lookup outside the list | `targets.0.queryText` | MongoDB query: line 4, column 24: /aggregate/0/$lookup/from: the collection is not in the key collections of the source (7.33) | panel removed | no |
 | `mongo-wrapped:/dashboard/panels/8/targets/0/queryText` | unsupported | 9: Shell syntax | `targets.0.queryText` | queryText is not a JSON text of the profile of 7.28 (Hune reads no shell syntax and no JavaScript): an unexpected byte, line 1, column 1 | panel removed | no |
 | `mongo-wrapped:/dashboard/panels/9/targets/0/queryText` | unsupported | 10: Binary form | `targets.0.queryText` | MongoDB query: line 4, column 21: /aggregate/0/$match/b/$binary: $binary is not permitted in a MongoDB query of Hune | panel removed | no |
-| `mongo-wrapped:/dashboard/templating/list/0/allowCustomValue` | changed |  | `templating.list.0.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
-| `mongo-wrapped:/dashboard/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check (ID-K200) |  | no |
+| `mongo-wrapped:/dashboard/templating/list/0/allowCustomValue` | changed |  | `templating.list.0.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
+| `mongo-wrapped:/dashboard/templating/list/1/allowCustomValue` | changed |  | `templating.list.1.allowCustomValue` | Grafana reads an absent allowCustomValue as true; Hune keeps the variable closed, so the server keeps its option check |  | no |
 
 ## Redirects
 

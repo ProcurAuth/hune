@@ -1,4 +1,4 @@
-// The option table of the type `histogram` (10.3h, F43; 4.33d, 9.19f). Owner: the worker of group C. The page does not draw this type yet: the
+// The option table of the type `histogram` (10.3h, F43; 4.33d, 9.19f). The page does not draw this type yet: the
 // table is data, and the browser cases wait for the page. The hooks of the histogram are those of F31 (`hist-*`).
 
 import { STACKING, displayNameRow, legendRows, row, tooltipRows } from "./rows.js";

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="The versions of Hune, with the changes and the upgrade steps.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hune">
+<meta property="og:title" content="Changelog | Hune">
+<meta property="og:description" content="The versions of Hune, with the changes and the upgrade steps.">
+<meta property="og:url" content="https://procurauth.github.io/hune/changelog.html">
+<meta property="og:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB. One static binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Changelog | Hune">
+<meta name="twitter:description" content="The versions of Hune, with the changes and the upgrade steps.">
+<meta name="twitter:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta name="twitter:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB.">
+<link rel="canonical" href="https://procurauth.github.io/hune/changelog.html">
+<title>Changelog | Hune</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#fafafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="access.html">Access</a></li><li><a href="security.html">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main id="main">
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.1.1</span> The changes of each version</p><h1>Changelog</h1><p class="lede">The versions of Hune, with the changes and the upgrade steps.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#unreleased">Unreleased</a></li><li><a href="#011---2026-11-23">0.1.1 - 2026-11-23</a></li><li><a href="#010---2026-11-22">0.1.0 - 2026-11-22</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/CHANGELOG.md"><code>CHANGELOG.md</code></a> in the repository.</p><p>This file follows the layout of <a href="https://keepachangelog.com/en/1.1.0/">Keep a Changelog</a> and uses ASD-STE100 Simplified Technical English. The versions follow <a href="https://semver.org/spec/v2.0.0.html">Semantic Versioning</a>. Before 1.0, a minor version can change a key, a route or the format of a document.</p>
+<p>Each version has a section <code>## &lt;version&gt; - &lt;YYYY-MM-DD&gt;</code>. The newest version is first. The release scripts read the section of the version as the notes of the release. The section <code>## Unreleased</code> holds the changes that no release has yet.</p>
+<h2 id="unreleased"><a class="self" href="#unreleased">Unreleased</a></h2>
+<h3 id="added">Added</h3>
+<ul><li>The public documentation: a website at <code>https://procurauth.github.io/hune/</code> that <code>scripts/build-site.py</code> makes from the Markdown files, and the checks of <code>scripts/check-docs.py</code> for links, site, ASD-STE100 and hygiene.</li><li>The guides <code>docs/GETTING-STARTED.md</code>, <code>docs/CONFIGURATION.md</code>, <code>docs/ARCHITECTURE.md</code>, <code>docs/SECURITY-MODEL.md</code>, <code>docs/OPERATIONS.md</code> and <code>docs/DEVELOPMENT.md</code>, and the index <code>docs/SPECIFICATION.md</code>.</li><li>The demo in <code>examples/demo/</code>: synthetic ClickHouse data, a configuration and demo dashboards.</li><li><code>SECURITY.md</code>, <code>CONTRIBUTING.md</code>, <code>CODE_OF_CONDUCT.md</code>, the issue forms, the pull request template and <code>THIRD-PARTY-NOTICES.md</code>.</li></ul>
+<h3 id="changed">Changed</h3>
+<ul><li>The project licence is <code>MIT OR Apache-2.0</code>. The files <code>LICENSE-MIT</code> and <code>LICENSE-APACHE</code> replace <code>LICENSE</code>, and the release archive holds both. Before, the licence was Apache-2.0 only.</li><li>The repository is <code>ProcurAuth/hune</code>. The git dependencies on <code>procurauth-core</code> and <code>procurauth-pep</code> use <code>https://github.com/ProcurAuth/procurauth</code>, at the same commit.</li><li>The specification and the other documents are rewritten as public documents. The decision ids and the internal notes are removed. The section numbers stay the same.</li><li>The class of the page selector of the editor lists has a new name, <code>flist__pages</code>.</li></ul>
+<h3 id="removed">Removed</h3>
+<ul><li>The script <code>tools/rename-hune.py</code>.</li></ul>
+<h2 id="011---2026-11-23"><a class="self" href="#011---2026-11-23">0.1.1 - 2026-11-23</a></h2>
+<p>This release changes the loader of a panel. The checks ran on a local machine with <code>tests/ci/all.sh</code>. It has the <code>amd64</code> archive only.</p>
+<h3 id="added-1">Added</h3>
+<ul><li>The script <code>tests/ci/all.sh</code> runs the jobs of the merge gate in order and stops at the first failure. The option <code>--from</code> continues a run after a fix.</li><li>The script <code>tests/ci/release.sh</code> makes the release from a local machine. It checks the input, makes <code>SHA256SUMS</code>, makes and checks the draft release with <code>gh</code>, and publishes it. The option <code>--amd64-only</code> releases the <code>amd64</code> archive only.</li><li>With these two scripts, a maintainer can run every job and the release with no GitHub Actions and no GitHub billing.</li></ul>
+<h3 id="changed-1">Changed</h3>
+<ul><li>The loader of a panel is now three small dots that pulse in the middle of the body. They show 300 ms after the request starts. The old loader was a dashed bar under the title bar.</li><li>A panel that refreshes still dims its earlier content to 60 %. The spinner in the title bar and the grey block of a panel that waits are removed.</li><li>With <code>prefers-reduced-motion: reduce</code>, the dots do not pulse. A print has no dots.</li><li>The workflows in <code>.github/workflows</code> stay as an option. They run the CI and the release on GitHub. Hune does not depend on them.</li><li>The script <code>tests/conformance/run.sh</code> takes the commit of ProcurAuth from <code>Cargo.toml</code> only. No second pin exists.</li><li>The job <code>policy</code> scans <code>tests/compose</code>, <code>tests/conformance</code> and the deployment files for image pushes, in addition to the workflows.</li></ul>
+<h2 id="010---2026-11-22"><a class="self" href="#010---2026-11-22">0.1.0 - 2026-11-22</a></h2>
+<p>This is the first release of Hune. It holds the work of the milestones that exists on this date. Version 1.0.0 comes after the exit criteria of the milestone M7.</p>
+<h3 id="added-2">Added</h3>
+<ul><li>The server <code>hune</code> and the commands <code>serve</code>, <code>health</code>, <code>version</code>, <code>check-config</code>, <code>print-config</code> and <code>print-reference</code>. The configuration file is closed HCL, with a generated reference.</li><li>The document format 3 in JSON: a closed schema, canonical bytes and an etag. The command <code>migrate-documents</code> changes the formats 1 and 2 to format 3.</li><li>Two storage backends: a volume (a folder) and a PostgreSQL database. The commands <code>migrate-store</code>, <code>copy-store</code>, <code>export</code>, <code>import</code> and <code>restore</code> work on both.</li><li>Three kinds of data source: ClickHouse, PostgreSQL and MongoDB. Each kind has a closed check of the query text, limits, cancellation and a probe.</li><li>The importer <code>hune import-grafana</code> for the dashboards of Grafana 12.4.2, with a report, an acceptance file and an nginx map.</li><li>The page: the list, the dashboard view, the time picker, the variables, 15 panel types, the transformations and two colour themes.</li><li>The editor: the panel forms, the query editor with a syntax tree, the history of versions, the conflict screen and the restore.</li><li>The access modes <code>open</code> and <code>authzen</code>. In mode <code>authzen</code>, Hune is a PEP of ProcurAuth.</li><li>The logs, the metrics, the audit lines and an OTLP exporter of traces.</li><li>The panel types <code>gauge</code>, <code>logs</code> and <code>geomap</code>. The map is off by default. Only the closed configuration block <code>geomap</code> gives it a tile source.</li><li>The stat: the percent change and the text sizes.</li><li>The time series and the bar chart: the gradient modes and the series options (dashes, axis width, border and colour, log base 2).</li><li>The bar chart: the fill opacity, the line width, the grid lines and the orientation <code>auto</code>.</li><li>Ad hoc filters on a ClickHouse source, for the columns of the configuration key <code>adhoc_columns</code> only, with the operators <code>=</code> and <code>!=</code>.</li><li>The ClickHouse query parameters in the strict form <code>{name:Type}</code>, with a closed list of types.</li><li>Annotations from PostgreSQL and MongoDB sources, with the rules of the ClickHouse annotations.</li><li>30 more units and 6 more data link tokens of Grafana.</li><li>The time forms of Grafana in the URL, and the cell value inspect of a table.</li></ul>
+<h3 id="changed-2">Changed</h3>
+<ul><li>Development builds before this release used another product name. This release is the first one with the name Hune. No compatibility layer exists for those builds.</li></ul>
+<h3 id="security">Security</h3>
+<ul><li>Security reviews of the code on 2026-11-14 and on 2026-11-16 found problems. Each high and medium problem has a fix and a test.</li><li>The review of 2026-11-22 examined the new features of this release. Each high and medium problem has a fix and a test.</li><li>Fixed: the ClickHouse lexer of Hune did not know three rules of ClickHouse 26.8. A comment can start with <code>//</code>, a line comment ends at LF only, and a heredoc tag can start with a digit. With such SQL, a variable value could run as code. A test sends 87 forms to ClickHouse and compares them with the lexer of Hune.</li><li>Fixed: <code>$__adhocFilters</code> must be one AND term at the top level of the WHERE or PREWHERE clause, so a filter never adds rows. A map does not ask again for a failed tile, and it keeps decoded tiles only.</li></ul>
+<h3 id="known-limits">Known limits</h3>
+<ul><li>The milestone M0 and the checks on real data (the parity spike and the verification V1 to V5) are not done. All tests use synthetic data.</li><li>This release can have no <code>arm64</code> archive. The release workflow builds <code>arm64</code> only when its input <code>arm64</code> is <code>true</code>.</li><li>The nightly job runs no fuzz target, because no pinned image has a nightly toolchain.</li><li>The fuzz campaigns, the 30-minute load run and the CloudNativePG drill of M7 are not done.</li><li>Some open questions remain. The file <code>docs/implementation-status.md</code> and section 19 of the specification list them.</li></ul></article></div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>Hune</h2>
+        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="configuration.html">Configuration</a></li>
+          <li><a href="architecture.html">Architecture</a></li>
+          <li><a href="specification.html">Specification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Run</h2>
+        <ul>
+          <li><a href="access.html">Access and ProcurAuth</a></li>
+          <li><a href="security.html">Security model</a></li>
+          <li><a href="operations.html">Operations</a></li>
+          <li><a href="reference.html">Configuration reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/ProcurAuth/hune">Repository</a></li>
+          <li><a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a></li>
+          <li><a href="changelog.html">Changelog</a></li>
+          <li><a href="status.html">Status</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="conformance.html">Conformance</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>Hune, version 0.1.1.</p>
+      <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
+      <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

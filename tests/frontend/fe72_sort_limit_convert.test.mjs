@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-72: sort_by, limit and convert_field_type (9.21a, rules 4, 5 and 12).
 import test from "node:test";
 import assert from "node:assert/strict";

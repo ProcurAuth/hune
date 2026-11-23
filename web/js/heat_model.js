@@ -1,5 +1,5 @@
 // The heatmap: the grid of raw values, the frame that is already bucketed, the cells, the colour scale and the axis (9.19e, FE-42, FE-44, FE-45).
-// Pure module: no DOM access. `panels/heatmap.js` is the only page module that imports it (decision ID-K195b).
+// Pure module: no DOM access. `panels/heatmap.js` is the only page module that imports it.
 import { basisChannel, parseCss, resolveFill } from "./colors.js";
 import { MAX_BUCKET_VALUES, clip, decimal, finite, hidden, isNumber, numbers, plain, shortText, tooMany } from "./bucket_model.js";
 import { formatTime } from "./units.js";
@@ -42,7 +42,7 @@ export const niceValue = (y) => floorIn(VALUE_SIZES, y, 1e-16);
 
 const tooManyCells = (nx, ny) => `Too many cells: ${plain(nx)} x ${plain(ny)}. The limit is ${plain(MAX_HEAT_CELLS)}.`;
 
-/** The note of the values of 0 or less that a log scale skips (decision ID-K183), or "". */
+/** The note of the values of 0 or less that a log scale skips, or "". */
 export const logNote = (n) => (n ? `${plain(n)} ${n === 1 ? "value of 0 or less is" : "values of 0 or less are"} not on the log scale.` : "");
 
 /**
@@ -134,7 +134,7 @@ export function buildHeatmap({ fields, names, options, range }) {
     at.push(order[k]);
   }
   if (at.length < 2) return { error: "A heatmap needs two time rows at least." };
-  // A long frame (9.22) gives the names "<value field> <label>": the prefix goes when every row has it (decision ID-K195c).
+  // A long frame (9.22) gives the names "<value field> <label>": the prefix goes when every row has it.
   const lead = `${field.name} `;
   const drop = picked.every((i) => fields[i].name === field.name && Object.keys(fields[i].labels || {}).length && names[i].startsWith(lead));
   const list = picked.map((i, k) => ({ k, name: drop ? names[i].slice(lead.length) : names[i], i }));

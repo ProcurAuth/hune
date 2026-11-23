@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the gzip encoder: the format, the edge cases, seeded random inputs and the embedded files.
 //! The module `external` decodes the output with the system `gzip -d` and with the zlib of Node.js.
 

@@ -1,4 +1,5 @@
-// FE-80, F36 (decision ID-K329): the URL form of the ad hoc filters (9.5, 9.10a), the checks of the page, the request member (7.7a) and
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-80, F36: the URL form of the ad hoc filters (9.5, 9.10a), the checks of the page, the request member (7.7a) and
 // the permitted keys of the answer of 6.14. The vectors come from the measure of Grafana 12.4.2 (tests/frontend/vectors/FE-80-adhoc-url.json).
 import test from "node:test";
 import assert from "node:assert/strict";

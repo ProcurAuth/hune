@@ -141,7 +141,7 @@ export async function mount(ctx) {
     else window.history.replaceState(window.history.state, "", url);
   }
 
-  // The notice of a value that a variable dropped (9.10, ID-K202): one for each variable, in the area of the notices. The address gets the new
+  // The notice of a value that a variable dropped (9.10): one for each variable, in the area of the notices. The address gets the new
   // value, so a reload of it shows no second notice. The runtime calls this during its constructor: the work waits for the end of the call.
   function variableNotice({ name, text }) {
     queueMicrotask(() => {
@@ -467,7 +467,7 @@ export async function mount(ctx) {
     more.addEventListener("click", () => openMenu(more, moreItems(), { align: "end", gap: 8 }));
     editSwitch = null;
     editBar = null;
-    // The switch shows only with the right to write. The group of the edit mode takes room from the crumbs only (ID-K177).
+    // The switch shows only with the right to write. The group of the edit mode takes room from the crumbs only.
     if (canEdit()) {
       editSwitch = buildEditSwitch();
       paintEditSwitch();
@@ -699,7 +699,7 @@ export async function mount(ctx) {
       if (toolbar && h1 && toolbar.parentElement !== main) h1.after(toolbar);
     },
     // The last crumb of the header while the editor shows a view of a panel: "Edit panel" or nothing. `back` makes the crumb of the
-    // dashboard the way back (icon and attrs, ID-K178).
+    // dashboard the way back (icon and attrs).
     setCrumbTail(text, back) {
       crumbTails = { ...crumbTails, edit: text || null, back: back || null };
       paintCrumbs();

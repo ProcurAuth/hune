@@ -5,7 +5,7 @@ import { displayNameRow, row } from "./rows.js";
 import { reduceRows } from "./reduce_rows.js";
 
 const r = (id, member, kind, label, rest, group = "styles") => row(id, `options.${member}`, kind, label, group, rest);
-// The rows of wave H, item P11. A row shows only where it can change the picture (10.3h, rule 14): the change needs a calculation, its colour
+// The rows (P11). A row shows only where it can change the picture (10.3h, rule 14): the change needs a calculation, its colour
 // needs the change, and the name size needs a name.
 const calculated = (o) => !(o.reduce && o.reduce.values);
 const size = (id, member, label, rest) => r(id, member, "number", label, { min: 1, max: 200, integer: true, nullable: true, optional: true, default: undefined, hint: "Empty: auto.", ...rest }, "text");

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The member `placement` of a variable (4.7a): the fixture, one refusal for each error, the canonical form
 //! and the rules across members (4.34). The member joins format 3 with no change of the version (4.42).
 

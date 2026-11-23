@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The marks of an annotation query (7.37): a pure function from a frame to a list of marks.
 //!
 //! The function reads the columns by their role (`time`, `timeend`, `title`, `text` and `tags`),

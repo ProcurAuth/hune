@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Contract of the dashboard grid and of the panel frame CSS (9.8, 9.11, 9.26). The geometry is read by the browser
 // cases B02 and B27: these tests keep it from drifting. The page has no DOM here, so the CSS is read as text.
 import assert from "node:assert/strict";
@@ -156,7 +157,7 @@ test("a query error shows a warning icon left of the title with the message as t
   for (const name of ["eye", "table", "download"]) assert.match(js, new RegExp(`icon: "${name}"`));
 });
 
-// F21: the CSV of "View data" (9.11, D9 of ID-87).
+// F21: the CSV of "View data" (9.11).
 test("CSV: quote rule, row end, header row", () => {
   assert.equal(csvCell("plain"), "plain");
   assert.equal(csvCell('say "hi"'), '"say ""hi"""');
@@ -200,7 +201,7 @@ test("CSV: the name of the file", () => {
   assert.equal(csvFileName("x\ud83d\ude00y", at), "x_y-data-20261109-080507.csv");
 });
 
-test("variables bar: the rows of the list and the empty state follow the measures of wave VF; its row has no button (owner decision of 2026-11-11)", () => {
+test("variables bar: the rows of the list and the empty state follow the measures of wave VF; its row has no button", () => {
   assert.match(css, /\.vars-bar \.select__popup \{ min-width: 170px/);
   assert.match(css, /min-height: 38px/);
   // The controls of the page are in the header: the row under it holds the variables and the dashboard links (9.8a), and it does not show
@@ -211,7 +212,7 @@ test("variables bar: the rows of the list and the empty state follow the measure
   assert.match(css, /\.empty__title \{[^}]*font-size: 18px/);
 });
 
-// F22: the item "Inspect" of the panel menu (9.11, D8 of ID-87).
+// F22: the item "Inspect" of the panel menu (9.11).
 test("Inspect: the item shows only when the session says that the server allows it", () => {
   assert.equal(inspectAllowed({ query_inspect: true }), true);
   for (const session of [null, undefined, {}, { query_inspect: false }, { query_inspect: "true" }, { query_inspect: 1 }]) assert.equal(inspectAllowed(session), false, JSON.stringify(session));
@@ -256,7 +257,7 @@ test("the frame shows a repeat note only for an object note; the text note of th
   assert.match(js, /rec\.note \|\| "Run the query to see the data\."/);
 });
 
-test("a panel type that the page cannot draw yet shows a fixed message in the error state, never the text of an exception (ID-K211a)", () => {
+test("a panel type that the page cannot draw yet shows a fixed message in the error state, never the text of an exception", () => {
   const js = readFileSync(new URL("../../web/js/panel_frame.js", import.meta.url), "utf8");
   const draw = js.slice(js.indexOf("async function draw(info)"), js.indexOf("function framesSelect"));
   // The check is the first step of draw(), before the data is prepared, and it uses the existing error state of the frame.

@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `procurauth` (16.12, 16.17, 11.32): the conformance series U of ProcurAuth against Hune in the mode authzen.
 # Use: tests/conformance/run.sh [--local]
 #   (default) builds the runner and the static musl binary of Hune in Docker. It starts Hune in a
@@ -7,7 +8,7 @@
 #   --local   runs the same checks on the host: the binary target/debug/hune (or target/release/hune), a
 #             ClickHouse container with port 8123 published on 127.0.0.1, and the runner of the
 #             ProcurAuth checkout. Use it for a first run. The result is the same.
-# Input: PROCURAUTH_DIR, the checkout of https://github.com/SCcagg5/procurauth at the commit of the
+# Input: PROCURAUTH_DIR, the checkout of https://github.com/ProcurAuth/procurauth at the commit of the
 #        dependency `procurauth-pep` (11.10). Without it, the script clones that commit into
 #        target/procurauth. The script never changes this checkout, except for its `target/`.
 # Output: target/conformance/report.txt. The script exits with 0 only when the set of failed cases equals
@@ -28,7 +29,7 @@ REV=$(sed -n 's/.*procurauth-pep *= *{.*rev *= *"\([0-9a-f]\{40\}\)".*/\1/p' "$R
 
 PA=${PROCURAUTH_DIR:-$ROOT/target/procurauth}
 if [ ! -d "$PA/.git" ] && [ ! -f "$PA/Cargo.toml" ]; then
-    git clone https://github.com/SCcagg5/procurauth "$PA"
+    git clone https://github.com/ProcurAuth/procurauth "$PA"
     git -C "$PA" checkout --detach "$REV"
 fi
 if [ -d "$PA/.git" ]; then

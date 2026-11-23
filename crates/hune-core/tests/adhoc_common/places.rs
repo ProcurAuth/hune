@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The place lists of `$__adhocFilters` (7.10a, rule 4; 7.18, item 20). The unit test of `src/sql/adhoc.rs` and the
 // test `tests/adhoc_filters.rs` include this file, so the two read the same lists.
 //

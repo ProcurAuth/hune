@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Case K18 of 16.5: the block `mongodb "<id>"` (13.12b), the contradictions C14, C15 and C22 to C27,
 //! the warning W8, the refusal of a build without the driver, the output of `print-config` and the
 //! reference document.

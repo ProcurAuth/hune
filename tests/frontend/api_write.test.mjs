@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the write routes of editor/api_editor.js (6.3, 6.6, 6.15 to 6.19, 6.11, 6.22) with a fake fetch.
 import test from "node:test";
 import assert from "node:assert/strict";

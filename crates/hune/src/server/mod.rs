@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The HTTP server of `hune serve`: the router, the pipeline of 6.28, the handlers, the ops
 //! listener, the start sequence and the graceful stop.
 //!

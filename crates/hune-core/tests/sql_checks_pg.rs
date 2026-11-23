@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the checks at save for the dialect `postgres` (7.26): the changes of the items and of the
 //! warnings, and the agreement of the checks with the expansion.
 

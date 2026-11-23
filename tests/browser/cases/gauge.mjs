@@ -1,4 +1,5 @@
-// Browser case B225 (4.33e, 9.19g; wave H, item P12, decision ID-K326): the gauge panel.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B225 (4.33e, 9.19g): the gauge panel.
 // The pure rules of the cells, the arc and the texts are the rules of the classic gauge of Grafana 12.4.2 (FE-84 holds the measures).
 // This case proves that the page applies them: for each gauge, the record `data-gauge` equals the rules for the box that the page has
 // and the text widths of its font. It reads the pixels of the arcs (the empty arc, the filled arc, the threshold band, the inside), the

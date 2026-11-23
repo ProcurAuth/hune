@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The lexer of the dialect `postgres` of the page (7.20) gives the same tokens as the lexer of the server.
 // The vectors are tests/fixtures/sql-lex-vectors-pg.json, which the Rust test of the server reads too.
 import { test } from "node:test";

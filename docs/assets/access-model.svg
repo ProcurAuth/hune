@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 600" width="1100" height="600" role="img" aria-label="Access model of Hune: the resource tree with the service, folders, dashboards and sources, the question that Hune sends to the PDP with the chain of ancestors, the three actions and the two ceilings">
+  <title>Access model: the resource tree, the actions and the ceilings</title>
+  <desc>The service is the root. A folder holds dashboards. A source is a child of the service, and it can be a ClickHouse, PostgreSQL or MongoDB block. Hune sends the node and the chain of its ancestors to the PDP. A grant on a node covers each node below it. There are three actions, dashboard.read, dashboard.write and source.query, and two ceilings, max_rows and max_duration.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#a5b4fc"/>
+    </marker>
+  </defs>
+  <rect width="1100" height="600" rx="20" fill="#12142a"/>
+  <g font-family="Inter, 'Segoe UI', -apple-system, Helvetica, Arial, sans-serif">
+    <text x="40" y="52" font-size="24" font-weight="700" fill="#ffffff">The access model: a tree of nodes, three actions, two ceilings</text>
+    <text x="40" y="82" font-size="15" fill="#9ca3d4">A grant on a node covers each node below it. Hune builds the chain from its own catalog, never from the request.</text>
+
+    <text x="40" y="124" font-size="13" font-weight="700" fill="#a5b4fc" letter-spacing="0.8">RESOURCE TREE</text>
+    <g stroke="#a5b4fc" stroke-width="2" fill="none" marker-end="url(#ar)">
+      <path d="M130 164V186"/>
+      <path d="M130 224V246"/>
+      <path d="M60 164V316H78"/>
+    </g>
+    <rect x="40" y="132" width="180" height="32" rx="9" fill="#4338ca" fill-opacity="0.45" stroke="#818cf8" stroke-width="2"/>
+    <text x="130" y="154" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">service  dashboards</text>
+    <rect x="40" y="192" width="180" height="32" rx="9" fill="#1c1f3d" stroke="#2c3070" stroke-width="1.5"/>
+    <text x="130" y="214" font-size="14" font-weight="700" fill="#e0e7ff" text-anchor="middle">folder  transit</text>
+    <rect x="40" y="252" width="180" height="32" rx="9" fill="#1c1f3d" stroke="#2c3070" stroke-width="1.5"/>
+    <text x="130" y="274" font-size="14" font-weight="700" fill="#e0e7ff" text-anchor="middle">dashboard  score</text>
+    <rect x="80" y="300" width="140" height="32" rx="9" fill="#0ea5e9" fill-opacity="0.22" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="150" y="321" font-size="14" font-weight="700" fill="#e0f2fe" text-anchor="middle">source  prod</text>
+    <text x="240" y="156" font-size="12" fill="#c7d2fe">the id is the audience</text>
+    <text x="240" y="216" font-size="12" fill="#c7d2fe">the id of a folder</text>
+    <text x="240" y="276" font-size="12" fill="#c7d2fe">the uid of a dashboard</text>
+    <text x="240" y="314" font-size="12" fill="#bae6fd">the id of a clickhouse,</text>
+    <text x="240" y="330" font-size="12" fill="#bae6fd">postgres or mongodb block</text>
+    <text x="40" y="364" font-size="12" fill="#c7d2fe">A folder grant covers its dashboards, now and later.</text>
+
+    <text x="500" y="124" font-size="13" font-weight="700" fill="#a5b4fc" letter-spacing="0.8">THE QUESTION FOR THE DASHBOARD  score</text>
+    <rect x="500" y="136" width="560" height="216" rx="12" fill="#0f1220" stroke="#2c3070" stroke-width="1.5"/>
+    <g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="13.5" fill="#dfe3f2" style="white-space:pre" xml:space="preserve">
+      <text xml:space="preserve" x="520" y="164">{ "subject":  { "type": "user", "id": "alice" },</text>
+      <text xml:space="preserve" x="520" y="188">  "action":   { "name": "dashboard.read" },</text>
+      <text xml:space="preserve" x="520" y="212">  "resource": { "type": "dashboard", "id": "score",</text>
+      <text xml:space="preserve" x="520" y="236">    "properties": { "ancestors": [</text>
+      <text xml:space="preserve" x="520" y="260">      { "type": "service", "id": "dashboards" },</text>
+      <text xml:space="preserve" x="520" y="284">      { "type": "folder",  "id": "transit" } ] } } }</text>
+    </g>
+    <text x="520" y="324" font-size="12.5" fill="#c7d2fe">The subject comes from the identity token. The PDP finds a grant on the</text>
+    <text x="520" y="342" font-size="12.5" fill="#c7d2fe">node or on any ancestor.</text>
+
+    <text x="40" y="410" font-size="13" font-weight="700" fill="#a5b4fc" letter-spacing="0.8">ACTIONS</text>
+    <g font-size="13" font-weight="700" fill="#e0e7ff" text-anchor="middle">
+      <rect x="40" y="420" width="250" height="74" rx="10" fill="#1c1f3d" stroke="#2c3070"/><text x="165" y="444">dashboard.read</text><text x="165" y="464" font-size="11.5" font-weight="400" fill="#c7d2fe">list, open, run saved queries, history</text><text x="165" y="482" font-size="11.5" font-weight="400" fill="#c7d2fe">on service, folder or dashboard</text>
+      <rect x="306" y="420" width="250" height="74" rx="10" fill="#1c1f3d" stroke="#2c3070"/><text x="431" y="444">dashboard.write</text><text x="431" y="464" font-size="11.5" font-weight="400" fill="#c7d2fe">create, change, move, restore, delete</text><text x="431" y="482" font-size="11.5" font-weight="400" fill="#c7d2fe">on service, folder or dashboard</text>
+      <rect x="572" y="420" width="250" height="74" rx="10" fill="#1c1f3d" stroke="#2c3070"/><text x="697" y="444">source.query</text><text x="697" y="464" font-size="11.5" font-weight="400" fill="#c7d2fe">run a query that is not saved,</text><text x="697" y="482" font-size="11.5" font-weight="400" fill="#c7d2fe">save SQL that uses the source</text>
+    </g>
+    <text x="40" y="520" font-size="12.5" fill="#c7d2fe">With server.editing = false, Hune publishes dashboard.read only.</text>
+
+    <text x="860" y="410" font-size="13" font-weight="700" fill="#a5b4fc" letter-spacing="0.8">CEILINGS</text>
+    <rect x="860" y="420" width="200" height="74" rx="10" fill="#0ea5e9" fill-opacity="0.22" stroke="#38bdf8"/>
+    <text x="960" y="448" font-size="13" font-weight="700" fill="#e0f2fe" text-anchor="middle">max_rows</text>
+    <text x="960" y="468" font-size="11.5" fill="#bae6fd" text-anchor="middle">and max_duration</text>
+    <text x="960" y="484" font-size="11.5" fill="#bae6fd" text-anchor="middle">lower the key of the source</text>
+    <text x="860" y="520" font-size="12.5" fill="#c7d2fe">A result above a ceiling</text>
+    <text x="860" y="538" font-size="12.5" fill="#c7d2fe">gives 403 ceiling_exceeded.</text>
+    <text x="40" y="566" font-size="12.5" fill="#c7d2fe">An answer of false stops the operation. A PDP that does not answer gives 503, never a grant.</text>
+  </g>
+</svg>

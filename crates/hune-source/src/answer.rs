@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The reader of the answer (8.4): a state machine that takes the bytes when they arrive.
 //! It checks each line and builds the frame row by row.
 

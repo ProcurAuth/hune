@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Shared helpers of the CI scripts of tests/ci (16.17). Source this file. Do not run it.
 #
 # Use in a job script:
@@ -131,7 +132,7 @@ in_builder_offline() {
 }
 
 # ci_vendor : stage 1 of 17.2, with network. Fetches the sources of Cargo.lock into target/cargo-vendor/.
-# The directory vendor/ of the repository holds the local copy of the crate mongodb (ID-MG25): cargo vendor
+# The directory vendor/ of the repository holds the local copy of the crate mongodb: cargo vendor
 # would delete it, so the fetched sources go to target/cargo-vendor/ (a path crate is not fetched).
 # The config goes to target/vendor-config.toml (the file at the root would be untracked).
 ci_vendor() {

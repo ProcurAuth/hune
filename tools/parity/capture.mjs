@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Capture tool for the SQL parity of a dashboard (15.14a).
 //
 // What it does for one pair (Grafana uid, Hune uid) and one fixed time range:
@@ -484,7 +485,7 @@ function grafanaFacts(dash) {
     const notes = [];
     for (const ov of p.fieldConfig?.overrides ?? []) {
       if ((ov.properties ?? []).some((x) => x.id === "custom.hideFrom" && x.value?.viz === true)) {
-        notes.push("the override hideSeriesFrom of Grafana has no counterpart in Hune (ID-67); it changes the display only, not the SQL or the data");
+        notes.push("the override hideSeriesFrom of Grafana has no counterpart in Hune; it changes the display only, not the SQL or the data");
         break;
       }
     }
@@ -575,7 +576,7 @@ async function main() {
       const base = side === "grafana" ? o.grafanaUrl : o.huneUrl;
       await page.send("Page.navigate", { url: base + (side === "grafana" ? "/login" : "/") });
       await sleep(500);
-      // The docked menu of Grafana 12.4 takes 250 px of the width. The option shows the width without it (7.4, ID-79).
+      // The docked menu of Grafana 12.4 takes 250 px of the width. The option shows the width without it (7.4).
       if (side === "grafana" && o.undockMenu) await page.eval(`localStorage.setItem("grafana.navigation.docked", "false")`);
       const uid = side === "grafana" ? o.grafanaUid : o.huneUid;
       if (side === "grafana") {

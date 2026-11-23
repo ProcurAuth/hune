@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `api` (16.17, 16.8): the black-box suite of the HTTP API, and the environment test K14.
 # Use: tests/ci/api.sh [--local]
 #   (default) builds the musl binary (17.2), then runs the compose project tests/compose/api.yaml.

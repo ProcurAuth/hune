@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The test harness: a test configuration, a live server and a small HTTP/1.1 client.
 
 use crate::config::Secret;

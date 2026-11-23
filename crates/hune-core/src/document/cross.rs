@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The rules across members (4.34): unique ids and names, overlaps, reuse chains and cycles of
 //! variable references. They run after the member checks, on the parts that passed.
 
@@ -1019,7 +1020,7 @@ mod tests {
         assert_eq!(scan_postgres(r"select 1E'\' $z'").iter().map(|x| x.1.as_str()).collect::<Vec<_>>(), ["z"]);
     }
 
-    // ---- the scan agrees with the lexers (ID-08) ----
+    // ---- the scan agrees with the lexers ----
 
     struct Rng(u64);
 

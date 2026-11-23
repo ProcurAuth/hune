@@ -1,4 +1,5 @@
-// Browser case B215 (4.20, 9.15; gap paper H01, item P01): the units of wave H in a stat and in a table. The texts are the texts of
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B215 (4.20, 9.15; gap paper H01, item P01): the units of the later options in a stat and in a table. The texts are the texts of
 // Grafana 12.4.2 (tests/frontend/vectors/FE-06-units-h.json). The server takes the new ids, and the page shows them in the DOM as text.
 import { doc, panel, section } from "../lib/docs.mjs";
 import { waitPanelsReady } from "../lib/h.mjs";

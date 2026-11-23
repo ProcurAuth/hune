@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Helpers of the Markdown tests (9.19b, 16.10a). They are not part of the page.
 import { parseMarkdown } from "../../web/js/markdown.js";
 

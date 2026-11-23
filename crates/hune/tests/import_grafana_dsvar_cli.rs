@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Black-box tests of a data source variable and of `__inputs` in `hune import-grafana` (15.9, case I36 of 16.13).
 //!
 //! Each test runs the real binary on the fixture `tests/fixtures/grafana/datasource_variable.json`. A key of

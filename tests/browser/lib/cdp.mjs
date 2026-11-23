@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Minimal Chrome DevTools Protocol client for the browser suite (16.10).
 // One browser process, one WebSocket, one session for each page (flat mode).
 // Node 22 has a global WebSocket and fetch: no dependency is needed.

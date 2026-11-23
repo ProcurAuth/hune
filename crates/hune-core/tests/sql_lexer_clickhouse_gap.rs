@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The lexer gap of review 3 (finding 1): ClickHouse 26.8.34.13 reads `//` as a line comment, ends a line comment at LF
 //! only, and reads `$1$ ... $1$` as a heredoc (7.5). Before the fix, the lexer of Hune did not, so a value of a
 //! viewer could leave its literal in the four texts below. Each text now gets the error that 7.11 and 7.6a give, and a

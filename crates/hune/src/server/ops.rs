@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The ops listener (14.2 to 14.4, 6.26): `/livez`, `/readyz` and `/metrics`.
 
 use super::conn::{CloseReason, ConnShared, ConnTimes, run_connection};

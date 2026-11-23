@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Warning 6 of 7.18: a placeholder in a display text that names no variable of the document.
 
 use hune_core::document::{TextWarning, text_warnings, validate};

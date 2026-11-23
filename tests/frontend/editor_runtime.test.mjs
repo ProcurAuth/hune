@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the draft runtime (10.2) and of the body of a preview (6.22, 10.3).
 import test from "node:test";
 import assert from "node:assert/strict";

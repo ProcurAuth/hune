@@ -18,7 +18,7 @@ const HIDE = [["none", "Show the label and the control"], ["label", "Show the co
 const KIND_TEXT = Object.fromEntries(VARIABLE_KINDS);
 const ALL = "$__all";
 
-// The help text under the switch "Allow custom values" (10.3b, ID-K210).
+// The help text under the switch "Allow custom values" (10.3b).
 const ALLOW_HELP = {
   query: "Off: the value must be one that the query returns. On: a person can also type a value.",
   custom: "Off: the value must be one of the options. On: a person can also type a value. A typed value is free text: the SQL cannot use it in a quoted name, and in code it must be a number.",
@@ -455,7 +455,7 @@ export function createVariables(E, scope) {
       multi.input.title = "A repeat uses this variable. It needs several values.";
     }
     parts.push(multi.node);
-    // The switch "Allow custom values" (4.8, 4.9, ID-K210): off for a new variable. The switch off removes the member from the draft.
+    // The switch "Allow custom values" (4.8, 4.9): off for a new variable. The switch off removes the member from the draft.
     const open = switchField({
       label: "Allow custom values",
       checked: v.allow_custom_value === true,

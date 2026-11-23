@@ -94,7 +94,7 @@ const encoder = new TextEncoder();
 export const isOpen = (variable) => variable.allow_custom_value === true;
 
 /**
- * The error of a text that a person types in an open variable (9.10, ID-K203): the text of the error, or "" when the text is a typed value.
+ * The error of a text that a person types in an open variable (9.10): the text of the error, or "" when the text is a typed value.
  * A typed value has 1 to 1,024 bytes and no control character, and it is not `$__all`.
  */
 export function typedValueError(text) {
@@ -149,7 +149,7 @@ export function droppedValues(variable, options, requested) {
 export const cut = (text) => (text.length > 40 ? `${text.slice(0, 40)}...` : text);
 
 /**
- * The text of the notice of a replaced value (9.10, ID-K202). `label` is the label of the variable, `dropped` the values that went,
+ * The text of the notice of a replaced value (9.10). `label` is the label of the variable, `dropped` the values that went,
  * `selection` the selection that the page used. A value of more than 40 characters is cut. The list has 3 values at most.
  */
 export function replacedNotice(label, dropped, options, selection) {
@@ -248,7 +248,7 @@ function placeholderText(info, format) {
  */
 export function interpolateText(text, lookup) {
   const out = expandText(text, lookup, 65536);
-  return out === null ? text : out; // an expansion above 65,536 characters stays as written (ID-K108)
+  return out === null ? text: out; // an expansion above 65,536 characters stays as written
 }
 
 /** The same replacement with a budget: gives null as soon as the result has more than `max` characters (the budget stops it, never a RangeError). */

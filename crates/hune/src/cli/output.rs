@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The files that `hune import-grafana` writes: the report and the nginx map (15.2, 15.11, 15.17).
 //!
 //! This module is the one place of the command line that writes files (policy check 16.18).

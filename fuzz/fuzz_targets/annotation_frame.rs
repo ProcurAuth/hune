@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `annotation_frame` (16.3, 7.37).
 //!
 //! The input is the text of an answer of ClickHouse in the format of 8.4, as for `frame_decode`: line 1 holds

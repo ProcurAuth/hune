@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B14, B15 (16.10). The case B23 is in authzen.mjs.
 import { allTypesDoc } from "../lib/docs.mjs";
 import { enterEdit, makeSeed, openPanelEditor, saveDialog, moreItem } from "../lib/ed.mjs";

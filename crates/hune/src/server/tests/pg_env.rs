@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers of the PostgreSQL tests of milestone M5: the connection data from the environment,
 //! the databases with the grants of 5.25, and the configuration files for the binary.
 //!

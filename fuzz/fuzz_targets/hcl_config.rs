@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `hcl_config` (16.16, section 13).
 //!
 //! The target checks the input text against the real key table of Hune. The table lives in the

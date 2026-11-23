@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The options of the types `heatmap` and `histogram` (15.6, 4.33c, 4.33d).
 //!
 //! The heatmap of Grafana 10 and later is the only form that the importer reads. The old heatmap of Grafana 7
-//! to 9 has panel members that no row names: [`old_heatmap_member`] finds the first one (decision ID-K186).
+//! to 9 has panel members that no row names: [`old_heatmap_member`] finds the first one.
 
 use hune_core::document::{is_valid_unit, parse_duration_ms};
 use serde_json::Value;
@@ -25,7 +26,7 @@ const OLD_HEATMAP_MEMBERS: [&str; 9] = [
 ];
 
 /// Finds the first member of the old heatmap at the top level of a panel of the form v1. A panel that has one
-/// is `unsupported` with the fallback "panel removed". The function gives `true` in that case (15.6, ID-K186).
+/// is `unsupported` with the fallback "panel removed". The function gives `true` in that case (15.6).
 pub(crate) fn old_heatmap_member(ctx: &mut Ctx, panel: &Node) -> bool {
     let Some(found) = OLD_HEATMAP_MEMBERS.iter().find_map(|name| panel.get(name)) else { return false };
     let reason = "this is a heatmap of Grafana 7 to 9: Hune reads the heatmap of Grafana 10 and later only (4.33c)";
@@ -555,7 +556,7 @@ fn color(ctx: &mut Ctx, node: Option<Node>) -> Out {
 // ------------------------------------------------------------------ the other heatmap options
 
 /// Maps `filterValues`: `le` gives `hide_le` and `ge` gives `hide_ge`. The default `le` of Grafana, 1e-9, gives 0
-/// (decision ID-K184). An explicit `null` gives `null`.
+///. An explicit `null` gives `null`.
 fn filter_values(ctx: &mut Ctx, node: Option<Node>) -> (Out, Out) {
     let mut w = OptWalk::new(ctx, node, "filterValues");
     // An explicit `null` is a value here: it gives `null`. The walk of an object skips it, so read the raw node.
@@ -599,7 +600,7 @@ fn heat_legend(ctx: &mut Ctx, node: Option<Node>) -> Out {
     bool_opt(ctx, show.as_ref(), true)
 }
 
-/// Maps `tooltip` of a heatmap. `yHistogram` and `showColorScale` equal to `true` have no equal (ID-K187).
+/// Maps `tooltip` of a heatmap. `yHistogram` and `showColorScale` equal to `true` have no equal.
 fn heat_tooltip(ctx: &mut Ctx, node: Option<Node>) -> Out {
     let mut w = OptWalk::new(ctx, node, "tooltip");
     let mode = w.take("mode");

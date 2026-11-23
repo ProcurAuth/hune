@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="The server, the query flow, the stores, the data sources and the limits.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hune">
+<meta property="og:title" content="Architecture | Hune">
+<meta property="og:description" content="The server, the query flow, the stores, the data sources and the limits.">
+<meta property="og:url" content="https://procurauth.github.io/hune/architecture.html">
+<meta property="og:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB. One static binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Architecture | Hune">
+<meta name="twitter:description" content="The server, the query flow, the stores, the data sources and the limits.">
+<meta name="twitter:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta name="twitter:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB.">
+<link rel="canonical" href="https://procurauth.github.io/hune/architecture.html">
+<title>Architecture | Hune</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#fafafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html" aria-current="page">Architecture</a></li><li><a href="access.html">Access</a></li><li><a href="security.html">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main id="main">
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.1.1</span> How the single binary works</p><h1>Architecture</h1><p class="lede">The server, the query flow, the stores, the data sources and the limits.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#one-binary">One binary</a></li><li><a href="#the-document-and-the-stores">The document and the stores</a></li><li><a href="#the-query-flow">The query flow</a></li><li><a href="#data-sources">Data sources</a></li><li><a href="#the-page">The page</a></li><li><a href="#access">Access</a></li><li><a href="#limits">Limits</a></li><li><a href="#code-layout">Code layout</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/ARCHITECTURE.md"><code>docs/ARCHITECTURE.md</code></a> in the repository.</p><p>This document tells how Hune works inside. Part 1 of the <a href="specification.html">specification</a> and the other parts give the full rules. Each section here names the paragraphs that hold them.</p>
+<h2 id="one-binary"><a class="self" href="#one-binary">One binary</a></h2>
+<p>Hune is one static binary, <code>hune</code>. It is built with musl for Linux. The binary holds the HTTP server, the page, the query engine, the two stores, the three source clients and the command line tools. It needs no other file at run time.</p>
+<p>The server has two listeners. The main listener serves the page, the static files, the API and the ProcurAuth routes. The ops listener serves <code>/livez</code>, <code>/readyz</code> and <code>/metrics</code> only. The ops listener needs no token and must not be reachable through the edge (3.8).</p>
+<p>&lt;p align="center"&gt; &lt;img src="assets/architecture.svg" alt="Architecture of Hune: the browser, the edge, the single binary with the HTTP server, the access guard, the query engine and the store, the three data sources, and the PDP" width="100%"&gt; &lt;/p&gt;</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Part</th><th scope="col">What it does</th></tr></thead><tbody><tr><th scope="row">HTTP server</th><td data-label="What it does">Routes about 30 requests with <code>hyper</code>. Serves the embedded page. Applies the write guard and the security headers.</td></tr><tr><th scope="row">Access guard</th><td data-label="What it does">In the mode <code>authzen</code>, it checks the identity token and asks the PDP before each operation. In the mode <code>open</code>, it asks nothing.</td></tr><tr><th scope="row">Catalog</th><td data-label="What it does">Keeps the documents of the store in memory: canonical bytes, parsed document, etag, version and folder. The catalog holds no query result.</td></tr><tr><th scope="row">Query engine</th><td data-label="What it does">Expands the macros and the variables of the saved SQL, checks the text, applies the limits and asks the source.</td></tr><tr><th scope="row">Store</th><td data-label="What it does">A volume (a folder) or PostgreSQL. It keeps the documents and their history.</td></tr><tr><th scope="row">Source clients</th><td data-label="What it does">One client for each kind of source: ClickHouse, PostgreSQL and MongoDB. Each one has a pool, limits and a cancel.</td></tr></tbody></table></div>
+<h2 id="the-document-and-the-stores"><a class="self" href="#the-document-and-the-stores">The document and the stores</a></h2>
+<p>A dashboard is one JSON document of the format 3. The format has a closed schema: an unknown member is an error. The server writes each document in a canonical form with one exact byte sequence. The etag of a document is the hash of these bytes (4.38, 4.39).</p>
+<p>The document holds no storage data. The store keeps the folder, the version, the etag and the author.</p>
+<p>&lt;p align="center"&gt; &lt;img src="assets/storage.svg" alt="The two stores: a volume with one JSON file for each dashboard and a history folder, and PostgreSQL with the tables for folders, dashboards and versions" width="100%"&gt; &lt;/p&gt;</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Store</th><th scope="col">Key</th><th scope="col">Layout</th><th scope="col">Instances</th></tr></thead><tbody><tr><th scope="row">Volume</th><td data-label="Key"><code>storage.backend = "volume"</code></td><td data-label="Layout">One file <code>&lt;folder&gt;/&lt;uid&gt;.json</code> for each dashboard. A folder <code>.history</code> keeps each version.</td><td data-label="Instances">One writer process. It holds a lock on the folder.</td></tr><tr><th scope="row">PostgreSQL</th><td data-label="Key"><code>storage.backend = "postgres"</code></td><td data-label="Layout">The tables <code>hune_folders</code>, <code>hune_dashboards</code>, <code>hune_versions</code> and <code>hune_schema</code>.</td><td data-label="Instances">Two or more instances.</td></tr></tbody></table></div>
+<p>Both stores keep the same canonical bytes and follow the same contract and the same test suite (section 5). Each save writes a history version first, then the document. A save carries the etag of its base, so a stale save gets a conflict and no data is lost. The editor shows a conflict screen. The commands <code>copy-store</code>, <code>export</code>, <code>import</code> and <code>restore</code> move documents between stores (5.37 to 5.40).</p>
+<p>The catalog reads the store at start and polls it. A change that comes from outside, for example a <code>git pull</code> on a volume, shows up at the next poll (5.17, 5.30).</p>
+<h2 id="the-query-flow"><a class="self" href="#the-query-flow">The query flow</a></h2>
+<p>A viewer never sends SQL. The browser sends the dashboard etag, the variable values and the time range. The server finds the saved query in its catalog.</p>
+<p>&lt;p align="center"&gt; &lt;img src="assets/query-flow.svg" alt="The query flow: the dashboard document, the expander, the query engine with its limits, and the data source" width="100%"&gt; &lt;/p&gt;</p>
+<ol><li>The server runs the limits, the write guard and the token check. In the mode <code>authzen</code>, it asks the PDP for <code>dashboard.read</code> and applies the ceilings of the answer.</li><li>The server compares the etag with the catalog. A stale etag gives <code>409 dashboard_changed</code>, and the browser loads the dashboard again.</li><li>The server checks the time range, <code>max_data_points</code> and the variable values (section 7).</li><li>The expander puts the macros and the values in the stored SQL. It escapes each value by its place in the text. The lexer of the source finds that place.</li><li>The server checks the statement and the size of the final SQL. It takes a permit of the source, or it waits at most <code>queue_wait</code>.</li><li>The source client sends the text. ClickHouse gets it in the body of an HTTP request. PostgreSQL gets it in one Parse message inside a read-only transaction. MongoDB gets a typed command.</li><li>The server reads the rows as a stream and builds a columnar frame. The browser draws the panel and computes the transforms.</li></ol>
+<p>When the browser aborts a request, the server drops it. The connection closes and the source cancels the query. Hune never cuts a result. A result above a limit is an error with a code.</p>
+<h2 id="data-sources"><a class="self" href="#data-sources">Data sources</a></h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Kind</th><th scope="col">Block</th><th scope="col">Reads with</th><th scope="col">Boundary</th></tr></thead><tbody><tr><th scope="row">ClickHouse</th><td data-label="Block"><code>clickhouse "&lt;id&gt;"</code></td><td data-label="Reads with">HTTP, with <code>max_execution_time</code>, <code>max_result_rows</code> and a <code>query_id</code></td><td data-label="Boundary">The ClickHouse account with the profile <code>readonly</code> (12.12).</td></tr><tr><th scope="row">PostgreSQL</th><td data-label="Block"><code>postgres "&lt;id&gt;"</code></td><td data-label="Reads with">The wire protocol, one Parse message, a read-only transaction</td><td data-label="Boundary">The role of the source (8a.13).</td></tr><tr><th scope="row">MongoDB</th><td data-label="Block"><code>mongodb "&lt;id&gt;"</code></td><td data-label="Reads with">The driver, a closed list of commands and stages</td><td data-label="Boundary">The user of the source (8b.13).</td></tr></tbody></table></div>
+<p>Each source has limits in the file. They cover the time, the rows, the bytes, the size of a query and the number of queries at the same time. A probe checks the account and the settings at start. These checks are not the security boundary. The account of the source is the boundary.</p>
+<h2 id="the-page"><a class="self" href="#the-page">The page</a></h2>
+<p>The page is plain JavaScript, HTML and CSS. It has no framework and no build step. The binary embeds the files and compresses them one time at start. A test limits the size of the page for the dashboard view. The editor loads on demand. The chart engine is a copy of the engine of ClickHouse Dash, with marked edits (see <a href="engine.html">chart engine edits</a>).</p>
+<p>The page has fifteen panel types, variables, transformations, annotations, a time picker and two colour themes. The editor has a form for each panel type, a query editor with a syntax tree, a history and a conflict screen.</p>
+<h2 id="access"><a class="self" href="#access">Access</a></h2>
+<p>The mode <code>open</code> trusts each request. A reverse proxy must authenticate the people. The mode <code>authzen</code> makes Hune a policy enforcement point (PEP) of <a href="https://github.com/ProcurAuth/procurauth">ProcurAuth</a>. The edge signs an identity token. Hune checks it and asks a PDP before each operation. <a href="access.html">Access and ProcurAuth</a> has the rules.</p>
+<h2 id="limits"><a class="self" href="#limits">Limits</a></h2>
+<p>Each queue, pool and cache has a bound. When a bound is reached, Hune answers at once with a code and <code>Retry-After</code>. It never keeps a request in an unbounded queue. Section 12.16 of the specification lists the bounds.</p>
+<h2 id="code-layout"><a class="self" href="#code-layout">Code layout</a></h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Crate</th><th scope="col">Role</th></tr></thead><tbody><tr><th scope="row"><code>hune</code></th><td data-label="Role">The binary: server, access, command line, telemetry.</td></tr><tr><th scope="row"><code>hune-core</code></th><td data-label="Role">The format, the validation, the SQL and MongoDB lexers, the expander and the checks.</td></tr><tr><th scope="row"><code>hune-store</code></th><td data-label="Role">The <code>Store</code> trait, the volume and the PostgreSQL backend.</td></tr><tr><th scope="row"><code>hune-source</code></th><td data-label="Role">The three source clients.</td></tr><tr><th scope="row"><code>hune-grafana</code></th><td data-label="Role">The importer of Grafana dashboards.</td></tr><tr><th scope="row"><code>hclconf</code></th><td data-label="Role">The strict HCL reader and the table of keys.</td></tr></tbody></table></div>
+<p>The code forbids <code>unsafe</code>. Only one file reads the environment (3.4).</p></article></div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>Hune</h2>
+        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="configuration.html">Configuration</a></li>
+          <li><a href="architecture.html">Architecture</a></li>
+          <li><a href="specification.html">Specification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Run</h2>
+        <ul>
+          <li><a href="access.html">Access and ProcurAuth</a></li>
+          <li><a href="security.html">Security model</a></li>
+          <li><a href="operations.html">Operations</a></li>
+          <li><a href="reference.html">Configuration reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/ProcurAuth/hune">Repository</a></li>
+          <li><a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a></li>
+          <li><a href="changelog.html">Changelog</a></li>
+          <li><a href="status.html">Status</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="conformance.html">Conformance</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>Hune, version 0.1.1.</p>
+      <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
+      <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers that read typed members from the JSON tree and collect errors (4.36, step 5).
 
 use super::json::Json;

@@ -1,4 +1,5 @@
-// The 11 more transforms in the page pipeline (9.21a, 9.22a rule 2, 9.23, ID-K174): the list of frames, the refs, the select of a table,
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The 11 more transforms in the page pipeline (9.21a, 9.22a rule 2, 9.23): the list of frames, the refs, the select of a table,
 // the current name for the two older kinds, and the name of a field after the configuration (9.13, 9.14).
 import test from "node:test";
 import assert from "node:assert/strict";

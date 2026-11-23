@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The items of the report (15.5, 15.11) and the collector that the conversion fills.
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -30,7 +31,7 @@ impl Class {
     }
 }
 
-/// What the importer does with an `unsupported` item when the owner accepts it (15.5).
+/// What the importer does with an `unsupported` item when the operator accepts it (15.5).
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Fallback {
     /// The member is not in the document.

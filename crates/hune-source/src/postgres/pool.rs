@@ -1,4 +1,5 @@
-//! The small connection pool of a PostgreSQL source (8a.9, ID-PG8, ID-PG10).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The small connection pool of a PostgreSQL source (8a.9).
 //!
 //! The pool holds the idle sessions only. The admission of 8a.10 bounds the sessions in use: a
 //! permit gives a connection, or the right to open one. So a source holds `max_concurrent`

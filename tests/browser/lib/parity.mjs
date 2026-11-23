@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The visual parity capture of 15.14c for the browser cases: it runs `tools/parity/visual.mjs` for some fixtures of
 // `tests/fixtures/grafana` against the disposable Grafana, and it reads the report.
 //

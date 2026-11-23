@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of TLS (8.6): the configured CA is the only trust root, the name is checked.
 
 mod common;

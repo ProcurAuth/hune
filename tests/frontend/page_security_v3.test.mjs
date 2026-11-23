@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Review v3 of the page code (findings P1 and N2 of 2026-11-16): the number patterns and the decimal compare that run on data.
 // Each test failed (or ran for many seconds) before the fix. The timing tests take the minimum of 7 runs after 2 warm-ups.
 import test from "node:test";

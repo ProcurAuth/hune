@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-02: options and selection of a variable (9.10).
 import test from "node:test";
 import assert from "node:assert/strict";

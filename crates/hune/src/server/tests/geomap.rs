@@ -1,4 +1,5 @@
-//! The block `geomap` on the main listener (decision ID-K328, 9.4, 12.8, 6.10): without the block, the header of 12.8 byte for byte
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The block `geomap` on the main listener (9.4, 12.8, 6.10): without the block, the header of 12.8 byte for byte
 //! and the session member `null`; with the block, one more source in `img-src` only, and the session member with the three values.
 
 use super::harness::*;

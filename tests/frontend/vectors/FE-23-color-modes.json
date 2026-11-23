@@ -1,6 +1,6 @@
 {
  "id": "FE-23",
- "comment": "Colour modes (9.16, paper 10.8 V5). The series palette is the one palette of ClickHouse Dash with a hex for each theme (ID-K70, ID-K74): series i has slot `i mod 18`. The gradients are measured on Grafana 12.4.2. The keys of `measured` are the percent of the scale; -10 and 110 are outside it.",
+ "comment": "Colour modes (9.16, paper 10.8 V5). The series palette is the one palette of ClickHouse Dash with a hex for each theme: series i has slot `i mod 18`. The gradients are measured on Grafana 12.4.2. The keys of `measured` are the percent of the scale; -10 and 110 are outside it.",
  "palette_dark": [
   "#4296fb",
   "#e86a34",

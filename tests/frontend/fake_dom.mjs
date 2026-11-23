@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // A small fake DOM for the tests of the editor forms (web/js/ui.js and the controls of web/js/editor/forms/controls.js).
 // It keeps what the forms use: elements, attributes, the dataset, events, a selector engine for `querySelector` and a focus.
 // The text of a node goes in with `textContent` only, and `innerHTML` throws, as the page rules ask (9.1).

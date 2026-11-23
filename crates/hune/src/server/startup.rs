@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The steps 6 to 9 of the start sequence (14.12): open the store (the volume or PostgreSQL),
 //! load the catalog and start the poller. The hook `open_store` is the one that `serve` runs.
 

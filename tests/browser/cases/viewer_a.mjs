@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B01, B02, B03, B10, B12, B13, B24, B25, B26, B27 (16.10).
 import { allTypesDoc, doc, panel, section, SQL } from "../lib/docs.mjs";
 import { SEED_FROM, SEED_TO } from "../lib/env.mjs";

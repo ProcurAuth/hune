@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B212 (9.5, 9.9; gap paper H02, step D02): a link of Grafana 12.4.2 with an ISO range and the name `timezone` opens with that
 // range and that zone. The forms that Grafana reads as 1970 and an unknown zone give a notice. The browser is in America/New_York.
 import { doc, panel, section } from "../lib/docs.mjs";

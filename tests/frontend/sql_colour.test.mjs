@@ -1,4 +1,5 @@
-// The colour layer of the SQL area (10.3, decision ID-K230a). It draws only the rows near the visible rows. These tests compare its markup
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The colour layer of the SQL area (10.3). It draws only the rows near the visible rows. These tests compare its markup
 // with the markup that the engine writes for the whole text: each character must have the same kind. The layer has no DOM here: `code` and
 // the gaps are plain objects, so the test reads the markup and the heights that the layer sets.
 import test from "node:test";

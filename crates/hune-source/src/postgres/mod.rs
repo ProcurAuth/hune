@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The PostgreSQL data source (section 8a). It reads data for panel queries and never writes.
 //!
 //! The dialect (7.19 to 7.26) lives in `hune_core::sql`. The frame types (7.16a, 7.16b) are
@@ -25,7 +26,7 @@
 //!
 //! # Status
 //!
-//! The client is complete (milestone PG, wave 2): `session`, `pool`, `exec`, `cancel` and `source`
+//! The client is complete (milestone PG): `session`, `pool`, `exec`, `cancel` and `source`
 //! run the steps of 8a.4 to 8a.10 and 8a.12. The container tests are in
 //! `tests/pgsource_client.rs` and in `tests/pgsource_down.rs` (16.9a: PS04 to PS07, PS09, PS12 to PS15).
 

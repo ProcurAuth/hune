@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the rows of 15.6, one table at a time (I01, I02, I10, I12). Each case builds a small
 //! v1 dashboard. The v2 forms use the same code: see `export.rs` for the parity of the four forms.
 
@@ -246,7 +247,7 @@ fn panel_types() {
         no_items(&r);
         assert_eq!(first_panel(&doc(&r))["type"], t);
     }
-    // The news panel of Grafana stays out (decision ID-K333): the panel is removed.
+    // The news panel of Grafana stays out: the panel is removed.
     let r = import_panel(panel(1, "news", 0));
     assert_eq!(r.items.len(), 1);
     assert_eq!(r.items[0].fallback, Some(Fallback::PanelRemoved));
@@ -471,7 +472,7 @@ fn placeholders_and_macros() {
         ("SELECT * FROM t WHERE ts > $__fromTime_ms AND ts < $__toTime_ms", true),
         ("SELECT * FROM t WHERE ts > $__from AND ts < $__to", true),
         ("SELECT * FROM t WHERE $__dateFilter(d) AND $__dateTimeFilter(d, ts)", true),
-        // D08 of wave H: the second name of `$__dateTimeFilter` in the plugin.
+        // D08: the second name of `$__dateTimeFilter` in the plugin.
         ("SELECT * FROM t WHERE $__dt(toDate(ts), ts)", true),
         ("SELECT * FROM t WHERE $__dt(ts)", false),
         ("SELECT * FROM t WHERE $__conditionalAll(e IN ($env), $env)", true),
@@ -656,7 +657,7 @@ fn legend_value_tables() {
         json!(["last_not_null", "mean", "max", "min", "range"]),
         None,
     );
-    // The calculations that milestone F adds (F20).
+    // The calculations that the Grafana-parity work adds (F20).
     option_case(
         "timeseries",
         ts(json!({"calcs": ["median", "stdDev", "variance", "range", "diff"]})),
@@ -853,7 +854,7 @@ fn tooltip_and_reduce_value_tables() {
         json!("total"),
         Some(Class::Unsupported),
     );
-    // The calculations that milestone F adds (F20).
+    // The calculations that the Grafana-parity work adds (F20).
     for (g, v) in [
         ("median", "median"),
         ("stdDev", "std_dev"),
@@ -963,7 +964,7 @@ fn timeseries_custom_value_tables() {
     );
     option_case("timeseries", json!({}), json!({"spanNulls": true}), "/span_nulls", json!(true), None);
     option_case("timeseries", json!({}), json!({"spanNulls": false}), "/span_nulls", json!(false), None);
-    // A number is the null threshold `span_nulls_ms` (wave H, item P14): `span_nulls` stays `false`.
+    // A number is the null threshold `span_nulls_ms`: `span_nulls` stays `false`.
     option_case("timeseries", json!({}), json!({"spanNulls": 3600000}), "/span_nulls", json!(false), None);
     option_case("timeseries", json!({}), json!({"spanNulls": 3600000}), "/span_nulls_ms", json!(3600000), None);
     for d in ["line", "bars", "points"] {
@@ -987,7 +988,7 @@ fn timeseries_custom_value_tables() {
         json!("log"),
         None,
     );
-    // The base 2 maps to `log_base` (wave H, item P14).
+    // The base 2 maps to `log_base`.
     option_case(
         "timeseries",
         json!({}),
@@ -1178,7 +1179,7 @@ fn other_panel_option_tables() {
 #[test]
 fn unknown_option_members_are_listed() {
     // `showPercentChange` = `false` is the Grafana default: metadata. (`wideLayout` = `false` turns a default off:
-    // it is an item since P04 of wave H.)
+    // it is an item since P04 of the later options.)
     let r = import_panel(stat(json!({"colorMode": "value", "frobnicate": "on", "showPercentChange": false})));
     assert_eq!(r.items.len(), 1);
     assert_eq!(r.items[0].member, "options.frobnicate");

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The pre-pass of a create and of a save (11.20, 11.21): the ids of the sources that a document names, read from
 //! the bytes of the document before the decision and before the validation of 4.36.
 //!

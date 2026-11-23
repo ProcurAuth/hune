@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The variables of a document as the engine needs them, and the variable values of a request (7.7).
 //!
 //! These types do not depend on the document model. The caller maps the variables of the document
@@ -858,7 +859,7 @@ mod tests {
 
     #[test]
     fn the_option_check_takes_time_in_proportion_to_the_count_not_the_product() {
-        // 10,000 values against 10,000 options: a linear `contains` makes 10^8 comparisons (ID-K200).
+        // 10,000 values against 10,000 options: a linear `contains` makes 10^8 comparisons.
         // A long common prefix makes each comparison of a linear scan cost a full compare of the texts.
         let prefix = "x".repeat(200);
         let options: Vec<String> = (0..10_000).map(|i| format!("{prefix}{i:05}")).collect();

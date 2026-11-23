@@ -1,0 +1,25 @@
+name: Feature request
+description: Propose a new function or a change of behavior.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What do you want to do? What stops you?
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: Describe the behavior that you want. State how it keeps the rules of Hune, for example the closed configuration and the read-only sources.
+    validations:
+      required: false
+  - type: input
+    id: source
+    attributes:
+      label: Data source
+      description: The kinds of source that the feature concerns, for example ClickHouse or PostgreSQL.
+    validations:
+      required: false

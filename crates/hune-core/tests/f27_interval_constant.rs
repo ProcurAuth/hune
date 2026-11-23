@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The variable kinds `interval` and `constant` in the engine (F27, 4.10a, 4.10b, 7.4a, 7.7, 7.8, 7.10):
 //! the set check of an `interval` value, the text of "Auto", the value of a `constant`, the contexts, the
 //! hostile sets and the seeded random tests of 16.4.

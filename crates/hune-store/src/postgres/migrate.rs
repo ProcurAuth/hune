@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `hune migrate-store` (5.28): the schema migrations, under an advisory lock, for the owner role.
 
 use std::fmt;

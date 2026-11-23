@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the PostgreSQL rows of 15.6 (case I22). The fixture `tests/fixtures/grafana/export-pg` holds one
 //! dashboard with a panel for each row, in the four input forms.
 

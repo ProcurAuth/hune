@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Black-box tests of the read modes of 13.18 with the real binary.
 //!
 //! The configuration of each test has a `clickhouse` block whose password file and CA file do

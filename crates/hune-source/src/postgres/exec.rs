@@ -1,4 +1,5 @@
-//! The run of one query (8a.5, 8a.6, 8a.7, ID-PG9).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The run of one query (8a.5, 8a.6, 8a.7).
 //!
 //! The steps of 8a.5 after the admission and the session (steps 1 and 2 belong to `source`):
 //!

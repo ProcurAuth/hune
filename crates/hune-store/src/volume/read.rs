@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The read side of the volume backend: the scan (5.10, 5.17), `get`, `history`, `version`.
 
 use std::collections::{BTreeMap, BTreeSet, HashMap};

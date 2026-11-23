@@ -1,5 +1,5 @@
 /* The time picker and the refresh picker (9.9). The rules of the popup of the time range are here; the sizes of the header are in components.css.
-   The popup follows the range picker of ClickHouse Dash (decisions ID-K60 to ID-K66, owner request of 2026-11-12). */
+   The popup follows the range picker of ClickHouse Dash. */
 
 .picker { position: relative; display: flex; align-items: center; min-width: 0; }
 

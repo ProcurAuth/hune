@@ -1,11 +1,12 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The annotations of a dashboard (4.5b) and the rows of 15.6 for `annotations.list`.
 //!
 //! An item with a data source of the source map and a query becomes one annotation: a ClickHouse or a
 //! PostgreSQL data source with a SQL text (`rawSql`), or a MongoDB data source with a pipeline
-//! (`queryText`, `collection` and `database`), as for a panel (decisions ID-K142 and ID-K333).
+//! (`queryText`, `collection` and `database`), as for a panel.
 //! The built-in item is metadata. An item that Hune cannot hold is `unsupported` and the importer
-//! removes it. The form v1 was read on the exports of the reference Grafana and on the measure of the
-//! worker of 19.20e. The form v2 follows the schema and no real export of Grafana confirms it.
+//! removes it. The form v1 was read on the exports of the reference Grafana and on the measure of
+//! 19.20e. The form v2 follows the schema and no real export of Grafana confirms it.
 
 use std::collections::BTreeSet;
 
@@ -363,7 +364,7 @@ fn enabled_of(ctx: &mut Ctx, node: Option<&Node>) -> Option<bool> {
     }
 }
 
-/// Reads `hide`: `true` is metadata. `false` is listed, because the page has no toggle (ID-K157).
+/// Reads `hide`: `true` is metadata. `false` is listed, because the page has no toggle.
 fn hide_of(ctx: &mut Ctx, node: Option<&Node>) -> bool {
     let Some(node) = node.filter(|n| !n.is_null()) else { return true };
     match as_flag(node.v) {
@@ -501,7 +502,7 @@ fn filter_of(ctx: &mut Ctx, cx: &AnnotationCx<'_>, node: Option<&Node>) -> Optio
 }
 
 /// Finds the source of the annotation (15.9): the data source of the item or of its query, and its kind. A
-/// ClickHouse, a PostgreSQL and a MongoDB source are valid (4.5b, decisions ID-K142 and ID-K333).
+/// ClickHouse, a PostgreSQL and a MongoDB source are valid (4.5b).
 fn source_of(
     ctx: &mut Ctx,
     cx: &AnnotationCx<'_>,

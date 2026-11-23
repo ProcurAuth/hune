@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The members that only the browser uses: fields, property sets, thresholds, mappings, links,
 //! colours, units, transforms, patterns and the options of the seven panel types (4.17 to 4.33).
 //!
@@ -337,7 +338,7 @@ case!(
     ErrorCode::WrongType
 );
 
-/// The member `inspect` of wave H (4.18): a boolean of a table in `fields.defaults` and in an override set. The canonical
+/// The member `inspect` of the later options (4.18): a boolean of a table in `fields.defaults` and in an override set. The canonical
 /// form keeps it after `footer` and before `hide_from`, and a second validation gives the same bytes.
 #[test]
 fn inspect_is_a_table_boolean_in_the_canonical_order() {

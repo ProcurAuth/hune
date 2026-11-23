@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The option forms of `table`, `heatmap` and `histogram` (10.3h, F43, vector set FE-78): the tables against the format and the new panel, the write
 // rule and the rules of display on the vectors, the grammar of the buckets, and the rule that each write keeps a heatmap valid (4.33c).
 // The page does not draw `heatmap` and `histogram` yet, so the "new" options come from the first panel of their fixtures (the defaults of 9.19e, 9.19f).

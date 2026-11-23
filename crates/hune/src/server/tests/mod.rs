@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! In-process tests of the server: real HTTP/1.1 requests on `127.0.0.1`.
 
 mod adhoc_filters;

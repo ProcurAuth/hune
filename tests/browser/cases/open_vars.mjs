@@ -1,4 +1,5 @@
-// Browser cases B160 to B169 (4.8, 4.9, 7.7, 9.10, 9.26, 10.3b, 15.6): the closed or free value of a variable (F41, decisions ID-K200 to ID-K213).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B160 to B169 (4.8, 4.9, 7.7, 9.10, 9.26, 10.3b, 15.6): the closed or free value of a variable (F41).
 // B160: a closed query variable (a URL value that is not an option, the notice, the URL, no notice for an error or an empty list).
 // B161: an open query variable with one value (the row Use, Enter, the URL, a reload, a range change, no request while typing).
 // B162: an open multi variable with All (typed rows, checked rows, the order, All and a typed value exclude each other).

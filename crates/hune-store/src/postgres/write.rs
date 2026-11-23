@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The write side of the PostgreSQL backend: the transactions of 5.27.
 //!
 //! Each write is one transaction at the level `READ COMMITTED`. The lock of the row (P9) or the
@@ -674,7 +675,7 @@ mod tests {
     use super::*;
 
     /// The transaction of a restore checks the kind of the row and the presence of its bytes, and nothing else: it
-    /// never validates the document, because the caller validated it before the transaction (6.18, ID-K321).
+    /// never validates the document, because the caller validated it before the transaction (6.18).
     #[test]
     fn the_row_check_of_a_restore_validates_nothing() {
         let e = "ab".repeat(32);

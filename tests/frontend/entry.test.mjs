@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the entry redirect of the list page (9.7): the pure decision and the guard.
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Mode `authzen` for the browser case B23 (16.10): `fake-pdp`, keys, identity tokens and a policy.
 // The ProcurAuth tools `fake-pdp` and `access-token` run from a build that the suite never changes.
 // Set PROCURAUTH_DIR to the checkout (default: target/procurauth). The tools are in target/release/.

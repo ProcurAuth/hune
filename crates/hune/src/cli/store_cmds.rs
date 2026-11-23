@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The subcommands that work on a store: `export`, `import`, `copy-store`, `restore`,
 //! `migrate-documents` and `migrate-store` (5.28, 5.37 to 5.40, 4.42).
 //!

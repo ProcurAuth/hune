@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Unit tests of the configuration: the nine rules of 13.2, the error forms of 13.14, the
 //! contradictions C1 to C13, the warnings W1 to W6, the stage 2 checks and the outputs.
 

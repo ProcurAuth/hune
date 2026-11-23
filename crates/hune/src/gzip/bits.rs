@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The bit writer of DEFLATE (RFC 1951, 3.1.1). The bits fill each byte from the least significant bit.
 
 /// A writer of bits into a byte list.

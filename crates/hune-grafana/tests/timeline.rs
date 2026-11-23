@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The rows of the state timeline and the status history in 15.6 (4.33b): one test for each new row in the form
 //! v1 and in the forms v2, the boundaries of `rowHeight` and `colWidth`, and the members that make items.
 

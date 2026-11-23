@@ -1,4 +1,4 @@
-// The colour layer of the SQL area (10.3, 10.3c rule 1, decision ID-K230a). It draws only the rows near the visible rows, as the
+// The colour layer of the SQL area (10.3, 10.3c rule 1). It draws only the rows near the visible rows, as the
 // folded view and the gutter do (10.3e). The text area stays the source of the text, the selection and the metrics.
 // The state of a string or of a comment at the first drawn row comes from the spans of the whole text. The highlighter of the
 // engine (vendor/chdash/app_highlight.js) is not changed: it reads only the plain text between two spans.

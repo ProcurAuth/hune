@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-74: reduce and partition_by_values (9.21a, rules 8 and 9).
 import test from "node:test";
 import assert from "node:assert/strict";

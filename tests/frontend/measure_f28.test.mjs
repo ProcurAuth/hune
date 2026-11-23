@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The measure of Grafana 12.4.2 for the 11 more transforms (docs/08, 19.20j): 240 cases of the worker f2827-spec (FE-70 to FE-74 use them).
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -1,4 +1,5 @@
-//! The rows of 15.6 for several queries in a panel (4.15a, decisions ID-K165, ID-K169 and ID-K171): one test
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The rows of 15.6 for several queries in a panel (4.15a): one test
 //! for each row in the four input forms (v1 raw, v1 wrapped, v2alpha1 and v2beta1), and separate tests for a
 //! hidden first target, a refId that breaks the grammar, two targets with one refId, nine targets, a Mixed
 //! panel with a target of each kind of source, a target of `-- Dashboard --`, a repeat with two targets and the

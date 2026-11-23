@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The capture test runs alone in its own process, because it clears the environment.
 
 use hclconf::env::CapturedEnvironment;

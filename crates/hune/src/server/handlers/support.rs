@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers of the store-backed handlers. They give the services, the error mapping of 5.6 and the
 //! write metadata. They also hold the log line of a change and the save checks of 7.18.
 
@@ -339,8 +340,7 @@ pub fn sql_save_checks(doc: &Document, declared: &[SourceBlock<'_>]) -> (Vec<Val
             SqlOwner::Annotation { .. } => SqlUse::Annotation,
         };
         let block = declared.iter().find(|d| d.id == text.source.as_str());
-        // An annotation runs on a `clickhouse`, a `postgres` or a `mongodb` source (4.5b, decisions ID-K142 and
-        // ID-K333): its text gets the checks of the kind below. A kind that 8.2 adds later is refused, and the
+        // An annotation runs on a `clickhouse`, a `postgres` or a `mongodb` source (4.5b): its text gets the checks of the kind below. A kind that 8.2 adds later is refused, and the
         // text of the annotation then gets no other check.
         if let SqlOwner::Annotation { index } = text.owner
             && let Some(b) = block

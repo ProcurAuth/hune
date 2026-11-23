@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Strict HCL configuration engine (section 13).
 //!
 //! The engine reads a file of the HCL subset of 13.3 and checks it against a key table: a

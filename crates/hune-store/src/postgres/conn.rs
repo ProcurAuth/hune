@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Connection settings, TLS and the pool of the PostgreSQL backend (5.23).
 
 use std::fmt;

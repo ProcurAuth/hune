@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the token stream of ClickHouse and of the SQL tree (F42): `tokensClickHouse` and `parseSql` for both dialects.
 // The tree is never a security check: these tests check structure only. The PostgreSQL tokens come from a small adapter in
 // this file, until the module `tokens_pg.js` of the PostgreSQL worker exists.

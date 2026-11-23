@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="The eight parts of the specification of Hune: the format of a document, the API, the query engine, the page, the access rules, the configuration and the tests.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hune">
+<meta property="og:title" content="Specification | Hune">
+<meta property="og:description" content="The eight parts of the specification of Hune: the format of a document, the API, the query engine, the page, the access rules, the configuration and the tests.">
+<meta property="og:url" content="https://procurauth.github.io/hune/specification.html">
+<meta property="og:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB. One static binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Specification | Hune">
+<meta name="twitter:description" content="The eight parts of the specification of Hune: the format of a document, the API, the query engine, the page, the access rules, the configuration and the tests.">
+<meta name="twitter:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta name="twitter:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB.">
+<link rel="canonical" href="https://procurauth.github.io/hune/specification.html">
+<title>Specification | Hune</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#fafafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="access.html">Access</a></li><li><a href="security.html">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html" aria-current="page">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main id="main">
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.1.1</span> The public specification</p><h1>Specification</h1><p class="lede">The eight parts of the specification of Hune: the format of a document, the API, the query engine, the page, the access rules, the configuration and the tests.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#rules-of-the-text">Rules of the text</a></li><li><a href="#other-documents">Other documents</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/SPECIFICATION.md"><code>docs/SPECIFICATION.md</code></a> in the repository.</p><p>The specification of Hune has eight parts. It describes the product that the code implements, and the rules that the tests check. It is a draft, version 0.1. The <a href="status.html">implementation status</a> lists the differences between the code and the text.</p>
+<p>The key words MUST, MUST NOT, SHOULD and MAY follow RFC 2119 and RFC 8174 when they are in capital letters.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Part</th><th scope="col">Content</th><th scope="col">Sections</th></tr></thead><tbody><tr><th scope="row"><a href="spec-01.html">Part 1: Overview</a></th><td data-label="Content">The purpose, the scope, the decisions and the architecture.</td><td data-label="Sections">1 to 3</td></tr><tr><th scope="row"><a href="spec-02.html">Part 2: Document format and storage</a></th><td data-label="Content">The JSON format of a dashboard, the volume and PostgreSQL stores.</td><td data-label="Sections">4 and 5</td></tr><tr><th scope="row"><a href="spec-03.html">Part 3: API, query engine and data sources</a></th><td data-label="Content">The HTTP API, the query engine and the three kinds of data source.</td><td data-label="Sections">6 to 8</td></tr><tr><th scope="row"><a href="spec-04.html">Part 4: Front end and editor</a></th><td data-label="Content">The page, the panels, the editor, the history and the conflicts.</td><td data-label="Sections">9 and 10</td></tr><tr><th scope="row"><a href="spec-05.html">Part 5: Access and security</a></th><td data-label="Content">The access rules, ProcurAuth and the security rules.</td><td data-label="Sections">11 and 12</td></tr><tr><th scope="row"><a href="spec-06.html">Part 6: Configuration and operation</a></th><td data-label="Content">The configuration, the observability and the operation.</td><td data-label="Sections">13 and 14</td></tr><tr><th scope="row"><a href="spec-07.html">Part 7: Migration, tests and delivery</a></th><td data-label="Content">The import from Grafana, the tests and the delivery.</td><td data-label="Sections">15 to 17</td></tr><tr><th scope="row"><a href="spec-08.html">Part 8: Roadmap and open questions</a></th><td data-label="Content">The roadmap, the open questions, the glossary and the references.</td><td data-label="Sections">18 to 20</td></tr></tbody></table></div>
+<h2 id="rules-of-the-text"><a class="self" href="#rules-of-the-text">Rules of the text</a></h2>
+<ul><li>A numbered paragraph <code>N.M</code> keeps its number in all later versions. A paragraph that leaves the text keeps its number with the word "Unused".</li><li>A cross-reference gives a section number (for example "section 11") or a paragraph number (for example "5.14").</li><li>A code span holds an exact name: a key, a member, a route, a type or a command.</li><li>The code and the tests cite the paragraph numbers.</li></ul>
+<h2 id="other-documents"><a class="self" href="#other-documents">Other documents</a></h2>
+<ul><li><a href="access.html">Access and ProcurAuth</a> tells the operator how to run the mode <code>authzen</code>.</li><li><a href="conformance.html">Conformance</a> tells how Hune follows the ProcurAuth protocol.</li><li><a href="engine.html">Chart engine edits</a> lists the edits of the copied chart engine.</li></ul></article></div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>Hune</h2>
+        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="configuration.html">Configuration</a></li>
+          <li><a href="architecture.html">Architecture</a></li>
+          <li><a href="specification.html">Specification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Run</h2>
+        <ul>
+          <li><a href="access.html">Access and ProcurAuth</a></li>
+          <li><a href="security.html">Security model</a></li>
+          <li><a href="operations.html">Operations</a></li>
+          <li><a href="reference.html">Configuration reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/ProcurAuth/hune">Repository</a></li>
+          <li><a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a></li>
+          <li><a href="changelog.html">Changelog</a></li>
+          <li><a href="status.html">Status</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="conformance.html">Conformance</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>Hune, version 0.1.1.</p>
+      <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
+      <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

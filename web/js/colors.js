@@ -41,8 +41,8 @@ export const NAMED_LIGHT = tokenTable(HUES_LIGHT);
 
 /**
  * The classic palette of 64 colours of Grafana 12.4.2 (9.16), in the order that Grafana draws series 1, 2, 3 and so on. No colour mode draws
- * it any more: since ID-K70 (owner request of 2026-11-12) the mode `palette` draws the series palette of ClickHouse Dash (`QCHART`, below),
- * the one series palette (ID-K74). The list stays as the reference of the difference from Grafana (19.20a).
+ * it any more: the mode `palette` draws the series palette of ClickHouse Dash (`QCHART`, below),
+ * the one series palette. The list stays as the reference of the difference from Grafana (19.20a).
  */
 export const PALETTE = Object.freeze([
   "green", "semi-dark-yellow", "blue", "orange", "red", "purple",
@@ -59,7 +59,7 @@ export const PALETTE = Object.freeze([
 export const QCHART_COUNT = 18;
 
 /**
- * The series palette of ClickHouse Dash (ID-K70, 9.16): the tokens `--qchart-1` to `--qchart-18` and `--qchart-other` of
+ * The series palette of ClickHouse Dash (9.16): the tokens `--qchart-1` to `--qchart-18` and `--qchart-other` of
  * css/vendor/chdash/00-tokens.css, as hex, for the dark and the light theme. A test keeps the two copies equal. Each colour has 3:1
  * with the panel in both themes (the test of fe07_colors). `other` is the colour of an index that is not a slot (a negative index).
  */
@@ -76,7 +76,7 @@ export const QCHART = Object.freeze({
 });
 
 /**
- * The colour (hex) of series `i` (from 0) in a theme: slot `i mod 18` of `QCHART`, in the order of ClickHouse Dash (ID-K70).
+ * The colour (hex) of series `i` (from 0) in a theme: slot `i mod 18` of `QCHART`, in the order of ClickHouse Dash.
  * A negative index or an index that is not a number gives the colour `other`.
  */
 export function qchartColor(i, dark = true) {
@@ -86,7 +86,7 @@ export function qchartColor(i, dark = true) {
   return QCHART[key][n % QCHART_COUNT];
 }
 
-// --- Colour modes of wave 2 (9.16, F26, FE-23): the 10 continuous gradients ---------------------------
+// --- Colour modes of the second set (9.16, F26, FE-23): the 10 continuous gradients ---------------------------
 
 /** The stops of the 10 continuous modes (4.19, 9.16). A token is a colour of this file. `panel` is the panel background of the theme. */
 export const CONTINUOUS_MODES = Object.freeze({
@@ -303,7 +303,7 @@ export function gradientFrom(css, dark = true) {
  * (9.16), or null. `fieldColor` and `markColor` resolve it.
  * `ctx` has `min` and `max` (the scale of `thresholds` and of the continuous modes), `seriesIndex` (the index among the number fields, for
  * `palette`) and `dark` (the theme, true when it is not set).
- * `palette` and a continuous mode give a hex of the theme in `ctx.dark` (the one series palette, ID-K74, or a gradient).
+ * `palette` and a continuous mode give a hex of the theme in `ctx.dark` (the one series palette, or a gradient).
  */
 export function fieldColorValue(config, value, ctx = {}) {
   const color = config && config.color ? config.color : { mode: "thresholds", fixed: null };

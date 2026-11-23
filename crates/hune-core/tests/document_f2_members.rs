@@ -1,4 +1,5 @@
-//! The members that wave 2 of milestone F adds to format 3 (4.5a, 4.6, 4.15, 4.18, 4.19): the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The members that the second set of Grafana-parity features adds to format 3 (4.5a, 4.6, 4.15, 4.18, 4.19): the
 //! fixture, one refusal for each error, the canonical form and the grammars.
 
 use hune_core::document::{

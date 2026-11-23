@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `pg-probe` (8a.12, 16.9a): the container test of the PostgreSQL probe, on PostgreSQL 15 and 18.
 # Use: tests/ci/pg-probe.sh [--versions "15 18"]
 #   For each version, the script starts one disposable container on 127.0.0.1, loads the roles and

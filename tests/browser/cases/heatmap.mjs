@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B140 to B144 and B146 to B148 (4.33c, 9.19e, 10.3, 15.6): the heatmap. B145 (the look of a histogram) is in histogram.mjs.
 // B140: the look of a heatmap of raw values. B141: the shape that is already bucketed. B142: the colours and the legend. B143: the axes.
 // B144: the card, the hover and the keyboard. B146: the caps and the time. B147: the editor and the format. B148: the import, the layouts, zoom, print.
@@ -178,7 +179,7 @@ export const cases = [
         const h8 = await h(8);
         t.assert(h8.cells.length === 79 && h8.cells.every((c) => c[2] > 0), `negative counts are not drawn: ${h8.cells.length} cells`);
         t.eq([(await h(9)).shape, (await h(9)).rows, (await h(9)).drawn], ["bucketed", 8, h1.drawn], "the long frame gives the same grid as the wide frame");
-        t.eq(await labels(9), POW2, "a long frame: the heatmap drops the prefix of the value field and sorts the rows as numbers (9.19e, ID-K195c)");
+        t.eq(await labels(9), POW2, "a long frame: the heatmap drops the prefix of the value field and sorts the rows as numbers (9.19e)");
         // Hostile names show as text and make no element: no image, no alert, the long name is cut.
         t.eq(await p.eval(`document.querySelectorAll('[data-testid="heatmap-10"] img, [data-testid="panel-10"] img').length`), 0, "no element from a name");
         const l10 = await labels(10);

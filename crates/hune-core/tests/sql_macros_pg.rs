@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The macros of the dialect `postgres` (7.22) and the interval argument of a group macro (7.23).
 //!
 //! The files of `tests/golden/expansion-pg/` are vectors. Each vector holds the SQL `executedQueryString`

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The expansion of a MongoDB query and the property PM (7.34, 7.35).
 //!
 //! The engine never writes a value in the text of the query. It parses the text one time (7.28). It

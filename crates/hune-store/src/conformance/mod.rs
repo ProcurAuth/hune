@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The conformance suite (5.33 to 5.36). The common tests of 5.34 are functions in
 //! [`common`]. Each one gets a new empty store from a [`Backend`], so the PostgreSQL backend
 //! can run the same functions (M5). The volume tests of 5.35 are in `tests/volume_suite.rs`.

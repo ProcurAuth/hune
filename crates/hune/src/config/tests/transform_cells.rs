@@ -1,4 +1,5 @@
-//! Tests of the key `server.transform_max_cells` (13.8, 4.35, 9.21a rule 13; owner order of 2026-11-16): an optional
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Tests of the key `server.transform_max_cells` (13.8, 4.35, 9.21a rule 13): an optional
 //! integer with the default 10000000, the fixed bound 100000000, a value in the file only, and no coercion.
 
 use super::*;

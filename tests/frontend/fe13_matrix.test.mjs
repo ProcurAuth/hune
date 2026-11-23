@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-13: grouping_to_matrix (9.21).
 import test from "node:test";
 import assert from "node:assert/strict";

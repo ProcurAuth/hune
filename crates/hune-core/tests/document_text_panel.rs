@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The panel type `text` (4.33a): the fixture and its canonical form, the boundaries of the limits, one refusal
 //! for each error, the rules across members (4.34) and the constants (4.35). The type joins format 3 with no
 //! change of the version (4.42).

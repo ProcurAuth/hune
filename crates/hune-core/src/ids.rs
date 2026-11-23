@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Checked identifiers of 4.3: dashboard uid, folder id and source id.
 //!
 //! The three ids use the rule `^[a-z0-9][a-z0-9-]{0,39}$`. Only lower-case letters are

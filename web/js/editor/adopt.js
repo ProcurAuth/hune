@@ -1,4 +1,4 @@
-// The frames of the base grid in the draft grid (10.2a, rule 17; decision ID-K301).
+// The frames of the base grid in the draft grid (10.2a, rule 17).
 // A panel of the draft that is the panel of the base document, with the same data, keeps its frame. The draft grid takes the element of
 // the base frame, with its plot, its canvas and its last result. The frame returns to its place in the base grid when the draft grid
 // closes. Thus the switch "Edit", the panel editor, "Back" and "Forward" make no new chart and send no query.

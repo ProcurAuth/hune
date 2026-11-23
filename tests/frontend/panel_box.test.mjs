@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The inner box of a panel part (9.19a): the sizes that stat and bar gauge give to their children always fit.
 import { test } from "node:test";
 import assert from "node:assert/strict";

@@ -1,4 +1,5 @@
-// Review v3 of the page code, the low findings P3 and P4 (owner order of 2026-11-16).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Review v3 of the page code, the low findings P3 and P4.
 // P3: the author patterns run on names and cells that hold data. A text longer than 1,024 code units never matches (9.14, T87).
 // P4: the variable bar and its popup look up the selection with a map and a set (9.10).
 // Each test failed (or ran for many seconds) before the fix. The timing tests take the minimum of 7 runs after 2 warm-ups.

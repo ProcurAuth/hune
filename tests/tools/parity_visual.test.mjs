@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the visual parity capture (15.14c): the canvas marks, the tolerances, the pairing of the copies of a repeat, the
 // count of the queries of a copy, the rules of the documented differences and the rewrites of the dashboard for Grafana.
 import assert from "node:assert/strict";

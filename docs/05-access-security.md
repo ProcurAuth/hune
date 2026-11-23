@@ -203,7 +203,7 @@ removes no rule.
 Two of these rules come from `procurauth-core`, and Hune follows the library for both. `iat` and `exp` must be whole
 numbers: the library refuses a fraction, a sign and an exponent. A token must have a `kid` when the key set holds two
 or more keys. ClickHouse Dash accepts a fraction, a sign and an exponent in `iat` and `exp`, and rounds the value
-down. Issue 1 of the repository `SCcagg5/procurauth` asks this question of the protocol, and section 19 holds it as an
+down. Issue 1 of the repository `ProcurAuth/procurauth` asks this question of the protocol, and section 19 holds it as an
 open item. Its title is "Section 9.4: can iat and exp have a fraction, a sign or an exponent?".
 
 Hune keeps no result of a token check. It checks the token again on each request. P 9.7 permits a cache, but a check
@@ -252,7 +252,7 @@ Hune builds its PEP on the reference library of ProcurAuth. It does not copy the
 | Item | Rule |
 |---|---|
 | Crates | `procurauth-pep` and `procurauth-core`, licence Apache-2.0, not on crates.io. |
-| Source | The git repository `https://github.com/SCcagg5/procurauth`. The repository is public, so CI needs no secret. |
+| Source | The git repository `https://github.com/ProcurAuth/procurauth`. The repository is public, so CI needs no secret. |
 | Version | `rev` is a full commit SHA of 40 hexadecimal characters. Both crates use the same `rev`. No `branch`, no `tag`. The commit is chosen at M6. |
 | Features | `default-features = false`. The feature `mcp` stays off: Hune has no MCP endpoint. |
 | Place | Only the crate `hune` (module `access`) depends on them. The pure crates never do. |
@@ -263,8 +263,8 @@ Hune builds its PEP on the reference library of ProcurAuth. It does not copy the
 The lines in the file `crates/hune/Cargo.toml`:
 
 ```toml
-procurauth-core = { git = "https://github.com/SCcagg5/procurauth", rev = "<40 hex>", default-features = false }
-procurauth-pep  = { git = "https://github.com/SCcagg5/procurauth", rev = "<40 hex>", default-features = false }
+procurauth-core = { git = "https://github.com/ProcurAuth/procurauth", rev = "<40 hex>", default-features = false }
+procurauth-pep  = { git = "https://github.com/ProcurAuth/procurauth", rev = "<40 hex>", default-features = false }
 ```
 
 The commit of `rev` is chosen at M6 (section 18). Until then, the figures of 11.32 come from the ProcurAuth commit
@@ -714,7 +714,7 @@ applies these rules in the mode `authzen`:
    for an item that exists and for one that does not exist. This work is the body read, the syntax check and, for
    a create and a save, the pre-pass of 11.21. Hune reads no store and validates no document before the decision.
    - On a write route, the two items also send the same number of PDP requests. They ask the same others, and neither
-     uses a kept answer (decision ID-K325).
+     uses a kept answer.
 
 Thus a subject with grants on one folder gets `403` for a dashboard of another folder. It gets the same `403`, byte
 for byte, for a uid that does not exist. A subject with `dashboard.read` on the service can read each dashboard, so a
@@ -849,7 +849,7 @@ Hune found and a `next` value (6.24). `GET /api/folders` has no pages. One reque
 This bound does not grow with the requests.
 
 The questions of one list are in Access Evaluations requests within the maxima of the PDP (P 10.7a). The kept answers
-of 11.27 apply. The reference deployment has 3 folders and a grant on each. There, one list of dashboards costs 9 questions,
+of 11.27 apply. For example, a deployment has 3 folders and a grant on each. There, one list of dashboards costs 9 questions,
 and the list of folders costs 7. A list in the next
 `cache_ttl` costs none.
 
@@ -927,7 +927,7 @@ The library keeps the answers of the PDP for `access.pdp.cache_ttl` at most (P 1
 - Each instance has its own cache. A revoked grant can stay active for `cache_ttl` at most on each instance.
 - A cache hit writes no `access.decision` line. The metric `hune_pdp_cache_hits_total` counts it.
 
-The cache does not keep these questions (decision ID-K325):
+The cache does not keep these questions:
 
 - The questions of each write route of 11.20, the preview included.
 - The question of 11.23 on the service, on each route.
@@ -1008,7 +1008,7 @@ The deviations from ProcurAuth:
 | Deviation | Reason |
 |---|---|
 | The pages, the static files and `GET /api/session` need the token but ask no question (P 10.1, P 15 item 6). | They hold no data of a dashboard or of a source. |
-| `server.ops_listen` serves three routes without a token (P 10.0, step 2). | They are for the orchestrator and the monitoring. They give no data of a dashboard. The edge must not route to this listener (12.6). |
+| `server.ops_listen` serves three routes without a token (P 10.0, step 2). | They are for the container platform and the monitoring. They give no data of a dashboard. The edge must not route to this listener (12.6). |
 | `plain_http = true` accepts an `http` URL for the PDP (P 10.0, step 4). | A trusted network can be enough. Hune writes a warning at start. |
 | A `false` answer with `budget_exceeded` gives 403, not 429 (P 10.3). | Hune declares no budget, so a correct PDP never gives this answer. The error table of section 6 has no code with the status 429. |
 | The options route searches a substring of the id or of the label. | P 5.6 lets the service choose its search rules. |
@@ -1137,7 +1137,7 @@ these properties of Hune:
 | The options route (P 5.6 to P 5.8) | U05, U70 to U83 |
 
 A later commit of the runner can add cases. To change the commit, follow 11.10, then update the numbers of this
-paragraph and `expected.txt`. A case that fails MUST have a line in `expected.txt` with its reason, and the owner
+paragraph and `expected.txt`. A case that fails MUST have a line in `expected.txt` with its reason, and a reviewer
 approves each line.
 
 ### 11.33 The PostgreSQL source in the access layer
@@ -1185,7 +1185,7 @@ The names of the tests in this section are the layers of section 16:
 
 | Asset | Place | Why it matters |
 |---|---|---|
-| The data that the dashboards show | ClickHouse, PostgreSQL and MongoDB sources | Business data of the reference deployment. A leak is the main risk. |
+| The data that the dashboards show | ClickHouse, PostgreSQL and MongoDB sources | The business data of the operator. A leak is the main risk. |
 | The ClickHouse credentials | `password_env` or `password_file` of each `clickhouse` block | They give each read that the account permits. |
 | The PostgreSQL source credentials | `password_env` or `password_file` of each `postgres` block | They give each read that the role permits. |
 | The MongoDB source credentials | `password_env` or `password_file` of each `mongodb` block | They give each read that the user permits. |
@@ -1204,11 +1204,11 @@ The names of the tests in this section are the layers of section 16:
                  browser
                     |  HTTPS, with the session cookie of the edge
              +------v------+
-             |    edge     |  reverse proxy and authentication (nginx auth_request at the reference deployment)
+             |    edge     |  reverse proxy and authentication (for example nginx with `auth_request`)
              +------+------+
                     |  HTTP on a private network; X-Identity-Token in the mode authzen
              +------v------+        server.ops_listen: /livez /readyz /metrics
-             |    Hune    | <----- orchestrator and Prometheus, on a private network
+             |    Hune    | <----- platform and Prometheus, on a private network
              +--+---+---+--+---+-------------+
                 |   |   |      |             |
      HTTPS      |   |   | file |  HTTPS      |  HTTP or HTTPS
@@ -1293,7 +1293,7 @@ The names of the tests in this section are the layers of section 16:
 | T57 | Availability | A result with a huge number of states makes the page slow: 100,000 states that change at each sample, or a status history of 100,000 points. | The cap `MAX_TIMELINE_SEGMENTS` of 10,000 segments or cells, and the rule of half the width for a status history. The panel draws nothing above the cap and shows a message (9.19c). | Front units: the cap and the time of the model. Browser suite: B114. |
 | T58 | Data, identity | A state text, a mapping text or a row name carries markup, a script or a very long text. | The page draws the text on a canvas with `fillText` and builds the tooltip and the legend with `textContent`. The text is cut to the box. No HTML is built from data (9.1). | Browser suite: B112 and B115 with hostile texts. Front units: FE-33. |
 | T59 | Data | A viewer sends SQL through the annotation route. | The route has the index and the etag only. It names a saved annotation. The body has no SQL member (6.21a, 7.37). | API suite: a body with an SQL member gives 400. The route has no way to run another text. |
-| T60 | Data | The SQL of an annotation reads or changes more than a panel can. | The same pipeline: the property P, the statement check of the kind, the read-only account, the admission and the limits (7.37). `dashboard.read` and the ceilings (11.21, 11.24). A `postgres` source adds the statement check of 7.25 and the read-only role of 8a.13. A `mongodb` source adds the grammar of 7.30 to 7.32, the property PM (7.35) and the role of 8b.13 (ID-K142, ID-K333). | API suite: the tests of the annotation route on each kind of source, with the cases of the options route (16.3). Container suites: PS17 and MS20 (16.17, 16.9b). |
+| T60 | Data | The SQL of an annotation reads or changes more than a panel can. | The same pipeline: the property P, the statement check of the kind, the read-only account, the admission and the limits (7.37). `dashboard.read` and the ceilings (11.21, 11.24). A `postgres` source adds the statement check of 7.25 and the read-only role of 8a.13. A `mongodb` source adds the grammar of 7.30 to 7.32, the property PM (7.35) and the role of 8b.13. | API suite: the tests of the annotation route on each kind of source, with the cases of the options route (16.3). Container suites: PS17 and MS20 (16.17, 16.9b). |
 | T61 | Data, identity | Script injection through the title, the text or a tag of a mark (XSS). Grafana renders HTML in the text. | The server refuses the form of an HTML tag and the control characters (7.37, rule 9). The page writes each text with `textContent`, never with `innerHTML`, and draws the marks on a canvas (9.19d). The CSP stays as it is (9.4). | Unit: 42 hostile texts give `bad_chars`. Front unit: the card is built with a fake document, and no element comes from data. Browser case B122. |
 | T62 | Data | Text that looks like another text: a bidirectional control or a control character changes the order or hides a part of a text. | The server refuses U+202A to U+202E, U+2066 to U+2069, U+200B to U+200F, U+061C, U+2028, U+2029, U+FEFF and the controls (7.37). | Unit: the characters of the list. |
 | T63 | Availability | An annotation query returns a huge number of marks, or the page runs a query for each panel or for each hover. | 8 annotations at most, 1,000 rows at most for each query (a fail-closed error), 2,000 marks at most for each panel (a fail-closed note), one query for each annotation and each trigger, queued after the panels (4.35, 7.37, 9.19d). | Server tests: 1,000 and 1,001 rows on a `clickhouse` and a `mongodb` source, and on real servers in PS17 and MS20. Browser cases B121 and B123: the count of requests and the cap. |
@@ -1323,13 +1323,13 @@ The names of the tests in this section are the layers of section 16:
 | T95 | Availability | A heavy stored version blocks the async workers through a restore or a read of the history. | The validation of a version runs in `spawn_blocking`, with a permit that comes before the store read (6.17, 6.18, 6.27). The names of 6.14 are made when the catalog reads the document (5.8). | API suite: `/api/session` stays below 100 ms while 2 times the workers restore and read a heavy version. The first read of a dashboard does not make the names. |
 | T96 | Availability | A document with a huge number of errors or warnings makes a huge answer. | The list of errors stops at `MAX_ERRORS` items and the list of warnings at `MAX_WARNINGS` items. The last item says that the list stops (4.35, 4.36, 6.13). | API suite: 214 errors and 2,048 warnings give 200 items each. |
 | T97 | Data | A fault of the pre-pass skips a `source.query` question of a save. | The check after the validation: a source that the decision did not ask gives 500, and Hune writes nothing (11.21). | API suite: an injected pre-pass that misses a source gives 500 and no write. Unit: the pre-pass equals the sources of each valid document of the corpus. |
-| T98 | Data | A subject without a grant compares the `403` of a uid or a folder that exists with the `403` of one that does not exist. The review of 2026-11-16 found the member `action`: `dashboard.read` for an unknown uid, `dashboard.write` or `source.query` for a uid that exists. | The member `action` is the use of the route (11.30). Both paths do the same work before the decision: no store read, no validation, and the pre-pass for a create and a save (11.20, 11.23). On a write route, both paths send the same number of PDP requests with the same others, and neither uses a kept answer: the question of 11.23 and the questions of a write route are never kept (11.23, 11.27). This residual of the review of 2026-11-21 is closed (decision ID-K325). | API suite: on each route that names a uid or a folder, the two answers are equal byte for byte, and neither request reads the store or validates (decision ID-K321). On each write route, with `cache_ttl` of 0 s and of 30 s, a subject with no grant and a subject with `source.query` send three requests for each item: each request sends the same PDP requests and questions, and reads and writes no kept answer. On a read route, the question of 11.23 goes to the PDP at each request (decision ID-K325). |
-| T99 | Availability | Many restores with a wrong `If-Match` hold the store lock while the store validates a heavy version again. The review measured 11.6 s for the slowest of 30 restores at the same time. | A restore validates its version one time, in `spawn_blocking`, before the store. Under its lock, the store reads only the metadata of the version and the current document, then it compares `If-Match` and the folder (6.18, 12.16). | API suite: one restore gives one validation. A move ends within 200 ms while 16 clients restore a heavy version with a wrong `If-Match`. Store suite: SC-26 and SC-28 (decision ID-K321). |
+| T98 | Data | A subject without a grant compares the `403` of a uid or a folder that exists with the `403` of one that does not exist. The member `action` can show it: `dashboard.read` for an unknown uid, `dashboard.write` or `source.query` for a uid that exists. | The member `action` is the use of the route (11.30). Both paths do the same work before the decision: no store read, no validation, and the pre-pass for a create and a save (11.20, 11.23). On a write route, both paths send the same number of PDP requests with the same others, and neither uses a kept answer: the question of 11.23 and the questions of a write route are never kept (11.23, 11.27). This residual of the review of 2026-11-21 is closed. | API suite: on each route that names a uid or a folder, the two answers are equal byte for byte, and neither request reads the store or validates. On each write route, with `cache_ttl` of 0 s and of 30 s, a subject with no grant and a subject with `source.query` send three requests for each item: each request sends the same PDP requests and questions, and reads and writes no kept answer. On a read route, the question of 11.23 goes to the PDP at each request. |
+| T99 | Availability | Many restores with a wrong `If-Match` hold the store lock while the store validates a heavy version again. One measure gave 11.6 s for the slowest of 30 restores at the same time. | A restore validates its version one time, in `spawn_blocking`, before the store. Under its lock, the store reads only the metadata of the version and the current document, then it compares `If-Match` and the folder (6.18, 12.16). | API suite: one restore gives one validation. A move ends within 200 ms while 16 clients restore a heavy version with a wrong `If-Match`. Store suite: SC-26 and SC-28. |
 | T100 | Data, availability | A cell value of a column with `inspect` carries markup or a script (XSS), or it is very long or very deep, so that the drawer "Inspect value" blocks the page. | The page writes the value with `textContent` only, never with HTML. Only `JSON.parse` reads the value, and the indent keeps the tokens. The block has a limit of 1,048,576 UTF-16 code units, the indent stops at the same limit, and a text with a 65th level of objects and arrays gets no indent (9.20). CSP as in 9.4. | Front unit: `table_inspect.test.mjs` (hostile values with a fake `document`, the limits). Browser case B213. |
 | T101 | Data | A viewer sends a value for a query parameter of ClickHouse (`{name:Type}`) to change the statement. An author writes a loose form, a type such as `Identifier`, or author text that makes a new form. | The value goes in the URL as `param_<name>` and never in the SQL text (property PQ). Only the strict form, with a closed list of 8 types and a shape for each kind of variable, at save and at run. A second scan of the final text refuses a form that the stored text has not. Each value passes the grammar of its type before any byte to the source. The caps are 32 names, 1,000 items and 4,096 bytes. A status 414 or 431 of a proxy changes no state of the source (7.6a, 8.5). | Unit: each loose form, the grammar of each type, PQ with seeded random values, a forged `{x:Identifier}`. ClickHouse suite: C40, the round trip of a hostile set for each type. API suite: A140 and A141. |
 | T103 | Data | A viewer sends ad hoc filters (`$__adhocFilters`, 7.10a) to change the statement, to read a column that the author did not list, or to find hidden values by bisection. A git document or a change of the configuration names a column that the operator removed. | The key is only compared, byte for byte, with the keys of the variable and with `clickhouse "<id>".adhoc_columns`; the identifier text comes from the configured string, in backquotes. The operators are `=` and `!=` only, so no bisection with `<` or `>`. Each value is a string literal with the escapes of 7.8, and the property P checks it. The caps are 16 filters and 1,024 bytes for each value. The macro MUST be one term of the top-level `AND` of the `WHERE` or `PREWHERE` clause of the outer statement, so a filter never adds a row that the rest of the clause refuses. A `LIMIT` or an aggregate can still show other rows (7.10a, rule 4). A fault gives `422` before any source query, and a filter is never ignored. The log holds the count and the keys, never a value (4.10c, 7.7a, 7.10a, 13.12). The `sql_sha256` of `query.run` is a fingerprint of the values: treat the log as `system.query_log` (12.15). | Unit: seeded hostile values through the macro (P holds, each literal decodes to its value), a test that no byte of the request key reaches the SQL, the place rule, the save checks. API: an unknown key, an unknown operator and 17 filters give 422 and no source query; a change of the list fails closed. ClickHouse suite: the comparison of a string literal with each column type. Browser: B218, B219. |
 | T104 | Data, availability | A log line of the logs panel (4.33f, 9.19h) holds markup, a script, a URL, a bidirectional control or a very long text. The text comes from the data source, so any person who writes logs can put such a text on the page of a viewer. A frame of many lines or of very long lines can also block the page. | The page writes each time, level, body, field name and field value with `textContent` only: no markup, no attribute and no link come from the text. Each text has `unicode-bidi: isolate`, so a control character changes the order inside its own element only. The level is a closed value of 7.16e, and its colour comes from a class of a closed list. The page draws 10,000 lines at most, 10,000 characters of a body or a value, and 2,000,000 characters of all the bodies (9.19h, section 4). The level scan is one linear pass. The caps of 8.3 bound the frame before it comes to the page. | Front: FE-81 and the hostile lines of `logs_panel.test.mjs` (no markup, no event attribute, the caps, the time of 10,000 lines). Browser: B221. |
-| T105 | Data, privacy | A dashboard sends data of the page to a host outside Hune through the map: a tile URL in the document, a value in the URL of a tile, a view that follows the data, or a policy that permits more than the tile host. The tile host learns the address of each viewer and the area of the map. | The feature is off by default. The tile source comes only from the closed block `geomap` (13.12c): value form only, no environment variable, the strict grammar of 13.13. The document holds no tile URL (4.33g). The policy gets one source from the parsed parts only, in `img-src`, and `connect-src` does not change (12.8). The URL of a tile holds three whole numbers only. With tiles, the view `fit` does not apply. A tile is an image with `crossOrigin` "anonymous" (no cookie) and `referrerPolicy` "no-referrer". W9 and the privacy note of 12.8b tell the operator (decision ID-K328). | Unit: each refusal of the grammar (the shared list FE-85), the header from the parts, the header of 12.8 byte for byte with no block, the session member. Front unit FE-85. Browser cases B226 and B227 (no Referer, no cookie, z/x/y only, no request off the page origin with no block). |
+| T105 | Data, privacy | A dashboard sends data of the page to a host outside Hune through the map: a tile URL in the document, a value in the URL of a tile, a view that follows the data, or a policy that permits more than the tile host. The tile host learns the address of each viewer and the area of the map. | The feature is off by default. The tile source comes only from the closed block `geomap` (13.12c): value form only, no environment variable, the strict grammar of 13.13. The document holds no tile URL (4.33g). The policy gets one source from the parsed parts only, in `img-src`, and `connect-src` does not change (12.8). The URL of a tile holds three whole numbers only. With tiles, the view `fit` does not apply. A tile is an image with `crossOrigin` "anonymous" (no cookie) and `referrerPolicy` "no-referrer". W9 and the privacy note of 12.8b tell the operator. | Unit: each refusal of the grammar (the shared list FE-85), the header from the parts, the header of 12.8 byte for byte with no block, the session member. Front unit FE-85. Browser cases B226 and B227 (no Referer, no cookie, z/x/y only, no request off the page origin with no block). |
 | T106 | Availability, integrity | A hostile or broken tile host sends large images, images of another size, slow answers or redirects, or a map makes many requests to the host, which then refuses the instance. | The page asks only for the tiles of a map in the viewport, 200 ms after the last pan or zoom, with 6 requests in flight on a page, 256 tiles for one view, no prefetch and a cache of 256 tiles. It does not ask again for a failed tile in the same view, also after a refresh or a new result: the view and its failed tiles stay through a new draw of the map. It drops a tile that is not 256 x 256. The cache keeps decoded bitmaps, 64 MiB at most: the image and its downloaded bytes go after the decode. A host with no CORS header gives no tile. The policy permits only the path of the template, so a redirect to another host gives no tile. An image runs no script (9.19i). Residual risk: the page cannot cap the downloaded bytes of a tile, because it loads the tile as an image and `connect-src` stays `'self'`. A hostile tile host can use the bandwidth of each viewer (12.8b). | Front unit FE-85 (the queue, the cache of bitmaps and their close, the caps, the size check, and the real panel frame through the refreshes). Browser case B227 (6 in flight, the delay after a pan, CORS fail closed, a tile of 512 px, one request for each failed tile through refreshes of 10 s, and the memory of 24 tiles of 16 MiB). |
 
 ### 12.5 The open mode warning
@@ -1342,8 +1342,8 @@ In the mode `open`, each request that reaches `server.listen` can read each dash
 `server.editing = true`, it can also change each dashboard. A change of the SQL runs that SQL with the ClickHouse
 account of Hune. The mode `open` is thus safe only behind a proxy that authenticates each request.
 
-At the cutover, the reference deployment uses the mode `open` (section 15). Its nginx guards the whole prefix with `auth_request`, as it
-guards the prefix `/grafana/` of Grafana now.
+The mode `open` fits a deployment where the proxy guards the whole prefix with `auth_request`. A proxy can guard the prefix
+`/grafana/` of a Grafana instance in the same way.
 
 ### 12.6 Deployment rules
 
@@ -1353,7 +1353,7 @@ These rules apply to each deployment. The examples of section 17 follow them.
 2. In the mode `authzen`, Hune MUST receive requests only through the edge (P 9.4). Use a firewall, a network policy or
    a private network.
 3. Do not publish `server.listen` or `server.ops_listen` to an untrusted network.
-4. The proxy MUST NOT route a public path to `server.ops_listen`. Only the orchestrator and the monitoring reach it.
+4. The proxy MUST NOT route a public path to `server.ops_listen`. Only the container platform and the monitoring reach it.
 5. The proxy terminates TLS. The link from the proxy to Hune is on a private network or on the loopback interface.
 6. The proxy passes the header `Host` unchanged, or sets `X-Forwarded-Host`. The write guard needs it (12.7).
 7. The proxy adds `Strict-Transport-Security`. It does not replace the headers of 12.8.
@@ -1361,8 +1361,7 @@ These rules apply to each deployment. The examples of section 17 follow them.
 9. The keep-alive timeout of the proxy to Hune is less than `server.idle_timeout`.
 10. In the mode `authzen`, the edge replaces the token header that a client sends (P 9.1).
 
-An example for the reference deployment, with `server.base_path = "/dashboards/"`. Copy the `auth_request` lines of the current
-location `/grafana/`:
+An example with `server.base_path = "/dashboards/"`. Copy the `auth_request` lines of the location that guards your Grafana instance:
 
 ```nginx
 location /dashboards/ {
@@ -1380,8 +1379,7 @@ address of the host (`127.0.0.1`).
 
 ### 12.7 The write guard
 
-A page of another site must not use the browser of a person to change a dashboard or to run a query. The edge of
-The reference deployment and a ProcurAuth edge both authenticate the browser with a cookie. A hostile page can make the browser send
+A page of another site must not use the browser of a person to change a dashboard or to run a query. A proxy with `auth_request` and a ProcurAuth edge both authenticate the browser with a cookie. A hostile page can make the browser send
 that cookie. Thus the guard applies in both modes.
 
 Each `POST`, `PUT` and `DELETE` on `server.listen` passes the guard before Hune reads the body. This includes
@@ -1425,7 +1423,7 @@ The block `geomap` (13.12c) changes the value of `img-src` and no other directiv
 
 Example: the template `https://tiles.example.org/osm/{z}/{x}/{y}.png` gives `img-src 'self' data: https://tiles.example.org/osm/`. Hune builds the header one time at start from the parsed parts of 13.13. Thus a `;`, a `,`, a blank or a quote mark cannot reach it.
 
-Without the block, the header is the value of the table, byte for byte. The refusal of 6.27 for a full connection keeps the value of the table, because Hune writes it before it reads a request. A unit test checks the three cases (decision ID-K328).
+Without the block, the header is the value of the table, byte for byte. The refusal of 6.27 for a full connection keeps the value of the table, because Hune writes it before it reads a request. A unit test checks the three cases.
 
 The cache headers:
 
@@ -1433,7 +1431,7 @@ The cache headers:
 |---|---|
 | Each answer under `/api/`, the two ProcurAuth routes, and each error | `no-store` |
 | The shell of the pages (`/`, `/d/{uid}[/{slug}]`) | `no-cache` |
-| A file under `/static/{build-hash}/` | `private, max-age=31536000, immutable` (section 9). A shared cache in front of the edge cannot give the file to a client that has no token (decision ID-K315). |
+| A file under `/static/{build-hash}/` | `private, max-age=31536000, immutable` (section 9). A shared cache in front of the edge cannot give the file to a client that has no token. |
 
 The page renders each value from a dashboard or from a result with `textContent` or on a canvas, never with
 `innerHTML`. A data link accepts only an `http` URL, an `https` URL or a relative URL. A relative URL
@@ -1452,7 +1450,7 @@ The heatmap and the histogram draw on the canvas of the chart engine. The colour
 
 ### 12.8a Compression and BREACH
 
-With `server.compress_static = true` (the default, 13.8), Hune sends a gzip copy of a static file of a text type (9.3). It compresses no other answer. This section gives the security reasons (decision ID-K304, to re-read by the owner).
+With `server.compress_static = true` (the default, 13.8), Hune sends a gzip copy of a static file of a text type (9.3). It compresses no other answer. This section gives the security reasons.
 
 BREACH and the attacks of its type (TIME, HEIST) read a secret from the size of compressed answers. Such an attack needs all of these conditions:
 
@@ -1477,7 +1475,7 @@ A later change can compress another answer only after a written proof. The proof
 
 ### 12.8b The tile source of the map: privacy
 
-The map of 9.19i can draw tiles of a host outside Hune. These rules apply (decision ID-K328, to re-read by the owner):
+The map of 9.19i can draw tiles of a host outside Hune. These rules apply:
 
 - The feature is off by default. Without the block `geomap` (13.12c), no page contacts a host other than Hune, and the policy of 12.8 does not change.
 - With the block, the browser of each viewer contacts the tile host for each tile of a view. The host gets the address of the viewer, the `User-Agent`, the `Accept-Language`, the time and the rate of the requests. It also gets the header `Origin` with the origin of Hune, and the tile coordinates z, x and y. The coordinates tell the area that the viewer looks at, and this is often the area of the data.
@@ -1504,7 +1502,7 @@ Section 7 gives the complete rules. In short:
 - The macro `$__adhocFilters` is one term of the top-level `AND` of the `WHERE` or `PREWHERE` clause of the outer statement (7.10a, rule 4). So a filter never adds a row that the rest of the clause refuses. The rule is about the clause and not about the result. A `LIMIT`, an aggregate or a window function can still show other rows, because the filter removes rows first.
 - The syntax tree of the SQL area is never a security check. It never changes what the server accepts or refuses, and a fault of the tree never stops a save or a run (10.3c, rule 1).
 
-The exposure of a listed column (decision ID-K329). Each column of `clickhouse "<id>".adhoc_columns` is exposed to each viewer of each dashboard on that source whose SQL has `$__adhocFilters`. With `=` and `!=`, a viewer can test a guess of a value and read the count or the sum that the panel shows. A viewer can thus learn which values a listed column holds in the rows of the panel. List only the columns that each viewer of the dashboards of the source may read. The list is empty by default: with the key absent, no filter applies on the source.
+The exposure of a listed column. Each column of `clickhouse "<id>".adhoc_columns` is exposed to each viewer of each dashboard on that source whose SQL has `$__adhocFilters`. With `=` and `!=`, a viewer can test a guess of a value and read the count or the sum that the panel shows. A viewer can thus learn which values a listed column holds in the rows of the panel. List only the columns that each viewer of the dashboards of the source may read. The list is empty by default: with the key absent, no filter applies on the source.
 
 For a `postgres` source, the same rules hold with the dialect of 7.19 to 7.26. The SQL goes in one Parse message, never in a URL and never by the simple protocol. The first word is `SELECT`, `WITH`, `VALUES` or `TABLE`. The role of 8a.13 and the read-only transaction are the boundary (12.19).
 
@@ -1654,7 +1652,7 @@ These values are permitted in a log line:
 
 The values of the query parameters of 7.6a travel in the request URI to ClickHouse, as `param_<name>` (8.3). ClickHouse writes this URI to its own log at the level `debug` or `trace`. A proxy in front of ClickHouse can write it to its access log. The operator keeps the ClickHouse log at the level `information` or higher, or treats that log as data of the same class as `system.query_log`.
 
-The table `system.query_log` already holds the final SQL, with the values of the text form of 7.6. ClickHouse 26.8 also writes the statement there with the value of each query parameter in place of its form (case C41). Thus query parameters add no new class of data to that table (decision ID-K330).
+The table `system.query_log` already holds the final SQL, with the values of the text form of 7.6. ClickHouse 26.8 also writes the statement there with the value of each query parameter in place of its form (case C41). Thus query parameters add no new class of data to that table.
 
 The hash `sql_sha256` of the event `query.run` (14.7) is a fingerprint of the values. The expanded SQL holds each value of the text form of 7.6 and each value of an ad hoc filter (7.10a). A person with the log and the stored SQL can compute the hash for a guessed value. When the value has few possible texts, this person can thus find the value offline. The values of the query parameters of 7.6a are not in the expanded SQL, so the hash does not show them. Treat the log of Hune as data of the same class as `system.query_log`, with the same access control and the same retention.
 
@@ -1772,8 +1770,7 @@ The codes `server_busy`, `request_timeout`, `uri_too_long`, `headers_too_large`,
 - A valid user can load ClickHouse up to the limits of 12.16. The limits bound the cost. They do not remove it.
 - Differences of time can show that an operation reached the PDP or the store. Hune makes the body, the headers and
   its own work the same for an item that exists and one that does not exist (11.23, T98). On a write route, both
-  items also send the same number of PDP requests. Neither uses a kept answer, so this residual is closed (decision
-  ID-K325). Two differences stay:
+  items also send the same number of PDP requests. Neither uses a kept answer, so this residual is closed. Two differences stay:
   - The PDP can take another time to evaluate the question of 11.23 than the use of the route.
   - On a read route, a second request for a uid that exists can get a kept answer in one `cache_ttl`. The question of
     11.23 never gets one (11.27).

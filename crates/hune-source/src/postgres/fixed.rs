@@ -1,4 +1,5 @@
-//! The fixed texts that Hune sends itself (8a.5, 8a.3 rule 8, ID-PG8).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The fixed texts that Hune sends itself (8a.5, 8a.3 rule 8).
 //!
 //! This is the only module that may name a function of the simple protocol (`simple_query`,
 //! `batch_execute`, `copy_in`, `copy_out`). A policy check greps for these names in the other

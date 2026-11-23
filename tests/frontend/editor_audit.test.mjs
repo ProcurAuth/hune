@@ -1,5 +1,6 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The bridge from the panel editor to the preview (10.3, 4.13): the switch "Transparent background" writes the draft, the draft gives the
-// attribute of the frame, and no rule of the editor hides the effect (decision ID-K179, owner request of 2026-11-14).
+// attribute of the frame, and no rule of the editor hides the effect.
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -54,7 +55,7 @@ test("the editor writes the switch to the draft and draws the preview again from
   assert.equal(editorJs.split('optionGroup({ key: "panel", title: "Panel options"').length - 1, 2);
 });
 
-test("no rule of the editor gives the preview a fill or an edge of its own (the root cause of ID-K179)", () => {
+test("no rule of the editor gives the preview a fill or an edge of its own", () => {
   // The rule of the preview frame keeps the place only: the fill, the edge and the overlay come from the frame (`.panel`), also in the editor.
   const rule = ruleOf(editorCss, ".peditor__top .panel.panel--editing");
   assert.match(rule, /position: absolute; inset: 0; height: auto;/);

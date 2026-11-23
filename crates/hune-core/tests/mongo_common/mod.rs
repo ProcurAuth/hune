@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers that the MongoDB tests share: a source with known lists, and short calls of the engine.
 #![allow(dead_code)]
 

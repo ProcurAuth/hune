@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The member `repeat` of a panel and of a section (4.13a): the fixture, one refusal for each error, the
 //! canonical form, the rules across members (4.34) and the limits (4.35). The member joins format 3 with
 //! no change of the version (4.42).

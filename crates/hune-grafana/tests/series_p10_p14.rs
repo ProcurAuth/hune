@@ -1,4 +1,5 @@
-//! Wave H, items P10 and P14 (decision ID-K326, importer row I44): the importer maps `custom.gradientMode` of a time series and of a bar
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Items P10 and P14 (importer row I44): the importer maps `custom.gradientMode` of a time series and of a bar
 //! chart, and the cosmetic series members `lineStyle.dash`, `scaleDistribution.log` 2, `spanNulls` as a number, `barAlignment`,
 //! `axisCenteredZero`, `axisWidth`, `axisBorderShow` and `axisColorMode` (4.18, 4.28, 4.30, 15.6). `symlog` stays unsupported.
 
@@ -180,7 +181,7 @@ fn the_dash_array_maps_to_line_dash_array() {
 
 #[test]
 fn the_panels_of_the_plugin_examples_import_with_no_item_for_these_members() {
-    // The custom members of four panels of the ClickHouse plugin 4.5.1 examples (measure M1 of wave H): the two gradient time series
+    // The custom members of four panels of the ClickHouse plugin 4.5.1 examples (measure M1 of the later options): the two gradient time series
     // of "Query Analysis", a bar chart of "Data Analysis" and the time series with `axisWidth` of "Data Analysis".
     let hide = json!({"legend": false, "tooltip": false, "viz": false});
     let requests = json!({"axisLabel": "", "axisPlacement": "auto", "barAlignment": 0, "drawStyle": "bars", "fillOpacity": 0, "gradientMode": "opacity",

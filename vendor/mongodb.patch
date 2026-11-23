@@ -11,7 +11,7 @@
 -                        });
 +                    // hune: the original reads AZURE_FEDERATED_TOKEN_FILE and
 +                    // AWS_WEB_IDENTITY_TOKEN_FILE. Hune reads no environment variable
-+                    // (ID-MG25): the path is the Kubernetes default.
++                    //: the path is the Kubernetes default.
 +                    let path = "/var/run/secrets/kubernetes.io/serviceaccount/token".to_string();
                      let access_token = tokio::fs::read_to_string(path).await?;
                      Ok(IdpServerResponse {
@@ -25,7 +25,7 @@
 -                                    let host = std::env::var("GCE_METADATA_HOST")
 -                                        .unwrap_or_else(|_| "metadata.google.internal".into());
 +                                    // hune: the original reads GCE_METADATA_HOST. Hune reads
-+                                    // no environment variable (ID-MG25): the host is the default.
++                                    // no environment variable: the host is the default.
 +                                    let host = "metadata.google.internal".to_string();
                                      let uri = format!(
                                          "http://{host}/computeMetadata/v1/instance/service-accounts/default/token"
@@ -42,7 +42,7 @@
      pub(crate) container: Option<RawDocumentBuf>,
  }
  
-+// hune: no variant is built any more, because the driver reads no environment variable (ID-MG25).
++// hune: no variant is built any more, because the driver reads no environment variable.
 +#[allow(dead_code)]
  #[derive(Copy, Clone, Debug, PartialEq)]
  pub(crate) enum FaasEnvironmentName {
@@ -53,7 +53,7 @@
  
 +    // hune: the original reads the environment variables of the FaaS platforms, the file
 +    // /.dockerenv and KUBERNETES_SERVICE_HOST to fill the `env` field of the client metadata.
-+    // Hune reads no environment variable (rule 5 of the owner, ID-MG25). The field stays unset.
++    // Hune reads no environment variable (configuration rule 5). The field stays unset.
      fn new() -> Option<Self> {
 -        let mut out = Self::UNSET;
 -        if let Some(name) = FaasEnvironmentName::new() {
@@ -110,7 +110,7 @@
  impl FaasEnvironmentName {
 +    // hune: the original reads AWS_EXECUTION_ENV, AWS_LAMBDA_RUNTIME_API, VERCEL,
 +    // FUNCTIONS_WORKER_RUNTIME, K_SERVICE and FUNCTION_NAME. Hune reads no environment
-+    // variable (ID-MG25): there is never a FaaS platform. `is_faas()` is always false, so the
++    // variable: there is never a FaaS platform. `is_faas()` is always false, so the
 +    // server monitoring mode `auto` always selects the streaming protocol.
      pub(crate) fn new() -> Option<Self> {
 -        use FaasEnvironmentName::*;
@@ -155,7 +155,7 @@
 -            }
 -        });
 +        // hune: the original reads OTEL_RUST_INSTRUMENTATION_MONGODB_ENABLED. Hune reads no
-+        // environment variable (ID-MG25): the default is "off".
++        // environment variable: the default is "off".
 +        static ENABLED_ENV: LazyLock<bool> = LazyLock::new(|| false);
  
          self.tracing
@@ -171,7 +171,7 @@
 -                .unwrap_or(0)
 -        });
 +        // hune: the original reads OTEL_RUST_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH.
-+        // Hune reads no environment variable (ID-MG25): the default is 0.
++        // Hune reads no environment variable: the default is 0.
 +        static MAX_LENGTH_ENV: LazyLock<usize> = LazyLock::new(|| 0);
  
          self.tracing

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The values that build the PEP and the action document (11.10, 11.18, 13.13).
 //!
 //! One structure, `PepInputs`, holds these values. Stage 2 of the configuration checks builds it from

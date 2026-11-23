@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Parser of the HCL subset of 13.3: blocks, labelled blocks, attributes and literal values.
 //!
 //! The parser keeps the line of each block and each attribute. It does not refuse an

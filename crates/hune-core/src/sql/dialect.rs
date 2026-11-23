@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The SQL dialects of the query engine (7.19).
 //!
 //! A source has a kind, and the kind gives the dialect of its SQL. The engine is one program with

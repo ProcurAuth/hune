@@ -1,4 +1,4 @@
-// The gradient modes of a series (4.28, 4.30, 9.19; wave H, item P10), as Grafana 12.4.2 draws them. Pure module: no DOM access.
+// The gradient modes of a series (4.28, 4.30, 9.19), as Grafana 12.4.2 draws them. Pure module: no DOM access.
 // The engine calls the paint function of a series (E43) for its fill and its line; null keeps the plain colour.
 
 import { CONTINUOUS_MODES, PANEL_BACKGROUND, QCHART, isContinuousMode, parseCss, resolveFill } from "../colors.js";

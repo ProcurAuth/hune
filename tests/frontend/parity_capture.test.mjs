@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the parity capture tool (15.14a): the normaliser, the comparison, the causes and the refusals of the command.
 // No browser, no Grafana and no ClickHouse run here: the functions of tools/parity/capture-lib.mjs are pure.
 import { test } from "node:test";

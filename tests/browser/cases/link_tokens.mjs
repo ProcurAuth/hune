@@ -1,4 +1,5 @@
-// Browser case B211 (9.18, wave H item P02): the data link tokens of Grafana 12 in a table, and a click on a link with tokens.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B211 (9.18): the data link tokens of Grafana 12 in a table, and a click on a link with tokens.
 // The first link has the form of the two links of the OTel dashboard of the ClickHouse plugin: it opens the same dashboard with
 // `${__url_time_range}`, the variables in the form `${<name>:queryparam}` and the value of the cell. The hrefs are the hrefs that
 // Grafana 12.4.2 gives for the same values (measured on 2026-11-22). A text variable with `javascript:alert(1)` gives no link.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-73: merge and join_by_field on lists of frames (9.21a, rules 6 and 7).
 import test from "node:test";
 import assert from "node:assert/strict";

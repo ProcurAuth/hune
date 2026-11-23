@@ -1,4 +1,5 @@
-//! Wave H, step 0 (decision ID-K326, case I36 of 16.13): the data source variable and `__inputs` by the source map
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Step 0 (case I36 of 16.13): the data source variable and `__inputs` by the source map
 //! (D01, P00), a panel that has the `y` of its row (D03), and the format 2 of the plugin on a panel that is not a
 //! logs panel (D07). The forms v1, v2alpha1 and v2beta1.
 

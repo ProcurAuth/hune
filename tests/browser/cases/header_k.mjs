@@ -1,7 +1,8 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B69 to B71, B90, B150 and B151 (9.6, 9.9, 9.25, 10.2, 10.13, 9.29): the header of wave K.
 // B150: the four fixed buttons (time control, switch Edit, theme selector, More actions) keep their x and y when the edit mode starts and
-//       ends (ID-K177), at 1920, 1280, 900, 768 and 390 px, light and dark; no frame between; the tab order is the visual order.
-// B151: the panel editor has no row for the back button (ID-K178): the editor gains the 48 px of the old row at 1920, 1280, 768 and 390 px,
+//       ends, at 1920, 1280, 900, 768 and 390 px, light and dark; no frame between; the tab order is the visual order.
+// B151: the panel editor has no row for the back button: the editor gains the 48 px of the old row at 1920, 1280, 768 and 390 px,
 //       and the crumb of the dashboard is the way back from each origin (the panel view, edit mode, the dashboard), with the focus rule.
 // B90: the button Add of the edit mode: a split button (Add panel with one click, a menu for Add section and the placement of a variable),
 //      the icon only at 900 px and below, the keyboard, and the items that left the menu More actions.
@@ -208,7 +209,7 @@ export const cases = [
       // 1. The semantics: a button with role="switch", off, named "Edit".
       t.eq(await state(), { role: "switch", checked: "false", tag: "BUTTON", name: "Edit", bar: false }, "the switch in the view");
       t.eq(await p.eval(`document.querySelector('[data-testid="edit-bar"]')`), null, "no Save and no Revert in the view");
-      // The view has no slot for the edit mode (ID-K13): nothing is between the switch and the theme selector but one gap.
+      // The view has no slot for the edit mode: nothing is between the switch and the theme selector but one gap.
       t.eq(await rect(p, "header-edit-slot"), null, "no reserved slot in the view");
       const switchBox = await rect(p, "edit-toggle");
       const gapView = await p.eval(`document.querySelector(".theme-select__button").getBoundingClientRect().left - document.querySelector('[data-testid="edit-toggle"]').getBoundingClientRect().right`);
@@ -639,7 +640,7 @@ export const cases = [
           await sleep(200);
           const m = await p.eval(LAYOUT);
           if (m.bar) found.push(`${label}: the row .peditor__bar is still in the page`);
-          // The editor box starts at the foot of the header; its top padding is the gap of ID-K302 (B208 measures it), so the main part starts 16 px lower.
+          // The editor box starts at the foot of the header; its top padding is the gap of the header (B208 measures it), so the main part starts 16 px lower.
           if (!m.ed || Math.abs(m.ed[1] - (m.header[1] + m.header[3])) > 0.5) found.push(`${label}: the editor starts at ${m.ed && m.ed[1]}, the header ends at ${m.header[1] + m.header[3]}`);
           if (width > 900 && Math.abs(m.ed[3] - (m.win - m.header[3])) > 0.5) found.push(`${label}: the editor is ${m.ed[3]} px high, expected ${m.win - m.header[3]} (the old row took 48 px)`);
           // The way back is in the header, in view, with room, and it does not overlap the first button of the group.

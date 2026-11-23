@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser case B23 (16.10): mode `authzen` with `fake-pdp`.
 //
 // One server in mode `authzen`, one `fake-pdp` with the policy of lib/authzen.mjs, and a browser that sends the
@@ -90,7 +91,7 @@ export const cases = [
         t.eq(await menuItems(d), ["View", "View data", "Download CSV"], "panel menu has no edit entry");
         await d.press("Escape");
         await d.click(d.tid("dashboard-menu"));
-        // A reader has History (dashboard.read reads the history, 05) and Export in the menu "More actions" (ID-K14); no Delete.
+        // A reader has History (dashboard.read reads the history, 05) and Export in the menu "More actions"; no Delete.
         t.eq(await menuItems(d), ["History", "Export"], "dashboard menu of a reader: History and Export");
         await d.press("Escape");
         // The history shows (dashboard.read), with no Restore.

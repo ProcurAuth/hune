@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Reference screenshots: static HTML pages of other products, rendered from the file system (file:// URLs).
 // The harness only reads these files. It starts no server of these products and it blocks every request that is not
 // a file or a data URL, so no network or production host is contacted.

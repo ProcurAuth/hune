@@ -1,4 +1,5 @@
 #![cfg(target_os = "linux")]
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The memory of a canonical form above `MAX_DOCUMENT_BYTES` (finding D2 of the security review of 2026-11-16).
 //! The writer made the whole text (27.6 MB for `lines_split`) before the check of its size. It now measures the
 //! length first and allocates no text above the limit. This file holds one test, because the peak of the process

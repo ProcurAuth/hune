@@ -1,4 +1,5 @@
-// Browser case B92 (9.9, decisions ID-K60 to ID-K66, owner request of 2026-11-12): the time range picker is the picker of ClickHouse Dash.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B92 (9.9): the time range picker is the picker of ClickHouse Dash.
 // It checks the look of the popup, the quick ranges and their search, the recent ranges, the absolute fields, the calendar, the keys
 // (Enter, Escape, Tab, the arrows), the 160 ms motion and reduced motion, the narrow layouts, and the shift and zoom buttons.
 import { SQL, doc, panel, section } from "../lib/docs.mjs";
@@ -283,7 +284,7 @@ export const cases = [
       t.assert(await p.eval(`!document.activeElement.closest(".picker__popup")`), "the focus left the popup");
       t.eq(await p.attr(p.tid("time-picker-button"), "aria-expanded"), "false", "the button is collapsed");
 
-      // 12. The shift buttons and the zoom out stay in the time control (ID-K12): they act on the applied range.
+      // 12. The shift buttons and the zoom out stay in the time control: they act on the applied range.
       await p.goto(t.dash(UID, "refresh=off"));
       await p.idle();
       const d0 = (await params(p));

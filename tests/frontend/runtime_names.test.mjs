@@ -1,4 +1,5 @@
-// The member `names` of the answer of 6.14 (ID-K176, 9.10): the shape check of the page, and what the runtime does when the member is
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The member `names` of the answer of 6.14 (9.10): the shape check of the page, and what the runtime does when the member is
 // absent or wrong. The page never scans a query text: the server gives the names of each saved query.
 import test from "node:test";
 import assert from "node:assert/strict";

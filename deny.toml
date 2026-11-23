@@ -4,7 +4,7 @@ targets = ["x86_64-unknown-linux-musl", "aarch64-unknown-linux-musl"]
 [advisories]
 version = 2
 yanked = "deny"
-# Accepted by the owner on 2026-11-22 (decision ID-K358; to re-read): crypto-bigint 0.5 comes through p256 0.13 of procurauth-core.
+# Accepted on 2026-11-22: crypto-bigint 0.5 comes through p256 0.13 of procurauth-core.
 ignore = [
   { id = "RUSTSEC-2026-0387", reason = "Hune only verifies ES256 signatures with public keys; remove when procurauth-core moves to p256 0.14" },
 ]
@@ -13,7 +13,7 @@ ignore = [
 version = 2
 allow = ["Apache-2.0", "MIT", "BSD-2-Clause", "BSD-3-Clause", "ISC", "Unicode-3.0", "Zlib"]
 confidence-threshold = 0.93
-# Licences outside the list, each for one crate of the MongoDB driver graph (ID-MG2; pending owner, ID-MG20).
+# Licences outside the list, each for one crate of the MongoDB driver graph.
 exceptions = [
   { allow = ["CDLA-Permissive-2.0"], name = "webpki-roots" },
   { allow = ["CC0-1.0"], name = "tiny-keccak" },
@@ -22,7 +22,7 @@ exceptions = [
 [bans]
 multiple-versions = "warn"
 wildcards = "deny"
-# Change of 2026-11-22 (release 0.1.0; to re-read by the owner): the workspace crates use each other and the two
+# The workspace crates use each other and the two
 # ProcurAuth crates with no version (a path or a pinned git rev). Each crate of the workspace has `publish = false`.
 # This key accepts such dependencies for these crates only; a registry dependency with "*" still fails.
 allow-wildcard-paths = true
@@ -31,10 +31,10 @@ deny = [
   { name = "aws-lc-rs" }, { name = "aws-lc-sys" },
   { name = "reqwest" }, { name = "sqlx" }, { name = "axum" },
   { name = "rustls-native-certs" }, { name = "rustls-platform-verifier" },
-  # The MongoDB driver (ID-MG2, a local copy under vendor/ since ID-MG25) always pulls the bundled roots. Hune gives it the CA file of the block
+  # The MongoDB driver (a local copy under vendor/) always pulls the bundled roots. Hune gives it the CA file of the block
   # (tls.ca_file), and a test makes sure that the driver trusts no other root (8b.4).
   { name = "webpki-roots", wrappers = ["mongodb"] },
-  # No SRV resolver (8b.4, ID-MG7) and no AWS authentication (ID-MG2).
+  # No SRV resolver (8b.4) and no AWS authentication.
   { name = "hickory-resolver" }, { name = "hickory-proto" }, { name = "aws-config" }, { name = "aws-sigv4" },
 ]
 
@@ -42,4 +42,4 @@ deny = [
 unknown-registry = "deny"
 unknown-git = "deny"
 allow-registry = ["https://github.com/rust-lang/crates.io-index"]
-allow-git = ["https://github.com/SCcagg5/procurauth"]
+allow-git = ["https://github.com/ProcurAuth/procurauth"]

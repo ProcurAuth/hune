@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-09: data links: tokens, encoding, final URL check (9.18).
 import test from "node:test";
 import assert from "node:assert/strict";

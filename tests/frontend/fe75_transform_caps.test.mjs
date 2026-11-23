@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-75: the caps and the time of the 11 more transforms (9.21a, rules 13 and 15; 4.35; T85).
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -28,7 +29,7 @@ test("FE-75 the caps equal the table of 4.35 and the limits of the server", () =
     assert.ok(rs, `${name} is in limits.rs`);
     assert.equal(Number(rs[1].replaceAll("_", "")), value, `${name} in limits.rs`);
   }
-  // MAX_TRANSFORM_CELLS is the key `server.transform_max_cells` (owner order of 2026-11-16). The row of 4.35 gives the key, its
+  // MAX_TRANSFORM_CELLS is the key `server.transform_max_cells`. The row of 4.35 gives the key, its
   // default and its bound, and the key table of the server and the table of 13.8 hold the same two numbers. limits.rs does not hold it.
   const cells = /\| `MAX_TRANSFORM_CELLS` \| the configured value \| [^\n]*`server\.transform_max_cells` \(13\.8\): the default is ([0-9,]+)\. A file can set it from 1 to ([0-9,]+)\./.exec(doc);
   assert.ok(cells, "MAX_TRANSFORM_CELLS is in the table of 4.35, with the key, its default and its bound");

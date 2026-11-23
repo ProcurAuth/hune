@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The LZ77 step of DEFLATE (RFC 1951, 4): hash chains and the lazy match of zlib level 6.
 //!
 //! The memory is fixed: two tables of 32768 positions. The time for each byte has a limit: a search reads

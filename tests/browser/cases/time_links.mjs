@@ -1,4 +1,5 @@
-// Browser case B65 (16.10): the dashboard links (milestone F, wave 2: F19, 9.8a). A `link` with include_vars and keep_time has the URL with the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B65 (16.10): the dashboard links (the Grafana-parity work: F19, 9.8a). A `link` with include_vars and keep_time has the URL with the
 // variables and the time. A URL that the check of 4.23 refuses gives no link. A `dashboards` link lists the dashboards that have all its tags, without the
 // current one, in the order of 9.8a. A dropdown opens a menu, and a click opens the dashboard with pushState. A title with markup shows as text.
 import { doc, panel, section } from "../lib/docs.mjs";

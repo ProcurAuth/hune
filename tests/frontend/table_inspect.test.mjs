@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The drawer "Inspect value" of a table cell (9.20, 4.18 `inspect`, threat T100): the text (trim, JSON indent, depth and size limits)
 // and the dialog, built with a fake `document` (textContent only, hostile values, the copy).
 import test from "node:test";

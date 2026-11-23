@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The PostgreSQL source in the API: A48 and A49 of 16.8, the dialect that the kind of the source
 //! chooses, the error answer, and the log line of a query that reaches no server.
 //!

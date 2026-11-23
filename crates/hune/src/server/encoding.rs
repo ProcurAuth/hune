@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The header `Accept-Encoding` of a request (RFC 9110, 12.5.3) for the gzip copies of the static files (9.3).
 //!
 //! The rule is strict. A request accepts gzip only when the header names `gzip` or `x-gzip` with a weight

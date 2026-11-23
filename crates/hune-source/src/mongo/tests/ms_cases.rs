@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the cases MS02, MS03, MS06 and MS07 of 16.9b that need no server.
 //!
 //! The script `tests/ci/mongosource.sh` reports a case by the name of a test: a name that starts with

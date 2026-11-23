@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Check a file against a key table: the closed schema, the forms, the reads of `_env` and
 //! `_file`, the type and range of each value, and the modes (stage 1 of 13.19).
 

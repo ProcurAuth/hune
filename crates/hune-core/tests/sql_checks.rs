@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the checks at save (7.18): the nine faults and the three warnings.
 
 use hune_core::error::ErrorCode;

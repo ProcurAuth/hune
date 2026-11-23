@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The vectors of `test_lexer_rules` and `test_literals` of `tests/native/sql_test.cpp` of
 //! ClickHouse Dash at the commit `e970694e5e0b17b07cf187f3128af93fa1a82b76`, and the table of 7.5.
 //!

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Binary decode of the values of a row (7.16a).
 //!
 //! The client asks for the binary form of each column (8a.5). This module gives the closed list
@@ -91,7 +92,7 @@ pub(crate) struct ColumnType {
     pub array: bool,
 }
 
-/// A column type that 7.16a does not list (ID-PG12).
+/// A column type that 7.16a does not list.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub(crate) struct UnsupportedType {
     /// The name of the type: `pg_type.typname`, or the element name and `[]`.

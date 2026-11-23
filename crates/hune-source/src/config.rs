@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The configuration of one ClickHouse source. The binary builds it from its own types.
 //!
 //! The crate does not depend on the configuration types of the binary (3.3, rule 3).

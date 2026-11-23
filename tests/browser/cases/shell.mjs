@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B49 to B54 (9.6, 9.7, 9.9, 9.25): the header bar, the theme selector and the version line.
 // The controls of the home page and of the dashboard page are in the header. The theme selector is the same on every page.
 // The header is one row of 44 px at every width (wave K): History, Export and Delete and the actions of the edit mode are in the menu "More actions".

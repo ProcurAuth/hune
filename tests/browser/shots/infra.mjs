@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Infrastructure of the screenshot harness: the volume copy, the configuration and the server.
 // The harness uses the local ClickHouse container (it never starts or stops it) and the debug binary.
 import { spawn } from "node:child_process";

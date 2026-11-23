@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-42 to FE-45 (9.19e, 9.19f): the grid of raw values, the size lists, the shape that is already bucketed, the buckets of the histogram and
 // the colour scale. The vectors come from the measure of Grafana 12.4.2 (19.20g), from the rule of its code, or from the choices of Hune.
 import test from "node:test";
@@ -236,7 +237,7 @@ const longHeat = (name, les) => {
   return { wide, names: displayNames(wide), model: buildHeatmap({ fields: wide, names: displayNames(wide), options: { calculate: false }, range: { from: 0, to: 1 } }) };
 };
 
-test("FE-44 heatmap (ID-K195c): a long frame drops the prefix of the value field and the rows sort as numbers", () => {
+test("FE-44 heatmap: a long frame drops the prefix of the value field and the rows sort as numbers", () => {
   const les = Array.from({ length: 10 }, (_, i) => String(i + 1));
   const { wide, names, model } = longHeat("count", les);
   assert.deepEqual(names.slice(1), ["count 1", "count 10", "count 2", "count 3", "count 4", "count 5", "count 6", "count 7", "count 8", "count 9"], "the other panels keep the 9.22 naming");
@@ -245,7 +246,7 @@ test("FE-44 heatmap (ID-K195c): a long frame drops the prefix of the value field
   assert.equal(model.counts[0 * 10 + 9], 10, "the row 10 has the values of its own field");
 });
 
-test("FE-44 heatmap (ID-K195c): +Inf is the last row, and names that do not share the prefix keep it", () => {
+test("FE-44 heatmap: +Inf is the last row, and names that do not share the prefix keep it", () => {
   assert.deepEqual(longHeat("count", ["+Inf", "5", "1"]).model.labels, ["1", "5", "+Inf"]);
   const real = ["count 1", "count 2"];
   const fields = [{ name: "time", kind: "time", values: Float64Array.of(1, 2), nulls: new Uint8Array(2), config: {} }, ...real.map((n) => numberField(n, [1, 2]))];

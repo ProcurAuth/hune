@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The one reader of the process environment (rule R2 of 3.4, 13.23).
 //!
 //! `main` calls `CapturedEnvironment::capture_and_clear` first, before any other thread

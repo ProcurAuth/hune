@@ -1,4 +1,5 @@
-//! A restore validates its version one time, never under the store lock (6.18, decision ID-K321).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! A restore validates its version one time, never under the store lock (6.18).
 
 use super::{VolumeOptions, VolumeStore};
 use crate::types::{

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A secret text that never shows in `Debug` or `Display`.
 
 use std::fmt;

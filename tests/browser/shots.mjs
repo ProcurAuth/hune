@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Screenshot harness of the Hune front end.
 //
 // Use:  node tests/browser/shots.mjs --label before

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The span model (14.10): ids, the W3C `traceparent` header, attributes and the span data.
 //!
 //! The model holds no I/O. A caller gives the times, or the telemetry module reads the clock.

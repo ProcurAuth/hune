@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-06: units and decimals (9.15).
 import test from "node:test";
 import assert from "node:assert/strict";

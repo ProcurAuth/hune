@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The strict JSON profile J of 7.28 (J1 to J6) and the limits of `limits.rs`.
 
 mod mongo_common;

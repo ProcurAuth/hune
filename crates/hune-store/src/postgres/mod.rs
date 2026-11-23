@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The PostgreSQL backend (5.23 to 5.32).
 //!
 //! The backend sends the statements of 5.26 in the transactions of 5.27. It never migrates the

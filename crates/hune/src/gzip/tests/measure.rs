@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The measure of the encoder for the size analysis of the embedded files. It does not
 //! run by default. Run it in the release profile:
 //!

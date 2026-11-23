@@ -1,4 +1,5 @@
 #![cfg(target_os = "linux")]
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The memory of the validation of a long array of SQL lines (finding D2 of the security review of 2026-11-16).
 //! Each item had a field with two texts, and each line was copied before the check of the joined size. The joined
 //! size now comes first, and an item makes its pointer only for a message. This file holds one test, because the

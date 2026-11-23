@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The statements of 5.26. The backend sends only these statements and the transaction
 //! control of 5.27. The names P1 to P30 are the names of 5.26.
 //!

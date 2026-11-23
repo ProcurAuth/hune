@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The transformations of a panel (4.25), with the transformation table of 15.6.
 
 use hune_core::document::{PatternForm, check_pattern};
@@ -279,7 +280,7 @@ pub(crate) fn transforms(ctx: &mut Ctx, form: Form, node: Option<Node>, has_quer
                     result.items.push(out);
                 }
             }
-            // The eleven transformations of milestone F (15.6, 4.25a).
+            // The eleven transformations of the Grafana-parity work (15.6, 4.25a).
             "organize" | "calculateField" | "sortBy" | "limit" | "merge" | "reduce" | "partitionByValues"
             | "joinByField" | "seriesToColumns" | "filterFieldsByName" | "renameByRegex" | "convertFieldType" => {
                 let out = match id.as_str() {

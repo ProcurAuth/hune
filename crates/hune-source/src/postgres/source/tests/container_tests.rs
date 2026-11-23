@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Container tests of the source (16.9a): PS07 (the connection side of the read-only rule, alone), and the
 //! regression tests of the security review: the functions that run text (H1), the login class codes of a
 //! statement (M1), the verdict of the probe (M2, M3), the size of a message (M4), and a session in use at the

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the ClickHouse lexer (7.5) on the shared vectors of ClickHouse Dash.
 //!
 //! The vectors are `tests/frontend/model/sql-lex-vectors.json` of ClickHouse Dash at the commit

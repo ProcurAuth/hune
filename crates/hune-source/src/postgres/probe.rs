@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The probe and the state of a PostgreSQL source (8a.12, 8.11).
 //!
 //! The probe opens a connection and runs the setup check R0 and the account checks R1 to R9
@@ -12,7 +13,7 @@
 //!   the check, for example `R4`, and the first names (at most five). It holds no secret and no
 //!   value of the data: it holds names of the catalog only.
 //! - The run stops at the first failed check, in the order R0 to R9. It reads no advice then.
-//! - The advice checks A1 to A4 (ID-PG4) never change the state. [`advice_changes`] gives the
+//! - The advice checks A1 to A4 never change the state. [`advice_changes`] gives the
 //!   advice that differs from the last probe, so the caller writes one `source.advice` line for
 //!   each change. The line holds `source`, `check` ([`Advice::check`]) and `names`.
 //! - A fault of the probe gives `down` for a transport fault, a timeout and a server error of the
@@ -287,7 +288,7 @@ pub(crate) fn check_r3(schemas: &[String], database_create: bool) -> Result<(), 
     if names.is_empty() { Ok(()) } else { Err(Failure::names(Check::R3, &names)) }
 }
 
-/// One advice check of 8a.12 (ID-PG4).
+/// One advice check of 8a.12.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) enum AdviceCheck {
     /// A language that runs `DO` blocks.

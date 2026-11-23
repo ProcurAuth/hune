@@ -1,4 +1,5 @@
-// Browser case B222 (4.29, 9.19; wave H, item P11): the percent change and the text sizes of a stat, in both themes, against the values that
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B222 (4.29, 9.19): the percent change and the text sizes of a stat, in both themes, against the values that
 // Grafana 12.4.2 gives (tests/frontend/vectors/FE-82-stat-percent.json). The sizes follow from the box of each tile, as the rules of 9.19 say.
 import { doc, panel, section } from "../lib/docs.mjs";
 import { waitPanelsReady } from "../lib/h.mjs";

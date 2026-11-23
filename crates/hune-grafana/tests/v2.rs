@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the members that only the v2 form has (I01): layouts, elements, variable names,
 //! data source references and the transformation items.
 

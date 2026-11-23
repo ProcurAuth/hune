@@ -1,7 +1,7 @@
-// The map panel (9.19i, 4.33g, decision ID-K328): one layer of markers on the tiles of the block `geomap` of the configuration, or on a
+// The map panel (9.19i, 4.33g): one layer of markers on the tiles of the block `geomap` of the configuration, or on a
 // plain background when the server has no tile source. Hune code draws the tiles, the graticule and the markers on one canvas.
 //
-// Security rules of ID-K328: the tile source comes only from the session (6.10), and the page checks its template again with the grammar
+// Security rules of the map: the tile source comes only from the session (6.10), and the page checks its template again with the grammar
 // of 13.13. A tile is an Image with crossOrigin "anonymous" (no cookie, no HTTP auth) and referrerPolicy "no-referrer". The URL of a tile
 // holds only the three integers z, x and y. A host with no CORS header gives no tile (fail closed). The page requests a tile only for a
 // panel in the viewport, 200 ms after the last pan or zoom, with 6 requests in flight on the page at most, no prefetch and no second try
@@ -80,7 +80,7 @@ export function render(host, ctx) {
 
   // --- the view ----------------------------------------------------------------------------------------------------------------
   // `cx`, `cy` are the world pixels of the centre at the zoom `z`. The view `fit` applies only with no tile source: with tiles, the tile
-  // coordinates would tell the tile host the area of the data (ID-K328). A new draw starts at the kept view, and `fit` fits again.
+  // coordinates would tell the tile host the area of the data. A new draw starts at the kept view, and `fit` fits again.
   const sig = JSON.stringify([o.view, tiles && tiles.template, maxZoom]);
   const vkey = `${typeof ctx.linkContext === "function" ? ctx.linkContext().dashboardUid : ""}|${ctx.key ?? id}`;
   let kept = views.get(vkey);

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B130 to B137 (4.15a, 9.8d, 9.22a, 9.23, 10.3, 15.6, 9.26): several queries in one panel.
 // B130: the join and the names. B131: hidden queries. B132: failures. B133: the types. B134: the bounds. B135: mixed sources and reuse.
 // B136: the editor. B137: the import and the accessibility.

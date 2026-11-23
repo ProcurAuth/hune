@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The version, the commit and the target of the binary (17.2).
 
 /// The version of the binary.

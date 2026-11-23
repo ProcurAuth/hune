@@ -1,4 +1,5 @@
-// Browser case B63 (16.10): the zone names (milestone F, wave 2: F35, 9.9). The chart part: the labels of the x axis and the head of the tooltip
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B63 (16.10): the zone names (the Grafana-parity work: F35, 9.9). The chart part: the labels of the x axis and the head of the tooltip
 // follow the zone of the dashboard, a name of an IANA zone, whatever the zone of the browser. The cells of a `time` field and the notice of an unknown
 // name are checked too. The runner sets the zone of the browser with `Emulation.setTimezoneOverride`.
 import { doc, panel, section } from "../lib/docs.mjs";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The time zone of the page (9.19, decision F10): formatTime, the clock of a zone, and the x axis of the chart engine in a zone.
 import test from "node:test";
 import assert from "node:assert/strict";

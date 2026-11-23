@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Error codes, limits and the rules across members of the document format (4.34 to 4.37).
 //!
 //! Each test changes one place of the worked example (4.40) and checks the one error that

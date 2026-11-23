@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the states of the page (10.2a): the vectors FE-26, the round trip, the normal form and a walk of events on a model of the history.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -86,7 +87,7 @@ test("Edit from the view of a copy opens the editor of the stored panel (9.8c, r
   }
 });
 
-test("the owner's bug: panel view, Edit, leave gives the panel view and the same stack", () => {
+test("the bug: panel view, Edit, leave gives the panel view and the same stack", () => {
   const pv = { ...baseState(), page: "panel-view", panel: 2 };
   const a = nextState(pv, "edit-on", undefined, { origin: null, dirty: false });
   assert.equal(a.state.page, "panel-edit");

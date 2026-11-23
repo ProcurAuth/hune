@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Errors of the configuration (13.14).
 
 use std::fmt;

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The queries of a panel (15.6, query members) and the data sources (15.9).
 
 use std::collections::{BTreeMap, BTreeSet};

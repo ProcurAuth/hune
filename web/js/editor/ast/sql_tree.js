@@ -203,7 +203,7 @@ export function parseSql(text, dialect = "clickhouse", tokens = null) {
   const s = String(text ?? "");
   const d = dialect === "postgres" ? POSTGRES : CLICKHOUSE;
   let toks = tokens;
-  // The cap first: a text over the cap gets one `other` token that covers it, and no token object is made (ID-K146).
+  // The cap first: a text over the cap gets one `other` token that covers it, and no token object is made.
   const over = overCap(s);
   if (over >= 0) {
     return { root: node(SQL_NODE.SCRIPT, 0, s.length), tokens: toks || [{ kind: TOKEN.OTHER, start: 0, end: s.length, closed: true }], capped: { reason: "too_large", at: over } };

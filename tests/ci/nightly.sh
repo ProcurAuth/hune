@@ -1,5 +1,6 @@
 #!/bin/sh
-# Job `nightly` (16.17, 16.4, 16.16). The workflow nightly.yaml runs it. The owner can run it by hand:
+# SPDX-License-Identifier: MIT OR Apache-2.0
+# Job `nightly` (16.17, 16.4, 16.16). The workflow nightly.yaml runs it. A maintainer can run it by hand:
 # tests/ci/all.sh does not run it.
 # 1,000 random seeds, the fuzz targets, the `source`, `pgsource` and `mongosource` jobs again.
 # Use: tests/ci/nightly.sh [--local]

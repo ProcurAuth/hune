@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The `Store` trait (5.3), the enum `AnyStore` (R8) and the types that the trait needs.
 
 use std::collections::BTreeMap;

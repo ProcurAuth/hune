@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """Check Markdown files against the machine-checkable rules of ASD-STE100.
 
 Use: python3 -I tools/ste_lint.py [--strict20] FILE...

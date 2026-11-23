@@ -55,7 +55,7 @@ export function frameDataset(panel, instance = null) {
   return { testid: `panel-${instance ? instance.key : panel.id}`, state: "idle", type: panel.type, ...copy, ...(panel.transparent === true ? { transparent: "" } : {}) };
 }
 
-// --- CSV of "View data" (9.11, D9 of ID-87) ----------------------------------------------------------------------------------
+// --- CSV of "View data" (9.11) ----------------------------------------------------------------------------------
 // A text cell that starts with `=`, `+`, `-`, `@`, TAB or CR gets a `'` before its first character, so that a spreadsheet reads text and
 // never a formula. A NUMBER (the display text of a numeric field: a number and a short unit) is written as it is: the sign of a
 // negative number is not a formula. Then the quote rule applies.
@@ -77,7 +77,7 @@ export function csvText(names, fields, cell, rows) {
   return `${lines.join("\r\n")}\r\n`;
 }
 
-// --- "Inspect" (9.11, F22, D8 of ID-87) ----------------------------------------------------------------------------------
+// --- "Inspect" (9.11, F22) ----------------------------------------------------------------------------------
 
 /** True when the session says that the server allows the item "Inspect": the key `server.query_inspect` is `true` (6.10). */
 export function inspectAllowed(session) {
@@ -574,7 +574,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
       build(bodyEl) {
         const shown = Math.min(total, VIEW_DATA_CAP);
         const plural = (n, word) => `${n.toLocaleString("en-US")} ${word}${n === 1 ? "" : "s"}`;
-        // The values that a log scale of a heatmap skipped (9.19e, decision ID-K183): the note stands above the table.
+        // The values that a log scale of a heatmap skipped (9.19e): the note stands above the table.
         if (instance && instance.note) bodyEl.append(el("p", { class: "view-data__meta", dataset: { testid: `view-data-${key}-skip` }, text: instance.note }));
         bodyEl.append(el("p", { class: "view-data__meta", dataset: { testid: `view-data-${key}-meta` }, text: total > VIEW_DATA_CAP ? `Showing the first ${VIEW_DATA_CAP.toLocaleString("en-US")} of ${plural(total, "row")}, ${plural(fields.length, "column")}.` : `${plural(total, "row")}, ${plural(fields.length, "column")}.` }));
         const numeric = fields.map((f) => f.kind === "number" || f.kind === "number_text");
@@ -654,7 +654,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     textView = textView || createText(panel);
     const expand = (t) => (rt.interpolateContent ? rt.interpolateContent(t) : t);
     let sig;
-    try { sig = textView.key(expand); } catch (e) { sig = "!"; } // fail closed: a thrown error never leaves the frame (ID-K108)
+    try { sig = textView.key(expand); } catch (e) { sig = "!"; } // fail closed: a thrown error never leaves the frame
     if (content.firstElementChild) content.firstElementChild.setAttribute("aria-label", titleNow() || "Text");
     if (!force && sig === textSig) return;
     textSig = sig;

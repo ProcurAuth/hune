@@ -1,4 +1,5 @@
-//! The error map of a PostgreSQL source (8a.8, ID-PG12).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The error map of a PostgreSQL source (8a.8).
 //!
 //! This module maps an error of the server to a [`SourceError`] by the SQLSTATE only, never by the
 //! message. The table of 8a.8 is the contract:
@@ -155,7 +156,7 @@ pub(crate) fn map_error(
 }
 
 /// The error of a column of a type that 7.16a does not list: `422 query_error` with
-/// `sqlstate = null`, before the query runs (8a.8, ID-PG12).
+/// `sqlstate = null`, before the query runs (8a.8).
 pub(crate) fn unsupported_type(ctx: &ErrorCtx<'_>, column: &str, type_name: &str) -> SourceError {
     // The column name and the type name come from the server catalog and the query text. They are
     // cut so that one line stays short.

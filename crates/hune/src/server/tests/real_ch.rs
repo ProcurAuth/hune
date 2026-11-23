@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The cases A18 to A24 and C05 of 16.8 against a real ClickHouse, through the server.
 //!
 //! The tests are ignored. Start a ClickHouse as `tests/ci/source.sh` does (the database

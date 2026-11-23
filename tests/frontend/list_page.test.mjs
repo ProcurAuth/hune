@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Tests of the grouping and the search of the list page (9.7).
 import test from "node:test";
 import assert from "node:assert/strict";

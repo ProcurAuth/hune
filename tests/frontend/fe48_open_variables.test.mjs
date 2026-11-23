@@ -1,4 +1,5 @@
-// FE-48 (9.10, ID-K202, ID-K203, T78): the selection of a closed and of an open variable, the typed value, the notice of a replaced value and the
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-48 (9.10, T78): the selection of a closed and of an open variable, the typed value, the notice of a replaced value and the
 // runtime that sends the notice. The vectors are in `vectors/FE-48-open-variables.json`: they come from a reference that follows 9.10, not from the code.
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -1,4 +1,5 @@
-//! The names of the saved queries (decision ID-K176, 6.14, 7.19): the JSON reader, the dependency scan
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The names of the saved queries (6.14, 7.19): the JSON reader, the dependency scan
 //! and the member `names` of a document. The golden test of the page names is `names_golden.rs`.
 
 use hune_core::document::{DocumentNames, dependency_names, referenced_names, validate};

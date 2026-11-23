@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The differences that the visual parity capture accepts (15.14c). Each rule names the section of 19.20 that lists the difference.
 // A difference that no rule matches is a fault. A rule is `{ id, section, text, match(ctx) }`.
 //
@@ -82,7 +83,7 @@ export const RULES = [
   {
     id: "log-note",
     section: "19.20g",
-    text: "Hune shows a note with the count of the values of 0 or less that a log scale skips. The note takes room under the plot (decision ID-K183).",
+    text: "Hune shows a note with the count of the values of 0 or less that a log scale skips. The note takes room under the plot.",
     match: (c) => isHeat(c) && ["plot", "marks", "colours", "canvas-size"].includes(c.check) && /of 0 or less (is|are) not on the log scale/.test(hune(c)),
   },
   {

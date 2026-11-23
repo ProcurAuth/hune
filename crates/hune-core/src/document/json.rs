@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The JSON reader of a document (4.36, steps 1 and 2).
 //!
 //! The reader is strict. It refuses a duplicate member and a depth above `MAX_JSON_DEPTH`. It

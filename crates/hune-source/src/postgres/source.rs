@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The type `PostgresSource` (8a.2, 8a.9, 8a.10, 8a.12, 8.11).
 //!
 //! A `PostgresSource` is a cheap handle (`Clone`) to the shared state of one `postgres "<id>"`

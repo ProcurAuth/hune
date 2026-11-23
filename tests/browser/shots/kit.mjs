@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Page helpers of the screenshot harness: emulation, settle, capture, hold of requests.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";

@@ -1,4 +1,5 @@
-//! The percent change and the text sizes of a `stat` (15.6, 4.29; wave H, item P11).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The percent change and the text sizes of a `stat` (15.6, 4.29).
 //!
 //! The Grafana defaults give no behaviour and stay metadata: `showPercentChange` = `false`, `percentChangeColorMode` =
 //! `standard`, and a `text` object whose members are all trivial (`{}`, a size of 0 or `null`: Grafana then fits the size).

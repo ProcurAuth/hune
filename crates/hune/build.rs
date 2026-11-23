@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Build script of the crate `hune`.
 //!
 //! It embeds each file of the directory `web/` (9.3). It makes the build list, the build hash and a

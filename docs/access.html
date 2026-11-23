@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="How Hune checks the identity token, asks the PDP and applies the decision: the resource tree, the actions, the ceilings and the errors.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Hune">
+<meta property="og:title" content="Access and ProcurAuth | Hune">
+<meta property="og:description" content="How Hune checks the identity token, asks the PDP and applies the decision: the resource tree, the actions, the ceilings and the errors.">
+<meta property="og:url" content="https://procurauth.github.io/hune/access.html">
+<meta property="og:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB. One static binary.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Access and ProcurAuth | Hune">
+<meta name="twitter:description" content="How Hune checks the identity token, asks the PDP and applies the decision: the resource tree, the actions, the ceilings and the errors.">
+<meta name="twitter:image" content="https://procurauth.github.io/hune/assets/og.png">
+<meta name="twitter:image:alt" content="Hune: dashboards over ClickHouse, PostgreSQL and MongoDB.">
+<link rel="canonical" href="https://procurauth.github.io/hune/access.html">
+<title>Access and ProcurAuth | Hune</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#fafafd" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c0e15" media="(prefers-color-scheme: dark)">
+<link rel="stylesheet" href="assets/site.css">
+<script src="assets/site.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
+    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="access.html" aria-current="page">Access</a></li><li><a href="security.html">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
+  </div>
+</header>
+<main id="main">
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.1.1</span> The mode authzen</p><h1>Access and ProcurAuth</h1><p class="lede">How Hune checks the identity token, asks the PDP and applies the decision: the resource tree, the actions, the ceilings and the errors.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#the-two-modes">The two modes</a></li><li><a href="#what-the-operator-gives">What the operator gives</a></li><li><a href="#an-example">An example</a></li><li><a href="#the-identity-token">The identity token</a></li><li><a href="#the-public-keys">The public keys</a></li><li><a href="#the-resource-tree">The resource tree</a></li><li><a href="#the-actions">The actions</a></li><li><a href="#the-questions-of-each-route">The questions of each route</a></li><li><a href="#an-unknown-uid">An unknown uid</a></li><li><a href="#the-ceilings">The ceilings</a></li><li><a href="#the-display-filter">The display filter</a></li><li><a href="#the-options-route">The options route</a></li><li><a href="#the-answer-cache">The answer cache</a></li><li><a href="#the-pdp-down-slow-or-wrong">The PDP down, slow or wrong</a></li><li><a href="#the-link-to-the-pdp">The link to the PDP</a></li><li><a href="#the-logs-and-the-metrics">The logs and the metrics</a></li><li><a href="#checklist-before-the-start">Checklist before the start</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/ACCESS.md"><code>docs/ACCESS.md</code></a> in the repository.</p><p>This document uses ASD-STE100 Simplified Technical English.</p>
+<p>This document is for the operator of Hune. It tells how to run Hune in the mode <code>authzen</code>. Section 11 of the specification is the reference. A reference such as P 9.4 is a paragraph of the ProcurAuth protocol 1.0.</p>
+<h2 id="the-two-modes"><a class="self" href="#the-two-modes">The two modes</a></h2>
+<p>The key <code>access.mode</code> is necessary. It has no default value. A file without it stops the start.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Mode</th><th scope="col">What Hune does</th></tr></thead><tbody><tr><th scope="row"><code>open</code></th><td data-label="What Hune does">Hune reads no token and asks no PDP. Each request has the subject <code>-</code>. A reverse proxy that authenticates the users MUST guard each route.</td></tr><tr><th scope="row"><code>authzen</code></th><td data-label="What Hune does">Hune checks an identity token on each request. It asks a PDP for each operation. It never trusts another header.</td></tr></tbody></table></div>
+<p>The mode <code>authzen</code> has three parts. The edge authenticates the person and signs the token. Hune checks the token. The PDP decides. Hune is the PEP.</p>
+<h2 id="what-the-operator-gives"><a class="self" href="#what-the-operator-gives">What the operator gives</a></h2>
+<p>Before the first start, the operator and Hune exchange these facts.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Fact</th><th scope="col">Direction</th><th scope="col">Key</th></tr></thead><tbody><tr><th scope="row">The id of the service</th><td data-label="Direction">Hune to the operator</td><td data-label="Key"><code>access.identity.audience</code></td></tr><tr><th scope="row">The origin of the action document</th><td data-label="Direction">Hune to the operator</td><td data-label="Key">The origin of the edge, with the path <code>/.well-known/procurauth/actions</code></td></tr><tr><th scope="row">The name of the token header</th><td data-label="Direction">Operator to Hune</td><td data-label="Key"><code>access.identity.header</code></td></tr><tr><th scope="row">The issuer of the tokens</th><td data-label="Direction">Operator to Hune</td><td data-label="Key"><code>access.identity.issuer</code></td></tr><tr><th scope="row">The public keys of the edge</th><td data-label="Direction">Operator to Hune</td><td data-label="Key"><code>access.identity.public_keys</code>, <code>_env</code> or <code>_file</code></td></tr><tr><th scope="row">The longest life of a token, and the clock skew</th><td data-label="Direction">Operator to Hune</td><td data-label="Key"><code>access.identity.max_age</code>, <code>access.identity.clock_skew</code></td></tr><tr><th scope="row">The URL and the credential of the PDP</th><td data-label="Direction">Operator to Hune</td><td data-label="Key"><code>access.pdp.url</code>, <code>access.pdp.token_env</code> or <code>token_file</code></td></tr></tbody></table></div>
+<p>With <code>server.base_path = "/"</code>, Hune serves the action document at the root. With another base path, the edge maps <code>/.well-known/procurauth/</code> to that path.</p>
+<h2 id="an-example"><a class="self" href="#an-example">An example</a></h2>
+<div class="code-wrap"><span class="label">hcl</span><pre data-copy tabindex="0" aria-label="Code example: hcl"><code>access {
+  mode = "authzen"
+
+  identity {
+    header           = "X-Identity-Token"
+    issuer           = "https://edge.example"
+    audience         = "dashboards"
+    public_keys_file = "/run/secrets/edge/jwks.json"
+    max_age          = "5m"
+    clock_skew       = "60s"
+  }
+
+  pdp {
+    url             = "https://pdp.example:4182"
+    token_file      = "/run/secrets/pdp/token"
+    ca_file         = "/run/secrets/pdp/ca.pem"
+    plain_http      = false
+    timeout         = "500ms"
+    cache_ttl       = "30s"
+    max_connections = 4
+  }
+}</code></pre></div>
+<p>Run <code>hune check-config</code> to check the file. This command builds the PEP and the action document. It sends nothing on the network. It finds each error that <code>serve</code> finds.</p>
+<h2 id="the-identity-token"><a class="self" href="#the-identity-token">The identity token</a></h2>
+<p>Hune reads the token from the header that <code>identity.header</code> names. It never reads <code>Authorization</code>, a cookie or a query parameter.</p>
+<p>A token is valid when it passes each rule of P 9.4 and the subject rule of Hune.</p>
+<ul><li>The header has one copy. The token has 16384 bytes at most.</li><li><code>alg</code> is <code>Ed25519</code> or <code>ES256</code>. <code>typ</code> is <code>JWT</code>. The header has no <code>crit</code> member.</li><li>The claims <code>iss</code>, <code>sub</code>, <code>aud</code>, <code>iat</code> and <code>exp</code> are present. <code>iss</code> and <code>aud</code> match the configuration.</li><li><code>iat</code> and <code>exp</code> are whole numbers. <code>exp</code> minus <code>iat</code> is not more than <code>max_age</code>.</li><li>The key set has the <code>kid</code> of the token. With one key, the <code>kid</code> is optional.</li><li><code>sub</code> has 1 to 256 bytes with no control character. It is not <code>-</code>, <code>external</code> or <code>import-grafana</code>.</li></ul>
+<p>A request without a valid token gets <code>401 unauthenticated</code>. The body gives no reason. When the request has a body, the answer has <code>Connection: close</code>. The log line <code>access.unauthenticated</code> gives the reason.</p>
+<p>Hune reads the keys one time at start. A change of the keys needs a restart. Use a JWK Set with an explicit <code>kid</code> for each key.</p>
+<h2 id="the-public-keys"><a class="self" href="#the-public-keys">The public keys</a></h2>
+<p><code>public_keys</code> holds PEM text or a JWK Set with 1 to 16 keys. Each key is Ed25519 or P-256. A private member, an RSA key or a duplicate <code>kid</code> stops the start. A PEM key gets the RFC 7638 thumbprint as its <code>kid</code>.</p>
+<p><code>hune print-config</code> shows each key as its type and its <code>kid</code>.</p>
+<h2 id="the-resource-tree"><a class="self" href="#the-resource-tree">The resource tree</a></h2>
+<p>Hune gives each operation a node of this tree. The service id is <code>access.identity.audience</code>.</p>
+<div class="code-wrap"><span class="label">text</span><pre data-copy tabindex="0" aria-label="Code example: text"><code>service
+├── folder     the id of a folder
+│   └── dashboard   the uid of a dashboard
+└── source     the id of a clickhouse block, a postgres block or a mongodb block</code></pre></div>
+<p>A <code>clickhouse</code> block, a <code>postgres</code> block and a <code>mongodb</code> block are each a node <code>source</code>. The access layer does not tell the three kinds apart. The PDP never gets the kind of a source. A rule of the PDP names the source id. The page gets the kind from <code>GET /api/sources</code>.</p>
+<p>A grant on a folder covers each dashboard of the folder, now and later. A grant on the service covers each node. A move changes the chain of a dashboard, so the grants of the new folder apply at once.</p>
+<p>Hune builds each chain from its own catalog. It never uses a value of the request.</p>
+<h2 id="the-actions"><a class="self" href="#the-actions">The actions</a></h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Action</th><th scope="col">Resource types</th><th scope="col">Ceilings</th><th scope="col">What it permits</th></tr></thead><tbody><tr><th scope="row"><code>dashboard.read</code></th><td data-label="Resource types">service, folder, dashboard</td><td data-label="Ceilings"><code>max_rows</code>, <code>max_duration</code></td><td data-label="What it permits">List and open dashboards. Run their saved queries. Read their history.</td></tr><tr><th scope="row"><code>dashboard.write</code></th><td data-label="Resource types">service, folder, dashboard</td><td data-label="Ceilings">none</td><td data-label="What it permits">Create, change, move, restore and delete dashboards. Change folders.</td></tr><tr><th scope="row"><code>source.query</code></th><td data-label="Resource types">service, source</td><td data-label="Ceilings"><code>max_rows</code>, <code>max_duration</code></td><td data-label="What it permits">Run a query that is not saved. Save a dashboard whose query uses the source.</td></tr></tbody></table></div>
+<p>With <code>server.editing = false</code>, Hune publishes <code>dashboard.read</code> only. It asks no question for the other actions.</p>
+<p>Two facts need care.</p>
+<ul><li><code>dashboard.read</code> gives the result of the stored SQL. This is true for each table that the SQL reads.</li><li><code>source.query</code> gives each read that the account of the source permits. For a <code>postgres</code> source, this is the role of the source (section 8a.13 of the specification). A save of SQL is the power to run that SQL with the credentials of Hune.</li><li>A grant of <code>source.query</code> gives no write on a <code>postgres</code> source. The role cannot write, the session cannot write, and the transaction is read-only.</li><li>For a <code>mongodb</code> source, <code>source.query</code> gives each read that the account of the source permits (section 8b.13 of the specification). The grammar of the query has no write stage.</li><li>A grant of <code>source.query</code> gives no write on a <code>mongodb</code> source. The account has the role <code>read</code> only, and Hune sends only read commands.</li></ul>
+<p>Give each author the same ceilings on <code>dashboard.read</code> as on <code>source.query</code>. The saved SQL runs later with the ceilings of each viewer.</p>
+<h2 id="the-questions-of-each-route"><a class="self" href="#the-questions-of-each-route">The questions of each route</a></h2>
+<p>Section 11.21 of the specification has the complete table. The questions are the same for both kinds of source. These are the main rules.</p>
+<ul><li>A read route asks <code>dashboard.read</code> on the dashboard.</li><li>A save, a restore or a create asks <code>source.query</code> on each source of the document, then <code>dashboard.write</code>. The check applies also when the SQL did not change.</li><li>A move asks <code>dashboard.write</code> on the dashboard, then <code>dashboard.write</code> on the target folder.</li><li>A query route asks <code>dashboard.read</code> and applies the ceilings of the answer.</li><li>A preview asks <code>dashboard.write</code> on the dashboard or the folder, then <code>source.query</code> on the source.</li><li><code>validate_only=true</code> asks the use question only.</li><li>The pages, the static files and <code>GET /api/session</code> need a token and ask nothing.</li><li>The action document needs no token and asks nothing.</li></ul>
+<p>Hune asks the other permissions first, in one request to the PDP. A <code>false</code> answer gives <code>403 forbidden</code>, and Hune does not ask the use.</p>
+<h2 id="an-unknown-uid"><a class="self" href="#an-unknown-uid">An unknown uid</a></h2>
+<p>An unknown uid must tell nothing to a subject without the right. Hune asks <code>dashboard.read</code> on the service. A <code>false</code> answer gives <code>403</code>. A <code>true</code> answer gives <code>404</code>. The same rule applies to an unknown folder id.</p>
+<p>Hune asks this question at each request. It never uses a kept answer, and the PEP keeps no answer to it. On a write route, Hune first asks the other permissions of the route that name only items that exist, as for a uid that exists.</p>
+<ul><li>A create and a save first ask <code>source.query</code> on each source of the document.</li><li>A move to an unknown folder first asks <code>dashboard.write</code> on the dashboard.</li></ul>
+<p>The questions of a write route also never use a kept answer. Thus on a write route, a uid that exists and a uid that does not exist send the same number of requests to the PDP.</p>
+<p>The <code>403</code> for an unknown uid equals the <code>403</code> for a uid that exists: the same status, headers and body. The member <code>action</code> of the body is the action of the use of the route. It does not name the question that the PDP refused. To find that question, read the log line <code>access.decision</code>.</p>
+<p>A create of a uid that exists asks <code>dashboard.read</code> on that dashboard. A <code>false</code> answer gives <code>403</code>. A <code>true</code> answer gives <code>409 already_exists</code>.</p>
+<h2 id="the-ceilings"><a class="self" href="#the-ceilings">The ceilings</a></h2>
+<p>A <code>true</code> answer can carry <code>max_rows</code> and <code>max_duration</code>. Hune applies the lower of the ceiling and the key of the source. The ceilings are the same for the three kinds of source.</p>
+<ul><li>For a <code>clickhouse</code> source, Hune sends the values to ClickHouse as <code>max_result_rows</code> and <code>max_execution_time</code>.</li><li>For a <code>postgres</code> source, Hune enforces the values in its own client. It counts the rows and the bytes. It sets the time limit of the query (sections 8a.6 and 8a.7 of the specification).</li><li>For a <code>mongodb</code> source, Hune enforces the values in its own client. It counts the rows and the bytes. It sends the time limit as <code>maxTimeMS</code> (sections 8b.6 and 8b.7 of the specification).</li></ul>
+<p>Hune never cuts a result. A result above a ceiling gives <code>403 ceiling_exceeded</code>. The body names the action, the ceiling and the limit. A ceiling of 0 gives the same answer before Hune sends the query. When a ceiling equals the key of the source, the ceiling is the cause.</p>
+<p>These answers are refusals.</p>
+<ul><li>A ceiling that the action does not list gives <code>403 forbidden</code>.</li><li>A ceiling that is not a whole number, or that is below 1, gives <code>503 pdp_unavailable</code>.</li><li>A <code>false</code> answer ignores its ceilings.</li></ul>
+<h2 id="the-display-filter"><a class="self" href="#the-display-filter">The display filter</a></h2>
+<p>The page shows each person the items that the person can use. The server checks each operation again. A <code>subtree</code> answer never lets an operation run.</p>
+<ul><li>The list of folders keeps the folders with <code>true</code> for <code>dashboard.read</code>.</li><li>The list of dashboards keeps the dashboards of a visible folder when the folder grant covers them. Else Hune asks one question for each dashboard.</li><li>Each folder and each dashboard carries the flag <code>access.write</code>. The list of folders carries <code>access.create</code>.</li><li><code>GET /api/sources</code> lists the sources with <code>true</code> for <code>source.query</code>. Each item has the member <code>kind</code>: <code>clickhouse</code>, <code>postgres</code> or <code>mongodb</code>. It holds no host, no user and no secret.</li></ul>
+<p>One page of dashboards asks 200 questions at most. A page can hold fewer items than <code>limit</code>. Only <code>next: null</code> marks the end.</p>
+<h2 id="the-options-route"><a class="self" href="#the-options-route">The options route</a></h2>
+<p><code>GET /.well-known/procurauth/resources</code> lists the children of a node, page by page. It needs a valid token. It has no action of its own.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Parameter</th><th scope="col">Rule</th></tr></thead><tbody><tr><th scope="row"><code>type</code></th><td data-label="Rule">Necessary: <code>folder</code>, <code>source</code> or <code>dashboard</code>.</td></tr><tr><th scope="row"><code>parent</code></th><td data-label="Rule">Necessary for <code>dashboard</code>: <code>folder%3A&lt;id&gt;</code>. Absent for the other types.</td></tr><tr><th scope="row"><code>q</code></th><td data-label="Rule">Optional search text of 256 bytes at most. It matches a substring of the id or of the label.</td></tr><tr><th scope="row"><code>limit</code></th><td data-label="Rule">Optional, from 1. A value above 50 gives 50.</td></tr><tr><th scope="row"><code>after</code></th><td data-label="Rule">The value <code>next</code> of the previous answer.</td></tr></tbody></table></div>
+<p>Hune asks the published actions for each child with the match <code>subtree</code>. It stops at the first <code>true</code> answer. A query that is not valid gives <code>400 invalid_options_request</code>.</p>
+<h2 id="the-answer-cache"><a class="self" href="#the-answer-cache">The answer cache</a></h2>
+<p>The PEP keeps the answers of the PDP for <code>cache_ttl</code> at most. The key of an answer is the subject, the action, the resource with its chain, and the match. A failure is never kept. The cache holds 16384 entries.</p>
+<p>A revoked grant can stay active for <code>cache_ttl</code> on each instance. Use <code>0s</code> to keep no answer.</p>
+<p>The PEP keeps no answer for the questions of a write route, the preview included, and for the question of an unknown uid. Hune asks them with a second PEP that has no cache, on the same link and the same pool. Thus a write route sees a revoked grant at once, and it gets <code>503</code> during an outage of the PDP.</p>
+<p>Two equal questions that wait together share one call. A page with 45 panels thus asks one question for its first refresh.</p>
+<h2 id="the-pdp-down-slow-or-wrong"><a class="self" href="#the-pdp-down-slow-or-wrong">The PDP down, slow or wrong</a></h2>
+<p>Hune fails closed. It never sends <code>context.reason</code> to the client.</p>
+<div class="tablewrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Answer</th></tr></thead><tbody><tr><th scope="row"><code>true</code></th><td data-label="Answer">The operation runs.</td></tr><tr><th scope="row"><code>false</code></th><td data-label="Answer"><code>403 forbidden</code></td></tr><tr><th scope="row">No connection, an error, or no answer in <code>timeout</code></th><td data-label="Answer"><code>503 pdp_unavailable</code>, retryable</td></tr><tr><th scope="row">No permit of the pool in <code>timeout</code></th><td data-label="Answer"><code>503 pdp_unavailable</code></td></tr><tr><th scope="row">An HTTP status other than 200, or a body that is not valid</th><td data-label="Answer"><code>503 pdp_unavailable</code></td></tr></tbody></table></div>
+<p>A kept answer still applies until its <code>cache_ttl</code> ends. The action document, the pages and <code>GET /api/session</code> still answer during an outage. <code>/readyz</code> does not change, because a restart cannot repair the PDP. Hune does not contact the PDP at start.</p>
+<h2 id="the-link-to-the-pdp"><a class="self" href="#the-link-to-the-pdp">The link to the PDP</a></h2>
+<p>The link uses <code>rustls</code> with the <code>ring</code> provider, TLS 1.2 and TLS 1.3. The trust roots are the certificates of <code>access.pdp.ca_file</code>. No other root applies. Hune sends no client certificate. It follows no redirect and uses no proxy.</p>
+<p>The PEP is synchronous. Hune runs each call in <code>spawn_blocking</code>, behind a semaphore of <code>max_connections</code> permits. The runtime has <code>16 + max_connections</code> threads for blocked work. The longest wait for one PDP request is three times <code>timeout</code>: the permit, the connection and the exchange.</p>
+<p>A call cannot stop early. When the client leaves, the call ends and gives back its permit. Its answer goes to the cache, except the answer of a question that is never kept.</p>
+<p><code>plain_http = true</code> accepts an <code>http</code> URL. Use it only on a trusted network. Hune writes a warning at start.</p>
+<h2 id="the-logs-and-the-metrics"><a class="self" href="#the-logs-and-the-metrics">The logs and the metrics</a></h2>
+<div class="tablewrap"><table><thead><tr><th scope="col">Event</th><th scope="col">When</th></tr></thead><tbody><tr><th scope="row"><code>access.unauthenticated</code></th><td data-label="When">A token is refused. The field <code>reason</code> gives the check.</td></tr><tr><th scope="row"><code>access.decision</code></th><td data-label="When">The PDP answers a question. A kept answer writes no line.</td></tr><tr><th scope="row"><code>access.pdp_failed</code></th><td data-label="When">No answer in time, a connection error, a bad status or no permit.</td></tr><tr><th scope="row"><code>access.pdp_credential_refused</code></th><td data-label="When">The PDP answers 401 or 403.</td></tr><tr><th scope="row"><code>access.pdp_invalid_answer</code></th><td data-label="When">A 200 answer is not valid.</td></tr><tr><th scope="row"><code>access.ceiling_unenforceable</code></th><td data-label="When">A <code>true</code> answer has a ceiling that the action does not list.</td></tr><tr><th scope="row"><code>access.ceiling_refused</code></th><td data-label="When">A query is above a ceiling.</td></tr><tr><th scope="row"><code>access.options</code></th><td data-label="When">A request to the options route.</td></tr><tr><th scope="row"><code>access.no_rule</code></th><td data-label="When">A route has no line in the access table.</td></tr><tr><th scope="row"><code>access.prepass_mismatch</code></th><td data-label="When">A create or a save names a source that the first read of the document did not find, so Hune asked no question for it. Hune gives 500 and writes nothing.</td></tr></tbody></table></div>
+<p>The metrics <code>hune_pdp_requests_total</code>, <code>hune_pdp_duration_seconds</code>, <code>hune_pdp_questions_total</code>, <code>hune_pdp_cache_hits_total</code> and <code>hune_pdp_pool_in_use</code> describe the PDP traffic. No log line holds a token or the credential of the PDP.</p>
+<h2 id="checklist-before-the-start"><a class="self" href="#checklist-before-the-start">Checklist before the start</a></h2>
+<ol><li>Give <code>server.listen</code> to the edge only. A wildcard host gives a warning.</li><li>Keep <code>server.ops_listen</code> away from the edge.</li><li>Put the PDP credential in <code>token_env</code> or <code>token_file</code>.</li><li>Give the CA of the PDP in <code>ca_file</code>. Keep <code>plain_http = false</code>.</li><li>Run <code>hune check-config</code>.</li><li>Read the action document at <code>/.well-known/procurauth/actions</code> through the edge.</li><li>Run the series U of <code>docs/CONFORMANCE.md</code> after each change of the access code.</li></ol></article></div>
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <h2>Hune</h2>
+        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
+      </div>
+      <div>
+        <h2>Learn</h2>
+        <ul>
+          <li><a href="getting-started.html">Getting started</a></li>
+          <li><a href="configuration.html">Configuration</a></li>
+          <li><a href="architecture.html">Architecture</a></li>
+          <li><a href="specification.html">Specification</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Run</h2>
+        <ul>
+          <li><a href="access.html">Access and ProcurAuth</a></li>
+          <li><a href="security.html">Security model</a></li>
+          <li><a href="operations.html">Operations</a></li>
+          <li><a href="reference.html">Configuration reference</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Project</h2>
+        <ul>
+          <li><a href="https://github.com/ProcurAuth/hune">Repository</a></li>
+          <li><a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a></li>
+          <li><a href="changelog.html">Changelog</a></li>
+          <li><a href="status.html">Status</a></li>
+          <li><a href="development.html">Development</a></li>
+          <li><a href="conformance.html">Conformance</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-legal">
+      <p>Hune, version 0.1.1.</p>
+      <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
+      <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

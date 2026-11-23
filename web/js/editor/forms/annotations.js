@@ -1,6 +1,6 @@
 // The form of the annotations (10.3b, 4.5b): the tab "Annotations" of the settings view.
 // A list shows the name, the source and the colour of each annotation. A click opens the form of one annotation.
-// The form has no "Run" and no preview: the route of 6.22 has no annotation (decision ID-K152). The person saves and looks at the panel.
+// The form has no "Run" and no preview: the route of 6.22 has no annotation. The person saves and looks at the panel.
 
 import { toggle, uniqueId, button, el } from "../../ui.js";
 import { allPanels } from "../draft.js";
@@ -10,7 +10,7 @@ import { cssColor } from "./colors_form.js";
 import { ANNOTATION_ADD_LIMIT, LIMITS, annotationFaults, newAnnotation, uniqueAnnotationName, withAnnotations } from "./model.js";
 import { checkChars } from "./rules.js";
 
-/** The kinds of source that an annotation can use (4.5b, decisions ID-K142 and ID-K333). A kind that a later version adds is not listed. */
+/** The kinds of source that an annotation can use (4.5b). A kind that a later version adds is not listed. */
 const ANNOTATION_KINDS = ["clickhouse", "postgres", "mongodb"];
 
 /** The sources that an annotation can use: the sources of the three kinds of `ANNOTATION_KINDS`. */

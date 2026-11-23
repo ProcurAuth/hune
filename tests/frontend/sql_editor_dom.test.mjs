@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // F42 (10.3d, 10.3f, 10.3g): the SQL area with a fake DOM. It tests the write path of the format, the own undo, the keys, the notices, the caps,
 // the band text and the fault notice. The folded view, the pair marks and the layout need a browser: the cases B170 to B177 test them.
 // The tree is never a security check: each test also looks at the save path (`onChange`) and the run (`onRun`).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The OTLP JSON encoding of `ExportTraceServiceRequest` (14.9).
 //!
 //! The writer is by hand so that the member order is fixed. The text of each string goes through

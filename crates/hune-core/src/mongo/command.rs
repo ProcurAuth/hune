@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The commands that a MongoDB source sends (8b.5, 8b.16).
 //!
 //! The enum [`MongoCommand`] is closed. It has one variant for each row of the table of 8b.5 and

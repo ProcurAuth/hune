@@ -1,4 +1,5 @@
-//! The importer of the Grafana geomap (15.6, 4.33g; decision ID-K328, item I42). The document holds no tile source: the base
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The importer of the Grafana geomap (15.6, 4.33g). The document holds no tile source: the base
 //! layer and a tile layer `xyz` give a `changed` item and leave the document. The first marker layer maps.
 
 mod common;

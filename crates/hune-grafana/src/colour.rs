@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Colours (4.19): the check and the nearest token for a Grafana colour that format 1 refuses.
 
 use hune_core::document::is_valid_colour;

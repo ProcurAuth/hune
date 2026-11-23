@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The rows of the repeat in 15.6 (4.13a): one test for each row in the v1 form and in the v2 forms, and
 //! separate tests for the default direction, `maxPerRow` with `v`, the shared row, the nested repeat and the
 //! stored copy with `repeatPanelId`.
@@ -316,7 +317,7 @@ fn a_panel_with_no_repeat_ignores_the_two_other_members() {
     assert!(first_panel(&d).get("repeat").is_none());
 }
 
-// ----------------------------------------------------------- the variable (ID-K94)
+// ----------------------------------------------------------- the variable
 
 #[test]
 fn the_variable_must_be_a_query_or_custom_variable_with_multi() {

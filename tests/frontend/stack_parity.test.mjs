@@ -1,4 +1,5 @@
-// The stacks of the time series, the bar chart and the histogram as Grafana 12.4.2 draws them (9.19, 9.19f, decision ID-K325 point 3, engine
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The stacks of the time series, the bar chart and the histogram as Grafana 12.4.2 draws them (9.19, 9.19f, engine
 // edit E33). The expected values are those that the worker stack-parity measured on Grafana 12.4.2 on 2026-11-22: 24 time series panels, 54 bar
 // chart panels and 24 histogram panels (temporary dashboards in the folder hune-parity), the tick labels and the drawn marks. The engine runs here
 // on a small fake of the DOM and of the canvas, which records the lines and the bars.

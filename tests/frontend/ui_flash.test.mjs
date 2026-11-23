@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The rules of the worker ui-flash (9.6, 9.9, 9.11, 9.25): one stable render on a reload, a header with fixed buttons, no Share feature.
 // The browser cases B58 and B59 check the behaviour in a real page. These tests check the files of web/ and the docs, so a change that
 // breaks a rule fails before the browser suite runs.
@@ -75,12 +76,12 @@ test("the controls of the header have fixed widths in every state (9.9)", () => 
   assert.match(css, /\.edit-switch \{ flex: none; width: var\(--tb-edit-w\);/);
   assert.match(css, /\.add-main \{ width: var\(--tb-add-w\);/);
   assert.match(css, /\.add-menu \{ width: var\(--tb-addmenu-w\);/);
-  assert.ok(!css.includes("--tb-save-w") && !css.includes("header-edit-slot"), "no reserved slot for Save and Revert (ID-K13)");
+  assert.ok(!css.includes("--tb-save-w") && !css.includes("header-edit-slot"), "no reserved slot for Save and Revert");
   // The title bar has no spinner of its own: the loader is the three dots of the body (9.11, 9.26).
   assert.ok(!/panel__state|stateIcon/.test(read("web/css/dashboard.css") + code("web/js/panel_frame.js")), "no spinner in the title bar of a panel");
 });
 
-test("the edit mode has no row of its own and no reserved slot: its group comes after the switch in the controls row (ID-K13)", () => {
+test("the edit mode has no row of its own and no reserved slot: its group comes after the switch in the controls row", () => {
   const dash = code("web/js/dashboard.js");
   assert.match(dash, /header\.setActions\(timeControl\.el, editSwitch\)/);
   assert.match(dash, /header\.setMore\(more\)/);

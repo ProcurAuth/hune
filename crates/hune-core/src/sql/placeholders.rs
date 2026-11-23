@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Placeholders (7.6) and formats (7.9).
 //!
 //! The functions of this file read bytes. The caller gives the byte range of a run of code tokens,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The types of the store contract (5.2) and the errors (5.6).
 
 use std::fmt;

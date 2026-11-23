@@ -43,7 +43,7 @@ function listControl(variable, rt, apply) {
     const loaded = rt.options.get(variable.name);
     const text = selectionText(variable, optionsOf(variable, loaded || []), current());
     const err = rt.optionErrors.get(variable.name);
-    // A query variable whose options loaded with no row, and that has no value, shows "No options" (9.10, ID-K208).
+    // A query variable whose options loaded with no row, and that has no value, shows "No options" (9.10).
     const none = !text && !err && variable.kind === "query" && Array.isArray(loaded) && loaded.length === 0;
     const shown = none ? "No options" : text;
     // A write that changes nothing is skipped: the registry watches the page, and a write of the same value would wake it again.
@@ -93,7 +93,7 @@ function listControl(variable, rt, apply) {
     const sel = current();
     draft = { all: sel.all, values: [...sel.values] };
     const listId = uniqueId("listbox");
-    // An open variable has an editable combobox with list autocomplete (WAI-ARIA Authoring Practices, 9.10, ID-K207): the focus stays in the field.
+    // An open variable has an editable combobox with list autocomplete (WAI-ARIA Authoring Practices, 9.10): the focus stays in the field.
     const search = el("input", free
       ? { type: "text", class: "input select__search", role: "combobox", "aria-expanded": "true", "aria-controls": listId, "aria-autocomplete": "list", "aria-label": `Search or type ${labelText}`, placeholder: "Search or type a value", autocomplete: "off", spellcheck: "false", dataset: { testid: `variable-${variable.name}-search` } }
       : { type: "search", class: "input select__search", "aria-label": `Search ${labelText}`, placeholder: "Search", dataset: { testid: `variable-${variable.name}-search` } });
@@ -124,7 +124,7 @@ function listControl(variable, rt, apply) {
       : null;
     const rows = () => [...typed.values(), ...items];
 
-    // The typed values of the draft are rows before the options, in the order of the selection, checked: the chip of the design (ID-K207).
+    // The typed values of the draft are rows before the options, in the order of the selection, checked: the chip of the design.
     function syncTyped() {
       const want = draft.all ? [] : draft.values.filter((v) => !optionValues.has(v));
       const wanted = new Set(want);
@@ -355,7 +355,7 @@ export const variableOf = (rt, name) => (typeof rt.varDef === "function" ? rt.va
 
 // One registry for each page runtime. It keeps one control for each variable and puts it in the first usable panel that holds the
 // variable, else in the bar. A panel is usable when its grid is in the page and not hidden (a collapsed section stays usable: the
-// control is then hidden with its section and the variable stays out of the bar, decision ID-K4). The registry looks again at each
+// control is then hidden with its section and the variable stays out of the bar). The registry looks again at each
 // change of the page (a MutationObserver) so that it needs no call from the pages.
 class Controls {
   constructor(rt) {

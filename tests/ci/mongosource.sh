@@ -1,11 +1,12 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `mongosource` (16.9b, 16.17): the container tests of the MongoDB source on MongoDB 7.0 and 8.0.
 # Use: tests/ci/mongosource.sh [--versions "7.0 8.0"]
 #   For each version, the script does these steps.
 #   1. It makes the passwords (random, disposable), the certificates and the key file under target/mongosource-<run>/.
 #   2. It starts five disposable containers from tests/compose/mongosource.yaml, on 127.0.0.1 only: the main
 #      server (authorization on, TLS only, --noscripting), a server with scripting on (MS18), a replica set of
-#      two members in one container (MS10, MS12; the decision ID-MG18 is open, so the set has two members, as the
+#      two members in one container (MS10, MS12; the set has two members, as the
 #      key `hosts` needs), a server that offers SCRAM-SHA-1 only and one that offers PLAIN only (MS10). The first start
 #      runs tests/fixtures/mongo-source/init.js. The ports come from the range 27101 to 27120 of 127.0.0.1.
 #   3. It runs the self check of the fixture (tests/fixtures/mongo-source/selfcheck.sh) on each server: the data,

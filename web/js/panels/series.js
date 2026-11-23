@@ -7,7 +7,7 @@ export function lastFinite(values) {
   return null;
 }
 
-// The colour of a series when its field gives none (no threshold step, or no value): one token of the series palette (ID-K70),
+// The colour of a series when its field gives none (no threshold step, or no value): one token of the series palette,
 // by the index of the series, so that several series stay apart in both themes. The engine reads the token from the page.
 export { QCHART_COUNT };
 export function fallbackColor(seriesIndex) {
@@ -36,7 +36,7 @@ const roundUp = (x, incr) => Number((Math.ceil(x / incr - 1e-9) * incr).toPrecis
  * Each side gets 10 % of the data range as room. The edge then rounds out to a tenth of the decade of that range.
  * The room never crosses 0: when the padded edge reaches 0 and the data does not cross 0, the edge is 0.
  * A flat series gets its own size (or 1 at 0) as room. The edges do NOT move to ticks.
- * `ends` (9.19 y axes rules 6 and 7, ID-K316): the hard ends `min`, `max` and the soft ends `softMin`, `softMax` of a scale, null when not set.
+ * `ends` (9.19 y axes rules 6 and 7): the hard ends `min`, `max` and the soft ends `softMin`, `softMax` of a scale, null when not set.
  * This is uPlot `rangeNum` with the scale of Grafana 12.4.2: a soft end replaces the rule of 0 on its side.
  * Returns `[min, max]`.
  */
@@ -79,7 +79,7 @@ export function histYAxis(low, high, plotH) {
 
 /**
  * The least distance in pixels between two y ticks, as Grafana 12.4.2 keeps it (`calculateSpace`): 30 px, or 15 px on a plot of
- * 150 px or less. The measure found it on 115 time series panels with plots of 19 to 817 px (9.19, decision ID-K311).
+ * 150 px or less. The measure found it on 115 time series panels with plots of 19 to 817 px (9.19).
  */
 export function yTickSpace(plotHeight) {
   return plotHeight <= 150 ? 15 : 30;
@@ -165,7 +165,7 @@ export function numberTicks(lo, hi, plotWidth, labelOf, measure, room = 11.5) {
   return make(step);
 }
 
-// ---- The y axes and the style of a series (9.19, wave 2: F16, F17) ----
+// ---- The y axes and the style of a series (9.19, the second set: F16, F17) ----
 
 export const AXIS_PLACEMENTS = Object.freeze(["auto", "left", "right", "hidden"]);
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Integration tests against a real ClickHouse (16.9, cases C01 to C13 that a local run can do).
 //!
 //! The tests are `#[ignore]`. The script `tests/ci/source.sh` starts a container on 127.0.0.1 and
@@ -957,7 +958,7 @@ mod f27 {
 }
 
 // ---------------------------------------------------------------------------------------------
-// C40 and C41 (F39, 7.6a, decision ID-K330): the query parameters of ClickHouse against the real server.
+// C40 and C41 (F39, 7.6a): the query parameters of ClickHouse against the real server.
 
 mod f39 {
     use super::*;

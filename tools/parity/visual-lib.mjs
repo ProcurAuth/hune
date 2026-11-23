@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Pure functions of the visual parity capture (15.14c). This module has no browser, no network and no file access, so
 // that a unit test can run each function (tests/tools/parity_visual.test.mjs).
 //

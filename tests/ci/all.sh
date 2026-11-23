@@ -1,6 +1,7 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # The merge gate of Hune (16.17): run each job of the gate in order. Stop at the first failure.
-# The workflow ci.yaml runs the same jobs on GitHub, as an option. The owner can run this script instead,
+# The workflow ci.yaml runs the same jobs on GitHub, as an option. A maintainer can run this script instead,
 # with no GitHub Actions and no GitHub billing, before each release.
 # Use: tests/ci/all.sh [--list] [--from JOB]
 #   (no option) runs the jobs in the order below, each with its default mode (Docker only).

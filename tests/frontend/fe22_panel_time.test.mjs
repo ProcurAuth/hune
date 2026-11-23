@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-22: the range of a panel with a time override and its note (9.8b, F18), and the zone names of 9.9 (D15, V8).
 import test from "node:test";
 import assert from "node:assert/strict";

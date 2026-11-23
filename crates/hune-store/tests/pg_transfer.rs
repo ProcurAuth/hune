@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! SC-44 and SC-47 between the volume and PostgreSQL, in both directions (5.34, 5.37, 16.14).
 #![cfg(feature = "conformance")]
 

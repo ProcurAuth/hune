@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `hune migrate-documents` (4.42): the migration of the stored documents from format 1 or
 //! format 2 to format 3.
 //!

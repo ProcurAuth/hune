@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The configuration of Hune (section 13): the key table, the checks and the typed `Config`.
 //!
 //! This module is the only code that uses the engine `hclconf` (13.2, rule 4; 16.18). It

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B102 to B109 (4.33a, 9.19b, 10.3, 10.6, 15.6): the text panel in Markdown.
 // B102: the look (computed values in both themes, the region, no query, empty content, transparent, variables in the title and the content).
 // B103: 40 hostile payloads (no element, attribute, request, dialog or CSP violation outside the rules). Chrome only: the runner drives Chrome.
@@ -621,7 +622,7 @@ export const cases = [
       for (const f of ["folders.json", "health.json", "plugin-clickhouse.json"]) cpSync(join(fx, "export", f), join(work, f));
       writeFileSync(join(work, "search.json"), JSON.stringify([{ uid: "text-panels", folderUid: "fe1x0abc2kq9" }]));
       const run = (extra) => spawnSync(BINARY, ["import-grafana", "--in", work, "--source-map", "x=prod", "--folders", join(fx, "export/folders.map.json"), "--report", join(work, "report"), "-c", s.configPath, ...extra], { encoding: "utf8", env: {} });
-      // The dry run lists the items. The owner accepts each one of them in the file of acceptance.
+      // The dry run lists the items. The operator accepts each one of them in the file of acceptance.
       const dry = run([]);
       t.eq(dry.status, 1, "a dry run with unaccepted items exits with 1: " + dry.stdout.slice(-300));
       const report = JSON.parse(readFileSync(join(work, "report.json"), "utf8"));
@@ -629,7 +630,7 @@ export const cases = [
       t.eq(items.map((i) => [i.id.split(":")[1], i.class]), [
         ["/panels/1/options/mode", "unsupported"], ["/panels/2/options/code", "dropped"], ["/panels/2/options/mode", "changed"], ["/panels/3/options/content", "changed"],
         ["/panels/4/options/content", "changed"], ["/panels/5/options/content", "changed"], ["/panels/6/repeat", "unsupported"],
-        // The `custom` variable `region` has no member `allowCustomValue`: Grafana reads it as true, Hune keeps the variable closed (15.6, ID-K206).
+        // The `custom` variable `region` has no member `allowCustomValue`: Grafana reads it as true, Hune keeps the variable closed (15.6).
         ["/templating/list/0/allowCustomValue", "changed"],
       ], "the items of the rows of 15.6");
       const accept = join(work, "accept.txt");

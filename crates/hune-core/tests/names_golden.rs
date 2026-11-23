@@ -1,4 +1,5 @@
-//! The golden test of the name scan (decision ID-K176, 6.14, 7.19).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The golden test of the name scan (6.14, 7.19).
 //!
 //! The files `tests/golden/names/*.json` hold the names that the scan of the page found for each query
 //! text and each document of the repository. The scan of the server MUST name every one of them: a missed

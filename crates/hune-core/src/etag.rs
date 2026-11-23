@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The etag of 4.39: the SHA-256 of the canonical bytes, as 64 lower-case hex characters.
 
 use sha2::{Digest, Sha256};

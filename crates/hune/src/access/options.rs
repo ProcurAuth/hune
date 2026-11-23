@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The options route (11.26): the children of a node, page by page, for a form of grants.
 //!
 //! `parse_options_query` checks the query string. `walk_options` asks the display questions of each

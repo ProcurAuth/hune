@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-15: panel reuse (9.23), with the worked document 4.40.
 import test from "node:test";
 import assert from "node:assert/strict";

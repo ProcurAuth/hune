@@ -12,8 +12,8 @@ members = [
 [workspace.package]
 version = "0.1.1"
 edition = "2024"
-license = "Apache-2.0"
-repository = "https://github.com/SCcagg5/hune"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ProcurAuth/hune"
 rust-version = "1.89"
 
 [workspace.lints.rust]
@@ -74,20 +74,20 @@ deadpool-postgres = { version = "=0.14.2", default-features = false, features = 
 tokio-postgres-rustls = { version = "=0.14.0", default-features = false }
 # The Stream trait: the PostgreSQL source reads the rows of a portal one at a time (8a.5, 8a.6). Already in the graph.
 futures-core = { version = "=0.3.34", default-features = false }
-# The MongoDB driver (8b.2, ID-MG2, granted by the owner on 2026-11-11). Only `hune-source` uses it, behind its
+# The MongoDB driver (8b.2). Only `hune-source` uses it, behind its
 # feature `mongo-driver`. No default feature: `compat-3-3-0` and `bson-3` select the API, `rustls-tls` gives
 # rustls with ring. No SRV resolver, compression, AWS auth, OpenSSL, encryption or sync API.
 mongodb = { version = "=3.10.0", default-features = false, features = ["compat-3-3-0", "bson-3", "rustls-tls"] }
 # The BSON types of the driver (the same major version as `bson-3` of the driver).
 bson = { version = "=3.1.0", default-features = false }
 # ProcurAuth PEP library (D28, 11.10): git dependency at one full commit, no default features.
-procurauth-pep = { git = "https://github.com/SCcagg5/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
+procurauth-pep = { git = "https://github.com/ProcurAuth/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
 # ProcurAuth core: identity token, keys, strict JSON (D28, 11.10).
-procurauth-core = { git = "https://github.com/SCcagg5/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
+procurauth-core = { git = "https://github.com/ProcurAuth/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
 # Test only: temporary directories for the volume tests.
 tempfile = { version = "=3.27.0", default-features = false }
 
-# The MongoDB driver is a local copy with no environment read (ID-MG25, 8b.15). `vendor/mongodb.lock` holds the
+# The MongoDB driver is a local copy with no environment read (8b.15). `vendor/mongodb.lock` holds the
 # hash of each file, `vendor/mongodb.patch` holds the edits and `tools/check-vendor-lock.sh --mongodb` checks both.
 [patch.crates-io]
 mongodb = { path = "vendor/mongodb" }

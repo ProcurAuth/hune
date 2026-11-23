@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The checks at save are linear and their lists have a cap (4.35, 6.13, 7.18, 7.36). Findings N1 and D1 of the
 //! security review of 2026-11-16: the SQL checks found the position of each item from the start of the text, and
 //! the lists of faults and warnings had no cap.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Expansion vectors from Grafana (16.13, case I15).
 //!
 //! Each file of `tests/golden/expansion/` is one vector that the capture tool `tools/parity/vectors.mjs`
@@ -235,7 +236,7 @@ fn the_interval_of_each_vector_equals_the_interval_of_grafana_unless_a_differenc
 }
 
 /// Prints the result of Hune for each vector that differs from Grafana and has no recorded difference.
-/// The maintainer uses it to write `tools/parity/vector-differences.json`:
+/// A developer uses it to write `tools/parity/vector-differences.json`:
 /// `cargo test -p hune-core --test sql_vectors -- --ignored --nocapture`.
 #[test]
 #[ignore = "helper that prints; it does not check"]

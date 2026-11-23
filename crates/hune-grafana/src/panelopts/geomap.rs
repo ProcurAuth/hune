@@ -1,4 +1,5 @@
-//! The options of the type `geomap` (15.6, 4.33g, decision ID-K328).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The options of the type `geomap` (15.6, 4.33g).
 //!
 //! The document holds no tile source: the importer drops the base layer of Grafana and the URL of an `xyz` layer
 //! with a `changed` item. The tile source of Hune is the block `geomap` of the configuration (13.12c). The first layer

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The text outputs of the configuration: `print-config` (13.20), `print-reference` (13.21)
 //! and the objects of the start log (13.22).
 

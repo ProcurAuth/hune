@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The logs panel (9.19h, 7.16e, threat T104): FE-81 (the level rules of Grafana 12.4.2), the order, the time, the caps of lines and
 // characters, hostile lines that stay text, the details row and its keys, and the time of 10,000 lines.
 import test from "node:test";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A JSON value with members in a fixed order, and the writer of the canonical layout (4.38).
 //!
 //! `serde_json` without the feature `preserve_order` sorts the members of an object. The

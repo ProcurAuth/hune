@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Restore drill (16.14, 5.37 to 5.41): export, migrate-store, import and copy-store lose nothing.
 # Use: tests/ci/restore-drill.sh [--versions "15 18"] [--binary PATH]
 #   The script needs Docker, python3 and a Hune binary. It sends nothing to a registry.

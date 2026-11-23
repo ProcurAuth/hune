@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the whole run on the synthetic export. They check the golden documents, the report,
 //! the nginx map, the acceptance, the exit codes, the folders, the uids and the links. They also
 //! check that the four input forms give the same document (I01, I03, I04, I08, I09, I11, I12).
@@ -151,7 +152,7 @@ fn strip(doc: &str, uid: &str) -> Value {
 #[test]
 fn open_custom_variable_of_the_v2beta1_export() {
     // F41, 15.6: Grafana reads an absent member as `true`. A `query` variable imports as open. A `custom` variable
-    // imports as closed unless the export says `true` (ID-K206). The v2beta1 export says `true` on its variables.
+    // imports as closed unless the export says `true`. The v2beta1 export says `true` on its variables.
     let r = accepted_run();
     let doc = |uid: &str| -> Value {
         let d = r.dashboards.iter().find(|d| d.grafana_uid == uid).unwrap();

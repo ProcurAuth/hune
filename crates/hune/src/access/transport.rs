@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The PDP transport (11.12): HTTP/1.1 over TCP, with rustls and the `ring` provider for `https`.
 //!
 //! The PEP library is synchronous and has no TLS code. This type implements its `PdpTransport`. The

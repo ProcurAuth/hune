@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The import of the whole input directory (15.4): the folders, the dashboards, the acceptance
 //! check, the redirects (15.17), the totals and the exit code (15.12).
 

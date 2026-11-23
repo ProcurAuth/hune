@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The ClickHouse dialect of the query engine (section 7).
 //!
 //! The module does no I/O. It makes the final SQL text from the stored SQL, the variable values,

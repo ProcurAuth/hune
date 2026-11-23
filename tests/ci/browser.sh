@@ -1,4 +1,5 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `browser` (16.17, 16.10): Playwright tests in the test image.
 # Use: tests/ci/browser.sh [--local]
 # The browser tests are milestone M3b. Until tests/browser/Dockerfile and tests/compose/browser.yaml

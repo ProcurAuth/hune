@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The macros and the built-in variables: names, forms and the parse of a call.
 //!
 //! The dialect `clickhouse` has [`Macro`] (7.10). The dialect `postgres` has [`PgMacro`] (7.22).

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! A fake PDP and an edge for the tests of the mode `authzen`: an in-process AuthZEN server on
 //! `127.0.0.1`, and identity tokens signed with a test key. Tests are not product code: they can
 //! use trait objects.

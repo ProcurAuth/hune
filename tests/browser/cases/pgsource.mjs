@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B44 and B45 (16.10): the PostgreSQL source in the page.
 // B44 a table with int8, numeric and timestamptz columns, a time series with `$__timeGroupAlias`, a refused function in
 // the editor, and the kind of each source in the source picker. B45 the scanner of 9.10 reads a variable after `#`.

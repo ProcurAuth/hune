@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Helpers of the editor cases (section 10).
 import { seedDocument } from "./env.mjs";
 import { sleep } from "./h.mjs";

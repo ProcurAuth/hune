@@ -1,4 +1,5 @@
-// FE-85, security review 3, finding F1 (9.19i, T106, decision ID-K328): a map keeps its view and its failed tiles through a new draw.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-85, security review 3, finding F1 (9.19i, T106): a map keeps its view and its failed tiles through a new draw.
 // The test drives the real panel frame (panel_frame.js): each refresh stores a new frame object, as the runtime does, so the frame draws the
 // map again. The ResizeObserver calls back once after observe(), as browsers do. Each tile fails, as with a host with no CORS header.
 // A failed tile is not asked again in the same view, also after a refresh. A pan, a zoom, a new size and new view options start again.

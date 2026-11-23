@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The line of a bar of a histogram stays inside the bar at its top and its bottom (9.19f section 3, E26 of the copied chart engine).
 // The engine runs here on a small fake of the DOM and of the canvas. The fake context records each `rect` of a path with the colour of the
 // next `fill`. Without the option `barInset`, the engine draws the bars as before.

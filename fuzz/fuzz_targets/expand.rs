@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Fuzz target `expand` (16.16, 7.11).
 //!
 //! Input format (a plain byte format, so a seed is easy to write):
@@ -173,7 +174,7 @@ fuzz_target!(|data: &[u8]| {
     };
     let result = run(&sql, &resolved);
     if flags & 32 != 0 {
-        // F41: the member `allow_custom_value` of a `query` variable changes nothing for the engine (ID-K200).
+        // F41: the member `allow_custom_value` of a `query` variable changes nothing for the engine.
         let plain = defs_plain(flags & 16 != 0);
         let same = resolve_values(&plain, &values).ok().map(|r| run(&sql, &r));
         assert_eq!(same, Some(result.clone()), "allow_custom_value changed a query variable");

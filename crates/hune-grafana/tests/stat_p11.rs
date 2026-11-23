@@ -1,4 +1,5 @@
-//! Wave H, item P11 (decision ID-K326): the importer maps the percent change and the text sizes of a Grafana stat
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! Items P11: the importer maps the percent change and the text sizes of a Grafana stat
 //! (15.6, 4.29). The Grafana defaults stay metadata, as the plugin samples write them (`showPercentChange: false`).
 
 mod common;

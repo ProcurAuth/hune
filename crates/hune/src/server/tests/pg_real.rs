@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The cases A47, A50 and A51 of 16.8 against a real PostgreSQL, through the server.
 //!
 //! The tests are ignored. `tests/ci/pgsource.sh` starts PostgreSQL 15 and 18 with the fixture of
@@ -264,7 +265,7 @@ fn ps17_annotations() -> Value {
     ])
 }
 
-/// PS17 (16.17): annotations on a `postgres` source through the server (7.37; decisions ID-K142 and ID-K333). The
+/// PS17 (16.17): annotations on a `postgres` source through the server (7.37). The
 /// route, the frame rules, the cap of 1,000 rows and the log line are those of a ClickHouse source.
 #[tokio::test]
 #[ignore = "needs PostgreSQL: tests/ci/pgsource.sh"]

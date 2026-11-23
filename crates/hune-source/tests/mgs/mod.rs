@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers of the container tests of the MongoDB source (16.9b).
 //!
 //! The script `tests/ci/mongosource.sh` starts disposable MongoDB servers on 127.0.0.1 and sets the
@@ -402,7 +403,7 @@ pub const ALLOWED_COMMANDS: [&str; 13] = [
 #[derive(Default)]
 struct ProxyState {
     commands: Mutex<Vec<String>>,
-    /// The raw BSON document of each `hello` (or legacy `isMaster`) that a client sent (ID-MG25).
+    /// The raw BSON document of each `hello` (or legacy `isMaster`) that a client sent.
     hellos: Mutex<Vec<Vec<u8>>>,
     connections: AtomicUsize,
     /// The name of a command after which the proxy closes the connection, once.
@@ -516,7 +517,7 @@ impl Proxy {
         self.state.hellos.lock().unwrap_or_else(PoisonError::into_inner).clear();
     }
 
-    /// The command documents (raw BSON) of the `hello` messages that the clients sent, in order (ID-MG25).
+    /// The command documents (raw BSON) of the `hello` messages that the clients sent, in order.
     /// The document of a `hello` holds the metadata of the driver in its key `client`.
     pub fn hello_documents(&self) -> Vec<Vec<u8>> {
         self.state.hellos.lock().unwrap_or_else(PoisonError::into_inner).clone()

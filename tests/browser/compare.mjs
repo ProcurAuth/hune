@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Side-by-side harness: the dashboard `stream` in Grafana (left) and in Hune (right).
 //
 // Use:  node tests/browser/compare.mjs
@@ -710,7 +711,7 @@ STATES.push({
   },
   hune: async (v) => {
     await vList(v, "");
-    // Up to 768 px the three list actions are in the menu "New" (ID-94): open it, then choose Import.
+    // Up to 768 px the three list actions are in the menu "New": open it, then choose Import.
     const narrow = await v.page.eval(`(() => { const b = document.querySelector('[data-testid="import"]'); return !b || b.getBoundingClientRect().width === 0; })()`);
     if (narrow) {
       await v.page.click('[data-testid="list-new-menu"]');

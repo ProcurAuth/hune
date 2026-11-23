@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The key table of Hune (13.7 to 13.12). The reference files, `print-config` and the
 //! checks all come from this table.
 
@@ -448,7 +449,7 @@ static KEYS: [KeyDesc; 112] = [
     )
     .when(AUTHZEN)
     .refs(Ref::Absent, Ref::Int(6)),
-    // The ad hoc filters (decision ID-K329). The key is optional and has no default: absent, no ad hoc filter applies on
+    // The ad hoc filters. The key is optional and has no default: absent, no ad hoc filter applies on
     // the source. The reference files hold no such key (`doc_ref` only), so no filter is on by default.
     KeyDesc::new(
         "clickhouse.adhoc_columns",
@@ -686,7 +687,7 @@ static KEYS: [KeyDesc; 112] = [
     )
     .when(AUTHZEN)
     .doc_ref(Ref::Int(6)),
-    // 13.12c: geomap (decision ID-K328). The block is optional. In the block each key is necessary, and each key accepts
+    // 13.12c: geomap. The block is optional. In the block each key is necessary, and each key accepts
     // the value form only: the values are public. The reference files hold no block `geomap` (`doc_ref` only).
     KeyDesc::new(
         "geomap.tile_url",

@@ -3,7 +3,7 @@
 #   mgNN       the main server: authorization on, TLS only, --noscripting, the full data of init.js.
 #   mgNN-js    the same without --noscripting, for the case MS18. Small data.
 #   mgNN-rs    a replica set of two members (rs0) in one container, on the ports MGS_PORT and MGS_PORT2, for the case MS12
-#              and the cases of the link. Small data. Two members, because the key `hosts` needs 2 to 7 (ID-MG18).
+#              and the cases of the link. Small data. Two members, because the key `hosts` needs 2 to 7.
 #   mgNN-sha1  a server that offers only SCRAM-SHA-1, for the case MS10. Small data.
 #   mgNN-plain a server that offers only PLAIN, for the case MS10. Small data. The community server has no PLAIN
 #              credential, so no user can log in there, and the health check does not log in.

@@ -1,8 +1,9 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The MongoDB data source (section 8b). It reads data for panel queries and never writes.
 //!
 //! The query language (7.27 to 7.36) and the value model (8b.16) live in `hune_core::mongo`. The
 //! network client stays behind the trait [`MongoClient`]. The crate has no MongoDB dependency: the
-//! driver is the decision `ID-MG2` and it is not in this build (8b.2).
+//! driver is an optional feature and it is not in this build (8b.2).
 //!
 //! # Modules and the sections that each one implements
 //!
@@ -22,7 +23,7 @@
 //!
 //! The logic of 8b.5 to 8b.12 is complete and generic over [`MongoClient`]. The unit tests run it
 //! against [`FakeMongo`]. The build has no driver (8b.2): [`MongoSource::new`] makes a source that
-//! stays `misconfigured` with [`NO_DRIVER_MESSAGE`]. The driver module, when the owner agrees, gives a
+//! stays `misconfigured` with [`NO_DRIVER_MESSAGE`]. The driver module, when the build has it, gives a
 //! client type `C` and the build calls [`MongoSource::with_driver`].
 
 mod attrib;

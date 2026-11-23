@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The page routes and the static files (6.25).
 
 use super::shell_response;
@@ -33,7 +34,7 @@ pub async fn page(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
 /// With `server.compress_static`, a file of a text type has `Vary: Accept-Encoding`, and a request that
 /// accepts gzip gets the gzip copy of start with `Content-Encoding: gzip` (9.3). The answer is always the
 /// whole file or the whole copy: the server ignores `Range`. A `HEAD` gets the headers of the `GET`.
-/// The `Cache-Control` of a static file (6.25, 12): never `public` (decision ID-K315).
+/// The `Cache-Control` of a static file (6.25, 12): never `public`.
 pub const STATIC_CACHE_CONTROL: &str = "private, max-age=31536000, immutable";
 
 pub async fn static_file(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
@@ -48,7 +49,7 @@ pub async fn static_file(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     let body = copy.unwrap_or_else(|| Bytes::from_static(file.bytes));
     let mut r = bytes_response(StatusCode::OK, file.content_type, body);
     let headers = r.headers_mut();
-    // `private` (decision ID-K315): the browser keeps the file for a year, and a shared cache in front of the edge never gives it
+    // `private`: the browser keeps the file for a year, and a shared cache in front of the edge never gives it
     // to a client that has no token (mode `authzen`, 11.29). The file and its gzip copy have the same value.
     headers.insert(CACHE_CONTROL, HeaderValue::from_static(STATIC_CACHE_CONTROL));
     if varies {

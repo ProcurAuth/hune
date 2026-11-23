@@ -1,7 +1,7 @@
 // The option table of the type `piechart` (10.3h, F43, 4.31).
 // It has the groups "Value options", "Pie chart", "Tooltip" and "Legend", and the row "Display name" of "Standard options". It has no DOM access.
 // A pie chart shows one slice under the pointer. So `tooltip.sort` and `tooltip.hide_zeros` have no row (NO_CONTROL).
-// The choice "All" of the tooltip equals "Single" and stays in the form (decision ID-K296).
+// The choice "All" of the tooltip equals "Single" and stays in the form.
 
 import { displayNameRow, legendRows, row, tooltipRows } from "./rows.js";
 import { reduceRows } from "./reduce_rows.js";

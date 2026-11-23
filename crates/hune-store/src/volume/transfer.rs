@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Export, import and the checks of a layout (5.37 to 5.39). This module writes the volume
 //! layout of 5.9 to 5.11 into an empty directory (R4).
 

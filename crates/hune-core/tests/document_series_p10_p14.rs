@@ -1,4 +1,5 @@
-//! The members of wave H, items P10 and P14 (decision ID-K326): the option `gradient_mode` of a `timeseries` and of a `barchart`
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The members (P10 and P14): the option `gradient_mode` of a `timeseries` and of a `barchart`
 //! (4.28, 4.30), the options `log_base`, `span_nulls_ms` and `bar_alignment` of a `timeseries` (4.28), and the properties
 //! `line_dash_array`, `axis_centered_zero`, `axis_width`, `axis_border` and `axis_color` (4.18).
 //!

@@ -311,7 +311,7 @@ export function listEditor(scope, { testid, itemTestid, get, set, limit, limitWh
       };
       const prev = button("Previous", { disabled: page === 0, dataset: testid ? { testid: `${testid}-prev` } : {}, on: { click: go(-1) } }, null, { size: "sm" });
       const next = button("Next", { disabled: to >= items.length, dataset: testid ? { testid: `${testid}-next` } : {}, on: { click: go(1) } }, null, { size: "sm" });
-      root.append(el("div", { class: "flist__pager" }, prev, el("span", { class: "muted", role: "status", text: `Items ${from + 1} to ${to} of ${items.length}` }), next));
+      root.append(el("div", { class: "flist__pages" }, prev, el("span", { class: "muted", role: "status", text: `Items ${from + 1} to ${to} of ${items.length}` }), next));
     }
     if (add) root.append(addControl());
     root.append(listError);
@@ -401,7 +401,7 @@ export function choiceField({ label, items, value, apply, testid = null }) {
 
 /**
  * A slider with a number field (10.3h, rules 3 and 7): one group with the name of the option. The slider writes at each `input`, at most once in
- * each frame, or on release when `heavy()` is true (more than 5,000 points, decision ID-K293). The number field writes 300 ms after the last key.
+ * each frame, or on release when `heavy()` is true (more than 5,000 points). The number field writes 300 ms after the last key.
  * `scope.flush()` runs a write that waits. The group is a `role="group"` named by its label. `apply(integer)` runs for a valid value only.
  */
 export function sliderField(scope, { label, value, min, max, apply, testid = null, rangeTestid = testid ? `${testid}-slider` : null, heavy = () => false, hint = null }) {

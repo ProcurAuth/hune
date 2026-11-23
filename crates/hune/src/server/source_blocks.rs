@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The source blocks of the configuration, seen without their kind (8a.2, 11.33).
 //!
 //! A `clickhouse` block, a `postgres` block and a `mongodb` block share the label space (C15). The server needs the

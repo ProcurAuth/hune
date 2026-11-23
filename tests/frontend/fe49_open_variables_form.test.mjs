@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // FE-49 (10.3b, T79): the form of an open variable in the editor. It tests the three SQL examples with the lexer of the page, the insert of an example,
 // the preview "Show options" with a fake document and 40 hostile texts, the body of the preview of a variable, the switch member and the default rule.
 // The page part of F41 (the combobox, 9.10) has its own test file (FE-48).
@@ -286,7 +287,7 @@ test("setAllowCustom: the member follows default and comes before placement; fal
   assert.deepEqual(keys(setAllowCustom(newVariable("custom", "b"), true)), ["kind", "name", "label", "hide", "options", "multi", "include_all", "all_value", "default", "allow_custom_value"]);
   assert.deepEqual(keys(setAllowCustom(setAllowCustom(newVariable("custom", "b"), true), true)).filter((k) => k === "allow_custom_value").length, 1);
   assert.deepEqual(keys(setAllowCustom(newVariable("text", "t"), true)), keys(newVariable("text", "t")));
-  // A new variable is closed (ID-K210): no member.
+  // A new variable is closed: no member.
   assert.ok(!("allow_custom_value" in newVariable("query", "a", "s")));
   assert.ok(!("allow_custom_value" in newVariable("custom", "a")));
   // The copy never changes the source.

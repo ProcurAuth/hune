@@ -1,4 +1,5 @@
-//! The eleven transformations of milestone F (15.6, 4.25a). Each function reads the options of one Grafana
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The eleven transformations of the Grafana-parity work (15.6, 4.25a). Each function reads the options of one Grafana
 //! transformation and gives the item of the member `transforms`, or `None` when the transformation has no item.
 //!
 //! The classes follow the measure on Grafana 12.4.2 (19.20j): an option with no measured effect is `dropped`, and

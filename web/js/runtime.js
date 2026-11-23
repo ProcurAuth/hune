@@ -66,7 +66,7 @@ export class Runtime {
    * @param {Map<string, string[]>} o.urlVars
    * @param {Map<string, {all: boolean, values: string[]}>} [o.keepSelections] selections kept after a reload (409)
    * @param {{panel: number, section: number, dashboard: number}} [o.limits] the limits of a repeat (repeat.js, limitsOf)
-   * @param {(notice: {name: string, text: string}) => void} [o.onNotice] called when a variable drops a requested value that is not an option (9.10, ID-K202)
+   * @param {(notice: {name: string, text: string}) => void} [o.onNotice] called when a variable drops a requested value that is not an option (9.10)
    * @param {string} [o.zone] a known zone of the URL (9.5), in place of the zone of the document
    * @param {object} [o.names] the member `names` of the answer of 6.14. When it is absent or wrong, `namesError` has the reason and each query names
    *   every variable (9.10): the page stays correct and runs more queries.
@@ -166,7 +166,7 @@ export class Runtime {
   interpolateContent(text) {
     if (typeof text !== "string" || !text.includes("$")) return text;
     // The budget is MD_MAX_EXPANDED_BYTES: the result has at least one byte for each character, so a longer result is over the cap.
-    // It gives null when the budget ends (the text panel shows `text-limit`, ID-K108).
+    // It gives null when the budget ends (the text panel shows `text-limit`).
     let used = text.length;
     const out = text.replace(CONTENT_PLACEHOLDER, (whole, braced, format, bare) => {
       if (used > MD_MAX_EXPANDED_BYTES) return "";

@@ -1,6 +1,7 @@
-// Browser case B62 (16.10): the colour modes of wave 2 (milestone F: F26): the one series palette (`palette`) and the continuous modes.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B62 (16.10): the colour modes of the second set (the Grafana-parity work: F26): the one series palette (`palette`) and the continuous modes.
 // The colours of the continuous modes are those that Grafana 12.4.2 draws (paper 10.8, V5, tests/frontend/vectors/FE-23-color-modes.json).
-// The colours of `palette` are the one series palette of ClickHouse Dash, with a dark and a light variant (ID-K70, ID-K74).
+// The colours of `palette` are the one series palette of ClickHouse Dash, with a dark and a light variant.
 // The removed mode `palette_by_name` gives `bad_format` (4.19).
 import { doc, panel, section } from "../lib/docs.mjs";
 import { reveal } from "../lib/h.mjs";

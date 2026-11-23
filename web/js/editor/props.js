@@ -69,7 +69,7 @@ export const PROPERTIES = Object.freeze([
   row("show_points", "Show points", "select", { values: ["auto", "always", "never"], types: SERIES, where: "set" }),
   row("point_size", "Point size", "integer", { min: 1, max: 40, types: SERIES, where: "set" }),
   row("transform", "Transform", "select", { values: ["none", "negative_y"], types: SERIES }),
-  // Wave H, item P14: the dash array and the look of the y axis.
+  // Items P14: the dash array and the look of the y axis.
   row("line_dash_array", "Dash array", "dash", { types: SERIES }),
   row("axis_centered_zero", "Centered zero", "switch", { types: AXIS }),
   row("axis_width", "Axis width", "integer", { min: 0, max: 500, types: AXIS }),

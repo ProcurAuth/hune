@@ -1,4 +1,5 @@
-// Browser case B64 (16.10): the time override of a panel (milestone F, wave 2: F18, 9.8b).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser case B64 (16.10): the time override of a panel (the Grafana-parity work: F18, 9.8b).
 // The requests of the panels carry the range that 9.8b computes. The note of the title bar has its text, its style and its tooltip.
 // `hide_time_override` removes the note, a `reuse` panel shows the note of its source, and an unusable range gives the state `error`.
 import { doc, panel, section } from "../lib/docs.mjs";

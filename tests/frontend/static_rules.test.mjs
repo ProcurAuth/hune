@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Static rules of the front end (9.1, 9.3, 9.4): checks on the files of web/.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -26,7 +27,7 @@ const text = (f) => readFileSync(f, "utf8");
 test("only the extensions of 9.3 (the LICENSE notices of the copy and of the font are the exceptions)", () => {
   for (const f of files) {
     const rel = relative(WEB, f);
-    // The chart engine (9.24) and the font Inter (ID-69, SIL OFL 1.1) each carry their notice beside the files.
+    // The chart engine (9.24) and the font Inter (SIL OFL 1.1) each carry their notice beside the files.
     if (rel === "js/vendor/chdash/LICENSE" || rel === "fonts/inter/LICENSE") continue;
     assert.ok(ALLOWED.has(extname(f)), rel);
   }
@@ -74,7 +75,7 @@ test("every localStorage access is in a try block", () => {
 
 test("only the editor loader imports with a template string (the 9.30 measure follows quoted paths only)", () => {
   // A template-string import() is not seen by the measure above. The editor loader is the one permitted case: the editor
-  // stays out of the page by design (9.30). Any other such import would hide a module from the budget (decision ID-K132).
+  // stays out of the page by design (9.30). Any other such import would hide a module from the budget.
   const offenders = files.filter((f) => f.endsWith(".js") && !f.includes("/vendor/") && !f.endsWith("/editor_loader.js") && /import\(\s*`/.test(text(f)));
   assert.deepEqual(offenders.map((f) => relative(WEB, f)), []);
 });
@@ -93,57 +94,13 @@ test("relative imports resolve to files, and the dashboard page stays under 1018
   };
   for (const entry of ["main.js", "dashboard.js", "list.js", ...readdirSync(join(WEB, "js/panels")).map((n) => `panels/${n}`)]) visit(join(WEB, "js", entry));
   const total = [...seen.values()].reduce((a, b) => a + b, 0);
-  // 700 KB until the header bar of 2026-11-11 (theme selector, layout of the header), then 730 KB (ID-UI-HDR), then 800 KB for
-  // F wave 2 (two y scales, colour modes, panel time, dashboard links): decision ID-F2-BUDGET, accepted by the owner.
-  // 880 KB for wave K (state machine, variable placement, time picker): decision ID-K37, accepted by the owner (option a).
-  // 910 KB for F30 (state timeline, status history): decision ID-K132, arbitrated in the absence of the owner by three
-  // independent arbiters (unanimous), to be reviewed by the owner.
-  // 932 KB for F25 (annotations) and the doc comments put back in panels/timeline.js: decision ID-K155, arbitrated in the
-  // absence of the owner by three independent arbiters (unanimous), to be reviewed by the owner. F24 gets its own step
-  // (ID-K172). A worker stops above 950,272 bytes.
-  // 937 KB for F24 (several queries): the rule of ID-K172 at the start of the F24 page code (page 930,612 bytes after F25 and the
-  // saving of ID-K176, + 1.8 x 13,312 + 4,096, rounded up to a whole KB), arbitrated in the absence of the owner, to review.
-  // A worker stops above 955,392 bytes.
-  // 946 KB for F41 (allow_custom_value): the first step of the plan of ID-K211a (three arbiters; to review): page 945,311 bytes
-  // after F24 and the saving S1, + 1.5 x 12,288 + 4,096, rounded up to a whole KiB. A worker stops above 964,608 bytes.
-  // F41 landed at 955,718 bytes (10,407 bytes, 0.85 times its estimate). 940 KB for F27 (interval, constant): the close-out of
-  // F41 and the step of F27 of ID-K211a (955,718 + 1.5 x 1,229 + 4,096, rounded up to a whole KiB). A worker stops above 958,464.
-  // The owner's engine patch (ID-K300, option b) removed code that Hune never calls; F27 landed (982 bytes): the page is
-  // 927,072 bytes. 943 KB for F28 (transformations): the close-out of F27 and the step of F28 of ID-K211a (927,072 +
-  // 1.5 x 22,528 + 4,096, rounded up to a whole KiB). A worker stops above 961,536 bytes.
-  // F28 landed at 951,705 bytes (24,633 bytes, 1.09 times its estimate). The owner asked to run the remaining page features
-  // (the histogram and the heatmap of F31) in parallel: PROVISIONAL limit 1,000 KB (the cap of ID-K211a) while they run; each
-  // worker keeps to its own allowance (1.5 x its estimate: histogram 13,517 bytes, heatmap 30,260 bytes). The close-out at the
-  // end sets the measure + 4,096 bytes, rounded up to a whole KiB (ID-K211e).
-  // Close-out of the parallel steps (ID-K211e, to re-read by the owner): the histogram (13,295 bytes, 1.48 times its estimate)
-  // and the heatmap (28,128 bytes, 1.39 times) landed; the page is 993,298 bytes; the limit is the measure + 4,096, rounded up
-  // to a whole KiB: 975 KB (998,400 bytes). A new feature gets its own step by the rule of ID-K211a.
-  // After ID-K211e: the owner's E25 (barchart tick rotation, 3,410 bytes) and the heatmap names (337 bytes) brought the page to
-  // 997,045 bytes. PROVISIONAL limit 1,000 KB (the cap of ID-K211a) while the owner's bug fixes run in parallel (the flash on the
-  // edit toggle, the F23 fixes of the arbitration); the close-out at the end sets the measure + 4,096 bytes, rounded up to a whole
-  // KiB (ID-K211f). Above 1,000 KB: savings first, then three arbiters (owner rule of 2026-11-15, at most 1,100 KB).
-  // Close-out of ID-K211f (to re-read by the owner): the edit flash, the F23 fixes, the Grafana view form (1,840 bytes), the E25 sign
-  // and E26 (339 bytes), E27 and the histogram y rule (1,086 bytes) landed; the page is 1,002,112 bytes; the limit is the measure +
-  // 4,096, rounded up to a whole KiB: 983 KB (1,006,592 bytes). A new feature gets its own step by the rule of ID-K211a.
-  // Close-out of ID-K211g (to re-read by the owner): the y tick rule of Grafana (-121 bytes, ID-K311t) and the fixes of the security
-  // review of 2026-11-16 (+2,882 bytes: engine edits E28 and E29, the caps of the joins, ID-K314); the page is 1,004,873 bytes; the
-  // limit is the measure + 4,096, rounded up to a whole KiB: 986 KB (1,009,664 bytes).
-  // Close-out of ID-K211h (to re-read by the owner): the y range of Grafana and fitTitle (+1,286 bytes, E30 and E31, ID-K319), the
-  // fixes of the low findings P3 and P4 (+1,644 bytes, ID-K317) and the cap of the cells from the session (+275 bytes, ID-K318);
-  // the page is 1,008,078 bytes; the limit is the measure + 4,096, rounded up to a whole KiB: 989 KB (1,012,736 bytes).
-  // Close-out of ID-K211i (to re-read by the owner): the stack of Grafana with values below 0 (+1,801 bytes, E32, ID-K322) and the
-  // draw of the charts before the hook of the state (+940 bytes, ID-K324); the page is 1,010,819 bytes; the limit is the measure +
-  // 4,096, rounded up to a whole KiB: 992 KB (1,015,808 bytes).
-  // Close-out of wave H, ID-K211j (three arbiters, unanimous; accepted by the owner on 2026-11-22): step A (units, link tokens, URL times,
-  // the cell inspect, the bar chart options: 1,023,019 bytes), then the savings of ID-K350 (-85,704 bytes of engine code that Hune
-  // never calls: 937,315 bytes), then step B (series options and gradients, stat percent change, gauge, geomap, ad hoc filters,
-  // logs: +100,481 bytes); the page is 1,037,796 bytes; the limit is the measure + 4,096, rounded up to a whole KiB: 1,018 KB
-  // (1,042,432 bytes). The room is for fixes that a test finds; a new feature gets its own step and three arbiters.
+  // The page budget is a measured limit: the measure plus 4 KiB of room, rounded up to a whole KiB (9.30). A new feature raises
+  // the limit in a reviewed change, and the limit then goes back to the measure plus 4 KiB. The limit is now 1,018 KB (1,042,432 bytes).
   assert.ok(total < 1018 * 1024, `${total} bytes`);
   assert.ok(![...seen.keys()].some((f) => f.includes("/editor/")), "the editor must load on demand only");
 });
 
-test("the routes that only the editor calls stay in editor/api_editor.js: no other file calls or imports them (ID-K211a, 9.30)", () => {
+test("the routes that only the editor calls stay in editor/api_editor.js: no other file calls or imports them (9.30)", () => {
   const moved = ["history", "historyVersion", "versionDownload", "sources", "createDashboard", "saveDashboard", "validateDocument", "deleteDashboard", "restoreVersion", "moveDashboard", "createFolder", "renameFolder", "deleteFolder", "preview"];
   const names = moved.join("|");
   const apiSrc = text(join(WEB, "js/api.js"));
@@ -306,9 +263,9 @@ test("the constants of bucket_model.js and heat_model.js equal 9.19e and 9.19f",
   assert.match(src, /export const MAX_HIST_BUCKETS = 4000;/);
   const spec = readFileSync(join(WEB, "../docs/04-frontend-editor.md"), "utf8");
   for (const n of ["500,000", "250,000", "4,000"]) assert.ok(spec.includes(n), n);
-  // The module stays out of the page until the page code of F31 imports it (ID-K211a): no module of the page names it before that step.
+  // The module stays out of the page until the page code of F31 imports it: no module of the page names it before that step.
   assert.ok(files.includes(join(WEB, "js/bucket_model.js")) && files.includes(join(WEB, "js/heat_model.js")));
-  // heat_model.js is the heatmap alone: only panels/heatmap.js will import it, so the step of the histogram does not carry it (ID-K195b).
+  // heat_model.js is the heatmap alone: only panels/heatmap.js will import it, so the step of the histogram does not carry it.
   assert.ok(!/heat_model/.test(code("js/bucket_model.js")));
 });
 

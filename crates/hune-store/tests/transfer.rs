@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! `copy_store`, export, import and restore from volume to volume (5.37 to 5.40).
 #![cfg(feature = "conformance")]
 

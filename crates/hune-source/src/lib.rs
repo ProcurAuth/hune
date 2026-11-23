@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Hune data sources (section 8). The crate has the `DataSource` trait and the enum `AnySource`.
 //! It has the ClickHouse HTTP client, the limits, the admission control and the cancellation.
 //!

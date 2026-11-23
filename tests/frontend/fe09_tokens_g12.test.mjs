@@ -1,4 +1,5 @@
-// FE-09, wave H item P02: the data link tokens of Grafana 12 (9.18). The expected texts are the hrefs that Grafana 12.4.2 gave on
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// FE-09: the data link tokens of Grafana 12 (9.18). The expected texts are the hrefs that Grafana 12.4.2 gave on
 // 2026-11-22 for the same values (a temporary dashboard on the local Grafana, read in Chrome), unless a comment says otherwise.
 import test from "node:test";
 import assert from "node:assert/strict";

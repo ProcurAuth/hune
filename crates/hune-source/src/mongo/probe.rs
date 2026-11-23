@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! The probe and the checks of a MongoDB source (8b.12, 8b.13, 8b.14).
 //!
 //! The checks M0 to M4 are pure functions of the plain structures [`ServerInfo`] and [`AuthInfo`],

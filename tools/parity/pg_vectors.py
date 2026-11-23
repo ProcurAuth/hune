@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """Capture tool of the PostgreSQL expansion vectors (16.13, case I22; 15.14a).
 
 What the tool does:

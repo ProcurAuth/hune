@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Small readers of JSON values.
 
 use serde_json::Value;

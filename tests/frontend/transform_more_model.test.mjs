@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // The rules of the forms of the eleven more transforms (10.3a, 4.25a): new transforms, the checks of one control and moreFaults.
 import test from "node:test";
 import assert from "node:assert/strict";

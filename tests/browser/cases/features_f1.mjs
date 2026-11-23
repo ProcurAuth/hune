@@ -1,4 +1,5 @@
-// Browser cases B36 to B42 (16.10): the features of wave 1 of milestone F.
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B36 to B42 (16.10): the features of the second set of Grafana-parity features.
 // B36 stat `justify`, B37 hidden series, B38 thresholds in the plot, B39 zone of the dashboard, B40 table features,
 // B41 CSV download, B42 titles with variables. All SQL is synthetic (`numbers(...)` or the seed table).
 import { readFileSync, readdirSync, renameSync } from "node:fs";

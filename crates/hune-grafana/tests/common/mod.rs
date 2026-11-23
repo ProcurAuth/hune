@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 //! Helpers of the integration tests: the synthetic export and the golden files.
 #![allow(dead_code)]
 

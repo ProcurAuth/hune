@@ -1,4 +1,5 @@
-//! The rows of 15.6 for the annotations (4.5b, ID-K153): the form v1 follows the exports of the reference
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The rows of 15.6 for the annotations (4.5b): the form v1 follows the exports of the reference
 //! Grafana and the measure of 19.20e. The form v2 is synthetic: it follows the schema, and no real export of
 //! Grafana confirms its paths (open question Q1).
 
@@ -212,7 +213,7 @@ fn an_item_that_hune_cannot_hold_is_removed() {
     assert_eq!(annotations_of(&r)[0]["name"], "Good");
 }
 
-// ---------------------------------------------------------------- PostgreSQL and MongoDB (ID-K142, ID-K333)
+// ---------------------------------------------------------------- PostgreSQL and MongoDB
 
 fn pg_ds() -> Value {
     json!({"type": "grafana-postgresql-datasource", "uid": "old-name"})

@@ -1,4 +1,5 @@
-//! The startup packet of a connection (8a.4, ID-PG7).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+//! The startup packet of a connection (8a.4).
 //!
 //! This module builds the `tokio-postgres` configuration from the keys of the block only: no `PG*`
 //! variable, no password file, no service file, no Unix socket, no second host. It sends the

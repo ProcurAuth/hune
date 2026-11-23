@@ -1,4 +1,5 @@
-// The closed list of the audit B153 for stat, bargauge and piechart (10.3h, rule 14, decision ID-K295).
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The closed list of the audit B153 for stat, bargauge and piechart (10.3h, rule 14).
 // An entry covers one member and the members under it, for the types that it names. A member with `=` and a value covers that value only.
 // `cls` is `design` (the control cannot change the picture by design) or `data` (the data of the audit does not show the effect).
 // A stale entry (its control changes the preview) makes B153 fail. A dead entry (no control matches it) makes B153 fail too.
@@ -17,7 +18,7 @@ export const EXEMPT = [
   { pointer: "fields.defaults.thresholds=percentage", types: ["stat"], cls: "data", cause: "the percentage needs a minimum and a maximum; the audit sets none" },
   { pointer: "options.legend.values=value", types: ["piechart"], cls: "design", cause: "a legend table always has the value column, so the box Value changes nothing there" },
   { pointer: "options.orientation=vertical", types: ["stat"], cls: "data", cause: "the mode Auto already puts the items side by side at the size of the audit panel" },
-  // The gauge (wave H, item P12): the manual size with the default least sizes of 75 px gives the cells of the automatic size (9.19g).
+  // The gauge: the manual size with the default least sizes of 75 px gives the cells of the automatic size (9.19g).
   { pointer: "options.sizing", types: ["gauge"], cls: "design", cause: "the manual size with its default least sizes of 75 px gives the cells of the automatic size" },
   { pointer: "options.tooltip.mode=multi", types: ["piechart"], cls: "design", cause: "a pie has one slice under the pointer, so All equals Single" },
 ];

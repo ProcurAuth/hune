@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT OR Apache-2.0
 """The cases of the PostgreSQL expansion vectors (16.13, case I22).
 
 Each case has an id, a template, tags and the inputs of one query. The module gives the list

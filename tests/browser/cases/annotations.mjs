@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B120 to B127 (4.5b, 6.21a, 7.37, 9.19d, 10.3b, 15.6): the annotations from a query on a time series.
 // B120: the look of the marks. B121: the queries. B122: the card, the hover and the keyboard. B123: the caps.
 // B124: the access (mode authzen). B125: the editor and the format. B126: the import. B127: layouts and views.
