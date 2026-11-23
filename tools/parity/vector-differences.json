@@ -1,0 +1,1134 @@
+{
+  "builtin-interval": {
+    "cause": "other",
+    "reason": "Grafana replaces the built-in variable $__interval in a string. Hune keeps the name of a macro or built-in variable as text in a string.",
+    "section": "7.6",
+    "hune": {
+      "sql": "SELECT '$__interval' AS i"
+    }
+  },
+  "builtin-range-ms": {
+    "cause": "other",
+    "reason": "Grafana replaces its built-in variable in the browser, or leaves the text. Hune reads each other $__name in code as a document error.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "builtin-range-s": {
+    "cause": "other",
+    "reason": "Grafana replaces its built-in variable in the browser, or leaves the text. Hune reads each other $__name in code as a document error.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "escape-custom-single-backslash-in-string": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE e = 'a\\\\b'"
+    }
+  },
+  "escape-custom-single-quote-in-string": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE e = 'a\\'b'"
+    }
+  },
+  "escape-query-multi-backslash-default": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('a1','b\\\\2')"
+    }
+  },
+  "escape-query-multi-backslash-singlequote": {
+    "cause": "escape",
+    "reason": "Grafana writes the backslash raw. Hune also escapes the backslash with singlequote and sqlstring.",
+    "section": "7.9",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('a1','b\\\\2')"
+    }
+  },
+  "escape-query-multi-backslash-sqlstring": {
+    "cause": "escape",
+    "reason": "Grafana writes the backslash raw. Hune also escapes the backslash with singlequote and sqlstring.",
+    "section": "7.9",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('a1','b\\\\2')"
+    }
+  },
+  "escape-query-multi-quote-all": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('a1','b\\'2')"
+    }
+  },
+  "escape-query-multi-quote-csv": {
+    "cause": "other",
+    "reason": "Grafana joins the raw values. Hune refuses a free value in code with the format csv or raw when it is not a number.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  },
+  "escape-query-multi-quote-default": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('a1','b\\'2')"
+    }
+  },
+  "escape-query-multi-quote-in-string-csv": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h = 'a1,b\\'2'"
+    }
+  },
+  "escape-query-single-quote-string": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h = 'a\\'b'"
+    }
+  },
+  "escape-text-backslash-in-string": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE s = 'a\\\\b'"
+    }
+  },
+  "escape-text-backslash-quote-in-string": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE s = 'a\\\\\\'b'"
+    }
+  },
+  "escape-text-macro-name-in-value": {
+    "cause": "other",
+    "reason": "Grafana expands the macro name inside a variable value in its second step. Hune never reads an inserted value again.",
+    "section": "7.11",
+    "hune": {
+      "sql": "SELECT 1 WHERE s = '$__fromTime'"
+    }
+  },
+  "escape-text-quote-closes-string": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE s = '\\' OR 1=1 --'"
+    }
+  },
+  "escape-text-quote-in-quoted-name": {
+    "cause": "other",
+    "reason": "Grafana writes the value raw into the quoted name. Hune gives a document error for a text variable in a quoted name.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "escape-text-quote-in-string": {
+    "cause": "escape",
+    "reason": "Grafana inserts a value with a quote mark or a backslash raw, so the SQL text breaks. Hune escapes the value for its literal.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE s = 'a\\'b'"
+    }
+  },
+  "macro-fromTime-empty-call": {
+    "cause": "other",
+    "reason": "Grafana leaves the text or drops the parentheses. Hune gives a document error for a macro with a wrong argument count or an unexpected parenthesis.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "macro-fromTime-in-comment": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT 1 -- $__fromTime\n"
+    }
+  },
+  "macro-fromTime-in-string": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT '$__fromTime' AS s"
+    }
+  },
+  "macro-interval_s-in-comment": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT 1 -- $__interval_s\n"
+    }
+  },
+  "macro-interval_s-in-string": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT '$__interval_s' AS s"
+    }
+  },
+  "macro-timeFilter-in-block-comment": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT count() /* $__timeFilter(timestamp) */ FROM analytics.events"
+    }
+  },
+  "macro-timeFilter-in-line-comment": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT count() FROM analytics.events -- $__timeFilter(timestamp)\nWHERE 1"
+    }
+  },
+  "macro-timeFilter-in-string": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT 'a $__timeFilter(timestamp) b' AS s, count() FROM analytics.events"
+    }
+  },
+  "macro-timeFilter-lowercase-name": {
+    "cause": "other",
+    "reason": "Grafana leaves $__timefilter as text. Hune reads the macro name with the case, and reads an unknown $__name in code as a document error.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "macro-timeFilter-no-parenthesis": {
+    "cause": "other",
+    "reason": "Grafana leaves the text or drops the parentheses. Hune gives a document error for a macro with a wrong argument count or an unexpected parenthesis.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "macro-timeFilter-string-with-paren": {
+    "cause": "other",
+    "reason": "Grafana does not expand the macro when a string in the argument holds a parenthesis. Hune counts only punctuation tokens, so it expands it.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT count() FROM analytics.events WHERE concat(')', toString(timestamp)) >= toDateTime(1794211200) AND concat(')', toString(timestamp)) <= toDateTime(1794232800)"
+    }
+  },
+  "macro-timeFilter-two-arguments": {
+    "cause": "other",
+    "reason": "Grafana leaves the text or drops the parentheses. Hune gives a document error for a macro with a wrong argument count or an unexpected parenthesis.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "macro-timeInterval-in-string": {
+    "cause": "other",
+    "reason": "Grafana expands a macro in a string or in a comment. Hune expands a macro only in code.",
+    "section": "7.10",
+    "hune": {
+      "sql": "SELECT '$__timeInterval(t)' AS s"
+    }
+  },
+  "pg-builtin-interval-s": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana has no $__interval_s for PostgreSQL: it replaces the start of the name and the database refuses the text. Hune adds the macro.",
+    "hune": {
+      "sql": "SELECT 20 AS s FROM t"
+    }
+  },
+  "pg-interval-builtin-in-code": {
+    "cause": "other",
+    "section": "7.23",
+    "reason": "Grafana replaces $__interval in any place. Hune accepts it in code only as the interval argument of a group macro.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-builtin-in-string": {
+    "cause": "other",
+    "section": "7.23",
+    "reason": "Grafana replaces the built-in variable $__interval in a string. Hune keeps the name of a macro or built-in variable as text in a string.",
+    "hune": {
+      "sql": "SELECT '$__interval' AS i FROM t"
+    }
+  },
+  "pg-interval-refused-blank-padded": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana refuses blanks inside the string. Hune also refuses them, with another text.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-decimal": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana reads a decimal number. Hune accepts a whole number only.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-double-quote": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Both refuse a name in double quotes. Grafana gives an error and no SQL.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-empty": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Both refuse an empty text. Grafana gives an error and no SQL.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-leading-zero": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana reads a zero at the start. Hune refuses it.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-negative": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana reads a negative interval. Hune accepts no sign.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-number": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Both refuse a number without a unit. Grafana gives an error and no SQL.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-over-365d": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana has no upper limit. Hune accepts 365 days at most.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-two-units": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana reads two units. Hune accepts one whole number and one unit.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-unknown-unit": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Both refuse an unknown unit. Grafana gives an error and no SQL.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-unquoted": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana reads a text without quote marks. Hune accepts a string or the built-in $__interval only.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-refused-zero": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana gives a division by zero at run time. Hune refuses an interval of 0.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-interval-unit-M-1": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana prints 2592000 as 2.592e+06. Hune never prints an exponent.",
+    "hune": {
+      "sql": "SELECT floor(extract(epoch from ts)/2592000)*2592000 FROM t"
+    }
+  },
+  "pg-interval-unit-d-365": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana prints 31536000 as 3.1536e+07. Hune never prints an exponent.",
+    "hune": {
+      "sql": "SELECT floor(extract(epoch from ts)/31536000)*31536000 FROM t"
+    }
+  },
+  "pg-interval-unit-y-1": {
+    "cause": "interval",
+    "section": "7.23",
+    "reason": "Grafana prints 31536000 as 3.1536e+07. Hune never prints an exponent.",
+    "hune": {
+      "sql": "SELECT floor(extract(epoch from ts)/31536000)*31536000 FROM t"
+    }
+  },
+  "pg-macro-conditionalAll-all": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana has no macro $__conditionalAll for PostgreSQL. Hune adds the macro of 7.10.",
+    "hune": {
+      "sql": "SELECT v FROM t WHERE 1=1"
+    }
+  },
+  "pg-macro-conditionalAll-one": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana has no macro $__conditionalAll for PostgreSQL. Hune adds the macro of 7.10.",
+    "hune": {
+      "sql": "SELECT v FROM t WHERE host IN ('a1')"
+    }
+  },
+  "pg-macro-in-block-comment": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana removes a comment and expands a macro in it. Hune keeps a comment as it is and expands a macro only in code.",
+    "hune": {
+      "sql": "SELECT v FROM t /* $__unixEpochFrom() */ WHERE ts BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+    }
+  },
+  "pg-macro-in-line-comment": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana removes a comment and expands a macro in it. Hune keeps a comment as it is and expands a macro only in code.",
+    "hune": {
+      "sql": "SELECT v FROM t -- $__unixEpochFrom()\nWHERE ts BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+    }
+  },
+  "pg-macro-in-quoted-name": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana expands a macro in a quoted name. Hune expands a macro only in code.",
+    "hune": {
+      "sql": "SELECT 1 AS \"$__timeFrom()\" FROM t"
+    }
+  },
+  "pg-macro-in-string": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana expands a macro in a string. Hune expands a macro only in code.",
+    "hune": {
+      "sql": "SELECT 'a$__unixEpochFrom()b' AS s FROM t"
+    }
+  },
+  "pg-macro-time-nested-call": {
+    "cause": "other",
+    "section": "7.10",
+    "reason": "Grafana reads the argument up to the first ). Hune counts the parentheses and the commas by depth.",
+    "hune": {
+      "sql": "SELECT coalesce(ts, now()) AS \"time\" FROM t"
+    }
+  },
+  "pg-macro-timeFilter-nested-call": {
+    "cause": "other",
+    "section": "7.10",
+    "reason": "Grafana reads the argument up to the first ). Hune counts the parentheses and the commas by depth.",
+    "hune": {
+      "sql": "SELECT v FROM t WHERE date_trunc('day', ts) BETWEEN '2026-11-09T08:00:00Z' AND '2026-11-09T14:00:00Z'"
+    }
+  },
+  "pg-macro-timeFilter-no-argument": {
+    "cause": "other",
+    "section": "7.10",
+    "reason": "Grafana gives a broken text for an empty argument. Hune refuses the call.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-macro-timeFrom-bare": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana leaves the name without parentheses as text, and the database refuses it. Hune also reads the name without parentheses.",
+    "hune": {
+      "sql": "SELECT v FROM t WHERE ts > '2026-11-09T08:00:00Z'"
+    }
+  },
+  "pg-macro-timeFrom-with-argument": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana ignores an argument of a macro that takes none. Hune refuses the call.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-macro-timeGroup-comma-in-argument": {
+    "cause": "other",
+    "section": "7.10",
+    "reason": "Grafana splits the arguments at each comma. Hune counts the parentheses and the commas by depth.",
+    "hune": {
+      "sql": "SELECT floor(extract(epoch from coalesce(ts, now()))/300)*300 FROM t"
+    }
+  },
+  "pg-macro-timeGroup-fill-value": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana reads a third argument, the fill value, and ignores it in this text. Hune refuses a third argument.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-macro-timeGroup-one-argument": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse a call with one argument. Grafana gives an error and no SQL.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-macro-timeTo-bare": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana leaves the name without parentheses as text, and the database refuses it. Hune also reads the name without parentheses.",
+    "hune": {
+      "sql": "SELECT v FROM t WHERE ts <= '2026-11-09T14:00:00Z'"
+    }
+  },
+  "pg-macro-unixEpochFrom-bare": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana leaves the name without parentheses as text, and the database refuses it. Hune also reads the name without parentheses.",
+    "hune": {
+      "sql": "SELECT v FROM t WHERE n > 1794211200"
+    }
+  },
+  "pg-macro-unixEpochGroup-fill-value": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Grafana reads a third argument, the fill value, and ignores it in this text. Hune refuses a third argument.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-unknown-macro-dateFilter": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse this name. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-unknown-macro-dateTimeFilter": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse this name. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-unknown-macro-fromTime": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse this name. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-unknown-macro-lowercase": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse a name with another case. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-unknown-macro-timeFilter_ms": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse this name. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-unknown-macro-timeInterval": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse this name. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "pg-unknown-macro-toTime": {
+    "cause": "other",
+    "section": "7.22",
+    "reason": "Both refuse this name. Grafana gives an error or a database error, and no SQL. Hune gives a document error.",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "unknown-macro-name": {
+    "cause": "other",
+    "reason": "The plugin or Grafana knows this macro. Hune knows five macros, and it reads each other $__name in code as a document error.",
+    "section": "7.10",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "macro"
+      }
+    }
+  },
+  "var-custom-all-single-all-in-string": {
+    "cause": "other",
+    "reason": "Grafana writes the list with its own quote marks inside the string, so the SQL text breaks. Hune gives a document error for a list in a string with no format csv.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-distributed": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-doublequote": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-glob": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-html": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-json": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-lucene": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-percentencode": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-pipe": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-queryparam": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-regex": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-format-text": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-multi-in-string": {
+    "cause": "other",
+    "reason": "Grafana writes the list with its own quote marks inside the string, so the SQL text breaks. Hune gives a document error for a list in a string with no format csv.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-date": {
+    "cause": "format",
+    "reason": "Grafana knows this variable format. Hune knows raw, csv, singlequote and sqlstring, and gives a document error for another format.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "placeholder"
+      }
+    }
+  },
+  "var-custom-single-format-distributed": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-doublequote": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-glob": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-html": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-json": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-lucene": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-percentencode": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-pipe": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-queryparam": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-regex": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-format-text": {
+    "cause": "format",
+    "reason": "Grafana formats the value in code. Hune permits this format only inside a string (D7), and gives a document error in code.",
+    "section": "7.9",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-custom-single-in-block-comment": {
+    "cause": "other",
+    "reason": "Grafana replaces a variable in a comment. Hune leaves a comment as it is.",
+    "section": "7.6",
+    "hune": {
+      "sql": "SELECT 1 /* $env */"
+    }
+  },
+  "var-custom-single-in-line-comment": {
+    "cause": "other",
+    "reason": "Grafana replaces a variable in a comment. Hune leaves a comment as it is.",
+    "section": "7.6",
+    "hune": {
+      "sql": "SELECT 1 -- $env\n"
+    }
+  },
+  "var-custom-single-old-syntax": {
+    "cause": "other",
+    "reason": "Grafana replaces the form [[name]]. Hune keeps it as text. The importer rewrites it to ${name} (15).",
+    "section": "7.6",
+    "hune": {
+      "sql": "SELECT '[[env]]'"
+    }
+  },
+  "var-query-multi-all-csv": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  },
+  "var-query-multi-empty-selection-singlequote": {
+    "cause": "format",
+    "reason": "Grafana gives the empty text for this empty selection. The table of 7.8 gives an empty string literal for the formats none, singlequote and sqlstring.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('')"
+    }
+  },
+  "var-query-multi-empty-selection-sqlstring": {
+    "cause": "format",
+    "reason": "Grafana gives the empty text for this empty selection. The table of 7.8 gives an empty string literal for the formats none, singlequote and sqlstring.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('')"
+    }
+  },
+  "var-query-multi-empty-selection-string": {
+    "cause": "other",
+    "reason": "Grafana writes the list with its own quote marks inside the string, so the SQL text breaks. Hune gives a document error for a list in a string with no format csv.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "sql_invalid",
+        "part": "context"
+      }
+    }
+  },
+  "var-query-multi-format-csv": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  },
+  "var-query-multi-format-raw": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  },
+  "var-query-single-code-csv": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  },
+  "var-query-single-code-raw": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  },
+  "var-query-single-code-text": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "host"
+      }
+    }
+  },
+  "var-query-single-empty-selection": {
+    "cause": "format",
+    "reason": "Grafana gives the empty text for this empty selection. The table of 7.8 gives an empty string literal for the formats none, singlequote and sqlstring.",
+    "section": "7.8",
+    "hune": {
+      "sql": "SELECT 1 WHERE h IN ('')"
+    }
+  },
+  "var-text-code-text": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "t"
+      }
+    }
+  },
+  "var-text-empty-code": {
+    "cause": "other",
+    "reason": "Grafana writes a free value raw in code. Hune refuses a free value in code that is not a number, and a list of free values with the format csv or raw.",
+    "section": "7.8",
+    "hune": {
+      "error": {
+        "code": "variable_value_refused",
+        "part": "t"
+      }
+    }
+  },
+  "var-text-in-comment": {
+    "cause": "other",
+    "reason": "Grafana replaces a variable in a comment. Hune leaves a comment as it is.",
+    "section": "7.6",
+    "hune": {
+      "sql": "SELECT 1 /* $t */"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+# The builder image of 17.2. The jobs run cargo only in this image.
+# Build: docker build -f build/Dockerfile.build -t hune-builder \
+#   --build-arg RUST_IMAGE=<image from tests/images.lock> \
+#   --build-arg CARGO_DENY_VERSION=<version from tests/images.lock> build
+# Never push this image to a registry.
+ARG RUST_IMAGE
+FROM ${RUST_IMAGE}
+ARG CARGO_DENY_VERSION
+# musl-tools and jq are in 17.2. python3 runs tools/ste_lint.py and tools/check-vendor-lock.sh.
+# binutils gives readelf (case G01).
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends musl-tools jq python3 binutils \
+ && rm -rf /var/lib/apt/lists/*
+# The offline stage builds for the two musl targets. The toolchain file asks for these components.
+RUN rustup target add x86_64-unknown-linux-musl aarch64-unknown-linux-musl \
+ && rustup component add rustfmt clippy
+RUN cargo install --locked "cargo-deny@${CARGO_DENY_VERSION}"

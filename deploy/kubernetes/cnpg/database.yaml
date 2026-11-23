@@ -1,0 +1,10 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: hune
+  namespace: data
+spec:
+  cluster:
+    name: postgresql
+  name: hune
+  owner: hune_owner

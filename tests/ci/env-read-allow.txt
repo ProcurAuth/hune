@@ -1,0 +1,2 @@
+# Reads of the environment that the check "No environment read in the MongoDB driver copy" accepts.
+# The list is EMPTY (ID-MG25). A line that is not a comment is a fixed text; a finding that holds it is accepted.

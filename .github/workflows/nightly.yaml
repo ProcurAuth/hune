@@ -1,0 +1,23 @@
+# Nightly jobs of 16.17: `nightly` (1,000 random seeds, the fuzz targets from M7, the `source` job again),
+# `procurauth` and `failover`. No job pushes an image or logs in to a registry (16.18).
+name: nightly
+
+on:
+  schedule:
+    - cron: "17 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  nightly:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      # TO-PIN: replace the tag of each action by its full commit SHA.
+      - uses: actions/checkout@v4
+      - run: tests/ci/nightly.sh
+
+  conformance:
+    uses: ./.github/workflows/conformance.yml

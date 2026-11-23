@@ -1,0 +1,41 @@
+# The merge gate of 16.17 as data. One line: <milestone> <job> <case ids>.
+# The job "gate" lists the jobs that the gate runs from the exit of that milestone (they add up).
+# A case id list is comma separated. A token is one of:
+#   an exact id (A01), a range (A18..A24), a prefix pattern (SC-*), "*" for every case,
+#   "-" for no case, or "!id" / "!prefix*" to remove cases from the milestone list.
+# The cases of one milestone add up to the cases of the earlier milestones.
+# The file tests/ci/milestone holds the last milestone that passed. M0 means no gate case is required.
+M1 gate policy,rust,image,api[volume;open]
+M1 api A01,A02,A33
+M2 gate source
+M2 api A18..A24,K14a
+M3a gate import
+M3a api -
+M3b gate frontend,browser
+M3b api -
+M4 gate store[volume]
+M4 store SC-*,!SC-44,!SC-47,SV-*,SX-01
+M4 api A01..A38,A46
+M5 gate store[volume;postgres15;postgres18],api[volume;postgres15;postgres18],failover[when-changed]
+M5 store *
+M5 api A01..A38,A46
+M6 gate api[authzen],procurauth[when-changed]
+M6 api A39..A45,K14b
+M7 gate -
+M7 api K14c
+# The milestone MPG (the PostgreSQL source) comes after M7: the job pgsource joins the gate, and the cases A47 to A51
+# join the cases of api. The cases PS01 to PS15 are the cases of 16.9a.
+MPG gate pgsource
+MPG pgsource PS01..PS15
+MPG api A47..A51
+# Extension of the table (not in 16.17): the cases of the job image, from the exit criteria of 18.4 and the
+# paragraphs 16.13 and 16.15. G07 and G09 have one case for each example.
+M1 image G01..G06,G07-volume,G08,G09-volume
+M3a image I14
+M5 image G07-postgres,G09-postgres
+M6 image G09-kubernetes
+# The milestone MMG (the MongoDB source) comes after MPG: the job mongosource joins the gate, and the cases A52 to A56
+# join the cases of api. The cases MS01 to MS18 are the cases of 16.9b.
+MMG gate mongosource
+MMG mongosource MS01..MS18
+MMG api A52..A56

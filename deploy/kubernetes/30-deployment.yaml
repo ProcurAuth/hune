@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hune
+  namespace: hune
+  labels:
+    app.kubernetes.io/name: hune
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: hune
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hune
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+        prometheus.io/path: /metrics
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: hune
+      containers:
+        - name: hune
+          image: hune:0.1.0
+          imagePullPolicy: Never
+          args: ["serve", "-c", "/etc/hune/config.hcl"]
+          ports:
+            - { name: http, containerPort: 8080 }
+            - { name: ops, containerPort: 9090 }
+          readinessProbe:
+            httpGet: { path: /readyz, port: ops }
+            periodSeconds: 5
+            failureThreshold: 2
+          livenessProbe:
+            httpGet: { path: /livez, port: ops }
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { memory: 1Gi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - { name: config, mountPath: /etc/hune/config.hcl, subPath: config.hcl, readOnly: true }
+            - { name: pg-app, mountPath: /etc/hune/secrets/pg-app, readOnly: true }
+            - { name: pg-ca, mountPath: /etc/hune/secrets/pg-ca, readOnly: true }
+            - { name: clickhouse, mountPath: /etc/hune/secrets/clickhouse, readOnly: true }
+            - { name: edge, mountPath: /etc/hune/secrets/edge, readOnly: true }
+            - { name: pdp, mountPath: /etc/hune/secrets/pdp, readOnly: true }
+            # PostgreSQL data source (13.12a): remove the "#" of these two lines and of the two volumes below.
+            # - { name: pg-metrics, mountPath: /etc/hune/secrets/pg-metrics, readOnly: true }
+            # - { name: pg-metrics-ca, mountPath: /etc/hune/secrets/pg-metrics-ca, readOnly: true }
+      volumes:
+        - { name: config, configMap: { name: hune-config-0-4-0 } }
+        - { name: pg-app, secret: { secretName: hune-pg-app, defaultMode: 0440 } }
+        - { name: pg-ca, secret: { secretName: hune-pg-ca, defaultMode: 0440 } }
+        - { name: clickhouse, secret: { secretName: hune-clickhouse, defaultMode: 0440 } }
+        - { name: edge, secret: { secretName: hune-edge, defaultMode: 0440 } }
+        - { name: pdp, secret: { secretName: hune-pdp, defaultMode: 0440 } }
+        # The secret hune-pg-metrics holds the keys username and password of the read-only role (8a.13).
+        # The secret hune-pg-metrics-ca holds the key ca.crt.
+        # - { name: pg-metrics, secret: { secretName: hune-pg-metrics, defaultMode: 0440 } }
+        # - { name: pg-metrics-ca, secret: { secretName: hune-pg-metrics-ca, defaultMode: 0440 } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hune
+  namespace: hune
+spec:
+  selector:
+    app.kubernetes.io/name: hune
+  ports:
+    - { name: http, port: 8080, targetPort: http }
+    - { name: ops, port: 9090, targetPort: ops }

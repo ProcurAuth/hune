@@ -1,0 +1,139 @@
+# CI of Hune (16.17). Each job calls one script of tests/ci/. Each script uses Docker only.
+# The workflow runs on each push and pull request. The release workflow calls it with `full: true`.
+# No job pushes an image or logs in to a registry (16.18). The jobs have read access to the contents only.
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_call:
+    inputs:
+      full:
+        description: "Run every job, with no path filter (the release workflow sets it)."
+        type: boolean
+        default: false
+      arm64:
+        description: "Run the job image on arm64 too (the release workflow passes its input arm64)."
+        type: boolean
+        default: true
+    secrets:
+      HUNE_POLICY_WORDS:
+        description: "The forbidden word list of the job policy. The maintainer keeps it outside the repository."
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}-${{ inputs.full }}
+  cancel-in-progress: true
+
+jobs:
+  policy:
+    runs-on: ubuntu-24.04
+    steps:
+      # TO-PIN: replace the tag of each action by its full commit SHA.
+      - uses: actions/checkout@v4
+      # The check of the word list fails when this secret is not set (tests/ci/policy.sh).
+      - run: tests/ci/policy.sh
+        env:
+          HUNE_POLICY_WORDS: ${{ secrets.HUNE_POLICY_WORDS }}
+
+  rust:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/rust.sh
+
+  store:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/store.sh
+
+  pgsource:
+    # The cases PS01 to PS15 of 16.9a on PostgreSQL 15 and 18, in disposable containers on 127.0.0.1.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/pgsource.sh
+
+  mongosource:
+    # The cases MS01 to MS18 of 16.9b on MongoDB 7.0 and 8.0, in disposable containers on 127.0.0.1.
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/mongosource.sh
+
+  api:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/api.sh
+
+  source:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/source.sh
+
+  frontend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/frontend.sh
+
+  browser:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/browser.sh
+      - name: Keep the screenshots, traces and console logs of a failed case
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-artefacts
+          path: tests/browser/test-results
+          if-no-files-found: ignore
+
+  import:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/import.sh
+
+  image:
+    # The builds of 17.2 run on a runner of each architecture: no build crosses an architecture.
+    # A call with arm64 false runs amd64 only. A push or a pull request has no input, so it runs both.
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ${{ fromJSON(format('{0}', inputs.arm64) == 'false' && '["amd64"]' || '["amd64", "arm64"]') }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: tests/ci/image.sh
+      - name: Keep the importer output of case I14
+        uses: actions/upload-artifact@v4
+        with:
+          name: i14-${{ matrix.arch }}
+          path: dist/i14-${{ matrix.arch }}
+          if-no-files-found: ignore
+
+  image-i14:
+    # Case I14: the two architectures give equal importer output.
+    needs: image
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: i14-*
+          path: i14
+      - name: Compare the output of the two architectures
+        run: |
+          if [ -d i14/i14-amd64 ] && [ -d i14/i14-arm64 ]; then
+            tests/ci/image.sh --compare-i14 i14/i14-amd64 i14/i14-arm64
+          else
+            echo "I14: no importer output yet (milestone M3a); nothing to compare"
+          fi

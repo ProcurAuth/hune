@@ -1,0 +1,73 @@
+# Jobs `procurauth` (16.12, 11.32) and `failover` (16.11) of 16.17.
+# STUB, milestone M6 (procurauth) and M5 (failover): the scripts tests/conformance/run.sh and
+# tests/failover/run.sh do not exist before these milestones. Until they exist, a job prints a message
+# and passes. The job `procurauth` runs `tests/conformance/run.sh`. The job `failover` runs
+# `tests/failover/run.sh kill` and then `tests/failover/run.sh partition`.
+# Runs: a pull request that changes the paths below, the nightly workflow, and the release workflow.
+# No job pushes an image or logs in to a registry (16.18).
+name: conformance
+
+on:
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  procurauth:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Decide if the job runs
+        id: paths
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.base_ref }}
+        run: |
+          # A pull request runs the job only when it changes these paths (16.17). Other events run it.
+          if [ "$EVENT" != pull_request ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if git diff --name-only "origin/$BASE...HEAD" |
+            grep -qE '^(crates/hune/src/access/|crates/hune/src/config/|crates/hclconf/|tests/conformance/|Cargo\.(toml|lock)$)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Run the conformance series U
+        if: steps.paths.outputs.run == 'true'
+        run: |
+          if [ -x tests/conformance/run.sh ]; then
+            tests/conformance/run.sh
+          else
+            echo "M6 conformance: tests/conformance/run.sh does not exist yet; stub"
+          fi
+
+  failover:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Decide if the job runs
+        id: paths
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.base_ref }}
+        run: |
+          if [ "$EVENT" != pull_request ]; then echo "run=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          if git diff --name-only "origin/$BASE...HEAD" | grep -qE '^(crates/hune-store/|tests/failover/)'; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Run the failover test, mode kill and mode partition
+        if: steps.paths.outputs.run == 'true'
+        run: |
+          if [ -x tests/failover/run.sh ]; then
+            tests/failover/run.sh kill
+            tests/failover/run.sh partition
+          else
+            echo "M5 failover: tests/failover/run.sh does not exist yet; stub"
+          fi

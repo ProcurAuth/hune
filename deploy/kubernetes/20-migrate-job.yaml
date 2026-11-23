@@ -1,0 +1,40 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hune-migrate-0-4-0
+  namespace: hune
+spec:
+  backoffLimit: 0
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: hune-migrate
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: migrate
+          image: hune:0.1.0
+          imagePullPolicy: Never
+          args: ["migrate-store", "-c", "/etc/hune/migrate.hcl"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - { name: config, mountPath: /etc/hune/migrate.hcl, subPath: migrate.hcl, readOnly: true }
+            - { name: pg-owner, mountPath: /etc/hune/secrets/pg-owner, readOnly: true }
+            - { name: pg-ca, mountPath: /etc/hune/secrets/pg-ca, readOnly: true }
+      volumes:
+        - { name: config, configMap: { name: hune-config-0-4-0 } }
+        - { name: pg-owner, secret: { secretName: hune-pg-owner, defaultMode: 0440 } }
+        - { name: pg-ca, secret: { secretName: hune-pg-ca, defaultMode: 0440 } }
