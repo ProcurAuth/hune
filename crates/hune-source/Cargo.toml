@@ -1,0 +1,39 @@
+[package]
+name = "hune-source"
+description = "Hune DataSource trait, ClickHouse HTTP client, frame builder, limits, admission and cancellation."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+hune-core.workspace = true
+tokio.workspace = true
+hyper.workspace = true
+hyper-util.workspace = true
+http-body-util.workspace = true
+http.workspace = true
+bytes.workspace = true
+rustls.workspace = true
+tokio-postgres.workspace = true
+tokio-postgres-rustls.workspace = true
+futures-core.workspace = true
+tokio-rustls.workspace = true
+rustls-pki-types.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+getrandom.workspace = true
+mongodb = { workspace = true, optional = true }
+bson = { workspace = true, optional = true }
+
+[features]
+# The MongoDB driver (8b.2): the module `mongo/driver.rs` and its two crates. Off by default in this crate; the
+# crate `hune` turns it on.
+mongo-driver = ["dep:mongodb", "dep:bson"]
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+
+[lints]
+workspace = true

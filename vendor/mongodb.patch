@@ -1,0 +1,178 @@
+--- a/src/client/auth/oidc.rs
++++ b/src/client/auth/oidc.rs
+@@ -270,11 +270,10 @@
+             move |_| {
+                 use futures_util::FutureExt;
+                 async move {
+-                    let path = std::env::var("AZURE_FEDERATED_TOKEN_FILE")
+-                        .or_else(|_| std::env::var("AWS_WEB_IDENTITY_TOKEN_FILE"))
+-                        .unwrap_or_else(|_| {
+-                            "/var/run/secrets/kubernetes.io/serviceaccount/token".to_string()
+-                        });
++                    // hune: the original reads AZURE_FEDERATED_TOKEN_FILE and
++                    // AWS_WEB_IDENTITY_TOKEN_FILE. Hune reads no environment variable
++                    // (ID-MG25): the path is the Kubernetes default.
++                    let path = "/var/run/secrets/kubernetes.io/serviceaccount/token".to_string();
+                     let access_token = tokio::fs::read_to_string(path).await?;
+                     Ok(IdpServerResponse {
+                         access_token,
+--- a/src/client/csfle/state_machine.rs
++++ b/src/client/csfle/state_machine.rs
+@@ -380,8 +380,9 @@
+                                     }
+ 
+                                     let http_client = HttpClient::default();
+-                                    let host = std::env::var("GCE_METADATA_HOST")
+-                                        .unwrap_or_else(|_| "metadata.google.internal".into());
++                                    // hune: the original reads GCE_METADATA_HOST. Hune reads
++                                    // no environment variable (ID-MG25): the host is the default.
++                                    let host = "metadata.google.internal".to_string();
+                                     let uri = format!(
+                                         "http://{host}/computeMetadata/v1/instance/service-accounts/default/token"
+                                     );
+--- a/src/cmap/establish/handshake.rs
++++ b/src/cmap/establish/handshake.rs
+@@ -1,4 +1,4 @@
+-use std::{collections::HashSet, env, sync::Arc};
++use std::{collections::HashSet, sync::Arc};
+ 
+ #[cfg(test)]
+ use crate::event::EventHandler;
+@@ -127,6 +127,8 @@
+     pub(crate) container: Option<RawDocumentBuf>,
+ }
+ 
++// hune: no variant is built any more, because the driver reads no environment variable (ID-MG25).
++#[allow(dead_code)]
+ #[derive(Copy, Clone, Debug, PartialEq)]
+ pub(crate) enum FaasEnvironmentName {
+     AwsLambda,
+@@ -230,84 +232,21 @@
+         container: None,
+     };
+ 
++    // hune: the original reads the environment variables of the FaaS platforms, the file
++    // /.dockerenv and KUBERNETES_SERVICE_HOST to fill the `env` field of the client metadata.
++    // Hune reads no environment variable (rule 5 of the owner, ID-MG25). The field stays unset.
+     fn new() -> Option<Self> {
+-        let mut out = Self::UNSET;
+-        if let Some(name) = FaasEnvironmentName::new() {
+-            out.name = Some(name);
+-            match name {
+-                FaasEnvironmentName::AwsLambda => {
+-                    out.runtime = env::var("AWS_EXECUTION_ENV").ok();
+-                    out.region = env::var("AWS_REGION").ok();
+-                    out.memory_mb = env::var("AWS_LAMBDA_FUNCTION_MEMORY_SIZE")
+-                        .ok()
+-                        .and_then(|s| s.parse().ok());
+-                }
+-                FaasEnvironmentName::AzureFunc => {
+-                    out.runtime = env::var("FUNCTIONS_WORKER_RUNTIME").ok();
+-                }
+-                FaasEnvironmentName::GcpFunc => {
+-                    out.memory_mb = env::var("FUNCTION_MEMORY_MB")
+-                        .ok()
+-                        .and_then(|s| s.parse().ok());
+-                    out.timeout_sec = env::var("FUNCTION_TIMEOUT_SEC")
+-                        .ok()
+-                        .and_then(|s| s.parse().ok());
+-                    out.region = env::var("FUNCTION_REGION").ok();
+-                }
+-                FaasEnvironmentName::Vercel => {
+-                    out.region = env::var("VERCEL_REGION").ok();
+-                }
+-            }
+-        }
+-        let mut container = rawdoc! {};
+-        if std::path::Path::new("/.dockerenv").exists() {
+-            container.append(cstr!("runtime"), "docker");
+-        }
+-        if var_set("KUBERNETES_SERVICE_HOST") {
+-            container.append(cstr!("orchestrator"), "kubernetes");
+-        }
+-        if !container.is_empty() {
+-            out.container = Some(container);
+-        }
+-        if out == Self::UNSET {
+-            None
+-        } else {
+-            Some(out)
+-        }
+-    }
+-}
+-
+-fn var_set(name: &str) -> bool {
+-    env::var_os(name).is_some_and(|v| !v.is_empty())
++        None
++    }
+ }
+ 
+ impl FaasEnvironmentName {
++    // hune: the original reads AWS_EXECUTION_ENV, AWS_LAMBDA_RUNTIME_API, VERCEL,
++    // FUNCTIONS_WORKER_RUNTIME, K_SERVICE and FUNCTION_NAME. Hune reads no environment
++    // variable (ID-MG25): there is never a FaaS platform. `is_faas()` is always false, so the
++    // server monitoring mode `auto` always selects the streaming protocol.
+     pub(crate) fn new() -> Option<Self> {
+-        use FaasEnvironmentName::*;
+-        let mut found: Option<Self> = None;
+-        let lambda_env = env::var_os("AWS_EXECUTION_ENV")
+-            .is_some_and(|v| v.to_string_lossy().starts_with("AWS_Lambda_"));
+-        if lambda_env || var_set("AWS_LAMBDA_RUNTIME_API") {
+-            found = Some(AwsLambda);
+-        }
+-        if var_set("VERCEL") {
+-            // Vercel takes precedence over AwsLambda.
+-            found = Some(Vercel);
+-        }
+-        // Any other conflict is treated as unset.
+-        if var_set("FUNCTIONS_WORKER_RUNTIME") {
+-            match found {
+-                None => found = Some(AzureFunc),
+-                _ => return None,
+-            }
+-        }
+-        if var_set("K_SERVICE") || var_set("FUNCTION_NAME") {
+-            match found {
+-                None => found = Some(GcpFunc),
+-                _ => return None,
+-            }
+-        }
+-        found
++        None
+     }
+ 
+     fn name(&self) -> &'static str {
+--- a/src/otel.rs
++++ b/src/otel.rs
+@@ -81,12 +81,9 @@
+     }
+ 
+     fn otel_enabled(&self) -> bool {
+-        static ENABLED_ENV: LazyLock<bool> = LazyLock::new(|| {
+-            match std::env::var("OTEL_RUST_INSTRUMENTATION_MONGODB_ENABLED").as_deref() {
+-                Ok("1" | "true" | "yes") => true,
+-                _ => false,
+-            }
+-        });
++        // hune: the original reads OTEL_RUST_INSTRUMENTATION_MONGODB_ENABLED. Hune reads no
++        // environment variable (ID-MG25): the default is "off".
++        static ENABLED_ENV: LazyLock<bool> = LazyLock::new(|| false);
+ 
+         self.tracing
+             .as_ref()
+@@ -95,12 +92,9 @@
+     }
+ 
+     fn otel_query_text_max_length(&self) -> usize {
+-        static MAX_LENGTH_ENV: LazyLock<usize> = LazyLock::new(|| {
+-            std::env::var("OTEL_RUST_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH")
+-                .ok()
+-                .and_then(|s| s.parse().ok())
+-                .unwrap_or(0)
+-        });
++        // hune: the original reads OTEL_RUST_INSTRUMENTATION_MONGODB_QUERY_TEXT_MAX_LENGTH.
++        // Hune reads no environment variable (ID-MG25): the default is 0.
++        static MAX_LENGTH_ENV: LazyLock<usize> = LazyLock::new(|| 0);
+ 
+         self.tracing
+             .as_ref()
