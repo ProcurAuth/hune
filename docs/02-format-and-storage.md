@@ -2732,7 +2732,7 @@ Input: the document D with uid U, canonical bytes B and etag E_new; the value `i
    - When v is the head and is applied, return `Saved` for v with the outcome `replayed`. The test depends on the kind of v. For `save`, `restore`, `import` and `migrate`, v is applied when E_cur equals the etag of v. For `move`, v is applied when F equals the folder of v.
    - When v is the head, is not applied, and the state is still the state before v, roll forward (5.5, rule 14). Then return `Saved` for v with the outcome `written`. The state before v is: E_cur equals the etag of version v - 1 or E_if, and, for a `move`, F equals the folder of version v - 1.
    - Else write the metadata file of v again with `save_id` null (5.13), and return `Conflict` with E_cur.
-   - To roll forward is to apply the effect of v. For a save, do steps 11 to 14 with the bytes of v. For a move or a delete, do steps 6 to 8 of `move_to` or steps 4 and 5 of `delete` (5.15).
+   - To roll forward is to apply the effect of v. For a save, do steps 11 to 14 with the bytes of v. For a move, do steps 6 to 8 of `move_to` (5.15). For a delete, do steps 4 and 5 of `delete` (5.15).
 6. When E_if differs from E_cur, or when F differs from `expected_folder`, return `Conflict` with E_cur.
 7. When E_new equals E_cur, return `Saved` for the current version with the outcome `unchanged`.
 8. Read the head version (the highest `<n>` with a metadata file). The head can be absent, or its etag can differ from E_cur. In both cases, first do steps 9 and 10 with the kind `external`. When the current file is valid, the `external` version holds its canonical bytes, and its etag is E_cur. When the current file is not valid, the version has the metadata file only, with the etag E_cur (5.11).

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The rows of 15.6 for `allowCustomValue` (F41): the forms v1 and v2beta1.
+//! The rows of 15.6 for `allowCustomValue`: the forms v1 and v2beta1.
 
 mod common;
 

@@ -37,7 +37,7 @@
   <div class="wrap bar">
     <a class="brand" href="index.html" aria-label="Hune, home page"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="8" fill="var(--accent)"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="var(--accent-ink)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></svg><span>Hun<b>e</b></span></a>
     <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
-    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="access.html" aria-current="page">Access</a></li><li><a href="security.html">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="specification.html">Specification</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
+    <nav id="site-nav" aria-label="Main"><ul><li><a href="index.html">Overview</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="architecture.html">Architecture</a></li><li><a href="security.html" aria-current="true">Security</a></li><li><a href="operations.html">Operations</a></li><li><a href="reference.html">Reference</a></li><li><a href="changelog.html">Changelog</a></li><li class="nav-gh"><a href="https://github.com/ProcurAuth/hune">GitHub</a></li></ul></nav>
     <a class="gh-link" href="https://github.com/ProcurAuth/hune" aria-label="Hune on GitHub" title="Hune on GitHub"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg><span>GitHub</span></a>
     <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch colour theme" title="Switch colour theme"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 3.5a8.5 8.5 0 0 1 0 17z" fill="currentColor"/></svg></button>
   </div>
@@ -134,10 +134,12 @@
 <h2 id="the-pdp-down-slow-or-wrong"><a class="self" href="#the-pdp-down-slow-or-wrong">The PDP down, slow or wrong</a></h2>
 <p>Hune fails closed. It never sends <code>context.reason</code> to the client.</p>
 <div class="tablewrap"><table><thead><tr><th scope="col">Case</th><th scope="col">Answer</th></tr></thead><tbody><tr><th scope="row"><code>true</code></th><td data-label="Answer">The operation runs.</td></tr><tr><th scope="row"><code>false</code></th><td data-label="Answer"><code>403 forbidden</code></td></tr><tr><th scope="row">No connection, an error, or no answer in <code>timeout</code></th><td data-label="Answer"><code>503 pdp_unavailable</code>, retryable</td></tr><tr><th scope="row">No permit of the pool in <code>timeout</code></th><td data-label="Answer"><code>503 pdp_unavailable</code></td></tr><tr><th scope="row">An HTTP status other than 200, or a body that is not valid</th><td data-label="Answer"><code>503 pdp_unavailable</code></td></tr></tbody></table></div>
+<p>Hune sets <code>plain_retries = 1</code> in the PEP. No key of the file changes this value. No action declares a budget, so no question has <code>context.usage</code>, and the PEP can send each question again. When a request does not leave Hune, the PEP sends it one more time. This includes no free connection in <code>timeout</code>, and a timeout of the connection, of the TLS handshake or of the first write. After a lost connection, or after a second request that does not leave Hune, the PEP sends the question one more time.</p>
+<p>Thus the PEP starts three requests at most for one question or one batch of questions. After a timeout that follows the first byte of the request, the PEP does not send the question again. An HTTP status other than 200 and a body that is not valid also get no new request. When the last request fails, the answer is <code>503 pdp_unavailable</code>. The PEP also reads the metadata of the PDP at its first question, and again at the first question after 3600 s. This read gets one more request after a lost connection or a request that does not leave Hune.</p>
 <p>A kept answer still applies until its <code>cache_ttl</code> ends. The action document, the pages and <code>GET /api/session</code> still answer during an outage. <code>/readyz</code> does not change, because a restart cannot repair the PDP. Hune does not contact the PDP at start.</p>
 <h2 id="the-link-to-the-pdp"><a class="self" href="#the-link-to-the-pdp">The link to the PDP</a></h2>
 <p>The link uses <code>rustls</code> with the <code>ring</code> provider, TLS 1.2 and TLS 1.3. The trust roots are the certificates of <code>access.pdp.ca_file</code>. No other root applies. Hune sends no client certificate. It follows no redirect and uses no proxy.</p>
-<p>The PEP is synchronous. Hune runs each call in <code>spawn_blocking</code>, behind a semaphore of <code>max_connections</code> permits. The runtime has <code>16 + max_connections</code> threads for blocked work. The longest wait for one PDP request is three times <code>timeout</code>: the permit, the connection and the exchange.</p>
+<p>The PEP is synchronous. Hune runs each call in <code>spawn_blocking</code>, behind a semaphore of <code>max_connections</code> permits. The runtime has <code>16 + max_connections</code> threads for blocked work. The longest wait for one PDP request is three times <code>timeout</code>: the permit, the connection and the exchange. A new request of the same call keeps the permit, and it has its own connection and exchange.</p>
 <p>A call cannot stop early. When the client leaves, the call ends and gives back its permit. Its answer goes to the cache, except the answer of a question that is never kept.</p>
 <p><code>plain_http = true</code> accepts an <code>http</code> URL. Use it only on a trusted network. Hune writes a warning at start.</p>
 <h2 id="the-logs-and-the-metrics"><a class="self" href="#the-logs-and-the-metrics">The logs and the metrics</a></h2>
@@ -149,10 +151,6 @@
 <footer class="site-footer">
   <div class="wrap">
     <div class="foot-grid">
-      <div>
-        <h2>Hune</h2>
-        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version 0.1.1.</p>
-      </div>
       <div>
         <h2>Learn</h2>
         <ul>
@@ -180,12 +178,20 @@
           <li><a href="status.html">Status</a></li>
           <li><a href="development.html">Development</a></li>
           <li><a href="conformance.html">Conformance</a></li>
-          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>ProcurAuth</h2>
+        <ul>
+          <li><a href="https://procurauth.github.io/">Home</a></li>
+          <li><a href="https://procurauth.github.io/procurauth/">Specification</a></li>
+          <li><a href="https://procurauth.github.io/portal/">portal</a></li>
+          <li><a href="https://procurauth.github.io/stowr/">Stowr</a></li>
         </ul>
       </div>
     </div>
     <div class="foot-legal">
-      <p>Hune, version 0.1.1.</p>
+      <p>Hune, version 0.1.1. Part of <a href="https://procurauth.github.io/">ProcurAuth</a>.</p>
       <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
       <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
     </div>

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The ad hoc filters on the routes (F36; 4.10c, 6.14, 7.7a, 7.10a, 7.18, 13.12).
+//! The ad hoc filters on the routes (4.10c, 6.14, 7.7a, 7.10a, 7.18, 13.12).
 //!
 //! The fake source records each request, so the tests read the SQL body. A refusal sends no byte to the source: the
 //! count of the recorded queries does not change.

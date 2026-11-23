@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The ad hoc filters of a ClickHouse source (F36; 4.10c, 7.7a, 7.10a).
+//! The ad hoc filters of a ClickHouse source (4.10c, 7.7a, 7.10a).
 //!
 //! The module does no I/O. It reads the request member of an `adhoc` variable, binds each filter to a key of the
 //! document and to an item of the configured list `clickhouse "<id>".adhoc_columns`, and makes the text of the macro

@@ -41,7 +41,7 @@ fn simple_properties() {
         no_items(&r);
         assert_eq!(set["unit"], u);
     }
-    // The units that the Grafana-parity work adds (F11).
+    // The units that the Grafana-parity work adds.
     for u in [
         "ns",
         "\u{b5}s",
@@ -172,7 +172,7 @@ fn custom_table_properties() {
     }
 }
 
-/// F04: the cell types `gauge` and `json`, and the wrap of the text.
+/// The cell types `gauge` and `json`, and the wrap of the text.
 #[test]
 fn gauge_and_json_cells() {
     for (grafana, expected) in [
@@ -222,7 +222,7 @@ fn table_options_of(defaults: Value) -> (hune_grafana::DashboardImport, Value) {
     (r, options)
 }
 
-/// F14: `custom.wrapText` (Grafana 12) and `custom.cellOptions.wrapText` (Grafana 11) give the table option `wrap`.
+/// `custom.wrapText` (Grafana 12) and `custom.cellOptions.wrapText` (Grafana 11) give the table option `wrap`.
 #[test]
 fn table_wrap_text() {
     for custom in [json!({"wrapText": true}), json!({"cellOptions": {"type": "auto", "wrapText": true}})] {
@@ -280,7 +280,7 @@ fn table_cell_inspect() {
     no_items(&r);
 }
 
-/// F14: the footer of Grafana 12, `custom.footer.reducers`, gives the property `footer`.
+/// The footer of Grafana 12, `custom.footer.reducers`, gives the property `footer`.
 #[test]
 fn table_footer() {
     let (r, set) = set_of(json!({"custom": {"footer": {"reducers": ["sum", "mean", "lastNotNull"]}}}));
@@ -338,7 +338,7 @@ fn old_table_footer() {
     assert_eq!((r.items[0].class, r.items[0].fallback.clone()), (Class::Changed, None));
 }
 
-/// F03: `custom.hideFrom` gives the property `hide_from`. A table hides a column with `viz`.
+/// `custom.hideFrom` gives the property `hide_from`. A table hides a column with `viz`.
 #[test]
 fn hide_from_property() {
     let (r, o) = overrides_of(
@@ -397,7 +397,7 @@ fn hide_from_property() {
     assert_eq!(o[1]["set"], json!({"hidden": false}));
 }
 
-/// F03: the matcher `byNames`.
+/// The matcher `byNames`.
 #[test]
 fn names_matcher() {
     let (r, o) = overrides(json!([
@@ -470,7 +470,7 @@ fn names_matcher_faults_remove_the_override() {
     assert_eq!(o[0]["match"]["names"].as_array().map(Vec::len), Some(64));
 }
 
-/// F02: the member `scope` of a matcher.
+/// The member `scope` of a matcher.
 #[test]
 fn matcher_scope() {
     let (r, o) = overrides(json!([
@@ -492,7 +492,7 @@ fn matcher_scope() {
     }
 }
 
-/// F12: `custom.thresholdsStyle.mode` gives the option `thresholds_style` of a time series and of a bar chart.
+/// `custom.thresholdsStyle.mode` gives the option `thresholds_style` of a time series and of a bar chart.
 #[test]
 fn thresholds_style() {
     for (grafana, expected) in [
@@ -1017,7 +1017,7 @@ fn options_with_grafana_defaults_are_metadata() {
     assert_eq!(r.items[0].member, "options.cellHeight");
 }
 
-/// F01: `justifyMode` gives the option `justify` of a stat.
+/// `justifyMode` gives the option `justify` of a stat.
 #[test]
 fn stat_justify_mode() {
     for (grafana, expected) in [("auto", None), ("center", Some("center"))] {

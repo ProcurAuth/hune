@@ -10,7 +10,7 @@
 //! client and numbers, or a kind and a query id. The values of the `set_config` statement go as
 //! bound parameters (extended protocol), never as part of the text.
 
-#![allow(dead_code)] // The client of the next wave calls these items.
+#![allow(dead_code)] // Some items have no caller outside the tests.
 
 use std::time::Duration;
 

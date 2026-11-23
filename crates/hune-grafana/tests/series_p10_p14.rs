@@ -138,7 +138,7 @@ fn the_log_scale_of_base_2_maps_and_symlog_stays_unsupported() {
     assert!(out["options"].get("log_base").is_none());
     let r = one(with("timeseries", json!({"scaleDistribution": {"type": "log", "log": 3}})));
     assert_eq!(one_item(&r, "fieldConfig.defaults.custom.scaleDistribution.log").class, Class::Unsupported);
-    // The symmetric log scale is for a later wave (19.20a).
+    // Hune has no symmetric log scale (19.20a).
     let r = one(with("timeseries", json!({"scaleDistribution": {"type": "symlog", "log": 2, "linearThreshold": 1}})));
     assert!(
         r.items

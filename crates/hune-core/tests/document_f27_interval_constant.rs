@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The variable kinds `interval` and `constant` in the document (F27, 4.7, 4.10a, 4.10b, 4.34, 4.35, 4.38, 4.42):
+//! The variable kinds `interval` and `constant` in the document (4.7, 4.10a, 4.10b, 4.34, 4.35, 4.38, 4.42):
 //! the fixture with its golden canonical form, one refusal for each error, the bounds and the closed schema.
 
 use hune_core::document::{VariableKind, validate};

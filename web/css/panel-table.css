@@ -351,3 +351,8 @@ button.cell-link { display: inline-block; max-width: 100%; }
 .panel[data-transparent] .vtable > tbody > tr > td:not(.cell--bg) { background: transparent; }
 .panel[data-transparent] .vtable > tbody > tr:hover > td:not(.cell--bg),
 .panel[data-transparent] .vtable > tbody > tr:focus-within > td:not(.cell--bg) { background-color: var(--row-hover); }
+
+/* Forced colors: the sort mark is a mask glyph (a background colour). It takes the text colour of the system. */
+@media (forced-colors: active) {
+  .vtable th[aria-sort] > .dataTable__sort::after { background-color: CanvasText; }
+}

@@ -17,7 +17,8 @@ This file lists the settings that a maintainer applies on GitHub with `gh`. The 
 - Pages: serve the branch `main`, from the folder `/docs`.
 - Enable the private reports of vulnerabilities (Settings, Code security). `SECURITY.md` and `CODE_OF_CONDUCT.md` link to them.
 - Enable the alerts of Dependabot. `.github/dependabot.yml` updates the actions of the workflows.
-- Protect `main`: require the checks of the workflow `ci` and the check `docs` before a merge. The release path is the pair of scripts `tests/ci/all.sh` and `tests/ci/release.sh`, so a required check is optional until the workflows run on GitHub.
+- Protect `main`: require the jobs of the workflow `ci` and the job `docs` before a merge. Most jobs of `ci` run the same job scripts of `tests/ci/` as `tests/ci/all.sh`. The job `no-image` is not in `all.sh`: it checks only the files of `.github/`. The workflow `conformance` runs the jobs `procurauth` and `failover` of `all.sh`.
+- The job `policy` needs the secret `HUNE_POLICY_WORDS`. GitHub gives no secret to the workflows of a pull request from a fork, so `policy` fails on it. When `policy` is a required job, a maintainer copies such a pull request to a branch of the repository before a merge.
 - Do not publish a container image. The releases hold binaries only.
 
 ## Labels

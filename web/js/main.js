@@ -179,7 +179,8 @@ function noAnswerPage(retry) {
 function notFoundPage() {
   document.documentElement.setAttribute("data-hune-view", "not-found");
   header.clear();
-  fullPage({ icon: "compass", text: "This address does not exist.", links: [{ label: "Go to the list", href: "." }], testid: "not-found" });
+  document.title = "Page not found - Hune";
+  fullPage({ icon: "compass", title: "Page not found", text: "This address does not exist.", links: [{ label: "Go to the list", href: "." }], testid: "not-found" });
 }
 
 // --- router ---------------------------------------------------------------------------------------
@@ -294,6 +295,15 @@ export function navigate(url, { replace = false } = {}) {
   return show();
 }
 
+// The skip link of the shell (shell.html) goes to <main>. The shell has a <base>, so the browser would resolve "#app-main" against
+// the base path and open the list. This handler moves the focus to <main> in the page instead. <main> is focusable only for this move.
+function skipToMain(event) {
+  event.preventDefault();
+  main.setAttribute("tabindex", "-1");
+  main.addEventListener("blur", () => main.removeAttribute("tabindex"), { once: true });
+  main.focus();
+}
+
 function onClick(event) {
   if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
   const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
@@ -344,6 +354,8 @@ async function start() {
     started = true;
     buildHeader();
     api.setUnauthorizedHandler(unauthorizedPage);
+    const skip = document.getElementById("skip-link");
+    if (skip) skip.addEventListener("click", skipToMain);
     document.addEventListener("click", onClick);
     window.addEventListener("popstate", () => show());
   }

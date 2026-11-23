@@ -12,6 +12,19 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The guides `docs/GETTING-STARTED.md`, `docs/CONFIGURATION.md`, `docs/ARCHITECTURE.md`, `docs/SECURITY-MODEL.md`, `docs/OPERATIONS.md` and `docs/DEVELOPMENT.md`, and the index `docs/SPECIFICATION.md`.
 - The demo in `examples/demo/`: synthetic ClickHouse data, a configuration and demo dashboards.
 - `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, the issue forms, the pull request template and `THIRD-PARTY-NOTICES.md`.
+- `hune help`, `hune --help` and `hune -h` write the usage text on the standard output and exit with 0. A known command with only `--help` or `-h` after it does the same.
+- `hune --version` and `hune -V` are aliases of `hune version`.
+- `hune healthcheck` is an alias of `hune health`. It takes the same options and gives the same exit codes.
+- `hune config-reference` is an alias of `hune print-reference --format markdown`. It takes no option.
+- The usage text gives the exit codes of the commands and the exit codes of `import-grafana`.
+- The ops listener answers `GET /healthz` and `HEAD /healthz`. This path is an alias of `/livez`, with the same status, body and headers.
+- Each answer of `server.listen` has the header `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()`. The ops listener does not send it.
+- The image recipe `build/Dockerfile` sets the label `org.opencontainers.image.licenses` and `STOPSIGNAL SIGTERM`. SIGTERM was already the stop signal of Docker.
+- The page has a skip link "Skip to content". It is the first stop of the Tab key, and it moves the focus to the main region.
+- The page has the meta `color-scheme` with the value `dark light`, and the meta `robots` with the value `noindex,nofollow`.
+- The page "not found" and the page of a dashboard that does not exist have a title, "Page not found" or "Dashboard not found". The browser tab shows "Page not found - Hune" or "Dashboard not found - Hune".
+- The CI job `no-image` stops the CI when a file in `.github` publishes a container image or logs in to a registry. It needs no Docker and no secret. The release workflow does the same check before the build.
+- The files `.editorconfig` and `.gitattributes` of the ProcurAuth family. Git stores each text file with LF line ends. Git never changes the bytes of pictures, archives, fonts and fuzz inputs.
 
 ### Changed
 
@@ -19,6 +32,30 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The repository is `ProcurAuth/hune`. The git dependencies on `procurauth-core` and `procurauth-pep` use `https://github.com/ProcurAuth/procurauth`, at the same commit.
 - The specification and the other documents are rewritten as public documents. The decision ids and the internal notes are removed. The section numbers stay the same.
 - The class of the page selector of the editor lists has a new name, `flist__pages`.
+- The workflow `ci` runs on a push to `main` and on each pull request. Before, it ran on a push to any branch or tag.
+- The workflows pin each action to a full commit SHA, with its version in a comment. No checkout keeps the credentials in the work tree.
+- Each job of the workflows `ci`, `conformance` and `release` has a time limit from 5 to 90 minutes. A job that hangs fails at this limit. Before, the GitHub limit of 360 minutes applied.
+- The job `procurauth` of the workflow `conformance` runs `tests/conformance/run.sh` directly. When the script is absent, the job fails. Only the job `failover` keeps a stub.
+- The release workflow stops before the build when the section of the version in `CHANGELOG.md` is absent or empty.
+- The release workflow stops when it cannot read the tags of `origin`. Before, it continued as if the tag did not exist.
+- `.gitignore` also ignores `.env`, `.env.*`, `*.pem`, `*.key`, `*.swp` and `.DS_Store`. The test certificates and keys in `crates/hune-source/tests/fixtures/tls/`, `tests/api/tls/` and `tests/fixtures/config/` stay in the repository.
+- `SECURITY.md` has a section about two known limits (RUSTSEC-2026-0387 and one large PostgreSQL row) and a table of the public test values. Its response times are in business days.
+- `CONTRIBUTING.md` and the pull request template name the job scripts of `tests/ci/` and the tools that they use on the host. They also give the command of the STE checker.
+- `docs/ACCESS.md` tells that Hune sets `plain_retries = 1` in the PEP, and when the PEP sends a question to the PDP again.
+- Docs: the website uses the shared ProcurAuth style sheet and script. The main menu has the same eight entries as the other sites of the family. Reference and Changelog are new in it.
+- Docs: Access, Specification, Status, Conformance, Development and Chart engine left the main menu. Each of these pages marks the menu entry of its section, and the footer links to it.
+- Docs: the footer has a ProcurAuth column with links to the family home page, the specification, portal and Stowr. The page 404 uses the common layout of the family.
+- Docs: each local image has its width and height. The hero image loads first. The other images load when they come near the visible part of the page.
+- Docs: the social preview image `docs/assets/og.png` has no colour bands now.
+- Docs: the README has the section "The ProcurAuth family", with the same picture and table of parts as the other ProcurAuth repositories.
+- Docs: the steps to apply the edit E25 again in `docs/engine-patches.md` are a numbered list, with one instruction in each step. The status of the applied edits is "applied, not yet reviewed".
+- Tools: `tools/ste_lint.py` gives the warning S20 only for a procedural sentence. It checks the text of a block quote. A bold run-in label of 8 words or fewer does not count as a sentence.
+- Tools: `scripts/check-docs.py` reports a local image that has no width and height.
+
+### Fixed
+
+- In the forced colors mode of the system, the mask glyphs show in the system text colour. These glyphs are the sort mark of a table, the check mark of a list and the resize mark of a panel. The type glyphs of the editor keep their own colours.
+- `check-config` names `access.identity.clock_skew` for a PEP error on the clock skew. Hune sets some PEP values from constants. A PEP error on such a value is now an internal error, not an error on a key of the file. With the pinned PEP, no output changes.
 
 ### Removed
 

@@ -359,7 +359,7 @@ async fn real_a_misconfigured_account_is_reported() {
     }
 }
 
-// ---- F27: the variables `interval` and `constant` (C33, C34 of 16.9) ----------------------------------------------
+// ---- The variables `interval` and `constant` (C33, C34 of 16.9) ---------------------------------------------------
 
 /// The text of the constant of the document: it has the hostile characters of C32.
 const F27_CONST: &str = "a'b\"c$d\\e;--x";

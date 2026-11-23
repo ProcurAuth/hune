@@ -327,7 +327,7 @@ async fn editing_disabled_on_write_routes_only() {
         let r = call(h.addr, m, p, &[json], if *m == "DELETE" { b"" } else { b"{}" }).await;
         assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"), "{m} {p}");
     }
-    // The query and options routes use POST but are reads: the route is reached (phase 1: 500, or an error of the route).
+    // The query and options routes use POST but are reads: the route is reached (500, or an error of the route).
     let r = call(h.addr, "POST", "/api/dashboards/abc/panels/1/query", &[json], b"{}").await;
     assert_ne!(r.code(), "editing_disabled");
     let r = call(h.addr, "POST", "/api/dashboards/abc/variables/v/options", &[json], b"{}").await;

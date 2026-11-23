@@ -2,7 +2,7 @@
 //! The parsed top object of a MongoDB query (7.27 to 7.29).
 //!
 //! The query text is one JSON object. It has the members `collection`, `database` and exactly one
-//! of `aggregate` and `find`. The parser of 7.28 (next wave) makes a [`MongoQuery`] from the text.
+//! of `aggregate` and `find`. The parser of 7.28 makes a [`MongoQuery`] from the text.
 //! The tree below the top object uses [`MongoValue`] with the eleven types of 7.28
 //! ([`MongoValue::is_query_value`]). A typed leaf, such as a Date, is never an operator object.
 

@@ -606,3 +606,10 @@ html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { di
 .view-data th { position: sticky; top: 0; padding: var(--space-4) var(--space-8); background: var(--thead-bg); color: var(--muted); font-size: var(--fs-sm); text-align: left; }
 .view-data td { padding: var(--space-4) var(--space-8); border-top: 1px solid var(--dt-divider); }
 .view-data .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* --- Forced colors (a high contrast mode of the system) ---------------------------------------------------------------
+   The browser paints every background in the colour Canvas. A mask glyph is a background colour, so it would disappear:
+   it takes the text colour of the system. */
+@media (forced-colors: active) {
+  .listbox:not([aria-multiselectable="true"]) .listbox__item[aria-selected="true"]::after { background-color: CanvasText; }
+}

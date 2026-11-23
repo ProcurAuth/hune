@@ -86,7 +86,7 @@ async fn options_route(ctx: &Ctx, access: &Arc<Access>) -> Result<Response, ApiE
 
 /// A route that is not built yet.
 pub async fn todo(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
-    // TODO(phase 2): this route needs the store or a source.
+    // This route needs the store or a source.
     ctx.state
         .logger
         .event(crate::config::LogLevel::Error, "http.not_implemented")

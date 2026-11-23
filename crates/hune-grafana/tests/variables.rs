@@ -188,8 +188,8 @@ fn text_variables() {
 
 #[test]
 fn variable_types_and_names() {
-    // The kinds `constant` and `interval` map now (F27, 15.6): the file f27_interval_constant.rs holds their tests.
-    // The kind `adhoc` maps now (F36, I39): the file adhoc_import.rs holds its tests.
+    // The kinds `constant` and `interval` map now (15.6): the file f27_interval_constant.rs holds their tests.
+    // The kind `adhoc` maps now (I39): the file adhoc_import.rs holds its tests.
     for t in ["datasource", "groupby", "whatever"] {
         let r = run(&dash(vec![panel(1, "stat", 0)], vec![json!({"type": t, "name": "x"})]));
         assert!(r.document_bytes.is_none(), "{t}");

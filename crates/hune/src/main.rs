@@ -14,7 +14,7 @@ mod telemetry;
 #[cfg(test)]
 mod tests;
 mod web_assets;
-// The typed configuration has members that the server reads from later milestones.
+// Some members of the typed configuration have no reader yet.
 #[allow(dead_code)]
 mod config;
 

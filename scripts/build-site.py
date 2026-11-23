@@ -53,7 +53,7 @@ PAGES = [
      "The server, the query flow, the stores, the data sources and the limits.", True),
     ("access.html", "Access and ProcurAuth", "Access", "docs/ACCESS.md",
      "The mode authzen",
-     "How Hune checks the identity token, asks the PDP and applies the decision: the resource tree, the actions, the ceilings and the errors.", True),
+     "How Hune checks the identity token, asks the PDP and applies the decision: the resource tree, the actions, the ceilings and the errors.", False),
     ("security.html", "Security model", "Security", "docs/SECURITY-MODEL.md",
      "What Hune protects, and how",
      "The protections of the query engine, the stores, the page and the data source connections. To report a vulnerability, read the security policy.", True),
@@ -62,15 +62,15 @@ PAGES = [
      "The service, the stores, the logs and metrics, the limits, the upgrade and the steps to find a problem.", True),
     ("specification.html", "Specification", "Specification", "docs/SPECIFICATION.md",
      "The public specification",
-     "The eight parts of the specification of Hune: the format of a document, the API, the query engine, the page, the access rules, the configuration and the tests.", True),
+     "The eight parts of the specification of Hune: the format of a document, the API, the query engine, the page, the access rules, the configuration and the tests.", False),
     ("reference.html", "Configuration reference", "Reference", "docs/configuration-reference.md",
      "Generated from the code",
-     "Each key with its type, its range and its forms. The program makes this page from its table of keys.", False),
+     "Each key with its type, its range and its forms. The program makes this page from its table of keys.", True),
     ("changelog.html", "Changelog", "Changelog", "CHANGELOG.md",
-     "The changes of each version", "The versions of Hune, with the changes and the upgrade steps.", False),
+     "The changes of each version", "The versions of Hune, with the changes and the upgrade steps.", True),
     ("status.html", "Implementation status", "Status", "docs/implementation-status.md",
      "What exists, and what does not",
-     "The state of each milestone, the differences from the specification and the known limits.", False),
+     "What exists, the differences from the specification and the known limits.", False),
     ("development.html", "Development", "Development", "docs/DEVELOPMENT.md",
      "Build, test and release",
      "The checks, the tests, the dependencies and the steps of a release.", False),
@@ -98,6 +98,26 @@ PAGES = [
      "Part 8 of the specification", "The roadmap, the open questions, the glossary and the references.", False),
 ]
 PAGE_OF_SOURCE = {p[3]: p[0] for p in PAGES if p[3]}
+
+# The main menu has the same eight entries as the menu of the portal site. A page that is not in the menu marks the
+# entry of its section. The footer links the access, specification, status, development and conformance pages. The
+# text of the Architecture and Specification pages links the chart engine page. The Specification page links its parts.
+SECTION = {
+    "access.html": "security.html",
+    "specification.html": "reference.html",
+    "conformance.html": "reference.html",
+    "status.html": "changelog.html",
+    "development.html": "operations.html",
+    "engine.html": "architecture.html",
+}
+SECTION.update({f"spec-0{n}.html": "reference.html" for n in range(1, 9)})
+FAMILY_HOME = "https://procurauth.github.io/"
+FAMILY_LINKS = [
+    ("Home", FAMILY_HOME),
+    ("Specification", "https://procurauth.github.io/procurauth/"),
+    ("portal", "https://procurauth.github.io/portal/"),
+    ("Stowr", "https://procurauth.github.io/stowr/"),
+]
 
 
 # ------------------------------------------------------------------ Markdown
@@ -417,11 +437,13 @@ def head(name: str, title: str, description: str) -> str:
 
 
 def header(current: str) -> str:
+    section = SECTION.get(current)
     items = []
     for name, _title, short, _src, _eyebrow, _lede, nav in PAGES:
         if not nav:
             continue
-        aria = ' aria-current="page"' if name == current else ""
+        # "page" marks the page itself. "true" marks the menu entry of the section that holds the page.
+        aria = ' aria-current="page"' if name == current else ' aria-current="true"' if name == section else ""
         items.append(f'<li><a href="{name}"{aria}>{short}</a></li>')
     items.append(f'<li class="nav-gh"><a href="{REPO_URL}">GitHub</a></li>')
     return f"""<a class="skip" href="#main">Skip to the content</a>
@@ -439,14 +461,11 @@ def header(current: str) -> str:
 
 
 def footer() -> str:
+    family = "".join(f'\n          <li><a href="{url}">{label}</a></li>' for label, url in FAMILY_LINKS)
     return f"""</main>
 <footer class="site-footer">
   <div class="wrap">
     <div class="foot-grid">
-      <div>
-        <h2>Hune</h2>
-        <p>Hune is a dashboard server for ClickHouse, PostgreSQL and MongoDB. Version {VERSION}.</p>
-      </div>
       <div>
         <h2>Learn</h2>
         <ul>
@@ -474,12 +493,16 @@ def footer() -> str:
           <li><a href="status.html">Status</a></li>
           <li><a href="development.html">Development</a></li>
           <li><a href="conformance.html">Conformance</a></li>
-          <li><a href="https://procurauth.github.io/procurauth/">ProcurAuth</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>ProcurAuth</h2>
+        <ul>{family}
         </ul>
       </div>
     </div>
     <div class="foot-legal">
-      <p>Hune, version {VERSION}.</p>
+      <p>Hune, version {VERSION}. Part of <a href="{FAMILY_HOME}">ProcurAuth</a>.</p>
       <p>Licence: <a href="{BLOB}LICENSE-MIT">MIT</a> or <a href="{BLOB}LICENSE-APACHE">Apache-2.0</a>.</p>
       <p><a href="{BLOB}SECURITY.md">Security policy</a></p>
     </div>
@@ -668,25 +691,103 @@ def overview() -> str:
 
 def not_found() -> str:
     name = "404.html"
-    description = "This page does not exist. Go to the home page or to the guide of Hune."
+    description = "The address does not match a page of this site. Go to the home page of Hune or to the guide."
     page = head(name, "Page not found", description)
     # The page 404 can be served at any depth: it loads its files from the public address.
     page = page.replace('<meta name="color-scheme"', '<meta name="robots" content="noindex">\n<meta name="color-scheme"', 1)
     page = page.replace('<link rel="canonical" href="' + SITE_URL + '404.html">\n', "")
+    page = page.replace(f'<meta property="og:url" content="{SITE_URL}404.html">\n', "")
     for rel in ("assets/favicon.svg", "assets/favicon-32.png", "assets/favicon.ico", "assets/apple-touch-icon.png", "assets/site.css", "assets/site.js", "site.webmanifest"):
         page = page.replace(f'"{rel}"', f'"{SITE_URL}{rel}"')
     body = header(name)
     body = body.replace('href="index.html"', f'href="{SITE_URL}index.html"')
     body = re.sub(r'<a href="([a-z-]+\.html)"', lambda m: f'<a href="{SITE_URL}{m.group(1)}"', body)
     main = (
-        '<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Error 404</span> Page not found</p><h1>This page does not exist</h1>'
-        '<p class="lede">The address is wrong, or the page moved. Go to the home page or to the guide.</p></div></div>'
-        f'<div class="page-body"><div class="wrap"><div class="btn-row"><a class="btn primary" href="{SITE_URL}index.html">Home page</a>'
-        f'<a class="btn" href="{SITE_URL}getting-started.html">Getting started</a></div></div></div>\n'
+        # The rule .page-404 sets the vertical padding. The inner .wrap keeps the side gutter on a narrow screen.
+        '<div class="page-404"><div class="wrap narrow"><p class="eyebrow"><span class="badge">Error 404</span></p><h1>Page not found</h1>'
+        '<p class="lede">The address does not match a page of this site.</p>'
+        f'<div class="btn-row"><a class="btn primary" href="{SITE_URL}index.html">Go to the Hune home page</a>'
+        f'<a class="btn" href="{SITE_URL}getting-started.html">Getting started</a>'
+        f'<a class="btn" href="{FAMILY_HOME}">ProcurAuth home</a></div></div></div>\n'
     )
     foot = footer()
     foot = re.sub(r'href="([a-z-]+\.html)"', lambda m: f'href="{SITE_URL}{m.group(1)}"', foot)
     return page + body + main + foot
+
+
+def image_size(path: Path) -> tuple[int, int] | None:
+    """Return the intrinsic width and height of a PNG, WebP, JPEG, GIF or SVG file, or None."""
+    try:
+        data = path.read_bytes()
+    except OSError:
+        return None
+    if data[:8] == b"\x89PNG\r\n\x1a\n" and data[12:16] == b"IHDR":
+        return int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big")
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        kind = data[12:16]
+        if kind == b"VP8X":
+            return 1 + int.from_bytes(data[24:27], "little"), 1 + int.from_bytes(data[27:30], "little")
+        if kind == b"VP8 ":
+            return int.from_bytes(data[26:28], "little") & 0x3FFF, int.from_bytes(data[28:30], "little") & 0x3FFF
+        if kind == b"VP8L":
+            bits = int.from_bytes(data[21:25], "little")
+            return (bits & 0x3FFF) + 1, ((bits >> 14) & 0x3FFF) + 1
+        return None
+    if data[:6] in (b"GIF87a", b"GIF89a"):
+        return int.from_bytes(data[6:8], "little"), int.from_bytes(data[8:10], "little")
+    if data[:2] == b"\xff\xd8":
+        i = 2
+        while i + 9 < len(data) and data[i] == 0xFF:
+            marker = data[i + 1]
+            length = int.from_bytes(data[i + 2:i + 4], "big")
+            if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+                return int.from_bytes(data[i + 7:i + 9], "big"), int.from_bytes(data[i + 5:i + 7], "big")
+            i += 2 + length
+        return None
+    if path.suffix == ".svg":
+        root = re.search(r"<svg\b[^>]*>", data.decode("utf-8", "replace"), re.S)
+        if not root:
+            return None
+        tag = root.group(0)
+        width = re.search(r'\swidth="([\d.]+)(?:px)?"', tag)
+        height = re.search(r'\sheight="([\d.]+)(?:px)?"', tag)
+        if width and height:
+            return round(float(width.group(1))), round(float(height.group(1)))
+        box = re.search(r'\sviewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)\s*"', tag)
+        if box:
+            return round(float(box.group(1))), round(float(box.group(2)))
+    return None
+
+
+def size_images(name: str, page: str) -> str:
+    """Write the intrinsic width and height on each local image, so that the layout does not move while it loads.
+
+    The browser loads the image in the hero first, with a high priority. It loads each other image only when the image is
+    near the visible part of the page. A local image without a known size stops the build. A local image must have an
+    address relative to the page: an address that starts with "/" stops the build. The build ignores a query and a
+    fragment in the address.
+    """
+    hero = re.search(r'<section class="hero".*?</section>', page, re.S)
+    hero_span = hero.span() if hero else (0, 0)
+
+    def fix(match: re.Match[str]) -> str:
+        tag = match.group(0)
+        src = re.search(r'\ssrc="([^"]+)"', tag)
+        if src and " width=" not in tag and not re.match(r"^([a-z][a-z0-9+.-]*:|//)", src.group(1)):
+            address = html.unescape(src.group(1))
+            if address.startswith("/"):
+                raise SystemExit(f"site: {name}: the image {src.group(1)} must have an address relative to the page")
+            target = DOCS / re.split(r"[?#]", address, maxsplit=1)[0]
+            size = image_size(target)
+            if size is None:
+                raise SystemExit(f"site: {name}: the size of the image {src.group(1)} is unknown")
+            tag = tag.replace(src.group(0), f'{src.group(0)} width="{size[0]}" height="{size[1]}"', 1)
+        tag = re.sub(r'\s(loading|fetchpriority)="[^"]*"', "", tag)[:-1].rstrip(" /")
+        if hero_span[0] <= match.start() < hero_span[1]:
+            return tag + ' loading="eager" fetchpriority="high">'
+        return tag + ' loading="lazy">'
+
+    return re.sub(r"<img\b[^>]*>", fix, page)
 
 
 def small_files() -> dict[str, str]:
@@ -715,8 +816,9 @@ def small_files() -> dict[str, str]:
 def build() -> dict[str, str]:
     out: dict[str, str] = {}
     for name, title, _short, source, eyebrow, lede, _nav in PAGES:
-        out[name] = overview() if name == "index.html" else doc_page(name, title, eyebrow, lede, source)
-    out["404.html"] = not_found()
+        page = overview() if name == "index.html" else doc_page(name, title, eyebrow, lede, source)
+        out[name] = size_images(name, page)
+    out["404.html"] = size_images("404.html", not_found())
     out.update(small_files())
     return out
 

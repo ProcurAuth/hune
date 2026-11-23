@@ -401,7 +401,7 @@ async fn the_query_run_line_has_the_panel_id_and_no_value_and_the_route_table_ha
     let comment = fake.queries()[0].param("log_comment").unwrap();
     assert!(!comment.contains(value), "{comment}");
     assert!(comment.contains("\"panel\":2"), "{comment}");
-    // F23 adds no route: the 24 routes of before, and the route of F25 (6.21a), make 25. None is for a repeat.
+    // Repeats add no route: the 24 routes of before and the route of 6.21a make 25. None is for a repeat.
     assert_eq!(crate::server::route::ROUTES.len(), 25);
     assert!(crate::server::route::ROUTES.iter().all(|r| !r.label.contains("repeat") && !r.label.contains("copy")));
     let r = call(h.addr, "POST", "/api/dashboards/repeats9/repeat/2/query", &[JSON], &copy_body(&e, "node", "a")).await;

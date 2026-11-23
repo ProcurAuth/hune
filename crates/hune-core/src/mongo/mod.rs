@@ -25,8 +25,8 @@
 //!
 //! # Status
 //!
-//! This is the first skeleton. The parser (7.28), the grammar (7.30 to 7.33), the variables
-//! (7.34, 7.35) and the save checks (7.36) come in the next waves and build on these types.
+//! The modules of the table above implement the parser (7.28), the grammar (7.29 to 7.34), the
+//! variables (7.34, 7.35) and the save checks (7.36).
 
 pub mod check;
 pub mod command;

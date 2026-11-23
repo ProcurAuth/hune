@@ -699,7 +699,7 @@ async fn c11_a_source_that_is_down_gives_a_retryable_error() {
 }
 
 // ---------------------------------------------------------------------------------------------
-// C30 to C32 and C35 (F27): the variables `interval` and `constant` against the real ClickHouse.
+// C30 to C32 and C35: the variables `interval` and `constant` against the real ClickHouse.
 // C33 and C34 go through the routes of the server: `crates/hune/src/server/tests/real_ch.rs`.
 
 mod f27 {
@@ -958,7 +958,7 @@ mod f27 {
 }
 
 // ---------------------------------------------------------------------------------------------
-// C40 and C41 (F39, 7.6a): the query parameters of ClickHouse against the real server.
+// C40 and C41 (7.6a): the query parameters of ClickHouse against the real server.
 
 mod f39 {
     use super::*;

@@ -303,9 +303,9 @@ def check_online(report: Report, public: dict[str, list[str]]) -> None:
 
 # ------------------------------------------------------------------ site
 
-NAV_PAGES = ["index.html", "getting-started.html", "configuration.html", "architecture.html", "access.html",
-             "security.html", "operations.html", "specification.html"]
-EXTRA_PAGES = ["reference.html", "changelog.html", "status.html", "development.html", "conformance.html", "engine.html"] + [f"spec-0{n}.html" for n in range(1, 9)]
+NAV_PAGES = ["index.html", "getting-started.html", "configuration.html", "architecture.html",
+             "security.html", "operations.html", "reference.html", "changelog.html"]
+EXTRA_PAGES = ["access.html", "specification.html", "status.html", "development.html", "conformance.html", "engine.html"] + [f"spec-0{n}.html" for n in range(1, 9)]
 
 
 def check_site(report: Report) -> None:
@@ -349,6 +349,9 @@ def check_site(report: Report) -> None:
         for tag, attrs, line in page.tags:
             if tag == "img" and attrs.get("alt") is None:
                 report.add("site", f"{name}:{line}: an img has no alt attribute")
+            if tag == "img" and not re.match(r"(https?:)?//", attrs.get("src") or "") and not (attrs.get("width") and attrs.get("height")):
+                # The size of a local image keeps the layout in place while the image loads.
+                report.add("site", f"{name}:{line}: a local img has no width and height")
             if tag == "svg" and attrs.get("role") == "img":
                 pass
             if tag == "a" and attrs.get("target") == "_blank" and "noopener" not in (attrs.get("rel") or ""):

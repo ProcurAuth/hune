@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 //! Tests of the keys `server.repeat_max_per_panel`, `server.repeat_max_per_section` and
-//! `server.repeat_max_per_dashboard` (13.8, 4.35, F23): optional keys with a default, a hard range and
+//! `server.repeat_max_per_dashboard` (13.8, 4.35): optional keys with a default, a hard range and
 //! the contradictions C28 and C29.
 
 use super::*;

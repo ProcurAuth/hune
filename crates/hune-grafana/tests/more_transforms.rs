@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The eleven transformations of the Grafana-parity work in the import (F28, 15.6, 4.25a, 19.20j): the classes, the fallbacks
+//! The eleven transformations of the Grafana-parity work in the import (15.6, 4.25a, 19.20j): the classes, the fallbacks
 //! and the document for each Grafana id. The cases come from the measure on Grafana 12.4.2.
 
 mod common;

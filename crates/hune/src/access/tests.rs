@@ -219,6 +219,19 @@ fn the_pep_checks_map_to_the_keys_of_13_11() {
 }
 
 #[test]
+fn the_pep_config_fields_map_to_their_own_key_or_to_an_internal_error() {
+    use super::inputs::config_key_of;
+    assert_eq!(config_key_of("max_token_age_seconds"), Some("access.identity.max_age"));
+    assert_eq!(config_key_of("clock_skew_seconds"), Some("access.identity.clock_skew"));
+    assert_eq!(config_key_of("cache_ttl"), Some("access.pdp.cache_ttl"));
+    assert_eq!(config_key_of("pdp.max_connections"), Some("access.pdp.max_connections"));
+    // Hune sets these fields from constants: no key of the file gives them.
+    for field in ["display_max_questions", "cache_max_entries", "pdp.idle_close_after", "pdp.max_response_bytes"] {
+        assert_eq!(config_key_of(field), None, "{field}");
+    }
+}
+
+#[test]
 fn the_values_of_11_10_reach_the_pep_config() {
     let i = inputs("dashboards", true, vec![source("prod", "Production", 10, 10)]);
     let c = i.build_pep_config(false).unwrap();

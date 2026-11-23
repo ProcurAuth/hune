@@ -159,7 +159,7 @@ fn with_control(rng: &mut Rng) -> String {
 
 const OPTIONS: [&str; 3] = ["a1", "b2", "c d"];
 
-/// The variables of the test. `open_query` and `open_custom` set the member `allow_custom_value` (F41, 4.7).
+/// The variables of the test. `open_query` and `open_custom` set the member `allow_custom_value` (4.7).
 fn defs_with(open_query: bool, open_custom: bool) -> Vec<VariableDef> {
     vec![
         VariableDef::text("t", TextValueType::Text),
@@ -193,7 +193,7 @@ struct VarCase {
 }
 
 impl VarCase {
-    /// The case of the same values when the `custom` variable is open (F41): each value of the
+    /// The case of the same values when the `custom` variable is open: each value of the
     /// request is free text and the variable stands in no quoted name. The list "All" and `all_value` stay author text.
     fn opened(&self) -> VarCase {
         if !self.custom {
@@ -982,7 +982,7 @@ fn run_case(rng: &mut Rng, seed: u64, case: usize, stats: &mut Stats) {
     let closed = defs_with(false, false);
     let Some(base) = check_run(&closed, &req, &tpl, &ctx, stats) else { return };
 
-    // F41, 16.4: the flag of a `query` variable. The expansion and the checks at save give the same result.
+    // 16.4: the flag of a `query` variable. The expansion and the checks at save give the same result.
     let query_open = defs_with(true, false);
     assert_eq!(
         outcome(&query_open, &req, &tpl),
@@ -992,7 +992,7 @@ fn run_case(rng: &mut Rng, seed: u64, case: usize, stats: &mut Stats) {
     );
     assert_eq!(outcome(&query_open, &req, &tpl).0, base, "{}", ctx());
 
-    // F41, 16.4: the same values with each `custom` variable open. Each value is free text: P holds.
+    // 16.4: the same values with each `custom` variable open. Each value is free text: P holds.
     let custom_open = defs_with(false, true);
     let opened = Request {
         values: req.values.clone(),
@@ -1264,7 +1264,7 @@ mod pg {
         rng.pick(items)
     }
 
-    /// The kind of the variables that are not in a quoted name (F41, 16.4): a `text` variable, or a `query`
+    /// The kind of the variables that are not in a quoted name (16.4): a `text` variable, or a `query`
     /// variable with `allow_custom_value` true or false. The three give the same result.
     #[derive(Clone, Copy)]
     enum Kind {

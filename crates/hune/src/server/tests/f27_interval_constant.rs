@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The variable kinds `interval` and `constant` on the routes (F27, A103 to A110 of 16.8,
+//! The variable kinds `interval` and `constant` on the routes (A103 to A110 of 16.8,
 //! C33 and C34 of 16.9).
 //!
 //! The four routes that check the values of a request are 6.20 (panel query), 6.21 (options of a variable),

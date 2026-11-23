@@ -96,7 +96,7 @@ not verified against real dashboards.
 
 Content:
 
-1. Import two real dashboards with a first version of the importer: one in the v2 form and one in the v1 form.
+1. Import two real dashboards with a first version of the importer. One is in the v2 form and one is in the v1 form.
 2. Expand their SQL and compare it with `executedQueryString`, with a first version of the capture tool (15.14a). The
    capture tool reads the Grafana and the ClickHouse of the operator.
 3. Render one large table panel of a real dashboard with its overrides, in a prototype page.

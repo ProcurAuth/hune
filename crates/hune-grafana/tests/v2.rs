@@ -354,7 +354,7 @@ fn input_errors_of_the_forms() {
 /// The panels of a synthetic v2 export (the `Stream` fixture, with the structure of a real export): the base step
 /// of the thresholds has the value 0, `justifyMode` and the matcher `scope` are mapped, the `hideSeriesFrom`
 /// override has the matcher `byNames`, and two panels are transparent. No item stays: the export imports with no
-/// acceptance (F01, F02, F03).
+/// acceptance.
 #[test]
 fn stream_sample_v2() {
     let path = repo_root().join("tests/fixtures/grafana/stream/stream-sample.json");
@@ -368,12 +368,12 @@ fn stream_sample_v2() {
         assert_eq!(p["fields"]["defaults"]["thresholds"]["steps"][0]["value"], Value::Null, "panel {}", p["id"]);
     }
     let panel = |id: i64| panels.as_array().unwrap().iter().find(|p| p["id"] == id).unwrap();
-    // F01: the stat is centred.
+    // The stat is centred.
     assert_eq!(panel(23)["options"]["justify"], "center");
-    // F02: the matcher `scope` series gives no member, and the width stays.
+    // The matcher `scope` series gives no member, and the width stays.
     let widths = panel(10)["fields"]["overrides"].as_array().unwrap();
     assert_eq!(widths[1], json!({"match": {"by": "name", "value": "users"}, "set": {"width": 80}}));
-    // F03: the override `hideSeriesFrom` gives the matcher `names` and the property `hide_from`.
+    // The override `hideSeriesFrom` gives the matcher `names` and the property `hide_from`.
     assert_eq!(
         panel(40)["fields"]["overrides"][0],
         json!({"match": {"by": "names", "names": ["eu p99", "eu p50"], "mode": "exclude"},
@@ -386,7 +386,7 @@ fn stream_sample_v2() {
 
 #[test]
 fn the_member_allow_custom_value_is_read_in_the_spec_of_a_variable() {
-    // F41, 15.6: the member of a `QueryVariable` and of a `CustomVariable`, in the two v2 forms.
+    // 15.6: the member of a `QueryVariable` and of a `CustomVariable`, in the two v2 forms.
     let custom = |name: &str, member: Option<bool>| {
         let mut spec = json!({"name": name, "query": "a,b", "multi": false, "includeAll": false, "current": {"value": "a"},
             "options": [{"text": "a", "value": "a"}, {"text": "b", "value": "b"}]});

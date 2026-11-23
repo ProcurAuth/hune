@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The query parameters of ClickHouse on the routes (F39, 7.6a, 8.3, 8.5; A140 and A141 of 16.8).
+//! The query parameters of ClickHouse on the routes (7.6a, 8.3, 8.5; A140 and A141 of 16.8).
 //!
 //! The fake source records each request, so the tests read the request target, the pairs `param_<name>` and the
 //! SQL body. A refusal sends no byte to the source.

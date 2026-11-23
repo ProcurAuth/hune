@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <meta name="robots" content="noindex,nofollow">
   <base href="{{base_path}}">
   <title>Hune</title>
   <link rel="icon" href="static/{{build}}/favicon.svg" type="image/svg+xml">
@@ -30,6 +32,7 @@
   <script type="module" src="static/{{build}}/js/main.js"></script>
 </head>
 <body>
+  <a id="skip-link" class="skip-link" href="#app-main" data-testid="skip-link">Skip to content</a>
   <header id="app-header" data-testid="app-header"></header>
   <main id="app-main"></main>
   <div id="app-notices" role="status" aria-live="polite"></div>

@@ -151,7 +151,7 @@ fn strip(doc: &str, uid: &str) -> Value {
 
 #[test]
 fn open_custom_variable_of_the_v2beta1_export() {
-    // F41, 15.6: Grafana reads an absent member as `true`. A `query` variable imports as open. A `custom` variable
+    // 15.6: Grafana reads an absent member as `true`. A `query` variable imports as open. A `custom` variable
     // imports as closed unless the export says `true`. The v2beta1 export says `true` on its variables.
     let r = accepted_run();
     let doc = |uid: &str| -> Value {

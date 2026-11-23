@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! Helpers of the PostgreSQL tests of milestone M5: the connection data from the environment,
+//! Helpers of the PostgreSQL tests: the connection data from the environment,
 //! the databases with the grants of 5.25, and the configuration files for the binary.
 //!
 //! The file uses only the standard library. The integration test `tests/pg_cli.rs` includes it

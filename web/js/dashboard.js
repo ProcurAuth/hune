@@ -22,7 +22,10 @@ import { exportDashboard } from "./list.js";
 
 function errorPage(ctx, error) {
   const { fullPage } = ctx;
-  if (error.status === 404) return fullPage({ icon: "compass", text: "This dashboard does not exist.", links: [{ label: "Go to the list", href: "." }], testid: "dashboard-not-found" });
+  if (error.status === 404) {
+    document.title = "Dashboard not found - Hune";
+    return fullPage({ icon: "compass", title: "Dashboard not found", text: "This dashboard does not exist.", links: [{ label: "Go to the list", href: "." }], testid: "dashboard-not-found" });
+  }
   if (error.status === 403) return fullPage({ icon: "lock", tone: "warning", text: "You have no access to this dashboard.", links: [{ label: "Go to the list", href: "." }], testid: "dashboard-forbidden" });
   if (error.code === "stored_document_invalid") {
     const box = fullPage({ icon: "error", tone: "error", title: "This dashboard is not valid", text: "The stored document breaks the rules of the format:", links: [{ label: "Go to the list", href: "." }], testid: "dashboard-invalid" });

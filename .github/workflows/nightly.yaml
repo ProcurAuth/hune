@@ -1,5 +1,9 @@
-# Nightly jobs of 16.17: `nightly` (1,000 random seeds, the fuzz targets from M7, the `source` job again),
-# `procurauth` and `failover`. No job pushes an image or logs in to a registry (16.18).
+# Nightly jobs of 16.17: `nightly`, `procurauth` and `failover`. No job pushes an image or logs in to a registry (16.18).
+# The job `nightly` runs 1,000 random seeds and the jobs `source`, `pgsource` and `mongosource` again.
+# It runs no fuzz target here: only `tests/ci/nightly.sh --local` runs them (see the script).
+# Each step pins its action to a full commit SHA and gives the version in a comment. Dependabot proposes the updates.
+# Each checkout keeps no credentials in the work tree (persist-credentials: false).
+# The job `conformance` calls conformance.yml: each job of that workflow has its own timeout.
 name: nightly
 
 on:
@@ -15,8 +19,9 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 360
     steps:
-      # TO-PIN: replace the tag of each action by its full commit SHA.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/nightly.sh
 
   conformance:

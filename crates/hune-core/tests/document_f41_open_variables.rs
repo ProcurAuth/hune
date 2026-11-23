@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The member `allow_custom_value` of a `query` and of a `custom` variable (F41, 4.7 to 4.11, 4.38, 4.42):
+//! The member `allow_custom_value` of a `query` and of a `custom` variable (4.7 to 4.11, 4.38, 4.42):
 //! the fixture with its golden canonical form, one refusal for each error, the typed default of an open
 //! `custom` variable and the closed schema.
 

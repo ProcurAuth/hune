@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The member `allow_custom_value` on the routes (F41, A90 to A98 of 16.8, C20 to C22 of 16.9).
+//! The member `allow_custom_value` on the routes (A90 to A98 of 16.8, C20 to C22 of 16.9).
 //!
 //! The four routes that check the values of a request are 6.20 (panel query), 6.21 (options of a variable),
 //! 6.21a (annotation query) and 6.22 (preview, with a draft panel and with a draft variable).

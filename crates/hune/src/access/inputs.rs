@@ -224,7 +224,15 @@ impl PepInputs {
             Ok(config) => {
                 if let Err(list) = config.check() {
                     for e in list {
-                        errors.push((config_key_of(&e.key), format!("expected {}, found {}", e.expected, e.found)));
+                        let message = format!("expected {}, found {}", e.expected, e.found);
+                        errors.push(match config_key_of(&e.key) {
+                            Some(key) => (key.to_owned(), message),
+                            // No key of the file gives this field: Hune sets it from a constant.
+                            None => (
+                                "access".to_owned(),
+                                format!("internal error: the PEP refuses the value of Hune for `{}`: {message}", e.key),
+                            ),
+                        });
                     }
                 }
             }
@@ -255,22 +263,23 @@ impl PepInputs {
     }
 }
 
-/// The key of 13.11 that gives a field of the `PepConfig` (13.14).
-fn config_key_of(field: &str) -> String {
-    match field {
+/// The key of 13.11 that gives a field of the `PepConfig` (13.14). `None` is a field that no key
+/// of the file gives: Hune sets it from a constant, so an error on it is an internal error.
+pub(super) fn config_key_of(field: &str) -> Option<&'static str> {
+    Some(match field {
         "service_id" => "access.identity.audience",
         "token_header" => "access.identity.header",
         "issuer" => "access.identity.issuer",
         "trusted_keys" => "access.identity.public_keys",
-        "max_token_age_seconds" | "clock_skew_seconds" => "access.identity.max_age",
-        "cache_ttl" | "cache_max_entries" => "access.pdp.cache_ttl",
-        "display_max_questions" => "access.pdp.cache_ttl",
+        "max_token_age_seconds" => "access.identity.max_age",
+        "clock_skew_seconds" => "access.identity.clock_skew",
+        "cache_ttl" => "access.pdp.cache_ttl",
         "pdp.url" => "access.pdp.url",
         "pdp.credential" => "access.pdp.token",
         "pdp.allow_insecure_pdp_link" => "access.pdp.plain_http",
         "pdp.request_timeout" => "access.pdp.timeout",
         "pdp.max_connections" => "access.pdp.max_connections",
-        other => return format!("access.pdp.{other}"),
-    }
-    .to_owned()
+        // `cache_max_entries`, `display_max_questions` and the other `pdp.*` fields.
+        _ => return None,
+    })
 }

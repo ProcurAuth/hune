@@ -1468,7 +1468,7 @@ In each case `/readyz` stays 200 after the first load (14.4).
 2. Edit `config.hcl`: the source, the user, the database and `server.base_path`. Keep its secret paths.
 3. Create the ClickHouse account of 8.12.
 4. Make the directories `dashboards` and `secrets` and the two secret files with the commands of 17.6.
-5. Make sure that each secret file is readable by the user 65532 and by no other user of the host (12.10).
+5. Make sure that only the user 65532 of the host can read each secret file (12.10).
 6. Run `docker compose run --rm hune check-config -c /etc/hune/config.hcl`. Correct each error.
 7. Start the container: `docker compose up -d`.
 8. Find the log line `server.ready`. The container health check must show "healthy".
@@ -1484,7 +1484,7 @@ To bring the Grafana dashboards, follow section 15.
    names the owner role (5.25).
 3. Create the database and the two roles of 5.25 and 12.13, as 17.8 gives.
 4. Make the Kubernetes Secrets with the commands of 17.8. They mount under `/etc/hune/secrets/`.
-5. Make sure that each secret file is readable by the user 65532 and by no other user of the node (12.10).
+5. Make sure that only the user 65532 of the node can read each secret file (12.10).
 6. Give the operator of the edge and of the PDP the facts of 11.7.
 7. Run `hune check-config` on `config.hcl` in a container with the mounts of the Deployment. Run it on `migrate.hcl`
    in a container that has each file that `migrate.hcl` names.

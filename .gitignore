@@ -1,7 +1,26 @@
-/dist/
-/parity-out/
-/private/
-*.pyc
-__pycache__/
+# Build output of cargo. The scripts of tests/ci/ also keep CARGO_HOME there.
 /target/
+# Release archives that a local run of the release steps makes.
+/dist/
+# Section 17.1 of the specification lists this entry. No tool of the repository writes to this folder now.
+/parity-out/
+
+# Local working files. They never go to the repository.
+/private/
 /docs/working-papers/
+
+# Local configuration and credentials. The certificates and keys of the tests stay in the repository: they are test values
+# that protect nothing (SECURITY.md lists them).
+.env
+.env.*
+*.pem
+*.key
+!/crates/hune-source/tests/fixtures/tls/*
+!/tests/api/tls/*
+!/tests/fixtures/config/*.pem
+
+# Files of Python, of editors and of the operating system.
+__pycache__/
+*.pyc
+*.swp
+.DS_Store

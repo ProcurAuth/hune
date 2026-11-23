@@ -2,9 +2,19 @@
 //! The command line (3.1, 13.18 to 13.21).
 //!
 //! The parser is written by hand. A subcommand is one function of `run`. To add a
-//! subcommand, add a variant to `Command`, a case in `parse` and a case in `run_command`.
+//! subcommand, add a variant to `Command`, a case in `parse`, a case in `run_command`
+//! and its name in `COMMANDS`.
 //!
-//! Exit codes (14.12): 0 success, 1 configuration error, 2 command line error.
+//! Each alias gives the same command as its subcommand:
+//!
+//! - `help`, `--help` and `-h` write the usage text on the standard output and exit with 0.
+//!   A known command with only `--help` or `-h` after it does the same.
+//! - `--version` and `-V` are aliases of `version`.
+//! - `healthcheck` is an alias of `health`.
+//! - `config-reference` is an alias of `print-reference --format markdown`.
+//!
+//! Exit codes (14.12): 0 success, 1 configuration error or failure, 2 command line error.
+//! `import-grafana` has its own exit codes (15.12). The usage text gives all of them.
 
 mod import_grafana;
 mod output;
@@ -29,8 +39,9 @@ commands:\n\
 \x20 print-config --config <path>\n\
 \x20 print-reference --format hcl --profile local|distributed\n\
 \x20 print-reference --format markdown\n\
+\x20 config-reference                  (the same as print-reference --format markdown)\n\
 \x20 serve --config <path>\n\
-\x20 health --config <path>\n\
+\x20 health --config <path>            (also healthcheck)\n\
 \x20 export --config <path> --to <dir>\n\
 \x20 import --config <path> --from <dir>\n\
 \x20 copy-store --from <path> --to <path>\n\
@@ -39,12 +50,55 @@ commands:\n\
 \x20 migrate-store --config <path>\n\
 \x20 import-grafana --in <dir> --source-map <grafana-key>=<source-id> [--folders <file>] [--link-prefix <old>=<new>]\n\
 \x20     [--accept <file>] [--report <path>] [--nginx-map <file>] [-c <config>] [--write [--replace]]\n\
-\x20 version\n\
-the short form of --config is -c";
+\x20 version                           (also --version and -V)\n\
+\x20 help                              (also --help and -h, or <command> --help)\n\
+the short form of --config is -c\n\
+exit codes:\n\
+\x20 0  success\n\
+\x20 1  a configuration error, or the command failed\n\
+\x20 2  the command line is not valid\n\
+exit codes of import-grafana:\n\
+\x20 0  success\n\
+\x20 1  an item needs acceptance and has none, or an acceptance line is stale\n\
+\x20 2  a usage error or an input error\n\
+\x20 3  the store refused or failed a write";
+
+/// The names that `parse` accepts as the first argument, aliases included. The commands of
+/// `store_cmds::NAMES` are also commands.
+const COMMANDS: [&str; 14] = [
+    "help",
+    "--help",
+    "-h",
+    "version",
+    "--version",
+    "-V",
+    "check-config",
+    "print-config",
+    "print-reference",
+    "config-reference",
+    "serve",
+    "health",
+    "healthcheck",
+    "import-grafana",
+];
+
+/// Tells if `name` is a command or an alias of a command.
+fn is_command(name: &str) -> bool {
+    COMMANDS.contains(&name) || store_cmds::NAMES.contains(&name)
+}
+
+/// Tells if the arguments after a command are only one `--help` or one `-h`.
+fn asks_for_help(rest: &[OsString]) -> bool {
+    matches!(rest, [one] if one == "--help" || one == "-h")
+}
+
+/// The `Accepts` of a command that accepts no option: `version`, `help` and `config-reference`.
+const ACCEPTS_NOTHING: Accepts = Accepts { config: false, format: false, profile: false };
 
 /// A parsed command line.
 #[derive(Debug, PartialEq, Eq)]
 enum Command {
+    Help,
     Version,
     CheckConfig { config: PathBuf },
     PrintConfig { config: PathBuf },
@@ -131,10 +185,22 @@ fn parse(args: &[OsString]) -> Result<Command, UsageError> {
         return usage("no command");
     };
     let rest = &args[1..];
+    // In Hune 0.1.1, a lone `--help` or `-h` after a command was an unknown option (exit code 2).
+    if first.to_str().is_some_and(is_command) && asks_for_help(rest) {
+        return Ok(Command::Help);
+    }
     match first.to_str() {
-        Some("version") => {
-            parse_options("version", rest, &Accepts { config: false, format: false, profile: false })?;
+        Some(name @ ("help" | "--help" | "-h")) => {
+            parse_options(name, rest, &ACCEPTS_NOTHING)?;
+            Ok(Command::Help)
+        }
+        Some(name @ ("version" | "--version" | "-V")) => {
+            parse_options(name, rest, &ACCEPTS_NOTHING)?;
             Ok(Command::Version)
+        }
+        Some("config-reference") => {
+            parse_options("config-reference", rest, &ACCEPTS_NOTHING)?;
+            Ok(Command::PrintReference { format: ReferenceFormat::Markdown, profile: None })
         }
         Some("check-config") => {
             let options =
@@ -150,9 +216,9 @@ fn parse(args: &[OsString]) -> Result<Command, UsageError> {
             let options = parse_options("serve", rest, &Accepts { config: true, format: false, profile: false })?;
             Ok(Command::Serve { config: need_config("serve", options)? })
         }
-        Some("health") => {
-            let options = parse_options("health", rest, &Accepts { config: true, format: false, profile: false })?;
-            Ok(Command::Health { config: need_config("health", options)? })
+        Some(name @ ("health" | "healthcheck")) => {
+            let options = parse_options(name, rest, &Accepts { config: true, format: false, profile: false })?;
+            Ok(Command::Health { config: need_config(name, options)? })
         }
         Some(name) if store_cmds::NAMES.contains(&name) => match store_cmds::parse(name, rest) {
             Ok(cmd) => Ok(Command::Store(cmd)),
@@ -224,6 +290,10 @@ fn load_and_report(
 
 fn run_command(command: Command, env: &CapturedEnvironment, out: &mut dyn Write, err: &mut dyn Write) -> u8 {
     match command {
+        Command::Help => {
+            let _ = writeln!(out, "{USAGE}");
+            EXIT_OK
+        }
         Command::Version => {
             let _ = writeln!(out, "{}", version_line());
             EXIT_OK
@@ -412,5 +482,107 @@ mod tests {
         assert_eq!(code, 1);
         assert_eq!(out, "");
         assert!(err.starts_with("cannot read the configuration file /nonexistent/hune.hcl"), "{err}");
+    }
+
+    #[test]
+    fn help_writes_the_usage_on_the_standard_output() {
+        let cases: &[&[&str]] = &[
+            &["help"],
+            &["--help"],
+            &["-h"],
+            &["help", "--help"],
+            &["serve", "--help"],
+            &["health", "-h"],
+            &["healthcheck", "--help"],
+            &["version", "-h"],
+            &["-V", "--help"],
+            &["print-reference", "--help"],
+            &["config-reference", "-h"],
+            &["import-grafana", "--help"],
+            &["export", "--help"],
+            &["migrate-store", "-h"],
+        ];
+        for case in cases {
+            let (code, out, err) = run_text(case);
+            assert_eq!((code, err.as_str()), (0, ""), "{case:?}");
+            assert_eq!(out, format!("{USAGE}\n"), "{case:?}");
+        }
+    }
+
+    #[test]
+    fn help_is_strict_like_the_other_commands() {
+        let cases: &[&[&str]] = &[
+            &["help", "serve"],
+            &["--help", "extra"],
+            &["-h", "--config", "/a"],
+            &["unknown", "--help"],
+            &["serve", "-c", "/a", "--help"],
+            &["serve", "--help", "-c", "/a"],
+            &["serve", "--help=yes"],
+        ];
+        for case in cases {
+            let (code, out, err) = run_text(case);
+            assert_eq!(code, 2, "{case:?}");
+            assert_eq!(out, "", "{case:?}");
+            assert!(err.starts_with("hune: "), "{case:?}: {err}");
+            assert!(err.contains("usage: hune"), "{case:?}");
+        }
+    }
+
+    #[test]
+    fn version_has_two_aliases() {
+        let (_, expected, _) = run_text(&["version"]);
+        for alias in ["--version", "-V"] {
+            let (code, out, err) = run_text(&[alias]);
+            assert_eq!((code, err.as_str()), (0, ""), "{alias}");
+            assert_eq!(out, expected, "{alias}");
+            let (code, out, err) = run_text(&[alias, "extra"]);
+            assert_eq!((code, out.as_str()), (2, ""), "{alias}");
+            assert!(err.starts_with(&format!("hune: {alias}: unexpected argument extra")), "{err}");
+        }
+    }
+
+    #[test]
+    fn healthcheck_is_an_alias_of_health() {
+        assert_eq!(parse(&args(&["healthcheck", "-c", "/a"])), Ok(Command::Health { config: "/a".into() }));
+        assert_eq!(parse(&args(&["healthcheck", "--config=/a"])), Ok(Command::Health { config: "/a".into() }));
+        let (code, out, err) = run_text(&["healthcheck"]);
+        assert_eq!((code, out.as_str()), (2, ""));
+        assert!(err.starts_with("hune: healthcheck: the option --config <path> is necessary"), "{err}");
+        let (code, out, err) = run_text(&["healthcheck", "-c", "/nonexistent/hune.hcl"]);
+        assert_eq!((code, out.as_str()), (1, ""));
+        assert!(err.starts_with("cannot read the configuration file /nonexistent/hune.hcl"), "{err}");
+    }
+
+    #[test]
+    fn config_reference_is_print_reference_in_markdown() {
+        assert_eq!(
+            parse(&args(&["config-reference"])),
+            Ok(Command::PrintReference { format: ReferenceFormat::Markdown, profile: None })
+        );
+        let (_, expected, _) = run_text(&["print-reference", "--format", "markdown"]);
+        let (code, out, err) = run_text(&["config-reference"]);
+        assert_eq!((code, err.as_str()), (0, ""));
+        assert_eq!(out, expected);
+        for extra in [&["--format", "markdown"][..], &["--profile", "local"][..], &["extra"][..]] {
+            let mut case = vec!["config-reference"];
+            case.extend_from_slice(extra);
+            let (code, out, _) = run_text(&case);
+            assert_eq!((code, out.as_str()), (2, ""), "{case:?}");
+        }
+    }
+
+    #[test]
+    fn the_usage_names_each_command_and_the_exit_codes() {
+        for name in COMMANDS.iter().chain(store_cmds::NAMES.iter()) {
+            assert!(USAGE.contains(name), "{name}");
+            assert!(is_command(name), "{name}");
+        }
+        for line in ["  0  success", "  1  a configuration error", "  2  the command line is not valid"] {
+            assert!(USAGE.contains(line), "{line}");
+        }
+        assert!(USAGE.contains("exit codes of import-grafana:\n"));
+        assert!(USAGE.contains("  3  the store refused or failed a write"));
+        assert_eq!((EXIT_OK, EXIT_CONFIG, EXIT_USAGE), (0, 1, 2));
     }
 }

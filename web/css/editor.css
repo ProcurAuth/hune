@@ -564,3 +564,10 @@ fieldset.field > legend + * { clear: both; }
 .checks__list { display: flex; flex-direction: column; gap: var(--space-4); max-height: 12rem; overflow-y: auto; padding: var(--space-2); }
 .checks__list .check { min-height: 24px; font-size: var(--fs-md); }
 .checks__list:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+
+/* Forced colors: the resize mark is a mask glyph (a background colour). It takes the text colour of the system.
+   A type glyph is a small picture of the panel, drawn with backgrounds and gradients: it keeps its own colours. */
+@media (forced-colors: active) {
+  .panel__resize::after { background-color: CanvasText; }
+  .tglyph { forced-color-adjust: none; }
+}

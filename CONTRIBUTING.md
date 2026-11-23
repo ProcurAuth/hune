@@ -4,12 +4,12 @@ Thank you for your interest. This document tells how to propose a change.
 
 ## Ask a question or report a defect
 
-Open an issue with [the issue forms](https://github.com/ProcurAuth/hune/issues/new/choose). Give the version of Hune (`hune version`), the data source, and the part of the configuration that matters. Remove each secret and each real host name. Do not report a vulnerability in an issue. Read [SECURITY.md](SECURITY.md).
+Open an issue with [the issue forms](https://github.com/ProcurAuth/hune/issues/new/choose). Give the version of Hune (`hune version`), the data source, the store, and the part of the configuration that matters. Remove each secret and each real host name. Do not report a vulnerability in an issue. Read [SECURITY.md](SECURITY.md).
 
 ## Change the code
 
 1. Open an issue first for a large change or a new feature. State the problem and the idea.
-2. Read [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). It tells how to build and how to run the checks.
+2. Read [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md). It tells how to build and how to run the checks. The jobs of the gate in `tests/ci/` build and test in Docker. Some jobs also use git, openssl and python3 on the host.
 3. Write a test for each change of behavior. Rust tests are in the `tests/` folder of each crate or in the module. Front-end tests are in `tests/frontend/`.
 4. Run the checks that cover your change:
 
@@ -21,7 +21,7 @@ node --test tests/frontend/<name>.test.mjs
 python3 -I scripts/check-docs.py
 ```
 
-The full gate (`tests/ci/all.sh`) is heavy. It needs Docker, and it starts ClickHouse, PostgreSQL and MongoDB. Run the job that covers your change, for example `tests/ci/all.sh --from frontend`. The CI on GitHub runs the same jobs.
+The full gate (`tests/ci/all.sh`) is heavy. It needs Docker, and it starts ClickHouse, PostgreSQL and MongoDB. Each job of the gate has its own script in `tests/ci/`, for example `tests/ci/frontend.sh` or `tests/ci/browser.sh`. Run the script of the job that covers your change. The CI on GitHub runs the same jobs.
 
 ## Rules of the code
 
@@ -31,8 +31,8 @@ The full gate (`tests/ci/all.sh`) is heavy. It needs Docker, and it starts Click
 - The program never builds SQL in the browser. The server builds every query from the saved document.
 - The page has no framework, no build step and no request to another origin. A test limits the size of the page.
 - The code forbids `unsafe`.
-- Add `SPDX-License-Identifier: MIT OR Apache-2.0` as the first comment of each new Rust, script or test file. The files of `web/` have no header, because the page size is limited by a test. The licence of the project covers them.
-- Do not edit the copied files of `web/js/vendor/`, `web/css/vendor/` and `vendor/` by hand. Their lock files and patches say how.
+- Add `SPDX-License-Identifier: MIT OR Apache-2.0` as the first comment of each new Rust, script or test file. The files of `web/` have no header, because a test limits the size of the page. The licence of the project covers them.
+- Do not edit the copied files of `web/js/vendor/`, `web/css/vendor/` and `vendor/` by hand. Their lock files and patches tell how to change them.
 
 ## Rules for the documents
 

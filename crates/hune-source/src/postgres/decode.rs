@@ -13,7 +13,7 @@
 //! A value that does not decode gives [`DecodeError`]. The error text names the type and the
 //! rule. It never holds a value of a row. The module does no I/O and holds no state.
 //!
-//! Choices where 7.16a is silent (see the report of the milestone):
+//! Choices where 7.16a is silent:
 //!
 //! - An array element `numeric` NaN, `Infinity` or `-Infinity` is the JSON string `"NaN"`,
 //!   `"Infinity"` or `"-Infinity"`, as for a `float` element.

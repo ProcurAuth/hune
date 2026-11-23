@@ -1,7 +1,11 @@
 # Release of Hune (17.3). A person starts it by hand on main, with the inputs `version` and `arm64`.
 # It builds and attaches two tarballs and SHA256SUMS to a GitHub release that this workflow creates.
 # With `arm64` false (a repository with no arm64 runner), it builds, sums and attaches the amd64 tarball only.
+# The notes of the release are the section of the version in CHANGELOG.md (tools/changelog-section.sh).
 # It never pushes an image and never logs in to a registry (16.18). The image is built by the operator.
+# Each step pins its action to a full commit SHA and gives the version in a comment. Dependabot proposes the updates.
+# Each checkout keeps no credentials in the work tree (persist-credentials: false).
+# The jobs `ci` and `conformance` call other workflows: each job of these workflows has its own timeout.
 name: release
 
 on:
@@ -24,12 +28,22 @@ jobs:
   check:
     # Step 1: check the input.
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     env:
       V: ${{ inputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
+          persist-credentials: false
+      - name: Never publish container images
+        run: |
+          # This step is an early copy of the job no-image of ci.yaml. Keep the two copies the same.
+          # The pattern is split so that this line does not match itself.
+          if grep -rnE 'ghcr''\.io|docker/login''-action|docker[[:space:]]+(pus''h|logi''n)\b|buildx[^#]*--pus''h|imagetools[[:space:]]+crea''te|packages: *wr''ite|push: *tr''ue' .github; then
+            echo "::error::workflows must not publish container images"
+            exit 1
+          fi
       - name: Check the version
         run: |
           set -eu
@@ -38,7 +52,15 @@ jobs:
           cargo_v=$(sed -n '/^\[workspace\.package\]/,/^\[/{s/^version *= *"\(.*\)"/\1/p}' Cargo.toml)
           [ "$cargo_v" = "$V" ] || { echo "Cargo.toml has version $cargo_v, not $V"; exit 1; }
           grep -qE "^## $V - [0-9]{4}-[0-9]{2}-[0-9]{2}\$" CHANGELOG.md || { echo "CHANGELOG.md has no heading '## $V - <date>'"; exit 1; }
-          if git ls-remote --exit-code --tags origin "refs/tags/v$V" >/dev/null 2>&1; then echo "tag v$V exists"; exit 1; fi
+          tools/changelog-section.sh "$V" CHANGELOG.md >/dev/null || { echo "the section '## $V - <date>' of CHANGELOG.md is empty"; exit 1; }
+          # git ls-remote --exit-code gives 2 when no tag matches. Any other error stops the release.
+          rc=0
+          git ls-remote --exit-code --tags origin "refs/tags/v$V" >/dev/null || rc=$?
+          case $rc in
+            0) echo "tag v$V exists"; exit 1 ;;
+            2) ;;
+            *) echo "cannot read the tags of origin (git ls-remote exit code $rc)"; exit 1 ;;
+          esac
           if grep -n 'digest: TO-PIN' tests/images.lock; then echo "tests/images.lock has an image with no digest"; exit 1; fi
 
   # Step 2: the jobs of the CI on this commit. All must pass.
@@ -64,12 +86,15 @@ jobs:
       matrix:
         arch: ${{ fromJSON(inputs.arm64 && '["amd64", "arm64"]' || '["amd64"]') }}
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    timeout-minutes: 90
     env:
       V: ${{ inputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/release-build.sh "$V"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: archive-${{ matrix.arch }}
           path: dist/hune_${{ inputs.version }}_linux_${{ matrix.arch }}.tar.gz
@@ -79,15 +104,20 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     permissions:
       contents: write
     env:
       V: ${{ inputs.version }}
       ARM64: ${{ inputs.arm64 }}
       GH_TOKEN: ${{ github.token }}
+      # gh reads the repository from GH_REPO: the work tree keeps no credentials.
+      GH_REPO: ${{ github.repository }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           pattern: archive-*
           merge-multiple: true
@@ -108,6 +138,7 @@ jobs:
         run: |
           set -eu
           # ARCHIVES holds one or two names: the split on blanks is intended.
+          # shellcheck disable=SC2086
           sha256sum $ARCHIVES > SHA256SUMS
           cat SHA256SUMS
       - name: Make the release notes
@@ -116,6 +147,8 @@ jobs:
         working-directory: dist
         run: |
           set -eu
+          # ARCHIVES holds one or two names: the split on blanks is intended.
+          # shellcheck disable=SC2086
           gh release create "v$V" --draft --target "$GITHUB_SHA" --title "Hune v$V" --notes-file ../notes.md \
             $ARCHIVES SHA256SUMS
       - name: Check the draft

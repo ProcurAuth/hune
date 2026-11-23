@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The members that the Grafana-parity work adds to format 2 (the first set, in format 3 since the second set) (gaps F01, F03, F04, F11, F12, F14, F20).
+//! The members that the Grafana-parity work adds to format 2 (the first set, in format 3 since the second set).
 //!
 //! Each member is optional. An absent member has its default value, and the canonical writer
 //! leaves out a member that has its default value. The base is `all_types.json`, which has none of
@@ -216,7 +216,7 @@ fn the_new_members_are_not_in_the_old_fixtures() {
     }
 }
 
-// ------------------------------------------------------------------ F01, F12, F14
+// ------------------------------------------------------- options of the panels
 
 #[test]
 fn stat_justify_values() {
@@ -337,7 +337,7 @@ fn footer_is_permitted_in_a_table_only_and_in_an_override() {
     valid(&v);
 }
 
-// ------------------------------------------------------------------------ F03
+// ------------------------------------------------------ the property hide_from
 
 #[test]
 fn hide_from_has_three_necessary_booleans() {
@@ -438,7 +438,7 @@ fn the_names_of_a_matcher_have_their_limits() {
     valid(&put(json!(["a", "a"])));
 }
 
-// ------------------------------------------------------------------------ F04
+// -------------------------------------------------------------- the cell types
 
 #[test]
 fn cell_types_gauge_and_json() {
@@ -479,7 +479,7 @@ fn cell_types_stay_in_the_table() {
     }
 }
 
-// ------------------------------------------------------------------------ F20
+// -------------------------------------------- legend, tooltip and calculations
 
 #[test]
 fn legend_sort_by_values() {

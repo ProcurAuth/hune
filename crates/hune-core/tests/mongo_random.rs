@@ -346,7 +346,7 @@ fn bad_template(rng: &mut Rng) -> String {
 
 // ---- the checks ----
 
-/// The variables that hold free text when each variable is closed, and when each `custom` variable is open (F41).
+/// The variables that hold free text when each variable is closed, and when each `custom` variable is open.
 const FREE_CLOSED: &[&str] = &["host", "n", "hosts", "one"];
 const FREE_OPEN: &[&str] = &["host", "n", "hosts", "one", "env", "envs"];
 
@@ -473,7 +473,7 @@ fn run_case(rng: &mut Rng, seed: u64, case: usize, stats: &mut Stats) {
         assert_eq!(first, second, "seed {seed} case {case}: not deterministic: {text}");
     }
     let outcome = first.clone();
-    // F41, 16.4: the member of a `query` variable changes nothing, at run and at save.
+    // 16.4: the member of a `query` variable changes nothing, at run and at save.
     for open in [false, true] {
         let defs_q = defs_open(open, false);
         assert_eq!(
@@ -487,7 +487,7 @@ fn run_case(rng: &mut Rng, seed: u64, case: usize, stats: &mut Stats) {
             "seed {seed} case {case}: query flag {open} at save: {text}"
         );
     }
-    // F41, 16.4: with each `custom` variable open, the same values are free text. PM holds for them too.
+    // 16.4: with each `custom` variable open, the same values are free text. PM holds for them too.
     let defs_c = defs_open(false, true);
     let open_run = run_with(&text, &defs_c, &req, false);
     if let Ok(q) = &open_run {

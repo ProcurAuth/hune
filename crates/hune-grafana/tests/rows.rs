@@ -466,7 +466,7 @@ fn placeholders_and_macros() {
             true,
         ),
         ("SELECT * FROM t WHERE x = ${n} AND e = '${env}' AND y = $unknown", true),
-        // The macros of F05 to F08 (the engine of section 7 reads them).
+        // The macros that the engine of section 7 reads.
         ("SELECT * FROM t WHERE $__timeFilter_ms(ts)", true),
         ("SELECT $__timeInterval_ms(ts), $__interval_ms FROM t WHERE $__timeFilter_ms(ts)", true),
         ("SELECT * FROM t WHERE ts > $__fromTime_ms AND ts < $__toTime_ms", true),
@@ -500,7 +500,7 @@ fn placeholders_and_macros() {
     }
 }
 
-/// F09: a macro or a format that Grafana replaces inside a string, and that Hune keeps as text, is a `changed` item.
+/// A macro or a format that Grafana replaces inside a string, and that Hune keeps as text, is a `changed` item.
 #[test]
 fn text_that_grafana_replaces_in_a_string_is_listed() {
     let custom =
@@ -657,7 +657,7 @@ fn legend_value_tables() {
         json!(["last_not_null", "mean", "max", "min", "range"]),
         None,
     );
-    // The calculations that the Grafana-parity work adds (F20).
+    // The calculations that the Grafana-parity work adds.
     option_case(
         "timeseries",
         ts(json!({"calcs": ["median", "stdDev", "variance", "range", "diff"]})),
@@ -700,7 +700,7 @@ fn legend_value_tables() {
         json!(["min", "max", "mean", "median", "range"]),
         Some(Class::Unsupported),
     );
-    // The sort of the legend table (F20): the title of the column, `sortDesc`.
+    // The sort of the legend table: the title of the column, `sortDesc`.
     for (title, to) in [
         ("Name", "name"),
         ("Last *", "last_not_null"),
@@ -854,7 +854,7 @@ fn tooltip_and_reduce_value_tables() {
         json!("total"),
         Some(Class::Unsupported),
     );
-    // The calculations that the Grafana-parity work adds (F20).
+    // The calculations that the Grafana-parity work adds.
     for (g, v) in [
         ("median", "median"),
         ("stdDev", "std_dev"),
@@ -876,7 +876,7 @@ fn tooltip_and_reduce_value_tables() {
         json!("last_not_null"),
         Some(Class::Unsupported),
     );
-    // The order and the zeros of the tooltip (F20).
+    // The order and the zeros of the tooltip.
     for sort in ["asc", "desc"] {
         option_case(
             "timeseries",

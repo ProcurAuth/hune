@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! Milestone F, the second set: the importer rows of 15.6 for format 3 (cases I30, I31 and I32). Each case
+//! The Grafana-parity work, the second set: the importer rows of 15.6 for format 3 (cases I30, I31 and I32). Each case
 //! runs in the four input forms: v1 raw, v1 wrapped, v2alpha1 and v2beta1.
 
 mod common;

@@ -237,7 +237,7 @@ Hune reads the text as a JWK Set when its first character after spaces, tabs and
 - The `kid` of a JWK is its member `kid`: 1 to 256 bytes with no control character. A PEM key, or a JWK without `kid`,
   gets the RFC 7638 thumbprint of the key as its `kid`. Two keys with the same `kid` stop the start.
 
-Use a JWK Set with an explicit `kid` for each key, and make the edge put this `kid` in each token. With two or more
+Use a JWK Set with an explicit `kid` for each key. Make the edge put this `kid` in each token. With two or more
 keys, Hune refuses a token without `kid` or with another `kid` (11.8). A PEM key has the RFC 7638 thumbprint as its
 `kid`, so the edge must then send that thumbprint.
 
@@ -1654,7 +1654,7 @@ The values of the query parameters of 7.6a travel in the request URI to ClickHou
 
 The table `system.query_log` already holds the final SQL, with the values of the text form of 7.6. ClickHouse 26.8 also writes the statement there with the value of each query parameter in place of its form (case C41). Thus query parameters add no new class of data to that table.
 
-The hash `sql_sha256` of the event `query.run` (14.7) is a fingerprint of the values. The expanded SQL holds each value of the text form of 7.6 and each value of an ad hoc filter (7.10a). A person with the log and the stored SQL can compute the hash for a guessed value. When the value has few possible texts, this person can thus find the value offline. The values of the query parameters of 7.6a are not in the expanded SQL, so the hash does not show them. Treat the log of Hune as data of the same class as `system.query_log`, with the same access control and the same retention.
+The hash `sql_sha256` of the event `query.run` (14.7) is a fingerprint of the values. The expanded SQL holds each value of the text form of 7.6 and each value of an ad hoc filter (7.10a). A person with the log and the stored SQL can compute the hash for a guessed value. When the value has few possible texts, this person can thus find the value offline. The values of the query parameters of 7.6a are not in the expanded SQL, so the hash does not show them. Give the log of Hune the access control and the retention of `system.query_log`.
 
 Hune does not use a keyed hash. The hash must equal the SHA-256 of the member `sql` of Inspect (6.20), and the tests compare the two.
 

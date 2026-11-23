@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The OTLP exporter of 14.9 and the span model of 14.10 (milestone M7).
+//! The OTLP exporter of 14.9 and the span model of 14.10.
 //!
 //! The module stands alone. The server makes spans with a `Telemetry` handle. A disabled handle
 //! makes no span and costs nothing. An enabled handle puts each finished span in a bounded

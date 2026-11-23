@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The expanded SQL in the answer of a panel query (`server.query_inspect`, F22).
+//! The expanded SQL in the answer of a panel query (`server.query_inspect`).
 //!
 //! The rules under test: the key `false` never shows the SQL; the key `true` shows the SQL that the
 //! source got and nothing else; a configuration secret never shows; in the mode `authzen` only a

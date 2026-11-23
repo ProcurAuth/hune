@@ -359,7 +359,7 @@ fn the_report_equals_its_golden_file() {
 
 #[test]
 fn an_open_custom_variable_with_a_dollar_option_used_by_a_mongodb_query_stays_closed() {
-    // F41, 15.6: the engine refuses a free value that starts with `$` for MongoDB (PM2), so Grafana's
+    // 15.6: the engine refuses a free value that starts with `$` for MongoDB (PM2), so Grafana's
     // `allowCustomValue: true` is not kept for a `custom` variable that has such an option and that a MongoDB query uses.
     let mongo = json!({"type": "haohanyang-mongodb-datasource", "uid": "mongo"});
     let panel = |text: &str| {

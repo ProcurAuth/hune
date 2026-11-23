@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The ops listener (14.2 to 14.4, 6.26): `/livez`, `/readyz` and `/metrics`.
+//! The ops listener (14.2 to 14.4, 6.26): `/livez`, `/readyz` and `/metrics`. `/healthz` is an alias of `/livez`: it
+//! gives the same answer. The other servers of the suite use this probe path.
 
 use super::conn::{CloseReason, ConnShared, ConnTimes, run_connection};
 use super::error::ApiError;
@@ -58,7 +59,7 @@ pub fn readyz(state: &AppState) -> Response {
 
 /// Answers one request of the ops listener.
 pub fn ops_response(state: &AppState, method: &Method, path: &str, has_body: bool) -> Response {
-    let known = matches!(path, "/livez" | "/readyz" | "/metrics");
+    let known = matches!(path, "/livez" | "/healthz" | "/readyz" | "/metrics");
     let mut response = if !known {
         error_response(&ApiError::not_found("No such path."))
     } else if *method != Method::GET && *method != Method::HEAD {
@@ -67,7 +68,7 @@ pub fn ops_response(state: &AppState, method: &Method, path: &str, has_body: boo
         error_response(&ApiError::bad_request("This route takes no body."))
     } else {
         match path {
-            "/livez" => {
+            "/livez" | "/healthz" => {
                 bytes_response(StatusCode::OK, "application/json", Bytes::from_static(b"{\"status\":\"live\"}"))
             }
             "/readyz" => readyz(state),
@@ -145,5 +146,31 @@ pub async fn accept_loop(listener: TcpListener, state: Arc<AppState>, mut stop: 
             let _: CloseReason = run_connection(stream, shared, handler, times, close_rx).await;
             open.fetch_sub(1, Ordering::SeqCst);
         });
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::server::tests::harness::{Harness, call, get};
+
+    #[tokio::test]
+    async fn healthz_gives_the_answer_of_livez() {
+        let h = Harness::start(|_| {}).await;
+        let live = get(h.ops, "/livez").await;
+        let r = get(h.ops, "/healthz").await;
+        assert_eq!((r.status, r.text()), (live.status, live.text()));
+        assert_eq!(r.text(), "{\"status\":\"live\"}");
+        for name in ["content-type", "cache-control", "x-content-type-options"] {
+            assert_eq!(r.header(name), live.header(name), "{name}");
+        }
+        let head = call(h.ops, "HEAD", "/healthz", &[], b"").await;
+        assert_eq!(head.status, 200);
+        assert!(head.body.is_empty());
+        let r = call(h.ops, "POST", "/healthz", &[], b"").await;
+        assert_eq!((r.status, r.code().as_str(), r.header("allow")), (405, "method_not_allowed", Some("GET, HEAD")));
+        let r = call(h.ops, "GET", "/healthz", &[("Content-Length", "2")], b"{}").await;
+        assert_eq!((r.status, r.code().as_str()), (400, "bad_request"));
+        // The main listener has no ops route, and the alias is not one either.
+        assert_eq!(get(h.addr, "/healthz").await.status, 404);
     }
 }

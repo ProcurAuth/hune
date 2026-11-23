@@ -14,6 +14,10 @@ pub const CSP: &str = "default-src 'none'; script-src 'self'; style-src 'self' '
                        font-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'self'; form-action 'self'; \
                        frame-ancestors 'none'";
 
+/// The value of `Permissions-Policy`. The page uses none of these browser features, so no page and no frame can use
+/// them. The other servers of the suite send the same value.
+pub const PERMISSIONS_POLICY: &str = "camera=(), microphone=(), geolocation=(), payment=(), usb=()";
+
 pub const X_REQUEST_ID: HeaderName = HeaderName::from_static("x-request-id");
 pub const X_HUNE_BUILD: HeaderName = HeaderName::from_static("x-hune-build");
 pub const IDEMPOTENCY_KEY: HeaderName = HeaderName::from_static("idempotency-key");
@@ -197,6 +201,9 @@ pub fn cross_site_guard(headers: &HeaderMap) -> Result<(), ApiError> {
         return Err(refuse());
     }
     let Ok(origin) = origin.to_str() else { return Err(refuse()) };
+    // Hune reads `X-Forwarded-Host` from each peer, as 12.7 says. A hostile page cannot use it. A page needs a CORS
+    // preflight to set this header on a request to another site, and the preflight always fails here. A client
+    // that is not a browser can set the header, but it does not carry the cookie of a victim.
     let host = headers
         .get(X_FORWARDED_HOST)
         .and_then(|v| v.to_str().ok())
@@ -235,12 +242,13 @@ pub fn add_security_headers(headers: &mut HeaderMap) {
 /// Adds the security headers of 12.8 to a header map, with the policy that the server built at start.
 pub fn add_security_headers_with(headers: &mut HeaderMap, csp: &HeaderValue) {
     headers.insert(HeaderName::from_static("content-security-policy"), csp.clone());
-    let pairs: [(&'static str, &'static str); 5] = [
+    let pairs: [(&'static str, &'static str); 6] = [
         ("x-content-type-options", "nosniff"),
         ("x-frame-options", "DENY"),
         ("referrer-policy", "same-origin"),
         ("cross-origin-resource-policy", "same-origin"),
         ("cross-origin-opener-policy", "same-origin"),
+        ("permissions-policy", PERMISSIONS_POLICY),
     ];
     for (name, value) in pairs {
         headers.insert(HeaderName::from_static(name), HeaderValue::from_static(value));
@@ -417,7 +425,7 @@ mod tests {
         add_security_headers_with(&mut h, &csp_header_value(Some(&g)));
         assert_eq!(h["content-security-policy"], csp.as_str());
         assert_eq!(h["x-frame-options"], "DENY");
-        assert_eq!(h.len(), 6);
+        assert_eq!(h.len(), 7);
     }
 
     #[test]
@@ -431,7 +439,26 @@ mod tests {
         assert_eq!(h["referrer-policy"], "same-origin");
         assert_eq!(h["cross-origin-resource-policy"], "same-origin");
         assert_eq!(h["cross-origin-opener-policy"], "same-origin");
+        assert_eq!(h["permissions-policy"], "camera=(), microphone=(), geolocation=(), payment=(), usb=()");
         assert!(h.keys().all(|k| !k.as_str().starts_with("access-control-")));
+    }
+
+    #[tokio::test]
+    async fn each_answer_of_the_main_listener_has_the_permissions_policy() {
+        use crate::server::tests::harness::{Harness, call, get};
+        let h = Harness::start(|_| {}).await;
+        let answers = [
+            get(h.addr, "/").await,
+            get(h.addr, "/api/session").await,
+            get(h.addr, "/api/dashboards/nothing").await,
+            get(h.addr, "/nothing").await,
+            call(h.addr, "DELETE", "/api/session", &[], b"").await,
+        ];
+        for r in &answers {
+            assert_eq!(r.header("permissions-policy"), Some(PERMISSIONS_POLICY), "{}", r.status);
+        }
+        // The ops listener keeps its own headers only.
+        assert_eq!(get(h.ops, "/livez").await.header("permissions-policy"), None);
     }
 
     #[test]

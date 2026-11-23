@@ -213,13 +213,17 @@ Hune fails closed. It never sends `context.reason` to the client.
 | No permit of the pool in `timeout` | `503 pdp_unavailable` |
 | An HTTP status other than 200, or a body that is not valid | `503 pdp_unavailable` |
 
+Hune sets `plain_retries = 1` in the PEP. No key of the file changes this value. No action declares a budget, so no question has `context.usage`, and the PEP can send each question again. When a request does not leave Hune, the PEP sends it one more time. This includes no free connection in `timeout`, and a timeout of the connection, of the TLS handshake or of the first write. After a lost connection, or after a second request that does not leave Hune, the PEP sends the question one more time.
+
+Thus the PEP starts three requests at most for one question or one batch of questions. After a timeout that follows the first byte of the request, the PEP does not send the question again. An HTTP status other than 200 and a body that is not valid also get no new request. When the last request fails, the answer is `503 pdp_unavailable`. The PEP also reads the metadata of the PDP at its first question, and again at the first question after 3600 s. This read gets one more request after a lost connection or a request that does not leave Hune.
+
 A kept answer still applies until its `cache_ttl` ends. The action document, the pages and `GET /api/session` still answer during an outage. `/readyz` does not change, because a restart cannot repair the PDP. Hune does not contact the PDP at start.
 
 ## The link to the PDP
 
 The link uses `rustls` with the `ring` provider, TLS 1.2 and TLS 1.3. The trust roots are the certificates of `access.pdp.ca_file`. No other root applies. Hune sends no client certificate. It follows no redirect and uses no proxy.
 
-The PEP is synchronous. Hune runs each call in `spawn_blocking`, behind a semaphore of `max_connections` permits. The runtime has `16 + max_connections` threads for blocked work. The longest wait for one PDP request is three times `timeout`: the permit, the connection and the exchange.
+The PEP is synchronous. Hune runs each call in `spawn_blocking`, behind a semaphore of `max_connections` permits. The runtime has `16 + max_connections` threads for blocked work. The longest wait for one PDP request is three times `timeout`: the permit, the connection and the exchange. A new request of the same call keeps the permit, and it has its own connection and exchange.
 
 A call cannot stop early. When the client leaves, the call ends and gives back its permit. Its answer goes to the cache, except the answer of a question that is never kept.
 

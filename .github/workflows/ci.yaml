@@ -1,10 +1,13 @@
 # CI of Hune (16.17). Each job calls one script of tests/ci/. Each script uses Docker only.
-# The workflow runs on each push and pull request. The release workflow calls it with `full: true`.
+# The workflow runs on each push to main and on each pull request. The release workflow calls it with `full: true`.
 # No job pushes an image or logs in to a registry (16.18). The jobs have read access to the contents only.
+# Each step pins its action to a full commit SHA and gives the version in a comment. Dependabot proposes the updates.
+# Each checkout keeps no credentials in the work tree (persist-credentials: false).
 name: ci
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_call:
     inputs:
@@ -29,11 +32,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  no-image:
+    # This check needs no Docker and no secret, so it also runs on a pull request from a fork.
+    # The job policy runs similar checks over .github/workflows and the scripts (tests/ci/policy.sh).
+    # The job check of release.yaml has an early copy of this step. Keep the two copies the same.
+    name: Policy (no image is published)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Never publish container images
+        run: |
+          # The pattern is split so that this line does not match itself.
+          if grep -rnE 'ghcr''\.io|docker/login''-action|docker[[:space:]]+(pus''h|logi''n)\b|buildx[^#]*--pus''h|imagetools[[:space:]]+crea''te|packages: *wr''ite|push: *tr''ue' .github; then
+            echo "::error::workflows must not publish container images"
+            exit 1
+          fi
+
   policy:
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
-      # TO-PIN: replace the tag of each action by its full commit SHA.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       # The check of the word list fails when this secret is not set (tests/ci/policy.sh).
       - run: tests/ci/policy.sh
         env:
@@ -41,56 +65,80 @@ jobs:
 
   rust:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/rust.sh
 
   store:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/store.sh
 
   pgsource:
     # The cases PS01 to PS15 of 16.9a on PostgreSQL 15 and 18, in disposable containers on 127.0.0.1.
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/pgsource.sh
 
   mongosource:
     # The cases MS01 to MS18 of 16.9b on MongoDB 7.0 and 8.0, in disposable containers on 127.0.0.1.
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/mongosource.sh
 
   api:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/api.sh
 
   source:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/source.sh
 
   frontend:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/frontend.sh
 
   browser:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/browser.sh
       - name: Keep the screenshots, traces and console logs of a failed case
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: browser-artefacts
           path: tests/browser/test-results
@@ -98,8 +146,11 @@ jobs:
 
   import:
     runs-on: ubuntu-24.04
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/import.sh
 
   image:
@@ -110,11 +161,14 @@ jobs:
       matrix:
         arch: ${{ fromJSON(format('{0}', inputs.arm64) == 'false' && '["amd64"]' || '["amd64", "arm64"]') }}
     runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - run: tests/ci/image.sh
       - name: Keep the importer output of case I14
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: i14-${{ matrix.arch }}
           path: dist/i14-${{ matrix.arch }}
@@ -124,9 +178,12 @@ jobs:
     # Case I14: the two architectures give equal importer output.
     needs: image
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           pattern: i14-*
           path: i14
@@ -135,5 +192,5 @@ jobs:
           if [ -d i14/i14-amd64 ] && [ -d i14/i14-arm64 ]; then
             tests/ci/image.sh --compare-i14 i14/i14-amd64 i14/i14-arm64
           else
-            echo "I14: no importer output yet (milestone M3a); nothing to compare"
+            echo "I14: the importer output of one architecture or of both is absent; nothing to compare"
           fi

@@ -5,7 +5,7 @@
 <p align="center">
   <a href="https://github.com/ProcurAuth/hune/actions/workflows/ci.yaml"><img src="https://github.com/ProcurAuth/hune/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
   <a href="https://github.com/ProcurAuth/hune/releases/latest"><img src="https://img.shields.io/github/v/release/ProcurAuth/hune?color=4338ca&label=release" alt="Latest release"></a>
-  <img src="https://img.shields.io/badge/licence-MIT%20OR%20Apache--2.0-lightgrey" alt="Licence: MIT OR Apache-2.0">
+  <a href="#licence"><img src="https://img.shields.io/badge/licence-MIT%20OR%20Apache--2.0-lightgrey" alt="Licence: MIT OR Apache-2.0"></a>
   <img src="https://img.shields.io/badge/binary-linux%20amd64%2C%20static%20musl-4338ca" alt="Static binary for Linux amd64">
   <img src="https://img.shields.io/badge/sources-ClickHouse%20%7C%20PostgreSQL%20%7C%20MongoDB-0ea5e9" alt="Data sources: ClickHouse, PostgreSQL and MongoDB">
   <img src="https://img.shields.io/badge/config-HCL%2C%20closed%20schema-34d399" alt="Configuration: one HCL file with a closed schema">
@@ -13,9 +13,10 @@
 
 <p align="center">
   <a href="https://procurauth.github.io/hune/"><b>Website</b></a> ·
-  <a href="https://procurauth.github.io/hune/getting-started.html">Documentation</a> ·
+  <a href="#documentation">Docs</a> ·
+  <a href="https://procurauth.github.io/hune/access.html">Access</a> ·
   <a href="https://procurauth.github.io/hune/configuration.html">Configuration</a> ·
-  <a href="https://procurauth.github.io/hune/security.html">Security</a> ·
+  <a href="SECURITY.md">Security</a> ·
   <a href="https://github.com/ProcurAuth/hune/releases/latest">Downloads</a>
 </p>
 
@@ -167,6 +168,20 @@ Open `http://127.0.0.1:8080/`. Press Ctrl+C to stop Hune, then run `docker stop 
 
 Hune is a program of the [ProcurAuth](https://github.com/ProcurAuth) organisation. The organisation holds the open specification and the programs that follow it. The [implementations page](https://procurauth.github.io/procurauth/implementations.html) lists them, with the results of the conformance runs.
 
+<p align="center">
+  <img src="https://procurauth.github.io/procurauth/assets/family.svg" alt="The specification defines the protocol, the schemas and the conformance cases. The reference tools read them and test the programs. The portal is a backend, an edge and a PDP. Stowr, Hune and ClickHouse Dash are services that ask the portal." width="90%">
+</p>
+
+| Part | Role | Repository | Site |
+| --- | --- | --- | --- |
+| **procurauth** | The specification and the reference tools | [ProcurAuth/procurauth](https://github.com/ProcurAuth/procurauth) | [procurauth.github.io/procurauth](https://procurauth.github.io/procurauth/) |
+| **portal** | Backend, edge and PDP | [ProcurAuth/portal](https://github.com/ProcurAuth/portal) | [procurauth.github.io/portal](https://procurauth.github.io/portal/) |
+| **Stowr** | PEP: a browser for S3, Google Cloud Storage and folders | [ProcurAuth/stowr](https://github.com/ProcurAuth/stowr) | [procurauth.github.io/stowr](https://procurauth.github.io/stowr/) |
+| **Hune** | PEP: dashboards over ClickHouse, PostgreSQL and MongoDB | [ProcurAuth/hune](https://github.com/ProcurAuth/hune) | [procurauth.github.io/hune](https://procurauth.github.io/hune/) |
+| **ClickHouse Dash** | PEP and MCP server: a query console for ClickHouse | Outside this organisation | [Implementations page](https://procurauth.github.io/procurauth/implementations.html#programs) |
+
+To add a program to this list, open an issue in the [specification repository](https://github.com/ProcurAuth/procurauth/issues).
+
 ## Documentation
 
 | Page | Content |
@@ -178,7 +193,7 @@ Hune is a program of the [ProcurAuth](https://github.com/ProcurAuth) organisatio
 | [Security model](docs/SECURITY-MODEL.md) | What Hune protects, and how. |
 | [Operations](docs/OPERATIONS.md) | Run, network, health, logs, limits, backup, upgrade and troubleshooting. |
 | [Specification](docs/SPECIFICATION.md) | The eight parts: format, API, query engine, page, access, configuration and tests. |
-| [Status](docs/implementation-status.md) | The state of each milestone, the differences from the specification and the known limits. |
+| [Status](docs/implementation-status.md) | What exists, the differences from the specification and the known limits. |
 | [Development](docs/DEVELOPMENT.md) | The checks, the tests, the dependencies and the release. |
 | [Changelog](CHANGELOG.md) | The changes of each version. |
 
@@ -200,7 +215,7 @@ The full gate is `tests/ci/all.sh`. It is heavy, and it starts ClickHouse, Postg
 
 ## Security
 
-Do not open a public issue for a vulnerability. Use the [private report](https://github.com/ProcurAuth/hune/security/advisories/new). [SECURITY.md](SECURITY.md) tells the supported versions and the response times.
+Do not open a public issue for a vulnerability. Use the [private report](https://github.com/ProcurAuth/hune/security/advisories/new). [SECURITY.md](SECURITY.md) tells the supported versions and the response times. The [security model](docs/SECURITY-MODEL.md) tells what Hune protects.
 
 ## Contribute
 
