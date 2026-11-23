@@ -1,0 +1,166 @@
+//! The folder routes (6.11).
+
+use super::gate;
+use super::support::{StoreOp, format_faults, map_store_error, read_folder_id, services};
+use crate::server::ctx::{Ctx, Request};
+use crate::server::error::ApiError;
+use crate::server::json::{Member, Shape, parse_and_check_with};
+use crate::server::response::{Response, empty_response, json_response};
+use http::StatusCode;
+use hune_core::error::{ErrorCode, ValidationError};
+use hune_store::{FolderId, FolderTitle, Store};
+use serde::Serialize;
+use serde_json::Value;
+
+#[derive(Serialize)]
+struct FolderAccess {
+    write: bool,
+}
+
+#[derive(Serialize)]
+struct FolderItem<'a> {
+    id: &'a str,
+    title: &'a str,
+    access: FolderAccess,
+}
+
+#[derive(Serialize)]
+struct ListAccess {
+    create: bool,
+}
+
+#[derive(Serialize)]
+struct FolderList<'a> {
+    access: ListAccess,
+    items: Vec<FolderItem<'a>>,
+}
+
+#[derive(Serialize)]
+struct FolderAnswer<'a> {
+    id: &'a str,
+    title: &'a str,
+}
+
+static CREATE_MEMBERS: [Member; 2] = [
+    Member { name: "id", shape: Shape::Str { min_chars: 1, max_chars: 40 }, required: true },
+    Member { name: "title", shape: Shape::Str { min_chars: 1, max_chars: 256 }, required: true },
+];
+static CREATE_SHAPE: Shape = Shape::Object(&CREATE_MEMBERS);
+static RENAME_MEMBERS: [Member; 1] =
+    [Member { name: "title", shape: Shape::Str { min_chars: 1, max_chars: 256 }, required: true }];
+static RENAME_SHAPE: Shape = Shape::Object(&RENAME_MEMBERS);
+
+fn read_title(value: &Value) -> Result<FolderTitle, ApiError> {
+    let text = value.get("title").and_then(Value::as_str).unwrap_or("");
+    FolderTitle::parse(text).map_err(|e| {
+        ApiError::bad_request_errors(
+            "The body does not follow the schema.",
+            &[ValidationError::new("/title", ErrorCode::BadFormat, e.0)],
+        )
+    })
+}
+
+fn log_folder_changed(ctx: &Ctx, action: &str, folder: &str) {
+    ctx.state.logger.folder_changed(Some(&ctx.request_id), action, folder, &ctx.subject);
+}
+
+/// `GET /api/folders`: the folders in byte order of the id. Mode `open` shows each folder.
+pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
+    let services = services(&ctx)?;
+    let folders = services.catalog.folders();
+    let ids: Vec<String> = folders.iter().map(|f| f.id.as_str().to_owned()).collect();
+    let body = match gate::filter_folders(&ctx, &ids).await? {
+        // Mode `authzen`: the display filter keeps some folders and gives the flags (11.25).
+        Some(filter) => FolderList {
+            access: ListAccess { create: filter.create },
+            items: folders
+                .iter()
+                .zip(&filter.folders)
+                .filter_map(|(f, flag)| {
+                    flag.map(|write| FolderItem {
+                        id: f.id.as_str(),
+                        title: f.title.as_str(),
+                        access: FolderAccess { write },
+                    })
+                })
+                .collect(),
+        },
+        None => {
+            let write = ctx.state.writes_enabled();
+            FolderList {
+                access: ListAccess { create: write },
+                items: folders
+                    .iter()
+                    .map(|f| FolderItem { id: f.id.as_str(), title: f.title.as_str(), access: FolderAccess { write } })
+                    .collect(),
+            }
+        }
+    };
+    Ok(json_response(StatusCode::OK, &body))
+}
+
+/// `POST /api/folders`: creates a folder. The answer is `201` with `{id, title}`.
+pub async fn create(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
+    let body = parse_and_check_with(&req.body, &CREATE_SHAPE, &[], |v| format_faults(v, &["id"], true, false))?;
+    let id = read_folder_id(body.value["id"].as_str().unwrap_or(""), "/id")?;
+    let title = read_title(&body.value)?;
+    gate::service_write(&ctx).await?;
+    let services = services(&ctx)?;
+    let op = StoreOp::begin(&ctx, "create_folder");
+    let result = services.store.create_folder(&id, &title).await;
+    op.end(&ctx.state, "create_folder", &result);
+    result.map_err(|e| map_store_error(&e))?;
+    services.catalog.refresh_folders(&services.store).await;
+    log_folder_changed(&ctx, "create", id.as_str());
+    Ok(json_response(StatusCode::CREATED, &FolderAnswer { id: id.as_str(), title: title.as_str() }))
+}
+
+/// Reads the folder id of the path. A text that is not an id names no folder: `404 not_found`.
+fn path_folder(ctx: &Ctx) -> Result<FolderId, ApiError> {
+    FolderId::parse(ctx.params.get("id").unwrap_or("")).map_err(|_| ApiError::not_found("No such folder."))
+}
+
+/// Reads the folder id of the path and asks the use question (11.21). In the mode `authzen`, an id that
+/// the catalog does not hold follows the rule of 11.23. In the mode `open`, it is the answer as before.
+async fn path_folder_gated(ctx: &Ctx) -> Result<FolderId, ApiError> {
+    let id = match path_folder(ctx) {
+        Ok(id) => id,
+        Err(_) => return Err(gate::unknown(ctx, "No such folder.").await),
+    };
+    if ctx.state.access.is_some() {
+        let services = services(ctx)?;
+        if !services.catalog.folders().iter().any(|f| f.id == id) {
+            return Err(gate::unknown(ctx, "No such folder.").await);
+        }
+        gate::folder_write_with_sources(ctx, id.as_str(), &[]).await?;
+    }
+    Ok(id)
+}
+
+/// `PUT /api/folders/{id}`: renames a folder. The last rename wins.
+pub async fn rename(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
+    let body = parse_and_check_with(&req.body, &RENAME_SHAPE, &[], |v| format_faults(v, &[], true, false))?;
+    let title = read_title(&body.value)?;
+    let id = path_folder_gated(&ctx).await?;
+    let services = services(&ctx)?;
+    let op = StoreOp::begin(&ctx, "rename_folder");
+    let result = services.store.rename_folder(&id, &title).await;
+    op.end(&ctx.state, "rename_folder", &result);
+    result.map_err(|e| map_store_error(&e))?;
+    services.catalog.refresh_folders(&services.store).await;
+    log_folder_changed(&ctx, "rename", id.as_str());
+    Ok(json_response(StatusCode::OK, &FolderAnswer { id: id.as_str(), title: title.as_str() }))
+}
+
+/// `DELETE /api/folders/{id}`: deletes an empty folder. The answer is `204`.
+pub async fn delete(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
+    let id = path_folder_gated(&ctx).await?;
+    let services = services(&ctx)?;
+    let op = StoreOp::begin(&ctx, "delete_folder");
+    let result = services.store.delete_folder(&id).await;
+    op.end(&ctx.state, "delete_folder", &result);
+    result.map_err(|e| map_store_error(&e))?;
+    services.catalog.refresh_folders(&services.store).await;
+    log_folder_changed(&ctx, "delete", id.as_str());
+    Ok(empty_response(StatusCode::NO_CONTENT))
+}

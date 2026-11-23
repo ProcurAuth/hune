@@ -1,0 +1,51 @@
+[package]
+name = "hune"
+description = "Hune: dashboards of ClickHouse SQL panels. One static binary with the server and the command line tools."
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+publish = false
+build = "build.rs"
+
+[features]
+# The MongoDB driver (8b.2, ID-MG2 granted). On by default (ID-MG20, pending owner): the release has the driver.
+# A build with `--no-default-features` has no driver and refuses a `mongodb` block at start.
+default = ["mongo-driver"]
+mongo-driver = ["hune-source/mongo-driver"]
+
+[[bin]]
+name = "hune"
+path = "src/main.rs"
+
+[dependencies]
+hune-core.workspace = true
+hclconf.workspace = true
+hune-store.workspace = true
+hune-source.workspace = true
+hune-grafana.workspace = true
+tokio.workspace = true
+hyper.workspace = true
+hyper-util.workspace = true
+http-body-util.workspace = true
+http.workspace = true
+bytes.workspace = true
+rustls.workspace = true
+tokio-rustls.workspace = true
+rustls-pki-types.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+getrandom.workspace = true
+procurauth-pep.workspace = true
+procurauth-core.workspace = true
+
+[build-dependencies]
+sha2.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
+
+[lints]
+workspace = true
