@@ -475,6 +475,7 @@ specification, and its number stays. The other parts of this specification hold 
 | 19.32 | The security choices of the PostgreSQL source | Open question |
 | 19.33 | The security choices of the MongoDB source | Open question |
 | 19.34 | The query model of the MongoDB plugin and the MongoDB version | Open question |
+| 19.35 | The card view of the list page, the threshold of its filters and the new look | Decision to read again |
 
 ### 19.2 Unused
 
@@ -1247,6 +1248,25 @@ M0 or the verification of MMG reads the MongoDB queries of a Grafana export (15.
 The result can change the rows of 15.6, the macros of 7.34 and the supported versions of 8b.14. Each such change is a new rule, and the vectors of 16.13 follow it.
 
 Open question: do the rows of 15.6 match the real plugin? Default today: the rows of 15.6 as written.
+
+### 19.35 The card view of the list page, the threshold of its filters and the new look
+
+The list page has a card view, and the whole page has a calmer look. The text of 9.7 and 9.25 follows the validated static mockups. These choices are new, and the owner MUST read them again:
+
+- The key `server.list_filters_min_dashboards` (13.8). It is an integer from 0 to 1000, optional, and its default is 6. The upper bound is fixed. The list page shows the sort control and the tag filter only when the user sees more dashboards than this number. The session gives the number to the page (6.10). If the session has no number, or an invalid number, the page shows the filters.
+- The threshold 6. The mockup hid the filters for "few" dashboards. The owner did not give the number. The default 6 is the value of the mockup. The count includes the items that are not valid.
+- Three controls are removed. These are the search field, the view control (folder view and list view) and the collapse of a folder. The keys `hune.list.layout` and `hune.list.collapsed` of `localStorage` are not read any more. The URL parameter `q` stays and holds one tag name. It matches a tag exactly, with ASCII letters folded. It does not match a part of a title or of a uid any more.
+- The sort control keeps "Alphabetically (A-Z)" and "Alphabetically (Z-A)". The mockup showed "Starred" and "Recent". Hune has no such state, and the owner did not ask for it.
+- The bin of a card. It shows under the same condition as the pencil: `editing` is `true` and the item has `access.write`. The route `DELETE api/dashboards/<uid>` needs `dashboard.write`. The page does not read a separate right to delete. The server decides, and a `403` shows the usual refusal.
+- The menu of a card. "Move" was in the menu of a row, and the dashboard page has no "Move". A small menu stays on a card that the user can edit, with "Export" and "Move". A card that the user cannot edit has no button, and its "Export" is in the menu "More actions" of the dashboard page.
+- The folder title shows only when the user sees two folders or more. With one folder, the user has no menu to rename or to delete the folder from the list page.
+- The entry redirect ignores `access.create`. A user who sees exactly one dashboard goes to it, also when the user can create a folder or a dashboard. The owner wanted the redirect for a user who also cannot create. The code does not check this condition.
+- A card that is not valid shows its uid, because it has no title. The mockup had no such card.
+- The look. The file `css/look.css` sets the new tokens of the surfaces, the accent, the buttons and the fields in the four contexts of the theme. The accent is `#2f5bd8` in the light theme and `#6c8cff` in the dark theme. The text on the primary button is dark in the dark theme. The edge of a field keeps the copied value, because of the 3:1 rule of 9.26.
+- The tag chips use the 29 colours of Grafana as a tint. The mockup used colours that were chosen by hand. The chips of Hune are less bright.
+- The logo. It is a square with round corners and one line that goes up. The green dot is gone. The site keeps its own accent for the mark of its header.
+
+Open question: are these choices right? Default today: the text of 9.7 and 9.25.
 
 ## 20. Glossary and references
 

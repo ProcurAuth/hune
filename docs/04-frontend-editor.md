@@ -57,10 +57,11 @@ web/
   css/
     fonts.css                the font face of Inter (9.25)
     tokens.css               tokens of Hune on top of the copied tokens: type, geometry, roles, series colours (9.25)
+    look.css                 the tokens of the calm look (surfaces, accent, buttons, fields, tag chips) in the four theme contexts (9.25)
     base.css                 reset, layout of the shell, header, focus rules
     components.css           buttons, menus, dialogs, forms, theme selector, header controls
     picker.css               the time picker and the refresh picker, the popup of the time range (9.9)
-    list.css                 list page (9.7)
+    list.css                 list page: cards, folder titles, tag chips, header controls (9.7)
     dashboard.css            grid, sections, panel frames, colour tokens of 9.16
     panel-table.css          table panel (9.20)
     panel-chart.css          time series, bar chart and xy chart panels (9.19)
@@ -238,7 +239,7 @@ the URL with `history.replaceState`. The server ignores the slug (6.25).
 | `editview` | dashboard | `json`, `history` or `settings` | The dashboard JSON tab (10.4), the history (10.11) or the dashboard settings (10.3b). |
 | `version` | dashboard | A version number, or `current` | A version of the history (10.11). |
 | `base` | dashboard | A version number, or `current` | The base of a diff (10.11). |
-| `q` | list | A text | The search text of the list (9.7). |
+| `q` | list | A tag name | The tag filter of the list (9.7). |
 
 An `interval` variable writes one `var-<name>` with the text of the option, or `$__auto` for "Auto" (4.10a). A `constant` writes no `var-<name>`. The page ignores a `var-<name>` of a `constant` in the URL (4.10b, rule 3). An `adhoc` variable writes one `var-<name>` for each filter, in the form `key|op|value` of Grafana, or one empty item with no filter (9.10a).
 
@@ -313,6 +314,7 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/00-tokens.css">
   <link rel="stylesheet" href="static/{{build}}/css/fonts.css">
   <link rel="stylesheet" href="static/{{build}}/css/tokens.css">
+  <link rel="stylesheet" href="static/{{build}}/css/look.css">
   <link rel="stylesheet" href="static/{{build}}/css/base.css">
   <link rel="stylesheet" href="static/{{build}}/css/components.css">
   <link rel="stylesheet" href="static/{{build}}/css/picker.css">
@@ -348,13 +350,14 @@ The page starts in this order:
 4. Another failure gives the full page "Hune does not answer." with a "Retry" button.
 5. The page waits for the font, for 1 s at most, and for the icons. Then the router shows the page of the URL (9.5). A font that does not load changes nothing else. When the first view is complete, the page releases the first paint.
 
-The header is one bar. It is opaque, and it has a line of 1 px below it. The bar is one row at every width, also in edit mode. Its height is 44 px with the line. It has five parts, in this order:
+The header is one bar. It is opaque, and it has a line of 1 px below it. The bar is one row at every width, also in edit mode. Its height is 44 px with the line. It has six parts, in this order:
 
-1. The brand: a logo of 20 px, the product name "Hune" and the version line. The brand is a link to the list.
-2. The crumbs: the folder title and the dashboard title. The text is 12 px high, with a line of 16 px. A thin chevron of 12 px is between two crumbs. The last crumb is muted. A crumb that is too long ends with an ellipsis, and its tooltip gives the whole text.
-3. The controls of the page. The list page and the dashboard page put their controls here (9.7, 9.9). A full page of an error has none.
-4. The theme selector (9.25).
-5. The button "More actions" (9.9). Only the dashboard page has it. It is the last control of the header.
+1. The brand: a logo of 20 px, the product name "Hune" and the version line. The brand is a link to the list. The logo is a square with round corners and one line that goes up. The square has the colour `--accent-fill`, and the line is white.
+2. The start controls. The list page puts its sort control and its tag filter here, after the brand (9.7). Other pages leave the slot empty.
+3. The crumbs: the folder title and the dashboard title. The text is 12 px high, with a line of 16 px. A thin chevron of 12 px is between two crumbs. The last crumb is muted. A crumb that is too long ends with an ellipsis, and its tooltip gives the whole text.
+4. The controls of the page. The list page and the dashboard page put their controls here (9.7, 9.9). A full page of an error has none.
+5. The theme selector (9.25).
+6. The button "More actions" (9.9). Only the dashboard page has it. It is the last control of the header.
 
 The controls have fixed sizes (9.9), and they do not depend on the state of the page. The header never has a second row.
 
@@ -418,57 +421,88 @@ The notice area shows one line for each notice, with a close button. A notice ha
 
 ### 9.7 The list page
 
+The list page is a set of cards on the page background. It has no title, no search field and no table.
+
 - The page reads all the pages of `GET api/dashboards` (`limit=500`, then each `next`) and `GET api/folders`.
-- It shows one group for each folder, in the order of the folder titles. The comparison folds ASCII letters to lower
-  case. In a group, the dashboards are in title order.
-- A row shows the title as a link to `d/<uid>/<slug>`, and the tags. It also shows the time of the last change and its
-  subject. The time is relative ("3 hours ago"), and its `title` attribute holds the absolute time in the browser zone.
-- A row of an `invalid` item (6.12) shows the uid and the text "Not valid". Its button shows the errors, each with its
-  pointer and message. The row has no link to the dashboard page.
-- The menu of an `invalid` row has "Download", which reads `GET api/dashboards/<uid>?download=true` (6.14). With
-  `editing = true` and `access.write`, it also has "Replace": the import of 10.12 with this uid and the `etag` of the
-  row.
-- The search field, the filters and the actions of the page are in the header (9.6). The page body has the title "Dashboards", its hint and the table. The header controls are in this order: the search field, the tag filter, the view control, the sort control, "New folder", "Import" and "New dashboard". Each control keeps its `data-testid`.
-- The search field filters the rows that the page holds. A row stays when its title, uid or one tag holds the text,
-  with letters folded to lower case. The URL keeps the text in `q`.
-- A group can collapse. The page keeps the collapsed groups in `localStorage` key `hune.list.collapsed`.
-- The body is one table with a head row of 36 px. A folder row has a chevron and a folder icon. A dashboard row is 36 px
-  high and is indented under its folder. The menus of a row show on hover or focus. On a touch screen they always show.
-- A tag is a chip. Its colour comes from a hash of the tag text over the 29 tag colours of Grafana 12.4.2. Each chip has
-  4.5:1 or more with its white text.
-- The button "Filter by tag" opens a list of the tags, with the number of dashboards of each tag. The most used tag
-  comes first, then the tags in text order. A choice puts this tag in the search field and in `q`.
-- The sort control has "Alphabetically (A-Z)" and "Alphabetically (Z-A)". Without a choice, the order is the order of
-  this paragraph. The page keeps the choice in `localStorage` key `hune.list.sort`.
-- The view control has a folder view and a list view. The list view is one table without folder rows, with a column for
-  the folder. The page keeps the choice in `localStorage` key `hune.list.layout`. The folder view is the default.
-- A hidden live status gives the count: "<n> dashboards in <m> folders". When the search keeps some of the rows, it reads
-  "<k> of <n> dashboards".
-- While the list loads, the body shows a skeleton and has `aria-busy`. A search with no result shows "No dashboard
-  matches the search." with the button "Clear search and filters". The key Escape in the search field clears it.
-- The page uses the full width of the window.
-- Up to 900 px, one button "New" with a menu replaces the three buttons. The menu has "New dashboard", "Import" and "New folder", as the user can use them. Up to 768 px the table shows the columns "Name" and "Tags", and the last change hides.
-- The header of the list page is one row at every width (9.6). The controls are 240 px for the search field, 150 px for the tag filter and 150 px for the sort control. The search field shrinks to 96 px when the row is narrow.
-- Up to 1180 px the tag filter and the sort control show their icon only, and they are 36 px wide. Their names and tooltips stay. At 480 px or less the icon controls are 32 px wide, and the search field takes the room that is left. Nothing of this block stays in the body at any width.
-- "New dashboard" and "Import" show when `editing` is `true` (6.10) and one folder has `access.write` (6.11).
-  "New folder" shows when `access.create` is `true` (6.11). The menu of a folder has "Rename" and "Delete". The menu of a dashboard has
-  "Move", "Export" and "Delete" (10.7, 10.12, 10.13).
-- An empty list shows only its empty state, with no search field and no toolbar. The title is "No dashboard yet.". In mode `authzen` it is "No dashboard is visible to you.". The state also has a hint and the main actions that the subject can use.
+- The page shows one card for each dashboard. A folder has no box around its cards. The folders are in the order of their titles. The comparison folds ASCII letters to lower case. In a folder, the cards are in title order.
+- A card has three parts. The first is the title. The second is a small note with the last change. The third is the tags.
+- The title is on one line. It ends with an ellipsis when it is too long. Its `title` attribute holds the whole name.
+- The note gives the age of `updated_at` in a short form: `now` (less than one minute), `<n>m`, `<n>h`, `<n>d`, `<n>w`, `<n>mo` or `<n>y`. The unit is the largest that fits, and the number is rounded down.
+- A week is 7 days, a month is 30 days and a year is 365 days. A time in the future gives `now`. The `title` attribute of the note holds the absolute time in the browser zone. The note has a fixed height, so each card has the same rhythm.
+- A card shows no description, no uid, no number, no shape and no count of panels. It has no word about the access of the user, such as "Can edit" or "Read only". The page has no counter of dashboards.
+- A card is an `article`. Its title is a link to `d/<uid>/<slug>`. The link covers the whole card with a pseudo-element. The buttons and the tag chips are siblings of the link, one layer above it. A card is never one anchor around buttons.
+- A tag is a chip. Its colour comes from a hash of the tag text over the 29 tag colours of Grafana 12.4.2. The chip shows this colour as a tint. The fill is 14 % of the colour, and the edge is 28 %. The text is the colour mixed with the ink of the theme. The ink is black at 25 % in the light theme, and white at 60 % in the dark theme.
+- Each chip has 4.5:1 or more on each surface that holds it, in both themes.
+- A tag chip filters the list when the page shows the filters. A second click on the same chip clears the filter. When the page hides the filters, a chip is only a picture.
+
+Folders:
+
+- A folder title shows above its cards only when the user sees two folders or more. It is the folder icon and the name, in small muted capitals. It spans the whole row.
+- With one folder, or with no folder, the page shows no folder title. An empty folder shows the text "This folder is empty." under its title.
+- With `editing` `true` and `access.write` on a folder, the title has a menu with "Rename" and "Delete" (10.7). A user who sees one folder only has no title, and so has no menu of the folder. "New folder" is in the header (below).
+
+The grid:
+
+- The cards are in a grid of columns of 400 px. The folders share the columns, so the cards of two folders do not align by folder. At 440 px or less, there is one column of the full width.
+- The whole block of cards is centred, across and down, in the window below the header. When the block is taller than the window, it starts at the top and the page scrolls.
+
+The buttons of a card:
+
+- A card that the user can edit has three buttons at its top right, in fixed slots. The pencil is at the left, the menu is in the middle, and the bin is at the right.
+- A button has no visible label. Its accessible name and its tooltip give the name.
+- The user can edit a card when `editing` is `true` (6.10) and the item has `access.write` (6.12). The pencil, the menu and the bin have this one condition. The bin needs `dashboard.write`, as the route `DELETE api/dashboards/<uid>` does.
+- The pencil is a link to `d/<uid>/<slug>?edit=1`. It opens the dashboard in edit mode.
+- The menu of a card has "Export" and "Move". The menu "More actions" of the dashboard page has "Export" but not "Move" (9.9). Thus the menu of the card is the way to "Move" (10.7).
+- The bin runs the delete flow of 10.13 and names the dashboard in its dialog. The server decides. A `403` shows the usual refusal.
+- A card that the user cannot edit has no button. The user finds "Export" in the menu "More actions" of the dashboard page.
+
+An item that is not valid (6.12):
+
+- Its card shows the uid in place of the title, and the badge "Not valid". It has no link to the dashboard, no pencil and no bin.
+- The button "Show errors" opens the errors in the card, each with its pointer and its message.
+- The menu of the card has "Download", which reads `GET api/dashboards/<uid>?download=true` (6.14). With `editing = true` and `access.write`, it also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
+
+The header (9.6):
+
+- The sort control and the tag filter follow the brand, at the left. "New folder", "Import" and "New dashboard" are at the right. The theme selector follows them. The page body has no control.
+- "New dashboard" and "Import" show when `editing` is `true` and one folder has `access.write` (6.11). "New folder" shows when `editing` and `access.create` are `true`.
+- The sort control has "Alphabetically (A-Z)" and "Alphabetically (Z-A)". Without a choice, the order is the order of the folders and cards above. The page keeps the choice in `localStorage` key `hune.list.sort`.
+- The button "Filter by tag" opens a list of the tags, with the number of dashboards of each tag. The most used tag comes first, then the tags in text order. A choice sets the filter and puts the tag in `q` of the URL. A card stays when one of its tags is this tag, with ASCII letters folded.
+- The page has no search field, no view control and no way to collapse a folder. The URL parameter `q` holds one tag name.
+
+The threshold of the filters:
+
+- The session gives the key `list_filters_min_dashboards` (6.10, 13.2). The default is 6.
+- The page shows the sort control and the tag filter only when the user sees more dashboards than this number. With this number or fewer, it shows neither. The number counts the items of the list, also the items that are not valid.
+- When the filters are hidden, the page uses the default order, and it ignores `q` and the saved sort. A hidden control never changes the page.
+- A session with no member `list_filters_min_dashboards`, or with a member that is not a whole number of 0 or more, shows the filters. The page keeps no copy of the number: each paint reads the session.
+
+States and widths:
+
+- While the list loads, the body shows three empty cards and has `aria-busy`. A hidden live status names the tag filter when it is active. It gives no count.
+- A tag filter with no result shows "No dashboard has this tag." with the button "Clear the filter".
+- An empty list shows only its empty state, with no toolbar. The title is "No dashboard yet.". In mode `authzen` it is "No dashboard is visible to you.". The state also has a hint and the main actions that the subject can use.
+- The header of the list page is one row at every width (9.6). The sort control and the tag filter are 150 px wide. Up to 1180 px they show their icon only, and they are 36 px wide. Their names and tooltips stay. At 480 px or less the icon controls are 32 px wide.
+- Up to 900 px, one button "New" with a menu replaces the three actions. The menu has "New dashboard", "Import" and "New folder", as the user can use them.
+
+The entry redirect:
+
 - The list page can open a dashboard at once. This is the entry redirect. It runs only when these conditions are all
   true:
   - The list page is the first route of the page load, or of a full reload.
-  - The URL has no search text `q`. An empty `q` counts as no text.
+  - The URL has no tag filter `q`. An empty `q` counts as no text.
   - The complete list of all pages holds exactly one item, and this item has the state `valid`.
 - The folder of the item does not matter. An `invalid` item never causes a redirect, also next to one valid item.
+- The redirect does not read `access.create`. A user who can create a folder or a dashboard also goes to the dashboard. The redirect can later depend on this right, so that a user who can create stays on the list. This is an open item (19.35).
 - In mode `authzen`, the list is the list that the display filter gives (11.25), so a subject who can see one dashboard goes to it.
 - The redirect goes to `d/<uid>/<slug>` with `history.replaceState`. Thus the browser "Back" does not return to the list.
 - A navigation in the page never causes a redirect. The brand link, a crumb, "Go to the list", "Back" and "Forward" show
-  the list with its row.
+  the list with its cards.
 - At each redirect, the page writes the uid and the time in `sessionStorage` key `hune.entry.redirect`. A second
   redirect to the same uid in the same tab does not run during 10 seconds. This stops a loop of full page loads. A
   failed read or write of `sessionStorage` counts as no guard. A guard with a time in the future counts as no guard.
 - When the dashboard answers `403` or `404` after the redirect, its page shows the link to the list (9.8). The list then
-  shows its row, or the empty state.
+  shows its card, or the empty state.
 
 ### 9.8 The dashboard page
 
@@ -3550,37 +3584,49 @@ Fonts and type:
 
 Colours of the chrome:
 
-- The chrome has the colour theme of ClickHouse Dash, in the light and the dark theme. The chrome is the header, the menus, the dialogs, the list page and the editor. It is also the forms, the frame of a table and the pages of an error.
-- The values are the tokens of the copied `00-tokens.css`. `css/tokens.css` does not set them again. It names them for the roles that only Hune has (for example `--surface-menu` is `--panel`).
+- The chrome has a calm look, in the light and the dark theme. The chrome is the header, the menus, the dialogs, the list page and the editor. It is also the forms, the frame of a table and the pages of an error.
+- The base is the tokens of the copied `00-tokens.css`. The file `css/look.css` loads after `css/tokens.css`. It sets again the tokens of the look, in the same four contexts as the copied file.
+- These tokens are the surfaces, the text, the lines, the accent, the buttons, the fields and the selected fill. The file also adds the tokens of the cards and of the tag chips. `css/tokens.css` does not set them. It names them for the roles that only Hune has (for example `--surface-menu` is `--panel`).
+- `css/look.css` leaves three groups to the copied file: the edge of a field (`--control-border`), the focus ring and the status colours. The edge of a field has 3:1 on each surface (9.26). A field is a little less quiet than the mockup because of this rule.
+- The shared components use the shape tokens of `css/look.css`: `--r-control` (8 px) for a button, a field, a menu, a dialog and a segmented control, and `--r-card` (10 px) for a card. A button of a joined group keeps its own corners.
 - The data of the panels keep the values measured on Grafana 12.4.2. These are the thresholds, the colours of a stat and a gauge, the named colours of 9.16 and the continuous modes.
 - The series palette is the exception. The mode `palette` draws `--qchart-1` to `--qchart-18` of the copied tokens (9.16). It is the one series palette.
 - The link blue `--link` and the text on a coloured stat `--text-strong` also keep the Grafana values.
 
 | Role | Token | Dark | Light |
 |---|---|---|---|
-| Page | `--bg` | `#0d0f12` | `#f6f7f9` |
-| Panel, header, menu, dialog | `--panel` | `#13161a` | `#ffffff` |
-| Raised surface, button | `--raised` | `#191d22` | `#ffffff` |
-| Field and code area | `--input-bg` | `#0f1215` | `#ffffff` |
-| Text | `--text` | `#e6e8eb` | `#15181d` |
-| Muted text | `--muted` | `#959ba5` | `#5b6270` |
-| Border | `--border` | `rgba(255, 255, 255, 0.08)` | `rgba(15, 18, 25, 0.1)` |
+| Page | `--bg` | `#0e1116` | `#f6f7f9` |
+| Panel, header, menu, dialog, card | `--panel` | `#161b22` | `#ffffff` |
+| Raised surface | `--raised` | `#1d232c` | `#f1f3f6` |
+| Field and code area | `--input-bg` | `#1d232c` | `#f1f3f6` |
+| Text | `--text` | `#e6e9ee` | `#14181f` |
+| Muted text | `--muted` | `#98a2b3` | `#5d6675` |
+| Border and line | `--border` | `#262d38` | `#e1e5eb` |
 | Strong border | `--border-strong` | `rgba(255, 255, 255, 0.14)` | `rgba(15, 18, 25, 0.18)` |
 | Hover tint | `--hover-tint` | `rgba(255, 255, 255, 0.06)` | `rgba(15, 18, 25, 0.05)` |
 | Hover of a row or a menu item | `--row-hover` | `rgba(53, 111, 230, 0.08)` | `rgba(37, 88, 217, 0.06)` |
-| Selected fill and edge | `--selected-bg`, `--selected-edge` | `rgba(53, 111, 230, 0.22)` and `#356fe6` | `rgba(37, 88, 217, 0.12)` and `#2558d9` |
-| Primary button, and its hover | `--accent-fill`, `--accent-fill-hover` | `#356fe6` and `#2c62d4` | `#2558d9` and `#1e49bd` |
-| Accent text | `--accent-text` | `#93b4ff` | `#1d4ed8` |
-| Border of a button | `--button-border` | `rgba(255, 255, 255, 0.12)` | `rgba(15, 18, 25, 0.14)` |
+| Selected fill and edge | `--selected-bg`, `--selected-edge` | `#1c2540` and `#6c8cff` | `#e8eefc` and `#2f5bd8` |
+| Primary button, and its hover | `--accent-fill`, `--accent-fill-hover` | `#6c8cff` and `#8199ff` | `#2f5bd8` and `#264bb8` |
+| Text on a primary button | `--on-fill` | `#0b1020` | `#ffffff` |
+| Accent text | `--accent-text` | `#8ba5ff` | `#2f5bd8` |
+| Button, and its hover | `--button-bg`, `--button-bg-hover` | `#161b22` and `#1d232c` | `#ffffff` and `#f1f3f6` |
+| Border of a button | `--button-border` | `#262d38` | `#e1e5eb` |
 | Border of a control | `--control-border` | `rgba(255, 255, 255, 0.4)` | `rgba(15, 18, 25, 0.54)` |
 | Focus ring | `--focus-ring-color` | `#3b82f6` | `#2563eb` |
 | Error text, and the fill of a destructive button | `--danger`, `--danger-fill` | `#f87171` and `#dc2626` | `#b91c1c` and `#dc2626` |
+| Text on a destructive button | `--on-danger` | `#ffffff` | `#ffffff` |
 | Warning text | `--warning` | `#fbbf24` | `#9a5b00` |
 | Success text | `--success` | `#34d399` | `#137333` |
+| Shadow of a card | `--shadow-card` | `0 1px 2px rgba(0, 0, 0, 0.4)` and `0 6px 18px rgba(0, 0, 0, 0.25)` | `0 1px 2px rgba(15, 23, 42, 0.06)` and `0 4px 14px rgba(15, 23, 42, 0.05)` |
 | Shadow of an overlay | `--shadow-overlay` | `0 8px 24px rgba(0, 0, 0, 0.45)` and a ring of 1 px | `0 8px 24px rgba(15, 18, 25, 0.12)` and a ring of 1 px |
+| Ink of a tag chip: the base and the share of the tag colour | `--tag-ink-base`, `--tag-ink-share` | `#ffffff` and 40 % | `#000000` and 75 % |
 
-- Hune has each state of ClickHouse Dash. The hover of a button is `--button-bg-hover`. The selected state is `--selected-bg` with `--selected-edge`. The disabled state is a lower opacity. The focus ring is 2 px of `--focus-ring-color`.
-- The theme of ClickHouse Dash meets 9.26 with one exception. The frame of the dark editor has 2.0:1. Hune uses the border of a control (`--control-border`) for it, so it has 3:1 in both themes.
+The fill of a tag chip is 14 % of the colour of the tag, and its edge is 28 % (`--tag-fill-share`, `--tag-edge-share`). The 29 colours of the tags give 4.5:1 or more for the text on the fill, on `--panel`, `--bg`, `--raised` and `--selected-bg`, in both themes. A unit test checks it.
+
+The primary button is light in the dark theme, so its text is dark (`--on-fill`). The white line of the logo has 3:1 or more on `--accent-fill` in both themes. The favicon and the images of the site use the fixed accent `#2f5bd8`, which has 4.5:1 with the white line.
+
+- Hune keeps the states of ClickHouse Dash. The hover of a button is `--button-bg-hover`. The selected state is `--selected-bg` with `--selected-edge`. The disabled state is a lower opacity. The focus ring is 2 px of `--focus-ring-color`.
+- The copied theme meets 9.26 with one exception. The frame of the dark editor has 2.0:1. Hune uses the border of a control (`--control-border`) for it, so it has 3:1 in both themes.
 - The border of a button has less than 3:1. The label of the button names it (9.26).
 - A menu, a popup and a tooltip have the panel colour, a strong border and the shadow of an overlay.
 
@@ -5330,11 +5376,12 @@ These controls are on the list page (9.7). They exist only when `editing` is `tr
   - It sends `POST api/dashboards` with a new `save_id` (10.9). On `409 already_exists` it makes a new uid and tries
     one more time.
   - It opens `d/<uid>?edit=1`.
-- "New folder" needs `access.create`. It opens a dialog with "Id" (the rule of 4.3 shows under the field) and
+- "New folder" needs `access.create`. It is in the header of the list page (9.7). It opens a dialog with "Id" (the rule of 4.3 shows under the field) and
   "Title". It sends `POST api/folders`.
-- "Rename" of a folder sends `PUT api/folders/<id>`. "Delete" of a folder asks for a confirmation and sends
+- "Rename" and "Delete" of a folder are in the menu on the folder title (9.7).
+- "Rename" sends `PUT api/folders/<id>`. "Delete" asks for a confirmation and sends
   `DELETE api/folders/<id>`. `409 folder_not_empty` gives "The folder holds dashboards. Move or delete them first.".
-- "Move" of a dashboard opens a select of the folders with `access.write`. It sends `POST api/dashboards/<uid>/move` with
+- "Move" of a dashboard is in the menu of its card (9.7). It opens a select of the folders with `access.write`. It sends `POST api/dashboards/<uid>/move` with
   `If-Match` (the etag of the list item) and a new `save_id`.
 - A dialog shows the message of each error of 6.8 under its fields.
 - The buttons of a dialog come in this order: the safe choice first ("Cancel" or "Stay"), the action last.
@@ -5497,7 +5544,7 @@ Restore:
 
 Export:
 
-- "Export" of the dashboard menu, of the list page and of a version view reads `download=true` (6.14, 6.17).
+- "Export" of the dashboard menu, of the menu of a card and of a version view reads `download=true` (6.14, 6.17).
 - The browser saves the canonical bytes as `<uid>.json`, or `<uid>-v<n>.json` for a version.
 
 Import (the list page, when `editing` is `true` and one folder has `access.write`):
@@ -5529,7 +5576,7 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 
 ### 10.13 Delete and restore of a dashboard
 
-- "Delete" exists in the menu "More actions" of the dashboard page (9.9) and in the list page. It needs `editing` `true` and `access.write`. It opens the dialog "Delete the dashboard <title>? It leaves the list. An operator can bring it back."
+- "Delete" exists in the menu "More actions" of the dashboard page (9.9) and as the bin of a card in the list page (9.7). It needs `editing` `true` and `access.write`. It opens the dialog "Delete the dashboard <title>? It leaves the list. An operator can bring it back."
   with "Delete" and "Cancel".
 - The page sends `DELETE api/dashboards/<uid>` with `If-Match` = the etag that it holds and a new `save_id` (6.16).
   The store keeps a deletion version and the history (5.4).

@@ -6,6 +6,28 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+### Added
+
+- The key `server.list_filters_min_dashboards`. It is a whole number from 0 to 1000, and the default is 6. The list page shows the sort control and the tag filter only when the user sees more dashboards than this number. The session gives the number to the page.
+- The file `web/css/look.css` with the tokens of a calmer look, in the light and the dark theme.
+- A new logo: a square with round corners and one line that goes up. The favicon, the sprite of the icons and the images of the site use it.
+- The browser case B228 for the cards of the list page.
+
+### Changed
+
+- The list page shows one card for each dashboard. A card has the title on one line, a short note with the last change (`now`, `2h`, `1d`, `1w`, `1mo`) and the tags. The grid has columns of 400 px and is centred in the window.
+- A card that the user can edit has a pencil that opens the edit mode, a menu with "Export" and "Move", and a bin. The bin shows under the same condition as the pencil. A card that the user cannot edit has no button.
+- A folder title shows only when the user sees two folders or more. The menu of a folder with "Rename" and "Delete" is on the folder title.
+- The sort control and the tag filter are in the header, after the brand.
+- The tag filter keeps the cards with one tag. The URL parameter `q` holds this tag name. Before, `q` was a text that matched a part of a title, a uid or a tag.
+- The buttons, the fields, the menus, the dialogs and the tag chips use the new tokens. The tag chip is a tint of its colour. The primary button has dark text in the dark theme.
+- The entry redirect of the list page does not read `access.create`. This is as before. The text of the specification now says it.
+
+### Removed
+
+- The search field of the list page, the view control (folder view and list view) and the collapse of a folder. The keys `hune.list.layout` and `hune.list.collapsed` of `localStorage` are not read any more.
+- The page title "Dashboards", the count of dashboards and the words "Can edit" and "Read only" on the list page.
+
 ## 0.1.2 - 2026-11-24
 
 ### Added
