@@ -88,7 +88,7 @@ test("the edit mode has no row of its own and no reserved slot: its group comes 
   assert.ok(!/setEditSlots|toolbarSlots|header-edit-row|editSlot/.test(dash));
   const main = code("web/js/main.js");
   assert.ok(!/header-edit-row|editRow|setEditSlots/.test(main), "no row of the edit mode");
-  assert.match(main, /headerEl\.append\(brand, crumbs, actionsSlot, themeSlot, moreSlot\)/);
+  assert.match(main, /headerEl\.append\(brand, leadSlot, crumbs, actionsSlot, themeSlot, moreSlot\)/);
   const css = read("web/css/base.css");
   assert.ok(!/\.header-edit(?!-slot)|data-layout="stacked"|"edit edit edit edit"/.test(css));
   assert.ok(!/\.header-edit(?!-slot)|\.header-keep|\.header-slot/.test(read("web/css/components.css")));

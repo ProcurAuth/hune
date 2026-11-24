@@ -37,7 +37,7 @@ test("the header has, in order: the group of the edit mode, the time control, th
   assert.match(dash, /setEditBar\(node\) \{[^}]*timeControl\.el\.before\(node\)/s);
   assert.ok(!/editSlot|header-edit-slot/.test(dash));
   const main = code("web/js/main.js");
-  assert.match(main, /headerEl\.append\(brand, crumbs, actionsSlot, themeSlot, moreSlot\)/);
+  assert.match(main, /headerEl\.append\(brand, leadSlot, crumbs, actionsSlot, themeSlot, moreSlot\)/);
   assert.match(main, /setMore\(node\)/);
 });
 
@@ -115,7 +115,13 @@ test("the header and the sizes of the controls: 44 px, fixed widths and the step
   assert.match(css, /@media \(max-width: 480px\) \{\s*#app-header \{ --tb-icon-w: 32px; \}/);
   assert.match(base, /\.crumbs \{ container-type: inline-size; \}\s*@container \(max-width: 149px\)/);
   const list = read("web/css/list.css");
-  assert.match(list, /\.list-search \{ position: relative; flex: 0 1 240px; min-width: 96px; \}/);
+  // The sort and the tag filter are the lead controls of the header, after the brand. The list has no search field.
+  assert.match(base, /\.header-lead \{ display: flex; align-items: center;/);
+  assert.match(base, /#app-header > \.brand, #app-header > \.header-lead,/);
+  assert.match(list, /\.list-select--tags \{ width: 150px; \}/);
+  assert.match(list, /\.list-select--sort \{ width: 150px; \}/);
+  assert.ok(!/list-search/.test(list) && !/list-search/.test(base), "no search field in the css");
+  assert.match(read("web/js/main.js"), /headerEl\.append\(brand, leadSlot, crumbs, actionsSlot, themeSlot, moreSlot\)/);
   assert.ok(!/data-layout="stacked"/.test(list));
 });
 

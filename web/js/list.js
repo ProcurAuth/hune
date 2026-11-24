@@ -3,32 +3,12 @@
 import * as api from "./api.js";
 import { loadEditorModule } from "./editor_loader.js";
 import { dashboardPath, listSearch, parseSearch } from "./url_state.js";
-import { absoluteTime, anchorPopup, button, clear, closeMenu, el, icon, notify, openMenu, relativeTime, uniqueId } from "./ui.js";
+import { absoluteTime, anchorPopup, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
 
-const COLLAPSE_KEY = "hune.list.collapsed";
-const LAYOUT_KEY = "hune.list.layout";
 const SORT_KEY = "hune.list.sort";
 
 // ASCII-only lower case (9.7): non-ASCII letters keep their case.
 const fold = (text) => String(text ?? "").replace(/[A-Z]/g, (c) => c.toLowerCase());
-
-function readCollapsed() {
-  try {
-    const raw = window.localStorage.getItem(COLLAPSE_KEY);
-    const list = raw ? JSON.parse(raw) : [];
-    return new Set(Array.isArray(list) ? list.filter((x) => typeof x === "string") : []);
-  } catch (error) {
-    return new Set();
-  }
-}
-
-function writeCollapsed(set) {
-  try {
-    window.localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...set]));
-  } catch (error) {
-    // The state then lasts for this page only.
-  }
-}
 
 const compareText = (a, b) => {
   const x = fold(a);
@@ -53,10 +33,42 @@ export function groupDashboards(folders, items, { descending = false } = {}) {
   return groups;
 }
 
-export function matchesQuery(item, text) {
+// The tag filter (9.7): the text q is one tag name. A dashboard matches when one of its tags is this name, with ASCII letters folded.
+// An empty text matches every dashboard.
+export function matchesTag(item, text) {
   if (!text) return true;
   const needle = fold(text);
-  return fold(item.title).includes(needle) || fold(item.uid).includes(needle) || (item.tags || []).some((t) => fold(t).includes(needle));
+  return (item.tags || []).some((t) => fold(t) === needle);
+}
+
+// The short form of the age of a change, for the note of a card (9.7): "now" below one minute (and for a time in the future), then
+// minutes "5m", hours "2h", days "3d", weeks "2w", months of 30 days "1mo" and years of 365 days "1y". An unreadable time gives "".
+export function shortAge(iso, now = Date.now()) {
+  const then = Date.parse(iso);
+  if (!Number.isFinite(then)) return "";
+  const minutes = Math.floor((now - then) / 60000);
+  if (minutes < 1) return "now";
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d`;
+  if (days < 30) return `${Math.floor(days / 7)}w`;
+  if (days < 365) return `${Math.floor(days / 30)}mo`;
+  return `${Math.floor(days / 365)}y`;
+}
+
+// True when the list page shows the sort and the tag filter (9.7): the user sees more dashboards than `list_filters_min_dashboards` of the
+// session (6.10). A missing or invalid member shows them. The page keeps no copy of the number: each render reads the session.
+export function filtersShown(session, count) {
+  const min = session ? session.list_filters_min_dashboards : undefined;
+  if (!Number.isSafeInteger(min) || min < 0) return true;
+  return count > min;
+}
+
+// What a card offers to the user (9.7). The pencil and the bin share one condition: editing is on and the item has the write right.
+export function cardRights(item, editing) {
+  return { write: editing === true && Boolean(item.access && item.access.write) };
 }
 
 // Saves a text as a file in the browser.
@@ -98,8 +110,6 @@ function glyph(paths, size = 16) {
   return svg;
 }
 
-const FOLDER_OPEN = ["M3 19V6a1 1 0 0 1 1-1h5l2 2h7a1 1 0 0 1 1 1v2", "M3 19l3-8.5a1 1 0 0 1 1-.5h14.5a.5.5 0 0 1 .5.7L19 18.5a1 1 0 0 1-1 .5H3z"];
-const LIST_LINES = ["M9 6h12", "M9 12h12", "M9 18h12", "M4 6h.01", "M4 12h.01", "M4 18h.01"];
 const SORT_ARROWS = ["M5 19V5", "M2 8l3-3 3 3", "M12 7h9", "M12 12h6", "M12 17h3"];
 
 // The picture of an empty state (300 x 200): a soft shape, a dashboard card and a sign. The colours are tokens (list.css).
@@ -138,8 +148,8 @@ const TAG_PALETTE = [
 ];
 
 // The colour of a tag chip is a function of the name: a hash of the lower-case name (the shift wraps to 32 bits, the sum stays a double) picks one of 29 colours (measured on
-// Grafana 12.4.2). Each colour holds white text with at least 4.7:1. The name is the only input: the same tag has the same colour
-// in every row, on every page and in every session.
+// Grafana 12.4.2). The chip shows the colour as a tint, and its text is the colour mixed with the ink of the theme (look.css), with 4.5:1 or more.
+// The name is the only input: the same tag has the same colour on every card, on every page and in every session.
 export function tagColor(name) {
   const text = String(name ?? "").toLowerCase();
   let hash = 5381;
@@ -176,73 +186,38 @@ export async function mount(ctx) {
   let folderAccess = { create: false };
   let items = [];
   let query = parseSearch(window.location.search).q || "";
-  let layout = readPref(LAYOUT_KEY, ["folders", "list"], "folders");
   let sort = readPref(SORT_KEY, ["az", "za"], null);
   let loadedOnce = false;
-  const collapsed = readCollapsed();
 
   header.clear();
   document.title = "Dashboards - Hune";
 
-  const searchInput = el("input", {
-    type: "search",
-    class: "list-search__input",
-    id: "list-search",
-    value: query,
-    placeholder: "Search by title, uid or tag",
-    autocomplete: "off",
-    dataset: { testid: "list-search" },
-    "aria-label": "Search dashboards",
-  });
-  const clearButton = el("button", { type: "button", class: "list-search__clear", hidden: !query, dataset: { testid: "list-search-clear" }, on: { click: () => { setQuery(""); searchInput.focus(); } } },
-    icon("close", 14), el("span", { text: "Clear" }));
-  // The search field is in the header (9.6, 9.7). Its fit width is its width in one row; it grows when the controls take a row of their own.
-  const searchBox = el("div", { class: "list-search", dataset: { fitWidth: "240" } }, el("span", { class: "list-search__icon", "aria-hidden": "true" }, icon("search", 16)), searchInput, clearButton);
-
-  const actionsBox = el("div", { class: "list-toolbar__actions" });
-  // The actions are in the header. Up to 768 px the three actions hide and one button "New" opens a menu with them. The menu runs the same buttons.
+  const actionsBox = el("div", { class: "list-actions" });
+  // The actions are in the header. Up to 900 px the actions hide and one button "New" opens a menu with them. The menu runs the same buttons.
   const newMenu = button("New", { class: "btn btn--tb list-new", "aria-haspopup": "menu", "aria-expanded": "false", hidden: true, dataset: { testid: "list-new-menu" } }, null, { variant: "tb" });
   newMenu.append(icon("chevron-down", 16));
   newMenu.addEventListener("click", () => {
-    const items = [...actionsBox.querySelectorAll("[data-toolbar-action]")].reverse().map((node) => ({ label: node.textContent.trim(), onSelect: () => node.click() }));
-    if (items.length) openMenu(newMenu, items, { align: "end", gap: 4, testid: "list-new-menu-popup" });
+    const entries = [...actionsBox.querySelectorAll("[data-toolbar-action]")].reverse().map((node) => ({ label: node.textContent.trim(), onSelect: () => node.click() }));
+    if (entries.length) openMenu(newMenu, entries, { align: "end", gap: 4, testid: "list-new-menu-popup" });
   });
+  // The live status says only the tag filter. It has no count (9.7).
   const status = el("p", { class: "list-status visually-hidden", role: "status" });
-  const head = el("div", { class: "list-head" },
-    el("div", { class: "list-head__text" }, el("h1", { class: "page-title", text: "Dashboards" }), el("p", { class: "list-subtitle", text: "Create and manage dashboards to visualize your data" }), status));
 
   const tagButton = el("button", { type: "button", class: "list-select list-select--tags", "aria-haspopup": "listbox", "aria-expanded": "false", "aria-label": "Filter by tag", dataset: { testid: "list-tag-filter" }, on: { click: () => openTagMenu() } });
-  const layoutItems = [
-    { value: "folders", title: "Folder view", testid: "list-layout-folders", glyph: () => icon("folder", 16) },
-    { value: "list", title: "List view", testid: "list-layout-list", glyph: () => glyph(LIST_LINES, 16) },
-  ];
-  const layoutNodes = new Map();
-  const layoutControl = el("div", { class: "list-seg", role: "group", "aria-label": "View" });
-  for (const item of layoutItems) {
-    const node = el("button", { type: "button", class: "list-seg__item", "aria-label": item.title, dataset: { testid: item.testid }, on: { click: () => {
-      if (layout === item.value) return;
-      layout = item.value;
-      writePref(LAYOUT_KEY, layout === "folders" ? null : layout);
-      render();
-    } } }, item.glyph());
-    node.setAttribute("data-tooltip", item.title);
-    layoutNodes.set(item.value, node);
-    layoutControl.append(node);
-  }
   tagButton.addEventListener("keydown", onTagKey);
   const sortLabel = el("span", { class: "list-select__text" });
   const sortButton = el("button", { type: "button", class: "list-select list-select--sort", "aria-haspopup": "menu", "aria-expanded": "false", "aria-label": "Sort", dataset: { testid: "list-sort" }, on: { click: () => openSortMenu() } },
     glyph(SORT_ARROWS, 16), sortLabel, icon("chevron-down", 16));
-  const filters = el("div", { class: "list-filters" }, tagButton, layoutControl, sortButton);
+  // The sort and the tag filter are the lead controls of the header: they follow the brand (9.6, 9.7).
+  const filters = el("div", { class: "list-filters" }, sortButton, tagButton);
 
   const body = el("div", { class: "list-body", dataset: { testid: "list" }, "aria-busy": "true" },
     el("div", { class: "list-skeleton", "aria-hidden": "true" }, el("span", { class: "skeleton" }), el("span", { class: "skeleton" }), el("span", { class: "skeleton" })));
   clear(main);
-  const page = el("section", { class: "list-page", dataset: { layout } }, head, body);
+  const page = el("section", { class: "list-page" }, status, body);
   main.append(page);
-  // The controls of the page are in the header (9.6): the search, the filters, the actions and the menu "New" (a phone).
-  header.setActions(searchBox, filters, actionsBox, newMenu);
-  searchBox.hidden = true;
+  header.setLead(filters);
+  header.setActions(actionsBox, newMenu);
   filters.hidden = true;
 
   const editorCtx = () => ({ session, folders, dashboards: items, navigate: ctx.navigate, reload: load });
@@ -275,31 +250,33 @@ export async function mount(ctx) {
     return list;
   }
 
-  // A click on a tag filters the list by this tag. A second click on the same tag clears the filter.
+  // The tag filter is the text q of the address (9.7). A choice of a tag sets it. A second choice of the same tag clears it.
   function setQuery(text) {
     query = text;
-    searchInput.value = text;
-    clearButton.hidden = !text;
     window.history.replaceState(null, "", `${window.location.pathname}${listSearch(query)}`);
-    clearTimeout(debounce);
     render();
   }
 
   const toggleTag = (text) => setQuery(fold(query) === fold(text) ? "" : text);
 
-  // A chip with the colour of its name. In a row it is a button that filters; in the tag filter it is only a picture.
-  const tagChip = (text) => el("span", { class: "list-tag", style: { "--tag-bg": tagColor(text) }, text });
+  // A chip with the colour of its name. On a card it is a button that filters when the page shows the filters, else a picture.
+  const tagChip = (text) => el("span", { class: "list-tag", style: { "--tag-c": tagColor(text) }, text });
 
-  function tagRowButton(text) {
-    return el("button", { type: "button", class: "tag tag--button list-tag", style: { "--tag-bg": tagColor(text) }, text, title: `Filter by the tag ${text}`, on: { click: () => toggleTag(text) } });
+  function tagCardButton(text, interactive) {
+    if (!interactive) return tagChip(text);
+    return el("button", { type: "button", class: "list-tag", style: { "--tag-c": tagColor(text) }, text, title: `Filter by the tag ${text}`, on: { click: () => toggleTag(text) } });
   }
 
-  function dashboardRow(item, flat) {
+  // A button of the card that is not the title link: an icon button on the layer above the stretched link.
+  const cardButton = (label, testid, iconName, attrs = {}) => button(label, { dataset: { testid, tooltipAlign: "end" }, ...attrs }, iconName, { iconOnly: true, variant: "ghost" });
+
+  // One card for one dashboard (9.7). The card is an element with a stretched title link. The buttons are its siblings, never inside the link.
+  function dashboardCard(item, interactiveTags) {
     const valid = item.state !== "invalid";
-    const cells = [];
-    const writable = editing && item.access && item.access.write;
+    const rights = cardRights(item, editing);
+    const card = el("article", { class: `card${rights.write ? " card--actions" : ""}`, dataset: { testid: `row-${item.uid}`, state: item.state || "valid" } });
     if (valid) {
-      cells.push(el("td", { class: "cell-title" }, el("span", { class: "cell-title__inner" }, icon("grid", 14), el("a", { class: "cell-title__link", href: dashboardPath(item.uid, item.title), title: item.title, text: item.title }))));
+      card.append(el("h3", { class: "card__title" }, el("a", { class: "card__link", href: dashboardPath(item.uid, item.title), title: item.title, text: item.title })));
     } else {
       const panelId = uniqueId("errors");
       const chevron = el("span", { class: "errors-toggle__chevron" }, icon("chevron-down", 12));
@@ -311,31 +288,33 @@ export async function mount(ctx) {
         detail.hidden = open;
       } } }, toggleText, chevron);
       const detail = el("div", { id: panelId, class: "invalid-detail", hidden: true }, errorsRow(item));
-      cells.push(el("td", { class: "cell-title" }, el("span", { class: "cell-title__inner" }, icon("error", 14), el("code", { class: "cell-title__uid", text: item.uid }), el("span", { class: "badge badge--error", text: "Not valid" }), toggle), detail));
+      card.append(el("h3", { class: "card__title card__title--invalid" }, icon("error", 14), el("code", { class: "card__uid", text: item.uid }), el("span", { class: "badge badge--error", text: "Not valid" })), el("div", { class: "card__errors" }, toggle, detail));
     }
-    if (flat) {
-      const folder = folders.find((f) => f.id === item.folder);
-      cells.push(el("td", { class: "cell-folder" }, el("span", { class: "cell-folder__inner" }, icon("folder", 14), el("span", { class: "cell-folder__text", text: folder ? folder.title : item.folder }))));
+    // The note under the title: the last change in the short form. Its title attribute has the full time. The note has a fixed height.
+    card.append(el("p", { class: "card__updated", title: absoluteTime(item.updated_at), text: shortAge(item.updated_at) }));
+    card.append(el("div", { class: "card__tags" }, ...(item.tags || []).map((t) => tagCardButton(t, interactiveTags))));
+    const buttons = [];
+    if (valid && rights.write) {
+      // The pencil opens the dashboard in the edit mode. The bin runs the delete dialog. The server decides: a 403 shows the refusal.
+      buttons.push(el("a", { class: "btn btn--ghost btn--icon card__edit", href: `${dashboardPath(item.uid, item.title)}?edit=1`, "aria-label": `Edit the dashboard ${item.title}`, dataset: { testid: `card-edit-${item.uid}`, tooltipAlign: "end" }, "data-tooltip": "Edit" }, icon("edit", 16)));
+      const more = cardButton(`Actions for ${item.title}`, `row-menu-${item.uid}`, "more", { "aria-haspopup": "menu", "aria-expanded": "false" });
+      more.addEventListener("click", () => openMenu(more, [
+        { label: "Export", icon: "download", onSelect: () => exportDashboard(item.uid) },
+        { label: "Move", icon: "folder", onSelect: () => callEditor("folders", "moveDashboard", item) },
+      ], { align: "end" }));
+      buttons.push(more);
+      const bin = cardButton(`Delete the dashboard ${item.title}`, `card-delete-${item.uid}`, "trash", { class: "btn btn--ghost btn--icon card__delete" });
+      bin.addEventListener("click", () => callEditor("folders", "deleteDashboard", item));
+      buttons.push(bin);
+    } else if (!valid) {
+      const more = cardButton(`Actions for ${item.uid}`, `row-menu-${item.uid}`, "more", { "aria-haspopup": "menu", "aria-expanded": "false" });
+      const entries = [{ label: "Download", icon: "download", onSelect: () => exportDashboard(item.uid) }];
+      if (rights.write) entries.push({ label: "Replace", icon: "upload", onSelect: () => callEditor("import_export", "importDialog", { uid: item.uid, etag: item.etag }) });
+      more.addEventListener("click", () => openMenu(more, entries, { align: "end" }));
+      buttons.push(more);
     }
-    cells.push(el("td", { class: "cell-tags" }, el("div", { class: "cell-tags__list" }, ...(item.tags || []).map(tagRowButton))));
-    const by = item.updated_by && item.updated_by !== "-" ? item.updated_by : null;
-    cells.push(el("td", { class: "cell-changed", title: absoluteTime(item.updated_at) }, relativeTime(item.updated_at), by ? el("span", { class: "cell-changed__by", text: ` by ${by}` }) : null));
-    const menuItems = [];
-    if (valid) {
-      menuItems.push({ label: "Export", icon: "download", onSelect: () => exportDashboard(item.uid) });
-      if (writable) {
-        menuItems.push({ label: "Move", icon: "folder", onSelect: () => callEditor("folders", "moveDashboard", item) });
-        menuItems.push({ separator: true });
-        menuItems.push({ label: "Delete", icon: "trash", danger: true, onSelect: () => callEditor("folders", "deleteDashboard", item) });
-      }
-    } else {
-      menuItems.push({ label: "Download", icon: "download", onSelect: () => exportDashboard(item.uid) });
-      if (writable) menuItems.push({ label: "Replace", icon: "upload", onSelect: () => callEditor("import_export", "importDialog", { uid: item.uid, etag: item.etag }) });
-    }
-    const menuButton = button(`Actions for ${item.title}`, { "aria-haspopup": "menu", "aria-expanded": "false", dataset: { testid: `row-menu-${item.uid}`, tooltipAlign: "end" } }, "more", { iconOnly: true, variant: "ghost" });
-    menuButton.addEventListener("click", () => openMenu(menuButton, menuItems, { align: "end" }));
-    cells.push(el("td", { class: "cell-menu" }, menuButton));
-    return el("tr", { dataset: { testid: `row-${item.uid}`, state: item.state || "valid" } }, ...cells);
+    if (buttons.length) card.append(el("div", { class: "card__buttons" }, ...buttons));
+    return card;
   }
 
   // The tags of all dashboards with the number of dashboards: the most used first, then in name order (the order of Grafana).
@@ -346,7 +325,7 @@ export async function mount(ctx) {
   }
 
   // The tag filter: a select-like button that shows the active tag as its chip, and a popup with a chip and a count for each tag.
-  // The filter is the search text (9.7): a tag fills the field, a second choice of the same tag clears it.
+  // The filter is the text q (9.7): a tag sets it, a second choice of the same tag clears it.
   let tagMenu = null;
   function closeTagMenu({ restoreFocus = true } = {}) {
     if (!tagMenu) return;
@@ -432,7 +411,8 @@ export async function mount(ctx) {
     popup.style.minWidth = `${sortButton.offsetWidth}px`;
   }
 
-  function renderFilters() {
+  function renderFilters(shown) {
+    filters.hidden = !shown;
     const counts = tagCounts();
     const active = counts.find(([t]) => fold(t) === fold(query));
     clear(tagButton);
@@ -443,11 +423,9 @@ export async function mount(ctx) {
     tagButton.disabled = counts.length === 0;
     sortLabel.textContent = sort ? SORT_LABELS[sort] : "Sort";
     sortLabel.classList.toggle("list-select__text--placeholder", !sort);
-    for (const [value, node] of layoutNodes) node.setAttribute("aria-pressed", String(value === layout));
-    page.dataset.layout = layout;
   }
 
-  // One empty state for an empty list and for a search with no result: a picture, a title, a hint and the main action.
+  // One empty state for an empty list and for a filter with no result: a picture, a title, a hint and the main action.
   function emptyBox({ kind, title, text, actions, testid }) {
     const box = el("div", { class: "list-empty", role: "status", dataset: { testid } }, illustration(kind), el("p", { class: "list-empty__title", text: title }));
     if (text) box.append(el("p", { class: "list-empty__text", text }));
@@ -476,89 +454,66 @@ export async function mount(ctx) {
     }));
   }
 
-  // The visible head of the columns. The tables below it keep their own hidden head for screen readers.
-  function columnHead(flat) {
-    const cell = (cls, text) => el("span", { class: `list-colhead__cell ${cls}`, text });
-    return el("div", { class: "list-colhead", "aria-hidden": "true" }, cell("list-colhead__title", "Name"), flat ? cell("list-colhead__folder", "Folder") : null, cell("list-colhead__tags", "Tags"), cell("list-colhead__changed", "Last change"), cell("list-colhead__menu", ""));
-  }
-
-  function tableHead(flat) {
-    return el("thead", { class: "visually-hidden" }, el("tr", {},
-      el("th", { scope: "col", text: "Title" }), flat ? el("th", { scope: "col", text: "Folder" }) : null, el("th", { scope: "col", text: "Tags" }), el("th", { scope: "col", text: "Last change" }), el("th", { scope: "col", text: "Actions" })));
+  // The folder title above a group: the folder icon and the name, with the menu of the folder when the user can write in it.
+  function folderHead(group) {
+    const head = el("h2", { class: "group__head" }, icon("folder", 14), el("span", { class: "group__title", text: group.folder.title }));
+    if (editing && group.folder.access && group.folder.access.write && folders.some((f) => f.id === group.folder.id)) {
+      const menuButton = button(`Actions for the folder ${group.folder.title}`, { "aria-haspopup": "menu", "aria-expanded": "false", class: "btn btn--ghost btn--icon group__menu", dataset: { tooltipAlign: "end" } }, "more", { iconOnly: true, variant: "ghost" });
+      menuButton.addEventListener("click", () => openMenu(menuButton, [
+        { label: "Rename", icon: "edit", onSelect: () => callEditor("folders", "renameFolder", group.folder) },
+        { separator: true },
+        { label: "Delete", icon: "trash", danger: true, onSelect: () => callEditor("folders", "deleteFolder", group.folder) },
+      ], { align: "end" }));
+      head.append(menuButton);
+    }
+    return head;
   }
 
   function render() {
     closeTagMenu({ restoreFocus: false });
     clear(body);
     body.removeAttribute("aria-busy");
-    // With nothing to search or to create from the toolbar, the page shows the empty state only.
-    searchBox.hidden = !items.length;
-    filters.hidden = !items.length;
-    renderFilters();
+    // The sort and the tag filter show only above the threshold of the session. Without them, the page uses the default order, and the
+    // text q of the address has no effect: a hidden control never changes the page.
+    const shown = items.length > 0 && filtersShown(session, items.length);
+    renderFilters(shown);
+    const active = shown ? query : "";
+    status.textContent = active ? `Showing the dashboards with the tag ${active}.` : "";
     if (!items.length) {
-      status.textContent = "";
       renderEmpty();
       return;
     }
-    const descending = sort === "za";
-    const filtered = items.filter((item) => matchesQuery(item, query));
-    const groups = groupDashboards(folders, filtered, { descending });
-    const count = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
-    status.textContent = filtered.length === items.length ? `${count(items.length, "dashboard")} in ${count(groups.length, "folder")}` : `${filtered.length} of ${count(items.length, "dashboard")}`;
-    if (!filtered.length) {
+    const descending = shown && sort === "za";
+    const groups = groupDashboards(folders, items, { descending });
+    const visible = groups.map((g) => ({ ...g, items: g.items.filter((item) => matchesTag(item, active)) }));
+    if (!visible.some((g) => g.items.length)) {
       body.append(emptyBox({
         kind: "match",
-        title: "No dashboard matches the search.",
+        title: "No dashboard has this tag.",
         text: null,
-        actions: [button("Clear search and filters", { dataset: { testid: "list-no-match-clear" }, on: { click: () => setQuery("") } }, null, { variant: "tb" })],
+        actions: [button("Clear the filter", { dataset: { testid: "list-no-match-clear" }, on: { click: () => setQuery("") } }, null, { variant: "tb" })],
         testid: "list-no-match",
       }));
       return;
     }
-    if (layout === "list") {
-      const flat = groups.flatMap((g) => g.items).sort((a, b) => compareText(a.title, b.title) || compareText(a.uid, b.uid));
-      if (descending) flat.reverse();
-      body.append(columnHead(true), el("table", { class: "list-table list-table--flat" }, tableHead(true), el("tbody", {}, ...flat.map((item) => dashboardRow(item, true)))));
-      return;
+    // A folder title shows only when the user sees two folders or more (9.7).
+    const showFolders = groups.length >= 2;
+    const stack = el("div", { class: "list-stack" });
+    for (const group of visible) {
+      if (!group.items.length && active) continue;
+      const section = el("section", { class: "group", dataset: { testid: `folder-${group.folder.id}` } });
+      if (showFolders) section.append(folderHead(group));
+      const cards = el("div", { class: "cards" });
+      if (group.items.length) for (const item of group.items) cards.append(dashboardCard(item, shown));
+      else cards.append(el("p", { class: "group__empty muted", text: "This folder is empty." }));
+      section.append(cards);
+      stack.append(section);
     }
-    body.append(columnHead(false));
-    for (const group of groups) {
-      if (!group.items.length && query) continue;
-      const open = !collapsed.has(group.folder.id);
-      const listId = uniqueId("folder");
-      const toggle = el("button", {
-        type: "button",
-        class: "group__toggle",
-        "aria-expanded": String(open),
-        "aria-controls": listId,
-        on: { click: () => {
-          if (collapsed.has(group.folder.id)) collapsed.delete(group.folder.id);
-          else collapsed.add(group.folder.id);
-          writeCollapsed(collapsed);
-          render();
-        } },
-      }, icon(open ? "chevron-down" : "chevron-right", 16), open ? glyph(FOLDER_OPEN, 14) : icon("folder", 14), el("span", { class: "group__title", text: group.folder.title }),
-      el("span", { class: "group__count visually-hidden" }, `${group.items.length} ${group.items.length === 1 ? "dashboard" : "dashboards"}`));
-      const headRow = el("h2", { class: "group__head" }, toggle);
-      if (editing && group.folder.access && group.folder.access.write && folders.some((f) => f.id === group.folder.id)) {
-        const menuButton = button(`Actions for the folder ${group.folder.title}`, { "aria-haspopup": "menu", "aria-expanded": "false", class: "btn btn--ghost btn--icon group__menu", dataset: { tooltipAlign: "end" } }, "more", { iconOnly: true, variant: "ghost" });
-        menuButton.addEventListener("click", () => openMenu(menuButton, [
-          { label: "Rename", icon: "edit", onSelect: () => callEditor("folders", "renameFolder", group.folder) },
-          { separator: true },
-          { label: "Delete", icon: "trash", danger: true, onSelect: () => callEditor("folders", "deleteFolder", group.folder) },
-        ], { align: "end" }));
-        headRow.append(menuButton);
-      }
-      const table = el("table", { id: listId, class: "list-table", hidden: !open },
-        el("colgroup", {}, el("col", { class: "col-title" }), el("col", { class: "col-tags" }), el("col", { class: "col-changed" }), el("col", { class: "col-menu" })),
-        tableHead(false),
-        el("tbody", {}, ...group.items.map((item) => dashboardRow(item, false))));
-      body.append(el("section", { class: `group${open ? "" : " group--collapsed"}`, dataset: { testid: `folder-${group.folder.id}` } }, headRow, group.items.length ? table : el("p", { class: "group__empty muted", text: "This folder is empty.", hidden: !open })));
-    }
+    body.append(stack);
   }
 
-  // Loads all pages of the folders and the dashboards. After the first load, and before the rows exist, the router can take over
-  // (ctx.afterLoad, the entry redirect). The function returns true when it did. A later load (search, import, delete) never asks again.
+  // Loads all pages of the folders and the dashboards. After the first load, and before the cards exist, the router can take over
+  // (ctx.afterLoad, the entry redirect). The function returns true when it did. A later load (import, delete) never asks again.
   async function load() {
     try {
       const [folderAnswer, list] = await Promise.all([api.folders(controller.signal), api.dashboards(controller.signal)]);
@@ -581,26 +536,10 @@ export async function mount(ctx) {
     }
   }
 
-  let debounce = 0;
-  searchInput.addEventListener("input", () => {
-    query = searchInput.value;
-    clearButton.hidden = !query;
-    window.history.replaceState(null, "", `${window.location.pathname}${listSearch(query)}`);
-    clearTimeout(debounce);
-    debounce = setTimeout(render, 80);
-  });
-  searchInput.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && searchInput.value) {
-      event.preventDefault();
-      setQuery("");
-    }
-  });
-
   if (await load() === true) return { destroy() { controller.abort(); } };
   return {
     destroy() {
       controller.abort();
-      clearTimeout(debounce);
       closeTagMenu({ restoreFocus: false });
     },
   };
