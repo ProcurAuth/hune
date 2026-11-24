@@ -421,8 +421,11 @@ async fn a05_save_with_if_match() {
     assert_eq!(hist["items"].as_array().unwrap().len(), 2);
     // The log line has no document body.
     let lines = h.logger.memory_lines();
-    let changed: Vec<&String> = lines.iter().filter(|l| l.contains("\"dashboard.changed\"")).collect();
-    assert_eq!(changed.len(), 1);
+    // The volume can log an external change of its own for the file of the setup, before or after the save. The
+    // time of that line depends on the scan, so only the lines of the save count here.
+    let changed: Vec<&String> =
+        lines.iter().filter(|l| l.contains("\"dashboard.changed\"") && l.contains("\"action\":\"save\"")).collect();
+    assert_eq!(changed.len(), 1, "{lines:?}");
     let v: Value = serde_json::from_str(changed[0]).unwrap();
     assert_eq!(v["action"], "save");
     assert_eq!(v["etag_before"], e0);
