@@ -185,7 +185,7 @@ fn parse(args: &[OsString]) -> Result<Command, UsageError> {
         return usage("no command");
     };
     let rest = &args[1..];
-    // In Hune 0.1.1, a lone `--help` or `-h` after a command was an unknown option (exit code 2).
+    // In Hune 0.1.2, a lone `--help` or `-h` after a command was an unknown option (exit code 2).
     if first.to_str().is_some_and(is_command) && asks_for_help(rest) {
         return Ok(Command::Help);
     }
@@ -465,7 +465,7 @@ mod tests {
     fn version_prints_one_line() {
         let (code, out, err) = run_text(&["version"]);
         assert_eq!((code, err.as_str()), (0, ""));
-        assert!(out.starts_with("hune 0.1.1 "), "{out}");
+        assert!(out.starts_with("hune 0.1.2 "), "{out}");
         assert_eq!(out.lines().count(), 1);
     }
 

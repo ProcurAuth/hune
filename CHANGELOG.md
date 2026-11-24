@@ -6,6 +6,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+## 0.1.2 - 2026-11-24
+
 ### Added
 
 - The public documentation: a website at `https://procurauth.github.io/hune/` that `scripts/build-site.py` makes from the Markdown files, and the checks of `scripts/check-docs.py` for links, site, ASD-STE100 and hygiene.

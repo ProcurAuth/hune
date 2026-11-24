@@ -154,13 +154,13 @@ docker exec -i hune-demo-ch clickhouse-client --multiquery < hune/examples/demo/
 Download Hune and check the archive. The file `SHA256SUMS` lists the checksum.
 
 ```sh
-curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.1.1/hune_0.1.1_linux_amd64.tar.gz
-curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.1.1/SHA256SUMS
+curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.1.2/hune_0.1.2_linux_amd64.tar.gz
+curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.1.2/SHA256SUMS
 sha256sum --check --ignore-missing SHA256SUMS
-tar -xzf hune_0.1.1_linux_amd64.tar.gz
+tar -xzf hune_0.1.2_linux_amd64.tar.gz
 mkdir -p /tmp/hune-demo && cp -R hune/examples/demo/dashboards /tmp/hune-demo/dashboards
-HUNE_DEMO_CH_PASSWORD=hune-demo-password hune_0.1.1_linux_amd64/hune check-config -c hune/examples/demo/hune.hcl
-HUNE_DEMO_CH_PASSWORD=hune-demo-password hune_0.1.1_linux_amd64/hune serve -c hune/examples/demo/hune.hcl
+HUNE_DEMO_CH_PASSWORD=hune-demo-password hune_0.1.2_linux_amd64/hune check-config -c hune/examples/demo/hune.hcl
+HUNE_DEMO_CH_PASSWORD=hune-demo-password hune_0.1.2_linux_amd64/hune serve -c hune/examples/demo/hune.hcl
 ```
 
 Open `http://127.0.0.1:8080/`. Press Ctrl+C to stop Hune, then run `docker stop hune-demo-ch`. The password is a public demo value. [docs/GETTING-STARTED.md](docs/GETTING-STARTED.md) explains each step. To build the binary from the source, read [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).

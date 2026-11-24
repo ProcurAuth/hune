@@ -239,7 +239,7 @@ compose_example() {
     dir=$work/compose-$cname
     rm -rf "$dir"
     cp -R "$srcdir" "$dir"
-    # The example names the tag of the release (hune:0.1.1). The test uses its own tag and never touches a real one.
+    # The example names the tag of the release (hune:0.1.2). The test uses its own tag and never touches a real one.
     sed -i -E "s#hune:[0-9]+\.[0-9]+\.[0-9]+#$tag#g" "$dir/compose.yaml"
     mkdir -p "$dir/dashboards" "$dir/secrets"
     chmod 0777 "$dir/dashboards"
