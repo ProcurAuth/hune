@@ -32,6 +32,7 @@ pub fn test_config(volume: &Path) -> Config {
             repeat_max_per_dashboard: 120,
             compress_static: true,
             transform_max_cells: 10_000_000,
+            list_filters_min_dashboards: 6,
             max_connections: 64,
             idle_timeout: Duration::from_secs(30),
             shutdown_grace: Duration::from_secs(30),

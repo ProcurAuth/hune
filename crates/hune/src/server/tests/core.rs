@@ -41,7 +41,7 @@ async fn session_in_mode_open() {
     assert_eq!(j["limits"]["query_body_bytes"], 262_144);
     assert_eq!(j["limits"]["max_data_points"], 10_000);
     let keys: Vec<&str> = j.as_object().unwrap().keys().map(String::as_str).collect();
-    assert_eq!(keys.len(), 11);
+    assert_eq!(keys.len(), 12);
     // The block `geomap` is absent: the member is `null` (6.10, 13.12c).
     assert_eq!(j["geomap"], serde_json::Value::Null);
     assert_eq!(j["query_inspect"], false);
@@ -49,6 +49,20 @@ async fn session_in_mode_open() {
     assert_eq!(j["repeat_limits"], serde_json::json!({"panel": 24, "section": 12, "dashboard": 120}));
     // The cap of the cells of a transform (6.10): the default of `server.transform_max_cells`.
     assert_eq!(j["transform_max_cells"], 10_000_000);
+    // The count above which the list page shows its filters (6.10): the default of `server.list_filters_min_dashboards`.
+    assert_eq!(j["list_filters_min_dashboards"], 6);
+}
+
+#[tokio::test]
+async fn session_gives_the_list_filter_count_of_the_configuration() {
+    // The value of the typed configuration goes to the page as it is: the lowest value, a value between and the bound.
+    for count in [0_u32, 1, 6, 1000] {
+        let h = Harness::start(|c| c.server.list_filters_min_dashboards = count).await;
+        let j = get(h.addr, "/api/session").await.json();
+        assert_eq!(j["list_filters_min_dashboards"], count, "{count}");
+        assert!(j["list_filters_min_dashboards"].is_u64());
+        assert!(j["limits"].get("list_filters_min_dashboards").is_none());
+    }
 }
 
 #[tokio::test]

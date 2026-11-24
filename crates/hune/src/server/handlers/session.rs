@@ -50,6 +50,8 @@ struct Session<'a> {
     repeat_limits: RepeatLimits,
     /// The value of `server.transform_max_cells` (6.10): the page checks the cells of a step of a transform with it.
     transform_max_cells: u32,
+    /// The value of `server.list_filters_min_dashboards` (6.10): the list page shows its filters above this count.
+    list_filters_min_dashboards: u32,
     /// The block `geomap` (6.10): `null` without the block. The page checks the template again (9.19i).
     geomap: Option<SessionGeomap<'a>>,
     version: &'a str,
@@ -71,6 +73,7 @@ pub async fn session(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
             dashboard: ctx.state.config.server.repeat_max_per_dashboard,
         },
         transform_max_cells: ctx.state.config.server.transform_max_cells,
+        list_filters_min_dashboards: ctx.state.config.server.list_filters_min_dashboards,
         geomap: ctx.state.config.geomap.as_ref().map(|g| SessionGeomap {
             tile_url: &g.tile_url.text,
             attribution: &g.attribution,
