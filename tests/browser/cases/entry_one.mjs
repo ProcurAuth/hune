@@ -16,7 +16,7 @@ const PROBE = `(() => {
   let docs = 0;
   try { docs = Number(sessionStorage.getItem("b214.docs") || 0) + 1; sessionStorage.setItem("b214.docs", String(docs)); } catch (e) {}
   const rec = window.__b214 = { docs, len0: history.length, rows: 0, empty: 0, views: [], holdOff: null };
-  const LIST = 'tr[data-testid^="row-"], [data-testid="list-empty"]';
+  const LIST = 'article[data-testid^="row-"], [data-testid="list-empty"]';
   new MutationObserver((list) => {
     for (const m of list) {
       if (m.type === "attributes") {
@@ -41,7 +41,7 @@ const place = (p) => p.eval("location.pathname + location.search");
 const rows = (p) => p.eval(`[...document.querySelectorAll('[data-testid^="row-"]:not([data-testid^="row-menu-"])')].map((e) => e.dataset.testid.slice(4))`);
 const guard = (p) => p.eval(`sessionStorage.getItem(${JSON.stringify(GUARD_KEY)})`);
 const probe = (p) => p.eval("JSON.parse(JSON.stringify(window.__b214))");
-const listShown = (p) => p.waitFor(`!!document.querySelector('[data-testid="list"] tr[data-testid^="row-"], [data-testid="list-empty"]')`, { what: "list content" });
+const listShown = (p) => p.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"], [data-testid="list-empty"]')`, { what: "list content" });
 
 /** The path stays this one for a while: no late redirect. */
 async function staysAt(t, p, path, what) {

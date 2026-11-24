@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser case B91 (9.25, 9.26): the colour theme of the chrome is the theme of ClickHouse Dash, in the dark, the light and the system mode.
-// The expected values come from the copied file css/vendor/chdash/00-tokens.css (a byte copy of the tokens of ClickHouse Dash), read at
-// the start of the case. The case reads the computed colours of the chrome tokens on the page, and it checks the contrast of the text,
+// Browser case B91 (9.25, 9.26): the colour theme of the chrome is the calm look, in the dark, the light and the system mode.
+// The expected values come from the copied file css/vendor/chdash/00-tokens.css (a byte copy of the tokens of ClickHouse Dash) and from
+// css/look.css, which sets again the tokens of the look in the same four contexts. Both are read at the start of the case. The case reads the computed colours of the chrome tokens on the page, and it checks the contrast of the text,
 // of the edge of a control and of the focus ring (WCAG 2.2 AA: 4.5:1 for text, 3:1 for components).
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { sleep } from "../lib/h.mjs";
 
 const VENDOR = join(dirname(fileURLToPath(import.meta.url)), "../../../web/css/vendor/chdash/00-tokens.css");
+const LOOK = join(dirname(fileURLToPath(import.meta.url)), "../../../web/css/look.css");
 
 /** The custom properties of one block of the copied file. */
 function block(css, start) {
@@ -21,15 +22,18 @@ function block(css, start) {
 function expectedThemes() {
   const css = readFileSync(VENDOR, "utf8");
   const root = block(css, ":root {\n  color-scheme: dark;");
-  const dark = { ...root, ...block(css, 'html[data-theme="dark"] {') };
-  const light = { ...root, ...block(css, 'html[data-theme="light"] {') };
+  const look = readFileSync(LOOK, "utf8");
+  const shape = block(look, ":root {\n  --r-control");
+  const lookRoot = block(look, ":root {\n  --bg:");
+  const dark = { ...root, ...block(css, 'html[data-theme="dark"] {'), ...shape, ...lookRoot, ...block(look, 'html[data-theme="dark"] {') };
+  const light = { ...root, ...block(css, 'html[data-theme="light"] {'), ...shape, ...lookRoot, ...block(look, 'html[data-theme="light"] {') };
   return { dark, light };
 }
 
 // The chrome tokens that carry the colour theme (the map of the themed tokens in web/css/tokens.css). A value that is a var() is resolved by the browser.
 const COLOUR = ["--bg", "--panel", "--raised", "--text", "--muted", "--border", "--border-strong", "--hover-tint", "--input-bg", "--button-bg-hover", "--button-border",
   "--button-border-hover", "--control-border", "--control-border-hover", "--row-hover", "--selected-bg", "--selected-edge", "--accent-fill", "--accent-fill-hover", "--accent-text",
-  "--danger-fill", "--danger", "--warning", "--success", "--info", "--on-fill", "--focus-ring-color"];
+  "--danger-fill", "--danger", "--warning", "--success", "--info", "--on-fill", "--on-danger", "--focus-ring-color"];
 
 // Hune roles that must follow a token of ClickHouse Dash: [Hune token, the token of ClickHouse Dash that it names].
 const ROLES = [["--primary", "--accent-fill"], ["--primary-hover", "--accent-fill-hover"], ["--on-primary", "--on-fill"], ["--header-bg", "--panel"], ["--surface-menu", "--panel"],
@@ -75,7 +79,7 @@ async function checkMode(t, label, url, { scheme, choice, theme }, expected) {
   const names = [...new Set([...COLOUR, ...ROLES.flat()])];
   const r = await p.eval(PROBE(names, Object.fromEntries(COLOUR.map((n) => [n, expected[n]]))));
   t.eq(r.theme, theme, `${label}: data-theme`);
-  for (const n of COLOUR) t.eq(r.tokens[n], r.expected[n], `${label}: ${n} is the value of ClickHouse Dash (${expected[n]})`);
+  for (const n of COLOUR) t.eq(r.tokens[n], r.expected[n], `${label}: ${n} is the value of the look (${expected[n]})`);
   for (const [hune, chdash] of ROLES) t.eq(r.tokens[hune], r.tokens[chdash], `${label}: ${hune} follows ${chdash}`);
   t.assert(r.shadow !== "none" && r.shadow.length > 10, `${label}: the shadow of an overlay: ${r.shadow}`);
   t.eq(r.real.body, r.tokens["--bg"], `${label}: the page has the colour --bg`);
@@ -91,9 +95,9 @@ async function checkMode(t, label, url, { scheme, choice, theme }, expected) {
     for (const tok of ["--text", "--muted"]) t.assert(ratio(solid(c[tok], bg), bg) >= 4.5, `${label}: ${tok} on ${sname} has ${ratio(solid(c[tok], bg), bg).toFixed(2)}:1, 4.5:1 needed`);
     for (const tok of ["--control-border", "--control-border-hover", "--focus-ring-color"]) t.assert(ratio(solid(c[tok], bg), bg) >= 3, `${label}: ${tok} on ${sname} has ${ratio(solid(c[tok], bg), bg).toFixed(2)}:1, 3:1 needed`);
   }
-  for (const f of ["--accent-fill", "--accent-fill-hover", "--danger-fill"]) {
+  for (const [f, on] of [["--accent-fill", "--on-fill"], ["--accent-fill-hover", "--on-fill"], ["--danger-fill", "--on-danger"]]) {
     const bg = c[f].slice(0, 3);
-    t.assert(ratio(c["--on-fill"].slice(0, 3), bg) >= 4.5, `${label}: --on-fill on ${f} has ${ratio(c["--on-fill"].slice(0, 3), bg).toFixed(2)}:1, 4.5:1 needed`);
+    t.assert(ratio(c[on].slice(0, 3), bg) >= 4.5, `${label}: ${on} on ${f} has ${ratio(c[on].slice(0, 3), bg).toFixed(2)}:1, 4.5:1 needed`);
   }
   const panel = c["--panel"].slice(0, 3);
   for (const tok of ["--accent-text", "--danger", "--warning", "--success"]) t.assert(ratio(c[tok].slice(0, 3), panel) >= 4.5, `${label}: ${tok} on --panel has ${ratio(c[tok].slice(0, 3), panel).toFixed(2)}:1, 4.5:1 needed`);
@@ -103,7 +107,7 @@ async function checkMode(t, label, url, { scheme, choice, theme }, expected) {
 export const cases = [
   {
     id: "B91",
-    name: "the chrome has the colour theme of ClickHouse Dash in dark, light and system, with the contrast of WCAG 2.2 AA (9.25, 9.26)",
+    name: "the chrome has the colours of the look in dark, light and system, with the contrast of WCAG 2.2 AA (9.25, 9.26)",
     async run(t) {
       const expected = expectedThemes();
       // The error page and a dashboard page both carry the header and the chrome. The error page needs no data.

@@ -207,10 +207,13 @@ async function main() {
   // (b to d) three servers
   const wanted = new Set(defs.map((d) => d.server || "main"));
   wanted.add("main");
+  // The shared servers set the threshold of the filters of the list to 0, so the sort and the tag filter show on a volume of two items.
+  // B228 starts a server with the default of 6.
+  const filters = ["list_filters_min_dashboards = 0"];
   const specs = {
-    main: {},
-    noedit: { editing: false },
-    base: { basePath: "/dashboards/" },
+    main: { serverLines: filters },
+    noedit: { editing: false, serverLines: filters },
+    base: { basePath: "/dashboards/", serverLines: filters },
   };
   for (const [name, opts] of Object.entries(specs)) {
     if (!wanted.has(name)) continue;

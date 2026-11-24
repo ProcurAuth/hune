@@ -27,7 +27,7 @@ const rows = (p) => p.eval(`[...document.querySelectorAll('[data-testid^="row-"]
 const emptyText = (p) => p.eval(`(document.querySelector('[data-testid="list-empty"]') || {}).textContent || ""`);
 
 /** The list page showed its content: a row or the empty state. */
-const listShown = (p) => p.waitFor(`!!document.querySelector('[data-testid="list"] tr[data-testid^="row-"], [data-testid="list-empty"]')`, { what: "list content" });
+const listShown = (p) => p.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"], [data-testid="list-empty"]')`, { what: "list content" });
 
 /** The dashboard page showed its grid. The redirect has no time range in the URL, so the panels need not have data. */
 async function dashboardShown(p) {
@@ -193,19 +193,26 @@ export const cases = [
   },
   {
     id: "B34",
-    name: "entry redirect: a search text q in the URL shows the list; an empty q does not stop the redirect",
+    name: "entry redirect: a tag filter q in the URL shows the list; an empty q does not stop the redirect",
     async run(t) {
-      const own = await t.ownServer("query", { prepare: ONE });
-      const p = await t.open(own.url + "?q=node");
+      // The filters show (threshold 0): q is a tag name. The dashboard has the tag `chain`.
+      const own = await t.ownServer("query", { prepare: ONE, serverLines: ["list_filters_min_dashboards = 0"] });
+      const p = await t.open(own.url + "?q=chain");
       await listShown(p);
-      t.eq(await rows(p), ["nodes"], "the search matches the one row");
-      await staysAt(t, p, "/?q=node", "q=node: no redirect");
+      t.eq(await rows(p), ["nodes"], "the tag filter keeps the one card");
+      await staysAt(t, p, "/?q=chain", "q=chain: no redirect");
       const none = await t.open(own.url + "?q=zzz");
-      await none.waitSel(none.tid("list"));
+      await none.waitSel(none.tid("list-no-match"));
       await staysAt(t, none, "/?q=zzz", "q=zzz: no redirect");
-      t.eq(await rows(none), [], "no row for q=zzz");
+      t.eq(await rows(none), [], "no card for q=zzz");
       const empty = await t.open(own.url + "?q=");
       await empty.waitFor(`location.pathname.startsWith("/d/nodes")`, { what: "redirect with an empty q" });
+      // The default threshold hides the filters: q has no effect on the cards, and it still stops the redirect.
+      const hid = await t.ownServer("query-hidden", { prepare: ONE });
+      const h = await t.open(hid.url + "?q=zzz");
+      await listShown(h);
+      t.eq(await rows(h), ["nodes"], "the filters are hidden: q does not hide the card");
+      await staysAt(t, h, "/?q=zzz", "q=zzz with the filters hidden: no redirect");
     },
   },
   {

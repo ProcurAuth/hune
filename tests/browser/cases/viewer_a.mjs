@@ -20,28 +20,32 @@ export const cases = [
     async run(t) {
       const p = await t.open(t.url(""));
       t.assert(await p.exists(p.tid("folder-transit")), "folder group transit");
-      t.eq((await p.text(`${p.tid("folder-transit")} .group__title`)).trim(), "Transit desk", "folder title");
-      // The valid row: a link to d/<uid>/<slug>, its tags, and a relative time with an absolute title.
+      // The volume has one folder: the page shows no folder title (9.7).
+      t.eq(await p.count(".group__head"), 0, "one folder: no folder title");
+      // The valid card: a link to d/<uid>/<slug>, its tags, and the last change in the short form with an absolute title.
       const row = await p.eval(`(() => {
         const r = document.querySelector('[data-testid="row-nodes"]');
-        const a = r.querySelector("a");
-        return { href: a.getAttribute("href"), text: a.textContent, tags: [...r.querySelectorAll(".tag")].map((e) => e.textContent),
-                 changed: r.querySelector(".cell-changed").textContent, title: r.querySelector(".cell-changed").title };
+        const a = r.querySelector("a.card__link");
+        const up = r.querySelector(".card__updated");
+        return { tag: r.tagName, href: a.getAttribute("href"), text: a.textContent, title: a.title, tags: [...r.querySelectorAll(".list-tag")].map((e) => e.textContent),
+                 changed: up.textContent, changedTitle: up.title, buttons: r.querySelectorAll("button, .card__edit").length, links: r.querySelectorAll("a").length };
       })()`);
-      t.eq(row.href, "d/nodes/nodes", "row link");
-      t.eq(row.text, "Nodes", "row title");
-      t.eq(row.tags, ["chain"], "row tags");
-      t.assert(/ago|just now/.test(row.changed), "relative time: " + row.changed);
-      t.assert(/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/.test(row.title), "absolute time in the title attribute: " + row.title);
-      // The invalid row: the uid, "Not valid", no link, and the errors with their pointers.
+      t.eq(row.tag, "ARTICLE", "a card is not an anchor");
+      t.eq(row.links, 2, "the title link and the pencil: two links, none around the card");
+      t.eq(row.href, "d/nodes/nodes", "card link");
+      t.eq([row.text, row.title], ["Nodes", "Nodes"], "card title and its title attribute");
+      t.eq(row.tags, ["chain"], "card tags");
+      t.assert(/^(now|\d+m|\d+h|\d+d|\d+w|\d+mo|\d+y)$/.test(row.changed), "short form of the last change: " + row.changed);
+      t.assert(/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/.test(row.changedTitle), "absolute time in the title attribute: " + row.changedTitle);
+      // The invalid card: the uid, "Not valid", no link to the dashboard, and the errors with their pointers.
       const bad = await p.eval(`(() => {
         const r = document.querySelector('[data-testid="row-grid-errors"]');
-        return r ? { state: r.dataset.state, text: r.querySelector(".cell-title").textContent, link: !!r.querySelector("a") } : null;
+        return r ? { state: r.dataset.state, text: r.querySelector(".card__title").textContent, link: !!r.querySelector("a") } : null;
       })()`);
-      t.assert(bad, "invalid row is present");
+      t.assert(bad, "invalid card is present");
       t.eq(bad.state, "invalid", "invalid state");
       t.assert(bad.text.includes("grid-errors") && bad.text.includes("Not valid"), "uid and Not valid: " + bad.text);
-      t.assert(!bad.link, "an invalid row has no link to the dashboard");
+      t.assert(!bad.link, "an invalid card has no link to the dashboard");
       await p.clickText(`${p.tid("row-grid-errors")} button`, "Show errors");
       const errs = await p.eval(`[...document.querySelectorAll('[data-testid="row-grid-errors"] .error-list li')].map((e) => e.querySelector("code").textContent)`);
       const api = await t.api.list();
@@ -49,9 +53,11 @@ export const cases = [
       t.assert(item && item.state === "invalid", "the API marks the item invalid");
       t.eq(errs, item.errors.map((e) => e.pointer), "the page lists the pointers of the API");
       t.assert(errs.length >= 2, "at least two errors");
-      // Search keeps rows by title, uid or tag, and the URL keeps the text in q.
-      await p.fill(p.tid("list-search"), "chain");
-      await p.waitFor(`document.querySelectorAll('[data-testid^="row-"][data-state]').length === 1`, { what: "search by tag" });
+      // The tag filter keeps the cards with the tag, and the URL keeps the tag in q. The page has no search field.
+      t.eq(await p.exists(p.tid("list-search")), false, "no search field");
+      await p.click(p.tid("list-tag-filter"));
+      await p.click(p.tid("tag-filter-chain"));
+      await p.waitFor(`document.querySelectorAll('[data-testid^="row-"][data-state]').length === 1`, { what: "filter by tag" });
       t.assert(/q=chain/.test(await p.eval("location.search")), "q in the URL");
       // The page route of an invalid dashboard gives the list of errors, not the dashboard.
       const r422 = await t.api.dashboard("grid-errors");

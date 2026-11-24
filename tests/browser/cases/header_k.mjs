@@ -357,7 +357,7 @@ export const cases = [
           check(`${label} panel editor`, await p.eval(HEADER));
           // The list page: one row too, for an editor.
           const l = await openAt(t, t.url(""), width, { scheme });
-          await l.waitFor(`!!document.querySelector('[data-testid="list"] tr[data-testid^="row-"]')`, { what: "the list" });
+          await l.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"]')`, { what: "the list" });
           check(`${label} list`, await l.eval(HEADER));
           if (!(await noOverflow(l))) found.push(`${label} list: the page scrolls sideways`);
         }
@@ -398,7 +398,7 @@ export const cases = [
         t.eq((await menuItems(v)).filter((x) => !/time range|Zoom/.test(x)), ["History", "Export"], `${width}: the menu of a viewer`);
         await v.press("Escape");
         const vl = await openAt(t, viewer.url, width);
-        await vl.waitFor(`!!document.querySelector('[data-testid="list"] tr[data-testid^="row-"]')`, { what: "the list of the viewer" });
+        await vl.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"]')`, { what: "the list of the viewer" });
         check(`viewer list ${width}`, await vl.eval(HEADER));
       }
 

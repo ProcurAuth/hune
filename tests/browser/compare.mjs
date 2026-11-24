@@ -200,16 +200,15 @@ async function gExpandFolders(page) {
   await sleep(700);
 }
 
-/** The list page of Hune: the preferences of the viewer are set first (local storage), then the page loads with them. */
-async function vList(v, query, { layout = null, collapsed = false } = {}) {
+/** The list page of Hune. Its look is the card view of 9.7 and no longer the browse page of Grafana, so the pixel comparison with Grafana
+ *  does not apply to it. The helper only clears the sort of the viewer (local storage) and loads the page. The options of the old list and
+ *  folder views are not read any more. */
+async function vList(v, query) {
   await v.open(`${CFG.hune}/`);
   await v.settle();
-  const folders = collapsed ? await v.page.eval(`[...document.querySelectorAll('section[data-testid^="folder-"]')].map((e) => e.dataset.testid.slice(7))`) : [];
   await v.page.eval(`(() => {
     try {
-      ${layout ? `localStorage.setItem("hune.list.layout", ${JSON.stringify(layout)});` : `localStorage.removeItem("hune.list.layout");`}
       localStorage.removeItem("hune.list.sort");
-      localStorage.setItem("hune.list.collapsed", ${JSON.stringify(JSON.stringify(folders))});
     } catch (e) {}
   })()`);
   await v.open(`${CFG.hune}/${query}`);

@@ -52,18 +52,23 @@ state("empty-list", "List page of an empty volume", { server: "empty", themes: "
   await c.open(c.url(""));
 });
 
-state("list-search", "List page with a search text", {}, async (c) => {
+state("list-tag-filter", "List page filtered by one tag", {}, async (c) => {
   await c.open(c.url(""));
-  await c.page.fill(T("list-search"), "table");
+  await c.page.click(T("list-tag-filter"));
+  await c.page.click('[data-testid="list-tag-menu"] [role="option"]');
   await sleep(500);
   await c.settle();
 });
 
-state("list-search-none", "List page with a search that finds nothing", {}, async (c) => {
-  await c.open(c.url(""));
-  await c.page.fill(T("list-search"), "zzzz-no-such-dashboard");
+state("list-tag-none", "List page with a tag filter that finds nothing", {}, async (c) => {
+  await c.open(c.url("?q=zzzz-no-such-tag"));
   await sleep(500);
   await c.settle();
+});
+
+state("list-card-menu", "List page: the pencil, the menu and the bin of a card", { view: "viewport" }, async (c) => {
+  await c.open(c.url(""));
+  await sleep(250);
 });
 
 state("list-invalid-errors", "List page: the errors of the invalid entry shown", {}, async (c) => {
@@ -72,7 +77,7 @@ state("list-invalid-errors", "List page: the errors of the invalid entry shown",
   await sleep(200);
 });
 
-state("list-row-menu", "List page: the menu of a row", { view: "viewport" }, async (c) => {
+state("list-row-menu", "List page: the menu of a card", { view: "viewport" }, async (c) => {
   await c.open(c.url(""));
   await c.page.click(T("row-menu-types-tour"));
   await sleep(250);
@@ -821,7 +826,7 @@ state("edit-panel-groups-open", "Panel editor: Thresholds, Colour and Overrides 
 // ---- more widths: menus, dialogs, toasts, full pages, pickers and the editor at 768 and 390 -------------------------
 
 const ALL_WIDTH_STATES = [
-  "list-row-menu", "new-dashboard-dialog", "new-folder-dialog", "import-dialog", "list-invalid-errors", "list-search",
+  "list-row-menu", "new-dashboard-dialog", "new-folder-dialog", "import-dialog", "list-invalid-errors", "list-tag-filter",
   "panel-menu-open", "dashboard-menu-open", "panel-links-menu", "panel-description",
   "view-data", "view-data-table", "view-panel-table",
   "notice", "notice-error",

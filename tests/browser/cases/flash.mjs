@@ -144,7 +144,7 @@ function judge(frames, final, expectTheme, label) {
   return [...new Set(out)].slice(0, 6);
 }
 
-const EXPECTED_BG = { dark: "rgb(13, 15, 18)", light: "rgb(246, 247, 249)" }; // --bg of the theme of ClickHouse Dash
+const EXPECTED_BG = { dark: "rgb(14, 17, 22)", light: "rgb(246, 247, 249)" }; // --bg of the look (css/look.css)
 
 // ----------------------------------------------------------------------------------------------------------------------------
 // B59 helpers

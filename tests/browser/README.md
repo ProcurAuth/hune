@@ -1,6 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B227 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 216 cases.
+This suite runs the browser cases B01 to B228 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 217 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -62,7 +62,7 @@ Build the binary of the copy again after each change in `web/` or in the Rust co
 1. It starts a ClickHouse container with the name `hune-test-browser-ch-<pid>`. The port is bound to 127.0.0.1. The seed data come from `tests/fixtures/clickhouse/init.sql`.
 2. It makes one volume for each server under `target/browser/`. The folder `transit` holds the dashboard `nodes`, and one file that is not valid.
 3. It writes a configuration from `hune print-reference --format hcl --profile local`. It sets the ports, the volume, the ClickHouse URL and the password file. It removes the `tls` block. It adds the source `zdown`, which is always down.
-4. It starts three servers: one with `server.editing = true`, one with `server.editing = false`, and one with `server.base_path = "/dashboards/"`.
+4. It starts three servers: one with `server.editing = true`, one with `server.editing = false`, and one with `server.base_path = "/dashboards/"`. Each of the three sets `server.list_filters_min_dashboards = 0`, so the sort control and the tag filter show on a volume of two items. B228 and B34 start servers of their own that use the default or another value.
 5. It starts one Chrome and drives it with the DevTools protocol. Each case has its own browser context.
 6. It runs the cases. A case fails on a console error, an uncaught exception or a CSP violation, unless the case provokes it on purpose.
 7. It stops the servers with SIGTERM, removes the container and kills Chrome. This also happens when a case fails or when you press Ctrl+C.
@@ -137,7 +137,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `lib/parity.mjs` | The visual parity capture of 15.14c (`tools/parity/visual.mjs`) for B101p, B137 and B148. It runs only when the Grafana of 127.0.0.1:3010 answers. It reads `tests/fixtures/parity/visual-open-faults.json`. |
 | `lib/ed.mjs`, `lib/h.mjs` | Helpers of the editor cases and of all cases. `h.mjs` also reads the canvas texts, the tooltip and the data of the threshold hook. |
 | `cases/*.mjs` | The cases. Each case has an id, a name and one function. |
-| `cases/home.mjs` | The cases B28 to B35: the entry redirect of the list page (9.7). |
+| `cases/home.mjs` | The cases B28 to B35: the entry redirect of the list page (9.7). B34 tests `q` as a tag filter. |
 | `cases/entry_one.mjs` | The case B214: the entry redirect in mode `authzen`, with the list of the display filter (9.7, 11.25). |
 | `cases/features_f1.mjs` | The cases B36 to B42: the first set of Grafana-parity features. |
 | `cases/editor_drag.mjs` | The case B43: drag and resize in edit mode (10.5a). |
@@ -150,7 +150,8 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/var_panel.mjs` | The cases B80 to B86: the placement of a variable in the grid (4.7a, 9.10). |
 | `cases/theme_k.mjs` | The case B91: the colour theme of the chrome (9.25, 9.26). |
 | `cases/picker_k.mjs` | The case B92: the time range picker of ClickHouse Dash (9.9). |
-| `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13 and B24 to B27: the viewer, the list and the base path. |
+| `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13 and B24 to B27: the viewer, the list (cards, tags, no search field) and the base path. |
+| `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the buttons of a card and the read-only card (9.7). |
 | `cases/editor_a.mjs`, `cases/editor_b.mjs` | The cases B16 to B22: the editor, conflict, history, import and export, delete, no editing. |
 | `cases/misc.mjs` | The cases B14 and B15: the scripted accessibility audit. |
 | `cases/authzen.mjs` | The case B23: the mode `authzen` with `fake-pdp`. |

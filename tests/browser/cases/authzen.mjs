@@ -71,13 +71,10 @@ export const cases = [
         t.eq(rows.sort(), ["desk-open", "grid-errors", "nodes"], "reader sees desk-open (one dashboard grant), and the dashboards of transit, no desk-closed");
         t.eq(await toolbar(p), [], "no New dashboard, Import or New folder");
         t.eq(await p.count('.group__head button[aria-haspopup="menu"]'), 0, "no folder menu");
-        await p.click(p.tid("row-menu-nodes"));
-        t.eq(await menuItems(p), ["Export"], "row menu holds Export only");
-        await p.press("Escape");
-        await p.click(p.tid("row-menu-desk-open"));
-        t.eq(await menuItems(p), ["Export"], "row menu of the dashboard-grant row: Export only");
-        await p.press("Escape");
-        // The search shows only what the list holds.
+        // A reader has no button on a card (9.7): no pencil, no bin and no menu. The dashboard page has Export.
+        t.eq(await p.count('[data-testid^="row-menu-"], [data-testid^="card-edit-"], [data-testid^="card-delete-"]'), 0, "no button on a card of a reader");
+        t.eq(await p.count("article[data-testid^=\"row-\"] button:not(.list-tag), article[data-testid^=\"row-\"] .card__edit"), 0, "a card of a reader holds no button but the tag chips");
+        // The list shows only what the display filter gives.
         t.eq(await p.exists(p.tid("row-hidden-one")), false, "no hidden-one in the DOM");
         t.eq(await p.exists(p.tid("row-lab-a")), false, "no lab-a in the DOM");
         t.assert(!(await p.eval("document.body.textContent")).includes("Hidden one"), "the title of a hidden dashboard is nowhere in the page");

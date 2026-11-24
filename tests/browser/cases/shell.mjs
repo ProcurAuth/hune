@@ -180,7 +180,7 @@ export const cases = [
       t.allow(p, /Failed to load resource/);
       await size(p, 1280);
       const pages = [
-        ["list", t.url(""), `!!document.querySelector('[data-testid="list"] tr[data-testid^="row-"]')`],
+        ["list", t.url(""), `!!document.querySelector('[data-testid="list"] article[data-testid^="row-"]')`],
         ["dashboard", t.dash("nodes"), `!!document.querySelector('[data-testid="panel-1"]')`],
         ["not found", t.url("nothing/here"), `!!document.querySelector('[data-testid="not-found"]')`],
         ["dashboard not found", t.url("d/no-such-dashboard"), `!!document.querySelector('[data-testid="dashboard-not-found"]')`],
@@ -228,8 +228,8 @@ export const cases = [
       await size(p, 1280);
       await p.goto(t.url(""));
       await p.idle();
-      await p.waitFor(`!!document.querySelector('[data-testid="list"] tr[data-testid^="row-"]')`, { what: "the list" });
-      const filterIds = ["list-search", "list-tag-filter", "list-layout-folders", "list-layout-list", "list-sort"];
+      await p.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"]')`, { what: "the list" });
+      const filterIds = ["list-sort", "list-tag-filter"];
       const actionIds = ["new-folder", "import", "new-dashboard"];
       let w = await where(p, filterIds.concat(actionIds));
       t.eq([w.header, w.main, w.missing], [filterIds.concat(actionIds), [], []], "1280: every control of the list is in the header");
@@ -238,10 +238,14 @@ export const cases = [
       t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').offsetParent === null`), true, "1280: no button New");
       t.eq(await insideHeader(p, filterIds.concat(actionIds)), true, "1280: each control is in the box of the header");
       t.eq(await noOverflow(p), true, "1280: no horizontal scroll");
-      // The controls work from the header: the search filters the rows, New dashboard opens its dialog.
-      await p.fill(p.tid("list-search"), "node");
-      await p.waitFor(`[...document.querySelectorAll('[data-testid^="row-"]:not([data-testid^="row-menu-"])')].length >= 1 && [...document.querySelectorAll('[data-testid^="row-"]:not([data-testid^="row-menu-"])')].length < 10`, { what: "the search filter" });
-      await p.fill(p.tid("list-search"), "");
+      // The sort and the tag filter follow the brand, at the left. The actions are at the right. The page has no search field and no view control.
+      const order = await p.eval(`(() => { const x = (id) => document.querySelector('[data-testid="' + id + '"]').getBoundingClientRect(); const brand = document.querySelector(".brand").getBoundingClientRect(); return [brand.right <= x("list-sort").left, x("list-sort").right <= x("list-tag-filter").left, x("list-tag-filter").right <= x("import").left]; })()`);
+      t.eq(order, [true, true, true], "1280: the brand, the sort, the tag filter, then the actions");
+      t.eq(await p.eval(`["list-search", "list-layout-folders", "list-layout-list"].filter((id) => document.querySelector('[data-testid="' + id + '"]'))`), [], "1280: no search field, no view control");
+      // The controls work from the header: the tag filter opens its list, New dashboard opens its dialog.
+      await p.click(p.tid("list-tag-filter"));
+      await p.waitSel(p.tid("list-tag-menu"));
+      await p.press("Escape");
       await p.click(p.tid("new-dashboard"));
       await p.waitSel(p.tid("new-dashboard-dialog"));
       await p.press("Escape");
@@ -295,8 +299,8 @@ export const cases = [
         await size(p, width, height);
         await p.goto(t.url(""));
         await p.idle();
-        await p.waitFor(`!!document.querySelector('[data-testid="list"] tr[data-testid^="row-"]')`, { what: "the list" });
-        const kept = ["list-search", "list-tag-filter", "list-layout-folders", "list-layout-list", "list-sort"];
+        await p.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"]')`, { what: "the list" });
+        const kept = ["list-sort", "list-tag-filter"];
         const w = await where(p, kept);
         t.eq([w.header, w.main, w.missing], [kept, [], []], `${width}: the filters of the list are in the header`);
         t.eq((await where(p, ["new-folder", "import", "new-dashboard"])).missing, ["new-folder", "import", "new-dashboard"], `${width}: no action of an editor`);
