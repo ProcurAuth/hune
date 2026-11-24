@@ -81,9 +81,9 @@ mongodb = { version = "=3.10.0", default-features = false, features = ["compat-3
 # The BSON types of the driver (the same major version as `bson-3` of the driver).
 bson = { version = "=3.1.0", default-features = false }
 # ProcurAuth PEP library (D28, 11.10): git dependency at one full commit, no default features.
-procurauth-pep = { git = "https://github.com/ProcurAuth/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
+procurauth-pep = { git = "https://github.com/ProcurAuth/procurauth", rev = "f318e259013fdaa7e841936c2b8a172dc1b7699e", default-features = false }
 # ProcurAuth core: identity token, keys, strict JSON (D28, 11.10).
-procurauth-core = { git = "https://github.com/ProcurAuth/procurauth", rev = "058563cfbc3536b9b850255d953568ef0a5cabbe", default-features = false }
+procurauth-core = { git = "https://github.com/ProcurAuth/procurauth", rev = "f318e259013fdaa7e841936c2b8a172dc1b7699e", default-features = false }
 # Test only: temporary directories for the volume tests.
 tempfile = { version = "=3.27.0", default-features = false }
 

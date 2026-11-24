@@ -121,11 +121,21 @@ impl PepInputs {
         Ok(KeySet::from_keys(keys))
     }
 
-    /// The `PepConfig` of 11.10. `lenient_scheme` lets an `http` URL pass with `plain_http = false`:
+    /// The `PepConfig` of 11.10. `lenient_scheme` lets an `http` URL pass with `plain_http = false`, and an `https` URL with `plain_http = true`:
     /// stage 2 uses it, because the contradiction check C5 (13.14) owns this error.
     pub fn build_pep_config(&self, lenient_scheme: bool) -> Result<PepConfig, String> {
         let mut pdp = PdpConfig::new(self.pdp_url.clone(), self.pdp_token.clone());
-        pdp.allow_insecure_pdp_link = self.plain_http || (lenient_scheme && self.pdp_url.starts_with("http://"));
+        // Stage 2 (`lenient_scheme`) lets both contradictions of the scheme pass, `http` with `plain_http = false`
+        // and `https` with `plain_http = true`. The PEP refuses both since v1.1, and C5 owns these errors.
+        pdp.allow_plain_http = if lenient_scheme {
+            if self.pdp_url.starts_with("https://") {
+                false
+            } else {
+                self.plain_http || self.pdp_url.starts_with("http://")
+            }
+        } else {
+            self.plain_http
+        };
         pdp.request_timeout = self.timeout;
         pdp.usage_wait_margin = Duration::from_secs(1);
         pdp.idle_close_after = IDLE_CLOSE_AFTER;
@@ -276,7 +286,7 @@ pub(super) fn config_key_of(field: &str) -> Option<&'static str> {
         "cache_ttl" => "access.pdp.cache_ttl",
         "pdp.url" => "access.pdp.url",
         "pdp.credential" => "access.pdp.token",
-        "pdp.allow_insecure_pdp_link" => "access.pdp.plain_http",
+        "pdp.allow_plain_http" => "access.pdp.plain_http",
         "pdp.request_timeout" => "access.pdp.timeout",
         "pdp.max_connections" => "access.pdp.max_connections",
         // `cache_max_entries`, `display_max_questions` and the other `pdp.*` fields.

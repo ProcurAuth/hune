@@ -16,7 +16,7 @@ Three cases have a letter: B101p, B145a and B145b. These numbers are reserved an
 - The debug binary. Build it with `cargo build -p hune --locked`.
 - For the cases B23, B35, B108, B124 and B214: `openssl`, and the tools `fake-pdp` and `access-token` of ProcurAuth. B23, B35 and B214 test the mode `authzen`. B108 and B124 test the access to the text panel and to the annotations in this mode. Without the tools, the runner reports these five cases as `skip`.
 - The default folder of the tools is `target/procurauth`. Set `PROCURAUTH_DIR` to use another checkout. The tools must be in `target/release/` of this folder.
-- Build the tools from the committed revision that Hune pins in `Cargo.toml` (`rev = "058563cf..."`). Do not change the work tree of ProcurAuth. Run `mkdir -p target/procurauth`. Then run `git archive <revision> | tar -x -C <Hune>/target/procurauth` in the repository of ProcurAuth. Then run `cargo build --release --locked --offline -p fake-pdp -p access-token` in `target/procurauth`. The build needs no network when the dependencies are in the local cache.
+- Build the tools from the committed revision that Hune pins in `Cargo.toml` (`rev = "f318e259..."`). Do not change the work tree of ProcurAuth. Run `mkdir -p target/procurauth`. Then run `git archive <revision> | tar -x -C <Hune>/target/procurauth` in the repository of ProcurAuth. Then run `cargo build --release --locked --offline -p fake-pdp -p access-token` in `target/procurauth`. The build needs no network when the dependencies are in the local cache.
 
 Each case has a time limit. The default is 120 seconds. A case that needs more time sets `timeout` (in milliseconds) in its definition. The runner fails the case with "timeout of <n> ms" when the limit passes.
 

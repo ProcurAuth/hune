@@ -279,6 +279,8 @@ pub struct ApiError {
     pub extras: Vec<(&'static str, Value)>,
     /// The value of the header `Allow` for `405`.
     pub allow: Option<String>,
+    /// A fixed word that is the whole body: `{"error": "<word>"}`. Only the refusal of 17.7a uses it.
+    pub plain: Option<&'static str>,
 }
 
 fn cut_message(message: String) -> String {
@@ -295,7 +297,7 @@ fn cut_message(message: String) -> String {
 impl ApiError {
     /// Makes an error with no extra member.
     pub fn new(code: Code, message: impl Into<String>) -> Self {
-        ApiError { code, message: cut_message(message.into()), extras: Vec::new(), allow: None }
+        ApiError { code, message: cut_message(message.into()), extras: Vec::new(), allow: None, plain: None }
     }
 
     /// Adds one extra member. Use the members of `Code::extra_members` only.
@@ -318,6 +320,9 @@ impl ApiError {
 
     /// Makes the body of 6.7.
     pub fn body(&self) -> Value {
+        if let Some(word) = self.plain {
+            return serde_json::json!({ "error": word });
+        }
         let mut inner = Map::new();
         inner.insert("code".to_owned(), Value::from(self.code.as_str()));
         inner.insert("message".to_owned(), Value::from(self.message.as_str()));

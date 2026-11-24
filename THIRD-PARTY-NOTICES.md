@@ -285,8 +285,8 @@ vendored copy.
 | ppv-lite86 | 0.2.21 | MIT OR Apache-2.0 |
 | primeorder | 0.13.6 | Apache-2.0 OR MIT |
 | proc-macro2 | 1.0.107 | MIT OR Apache-2.0 |
-| procurauth-core | 1.0.0 | Apache-2.0 |
-| procurauth-pep | 1.0.0 | Apache-2.0 |
+| procurauth-core | 1.1.1 | Apache-2.0 |
+| procurauth-pep | 1.1.1 | Apache-2.0 |
 | quote | 1.0.47 | MIT OR Apache-2.0 |
 | radium | 0.7.0 | MIT |
 | rand | 0.9.5 | MIT OR Apache-2.0 |

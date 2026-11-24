@@ -11,32 +11,33 @@ The git dependencies `procurauth-pep` and `procurauth-core` use one full commit.
 | Item | Value |
 |---|---|
 | Repository | `https://github.com/ProcurAuth/procurauth` |
-| Commit | `058563cfbc3536b9b850255d953568ef0a5cabbe` |
+| Commit | `f318e259013fdaa7e841936c2b8a172dc1b7699e` (the tag v1.1.1) |
 | Runner | `access-conformance`, role `pep`, series U |
-| Cases | U01 to U110 |
+| Cases | U01 to U127 |
 
 To change the commit, follow section 11.10 of the specification. Then run the series U again and update the counts of this file.
 
 ## The result
 
-The run on the commit above gave these counts. The last run was on 2026-11-11, with documents of format 2. The fixture `tests/conformance/fixture/conf/conf-dash.json` and the etag of the profile follow format 2. The run gave the same counts.
+The run on the commit above gave these counts. The last run was on 2026-11-24.
 
 | Cases | Count |
 |---|---|
-| Run | 110 |
-| Passed | 60 |
+| Run | 127 |
+| Passed | 65 |
 | Failed | 0 |
-| Skipped | 50 |
+| Skipped | 62 |
 
 The file `tests/conformance/expected.txt` is empty. The script exits with 0 only when the set of failed cases equals the ids in that file.
 
 | Skipped cases | Count | Reason |
 |---|---|---|
-| U18, U23, U25 to U31, U85 to U110 | 35 | The service has no MCP endpoint. |
-| U04, U19, U21, U22, U24, U32 to U35, U58, U62, U63, U67, U68 | 14 | No action declares a budget. |
+| U18, U23, U25 to U31, U85 to U111, U114 to U117, U121 to U125 | 45 | The service has no MCP endpoint. |
+| U04, U19, U21, U22, U24, U32 to U35, U58, U62, U63, U67, U68, U126 | 15 | No action lists a budget. |
 | U84 | 1 | The profile has no operation `use_service`. |
+| U127 | 1 | The profile has no operation `read_health`. |
 
-The specification expects 61 passed cases and 49 skipped cases. The difference is the case U67. Its only step names the operation `use_budget`, and the runner skips it when no action declares a budget. The specification counts U67 as a case that runs. Section 11.32, section 16.12 and section 19.28 need a correction. This is an open question.
+The specification states the same counts. The case U67 is skipped, because its only step names the operation `use_budget`. The owner MUST read again the change of the counts from 110 cases to 127 cases.
 
 ## The profile
 
@@ -83,19 +84,20 @@ The workflow `conformance.yml` calls it on GitHub. A maintainer can run it with 
 
 ## What the cases show
 
-The 60 cases that pass show these properties of Hune.
+The 65 cases that pass show these properties of Hune.
 
 | Property | Cases |
 |---|---|
 | The subject, the chain and the questions | U01, U02, U07 to U11, U59 |
 | A `subtree` answer never lets an operation run | U12 |
-| The action document needs no token and asks no question | U13 to U17 |
+| The action document needs no token and asks no question | U13 to U17, U112 |
 | No usage for an action without a budget | U20 |
 | The ceilings | U36 to U39 |
 | No question for the action `access` | U40 |
-| Each rule of the identity token | U03, U41 to U55 |
+| Each rule of the identity token | U03, U41 to U55, U118 to U120 |
 | The PDP credential and the kept answers | U56, U57 |
 | The refusals and the failures | U06, U60, U61, U64 to U66 |
+| A call that cannot wait for an approval gets `approval_cannot_wait` | U113 |
 | The connections to the PDP stay open | U69 |
 | The options route | U05, U70 to U83 |
 

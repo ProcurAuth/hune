@@ -36,6 +36,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The workflows pin each action to a full commit SHA, with its version in a comment. No checkout keeps the credentials in the work tree.
 - Each job of the workflows `ci`, `conformance` and `release` has a time limit from 5 to 90 minutes. A job that hangs fails at this limit. Before, the GitHub limit of 360 minutes applied.
 - The job `procurauth` of the workflow `conformance` runs `tests/conformance/run.sh` directly. When the script is absent, the job fails. Only the job `failover` keeps a stub.
+- The git dependencies `procurauth-core` and `procurauth-pep` use the commit of the tag v1.1.1 of ProcurAuth. Before, they used a commit before v1.1. The series U of the conformance run has 127 cases: 65 passed, 0 failed and 62 skipped.
+- An answer of the PDP with a reason `approval_required`, `approval_pending`, `approval_denied` or `approval_expired` gives `403` and the body `{"error": "approval_cannot_wait"}`. Hune has no approval flow. Before, the body was the usual `forbidden` error (case U113).
 - The release workflow stops before the build when the section of the version in `CHANGELOG.md` is absent or empty.
 - The release workflow stops when it cannot read the tags of `origin`. Before, it continued as if the tag did not exist.
 - `.gitignore` also ignores `.env`, `.env.*`, `*.pem`, `*.key`, `*.swp` and `.DS_Store`. The test certificates and keys in `crates/hune-source/tests/fixtures/tls/`, `tests/api/tls/` and `tests/fixtures/config/` stay in the repository.
@@ -54,6 +56,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Fixed
 
+- A token with an `nbf` in the future, a signed `nbf` or a fractional `nbf` gets `401`. The newer PEP library checks it (case U120). Before, Hune accepted such a token.
+- The timing tests MS05 and A41 no longer fail on a slow host. They are tests only: the product did not change.
 - In the forced colors mode of the system, the mask glyphs show in the system text colour. These glyphs are the sort mark of a table, the check mark of a list and the resize mark of a panel. The type glyphs of the editor keep their own colours.
 - `check-config` names `access.identity.clock_skew` for a PEP error on the clock skew. Hune sets some PEP values from constants. A PEP error on such a value is now an internal error, not an error on a key of the file. With the pinned PEP, no output changes.
 - The job `import` no longer hangs on a runner. The service `plugin-fetch` ends with the code 0 at the start. `docker compose up --abort-on-container-exit` then stopped ClickHouse, 5 of the 323 expansion vectors differed, and the project did not end. The job now uses `docker compose run`, shows the output at once, and has a time limit of 25 minutes.

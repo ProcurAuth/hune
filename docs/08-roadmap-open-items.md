@@ -1155,9 +1155,12 @@ Open question: must the protocol accept fractional `iat` and `exp`, and an absen
 ### 19.28 The pinned commit of ProcurAuth and the series U figures
 
 The `rev` of the git dependencies `procurauth-pep` and `procurauth-core` is chosen at M6 (11.10, 17.9). The
-profile and the counts are those of 11.32. At the commit `058563cfbc3536b9b850255d953568ef0a5cabbe`, the profile gives 110
-cases. The specification expects 61 passed, 0 failed and 49 skipped. The run gives 60 passed, 0 failed and 50 skipped,
-because the runner skips the case U67. `docs/CONFORMANCE.md` records the counts of the chosen commit.
+profile and the counts are those of 11.32. At the commit `f318e259013fdaa7e841936c2b8a172dc1b7699e` (the tag v1.1.1), the
+profile gives 127 cases. The run gives 65 passed, 0 failed and 62 skipped, and the specification states the same counts.
+The runner skips the case U67, because no action declares a budget. `docs/CONFORMANCE.md` records the counts of the chosen
+commit.
+
+The owner MUST read again the change from 110 cases (61 passed) to 127 cases (65 passed).
 
 ### 19.29 The pattern form of `byRegexp` and of `reduce.fields`
 

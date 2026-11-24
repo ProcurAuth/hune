@@ -181,6 +181,14 @@ pub(crate) fn forbidden(action: &str) -> ApiError {
     ApiError::new(Code::Forbidden, "You have no right for this operation.").with("action", action.to_owned())
 }
 
+/// 17.7a: a call that cannot wait for an approval gets `403` and the body `{"error": "approval_cannot_wait"}`,
+/// the fixed body of ProcurAuth for this case. No other member is in the body.
+pub(crate) fn approval_cannot_wait() -> ApiError {
+    let mut e = ApiError::new(Code::Forbidden, "You have no right for this operation.");
+    e.plain = Some("approval_cannot_wait");
+    e
+}
+
 impl Access {
     /// Builds the PEP and the transport from the inputs (11.10 to 11.13). It sends nothing.
     pub fn new(
@@ -592,6 +600,11 @@ impl Access {
             Refusal::Forbidden { .. } | Refusal::RateLimited { .. } => {
                 self.account(who, work, res, leader);
                 self.log_unenforceable(who, op, refusal, res);
+                if let Refusal::Forbidden { reason: Some(reason), cause: DenialCause::Decision } = refusal
+                    && reason.is_approval()
+                {
+                    return approval_cannot_wait();
+                }
                 // The use names the action of the body. Hune asks no question to find the refused one: the log
                 // line `access.decision` gives it, and the body is the same for each refusal of a route (11.30).
                 forbidden(op.uses().first().map_or("unknown", |p| p.action.as_str()))

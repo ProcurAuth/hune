@@ -1293,8 +1293,8 @@ dependencies = [
 
 [[package]]
 name = "procurauth-core"
-version = "1.0.0"
-source = "git+https://github.com/ProcurAuth/procurauth?rev=058563cfbc3536b9b850255d953568ef0a5cabbe#058563cfbc3536b9b850255d953568ef0a5cabbe"
+version = "1.1.1"
+source = "git+https://github.com/ProcurAuth/procurauth?rev=f318e259013fdaa7e841936c2b8a172dc1b7699e#f318e259013fdaa7e841936c2b8a172dc1b7699e"
 dependencies = [
  "base64",
  "ed25519-dalek",
@@ -1308,11 +1308,12 @@ dependencies = [
 
 [[package]]
 name = "procurauth-pep"
-version = "1.0.0"
-source = "git+https://github.com/ProcurAuth/procurauth?rev=058563cfbc3536b9b850255d953568ef0a5cabbe#058563cfbc3536b9b850255d953568ef0a5cabbe"
+version = "1.1.1"
+source = "git+https://github.com/ProcurAuth/procurauth?rev=f318e259013fdaa7e841936c2b8a172dc1b7699e#f318e259013fdaa7e841936c2b8a172dc1b7699e"
 dependencies = [
  "procurauth-core",
  "serde_json",
+ "sha2 0.10.9",
  "thiserror",
 ]
 

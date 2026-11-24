@@ -268,7 +268,7 @@ procurauth-pep  = { git = "https://github.com/ProcurAuth/procurauth", rev = "<40
 ```
 
 The commit of `rev` is chosen at M6 (section 18). Until then, the figures of 11.32 come from the ProcurAuth commit
-`058563cfbc3536b9b850255d953568ef0a5cabbe`.
+`f318e259013fdaa7e841936c2b8a172dc1b7699e` (the tag v1.1.1).
 
 The script `tests/conformance/run.sh` stops when its checkout of ProcurAuth is not at the `rev` of `Cargo.toml`. The CI job
 `policy` fails when a `rev` is not 40 hexadecimal characters, or when the two `rev` values differ.
@@ -296,7 +296,7 @@ Hune builds the PEP one time at start with these values:
 | `PepConfig.display_max_questions` | 200 |
 | `PdpConfig.url` | `access.pdp.url` |
 | `PdpConfig.credential` | the PDP token |
-| `PdpConfig.allow_insecure_pdp_link` | `access.pdp.plain_http` |
+| `PdpConfig.allow_plain_http` | `access.pdp.plain_http` |
 | `PdpConfig.request_timeout` | `access.pdp.timeout` |
 | `PdpConfig.usage_wait_margin` | 1 s (no effect: Hune declares no budget) |
 | `PdpConfig.idle_close_after` | 5 s |
@@ -1022,6 +1022,7 @@ layer uses these codes:
 |---|---|---|---|
 | 401 | `unauthenticated` | No token, a token that is not valid, or two copies of the token header. | `false` |
 | 403 | `forbidden` | A `false` answer (also with `budget_exceeded`), an answer that Hune treats as `false`, or a route with no rule. | `false` |
+| 403 | `approval_cannot_wait` | A `false` answer to a question with a reason of 17.1 (`approval_required`, `approval_pending`, `approval_denied` or `approval_expired`). Hune has no approval flow. The body is `{"error": "approval_cannot_wait"}` and has no other member (P 17.7a). | `false` |
 | 403 | `ceiling_exceeded` | A query above an effective limit that a ceiling gave (11.24). The body also has `action`, `ceiling` and `limit`. | `false` |
 | 403 | `editing_disabled` | `server.editing = false` on a write route. No question. | `false` |
 | 404 | `not_found` | An unknown item after the rule of 11.23, or a ProcurAuth route in the mode `open`. | `false` |
@@ -1037,6 +1038,9 @@ Thus a `403` does not show whether a uid or a folder exists.
 
 The value is always an action that the action document publishes for the route (11.18). For a route with no rule, it
 is `unknown`. The log line `access.decision` gives each question and its answer (14.7).
+
+The body of `approval_cannot_wait` is the fixed body of ProcurAuth for a call that cannot wait for an approval. It is the
+only error of Hune whose `error` member is a text and not an object. It has no `action`, and no route changes it.
 
 The message of each code is a fixed English text of section 6. It never holds `context.reason`, a value of the request,
 or a detail of the PDP. The log events of the access layer are in 14.7.
@@ -1110,29 +1114,30 @@ conditions `no_budget_action`, `no_mcp_endpoint`, `no_budget_session`, `no_appro
 also skips each step that needs `use_service`. U84 has only such a step, so the runner skips U84.
 U02, U40 and U59 run their other steps.
 
-With the cases U01 to U110 (ProcurAuth commit `058563cfbc3536b9b850255d953568ef0a5cabbe`, 2026-11-08), the run MUST give
-110 cases: 61 passed, 0 failed and 49 skipped. The file `expected.txt` is empty.
+With the cases U01 to U127 (ProcurAuth commit `f318e259013fdaa7e841936c2b8a172dc1b7699e`, the tag v1.1.1), the run MUST
+give 127 cases: 65 passed, 0 failed and 62 skipped. The file `expected.txt` is empty.
 
 | Skipped cases | Count | Reason |
 |---|---|---|
-| U18, U23, U25 to U31, U85 to U110 | 35 | The service has no MCP endpoint (`no_mcp_endpoint`). |
-| U04, U19, U21, U22, U24, U32 to U35, U58, U62, U63, U68 | 13 | No action declares a budget (`no_budget_action`). |
+| U18, U23, U25 to U31, U85 to U111, U114 to U117, U121 to U125 | 45 | The service has no MCP endpoint (`no_mcp_endpoint`). |
+| U04, U19, U21, U22, U24, U32 to U35, U58, U62, U63, U67, U68, U126 | 15 | No action lists a budget (`no_budget_action`). |
 | U84 | 1 | The profile has no operation `use_service`. |
+| U127 | 1 | The profile has no operation `read_health`. |
 
-The 61 cases that run are these: U01 to U03, U05 to U17, U20, U36 to U57, U59 to U61, U64 to U67 and U69 to U83. They show
+The 65 cases that run are these: U01 to U03, U05 to U17, U20, U36 to U57, U59 to U61, U64 to U66, U69 to U83, U112, U113 and U118 to U120. They show
 these properties of Hune:
 
 | Property | Cases |
 |---|---|
 | The subject, the chain and the questions (P 3.3, P 4.1, P 4.5, P 9.6) | U01, U02, U07 to U11, U59 |
 | A `subtree` answer never lets an operation run (P 4.4) | U12 |
-| The action document: no token, no question, good, within the bounds (P 5.1 to P 5.3c) | U13 to U17 |
+| The action document: no token, no question, good, within the bounds (P 5.1 to P 5.3c) | U13 to U17, U112 |
 | No usage for an action without a budget (P 6.4) | U20 |
 | Ceilings: an unknown ceiling refuses, a known ceiling runs, a `false` answer ignores them, no opt-in member (P 7.3 to P 7.6) | U36 to U39 |
 | No question for `access` (P 8.3) | U40 |
-| Each rule of the identity token (P 9.3, P 9.4, P 9.7) | U03, U41 to U55 |
+| Each rule of the identity token (P 9.3, P 9.4, P 9.7) | U03, U41 to U55, U118 to U120 |
 | The PDP credential and the kept answers (P 10.0, P 10.1) | U56, U57 |
-| The map of the refusals and of the failures (P 10.3, P 11) | U06, U60, U61, U64 to U67 |
+| The map of the refusals and of the failures (P 10.3, P 11, P 17.7a) | U06, U60, U61, U64 to U66, U113 |
 | The connections to the PDP stay open (P 10.7, SHOULD) | U69 |
 | The options route (P 5.6 to P 5.8) | U05, U70 to U83 |
 

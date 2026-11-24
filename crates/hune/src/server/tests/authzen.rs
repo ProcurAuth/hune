@@ -356,6 +356,29 @@ async fn a41_a_slow_pdp_gives_503_after_the_timeout_and_the_pool_is_bounded() {
     assert!(m.contains("hune_pdp_pool_in_use "));
 }
 
+/// 17.7a: a call that cannot wait for an approval gets 403 and the fixed body of ProcurAuth. Another reason of
+/// the PDP keeps the usual `forbidden` error of Hune, and the client never gets the reason.
+#[tokio::test]
+async fn u113_a_refusal_for_an_approval_gives_403_and_the_code_approval_cannot_wait() {
+    for (reason, body) in [
+        ("approval_required", serde_json::json!({"error": "approval_cannot_wait"})),
+        ("approval_pending", serde_json::json!({"error": "approval_cannot_wait"})),
+        ("approval_denied", serde_json::json!({"error": "approval_cannot_wait"})),
+        ("approval_expired", serde_json::json!({"error": "approval_cannot_wait"})),
+        (
+            "unknown_subject",
+            serde_json::json!({"error": {"action": "dashboard.read", "code": "forbidden",
+            "message": "You have no right for this operation.", "retryable": false}}),
+        ),
+    ] {
+        let pdp = Pdp::start(move |q: &Q| if q.permission_only { Ans::yes() } else { Ans::No(Some(reason)) }).await;
+        let h = start(&pdp, Duration::ZERO).await;
+        let r = rget(&h, "/api/dashboards/nodes?download=true", "user:alice").await;
+        assert_eq!(r.status, 403, "{reason}: {}", r.text());
+        assert_eq!(r.json(), body, "{reason}");
+    }
+}
+
 #[tokio::test]
 async fn the_requests_to_the_pdp_carry_the_credential_and_the_request_id() {
     let pdp = Pdp::start(allow_all()).await;

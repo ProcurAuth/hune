@@ -29,6 +29,8 @@ pub struct Q {
     pub resource: String,
     pub subtree: bool,
     pub usage: bool,
+    /// The question has `context.permission_only` (5.5a).
+    pub permission_only: bool,
 }
 
 impl Q {
@@ -120,6 +122,7 @@ fn questions_of(body: &Value) -> (Vec<Q>, bool) {
         resource: chain(item.get("resource").unwrap_or(&Value::Null)),
         subtree,
         usage: body.pointer("/context/usage").is_some(),
+        permission_only: body.pointer("/context/permission_only").is_some(),
     };
     match body.get("evaluations").and_then(Value::as_array) {
         Some(list) => (list.iter().map(make).collect(), true),

@@ -5,6 +5,7 @@
 <p align="center">
   <a href="https://github.com/ProcurAuth/hune/actions/workflows/ci.yaml"><img src="https://github.com/ProcurAuth/hune/actions/workflows/ci.yaml/badge.svg" alt="CI"></a>
   <a href="https://github.com/ProcurAuth/hune/releases/latest"><img src="https://img.shields.io/github/v/release/ProcurAuth/hune?color=4338ca&label=release" alt="Latest release"></a>
+  <a href="https://procurauth.github.io/hune/conformance.html"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FProcurAuth%2Fprocurauth%2Fconformance-results%2Flatest%2Fhune%2Fbadge.json" alt="ProcurAuth conformance"></a>
   <a href="#licence"><img src="https://img.shields.io/badge/licence-MIT%20OR%20Apache--2.0-lightgrey" alt="Licence: MIT OR Apache-2.0"></a>
   <img src="https://img.shields.io/badge/binary-linux%20amd64%2C%20static%20musl-4338ca" alt="Static binary for Linux amd64">
   <img src="https://img.shields.io/badge/sources-ClickHouse%20%7C%20PostgreSQL%20%7C%20MongoDB-0ea5e9" alt="Data sources: ClickHouse, PostgreSQL and MongoDB">

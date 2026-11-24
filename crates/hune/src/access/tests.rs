@@ -253,7 +253,7 @@ fn the_values_of_11_10_reach_the_pep_config() {
     assert_eq!(c.pdp.max_response_bytes, 262_144);
     assert_eq!(c.pdp.plain_retries, 1);
     assert_eq!(c.pdp.metadata_max_age, Duration::from_secs(3600));
-    assert!(!c.pdp.allow_insecure_pdp_link);
+    assert!(!c.pdp.allow_plain_http);
 }
 
 /// The test file of the API suite loads, and its document is the golden file (A45).

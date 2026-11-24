@@ -74,8 +74,12 @@ fn route_use(id: RouteId) -> Option<&'static str> {
 
 /// Gives each `403 forbidden` of a route one body: the member `action` is the use of the route (11.30). The refused
 /// question, and the existence of the uid or of the folder, do not change the body (11.23). A route that asks no
-/// decision of its own keeps the error as it is.
+/// decision of its own keeps the error as it is. The refusal of 17.7a (`approval_cannot_wait`) keeps its own fixed
+/// body: it has no `action` and it does not depend on the route.
 fn same_refusal(ctx: &Ctx, e: ApiError) -> ApiError {
+    if e.plain.is_some() {
+        return e;
+    }
     match (e.code, route_use(ctx.route.id)) {
         (Code::Forbidden, Some(action)) => crate::access::forbidden(action),
         _ => e,
