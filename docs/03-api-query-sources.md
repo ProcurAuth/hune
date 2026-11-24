@@ -273,6 +273,7 @@ valid identity token (11). The page calls it one time at load (9.6).
   "query_inspect": false,
   "repeat_limits": { "panel": 24, "section": 12, "dashboard": 120 },
   "transform_max_cells": 10000000,
+  "list_filters_min_dashboards": 6,
   "geomap": null,
   "version": "0.1.2",
   "build": "3f2a9c1e5b7d4a60",
@@ -296,6 +297,7 @@ valid identity token (11). The page calls it one time at load (9.6).
 | `query_inspect` | Boolean. The value of `server.query_inspect`. The page shows the menu item Inspect only when it is `true` (9.11). |
 | `repeat_limits` | An object with three integers: `panel`, `section` and `dashboard`. They are the values of `server.repeat_max_per_panel`, `server.repeat_max_per_section` and `server.repeat_max_per_dashboard` (13.8). The page checks the copies of a repeat with them (9.8c). The object has no other member. The server never trusts the page: it applies its own limits of 8.8 to each query. |
 | `transform_max_cells` | Integer, 1 to 100000000. The value of `server.transform_max_cells` (13.8). The page checks the cells of a step of a transform with it (`MAX_TRANSFORM_CELLS` of 4.35, 9.21a, rule 13). The page keeps no copy of the number. A session with no such member, or with a value that is not a positive integer, makes each step that makes cells fail with an error (fail closed). |
+| `list_filters_min_dashboards` | Integer, 0 to 1000. The value of `server.list_filters_min_dashboards` (13.8). The list page shows the sort control and the tag filter only when the user sees more dashboards than this number (9.7). The page keeps no copy of the number. A session with no such member, or with a value that is not a non-negative integer, makes the page show the filters (it never hides a control because of a bad value). |
 | `geomap` | `null` when the configuration has no block `geomap` (13.12c). Else an object with three members: `tile_url` (the text of `geomap.tile_url`), `attribution` and `max_zoom` (an integer from 0 to 22). The object has no other member. The values are public. The page checks `tile_url` again with the grammar of 13.13, and a value that fails gives no tile source (9.19i). The answer is the same in the modes `open` and `authzen`, and it holds no token. |
 | `version` | The version of the binary. |
 | `build` | The build hash of 9.3. |

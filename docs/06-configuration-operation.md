@@ -41,7 +41,7 @@ The annotations of a dashboard (4.5b) add no key. Their limits are constants of 
 | 4. Typed once | `hclconf` checks the file against the key table, and Hune builds one typed structure from it. | Code review; the unit tests of the extraction. |
 | 5. Single source | The environment is captured and cleared at start. No crate reads `RUST_LOG`, `OTEL_*`, a proxy variable or a CA store variable (13.23). The dependencies obey too: the crate `mongodb` is a local copy with no read, and the other reads are inert (13.23). | The environment test (13.24). The job `policy` and the test `mongosource_hello` (16.9b, 16.18). |
 | 6. `_env` and `_file` | Exactly one form of each key. A secret accepts only `_env` and `_file`. The tables of 13.8 to 13.12c give the forms of each key (13.5). | Unit: two forms, no form, secret in clear text, absent variable, empty file. |
-| 7. Documented defaults | Six keys have a default value: `server.query_inspect` (default `false`), `server.repeat_max_per_panel` (default 24), `server.repeat_max_per_section` (default 12), `server.repeat_max_per_dashboard` (default 120), `server.compress_static` (default `true`) and `server.transform_max_cells` (default 10000000). The file can omit these keys. No other key has a default value. The key `clickhouse "<id>".adhoc_columns` is optional with no default: absent, no ad hoc filter applies (4.10c). The file gives each other key that applies. A key that does not apply must not be in the file. `hune print-reference` writes complete files and the reference document from the key table (13.21). | The job `policy` compares `docs/configuration-reference.md` with the output. |
+| 7. Documented defaults | Seven keys have a default value: `server.query_inspect` (default `false`), `server.repeat_max_per_panel` (default 24), `server.repeat_max_per_section` (default 12), `server.repeat_max_per_dashboard` (default 120), `server.compress_static` (default `true`), `server.transform_max_cells` (default 10000000) and `server.list_filters_min_dashboards` (default 6). The file can omit these keys. No other key has a default value. The key `clickhouse "<id>".adhoc_columns` is optional with no default: absent, no ad hoc filter applies (4.10c). The file gives each other key that applies. A key that does not apply must not be in the file. `hune print-reference` writes complete files and the reference document from the key table (13.21). | The job `policy` compares `docs/configuration-reference.md` with the output. |
 | 8. Effective configuration | `hune print-config` prints the value and the source of each key, with the secrets hidden. `serve` writes the same values in its start log (13.20, 13.22). | Unit: the output for the two example files. |
 | 9. Contradictions | Two keys that contradict each other stop the start (13.14). | Unit: one case for each check. |
 
@@ -151,7 +151,7 @@ Each other key accepts only the form V.
 
 The tables of 13.8 to 13.12c are the complete key table. These rules apply to each row:
 
-- Six keys have a default value: `server.query_inspect`, the three keys `server.repeat_max_per_*`, `server.compress_static` and `server.transform_max_cells`. The key `clickhouse "<id>".adhoc_columns` is optional with no default (13.12). Each other key that applies is necessary. A key that does not apply is forbidden.
+- Seven keys have a default value: `server.query_inspect`, the three keys `server.repeat_max_per_*`, `server.compress_static`, `server.transform_max_cells` and `server.list_filters_min_dashboards`. The key `clickhouse "<id>".adhoc_columns` is optional with no default (13.12). Each other key that applies is necessary. A key that does not apply is forbidden.
 - "Forms" uses V, E and F of 13.5.
 - "Necessary when" and "Forbidden when" give the mode. A row with "always" has no mode. The keys of a block with a mode
   follow the mode of the block.
@@ -171,6 +171,7 @@ The tables of 13.8 to 13.12c are the complete key table. These rules apply to ea
 | `server.repeat_max_per_dashboard` | Integer, 1 to 200. The most copies of panels that repeat in one dashboard. The upper bound is `MAX_PANELS` (4.35). Contradictions C28 and C29 compare it with the two keys above. | no | V | optional, default `120` | never | `120` |
 | `server.compress_static` | Boolean. The value `true` sends the gzip copy of a static file of a text type to a request that accepts gzip (9.3). Hune makes the copies one time at start (14.12). An API answer, the shell and an error are never compressed (12.8a). | no | V | optional, default `true` | never | `true` |
 | `server.transform_max_cells` | Integer, 1 to 100000000. The most cells (fields times rows) of the frame that one step of a transform makes in the page (4.35, 9.21a, rule 13). Above it, the panel shows an error and no frame. The session gives the value to the page (6.10), and the page keeps no copy of it. The upper bound is fixed. One cell takes 9 bytes or more: a double and a null flag. Thus 100000000 cells take 900 MB or more, near the memory of one browser tab. | no | V | optional, default `10000000` | never | `10000000` |
+| `server.list_filters_min_dashboards` | Integer, 0 to 1000. The list page shows the sort control and the tag filter only when the user sees more dashboards than this number (9.7). With this number or fewer, the page hides them. The value 0 shows them for any list that is not empty. The session gives the value to the page (6.10), and the page keeps no copy of it. The upper bound is fixed at 1000. | no | V | optional, default `6` | never | `6` |
 | `server.max_connections` | Integer, 16 to 65536. The most open connections on `server.listen`. | no | V | always | never | `1024` |
 | `server.idle_timeout` | Duration, 1s to 10m. Hune closes a kept connection that is idle for this time. | no | V | always | never | `"75s"` |
 | `server.shutdown_grace` | Duration, 5s to 10m. The longest graceful stop (14.13). | no | V | always | never | `"30s"` |
@@ -288,7 +289,7 @@ The block `postgres "<id>"` declares one PostgreSQL server for panel queries (se
 | `postgres "<id>".queue_wait` | Duration, 0s to 60s. The longest wait for a place (12.16). | no | V | always | never | `"5s"` |
 | `postgres "<id>".max_concurrent_per_subject` | Integer, 1 to 256, at most `max_concurrent`. The most queries at one time for one subject on this source. | no | V | `access.mode = "authzen"` | `access.mode = "open"` | `6` |
 
-Only the six keys of 13.2, rule 7, have a default value. The reference values appear in `docs/configuration-reference.md` only. The reference files of 13.16 and 13.17 hold no `postgres` block, so `print-reference` writes none. The keys `user` and `password` name a read-only role (8a.13). Contradiction C20 stops a source that uses the role of the store on the same server.
+Only the seven keys of 13.2, rule 7, have a default value. The reference values appear in `docs/configuration-reference.md` only. The reference files of 13.16 and 13.17 hold no `postgres` block, so `print-reference` writes none. The keys `user` and `password` name a read-only role (8a.13). Contradiction C20 stops a source that uses the role of the store on the same server.
 
 An example block, with the keys in the order of the table:
 
@@ -349,7 +350,7 @@ The block `mongodb "<id>"` declares one MongoDB server or one replica set for pa
 | `mongodb "<id>".queue_wait` | Duration, 0s to 60s. The longest wait for a place (12.16). | no | V | always | never | `"5s"` |
 | `mongodb "<id>".max_concurrent_per_subject` | Integer, 1 to 256, at most `max_concurrent`. The most queries at one time for one subject on this source. | no | V | `access.mode = "authzen"` | `access.mode = "open"` | `6` |
 
-Only the six keys of 13.2, rule 7, have a default value. The keys `read_preference`, `collections` and `topology` have no default. The reference values appear in `docs/configuration-reference.md` only. The reference files of 13.16 and 13.17 hold no `mongodb` block, so `print-reference` writes none. The generated reference gets its rows for this block from the key table in the code, as for the other blocks.
+Only the seven keys of 13.2, rule 7, have a default value. The keys `read_preference`, `collections` and `topology` have no default. The reference values appear in `docs/configuration-reference.md` only. The reference files of 13.16 and 13.17 hold no `mongodb` block, so `print-reference` writes none. The generated reference gets its rows for this block from the key table in the code, as for the other blocks.
 
 An example block, with the keys in the order of the table:
 
@@ -561,7 +562,7 @@ telemetry. The file of 17.6 starts from this file and sets `server.base_path = "
 
 ```hcl
 # Hune configuration, profile local: volume storage, access mode open, no telemetry.
-# Each key that applies is in the file, except the six keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static` and `server.transform_max_cells`.
+# Each key that applies is in the file, except the seven keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static`, `server.transform_max_cells` and `server.list_filters_min_dashboards`.
 
 server {
   listen                  = "0.0.0.0:8080"
@@ -628,7 +629,7 @@ This is the output of `hune print-reference --format hcl --profile distributed`:
 
 ```hcl
 # Hune configuration, profile distributed: PostgreSQL storage, access mode authzen, no telemetry.
-# Each key that applies is in the file, except the six keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static` and `server.transform_max_cells`.
+# Each key that applies is in the file, except the seven keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static`, `server.transform_max_cells` and `server.list_filters_min_dashboards`.
 
 server {
   listen                  = "0.0.0.0:8080"
@@ -809,6 +810,7 @@ server.repeat_max_per_section = 12  # default
 server.repeat_max_per_dashboard = 120  # default
 server.compress_static = true  # default
 server.transform_max_cells = 10000000  # default
+server.list_filters_min_dashboards = 6  # default
 server.max_connections = 1024  # file
 server.idle_timeout = "75s"  # file
 server.shutdown_grace = "30s"  # file
@@ -930,7 +932,7 @@ After the checks pass, `serve` writes these lines, in this order, before any oth
 An example of the second line, for the file of 13.16:
 
 ```json
-{"ts":"2026-11-09T10:15:30.123Z","level":"info","event":"server.config.sources","sources":{"server.query_inspect":"default","server.repeat_max_per_panel":"default","server.repeat_max_per_section":"default","server.repeat_max_per_dashboard":"default","server.compress_static":"default","server.transform_max_cells":"default","clickhouse \"prod\".password":"file:/run/secrets/clickhouse/password"}}
+{"ts":"2026-11-09T10:15:30.123Z","level":"info","event":"server.config.sources","sources":{"server.query_inspect":"default","server.repeat_max_per_panel":"default","server.repeat_max_per_section":"default","server.repeat_max_per_dashboard":"default","server.compress_static":"default","server.transform_max_cells":"default","server.list_filters_min_dashboards":"default","clickhouse \"prod\".password":"file:/run/secrets/clickhouse/password"}}
 ```
 
 Before the checks pass, the log configuration is not known. `serve` then writes each error on the standard error in the

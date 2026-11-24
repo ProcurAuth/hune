@@ -12,7 +12,7 @@ Hune reads one HCL file. The file is the only source of the configuration. A mis
 | Typed once | The program parses the file one time into a typed structure. The rest of the code reads only this structure. |
 | Single source | The file is the only source. Hune captures and clears the environment at start. It reads no `RUST_LOG`, no `OTEL_*` variable and no proxy variable. |
 | `_env` and `_file` | A key can take its value from a variable or a file, but only when the file says so (see below). |
-| Documented defaults | Six keys have a default. Each other key is necessary. The reference lists the defaults. |
+| Documented defaults | Seven keys have a default. Each other key is necessary. The reference lists the defaults. |
 | Effective configuration | `hune print-config` prints the value and the source of each key. `serve` logs the same values at start. Secrets are hidden. |
 | Contradictions | Two keys that contradict each other stop the start. |
 
