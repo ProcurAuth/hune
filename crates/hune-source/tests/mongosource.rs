@@ -730,8 +730,14 @@ async fn wait_for(proxy: &Proxy, name: &str, count: usize, within: Duration) {
     }
 }
 
-async fn no_op_within(query_id: String, within: Duration) -> Result<Duration, String> {
-    tokio::task::spawn_blocking(move || wait_no_op(&query_id, within)).await.unwrap()
+/// Starts a watch of `currentOp` for the query id. The watch runs while the query runs.
+async fn start_watch(query_id: String) -> OpWatch {
+    tokio::task::spawn_blocking(move || watch_ops(&query_id)).await.unwrap()
+}
+
+/// The time from `from` until the watch sees no operation of the query. The watch polls every 50 ms.
+async fn gone_within(watch: OpWatch, from: u128) -> Result<Duration, String> {
+    tokio::task::spawn_blocking(move || watch.wait_gone(from, Duration::from_secs(30))).await.unwrap()
 }
 
 /// MS05: a query with a cursor, then the client leaves. `currentOp` shows no operation of the query within 2 s,
@@ -747,20 +753,25 @@ async fn ms05_a_client_that_leaves_kills_the_cursor() {
     proxy.clear();
     let context = ctx();
     let query_id = context.query_id.to_string();
+    let watch = start_watch(query_id.clone()).await;
     let query = hune_source::PreparedQuery::MongoQuery { command: prepared(&streaming_query()) };
     let task = {
         let source = source.clone();
         tokio::spawn(async move { source.query(query, streaming_limits(), context).await })
     };
     wait_for(&proxy, "getMore", 2, Duration::from_secs(20)).await;
-    let id = query_id.clone();
-    let seen = tokio::task::spawn_blocking(move || current_ops_for(&id)).await.unwrap();
-    assert!(seen >= 1, "the query is not in currentOp while it runs");
+    let watch = tokio::task::spawn_blocking(move || {
+        watch.wait_seen(Duration::from_secs(20)).expect("the query is in currentOp while it runs");
+        watch
+    })
+    .await
+    .unwrap();
     // The client leaves: the future of the query drops.
+    let left = epoch_ms();
     task.abort();
     let _ = task.await;
-    let wait = no_op_within(query_id, Duration::from_secs(2)).await.expect("no operation within 2 s");
-    assert!(wait <= Duration::from_secs(2));
+    let wait = gone_within(watch, left).await.expect("no operation within 2 s");
+    assert!(wait <= Duration::from_secs(2), "{wait:?}");
     tokio::time::sleep(Duration::from_millis(300)).await;
     assert_eq!(proxy.count("killCursors"), 1, "{:?}", proxy.commands());
     proxy.assert_only_closed_commands();
@@ -776,21 +787,24 @@ async fn ms05_a_command_with_no_cursor_leaves_currentop_within_max_time_plus_2s(
     let query_id = context.query_id.to_string();
     let query = hune_source::PreparedQuery::MongoQuery { command: prepared(&slow_query()) };
     let max_time = Duration::from_secs(3);
+    let watch = start_watch(query_id).await;
     let task = {
         let source = source.clone();
         tokio::spawn(async move { source.query(query, limits(10_000, 1 << 30, 3), context).await })
     };
-    tokio::time::sleep(Duration::from_millis(800)).await;
-    let id = query_id.clone();
-    let seen = tokio::task::spawn_blocking(move || current_ops_for(&id)).await.unwrap();
-    assert!(seen >= 1, "the command is not in currentOp while it runs");
-    let left = Instant::now();
+    let watch = tokio::task::spawn_blocking(move || {
+        watch.wait_seen(Duration::from_secs(20)).expect("the command is in currentOp while it runs");
+        watch
+    })
+    .await
+    .unwrap();
+    let left = epoch_ms();
     task.abort();
     let _ = task.await;
     // The server stops the command at `maxTimeMS`, counted from its start.
     let within = max_time + Duration::from_secs(2);
-    let wait = no_op_within(query_id, within).await.expect("the command leaves currentOp");
-    assert!(left.elapsed() <= within, "{wait:?}");
+    let wait = gone_within(watch, left).await.expect("the command leaves currentOp");
+    assert!(wait <= within, "{wait:?}");
 }
 
 /// MS05: the same at the client deadline. The proxy delays the answers, so the deadline of 8b.7 passes. The
@@ -806,6 +820,7 @@ async fn ms05_the_client_deadline_kills_the_cursor() {
     proxy.clear();
     let context = ctx();
     let query_id = context.query_id.to_string();
+    let watch = start_watch(query_id).await;
     let query = hune_source::PreparedQuery::MongoQuery { command: prepared(&streaming_query()) };
     let task = {
         let source = source.clone();
@@ -820,8 +835,8 @@ async fn ms05_the_client_deadline_kills_the_cursor() {
     assert_eq!((e.code(), e.http_status()), ("query_timeout", 504), "{e:?}");
     assert!(start.elapsed() < Duration::from_secs(9), "{:?}", start.elapsed());
     proxy.delay_replies(Duration::ZERO);
-    let wait = no_op_within(query_id, Duration::from_secs(2)).await.expect("no operation within 2 s");
-    assert!(wait <= Duration::from_secs(2));
+    let wait = gone_within(watch, epoch_ms()).await.expect("no operation within 2 s");
+    assert!(wait <= Duration::from_secs(2), "{wait:?}");
     assert_eq!(proxy.count("killCursors"), 1, "{:?}", proxy.commands());
 }
 

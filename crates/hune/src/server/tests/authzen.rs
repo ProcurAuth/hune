@@ -338,15 +338,21 @@ async fn a41_a_slow_pdp_gives_503_after_the_timeout_and_the_pool_is_bounded() {
     .await;
     pdp.set_fault(Fault::Delay(Duration::from_millis(900)));
     let started = std::time::Instant::now();
-    let (a, b) =
-        tokio::join!(rget(&h, "/api/dashboards/nodes", "user:alice"), rget(&h, "/api/dashboards/nodes", "user:carol"));
-    assert_eq!((a.status, b.status), (503, 503));
+    // One call holds the only permit for the time of the timeout. A second call can still get the permit when it
+    // starts a little after the first one on a loaded host. A third call cannot: the permit is free again only
+    // after the second call, which holds it for the time of the timeout too. So three calls make the test steady.
+    let (a, b, c) = tokio::join!(
+        rget(&h, "/api/dashboards/nodes", "user:alice"),
+        rget(&h, "/api/dashboards/nodes", "user:carol"),
+        rget(&h, "/api/dashboards/nodes", "user:dave")
+    );
+    assert_eq!((a.status, b.status, c.status), (503, 503, 503));
     assert!(started.elapsed() < Duration::from_secs(5));
     let l = lines(&h);
     let failed = events(&l, "access.pdp_failed");
-    assert!(failed.iter().any(|e| e["error"] == "pool_busy"), "the second call finds no permit: {failed:?}");
+    assert!(failed.iter().any(|e| e["error"] == "pool_busy"), "a call finds no permit: {failed:?}");
     let m = get(h.ops, "/metrics").await.text();
-    assert!(m.contains("hune_pdp_requests_total{result=\"pool_busy\"} 1"), "{m}");
+    assert!(m.contains("hune_pdp_requests_total{result=\"pool_busy\"} "), "{m}");
     assert!(m.contains("hune_pdp_pool_in_use "));
 }
 

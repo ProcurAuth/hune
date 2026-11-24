@@ -10,10 +10,12 @@
 //! connections, delay the answers, or close a connection after a given command.
 #![allow(dead_code)]
 
+use std::io::{BufRead, BufReader};
 use std::net::SocketAddr;
 use std::path::PathBuf;
-use std::process::Command;
+use std::process::{Child, Command, Stdio};
 use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
+use std::sync::mpsc;
 use std::sync::{Arc, Mutex, PoisonError};
 use std::time::{Duration, Instant};
 
@@ -378,6 +380,105 @@ pub fn wait_no_op(query_id: &str, within: Duration) -> Result<Duration, String> 
             return Err(format!("the operation of {query_id} is still in currentOp after {within:?}"));
         }
         std::thread::sleep(Duration::from_millis(200));
+    }
+}
+
+/// The time of the clock of the host, in milliseconds since the Unix epoch. `OpWatch` and the tests use it as
+/// the one clock: `mongosh` runs on the same host.
+pub fn epoch_ms() -> u128 {
+    std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).expect("the clock is after 1970").as_millis()
+}
+
+/// A `mongosh` process that polls `currentOp` every 50 ms for one query id, from the moment of its start. It
+/// lets a test measure when an operation leaves `currentOp`, with no start of `mongosh` inside the measure.
+/// A start of `mongosh` takes more than 2 s on a slow host, and the cases of MS05 allow 2 s.
+pub struct OpWatch {
+    child: Child,
+    lines: mpsc::Receiver<String>,
+}
+
+/// Starts the watch and waits until it is logged in. Start it before the query: the watch then sees the
+/// operation from its first moment.
+pub fn watch_ops(query_id: &str) -> OpWatch {
+    let docker = env("HUNE_TEST_MGS_DOCKER");
+    let script = format!(
+        "const conn = new Mongo('mongodb://localhost:{port}/?tls=true&tlsCAFile=%2Ftls%2Fca.pem&directConnection=true'); \
+         const admin = conn.getDB('admin'); admin.auth(process.env.MGS_U, process.env.MGS_P); \
+         print('READY'); let seen = false; let last = -1; const t0 = Date.now(); \
+         while (Date.now() - t0 < 120000) {{ \
+           const n = admin.aggregate([{{$currentOp: {{allUsers: true, idleCursors: true}}}}, {{$match: {{$or: [ \
+             {{'command.comment.query_id': '{query_id}'}}, {{'cursor.originatingCommand.comment.query_id': '{query_id}'}} ]}}}}]).toArray().length; \
+           if (n > 0) seen = true; \
+           if (seen && n !== last) {{ print('OPS ' + Date.now() + ' ' + n); last = n; }} \
+           if (seen && n === 0) break; \
+           sleep(50); }}",
+        port = port()
+    );
+    let mut child = Command::new(docker)
+        .args(["exec", "-i", "-e", &format!("MGS_U={}", env("HUNE_TEST_MGS_ADMIN_USER"))])
+        .args(["-e", &format!("MGS_P={}", env("HUNE_TEST_MGS_ADMIN_PASSWORD"))])
+        .args([&env("HUNE_TEST_MGS_CONTAINER"), "mongosh", "--quiet", "--norc", "--nodb", "--eval", &script])
+        .stdout(Stdio::piped())
+        .spawn()
+        .expect("docker runs");
+    let out = child.stdout.take().expect("a pipe");
+    let (tx, lines) = mpsc::channel();
+    std::thread::spawn(move || {
+        for line in BufReader::new(out).lines().map_while(Result::ok) {
+            if tx.send(line).is_err() {
+                break;
+            }
+        }
+    });
+    let watch = OpWatch { child, lines };
+    let first = watch.line(Duration::from_secs(60)).expect("the watch of currentOp starts");
+    assert_eq!(first, "READY", "the watch of currentOp gave: {first}");
+    watch
+}
+
+impl OpWatch {
+    fn line(&self, within: Duration) -> Result<String, String> {
+        self.lines.recv_timeout(within).map_err(|_| format!("the watch of currentOp gave no line in {within:?}"))
+    }
+
+    /// Reads lines until one has the form `OPS <time> <count>`. It gives the time and the count.
+    fn change(&self, within: Duration) -> Result<(u128, usize), String> {
+        let start = Instant::now();
+        loop {
+            let left = within.checked_sub(start.elapsed()).ok_or("the watch of currentOp saw no change")?;
+            let line = self.line(left)?;
+            let mut part = line.split_whitespace();
+            if part.next() == Some("OPS") {
+                let time = part.next().and_then(|t| t.parse().ok()).ok_or_else(|| format!("bad line: {line}"))?;
+                let count = part.next().and_then(|t| t.parse().ok()).ok_or_else(|| format!("bad line: {line}"))?;
+                return Ok((time, count));
+            }
+        }
+    }
+
+    /// Waits until the watch sees the operation in `currentOp`.
+    pub fn wait_seen(&self, within: Duration) -> Result<(), String> {
+        match self.change(within)? {
+            (_, 0) => Err("the operation left currentOp before the test measured".to_owned()),
+            _ => Ok(()),
+        }
+    }
+
+    /// Waits until the operation leaves `currentOp`. It gives the time from `from` (a value of `epoch_ms`) to
+    /// the first poll with no operation. The first poll after the event is at most 50 ms late.
+    pub fn wait_gone(&self, from: u128, within: Duration) -> Result<Duration, String> {
+        loop {
+            if let (time, 0) = self.change(within)? {
+                return Ok(Duration::from_millis(time.saturating_sub(from) as u64));
+            }
+        }
+    }
+}
+
+impl Drop for OpWatch {
+    fn drop(&mut self) {
+        let _ = self.child.kill();
+        let _ = self.child.wait();
     }
 }
 
