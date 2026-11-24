@@ -86,7 +86,8 @@ if [ "$LOCAL" -eq 1 ]; then
         "$ROOT/tests/conformance/config.hcl" >"$WORK/config.hcl"
 else
     cp "$ROOT/tests/conformance/config.hcl" "$WORK/config.hcl"
-    chmod -R a+rwX "$WORK"
+    # The container runs with the uid of the caller. Hune refuses a volume that others can write.
+    chmod -R u+rwX,go+rX,go-w "$WORK"
 fi
 
 wait_clickhouse() {
@@ -126,7 +127,7 @@ while [ "$ci_i" -lt 60 ]; do
     if [ "$LOCAL" -eq 1 ]; then
         curl -fsS http://127.0.0.1:9090/readyz >/dev/null 2>&1 && break
     else
-        docker exec "$CH_NAME" sh -c 'curl -fsS http://127.0.0.1:9090/readyz' >/dev/null 2>&1 && break
+        docker run --rm --network "container:$HUNE_NAME" --entrypoint curl "$BUILDER_TAG" -fsS http://127.0.0.1:9090/readyz >/dev/null 2>&1 && break
     fi
     ci_i=$((ci_i + 1))
     sleep 1
