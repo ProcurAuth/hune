@@ -1,0 +1,123 @@
+/* The look of Hune: the global tokens of the calm theme (9.25).
+   This file loads after tokens.css. It sets again the layer 1 tokens that give the look (surfaces, text, lines, accent, buttons,
+   fields and the selected fill) in the same four contexts as css/vendor/chdash/00-tokens.css, and it adds the tokens of the cards
+   and of the tag chips. The values are the values of the validated mockup.
+
+   Four contexts, as in layer 1:
+     :root                      dark, the first design target. It also applies when no data-theme is set.
+     @media light               light, for a light system when the page has no data-theme (JS off).
+     html[data-theme="dark"]    forced dark.
+     html[data-theme="light"]   forced light.
+
+   Three tokens stay as layer 1 sets them, on purpose: the edge of a field (--control-border, 3:1 on each surface, 9.26), the focus
+   ring, and the status colours. The --viz-* colours of the data are not here: they stay in dashboard.css and tokens.css.
+   A rule below names tokens. It never writes a colour. */
+
+/* --- Dark ------------------------------------------------------------------------------------------------------------ */
+:root {
+  --bg: #0e1116;
+  --panel: #161b22;
+  --raised: #1d232c;
+  --text: #e6e9ee;
+  --muted: #98a2b3;
+  --border: #262d38;
+  --input-bg: #1d232c;
+  --button-bg: var(--panel);
+  --button-bg-hover: var(--raised);
+  --button-border: var(--border);
+  --button-border-hover: var(--border-strong);
+  --accent-fill: #6c8cff;
+  --accent-fill-hover: #8199ff;
+  --accent-text: #8ba5ff;
+  --selected-bg: #1c2540;
+  --on-fill: #0b1020;                                  /* the text on an accent fill: dark, because the accent is light here */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.25);
+  /* The tag chip: the colour of the name is mixed 14 % into the surface for the fill, 28 % for the edge, and the text is the colour
+     of the name mixed with --tag-ink-base. 4.5:1 or more for the 29 colours (tests/frontend/theme_k.test.mjs). */
+  --tag-ink-base: #ffffff;
+  --tag-ink-share: 40%;
+}
+
+/* --- Light, for a light system without data-theme ------------------------------------------------------------------- */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f6f7f9;
+    --panel: #ffffff;
+    --raised: #f1f3f6;
+    --text: #14181f;
+    --muted: #5d6675;
+    --border: #e1e5eb;
+    --input-bg: #f1f3f6;
+    --button-bg: var(--panel);
+    --button-bg-hover: var(--raised);
+    --button-border: var(--border);
+    --button-border-hover: var(--border-strong);
+    --accent-fill: #2f5bd8;
+    --accent-fill-hover: #264bb8;
+    --accent-text: #2f5bd8;
+    --selected-bg: #e8eefc;
+    --on-fill: #ffffff;
+    --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.05);
+    --tag-ink-base: #000000;
+    --tag-ink-share: 75%;
+  }
+}
+
+/* --- Forced dark ------------------------------------------------------------------------------------------------------ */
+html[data-theme="dark"] {
+  --bg: #0e1116;
+  --panel: #161b22;
+  --raised: #1d232c;
+  --text: #e6e9ee;
+  --muted: #98a2b3;
+  --border: #262d38;
+  --input-bg: #1d232c;
+  --button-bg: var(--panel);
+  --button-bg-hover: var(--raised);
+  --button-border: var(--border);
+  --button-border-hover: var(--border-strong);
+  --accent-fill: #6c8cff;
+  --accent-fill-hover: #8199ff;
+  --accent-text: #8ba5ff;
+  --selected-bg: #1c2540;
+  --on-fill: #0b1020;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.25);
+  --tag-ink-base: #ffffff;
+  --tag-ink-share: 40%;
+}
+
+/* --- Forced light ----------------------------------------------------------------------------------------------------- */
+html[data-theme="light"] {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --raised: #f1f3f6;
+  --text: #14181f;
+  --muted: #5d6675;
+  --border: #e1e5eb;
+  --input-bg: #f1f3f6;
+  --button-bg: var(--panel);
+  --button-bg-hover: var(--raised);
+  --button-border: var(--border);
+  --button-border-hover: var(--border-strong);
+  --accent-fill: #2f5bd8;
+  --accent-fill-hover: #264bb8;
+  --accent-text: #2f5bd8;
+  --selected-bg: #e8eefc;
+  --on-fill: #ffffff;
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.05);
+  --tag-ink-base: #000000;
+  --tag-ink-share: 75%;
+}
+
+/* --- Shape: the same in both themes ---------------------------------------------------------------------------------- */
+:root {
+  --r-control: 8px;            /* a button, a field, a menu, a dialog, a segmented control */
+  --r-card: 10px;              /* a card of the list page */
+  --tag-fill-share: 14%;
+  --tag-edge-share: 28%;
+  --on-danger: #ffffff;        /* the text on --danger-fill: white in both themes (4.8:1) */
+}
+
+/* --- Shared components: the same rules for every page, no change of layout -------------------------------------------------- */
+.btn:not(.btn--tb), .input, .seg, .menu, .dialog, .list-select, .list-actions .btn--tb { border-radius: var(--r-control); }
+.btn--danger, .panel__status { color: var(--on-danger); }

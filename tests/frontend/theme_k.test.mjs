@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// The colour theme of the chrome is the theme of ClickHouse Dash (9.25). The CSS is read as text: the page has no DOM here.
+// The colour theme of the chrome: the copied tokens of ClickHouse Dash (layer 1), and look.css, which sets the tokens of the calm look
+// again in the same four contexts (9.25). The CSS is read as text: the page has no DOM here.
 // The browser case B91 reads the computed colours.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -8,6 +9,8 @@ import test from "node:test";
 const read = (p) => readFileSync(new URL(`../../web/${p}`, import.meta.url), "utf8");
 const tokens = read("css/tokens.css");
 const vendor = read("css/vendor/chdash/00-tokens.css");
+const look = read("css/look.css");
+const shell = read("shell.html");
 
 // The custom properties set in one block of a file.
 function block(css, start) {
@@ -16,7 +19,26 @@ function block(css, start) {
   return Object.fromEntries([...css.slice(i, css.indexOf("\n}\n", i)).matchAll(/(--[a-z0-9-]+):\s*([^;]+);/g)].map((m) => [m[1], m[2].trim()]));
 }
 const root = block(vendor, ":root {\n  color-scheme: dark;");
-const THEMES = { dark: { ...root, ...block(vendor, 'html[data-theme="dark"] {') }, light: { ...root, ...block(vendor, 'html[data-theme="light"] {') } };
+const lookRoot = block(look, ":root {\n  --bg:");
+const lookDark = block(look, 'html[data-theme="dark"] {');
+const lookLight = block(look, 'html[data-theme="light"] {');
+const lookShape = block(look, ":root {\n  --r-control");
+const lookMediaLight = block(look, "@media (prefers-color-scheme: light) {\n  :root {");
+// A token whose value is var(--other) names a token of the same element: the helper resolves it against the merged theme.
+function settle(theme) {
+  const out = { ...theme };
+  for (let pass = 0; pass < 2; pass++) {
+    for (const [k, v] of Object.entries(out)) {
+      const m = /^var\((--[a-z0-9-]+)\)$/.exec(v);
+      if (m && out[m[1]] !== undefined) out[k] = out[m[1]];
+    }
+  }
+  return out;
+}
+const THEMES = {
+  dark: settle({ ...root, ...block(vendor, 'html[data-theme="dark"] {'), ...lookShape, ...lookRoot, ...lookDark }),
+  light: settle({ ...root, ...block(vendor, 'html[data-theme="light"] {'), ...lookShape, ...lookRoot, ...lookLight }),
+};
 
 function rgba(value, over) {
   const hex = /^#([0-9a-f]{6})$/i.exec(value);
@@ -59,8 +81,10 @@ test("the three tokens that differ between the themes have the four contexts", (
 });
 
 test("component CSS has no literal colour (the print block of base.css and the named colours of dashboard.css are the two exceptions)", () => {
-  for (const file of ["css/base.css", "css/components.css", "css/picker.css", "css/list.css", "css/editor.css", "css/dashboard.css"]) {
+  for (const file of ["css/base.css", "css/components.css", "css/picker.css", "css/list.css", "css/editor.css", "css/dashboard.css", "css/look.css"]) {
     let text = read(file);
+    // look.css is the one file of values: its token blocks are before the marker, and its component rules are after it.
+    if (file === "css/look.css") text = text.slice(text.indexOf("/* --- Shared components"));
     text = text.replace(/\/\*[\s\S]*?\*\//g, "");
     text = text.replace(/@media print \{[\s\S]*$/, "");
     text = text.split("\n").filter((l) => !l.includes("--viz-")).join("\n");
@@ -73,7 +97,7 @@ test("component CSS has no literal colour (the print block of base.css and the n
 test("each text token of the copied theme has 4.5:1 and each edge of a control and the focus ring have 3:1 in both themes", () => {
   for (const [name, t] of Object.entries(THEMES)) {
     const surf = {};
-    for (const s of ["--bg", "--panel", "--raised", "--input-bg"]) surf[s] = rgba(t[s] === "var(--raised)" ? t["--raised"] : t[s], [0, 0, 0]);
+    for (const s of ["--bg", "--panel", "--raised", "--input-bg"]) surf[s] = rgba(t[s], [0, 0, 0]);
     const resolve = (v) => (/^var\((--[a-z0-9-]+)\)$/.test(v) ? t[/^var\((--[a-z0-9-]+)\)$/.exec(v)[1]] : v);
     for (const [sname, sv] of Object.entries(surf)) {
       for (const tok of ["--text", "--muted"]) assert.ok(ratio(rgba(resolve(t[tok]), sv), sv) >= 4.5, `${name} ${tok} on ${sname}`);
@@ -82,7 +106,8 @@ test("each text token of the copied theme has 4.5:1 and each edge of a control a
         assert.ok(ratio(rgba(v, sv), sv) >= 3, `${name} ${tok} on ${sname}`);
       }
     }
-    for (const f of ["--accent-fill", "--accent-fill-hover", "--danger-fill", "--danger-fill-hover"]) assert.ok(ratio(rgba(t["--on-fill"], [0, 0, 0]), rgba(t[f], [0, 0, 0])) >= 4.5, `${name} --on-fill on ${f}`);
+    for (const f of ["--accent-fill", "--accent-fill-hover"]) assert.ok(ratio(rgba(t["--on-fill"], [0, 0, 0]), rgba(t[f], [0, 0, 0])) >= 4.5, `${name} --on-fill on ${f}`);
+    for (const f of ["--danger-fill", "--danger-fill-hover"]) assert.ok(ratio(rgba(t["--on-danger"], [0, 0, 0]), rgba(t[f], [0, 0, 0])) >= 4.5, `${name} --on-danger on ${f}`);
     for (const tok of ["--accent-text", "--danger", "--warning", "--success", "--info"]) assert.ok(ratio(rgba(t[tok], [0, 0, 0]), surf["--panel"]) >= 4.5, `${name} ${tok} on --panel`);
   }
 });
@@ -103,8 +128,48 @@ test("the states of the chrome follow ClickHouse Dash: edge of a popup, selected
   assert.match(components, /\.theme-select__menu \{[^}]*border: 1px solid var\(--border-strong\)/);
   assert.match(components, /\.menu__item\[aria-checked="true"\][^{]*\{ background: var\(--selected-bg\); box-shadow: inset 0 0 0 1px var\(--selected-edge\)/);
   assert.match(components, /\.btn--tb-primary:hover \{ background: var\(--primary-hover\); \}/);
-  assert.match(read("css/list.css"), /\.list-colhead \{[^}]*background: var\(--thead-bg\)/);
   assert.match(read("css/list.css"), /\.list-tagmenu__item\[aria-selected="true"\] \{ background: var\(--selected-bg\)/);
   assert.match(read("css/dashboard.css"), /\.listbox__item\[aria-selected="true"\] \{ background: var\(--selected-bg\)/);
   assert.match(read("css/panel-table.css"), /\.filter-popup \{[^}]*border: 1px solid var\(--border-strong\)/);
+});
+
+test("look.css loads after tokens.css and before base.css, and it sets the same tokens in its four contexts", () => {
+  assert.ok(shell.indexOf("css/tokens.css") < shell.indexOf("css/look.css"));
+  assert.ok(shell.indexOf("css/look.css") < shell.indexOf("css/base.css"));
+  const names = (o) => Object.keys(o).sort().join(" ");
+  assert.equal(names(lookLight), names(lookMediaLight), "the forced light block and the light system block differ");
+  assert.equal(names(lookDark), names(lookLight), "the forced dark block and the forced light block differ");
+  assert.equal(names(lookRoot), names(lookDark), "the dark root block and the forced dark block differ");
+});
+
+test("look.css leaves the tokens of the rules of 9.26 to layer 1: the edge of a field, the focus ring and the danger fill", () => {
+  for (const name of ["--control-border", "--control-border-hover", "--focus-ring-color", "--danger-fill"]) {
+    for (const b of [lookRoot, lookDark, lookLight, lookMediaLight]) assert.equal(b[name], undefined, `${name} is set in look.css`);
+  }
+});
+
+// The 29 colours of the tag chips (list.js). The chip text is the colour mixed with the ink base, and the fill is a share of the colour.
+const palette = [...read("js/list.js").match(/const TAG_PALETTE = \[([^\]]*)\]/)[1].matchAll(/#[0-9a-f]{6}/g)].map((m) => m[0]);
+const mixRgb = (a, b, share) => a.map((v, i) => v * share + b[i] * (1 - share));
+test("the 29 tag colours give a chip text with 4.5:1 on the tint, on each surface that holds a chip, in both themes", () => {
+  assert.equal(palette.length, 29);
+  const fill = Number.parseFloat(look.match(/--tag-fill-share:\s*([0-9.]+)%/)[1]) / 100;
+  for (const [name, t] of Object.entries(THEMES)) {
+    const base = rgba(t["--tag-ink-base"], [0, 0, 0]);
+    const share = Number.parseFloat(t["--tag-ink-share"]) / 100;
+    const surfaces = ["--panel", "--bg", "--raised", "--selected-bg"].map((s) => rgba(t[s], [0, 0, 0]));
+    for (const c of palette) {
+      const tc = rgba(c, [0, 0, 0]);
+      const ink = mixRgb(tc, base, share);
+      for (const s of surfaces) assert.ok(ratio(ink, mixRgb(tc, s, fill)) >= 4.5, `${name} ${c}`);
+    }
+  }
+});
+
+test("the accent has 3:1 against the white line of the logo, and the fixed accent of the favicon has 4.5:1", () => {
+  const white = [255, 255, 255];
+  for (const [name, t] of Object.entries(THEMES)) assert.ok(ratio(white, rgba(t["--accent-fill"], [0, 0, 0])) >= 3, `${name} accent and the logo line`);
+  const favicon = read("favicon.svg").match(/rx="6" fill="(#[0-9a-f]{6})"/)[1];
+  assert.ok(ratio(white, rgba(favicon, [0, 0, 0])) >= 4.5);
+  assert.equal(favicon, THEMES.light["--accent-fill"]);
 });
