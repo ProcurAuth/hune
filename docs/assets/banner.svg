@@ -13,7 +13,7 @@
   </defs>
   <rect width="1280" height="320" rx="28" fill="url(#bg)"/>
   <rect width="1280" height="320" rx="28" fill="url(#glow)"/>
-  <g transform="translate(78 80) scale(5)"><rect width="32" height="32" rx="8" fill="#4338ca"/><path d="M6 21l5-6 4 3 5-8 6 7" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26" cy="24" r="2" fill="#34d399"/></g>
+  <g transform="translate(78 80) scale(6.6667)"><rect width="24" height="24" rx="6" fill="#2f5bd8"/><path d="M5 15l4-4 3 3 6-7" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></g>
   <g font-family="Inter, 'Segoe UI', -apple-system, Helvetica, Arial, sans-serif">
     <text x="290" y="148" font-size="76" font-weight="800" fill="#ffffff" letter-spacing="-1.5">Hun<tspan fill="#a5b4fc">e</tspan></text>
     <text x="292" y="196" font-size="28" font-weight="500" fill="#e0e7ff">Dashboards over ClickHouse, PostgreSQL and MongoDB</text>
