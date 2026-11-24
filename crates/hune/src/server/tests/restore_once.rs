@@ -124,6 +124,18 @@ fn k321_a_restore_with_a_wrong_if_match_does_not_hold_the_store_lock_for_a_valid
         .await;
         assert_eq!(r.status, 200, "{}", r.text());
         let probe = format!("\"{}\"", etag_of(&get(h.addr, "/api/dashboards/nodes").await));
+        // The time of a move with no restore, on this host and under its load now. Four moves put the dashboard
+        // back in its folder, so the moves below start from the same state as before.
+        let mut quiet = Vec::new();
+        for i in 0..4 {
+            let body = if i % 2 == 0 { br#"{"folder":"ops"}"# as &[u8] } else { br#"{"folder":"transit"}"# };
+            let id = key();
+            let headers = [JSON, ("If-Match", probe.as_str()), ("Idempotency-Key", id.as_str())];
+            let (status, took) = blocking_post(h.addr, "/api/dashboards/nodes/move", &headers, body);
+            assert_eq!(status, 200);
+            quiet.push(took);
+        }
+        let quiet = quiet.into_iter().min().unwrap_or_default();
         let stop = Arc::new(AtomicBool::new(false));
         let mut attackers = Vec::new();
         for _ in 0..16 {
@@ -161,6 +173,9 @@ fn k321_a_restore_with_a_wrong_if_match_does_not_hold_the_store_lock_for_a_valid
         // Each restore is a conflict, or a `503` when it waits too long for a validation permit.
         assert!(statuses.iter().all(|s| [409, 503].contains(s)), "{statuses:?}");
         assert!(statuses.contains(&409), "{statuses:?}");
-        assert!(min_of_7(&runs) < Duration::from_millis(200), "{runs:?}");
+        // A host under load makes each move slower, with or without a restore. The limit is 200 ms more than the
+        // quiet move, so a move that waits for the lock of a validation still fails.
+        let limit = Duration::from_millis(200) + quiet;
+        assert!(min_of_7(&runs) < limit, "{runs:?}, limit {limit:?}");
     });
 }
