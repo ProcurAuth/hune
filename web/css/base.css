@@ -90,10 +90,10 @@ html[data-hune-hold] body > :not(noscript) { visibility: hidden; }
   height: var(--header-base-h); padding: 0 var(--page-pad);
   border-bottom: 1px solid var(--border); background: var(--header-bg);
 }
-#app-header > .brand, #app-header > .header-lead, #app-header > .header-actions, #app-header > .header-theme, #app-header > .header-more { flex: none; }
-/* The lead controls (the sort and the tag filter of the list) follow the brand. The slot has no box when it is empty. */
-.header-lead { display: flex; align-items: center; gap: var(--space-8); margin-left: var(--space-8); }
-.header-lead:empty { display: none; }
+#app-header > .brand, #app-header > .header-start, #app-header > .header-actions, #app-header > .header-theme, #app-header > .header-more { flex: none; }
+/* The start controls (the sort and the tag filter of the list) follow the brand. The slot has no box when it is empty. */
+.header-start { display: flex; align-items: center; gap: var(--space-8); margin-left: var(--space-8); }
+.header-start:empty { display: none; }
 #app-header > .crumbs { flex: 1 1 0; }
 .header-more { display: flex; }
 .header-more:empty { display: none; }

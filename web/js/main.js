@@ -27,8 +27,8 @@ const versionLine = el("span", { id: "brand-version", class: "brand__version", d
 const brand = el("a", { class: "brand", href: ".", title: boot.versionTitle || null, "aria-label": "Hune, the list of dashboards", "aria-describedby": "brand-version" },
   icon("logo", 20), el("span", { class: "brand__text" }, el("span", { class: "brand__name", text: "Hune" }), versionLine));
 const crumbs = el("nav", { class: "crumbs", "aria-label": "Location" });
-// The controls that follow the brand at the left (the sort and the tag filter of the list): the page puts them here with header.setLead().
-const leadSlot = el("div", { class: "header-lead", dataset: { testid: "header-lead" } });
+// The controls that follow the brand at the left (the sort and the tag filter of the list): the page puts them here with header.setStart().
+const startSlot = el("div", { class: "header-start", dataset: { testid: "header-start" } });
 // The controls of the page (9.6): the page puts its groups in this row with header.setActions().
 const actionsRow = el("div", { class: "header-actions__row", dataset: { testid: "header-actions" } });
 const actionsSlot = el("div", { class: "header-actions" }, actionsRow);
@@ -36,12 +36,12 @@ const themeSlot = el("div", { class: "header-theme" });
 // The button "More actions" of a dashboard (9.9): it follows the theme selector. The list page and the pages of an error have none.
 const moreSlot = el("div", { class: "header-more" });
 
-// The header holds the brand, the lead controls, the crumbs, the controls of the page, the theme selector and the button "More actions", on every page.
+// The header holds the brand, the start controls, the crumbs, the controls of the page, the theme selector and the button "More actions", on every page.
 // It is one row at every width (9.6): the css steps of header_layout.js make the controls smaller, and the narrowest steps move
 // controls into the menu.
 function buildHeader() {
   clear(headerEl);
-  headerEl.append(brand, leadSlot, crumbs, actionsSlot, themeSlot, moreSlot);
+  headerEl.append(brand, startSlot, crumbs, actionsSlot, themeSlot, moreSlot);
   themeSlot.append(themeControl());
   headerMeasure = trackHeaderHeight();
 }
@@ -71,9 +71,9 @@ const header = {
     }
   },
   // The controls that follow the brand, before the crumbs. A page that has none leaves the slot empty.
-  setLead(...nodes) {
-    clear(leadSlot);
-    for (const node of nodes) if (node) leadSlot.append(node);
+  setStart(...nodes) {
+    clear(startSlot);
+    for (const node of nodes) if (node) startSlot.append(node);
   },
   // The groups of the controls of the page. The node `actions` is the row itself, for a class that depends on the state of the page.
   setActions(...nodes) {
@@ -89,7 +89,7 @@ const header = {
   },
   clear() {
     clear(crumbs);
-    clear(leadSlot);
+    clear(startSlot);
     clear(actionsRow);
     clear(moreSlot);
     actionsRow.className = "header-actions__row";

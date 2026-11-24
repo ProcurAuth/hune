@@ -208,7 +208,7 @@ export async function mount(ctx) {
   const sortLabel = el("span", { class: "list-select__text" });
   const sortButton = el("button", { type: "button", class: "list-select list-select--sort", "aria-haspopup": "menu", "aria-expanded": "false", "aria-label": "Sort", dataset: { testid: "list-sort" }, on: { click: () => openSortMenu() } },
     glyph(SORT_ARROWS, 16), sortLabel, icon("chevron-down", 16));
-  // The sort and the tag filter are the lead controls of the header: they follow the brand (9.6, 9.7).
+  // The sort and the tag filter are the start controls of the header: they follow the brand (9.6, 9.7).
   const filters = el("div", { class: "list-filters" }, sortButton, tagButton);
 
   const body = el("div", { class: "list-body", dataset: { testid: "list" }, "aria-busy": "true" },
@@ -216,7 +216,7 @@ export async function mount(ctx) {
   clear(main);
   const page = el("section", { class: "list-page" }, status, body);
   main.append(page);
-  header.setLead(filters);
+  header.setStart(filters);
   header.setActions(actionsBox, newMenu);
   filters.hidden = true;
 
