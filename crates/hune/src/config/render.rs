@@ -48,10 +48,10 @@ pub fn start_log_sources_json(loaded: &LoadedConfig) -> String {
 
 const INTRO: [&str; 6] = [
     "This document is the reference of the configuration keys of Hune. The command `hune print-reference --format markdown` generates it from the key table in the code. Do not edit it by hand.",
-    "Hune reads one HCL file. The file is the only source of the configuration. Six keys have a default value and can be absent: `server.query_inspect` (default `false`), `server.repeat_max_per_panel` (default 24), `server.repeat_max_per_section` (default 12), `server.repeat_max_per_dashboard` (default 120), `server.compress_static` (default `true`) and `server.transform_max_cells` (default 10000000). The key `clickhouse \"<id>\".adhoc_columns` is optional and has no default: absent, no ad hoc filter applies on that source. For each other key, a key that applies is necessary and a key that does not apply is forbidden.",
+    "Hune reads one HCL file. The file is the only source of the configuration. Seven keys have a default value and can be absent: `server.query_inspect` (default `false`), `server.repeat_max_per_panel` (default 24), `server.repeat_max_per_section` (default 12), `server.repeat_max_per_dashboard` (default 120), `server.compress_static` (default `true`), `server.transform_max_cells` (default 10000000) and `server.list_filters_min_dashboards` (default 6). The key `clickhouse \"<id>\".adhoc_columns` is optional and has no default: absent, no ad hoc filter applies on that source. For each other key, a key that applies is necessary and a key that does not apply is forbidden.",
     "The column Forms uses three letters. V is a value in the file. E is `<name>_env`, the name of an environment variable. F is `<name>_file`, the absolute path of a file. Give exactly one form for each key. A secret accepts only E and F.",
     "A duration is a text with one whole number and one unit: `ms`, `s`, `m` or `h`. A size is a whole number of bytes. An integer is a whole number with no sign and no zero at the start. A text is in double quotes. A list is texts in brackets with commas.",
-    "The reference value is the value that the reference files use. It is not a default, except for the six keys that have a default value. Run `hune print-reference --format hcl --profile local` or `--profile distributed` to get a complete file. These two files hold no `postgres` block, no `mongodb` block and no `geomap` block. The reference value of a `postgres` key, a `mongodb` key or a `geomap` key is a value for the example block of section 13.",
+    "The reference value is the value that the reference files use. It is not a default, except for the seven keys that have a default value. Run `hune print-reference --format hcl --profile local` or `--profile distributed` to get a complete file. These two files hold no `postgres` block, no `mongodb` block and no `geomap` block. The reference value of a `postgres` key, a `mongodb` key or a `geomap` key is a value for the example block of section 13.",
     "Section 13 of the specification gives the checks after the key table, the contradictions and the warnings.",
 ];
 
@@ -71,7 +71,7 @@ pub fn render_reference(format: ReferenceFormat, profile: Profile) -> String {
                 profile,
                 &[
                     first,
-                    "Each key that applies is in the file, except the six keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static` and `server.transform_max_cells`.",
+                    "Each key that applies is in the file, except the seven keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static`, `server.transform_max_cells` and `server.list_filters_min_dashboards`.",
                 ],
             )
         }

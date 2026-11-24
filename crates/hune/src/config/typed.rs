@@ -188,6 +188,9 @@ fn build_inner(checked: &Checked, stage: &Stage2, partial: bool) -> Result<Confi
         transform_max_cells: r
             .opt_int32("server.transform_max_cells")?
             .unwrap_or(super::keys::TRANSFORM_MAX_CELLS_DEFAULT),
+        list_filters_min_dashboards: r
+            .opt_int32("server.list_filters_min_dashboards")?
+            .unwrap_or(super::keys::LIST_FILTERS_MIN_DEFAULT),
         max_connections: r.int32("server.max_connections")?,
         idle_timeout: r.duration("server.idle_timeout")?,
         shutdown_grace: r.duration("server.shutdown_grace")?,

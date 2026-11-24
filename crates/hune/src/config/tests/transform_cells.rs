@@ -123,25 +123,25 @@ fn the_key_is_in_the_table_the_reference_and_the_effective_order() {
     let order: Vec<String> = fx.load(&fx.local()).unwrap().effective.iter().map(|e| e.key.clone()).collect();
     let position = |name: &str| order.iter().position(|k| k == name).unwrap();
     assert_eq!(position(KEY), position("server.compress_static") + 1);
-    assert_eq!(position("server.max_connections"), position(KEY) + 1);
+    assert_eq!(position("server.list_filters_min_dashboards"), position(KEY) + 1);
     // The reference files do not hold the key: its default applies.
     for profile in [Profile::Local, Profile::Distributed] {
         let text = render_reference(ReferenceFormat::Hcl, profile);
         assert!(!text.contains("transform_max_cells ="), "{profile:?}");
-        assert!(text.contains("the six keys that have a default") && text.contains("`server.transform_max_cells`"));
+        assert!(text.contains("the seven keys that have a default") && text.contains("`server.transform_max_cells`"));
     }
 }
 
 #[test]
 fn the_texts_of_the_defaults_name_each_key_with_a_default() {
     // The intro of the reference and the head of the reference files list the keys of `defaulted_keys`, with the right count.
-    assert!(REFERENCE_DOC.contains("Six keys have a default value and can be absent: "));
-    assert!(REFERENCE_DOC.contains("except for the six keys that have a default value"));
+    assert!(REFERENCE_DOC.contains("Seven keys have a default value and can be absent: "));
+    assert!(REFERENCE_DOC.contains("except for the seven keys that have a default value"));
     let hcl = render_reference(ReferenceFormat::Hcl, Profile::Local);
     for (key, default, _) in defaulted_keys() {
         let shown = if matches!(SCHEMA.key(key).unwrap().kind, Kind::Bool) { format!("`{default}`") } else { default };
         assert!(REFERENCE_DOC.contains(&format!("`{key}` (default {shown})")), "{key}");
         assert!(hcl.lines().nth(1).unwrap().contains(&format!("`{key}`")), "{key}");
     }
-    assert_eq!(defaulted_keys().len(), 6);
+    assert_eq!(defaulted_keys().len(), 7);
 }

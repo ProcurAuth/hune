@@ -31,6 +31,12 @@ pub const TRANSFORM_MAX_CELLS_DEFAULT: u32 = 10_000_000;
 /// double and a null flag. Thus one frame at the bound takes 900 MB or more, near the memory of one browser tab.
 pub const TRANSFORM_MAX_CELLS_BOUND: u32 = 100_000_000;
 
+/// The default of `server.list_filters_min_dashboards` (9.7, rule 6 of the list page).
+pub const LIST_FILTERS_MIN_DEFAULT: u32 = 6;
+/// The fixed upper bound of `server.list_filters_min_dashboards`. A list of more dashboards than this never has the
+/// filters hidden, so the bound only stops a typing error.
+pub const LIST_FILTERS_MIN_BOUND: u32 = 1000;
+
 /// The blocks, in table order. A parent comes before its children.
 static BLOCKS: [BlockDesc; 17] = [
     BlockDesc::new("server", "server", "The two listeners and the limits of the server (section 14)."),
@@ -89,7 +95,7 @@ const MONGO_DIRECT: &str = "`topology = \"direct\"`";
 const MONGO_REPLICA_SET: &str = "`topology = \"replica_set\"`";
 
 /// The keys, in table order.
-static KEYS: [KeyDesc; 112] = [
+static KEYS: [KeyDesc; 113] = [
     // 13.8: server
     KeyDesc::new(
         "server.listen",
@@ -157,6 +163,13 @@ static KEYS: [KeyDesc; 112] = [
     )
     .manual("never (the key is optional)", "never")
     .doc_ref(Ref::Int(TRANSFORM_MAX_CELLS_DEFAULT as u64)),
+    KeyDesc::new(
+        "server.list_filters_min_dashboards",
+        Kind::Integer { min: 0, max: LIST_FILTERS_MIN_BOUND as u64 },
+        "The list page shows the sort control and the tag filter only when the user sees more dashboards than this number (9.7). With this number or fewer, the page hides them. The value 0 shows them for any list that is not empty. The session gives the value to the page (6.10). The key is optional. The default is 6. The upper bound is fixed at 1000.",
+    )
+    .manual("never (the key is optional)", "never")
+    .doc_ref(Ref::Int(LIST_FILTERS_MIN_DEFAULT as u64)),
     KeyDesc::new(
         "server.max_connections",
         Kind::Integer { min: 16, max: 65536 },

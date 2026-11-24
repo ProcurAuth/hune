@@ -97,6 +97,9 @@ pub struct ServerConfig {
     /// The most cells of the frame that one step of a transform makes in the page (4.35, 9.21a). The session gives it to
     /// the page (6.10). The default is `TRANSFORM_MAX_CELLS_DEFAULT`.
     pub transform_max_cells: u32,
+    /// The list page shows its sort control and its tag filter above this number of dashboards (9.7). The session
+    /// gives it to the page (6.10). The default is `LIST_FILTERS_MIN_DEFAULT`.
+    pub list_filters_min_dashboards: u32,
     /// The most open connections on `listen`.
     pub max_connections: u32,
     /// The idle time after which Hune closes a kept connection.
@@ -436,9 +439,9 @@ const HIDDEN_VALUE: &str = "<hidden>";
 
 /// The keys that have a default value (13.7): each can be absent, and the default applies. The effective
 /// configuration shows the default with the source `default`. A row is the key, the default and the key that
-/// the entry follows in the key table. The defaults of the repeat keys are the constants of `hune-core`. The default of
-/// `server.transform_max_cells` is a constant of the key table, because the server never builds a frame.
-fn defaulted_keys() -> [(&'static str, String, &'static str); 6] {
+/// the entry follows in the key table. The defaults of the repeat keys are the constants of `hune-core`. The defaults of
+/// `server.transform_max_cells` and `server.list_filters_min_dashboards` are constants of the key table, because the server never builds a frame.
+fn defaulted_keys() -> [(&'static str, String, &'static str); 7] {
     [
         ("server.query_inspect", "false".to_string(), "server.editing"),
         ("server.repeat_max_per_panel", hune_core::limits::MAX_REPEAT_PER_PANEL.to_string(), "server.query_inspect"),
@@ -454,6 +457,11 @@ fn defaulted_keys() -> [(&'static str, String, &'static str); 6] {
         ),
         ("server.compress_static", "true".to_string(), "server.repeat_max_per_dashboard"),
         ("server.transform_max_cells", keys::TRANSFORM_MAX_CELLS_DEFAULT.to_string(), "server.compress_static"),
+        (
+            "server.list_filters_min_dashboards",
+            keys::LIST_FILTERS_MIN_DEFAULT.to_string(),
+            "server.transform_max_cells",
+        ),
     ]
 }
 const DEFAULT_SOURCE: &str = "default";

@@ -1,5 +1,5 @@
 # Hune configuration, profile distributed: PostgreSQL storage, access mode authzen, no telemetry.
-# Each key that applies is in the file, except the six keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static` and `server.transform_max_cells`.
+# Each key that applies is in the file, except the seven keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static`, `server.transform_max_cells` and `server.list_filters_min_dashboards`.
 
 server {
   listen                  = "0.0.0.0:8080"

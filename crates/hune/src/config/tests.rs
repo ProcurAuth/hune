@@ -409,7 +409,7 @@ fn start_log_objects_follow_13_22() {
     let sources = fx.back(&start_log_sources_json(&loaded));
     assert_eq!(
         sources,
-        r#"{"server.query_inspect":"default","server.repeat_max_per_panel":"default","server.repeat_max_per_section":"default","server.repeat_max_per_dashboard":"default","server.compress_static":"default","server.transform_max_cells":"default","clickhouse \"prod\".password":"file:/run/secrets/clickhouse/password"}"#
+        r#"{"server.query_inspect":"default","server.repeat_max_per_panel":"default","server.repeat_max_per_section":"default","server.repeat_max_per_dashboard":"default","server.compress_static":"default","server.transform_max_cells":"default","server.list_filters_min_dashboards":"default","clickhouse \"prod\".password":"file:/run/secrets/clickhouse/password"}"#
     );
     // A list is a JSON array.
     let dist = fx.load(&fx.distributed()).unwrap();
@@ -443,7 +443,8 @@ fn base_text_for(fx: &Fx, path: &str) -> String {
     }
     // The reference files do not set the optional keys that have a default.
     if let Some(attr) = path.strip_prefix("server.").filter(|a| {
-        matches!(*a, "query_inspect" | "compress_static" | "transform_max_cells") || a.starts_with("repeat_max_per_")
+        matches!(*a, "query_inspect" | "compress_static" | "transform_max_cells" | "list_filters_min_dashboards")
+            || a.starts_with("repeat_max_per_")
     }) {
         let initial = match attr {
             "query_inspect" => "false",
@@ -1795,6 +1796,7 @@ fn the_schema_values_have_the_kinds_of_the_typed_config() {
 mod adhoc;
 mod geomap;
 mod inspect;
+mod list_filters;
 mod modes;
 mod mongodb;
 mod pep;

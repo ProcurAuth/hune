@@ -8,6 +8,7 @@ server.repeat_max_per_section = 12  # default
 server.repeat_max_per_dashboard = 120  # default
 server.compress_static = true  # default
 server.transform_max_cells = 10000000  # default
+server.list_filters_min_dashboards = 6  # default
 server.max_connections = 1024  # file
 server.idle_timeout = "75s"  # file
 server.shutdown_grace = "30s"  # file
