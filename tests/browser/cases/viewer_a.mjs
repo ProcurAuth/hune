@@ -2,7 +2,7 @@
 // Browser cases B01, B02, B03, B10, B12, B13, B24, B25, B26, B27 and B233 (16.10).
 import { allTypesDoc, doc, panel, section, SQL } from "../lib/docs.mjs";
 import { SEED_FROM, SEED_TO } from "../lib/env.mjs";
-import { optionQueries, panelIdOf, panelQueries, panelStates, sleep, viewData, waitPanelsReady } from "../lib/h.mjs";
+import { breakFile, optionQueries, panelIdOf, panelQueries, panelStates, sleep, viewData, waitPanelsReady } from "../lib/h.mjs";
 
 const VP = '[data-testid="view-panel"]';
 
@@ -16,7 +16,7 @@ async function ensure(t, document, folder = "transit") {
 export const cases = [
   {
     id: "B01",
-    name: "list page shows folders, dashboards and an invalid document with its errors",
+    name: "list page shows folders, dashboards and a stale dashboard with its warning",
     async run(t) {
       const p = await t.open(t.url(""));
       t.assert(await p.exists(p.tid("folder-transit")), "folder group transit");
@@ -36,31 +36,40 @@ export const cases = [
       t.eq([row.text, row.title], ["Nodes", "Nodes"], "card title and its title attribute");
       t.eq(row.tags, ["chain"], "card tags");
       t.eq(row.changed, null, "a file of the volume has no badge of the last change");
-      // The invalid card: the uid, "Not valid", no link to the dashboard, and the errors with their pointers.
+      // A file that is not valid after the start: the server keeps the last valid state. The card stays valid, has its title and its link, and shows the
+      // warning mark with its text. The API gives the code `stale` and no path. The file put back clears the mark.
+      const restore = await breakFile(t, "stale-one");
+      await p.reload();
+      await p.idle();
+      await p.waitSel(p.tid("card-stale-stale-one"));
       const bad = await p.eval(`(() => {
-        const r = document.querySelector('[data-testid="row-grid-errors"]');
-        return r ? { state: r.dataset.state, text: r.querySelector(".card__title").textContent, link: !!r.querySelector("a") } : null;
+        const r = document.querySelector('[data-testid="row-stale-one"]');
+        const m = document.querySelector('[data-testid="card-stale-stale-one"]');
+        return r ? { state: r.dataset.state, text: r.querySelector(".card__title").textContent, link: !!r.querySelector("a"), label: m.getAttribute("aria-label"), tip: m.getAttribute("data-tooltip"), height: Math.round(r.getBoundingClientRect().height) } : null;
       })()`);
-      t.assert(bad, "invalid card is present");
-      t.eq(bad.state, "invalid", "invalid state");
-      t.assert(bad.text.includes("grid-errors") && bad.text.includes("Not valid"), "uid and Not valid: " + bad.text);
-      t.assert(!bad.link, "an invalid card has no link to the dashboard");
-      await p.clickText(`${p.tid("row-grid-errors")} button`, "Show errors");
-      const errs = await p.eval(`[...document.querySelectorAll('[data-testid="row-grid-errors"] .error-list li')].map((e) => e.querySelector("code").textContent)`);
+      t.assert(bad, "the card of the stale dashboard is present");
+      t.eq(bad.state, "valid", "a stale card is a valid card: it shows the last valid state");
+      t.eq(bad.text, "Stale one", "the title of the last valid state");
+      t.assert(bad.link, "the card keeps its link to the dashboard");
+      t.eq([bad.label, bad.tip], ["The file is not valid. The last valid version is shown.", "The file is not valid. The last valid version is shown."], "the text of the mark");
       const api = await t.api.list();
-      const item = api.json.items.find((i) => i.uid === "grid-errors");
-      t.assert(item && item.state === "invalid", "the API marks the item invalid");
-      t.eq(errs, item.errors.map((e) => e.pointer), "the page lists the pointers of the API");
-      t.assert(errs.length >= 2, "at least two errors");
+      const item = api.json.items.find((i) => i.uid === "stale-one");
+      t.eq(item.stale, "file_invalid", "the API gives the code stale");
+      t.assert(!JSON.stringify(item).includes("stale-one.json") && !JSON.stringify(item).includes("broken"), "the API shows no path and no parser text");
+      const sameHeight = await p.eval(`[...new Set([...document.querySelectorAll('article[data-testid^="row-"]')].map((e) => Math.round(e.getBoundingClientRect().height)))]`);
+      t.eq(sameHeight, [bad.height], "a card with the mark has the height of the others");
+      const page = await t.api.dashboard("stale-one");
+      t.eq([page.status, page.json.stale, page.json.document.title], [200, "file_invalid", "Stale one"], "GET of a stale dashboard gives the last valid document");
+      await restore();
+      await p.reload();
+      await p.idle();
+      await p.waitFor(`!!document.querySelector('[data-testid="row-stale-one"]') && !document.querySelector('[data-testid="card-stale-stale-one"]')`, { what: "the mark goes when the file is valid again" });
       // The tag filter keeps the cards with the tag, and the URL keeps the tag in q. The page has no search field.
       t.eq(await p.exists(p.tid("list-search")), false, "no search field");
       await p.click(p.tid("list-tag-filter"));
       await p.click(p.tid("tag-filter-chain"));
       await p.waitFor(`document.querySelectorAll('[data-testid^="row-"][data-state]').length === 1`, { what: "filter by tag" });
       t.assert(/q=chain/.test(await p.eval("location.search")), "q in the URL");
-      // The page route of an invalid dashboard gives the list of errors, not the dashboard.
-      const r422 = await t.api.dashboard("grid-errors");
-      t.eq(r422.status, 422, "GET of an invalid dashboard");
     },
   },
 

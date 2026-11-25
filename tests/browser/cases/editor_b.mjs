@@ -347,13 +347,16 @@ export const cases = [
       for (const id of ["new-dashboard", "import", "new-folder"]) t.eq(await p.exists(p.tid(id)), false, `no ${id}`);
       t.eq(await p.count('.group__head button[aria-haspopup="menu"]'), 0, "no folder menu");
       t.eq(await p.exists(p.tid("row-menu-nodes")), false, "a card that cannot be edited has no three dots");
-      await p.click(p.tid("row-menu-grid-errors"));
-      t.eq(await p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent)`), ["Download"], "invalid row menu: Download only, no Replace");
-      await p.press("Escape");
+      // With no primary store the volume is a read-only store: each card has the lock and no three dots, and the page has no title for its one group.
+      t.eq(await p.exists(p.tid("row-menu-stale-one")), false, "a card of a read-only store has no three dots");
+      t.eq(await p.count('[data-testid^="card-lock-"]'), 2, "each card of the read-only store has the lock");
+      t.eq(await p.attr(p.tid("card-lock-nodes"), "aria-label"), "Read-only store", "the name of the lock");
+      t.eq(await p.count(".group__head"), 0, "one root group: no title");
       // the dashboard page: no edit toggle, and edit=1 opens no editor
       const d = await t.open(t.dash("nodes"));
       await waitPanelsReady(d, [1, 2, 3]);
       t.eq(await d.exists(d.tid("edit-toggle")), false, "no edit toggle");
+      t.eq(await d.attr(d.tid("read-only-lock"), "aria-label"), "Read-only store", "the lock of a read-only store stands where the switch would be");
       const e = await t.open(t.dash("nodes", "edit=1"));
       await waitPanelsReady(e, [1, 2, 3]);
       const forbidden = await e.eval(`["edit-toggle", "edit-bar", "save-button", "add-panel", "add-section", "json-tab", "discard-button", "edit-grid"].filter((id) => document.querySelector('[data-testid="' + id + '"]'))`);

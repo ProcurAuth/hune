@@ -2,10 +2,10 @@
 // Browser cases B28 to B35 (9.7): the entry redirect of the list page.
 // One dashboard that the user can see opens at once, on the entry route of a page load only.
 // Each case starts a server of its own, with a volume that holds exactly the dashboards that it needs.
-import { cpSync, mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { ROOT, api, seedDocument } from "../lib/env.mjs";
-import { sleep } from "../lib/h.mjs";
+import { api, seedDocument } from "../lib/env.mjs";
+import { breakFile, sleep } from "../lib/h.mjs";
 
 const GUARD_KEY = "hune.entry.redirect";
 
@@ -176,19 +176,16 @@ export const cases = [
   },
   {
     id: "B33",
-    name: "entry redirect: one item that is not valid never redirects",
+    name: "entry redirect: one dashboard whose file is not valid now still opens, with its last valid state and the warning",
     async run(t) {
-      const own = await t.ownServer("invalid", {
-        prepare: (volume) => {
-          layout({ transit: { title: "Transit desk", docs: [] } })(volume);
-          cpSync(join(ROOT, "tests/fixtures/dashboards/invalid/grid_w_and_extra_member.json"), join(volume, "transit", "broken.json"));
-        },
-      });
+      const own = await t.ownServer("stale", { prepare: ONE });
+      const restore = await breakFile(t, "nodes", { file: "transit/nodes.json", server: own });
       const p = await t.open(own.url);
-      await listShown(p);
-      t.eq(await rows(p), ["broken"], "one row");
-      t.eq(await p.attr(p.tid("row-broken"), "data-state"), "invalid", "the row is invalid");
-      await staysAt(t, p, "/", "no redirect");
+      await dashboardShown(p);
+      t.assert((await place(p)).startsWith("/d/nodes"), "the entry redirect opens the dashboard: " + (await place(p)));
+      await p.waitSel('[data-notice="stale"]');
+      t.eq(await p.eval(`document.querySelector('[data-notice="stale"]').textContent`), "The file of this dashboard is not valid. The last valid version is shown.", "the text of the warning");
+      await restore();
     },
   },
   {

@@ -111,3 +111,29 @@ export async function thresholdSnapshot(page, id) {
   const text = await page.eval(`(() => { const e = document.querySelector('[data-testid="panel-${id}"] .panel__plot'); return e ? e.getAttribute("data-thresholds") : null; })()`);
   return text ? JSON.parse(text) : null;
 }
+
+/**
+ * Break a file of the volume that the server reads (B01, B241): the file gets text that is not JSON. The server keeps the last valid state and the
+ * API gives `stale` for the dashboard. Gives an async function that puts the file back and waits until `stale` is gone.
+ */
+export async function breakFile(t, uid, { file = "transit/stale-one.json", server = t.server } = {}) {
+  const { readFileSync, writeFileSync } = await import("node:fs");
+  const { api } = await import("./env.mjs");
+  const list = server === t.server ? t.api : api(server);
+  const path = `${server.volume}/${file}`;
+  const saved = readFileSync(path, "utf8");
+  const staleOf = async () => ((await list.list()).json.items.find((i) => i.uid === uid) || {}).stale;
+  const wait = async (want) => {
+    for (let i = 0; i < 60; i++) {
+      if ((await staleOf()) === want) return;
+      await sleep(250);
+    }
+    throw new Error(`the API did not give stale=${want} for ${uid}`);
+  };
+  writeFileSync(path, "{ \"broken\": ");
+  await wait("file_invalid");
+  return async () => {
+    writeFileSync(path, saved);
+    await wait(undefined);
+  };
+}

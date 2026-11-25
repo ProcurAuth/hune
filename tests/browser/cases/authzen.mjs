@@ -75,7 +75,7 @@ export const cases = [
         const p = await openAs(t, a, "reader", "");
         t.eq(await folderIds(p), ["desk", "transit"], "reader sees the folders desk and transit only (secret and lab are hidden)");
         const rows = await rowIds(p);
-        t.eq(rows.sort(), ["desk-open", "grid-errors", "nodes"], "reader sees desk-open (one dashboard grant), and the dashboards of transit, no desk-closed");
+        t.eq(rows.sort(), ["desk-open", "nodes", "stale-one"], "reader sees desk-open (one dashboard grant), and the dashboards of transit, no desk-closed");
         t.eq(await toolbar(p), [], "no New dashboard, Import or New folder");
         t.eq(await p.count('.group__head button[aria-haspopup="menu"]'), 0, "no folder menu");
         // A reader has no button on a card (9.7): no pencil, no bin and no menu. The dashboard page has Export.

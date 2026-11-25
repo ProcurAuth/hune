@@ -7,7 +7,7 @@
 import { sleep } from "../lib/h.mjs";
 
 const GUARD_KEY = "hune.entry.redirect";
-const ALL = ["desk-closed", "desk-open", "grid-errors", "hidden-one", "lab-a", "nodes"];
+const ALL = ["desk-closed", "desk-open", "hidden-one", "lab-a", "nodes", "stale-one"];
 
 // A probe at the start of each document of the page. It counts the documents of the tab (sessionStorage), keeps the
 // history length before main.js runs, and records each list row or empty state that enters the DOM, each value of the
@@ -119,9 +119,9 @@ export const cases = [
 
       // ---- 5. A subject who sees two dashboards gets the list. The admin removes the item that is not valid, so the
       // display filter leaves exactly desk-open and nodes to reader.
-      const item = (await a.call("admin", "GET", "api/dashboards?limit=500")).json.items.find((i) => i.uid === "grid-errors");
-      const del = await a.call("admin", "DELETE", "api/dashboards/grid-errors", { headers: { "If-Match": `"${item.etag}"`, "Idempotency-Key": crypto.randomUUID() } });
-      t.eq(del.status, 200, "admin deletes grid-errors: " + del.text.slice(0, 200));
+      const item = (await a.call("admin", "GET", "api/dashboards?limit=500")).json.items.find((i) => i.uid === "stale-one");
+      const del = await a.call("admin", "DELETE", "api/dashboards/stale-one", { headers: { "If-Match": `"${item.etag}"`, "Idempotency-Key": crypto.randomUUID() } });
+      t.eq(del.status, 200, "admin deletes stale-one: " + del.text.slice(0, 200));
       t.eq(await listed(t, a, "reader"), ["desk-open", "nodes"], "the display filter leaves two items to reader");
       const r = await open("reader");
       await r.idle();

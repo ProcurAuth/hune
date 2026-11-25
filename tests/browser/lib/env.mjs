@@ -359,11 +359,31 @@ export function makeVolume(dir) {
   mkdirSync(join(dir, "transit"), { recursive: true });
   writeFileSync(join(dir, "transit/_folder.json"), JSON.stringify({ format_version: 1, title: "Transit desk" }, null, 2) + "\n");
   writeFileSync(join(dir, "transit/nodes.json"), seedDashboardText());
-  // A volume has no file that is not valid: the start stops (5.41). The cases of the invalid card use a PostgreSQL store.
+  // A second dashboard, valid, with no tag: the list has two cards (the filters and the sort show with the threshold 0). A volume has no file that is not
+  // valid at the start (5.41): the cases of a file that is not valid (B01) break this file after the start, and the page shows a stale card.
+  const spare = JSON.parse(seedDashboardText());
+  spare.uid = "stale-one";
+  spare.title = "Stale one";
+  spare.tags = [];
+  writeFileSync(join(dir, "transit/stale-one.json"), JSON.stringify(spare, null, 2) + "\n");
+}
+
+/** Make a read-only volume `lab` with two folders: `lab-ops` (the dashboard `lab-traffic`) and `lab-archive` (the dashboard `lab-inventory`). */
+export function makeLabVolume(dir) {
+  rmSync(dir, { recursive: true, force: true });
+  for (const [folder, title, uid, docTitle] of [["lab-ops", "Lab operations", "lab-traffic", "Lab traffic"], ["lab-archive", "Lab archive", "lab-inventory", "Lab inventory"]]) {
+    mkdirSync(join(dir, folder), { recursive: true });
+    writeFileSync(join(dir, folder, "_folder.json"), JSON.stringify({ format_version: 1, title }, null, 2) + "\n");
+    const doc = JSON.parse(seedDashboardText());
+    doc.uid = uid;
+    doc.title = docTitle;
+    doc.tags = [];
+    writeFileSync(join(dir, folder, `${uid}.json`), JSON.stringify(doc, null, 2) + "\n");
+  }
 }
 
 /** Build the configuration text from `print-reference` with the values of this run. */
-export function makeConfig({ listen, ops, volume, chUrl, passwordFile, editing = true, basePath = "/", accessBlock = null, pgBlock = null, mongoBlock = null, queryInspect = null, serverLines = [], geomapBlock = null, chLines = [] }) {
+export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passwordFile, editing = true, basePath = "/", accessBlock = null, pgBlock = null, mongoBlock = null, queryInspect = null, serverLines = [], geomapBlock = null, chLines = [] }) {
   const ref = sh(BINARY, ["print-reference", "--format", "hcl", "--profile", "local"]);
   if (ref.status !== 0) throw new Error("print-reference failed: " + ref.stderr);
   let t = ref.stdout;
@@ -395,6 +415,12 @@ export function makeConfig({ listen, ops, volume, chUrl, passwordFile, editing =
   }
   set("path", JSON.stringify(volume));
   set("rescan_interval", JSON.stringify("1s"));
+  // A read-only volume (B241): a block `volume "lab"` with a title is added at the end of the block `storage`.
+  if (labVolume) {
+    const re = /^(storage \{[\s\S]*?)^\}/m;
+    if (!re.test(t)) throw new Error("no storage block in the reference");
+    t = t.replace(re, (m, body) => `${body}\n  volume "lab" {\n    title           = "Lab"\n    path            = ${JSON.stringify(labVolume)}\n    rescan_interval = "1s"\n  }\n}`);
+  }
   set("url", JSON.stringify(chUrl));
   set("user", JSON.stringify(CH_USER));
   set("password_file", JSON.stringify(passwordFile));
@@ -440,6 +466,8 @@ export async function startServer(name, ch, opts = {}) {
   const volume = join(dir, "volume");
   makeVolume(volume);
   if (opts.prepare) opts.prepare(volume);
+  const labVolume = opts.lab ? join(dir, "lab") : null;
+  if (labVolume) makeLabVolume(labVolume);
   const passwordFile = join(dir, "ch-password");
   writeFileSync(passwordFile, CH_PASSWORD + "\n");
   const port = await freePort();
@@ -448,6 +476,7 @@ export async function startServer(name, ch, opts = {}) {
     listen: `127.0.0.1:${port}`,
     ops: `127.0.0.1:${opsPort}`,
     volume,
+    labVolume,
     chUrl: ch.url,
     passwordFile,
     editing: opts.editing ?? true,

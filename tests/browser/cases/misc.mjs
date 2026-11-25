@@ -2,7 +2,7 @@
 // Browser cases B14, B15 (16.10). The case B23 is in authzen.mjs.
 import { allTypesDoc } from "../lib/docs.mjs";
 import { enterEdit, makeSeed, openPanelEditor, saveDialog, moreItem } from "../lib/ed.mjs";
-import { sleep, waitPanelsReady } from "../lib/h.mjs";
+import { breakFile, sleep, waitPanelsReady } from "../lib/h.mjs";
 
 /** The scripted accessibility audit that runs inside the page. It returns a list of problems. */
 const AUDIT = `(() => {
@@ -149,9 +149,14 @@ async function sequence(t, theme) {
   // list page
   await audit(t, p, `list ${theme}`);
   await contrast(t, p, `list ${theme}`);
-  // the row menu and the list with the invalid errors open
-  await p.clickText('[data-testid="row-grid-errors"] button', "Show errors");
-  await audit(t, p, `list with errors ${theme}`);
+  // the list with a card that has the warning of a file that is not valid
+  const restore = await breakFile(t, "stale-one");
+  await p.reload();
+  await p.idle();
+  await p.waitSel(p.tid("card-stale-stale-one"));
+  await audit(t, p, `list with a stale card ${theme}`);
+  await contrast(t, p, `list with a stale card ${theme}`);
+  await restore();
   // dashboard with the seven panel types
   await p.goto(t.dash(`a11y-types-${theme}`));
   await p.idle();
