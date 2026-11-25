@@ -82,8 +82,8 @@ impl std::fmt::Debug for Catalog {
 }
 
 fn first_key(uid: &Uid) -> Option<EntryKey> {
-    // "0" is the smallest folder id.
-    FolderId::parse("0").ok().map(|f| (uid.clone(), f))
+    // The root (a dashboard without a folder) is the smallest place: it sorts before each folder id.
+    Some((uid.clone(), FolderId::root()))
 }
 
 impl State {

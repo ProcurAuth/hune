@@ -29,6 +29,7 @@ mod query_params;
 mod real_ch;
 mod repeat;
 mod restore_once;
+mod root_dashboards;
 mod same_cost;
 mod same_refusal;
 mod static_gzip;
