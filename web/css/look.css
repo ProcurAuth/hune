@@ -20,6 +20,7 @@
   --raised: #1d232c;
   --text: #e6e9ee;
   --muted: #98a2b3;
+  --sql-comment: var(--muted);  /* the comment of the SQL editor: the full muted colour (the copied tokens mix it at 90 %, which has 4.36:1 over the band of the block) */
   --border: #262d38;
   --input-bg: #1d232c;
   --button-bg: var(--panel);
@@ -68,6 +69,7 @@
     --raised: #f1f3f6;
     --text: #14181f;
     --muted: #5d6675;
+    --sql-comment: var(--muted);
     --border: #e1e5eb;
     --input-bg: #f1f3f6;
     --button-bg: var(--panel);
@@ -114,6 +116,7 @@ html[data-theme="dark"] {
   --raised: #1d232c;
   --text: #e6e9ee;
   --muted: #98a2b3;
+  --sql-comment: var(--muted);
   --border: #262d38;
   --input-bg: #1d232c;
   --button-bg: var(--panel);
@@ -159,6 +162,7 @@ html[data-theme="light"] {
   --raised: #f1f3f6;
   --text: #14181f;
   --muted: #5d6675;
+  --sql-comment: var(--muted);
   --border: #e1e5eb;
   --input-bg: #f1f3f6;
   --button-bg: var(--panel);
