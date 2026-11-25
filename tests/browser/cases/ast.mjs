@@ -874,8 +874,12 @@ async function runB173(t) {
     t.eq((await state(p)).a, cte.close + 1, `${theme}: from before the open bracket the caret goes after the close bracket`);
     // In the folded view the key ends the folded view first.
     await caretAt(p, cte.open + 1);
-    await p.eval(`document.querySelector('${SQL}').scrollTop = 0`);
+    // The layers of the gutter follow the area at the event "scroll", which the browser sends at the next frame. A click at once would find the
+    // marker where it was before the scroll (148 px too high, under the preview). So the case sends the event and waits, as it does at the start.
+    await p.eval(`(() => { const i = document.querySelector('${SQL}'); i.scrollTop = 0; i.dispatchEvent(new Event("scroll")); })()`);
+    await sleep(100);
     await p.click(`${tid("sql-fold")}[data-from="${cte.open + 1}"]`);
+    await sleep(160);
     t.assert((await state(p)).folded, `${theme}: folded before the jump`);
     await partnerKey(p);
     await sleep(100);
