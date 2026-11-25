@@ -113,14 +113,17 @@
 .jarea__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-8); }
 .jarea__title { font-weight: var(--fw-semibold); }
 .jarea .jframe { flex: 1 1 auto; min-height: 120px; height: auto; }
-.jframe { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); height: clamp(220px, 40dvh, 480px); overflow: hidden; border: 1px solid var(--control-border); border-radius: var(--r-md); background: var(--editor-solid-bg); font-family: var(--font-mono); font-size: var(--fs-md); line-height: 18px; }
+/* --json-row is the height of one row: 14 px text with a line height of 1.43, as the editor of VS Code. The script (json_area.js, ROW) has the same number. */
+.jframe { --json-row: 20px; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); height: clamp(220px, 40dvh, 480px); overflow: hidden; border: 1px solid var(--control-border); border-radius: var(--r-md); background: var(--editor-solid-bg); font-family: var(--font-mono); font-size: var(--fs-md); line-height: var(--json-row); }
 /* The JSON view of the edit mode fills the page: its box has the height from the header to the bottom edge of the window, less the padding of the page
    above and below, and the area takes what the bar and the list of errors leave (the panel editor fills the page in the same way). */
 .jeditor { display: flex; flex-direction: column; height: max(320px, calc(100dvh - var(--header-h) - 2 * var(--page-pad))); min-height: 0; }
 .jeditor > .jframe--tall { flex: 1 1 auto; height: auto; min-height: 160px; }
 .jeditor > .ebar, .jeditor > .errors { flex: none; }
 .jframe:focus-within { border-color: var(--accent-fill); outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
-.jarea__gutter { position: relative; box-sizing: border-box; min-width: 56px; overflow: hidden; border-right: 1px solid var(--border); color: var(--muted); text-align: right; letter-spacing: 0; user-select: none; }
+/* The gutter has no border, as in VS Code: the numbers are in the muted blue-grey of the editor, and the number of the line of the caret has the strong colour. */
+.jarea__gutter { position: relative; box-sizing: border-box; min-width: 56px; overflow: hidden; color: var(--json-lineno); text-align: right; letter-spacing: 0; user-select: none; }
+.jarea__active-num { position: absolute; top: calc(var(--space-8) + var(--r, 0) * var(--json-row)); right: 0; left: 0; box-sizing: border-box; height: var(--json-row); padding: 0 var(--space-8) 0 var(--space-10); background: var(--editor-solid-bg); color: var(--json-lineno-active); pointer-events: none; will-change: transform; }
 .jarea__nums { margin: 0; padding: var(--space-8) var(--space-8) var(--space-8) var(--space-10); font: inherit; line-height: inherit; letter-spacing: inherit; will-change: transform; }
 /* The marks of the gutter: a bar of 3 px at its left edge for each run of added lines (green) and of modified lines (blue), a small arrow at the border
    where lines are gone (red), and a red band under the number of the line of a syntax error. They move with the numbers. */
@@ -133,20 +136,43 @@
 /* The two layers of the JSON area share the text metrics of the SQL area (10.3): the text area and the layer must draw each glyph at the same place.
    The text area is transparent. The layer shows the colours and does not scroll by itself: the script moves its content from the scroll position of the
    text area. The text area keeps the selection, the caret and the scroll bars. */
+/* The band of the line of the caret is under the text and across the area. The deco is over the text and moves with it: the guide of the pair that holds
+   the caret, and the two boxes of the bracket of the caret and its pair. A row is `--r` rows from the top, a column is `--c` columns (`ch`). */
 .jarea__body { position: relative; min-width: 0; overflow: hidden; }
+.jarea__band { position: absolute; top: calc(var(--space-8) + var(--r, 0) * var(--json-row)); right: 0; left: 0; height: var(--json-row); background: var(--json-line-active); pointer-events: none; will-change: transform; }
+.jarea__deco { position: absolute; top: 0; left: 0; width: 0; height: 0; font: inherit; pointer-events: none; will-change: transform; }
+.jarea__guide { position: absolute; top: calc(var(--space-8) + var(--r, 0) * var(--json-row)); left: calc(var(--space-10) + var(--c, 0) * 1ch); width: 1px; height: calc(var(--n, 0) * var(--json-row)); background: var(--json-guide-active); }
+.jarea__match { position: absolute; top: calc(var(--space-8) + var(--r, 0) * var(--json-row)); left: calc(var(--space-10) + var(--c, 0) * 1ch); box-sizing: border-box; width: 1ch; height: var(--json-row); border: 1px solid var(--json-match-edge); background: var(--json-match-bg); }
 .jarea__hl, .jarea__input { position: absolute; inset: 0; box-sizing: border-box; margin: 0; padding: var(--space-8) var(--space-10); border: 0; font: inherit; line-height: inherit; letter-spacing: 0; word-spacing: 0; text-indent: 0; text-transform: none; text-align: left; direction: ltr; unicode-bidi: normal; text-rendering: auto; font-kerning: none; font-variant-ligatures: none; font-feature-settings: normal; font-variation-settings: normal; font-synthesis: none; -webkit-text-size-adjust: 100%; tab-size: 2; white-space: pre; word-break: normal; overflow-wrap: normal; hyphens: none; }
-.jarea__hl { overflow: hidden; pointer-events: none; color: var(--text); }
+.jarea__hl { overflow: hidden; pointer-events: none; color: var(--json-punct); }
 .jarea__hl-in { position: absolute; top: var(--space-8); left: var(--space-10); width: max-content; will-change: transform; }
 .jarea__code { font: inherit; letter-spacing: inherit; }
 .jarea__input { overflow: auto; resize: none; background: transparent; color: transparent; caret-color: var(--text); outline: none; }
-.jarea__input::selection { background: var(--selected-bg); }
-/* The colours are the tokens of the SQL colours (the copied tokens of ClickHouse Dash), so both editors share one palette in both themes. */
-.jt-key { color: var(--sql-keyword); }
-.jt-str { color: var(--sql-string); }
-.jt-num { color: var(--sql-number); }
-.jt-bool { color: var(--sql-function); }
-.jt-null { color: var(--sql-null); }
-.jt-punct { color: var(--muted); }
+/* The selection is the blue of VS Code, and a paler grey when the area has no focus. The text area is under the layer, so the coloured text shows over it. */
+.jarea__input::selection { background: var(--json-selection); }
+.jarea__input:not(:focus)::selection { background: var(--json-selection-idle); }
+/* The scroll bars are thin, as in VS Code: a bar of 10 px with a grey thumb that darkens on hover. */
+.jarea__input::-webkit-scrollbar { width: 10px; height: 10px; }
+.jarea__input::-webkit-scrollbar-track, .jarea__input::-webkit-scrollbar-corner { background: transparent; }
+.jarea__input::-webkit-scrollbar-thumb { background: var(--json-thumb); }
+.jarea__input::-webkit-scrollbar-thumb:hover { background: var(--json-thumb-hover); }
+@supports not selector(::-webkit-scrollbar) {
+  .jarea__input { scrollbar-width: thin; scrollbar-color: var(--json-thumb) transparent; }
+}
+/* The colours are the tokens of VS Code, Light+ and Dark+ (look.css): keys, texts, numbers, `true`, `false` and `null`, and brackets by depth. A bracket
+   with no pair has the colour of an error. The white space at the start of a line is a box of one row with a guide at each indent step of two columns.
+   The first syntax error has a wavy line. */
+.jt-key { color: var(--json-key); }
+.jt-str { color: var(--json-str); }
+.jt-num { color: var(--json-num); }
+.jt-bool, .jt-null { color: var(--json-const); }
+.jt-punct { color: var(--json-punct); }
+.jt-b0 { color: var(--json-bracket-1); }
+.jt-b1 { color: var(--json-bracket-2); }
+.jt-b2 { color: var(--json-bracket-3); }
+.jt-bb { color: var(--json-bracket-bad); }
+.jt-ind { display: inline-block; height: var(--json-row); vertical-align: top; background-image: repeating-linear-gradient(to right, var(--json-guide) 0 1px, transparent 1px 2ch); }
+.jt-err { text-decoration: underline wavy var(--json-squiggle); text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .psummary { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16) 0 0; }
 .psummary__hint { margin: 0; color: var(--muted); }
 .psummary__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-8) var(--space-16); margin: 0; }

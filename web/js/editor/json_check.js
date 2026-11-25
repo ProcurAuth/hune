@@ -217,6 +217,169 @@ export function lineTokens(line) {
   return tokens;
 }
 
+/** The width of a tab in the JSON area, in columns. The area has `tab-size: 2`, and the indent guides are two columns apart. */
+export const TAB_SIZE = 2;
+
+/** The number of columns that the white space at the start of a line takes. A tab goes to the next multiple of TAB_SIZE. */
+export function indentColumns(line) {
+  let col = 0;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === " ") col++;
+    else if (c === "\t") col += TAB_SIZE - (col % TAB_SIZE);
+    else break;
+  }
+  return col;
+}
+
+/** The number of characters of white space at the start of a line. */
+export function indentLength(line) {
+  let i = 0;
+  while (i < line.length && (line[i] === " " || line[i] === "\t")) i++;
+  return i;
+}
+
+/**
+ * The brackets `{ } [ ]` of a document, found in one pass over its lines. A bracket in a text between quotes does not count: the text runs to its
+ * closing quote or to the end of the line, as in `lineTokens`. The result has, for the brackets in the order of the text:
+ *   pos     the offset of the bracket in the text (the lines are joined by one line feed),
+ *   mate    the index of the other bracket of its pair, or -1 for a bracket with no pair,
+ *   depth   the number of brackets that are open around it (a pair has one depth),
+ *   parent  the index of the open bracket that holds its pair, or -1,
+ * and for the lines: lineStart (the offset of each line, and the length of the text at the end) and lineFirst (the index of the first bracket of
+ * each line, and the count at the end). A close bracket that does not match the open bracket on top has no pair and does not close it.
+ */
+export function scanBrackets(lines) {
+  const n = lines.length;
+  const lineStart = new Int32Array(n + 1);
+  const lineFirst = new Int32Array(n + 1);
+  const pos = [];
+  const kind = [];
+  const mate = [];
+  const depth = [];
+  const parent = [];
+  const stack = [];
+  let offset = 0;
+  for (let r = 0; r < n; r++) {
+    lineStart[r] = offset;
+    lineFirst[r] = pos.length;
+    const line = lines[r];
+    for (let i = 0; i < line.length; i++) {
+      const c = line.charCodeAt(i);
+      if (c === 34) {
+        i++;
+        while (i < line.length && line.charCodeAt(i) !== 34) i += line.charCodeAt(i) === 92 ? 2 : 1;
+      } else if (c === 123 || c === 91) {
+        stack.push(pos.length);
+        pos.push(offset + i);
+        kind.push(c);
+        mate.push(-1);
+        depth.push(stack.length - 1);
+        parent.push(stack.length > 1 ? stack[stack.length - 2] : -1);
+      } else if (c === 125 || c === 93) {
+        const top = stack.length ? stack[stack.length - 1] : -1;
+        const index = pos.length;
+        pos.push(offset + i);
+        kind.push(c);
+        if (top >= 0 && kind[top] === c - 2) {
+          stack.pop();
+          mate.push(top);
+          mate[top] = index;
+          depth.push(depth[top]);
+          parent.push(parent[top]);
+        } else {
+          mate.push(-1);
+          depth.push(0);
+          parent.push(-1);
+        }
+      }
+    }
+    offset += line.length + 1;
+  }
+  lineStart[n] = offset;
+  lineFirst[n] = pos.length;
+  return { lineStart, lineFirst, pos: Int32Array.from(pos), mate: Int32Array.from(mate), depth: Uint16Array.from(depth), parent: Int32Array.from(parent), count: pos.length };
+}
+
+const BRACKET_CLASS = ["jt-b0", "jt-b1", "jt-b2"];
+
+/** The css class of the bracket with the index `index` of a scan: its colour follows its depth (three colours that repeat), and a bracket with no pair has the colour of an error. */
+export function bracketClass(scan, index) {
+  return scan.mate[index] < 0 ? "jt-bb" : BRACKET_CLASS[scan.depth[index] % BRACKET_CLASS.length];
+}
+
+/** The index of the line that holds an offset: the last line that starts at or before it. */
+export function rowOf(scan, offset) {
+  const starts = scan.lineStart;
+  let lo = 0;
+  let hi = starts.length - 2;
+  if (hi < 0) return 0;
+  while (lo < hi) {
+    const mid = (lo + hi + 1) >> 1;
+    if (starts[mid] <= offset) lo = mid;
+    else hi = mid - 1;
+  }
+  return lo;
+}
+
+// The index of the bracket at an offset, or -1.
+function bracketAt(scan, offset) {
+  let lo = 0;
+  let hi = scan.count - 1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    const p = scan.pos[mid];
+    if (p === offset) return mid;
+    if (p < offset) lo = mid + 1;
+    else hi = mid - 1;
+  }
+  return -1;
+}
+
+/** The bracket that the caret touches: the one before the caret first, else the one after it. It gives the index, or -1. */
+export function bracketNear(scan, caret) {
+  const before = caret > 0 ? bracketAt(scan, caret - 1) : -1;
+  return before >= 0 ? before : bracketAt(scan, caret);
+}
+
+/** The pair of brackets that holds a caret: [open, close] as indexes, or null when no pair holds it (the document level, or a bracket with no pair). */
+export function enclosingPair(scan, caret) {
+  // The last bracket before the caret.
+  let lo = 0;
+  let hi = scan.count - 1;
+  let last = -1;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (scan.pos[mid] < caret) {
+      last = mid;
+      lo = mid + 1;
+    } else hi = mid - 1;
+  }
+  if (last < 0 || scan.mate[last] < 0) return null;
+  // `last` is an open bracket whose pair is after the caret (it holds the caret), or a close bracket (its pair is closed: the pair around it holds the caret).
+  const around = scan.mate[last] > last ? last : scan.parent[scan.mate[last]];
+  return around >= 0 && scan.mate[around] >= 0 ? [around, scan.mate[around]] : null;
+}
+
+/**
+ * The part of a line to underline for a syntax error at `column` (the first column is 1): the token that holds the column, else the word of
+ * non-space characters that starts at the first non-space character from it, else the last non-space character of the line. It gives [start, end) or null.
+ */
+export function errorRange(line, tokens, column) {
+  if (!line.length || !Number.isInteger(column) || column < 1) return null;
+  let at = Math.min(column - 1, line.length);
+  for (const [start, end] of tokens) if (at >= start && at < end) return [start, end];
+  while (at < line.length && (line[at] === " " || line[at] === "\t")) at++;
+  if (at >= line.length) {
+    let k = line.length;
+    while (k > 0 && (line[k - 1] === " " || line[k - 1] === "\t")) k--;
+    return k > 0 ? [k - 1, k] : null;
+  }
+  let end = at + 1;
+  while (end < line.length && end - at < 40 && line[end] !== " " && line[end] !== "\t" && !"{}[],:\"".includes(line[end])) end++;
+  return [at, end];
+}
+
 /** The most cells (rows of the saved text times rows of the new text, after the common start and end are cut) that the line diff computes. */
 export const MAX_DIFF_CELLS = 1_000_000;
 

@@ -166,6 +166,35 @@ test("the 29 tag colours give a chip text with 4.5:1 on the tint, on each surfac
   }
 });
 
+// The JSON area of the edit mode (10.4) uses the palette of VS Code Light+ and Dark+. A text colour has 4.5:1 on the surface of the editor, on the band of
+// the line of the caret and on the box of a bracket. The colours of Light+ that fail are darker here (the number, the second bracket colour and the
+// bracket with no pair). The selection is a state that lasts a moment, as in VS Code: the text colours keep 2.5:1 on it (the colour of a bracket with
+// no pair excepted: it stands out by its hue).
+test("the JSON tokens have 4.5:1 for the text on the editor, on the band of the caret line and on the box of a bracket, in both themes", () => {
+  const texts = ["--json-key", "--json-str", "--json-num", "--json-const", "--json-punct", "--json-bracket-1", "--json-bracket-2", "--json-bracket-3", "--json-bracket-bad", "--json-lineno", "--json-lineno-active"];
+  for (const [name, t] of Object.entries(THEMES)) {
+    const get = (k) => {
+      const v = (name === "dark" ? { ...lookRoot, ...lookDark } : { ...lookLight })[k];
+      assert.ok(v !== undefined, `${name} ${k} is set`);
+      return v;
+    };
+    const bg = rgba(t["--editor-solid-bg"], [0, 0, 0]);
+    const band = rgba(get("--json-line-active"), bg);
+    const match = rgba(get("--json-match-bg"), bg);
+    const selection = rgba(get("--json-selection"), bg);
+    for (const tok of texts) {
+      const c = rgba(get(tok), bg);
+      assert.ok(ratio(c, bg) >= 4.5, `${name} ${tok} on the editor: ${ratio(c, bg).toFixed(2)}`);
+      if (tok !== "--json-lineno" && tok !== "--json-lineno-active") {
+        assert.ok(ratio(c, band) >= 4.5, `${name} ${tok} on the band: ${ratio(c, band).toFixed(2)}`);
+        assert.ok(ratio(c, match) >= 4.5 || !tok.startsWith("--json-bracket"), `${name} ${tok} on a box: ${ratio(c, match).toFixed(2)}`);
+        assert.ok(ratio(c, selection) >= 2.5 || tok === "--json-bracket-bad", `${name} ${tok} on the selection: ${ratio(c, selection).toFixed(2)}`);
+      }
+    }
+    assert.ok(ratio(rgba(get("--json-squiggle"), bg), bg) >= 3, `${name} the wavy line has 3:1`);
+  }
+});
+
 test("the accent has 3:1 against the white line of the logo, and the fixed accent of the favicon has 4.5:1", () => {
   const white = [255, 255, 255];
   for (const [name, t] of Object.entries(THEMES)) assert.ok(ratio(white, rgba(t["--accent-fill"], [0, 0, 0])) >= 3, `${name} accent and the logo line`);

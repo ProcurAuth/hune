@@ -36,6 +36,28 @@
      of the name mixed with --tag-ink-base. 4.5:1 or more for the 29 colours (tests/frontend/theme_k.test.mjs). */
   --tag-ink-base: #ffffff;
   --tag-ink-share: 40%;
+  /* The JSON area of the edit mode (10.4): the palette of VS Code Dark+. The tokens are for the JSON area only: the SQL editor keeps its own. */
+  --json-key: #9cdcfe;
+  --json-str: #ce9178;
+  --json-num: #b5cea8;
+  --json-const: #569cd6;
+  --json-punct: #d4d4d4;
+  --json-bracket-1: #ffd700;
+  --json-bracket-2: #da70d6;
+  --json-bracket-3: #179fff;
+  --json-bracket-bad: #ff2020;
+  --json-lineno: #858585;
+  --json-lineno-active: #c6c6c6;
+  --json-line-active: #171b20;
+  --json-guide: #404040;
+  --json-guide-active: #707070;
+  --json-match-bg: rgba(0, 100, 0, 0.1);
+  --json-match-edge: #888888;
+  --json-selection: #264f78;
+  --json-selection-idle: #3a3d41;
+  --json-squiggle: #f14c4c;
+  --json-thumb: rgba(121, 121, 121, 0.4);
+  --json-thumb-hover: rgba(121, 121, 121, 0.7);
 }
 
 /* --- Light, for a light system without data-theme ------------------------------------------------------------------- */
@@ -60,6 +82,28 @@
     --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.05);
     --tag-ink-base: #000000;
     --tag-ink-share: 70%;
+    /* The JSON area of the edit mode (10.4): the palette of VS Code Light+. The tokens are for the JSON area only: the SQL editor keeps its own. */
+    --json-key: #0451a5;
+    --json-str: #a31515;
+    --json-num: #087a50;
+    --json-const: #0000ff;
+    --json-punct: #000000;
+    --json-bracket-1: #0431fa;
+    --json-bracket-2: #297a29;
+    --json-bracket-3: #7b3814;
+    --json-bracket-bad: #d60f0f;
+    --json-lineno: #237893;
+    --json-lineno-active: #0b216f;
+    --json-line-active: #f5f5f5;
+    --json-guide: #d3d3d3;
+    --json-guide-active: #939393;
+    --json-match-bg: rgba(0, 100, 0, 0.1);
+    --json-match-edge: #b9b9b9;
+    --json-selection: #add6ff;
+    --json-selection-idle: #e5ebf1;
+    --json-squiggle: #e51400;
+    --json-thumb: rgba(100, 100, 100, 0.4);
+    --json-thumb-hover: rgba(100, 100, 100, 0.7);
   }
 }
 
@@ -84,6 +128,28 @@ html[data-theme="dark"] {
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.25);
   --tag-ink-base: #ffffff;
   --tag-ink-share: 40%;
+  /* The JSON area of the edit mode (10.4): the palette of VS Code Dark+. The tokens are for the JSON area only: the SQL editor keeps its own. */
+  --json-key: #9cdcfe;
+  --json-str: #ce9178;
+  --json-num: #b5cea8;
+  --json-const: #569cd6;
+  --json-punct: #d4d4d4;
+  --json-bracket-1: #ffd700;
+  --json-bracket-2: #da70d6;
+  --json-bracket-3: #179fff;
+  --json-bracket-bad: #ff2020;
+  --json-lineno: #858585;
+  --json-lineno-active: #c6c6c6;
+  --json-line-active: #171b20;
+  --json-guide: #404040;
+  --json-guide-active: #707070;
+  --json-match-bg: rgba(0, 100, 0, 0.1);
+  --json-match-edge: #888888;
+  --json-selection: #264f78;
+  --json-selection-idle: #3a3d41;
+  --json-squiggle: #f14c4c;
+  --json-thumb: rgba(121, 121, 121, 0.4);
+  --json-thumb-hover: rgba(121, 121, 121, 0.7);
 }
 
 /* --- Forced light ----------------------------------------------------------------------------------------------------- */
@@ -107,6 +173,28 @@ html[data-theme="light"] {
   --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.05);
   --tag-ink-base: #000000;
   --tag-ink-share: 70%;
+  /* The JSON area of the edit mode (10.4): the palette of VS Code Light+. The tokens are for the JSON area only: the SQL editor keeps its own. */
+  --json-key: #0451a5;
+  --json-str: #a31515;
+  --json-num: #087a50;
+  --json-const: #0000ff;
+  --json-punct: #000000;
+  --json-bracket-1: #0431fa;
+  --json-bracket-2: #297a29;
+  --json-bracket-3: #7b3814;
+  --json-bracket-bad: #d60f0f;
+  --json-lineno: #237893;
+  --json-lineno-active: #0b216f;
+  --json-line-active: #f5f5f5;
+  --json-guide: #d3d3d3;
+  --json-guide-active: #939393;
+  --json-match-bg: rgba(0, 100, 0, 0.1);
+  --json-match-edge: #b9b9b9;
+  --json-selection: #add6ff;
+  --json-selection-idle: #e5ebf1;
+  --json-squiggle: #e51400;
+  --json-thumb: rgba(100, 100, 100, 0.4);
+  --json-thumb-hover: rgba(100, 100, 100, 0.7);
 }
 
 /* --- Shape: the same in both themes ---------------------------------------------------------------------------------- */

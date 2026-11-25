@@ -5,7 +5,7 @@ import * as editorRoutes from "./api_editor.js";
 import * as busy from "../busy.js";
 import { button, clear, el } from "../ui.js";
 import { errorLink } from "./form.js";
-import { createJsonArea } from "./json_area.js";
+import { ROW, createJsonArea } from "./json_area.js";
 import { locatePointer, prettyJson, scanJson } from "./json_check.js";
 
 export const MAX_ERRORS_SHOWN = 100;
@@ -57,7 +57,7 @@ export function createJsonEditor(E, { embedded = false } = {}) {
     area.focus();
     area.setSelectionRange(index, index);
     const before = area.value.slice(0, index).split("\n").length - 1;
-    area.scrollTop = Math.max(0, before * 18 - 60);
+    area.scrollTop = Math.max(0, before * ROW - 60);
     area.dispatchEvent(new Event("scroll"));
   }
 
@@ -69,8 +69,9 @@ export function createJsonEditor(E, { embedded = false } = {}) {
     lastCheck = null;
     apply.disabled = true;
     format.disabled = true;
-    // The line of the syntax error has its number marked in the gutter (a text that is not valid stops at its first fault).
-    frame.setErrorLine(scan.ok ? 0 : (scan.errors.find((e) => e.line) || {}).line || 0);
+    // The line of the syntax error has its number marked in the gutter, and its place has a wavy line (a text that is not valid stops at its first fault).
+    const fault = scan.ok ? null : scan.errors.find((e) => e.line);
+    frame.setError(fault ? fault.line : 0, fault ? fault.column : 0);
     if (!scan.ok) {
       status.textContent = "The JSON is not valid.";
       showErrors(scan.errors);
