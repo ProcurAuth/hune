@@ -291,7 +291,7 @@ if [ ! -f docs/configuration-reference.md ]; then echo "docs/configuration-refer
 if ! cargo build --locked -q -p hune 2>target/ci-policy-build.log; then
   echo "cargo build of hune failed:"; tail -n 5 target/ci-policy-build.log; exit 0
 fi
-target/debug/hune print-reference --format markdown | diff -u docs/configuration-reference.md -
+"${CARGO_TARGET_DIR:-target}/debug/hune" print-reference --format markdown | diff -u docs/configuration-reference.md -
 '
 
 # --- 14 cargo deny ---

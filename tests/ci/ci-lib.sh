@@ -104,10 +104,13 @@ in_builder() {
     fi
     ci_build_builder
     mkdir -p "$ROOT/target/ci-cargo-home"
+    # CARGO_TARGET_DIR (a path under the root, for example target/policy) goes into the container. tests/ci/all.sh
+    # gives each group of jobs its own target folder, so the jobs do not wait for the build lock of one another.
     docker run --rm --user "$(id -u):$(id -g)" \
         -v "$ROOT:/src" -w /src \
         -e HOME=/tmp -e CARGO_HOME=/src/target/ci-cargo-home \
         -e "RUSTUP_TOOLCHAIN=$(ci_toolchain)" \
+        ${CARGO_TARGET_DIR:+-e "CARGO_TARGET_DIR=$CARGO_TARGET_DIR"} \
         "$BUILDER_TAG" "$@"
 }
 
@@ -136,12 +139,28 @@ in_builder_offline() {
 # would delete it, so the fetched sources go to target/cargo-vendor/ (a path crate is not fetched).
 # The config goes to target/vendor-config.toml (the file at the root would be untracked).
 ci_vendor() {
+    # tests/ci/all.sh vendors one time before it starts the jobs (HUNE_CI_VENDORED=1). Two vendor runs at once
+    # would rewrite target/cargo-vendor/ while a build reads it.
+    if [ "${HUNE_CI_VENDORED:-0}" = 1 ]; then
+        return 0
+    fi
     mkdir -p "$ROOT/target"
+    # A new vendor run writes each source file again, and cargo then builds the git dependencies and the crates
+    # above them again (more than 3 minutes). The stamp holds the hash of Cargo.lock of the last vendor run: when
+    # it is the same, the sources are the same, and the step has nothing to do.
+    ci_vstamp=$ROOT/target/cargo-vendor.lock-sha256
+    ci_vhash=$(sha256sum "$ROOT/Cargo.lock" | cut -d' ' -f1)
+    if [ -d "$ROOT/target/cargo-vendor" ] && [ -s "$ROOT/target/vendor-config.toml" ] && [ -f "$ci_vstamp" ] &&
+        [ "$(cat "$ci_vstamp")" = "$ci_vhash" ]; then
+        return 0
+    fi
+    rm -f "$ci_vstamp"
     if [ "$LOCAL" -eq 1 ]; then
         cargo vendor --locked --versioned-dirs "$ROOT/target/cargo-vendor" >"$ROOT/target/vendor-config.toml"
     else
         in_builder sh -c 'cargo vendor --locked --versioned-dirs /src/target/cargo-vendor > target/vendor-config.toml'
     fi
+    printf '%s\n' "$ci_vhash" >"$ci_vstamp"
 }
 
 # ci_build_binary TRIPLE [TARGET_DIR] : stage 2 of 17.2 (no network).
@@ -172,6 +191,45 @@ ci_build_image() {
     cp "$ROOT/target/$ci_triple/release/hune" "$ci_ctx/hune"
     cp "$ROOT/build/Dockerfile" "$ci_ctx/Dockerfile"
     docker build -t "$ci_tag" "$ci_ctx"
+}
+
+# ci_free_port : print a TCP port that is free on 127.0.0.1 now and that no other script of this host reserved.
+# The port is below the range of the ephemeral ports of the kernel (32768 and up), so a client socket never takes
+# it. The script reserves the port with a file in target/ci-ports/ (the variable CI_PORTS_DIR changes the folder).
+# The file holds the process id of the caller. Another call skips a port that a live process reserved. A job that
+# runs in parallel with other jobs (tests/ci/all.sh) never gets a port twice. Call it as `p=$(ci_free_port)`.
+ci_free_port() {
+    ci_pdir=${CI_PORTS_DIR:-${ROOT:-.}/target/ci-ports}
+    mkdir -p "$ci_pdir"
+    ci_tries=0
+    while [ "$ci_tries" -lt 300 ]; do
+        ci_tries=$((ci_tries + 1))
+        ci_cand=$(python3 -I -c '
+import random, socket
+for _ in range(200):
+    p = random.randint(20000, 29999)
+    s = socket.socket()
+    try:
+        s.bind(("127.0.0.1", p))
+    except OSError:
+        continue
+    finally:
+        s.close()
+    print(p)
+    break
+')
+        [ -n "$ci_cand" ] || continue
+        if (set -C && printf '%s\n' "$$" >"$ci_pdir/$ci_cand") 2>/dev/null; then
+            printf '%s\n' "$ci_cand"
+            return 0
+        fi
+        # The port is reserved. Take it again only when its owner has ended.
+        ci_owner=$(cat "$ci_pdir/$ci_cand" 2>/dev/null || true)
+        if [ -n "$ci_owner" ] && ! kill -0 "$ci_owner" 2>/dev/null; then
+            rm -f "$ci_pdir/$ci_cand"
+        fi
+    done
+    ci_die "no free port found"
 }
 
 # ci_compose_project JOB : print the compose project name hune-<job>-<run id> (16.1).
