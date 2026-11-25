@@ -32,7 +32,7 @@
   --selected-bg: #1c2540;
   --on-fill: #0b1020;                                  /* the text on an accent fill: dark, because the accent is light here */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.25);
-  /* The tag chip: the colour of the name is mixed 14 % into the surface for the fill, 28 % for the edge, and the text is the colour
+  /* The tag chip: the colour of the name is mixed 32 % into the surface for the fill, 65 % for the edge, and the text is the colour
      of the name mixed with --tag-ink-base. 4.5:1 or more for the 29 colours (tests/frontend/theme_k.test.mjs). */
   --tag-ink-base: #ffffff;
   --tag-ink-share: 40%;
@@ -59,7 +59,7 @@
     --on-fill: #ffffff;
     --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.05);
     --tag-ink-base: #000000;
-    --tag-ink-share: 75%;
+    --tag-ink-share: 70%;
   }
 }
 
@@ -106,18 +106,18 @@ html[data-theme="light"] {
   --on-fill: #ffffff;
   --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 14px rgba(15, 23, 42, 0.05);
   --tag-ink-base: #000000;
-  --tag-ink-share: 75%;
+  --tag-ink-share: 70%;
 }
 
 /* --- Shape: the same in both themes ---------------------------------------------------------------------------------- */
 :root {
   --r-control: 8px;            /* a button, a field, a menu, a dialog, a segmented control */
   --r-card: 10px;              /* a card of the list page */
-  --tag-fill-share: 14%;
-  --tag-edge-share: 28%;
+  --tag-fill-share: 32%;
+  --tag-edge-share: 65%;
   --on-danger: #ffffff;        /* the text on --danger-fill: white in both themes (4.8:1) */
 }
 
 /* --- Shared components: the same rules for every page, no change of layout -------------------------------------------------- */
-.btn:not(.btn--tb), .input, .seg, .menu, .dialog, .list-select, .list-actions .btn--tb { border-radius: var(--r-control); }
+.btn:not(.btn--tb), .input, .seg, .menu, .dialog, .selector, .list-new { border-radius: var(--r-control); }
 .btn--danger, .panel__status { color: var(--on-danger); }

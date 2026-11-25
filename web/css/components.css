@@ -272,6 +272,50 @@ input.toggle:checked::before { background: var(--toggle-thumb-on); transform: tr
 .menu__sep { height: 1px; margin: var(--space-4) 0; background: var(--border); }
 .menu__label { padding: var(--space-4) var(--space-12); color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-semibold); letter-spacing: var(--ls-eyebrow); text-transform: uppercase; }
 
+/* The selector and its joined menu follow the host selector of ClickHouse Dash and the switcher of Stowr: the button shows the chosen value; when the
+   menu is open, the button loses its bottom edge and the menu touches it, so the two make one shape. A line of the menu is 35 px high; the chosen
+   line has the selected fill, its edge and a check mark at the right; a count or another short fact is at the right too, in the muted colour. The
+   sort and the tag filter of the list page and the selector of the header use it (9.6, 9.7). */
+.selector {
+  display: flex; align-items: center; gap: 0; min-width: 0; height: var(--control-h); padding: 0 var(--space-8);
+  border: 1px solid var(--border-strong); background: var(--input-bg); color: var(--muted);
+  font-size: var(--fs-md); line-height: 22px; text-align: left; cursor: pointer;
+}
+.selector:hover:not(:disabled) { border-color: var(--control-border-hover); }
+.selector:disabled { opacity: 0.6; cursor: default; }
+.selector:focus-visible { outline-offset: 0; }
+.selector.is-joined-open, .selector.is-joined-open:hover:not(:disabled) {
+  position: relative; border-color: var(--border-strong); border-bottom-color: transparent; border-bottom-left-radius: 0; border-bottom-right-radius: 0;
+  background: var(--surface-menu);
+}
+.selector.is-joined-open > .icon:last-child { transform: rotate(180deg); }
+.selector > .icon:last-child { flex: none; margin-left: auto; transition: transform var(--dur-base) var(--ease); }
+.selector__text { flex: 1; min-width: 0; margin: 0 var(--space-4) 0 var(--space-6); overflow: hidden; color: var(--text); text-overflow: ellipsis; white-space: nowrap; }
+.selector__text--placeholder { color: var(--muted); }
+
+.menu--joined {
+  max-width: min(480px, calc(100vw - 2 * var(--space-8))); max-height: min(70vh, 520px); overflow: hidden auto;
+  border-top: 0; border-radius: 0 0 var(--r-lg) var(--r-lg);
+}
+.menu--joined .menu__item {
+  position: relative; min-width: 0; min-height: 35px; padding: var(--space-8) var(--space-40) var(--space-8) var(--space-12);
+  border: 1px solid transparent; border-radius: var(--r-md); font-size: var(--fs-sm); font-weight: var(--fw-semibold);
+}
+.menu--joined .menu__item[aria-checked="true"], .menu--joined .menu__item.is-current { border-color: var(--selected-edge); background: var(--selected-bg); box-shadow: none; }
+.menu__text { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.menu__meta { flex: none; color: var(--muted); font-variant-numeric: tabular-nums; }
+.menu__check { position: absolute; top: 50%; right: 0.85rem; display: inline-flex; transform: translateY(-50%); }
+.menu--joined .menu__check .icon { color: var(--text); }
+
+/* A group of the menu opens and closes the list under it (an accordion, as the hosts of the switcher of Stowr): a chevron that turns, the
+   folder icon and the name. The list under it is indented by the width of the chevron. */
+.menu__group { padding-right: var(--space-12); }
+.menu__chevron { display: inline-flex; flex: none; color: var(--muted); transition: transform var(--dur-base) var(--ease); }
+.menu__group[aria-expanded="true"] .menu__chevron { transform: rotate(90deg); }
+.menu__children { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); padding-left: var(--space-16); }
+.menu__children[hidden] { display: none; }
+@media (prefers-reduced-motion: reduce) { .selector > .icon:last-child, .menu__chevron { transition: none; } }
+
 /* --- Dialogs ---------------------------------------------------------------------------------------------------------- */
 
 /* A modal as in Grafana: 500 px wide, 10 % from the top of the window, a radius of 10, no line under the title (18 px), a body with 24 px
@@ -371,11 +415,8 @@ input.toggle:checked::before { background: var(--toggle-thumb-on); transform: tr
 
 /* --- The theme selector (header) and the variables row of the dashboard ------------------------------------------------- */
 
-/* The theme selector of the header (9.25). It has the structure and the motion of the selector of ClickHouse Dash: an icon button that
-   shows the choice, and a menu of three icon options that hangs from it, joined to it (the button loses its lower corners and its lower
-   border while the menu is open). The menu opens with a move of 6 px and a fade of --dur-base (160 ms); it closes the same way. */
-.theme-select { position: relative; display: inline-flex; }
-.theme-select__button { width: var(--tb-icon-w, 36px); padding: 0; color: var(--muted); transition: border-radius var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease), color var(--dur-quick) var(--ease), background-color var(--dur-quick) var(--ease); }
+/* The theme button of the header (9.25): one icon button that shows the choice. A click goes to the next choice (System, Dark, Light). */
+.theme-select__button { width: var(--tb-icon-w, 36px); padding: 0; color: var(--muted); transition: color var(--dur-quick) var(--ease), background-color var(--dur-quick) var(--ease), border-color var(--dur-quick) var(--ease); }
 .theme-select__button:hover, .theme-select__button:focus-visible { color: var(--text); }
 .theme-select__current { display: inline-flex; }
 /* The button holds the three icons; the one of the choice shows. boot_theme.js sets data-theme-choice before the first paint. */
@@ -383,31 +424,6 @@ input.toggle:checked::before { background: var(--toggle-thumb-on); transform: tr
 html:not([data-theme-choice="dark"], [data-theme-choice="light"]) .theme-select__current > .theme-icon--system,
 html[data-theme-choice="dark"] .theme-select__current > .theme-icon--dark,
 html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { display: block; }
-.theme-select__menu {
-  position: absolute; z-index: var(--z-dropdown); top: 100%; left: 0; width: 100%; box-sizing: border-box; margin-top: -1px;
-  display: grid; justify-items: center; gap: var(--space-2); padding: var(--space-4) 0;
-  border: 1px solid var(--border-strong); border-top: 0; border-radius: 0 0 var(--r-md) var(--r-md);
-  background: var(--surface-menu); box-shadow: var(--shadow-menu);
-  transform-origin: top center; will-change: transform, opacity;
-  opacity: 0; transform: translateY(-6px) scaleY(0.98); visibility: hidden; pointer-events: none;
-  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease), visibility 0s linear var(--dur-base);
-}
-.theme-select--open .theme-select__menu { opacity: 1; transform: none; visibility: visible; pointer-events: auto; transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease), visibility 0s; }
-.theme-select--open .theme-select__button, .theme-select--closing .theme-select__button {
-  border-bottom-color: transparent; border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-color: var(--border-strong); background: var(--surface-menu); color: var(--text);
-}
-.theme-select--closing .theme-select__button { border-bottom-color: transparent; }
-.theme-select__option {
-  display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0;
-  border: 1px solid transparent; border-radius: var(--r-md); background: transparent; color: var(--muted); cursor: pointer;
-  transition: background-color var(--dur-quick) var(--ease), color var(--dur-quick) var(--ease), border-color var(--dur-quick) var(--ease);
-}
-.theme-select__option:hover, .theme-select__option:focus-visible { background: var(--menu-item-hover); color: var(--text); }
-.theme-select__option[aria-selected="true"] { border-color: var(--selected-edge); background: var(--selected-bg); color: var(--text); }
-.theme-select__option:focus-visible { outline-offset: -2px; }
-@media (prefers-reduced-motion: reduce) {
-  .theme-select__menu { transition: none; transform: none; }
-}
 
 /* The row of the variables, under the header: the controls of the page are in the header (9.6, 9.9). It sticks under the header with the
    page colour (it scrolls away on a phone, and in the editor views). It reaches the edges of the page. A dashboard with no variable has no row. */
@@ -439,7 +455,7 @@ html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { di
    Up to 1100 px: the range button 156 px, the switch 44 px (the label hides), Save is an icon of 36 px.
    Up to 900 px the shift buttons and the zoom out are in the menu, and "Add" is an icon of 36 px. Up to 768 px the range button is 52 px
    (the clock and the chevron). Up to 640 px "Revert" is in the menu. Up to 560 px the time control, the switch and "Add" are smaller. Up to
-   480 px (a phone) the icon buttons are 32 px. The edit buttons are at the left of the time control and take room from the crumbs only. */
+   480 px (a phone) the icon buttons are 32 px. The edit buttons are at the left of the time control and take room from the selector only. */
 #app-header { --tb-range-w: 220px; --tb-edit-w: 76px; --tb-add-w: 68px; --tb-addmenu-w: 28px; --tb-icon-w: 36px; --tb-int-w: 58px; }
 .picker__run { width: var(--tb-icon-w); padding: 0; }
 .picker__run .btn__label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -486,7 +502,7 @@ html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { di
   .picker--time .picker__chevron { margin-left: var(--space-2); }
 }
 /* Up to 900 px the shift buttons and the zoom out hide: the menu "More actions" has them. The range button gets round left corners. The edit
-   group takes its room from the crumbs, so the header needs this room. */
+   group takes its room from the selector, so the header needs this room. */
 @media (max-width: 900px) {
   .picker--time > .btn--tb-nav, .picker--time > [data-testid="zoom-out"] { display: none; }
   .picker--time > .picker__button { border-top-left-radius: var(--r-md); border-bottom-left-radius: var(--r-md); }
@@ -501,7 +517,7 @@ html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { di
 @media (max-width: 640px) {
   .edit-revert { display: none; }
 }
-/* Up to 560 px (STEPS.compactMax) the time control, the switch and "Add" are smaller, so the crumbs keep room in edit mode. The interval
+/* Up to 560 px (STEPS.compactMax) the time control, the switch and "Add" are smaller, so the selector keeps room in edit mode. The interval
    shows its chevron only (the colour of the accent shows an interval). The sizes of the icon buttons stay for the list page and the theme. */
 @media (max-width: 560px) {
   #app-header { --tb-range-w: 40px; --tb-edit-w: 36px; --tb-addmenu-w: 20px; --tb-int-w: 28px; }
@@ -588,16 +604,13 @@ html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { di
 .select__typed-error { margin: 0 var(--space-8) var(--space-4); font-size: var(--fs-sm); overflow-wrap: anywhere; }
 
 /* --- The view of one panel (9.8) ---------------------------------------------------------------------------------------------
-   The panel starts under the toolbar row (as in Grafana: no row of its own for "Back") and ends 16 px above the window edge.
-   The way back is the crumb of the dashboard in the header, and Escape. The view gets the focus without a ring. */
+   The panel starts under the toolbar row (as in Grafana: no row of its own for "Back") and ends 16 px above the window edge: the page padding is above and under it, so the page has no scrollbar.
+   The way back is the arrow before the selector in the header, and Escape. The view gets the focus without a ring. */
 
 /* --view-toolbar-h is the height of the row of the variables (0 without a variable): dashboard.js measures it and sets it on the view. */
 .view-panel { --view-toolbar-h: 0px; }
-.view-panel .panel--view { height: max(var(--view-min-h), calc(100vh - var(--header-h) - var(--view-toolbar-h) - var(--page-pad))); height: max(var(--view-min-h), calc(100dvh - var(--header-h) - var(--view-toolbar-h) - var(--page-pad))); }
+.view-panel .panel--view { height: max(var(--view-min-h), calc(100vh - var(--header-h) - var(--view-toolbar-h) - var(--page-pad) * 2)); height: max(var(--view-min-h), calc(100dvh - var(--header-h) - var(--view-toolbar-h) - var(--page-pad) * 2)); }
 .view-panel:focus { outline: 0; }
-/* The button "Back to dashboard" of the view of one panel is in the header row. It shows only where the header hides the crumb of the dashboard (under 481 px). */
-.dash-toolbar__back { display: none; }
-@media (max-width: 480px) { .dash-toolbar__back { display: inline-flex; } }
 
 /* --- Table of the view data dialog ------------------------------------------------------------------------------------ */
 

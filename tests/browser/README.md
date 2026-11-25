@@ -1,6 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B228 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 217 cases.
+This suite runs the browser cases B01 to B233 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 222 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -140,7 +140,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/home.mjs` | The cases B28 to B35: the entry redirect of the list page (9.7). B34 tests `q` as a tag filter. |
 | `cases/entry_one.mjs` | The case B214: the entry redirect in mode `authzen`, with the list of the display filter (9.7, 11.25). |
 | `cases/features_f1.mjs` | The cases B36 to B42: the first set of Grafana-parity features. |
-| `cases/editor_drag.mjs` | The case B43: drag and resize in edit mode (10.5a). |
+| `cases/editor_drag.mjs` | The cases B43 and B229: drag and resize in edit mode (10.5a), and what the edit mode leaves on the frames (10.16). |
 | `cases/pgsource.mjs` | The cases B44 and B45: the PostgreSQL source in the page. |
 | `cases/states.mjs` | The cases B72 to B79 and B87 to B89: the states of the page and their transitions (10.2a). |
 | `cases/inspect.mjs` | The case B46: the item "Inspect" and the key `server.query_inspect` (9.11). |
@@ -150,12 +150,13 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/var_panel.mjs` | The cases B80 to B86: the placement of a variable in the grid (4.7a, 9.10). |
 | `cases/theme_k.mjs` | The case B91: the colour theme of the chrome (9.25, 9.26). |
 | `cases/picker_k.mjs` | The case B92: the time range picker of ClickHouse Dash (9.9). |
-| `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13 and B24 to B27: the viewer, the list (cards, tags, no search field) and the base path. |
-| `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the buttons of a card and the read-only card (9.7). |
-| `cases/editor_a.mjs`, `cases/editor_b.mjs` | The cases B16 to B22: the editor, conflict, history, import and export, delete, no editing. |
+| `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13, B24 to B27 and B233: the viewer, the page of one panel without a scrollbar, the list (cards, tags, no search field) and the base path. |
+| `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the three dots and the menu of a card, and the read-only card (9.7). |
+| `cases/json_view.mjs` | The case B240: the JSON view of the edit mode, its colours and their contrast, the marks of the gutter, the revert, the full height at four sizes and the caps of the colour layer |
+| `cases/editor_a.mjs`, `cases/editor_b.mjs` | The cases B16 to B22 and B230: the editor, conflict, history, import and export, delete, no editing, the id of a new folder. |
 | `cases/misc.mjs` | The cases B14 and B15: the scripted accessibility audit. |
 | `cases/authzen.mjs` | The case B23: the mode `authzen` with `fake-pdp`. |
-| `cases/shell.mjs` | The cases B49 to B54: the header bar, the theme selector and the version line. |
+| `cases/shell.mjs` | The cases B49 to B54: the header bar, the theme button and the version line. |
 | `cases/zoom.mjs`, `cases/flash.mjs` | The case B55 (browser zoom), and the cases B58 and B59 (one stable render, fixed button sizes). |
 | `cases/editor_fix.mjs` | The cases B56 and B57: fixes of the query editor. |
 | `cases/charts_axes.mjs`, `cases/charts_colors.mjs`, `cases/charts_zone.mjs` | The cases B60 to B63: the y axes, the series style, the colour modes and the zone names. |
@@ -174,6 +175,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/editor_options_a.mjs`, `cases/editor_options_b.mjs`, `cases/editor_options_c.mjs` | The cases B200 to B206: the option forms of the data types (F43). |
 | `cases/edit_flash.mjs` | The case B207: the charts stay painted across the switch "Edit", the panel editor, "Back" and "Forward" (10.2a, rule 17). |
 | `cases/section_expand.mjs` | The case B210: the charts of a section draw in the task that expands it (9.8, 10.2a, rule 17). |
+| `cases/time_defaults.mjs` | The cases B231 and B232: the range and the refresh that a person sets in edit mode stay after it, and the Save dialog offers them as the defaults (10.9). |
 | `cases/url_time.mjs` | The case B212: a link of Grafana 12 with an ISO range and `timezone` opens with that range and that zone (9.5). |
 | `cases/adhoc.mjs` | The cases B218 and B219: the ad hoc filters of an `adhoc` variable, the bar control, the address of Grafana and the refusals (9.10a). A server of the case has `adhoc_columns` (option `chLines` of `startServer`). |
 | `cases/units_h.mjs` | The case B215: the added units in a stat and in a table, with the texts of Grafana 12.4.2 (4.20, 9.15). |

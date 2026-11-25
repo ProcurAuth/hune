@@ -9,8 +9,12 @@ import { renderDiff } from "./diff_view.js";
 import { makeSaveId, makeUid } from "./draft.js";
 import { scanJson } from "./json_check.js";
 import { isGrafanaFile } from "./save_logic.js";
+import { folderIdFromTitle, folderIdWithSuffix } from "./folder_id.js";
 
 const fill = (b) => crypto.getRandomValues(b);
+
+// The value of the entry "New folder..." of the folder select. A folder id has letters, digits and "-" only, so it never equals this value.
+const NEW_FOLDER = "::new-folder::";
 
 const errorText = (error) => {
   const list = error.extra && error.extra.errors;
@@ -21,7 +25,9 @@ const errorText = (error) => {
 export async function importDialog(ctx, replace = null) {
   ensureCss();
   const folders = ((ctx.folders || (await api.folders()).items || [])).filter((f) => f.access && f.access.write);
-  if (!folders.length) {
+  // A person who can create a folder makes one in the dialog (the entry "New folder..."), so a store with no folder can still take an import.
+  const canCreateFolder = ctx.canCreateFolder === true;
+  if (!folders.length && !canCreateFolder) {
     notify({ level: "warning", text: "No folder accepts a dashboard." });
     return;
   }
@@ -44,7 +50,37 @@ export async function importDialog(ctx, replace = null) {
     file.files = dropped;
     file.dispatchEvent(new Event("change", { bubbles: true }));
   });
-  const select = el("select", { class: "input", "aria-label": "Folder", dataset: { testid: "import-folder" } }, ...folders.map((f) => el("option", { value: f.id, text: f.title })));
+  const select = el("select", { class: "input", "aria-label": "Folder", dataset: { testid: "import-folder" } },
+    ...folders.map((f) => el("option", { value: f.id, text: f.title })),
+    ...(canCreateFolder ? [el("option", { value: NEW_FOLDER, text: "New folder..." })] : []));
+  const newTitle = el("input", { class: "input", type: "text", "aria-label": "Title of the new folder", placeholder: "Title of the new folder", hidden: true, dataset: { testid: "import-new-folder-title" } });
+  select.addEventListener("change", () => {
+    newTitle.hidden = select.value !== NEW_FOLDER;
+    if (!newTitle.hidden) newTitle.focus();
+  });
+  // The id of the folder that the dialog made. A second try after a refusal of the dashboard uses it again: no second folder.
+  let madeFolder = null;
+  // The folder for the dashboard: the chosen id, or a new folder made from the title (the id follows the title, as in the dialog "New folder").
+  async function targetFolder() {
+    if (select.value !== NEW_FOLDER) return select.value;
+    if (madeFolder && madeFolder.title === newTitle.value.trim()) return madeFolder.id;
+    const title = newTitle.value.trim();
+    if (!title || [...title].length > 256) throw Object.assign(new Error("The title of the new folder is necessary and has 256 characters at most."), { code: "bad_title" });
+    let id = folderIdFromTitle(title, fill);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        await editorRoutes.createFolder({ id, title });
+        madeFolder = { id, title };
+        return id;
+      } catch (error) {
+        if (error.code !== "already_exists" || attempt === 2) throw error;
+        id = folderIdWithSuffix(id, fill);
+      }
+    }
+    return id;
+  }
+  // The folder that the check of a file uses. A new folder does not exist yet: the check uses the first folder that takes a dashboard, or none.
+  const folderForCheck = () => (select.value === NEW_FOLDER ? (folders[0] ? folders[0].id : null) : select.value);
   const info = el("span", { class: "field__hint", text: "A JSON file saved from a Hune dashboard. Grafana files use the command hune import-grafana." });
   const errors = el("div", { class: "errors", role: "alert", hidden: true, dataset: { testid: "import-errors" } });
   const choices = el("span", { class: "import__choices" });
@@ -69,7 +105,8 @@ export async function importDialog(ctx, replace = null) {
 
   async function createNew(doc, from403 = false) {
     try {
-      const answer = await editorRoutes.createDashboard({ folder: select.value, message: "", document: doc }, makeSaveId(fill));
+      const folder = await targetFolder();
+      const answer = await editorRoutes.createDashboard({ folder, message: "", document: doc }, makeSaveId(fill));
       dialog.close();
       ctx.navigate(dashboardPath(answer.uid, doc.title));
     } catch (error) {
@@ -82,7 +119,8 @@ export async function importDialog(ctx, replace = null) {
     const doc = structuredClone(value);
     doc.uid = makeUid(fill);
     try {
-      await editorRoutes.validateDocument({ folder: select.value }, JSON.stringify(doc));
+      const check = folderForCheck();
+      if (check !== null) await editorRoutes.validateDocument({ folder: check }, JSON.stringify(doc));
     } catch (error) {
       fail([errorText(error)]);
       return;
@@ -156,8 +194,8 @@ export async function importDialog(ctx, replace = null) {
     if (replace && value.uid !== replace.uid) return fail([`The file has the uid ${value.uid}, but this row is ${replace.uid}.`]);
     info.textContent = `Uid of the document: ${value.uid}`;
     try {
-      const answer = await editorRoutes.validateDocument({ folder: select.value }, text);
-      canonical = answer.canonical;
+      const check = folderForCheck();
+      canonical = check === null ? text : (await editorRoutes.validateDocument({ folder: check }, text)).canonical;
     } catch (error) {
       return fail(errorText(error).split(/(?<=\.) /));
     }
@@ -169,7 +207,7 @@ export async function importDialog(ctx, replace = null) {
     title: replace ? `Replace the dashboard ${replace.uid}` : "Import a dashboard",
     testid: "import-dialog",
     buttons: [{ label: "Cancel" }],
-    build: (body) => body.append(el("div", { class: "field" }, el("span", { class: "field__label", text: "JSON file" }), picker, info), labelled("Folder", select), errors, diffHost),
+    build: (body) => body.append(el("div", { class: "field" }, el("span", { class: "field__label", text: "JSON file" }), picker, info), labelled("Folder", el("span", { class: "import__folder" }, select, newTitle)), errors, diffHost),
   });
   // The choices sit in the footer after Cancel: the action is last (design system 6.7).
   resetChoices();

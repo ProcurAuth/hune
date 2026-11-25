@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser cases B19, B20, B21, B22 (16.10): conflict, history, import and export, delete, no editing.
+// Browser cases B19, B20, B21, B22 and B230 (16.10): conflict, history, import and export, delete, no editing, the id of a new folder.
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawnSync } from "node:child_process";
-import { BINARY, WORK, seedDocument } from "../lib/env.mjs";
+import { BINARY, SEED_FROM, SEED_TO, WORK, seedDocument } from "../lib/env.mjs";
 import { backToDashboard, draftOf, enterEdit, makeSeed, saveDialog, setFiles, setPanelTitle, waitDraft, waitNotice, moreItem } from "../lib/ed.mjs";
 import { sleep, waitPanelsReady } from "../lib/h.mjs";
 
@@ -33,13 +33,20 @@ async function waitSaved(p) {
   await p.waitFor(`document.querySelector('[data-testid="edit-bar"]') === null`, { what: "edit mode left after the save" });
 }
 
+// The action "Import" is an item of the menu New of the header (9.7).
+const openImport = async (p) => {
+  await p.click(p.tid("list-new-menu"));
+  await p.click(p.tid("import"));
+};
+
 export const cases = [
   {
     id: "B19",
     name: "conflict: a second context saves first; the screen has a line diff and three choices, each with its result",
     async run(t) {
       const uid = "ed19";
-      await makeSeed(t, uid);
+      // The default range is the range of the address of `t.dash`: the button Save is active when the range differs from the default (10.9).
+      await makeSeed(t, uid, (d) => { d.time = { ...d.time, from: String(SEED_FROM), to: String(SEED_TO) }; });
       const A = await editor(t, uid, "Mine 1");
       const B = await editor(t, uid, "Theirs 1");
       await saveDialog(B, "their change");
@@ -229,7 +236,7 @@ export const cases = [
       const doc = seedDocument("imp21", "Imported");
       const file1 = join(tmp, "imp21.json");
       writeFileSync(file1, JSON.stringify(doc, null, 4) + "\n"); // not the canonical bytes
-      await p.click(p.tid("import"));
+      await openImport(p);
       await p.waitSel(p.tid("import-dialog"));
       await setFiles(p, '[data-testid="import-file"]', [file1]);
       await p.waitSel(p.tid("import-create"));
@@ -246,7 +253,7 @@ export const cases = [
       writeFileSync(file2, JSON.stringify(doc, null, 2));
       await p.goto(t.url(""));
       await p.idle();
-      await p.click(p.tid("import"));
+      await openImport(p);
       await setFiles(p, '[data-testid="import-file"]', [file2]);
       await p.waitSel(p.tid("import-replace"));
       t.eq(await p.exists(p.tid("import-new")), true, "second choice");
@@ -259,7 +266,7 @@ export const cases = [
       t.assert(list[0].uid !== "imp21" && /^[a-z0-9]{14}$/.test(list[0].uid), "uid of 14 characters: " + list[0].uid);
       await p.goto(t.url(""));
       await p.idle();
-      await p.click(p.tid("import"));
+      await openImport(p);
       await setFiles(p, '[data-testid="import-file"]', [file2]);
       await p.waitSel(p.tid("import-replace"));
       await p.click(p.tid("import-replace"));
@@ -275,7 +282,7 @@ export const cases = [
       await p.goto(t.url(""));
       await p.idle();
       t.allow(p, /Failed to load resource/);
-      await p.click(p.tid("import"));
+      await openImport(p);
       await setFiles(p, '[data-testid="import-file"]', [file3]);
       await p.waitFor(`!document.querySelector('[data-testid="import-errors"]').hidden`, { what: "errors" });
       t.assert((await p.text(p.tid("import-errors"))).includes("/sections/1/panels/0/grid"), "pointer in the error text: " + (await p.text(p.tid("import-errors"))));
@@ -339,9 +346,7 @@ export const cases = [
       const p = await t.open(t.url(""));
       for (const id of ["new-dashboard", "import", "new-folder"]) t.eq(await p.exists(p.tid(id)), false, `no ${id}`);
       t.eq(await p.count('.group__head button[aria-haspopup="menu"]'), 0, "no folder menu");
-      await p.click(p.tid("row-menu-nodes"));
-      t.eq(await p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent)`), ["Export"], "row menu holds Export only");
-      await p.press("Escape");
+      t.eq(await p.exists(p.tid("row-menu-nodes")), false, "a card that cannot be edited has no three dots");
       await p.click(p.tid("row-menu-grid-errors"));
       t.eq(await p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent)`), ["Download"], "invalid row menu: Download only, no Replace");
       await p.press("Escape");
@@ -370,6 +375,60 @@ export const cases = [
       t.eq([folderW.status, folderW.json.error.code], [403, "editing_disabled"], "folder write refused");
       void backToDashboard;
       void sleep;
+    },
+  },
+  {
+    id: "B230",
+    name: "a new folder: the dialog asks for a title only and the page makes the id from it, with a short suffix when the id exists; the import makes a folder on the fly (10.7, 10.12)",
+    async run(t) {
+      const tmp = join(WORK, "tmp230");
+      mkdirSync(tmp, { recursive: true });
+      await makeSeed(t, "fid230");
+      const p = await t.open(t.url(""));
+      // The two answers that the page expects: 409 for a folder id that exists (it tries again with a suffix), 404 for the uid of an import (it checks if it exists).
+      t.allow(p, /Failed to load resource: the server responded with a status of (409|404)/);
+      await p.waitSel(p.tid("list-new-menu"));
+      const folders = () => p.eval(`fetch("/api/folders").then((r) => r.json()).then((j) => j.items.map((f) => f.id + "|" + f.title))`);
+      // The dialog "New folder" has one field, the title. The id follows the title: no accent, one dash for each run of other characters.
+      const makeFolder = async (title) => {
+        await p.click(p.tid("list-new-menu"));
+        await p.click(p.tid("new-folder"));
+        await p.waitSel(p.tid("new-folder-dialog"));
+        t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="new-folder-dialog"] input, [data-testid="new-folder-dialog"] textarea, [data-testid="new-folder-dialog"] select')].map((e) => e.getAttribute("aria-label"))`), ["Title"], "the dialog has the field Title only");
+        await p.fill(p.tid("folder-title"), title);
+        await p.clickText("dialog button, .dialog button", "Create");
+        await p.waitGone(p.tid("new-folder-dialog"));
+        await p.idle();
+      };
+      await makeFolder("Équipe réseau");
+      t.assert((await folders()).includes("equipe-reseau|Équipe réseau"), "the id is made from the title: " + JSON.stringify(await folders()));
+      // The same title again: the id exists, so the page adds a dash and four characters, and the folder has the same title.
+      await makeFolder("Équipe réseau");
+      const again = (await folders()).filter((f) => f.endsWith("|Équipe réseau"));
+      t.eq(again.length, 2, "two folders have the title: " + JSON.stringify(again));
+      t.assert(again.some((f) => /^equipe-reseau-[a-z0-9]{4}\|/.test(f)), "the second id has a short suffix: " + JSON.stringify(again));
+      // A title with no letter and no digit gives folder- and four characters.
+      await makeFolder("***");
+      t.assert((await folders()).some((f) => /^folder-[a-z0-9]{4}\|\*\*\*$/.test(f)), "a title of symbols: " + JSON.stringify(await folders()));
+
+      // The import has the entry "New folder..." in the select of the folders: the folder is made when the person chooses "Import".
+      const doc = seedDocument("imp230", "Imported on the fly");
+      const file = join(tmp, "imp230.json");
+      writeFileSync(file, JSON.stringify(doc, null, 2) + "\n");
+      await openImport(p);
+      await p.waitSel(p.tid("import-dialog"));
+      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="import-folder"] option')].pop().textContent`), "New folder...", "the last entry of the select");
+      t.eq(await p.eval(`document.querySelector('[data-testid="import-new-folder-title"]').hidden`), true, "the field of the title is hidden until the entry is chosen");
+      await setFiles(p, '[data-testid="import-file"]', [file]);
+      await p.waitSel(p.tid("import-create"));
+      await p.select(p.tid("import-folder"), "::new-folder::");
+      t.eq(await p.eval(`document.querySelector('[data-testid="import-new-folder-title"]').hidden`), false, "the field of the title shows");
+      await p.fill(p.tid("import-new-folder-title"), "Imported team");
+      await p.click(p.tid("import-create"));
+      await p.waitFor(`location.pathname.startsWith("/d/imp230")`, { what: "dashboard opened" });
+      t.assert((await folders()).includes("imported-team|Imported team"), "the folder was made: " + JSON.stringify(await folders()));
+      const item = await p.eval(`fetch("/api/dashboards").then((r) => r.json()).then((j) => j.items.find((i) => i.uid === "imp230").folder)`);
+      t.eq(item, "imported-team", "the dashboard is in the new folder");
     },
   },
 ];

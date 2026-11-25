@@ -7,11 +7,11 @@ import { dashboardPath } from "../url_state.js";
 import { button, clear, el, notify, openDialog } from "../ui.js";
 import { ensureCss, labelled } from "./form.js";
 import { makeSaveId, makeUid, smallestDocument } from "./draft.js";
+import { folderIdFromTitle, folderIdWithSuffix } from "./folder_id.js";
 import { removeStored } from "./draft_store.js";
 import { deleteRetryIsDone } from "./save_logic.js";
 
 const fill = (b) => crypto.getRandomValues(b);
-const ID_RULE = /^[a-z0-9][a-z0-9-]{0,39}$/;
 
 async function writableFolders(ctx) {
   const list = ctx.folders || (await api.folders()).items || [];
@@ -92,27 +92,29 @@ export async function newDashboard(ctx) {
   });
 }
 
+// The person gives a title. The page makes the id from it (folder_id.js). When the id exists already, the page tries again with a short suffix.
 export function newFolder(ctx) {
-  const id = el("input", { class: "input", type: "text", "aria-label": "Id", "aria-describedby": "folder-id-rule", dataset: { testid: "folder-id" } });
   const title = el("input", { class: "input", type: "text", "aria-label": "Title", dataset: { testid: "folder-title" } });
   actionDialog({
     title: "New folder",
     testid: "new-folder-dialog",
     label: "Create",
-    build: (body) => body.append(
-      labelled("Id", id, el("span", { class: "field__hint", id: "folder-id-rule", text: "Use 1 to 40 characters: lower-case letters, digits and -. Start with a letter or a digit." })),
-      labelled("Title", title)),
+    build: (body) => body.append(labelled("Title", title)),
     run: async () => {
-      if (!ID_RULE.test(id.value)) return "The id does not follow the rule under the field.";
       const t = title.value.trim();
       if (!t || [...t].length > 256) return "The title is necessary and has 256 characters at most.";
-      try {
-        await editorRoutes.createFolder({ id: id.value, title: t });
-        await ctx.reload();
-        return null;
-      } catch (error) {
-        return error.code === "already_exists" ? "A folder with this id exists." : errorText(error);
+      let id = folderIdFromTitle(t, fill);
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          await editorRoutes.createFolder({ id, title: t });
+          await ctx.reload();
+          return null;
+        } catch (error) {
+          if (error.code !== "already_exists" || attempt === 2) return errorText(error);
+          id = folderIdWithSuffix(id, fill);
+        }
       }
+      return null;
     },
   });
 }

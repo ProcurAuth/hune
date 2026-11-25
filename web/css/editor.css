@@ -31,7 +31,7 @@
 
 /* The layout follows the panel editor of Grafana: the row of the variables of the page under the header, the preview, and the options pane
    in the right column from the top of that row down to the window edge, with no gap at the right and at the bottom. The editor has no
-   top bar: the way back is the crumb of the dashboard in the header. The time range and the refresh are in the header (9.6).
+   top bar: the way back is the arrow before the selector in the header. The time range and the refresh are in the header (9.6).
    The editor reaches the header (the negative margin cancels the padding of #app-main) and has its own top padding of --page-pad, the gap
    that every view has under the header. The preview, the row of the variables and the top of the options pane start there. */
 .peditor {
@@ -114,11 +114,39 @@
 .jarea__title { font-weight: var(--fw-semibold); }
 .jarea .jframe { flex: 1 1 auto; min-height: 120px; height: auto; }
 .jframe { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: minmax(0, 1fr); height: clamp(220px, 40dvh, 480px); overflow: hidden; border: 1px solid var(--control-border); border-radius: var(--r-md); background: var(--editor-solid-bg); font-family: var(--font-mono); font-size: var(--fs-md); line-height: 18px; }
-.jframe--tall { height: max(420px, calc(100dvh - var(--header-h) - var(--space-80) - var(--space-64))); }
+/* The JSON view of the edit mode fills the page: its box has the height from the header to the bottom edge of the window, less the padding of the page
+   above and below, and the area takes what the bar and the list of errors leave (the panel editor fills the page in the same way). */
+.jeditor { display: flex; flex-direction: column; height: max(320px, calc(100dvh - var(--header-h) - 2 * var(--page-pad))); min-height: 0; }
+.jeditor > .jframe--tall { flex: 1 1 auto; height: auto; min-height: 160px; }
+.jeditor > .ebar, .jeditor > .errors { flex: none; }
 .jframe:focus-within { border-color: var(--accent-fill); outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
-.jarea__gutter { box-sizing: border-box; min-width: 56px; overflow: hidden; border-right: 1px solid var(--border); color: var(--muted); text-align: right; letter-spacing: 0; user-select: none; }
+.jarea__gutter { position: relative; box-sizing: border-box; min-width: 56px; overflow: hidden; border-right: 1px solid var(--border); color: var(--muted); text-align: right; letter-spacing: 0; user-select: none; }
 .jarea__nums { margin: 0; padding: var(--space-8) var(--space-8) var(--space-8) var(--space-10); font: inherit; line-height: inherit; letter-spacing: inherit; will-change: transform; }
-.jarea__input { min-width: 0; margin: 0; padding: var(--space-8) var(--space-10); border: 0; background: transparent; color: var(--text); font: inherit; line-height: inherit; outline: none; overflow: auto; resize: none; tab-size: 2; white-space: pre; }
+/* The marks of the gutter: a bar of 3 px at its left edge for each run of added lines (green) and of modified lines (blue), a small arrow at the border
+   where lines are gone (red), and a red band under the number of the line of a syntax error. They move with the numbers. */
+.jarea__marks { position: absolute; top: 0; right: 0; left: 0; height: 0; pointer-events: none; will-change: transform; }
+.jarea__mark { position: absolute; left: 0; width: 3px; }
+.jarea__mark--added { background: var(--success); }
+.jarea__mark--modified { background: var(--accent-fill); }
+.jarea__mark--deleted { width: 0; height: 0; margin-top: -4px; border: 4px solid transparent; border-right-width: 0; border-left: 6px solid var(--danger); }
+.jarea__mark--error { right: 0; width: auto; background: var(--danger-bg); }
+/* The two layers of the JSON area share the text metrics of the SQL area (10.3): the text area and the layer must draw each glyph at the same place.
+   The text area is transparent. The layer shows the colours and does not scroll by itself: the script moves its content from the scroll position of the
+   text area. The text area keeps the selection, the caret and the scroll bars. */
+.jarea__body { position: relative; min-width: 0; overflow: hidden; }
+.jarea__hl, .jarea__input { position: absolute; inset: 0; box-sizing: border-box; margin: 0; padding: var(--space-8) var(--space-10); border: 0; font: inherit; line-height: inherit; letter-spacing: 0; word-spacing: 0; text-indent: 0; text-transform: none; text-align: left; direction: ltr; unicode-bidi: normal; text-rendering: auto; font-kerning: none; font-variant-ligatures: none; font-feature-settings: normal; font-variation-settings: normal; font-synthesis: none; -webkit-text-size-adjust: 100%; tab-size: 2; white-space: pre; word-break: normal; overflow-wrap: normal; hyphens: none; }
+.jarea__hl { overflow: hidden; pointer-events: none; color: var(--text); }
+.jarea__hl-in { position: absolute; top: var(--space-8); left: var(--space-10); width: max-content; will-change: transform; }
+.jarea__code { font: inherit; letter-spacing: inherit; }
+.jarea__input { overflow: auto; resize: none; background: transparent; color: transparent; caret-color: var(--text); outline: none; }
+.jarea__input::selection { background: var(--selected-bg); }
+/* The colours are the tokens of the SQL colours (the copied tokens of ClickHouse Dash), so both editors share one palette in both themes. */
+.jt-key { color: var(--sql-keyword); }
+.jt-str { color: var(--sql-string); }
+.jt-num { color: var(--sql-number); }
+.jt-bool { color: var(--sql-function); }
+.jt-null { color: var(--sql-null); }
+.jt-punct { color: var(--muted); }
 .psummary { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-16) 0 0; }
 .psummary__hint { margin: 0; color: var(--muted); }
 .psummary__list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--space-8) var(--space-16); margin: 0; }
@@ -346,7 +374,12 @@ td.history__size::after { content: " B"; color: var(--muted); }
 .dialog__body textarea.input { width: 100%; }
 .save-status { margin-top: var(--space-8); color: var(--muted); font-size: var(--fs-sm); }
 .save-status:empty { display: none; }
+/* The two options of the default time range and the default refresh (10.9): under the message, each with its hint. They show only when a value differs. */
+.save-defaults { display: flex; flex-direction: column; gap: var(--space-12); margin-top: var(--space-16); }
+.save-defaults[hidden] { display: none; }
 .import__choices { display: inline-flex; flex-wrap: wrap; gap: var(--space-8); }
+/* The folder field of the import: the select, and under it the title of a new folder when the entry "New folder..." is chosen. */
+.import__folder { display: flex; flex-direction: column; gap: var(--space-8); }
 .dialog__body .filepick, .filepick { position: relative; display: flex; margin: 0; color: var(--text); font-size: var(--fs-md); font-weight: var(--fw-regular); align-items: center; gap: var(--space-8); min-width: 0; cursor: pointer; }
 .filepick--drop { flex-direction: column; justify-content: center; gap: var(--space-4); padding: var(--space-16); border: 1px dashed var(--border-strong); border-radius: var(--r-md); text-align: center; }
 .filepick--drop.is-over, .filepick--drop:hover { background: var(--hover-tint); }
@@ -403,16 +436,16 @@ html[data-theme="light"] .dash { --drag-lift: 11.7%; --drag-edge: 40%; }
 .edit-grid .panel__head { cursor: move; touch-action: none; user-select: none; -webkit-user-select: none; }
 .edit-grid .panel__head :is(button, a, [tabindex]) { cursor: pointer; }
 .edit-grid .panel__head .panel__info { cursor: help; }
-.panel__resize {
+.edit-grid .panel__resize {
   position: absolute; right: -1px; bottom: -1px; z-index: 2; width: 28px; height: 28px;
   cursor: se-resize; touch-action: none; color: color-mix(in srgb, var(--text) 30%, transparent);
 }
-.panel__resize::after {
+.edit-grid .panel__resize::after {
   content: ""; position: absolute; right: 0; bottom: 0; width: 16px; height: 16px; background: currentColor;
   -webkit-mask: var(--resize-icon) center / contain no-repeat; mask: var(--resize-icon) center / contain no-repeat;
   --resize-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M21 15L15 21M21 8L8 21'/%3E%3C/svg%3E");
 }
-.panel__resize:hover { color: var(--text); }
+.edit-grid .panel__resize:hover { color: var(--text); }
 .panel[data-drag] { transition: none; }
 .panel[data-drag="move"] {
   z-index: 3; opacity: 0.8; border-color: var(--border); outline: 1px dashed color-mix(in srgb, var(--text) var(--drag-edge), transparent);
@@ -425,7 +458,7 @@ html[data-theme="light"] .dash { --drag-lift: 11.7%; --drag-edge: 40%; }
   z-index: -1; pointer-events: none; background: color-mix(in srgb, var(--primary) 15%, transparent); box-shadow: 0 0 4px var(--accent-text);
 }
 @media (max-width: 768px) {
-  .panel__resize { display: none; }
+  .edit-grid .panel__resize { display: none; }
   .edit-grid .panel__head { cursor: auto; touch-action: auto; user-select: auto; -webkit-user-select: auto; }
 }
 @media print { .panel__resize, .drag-placeholder { display: none; } }
@@ -504,7 +537,9 @@ html[data-theme="light"] .dash { --drag-lift: 11.7%; --drag-edge: 40%; }
 .settings__form { display: flex; flex-direction: column; gap: var(--space-16); max-width: 640px; }
 .settings__form .input { width: 100%; }
 .settings__warning { color: var(--warning); }
-.settings[data-tab="json"] { max-width: none; }
+.settings[data-tab="json"] { max-width: none; height: max(320px, calc(100dvh - var(--header-h) - 2 * var(--page-pad))); min-height: 0; }
+.settings[data-tab="json"] .settings__body { display: flex; flex: 1 1 auto; flex-direction: column; min-height: 0; }
+.settings[data-tab="json"] .settings__body > .jeditor { flex: 1 1 auto; height: auto; min-height: 0; }
 .vrow { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); }
 .vform { display: flex; flex-direction: column; gap: var(--space-16); }
 .vform__title { margin: 0; font-size: var(--fs-lg); }

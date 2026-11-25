@@ -81,7 +81,7 @@ html[data-hune-hold] body > :not(noscript) { visibility: hidden; }
 :root { --header-base-h: 44px; } /* main.js sets --header-h to the real height of the header */
 
 /* The header is an opaque bar (--header-bg) with a 1 px rule below it (the rule at --border). It is one flex row, in this order: the brand
-   (a small logo, the name and the version line), the crumbs (they take the free room and shorten), the controls of the page, the theme selector
+   (a small logo, the name and the version line), the place of the page (it takes the free room and shortens), the controls of the page, the theme selector
    and the button "More actions" (a dashboard only). The controls have fixed sizes (9.9); the css steps of header_layout.js make them smaller
    on a narrow window, and the narrowest steps move controls into the menu. Nothing wraps and nothing goes to a second row. */
 #app-header {
@@ -94,7 +94,7 @@ html[data-hune-hold] body > :not(noscript) { visibility: hidden; }
 /* The start controls (the sort and the tag filter of the list) follow the brand. The slot has no box when it is empty. */
 .header-start { display: flex; align-items: center; gap: var(--space-8); margin-left: var(--space-8); }
 .header-start:empty { display: none; }
-#app-header > .crumbs { flex: 1 1 0; }
+#app-header > .location { flex: 1 1 0; }
 .header-more { display: flex; }
 .header-more:empty { display: none; }
 
@@ -107,7 +107,7 @@ html[data-hune-hold] body > :not(noscript) { visibility: hidden; }
 }
 #app-notices > * { pointer-events: auto; max-width: 100%; }
 
-/* Header content, in this order: the brand, the crumbs (folder, then dashboard), the controls of the page (the group of the edit mode, the
+/* Header content, in this order: the brand, the place of the page (on a dashboard, the selector of the dashboards), the controls of the page (the group of the edit mode, the
    control of the time and the switch Edit of a dashboard; the search and the actions of the list), the theme selector and the button More actions. */
 .brand {
   display: inline-flex; align-items: center; gap: var(--space-8); flex: 0 0 auto; min-width: 0;
@@ -120,27 +120,22 @@ html[data-hune-hold] body > :not(noscript) { visibility: hidden; }
 .brand__text { display: inline-flex; align-items: baseline; gap: var(--space-6); min-width: 0; }
 .brand__name { line-height: 20px; }
 .brand__version { color: var(--muted); font-size: var(--fs-xs); font-weight: var(--fw-regular); line-height: 16px; white-space: nowrap; font-variant-numeric: tabular-nums; }
-/* Small and discreet: a size of 12 px, a thin chevron between the items, and an ellipsis with the full text in the tooltip. */
-.crumbs { display: flex; align-items: center; gap: var(--space-2); min-width: 0; color: var(--text); font-size: var(--fs-sm); font-weight: var(--fw-regular); line-height: 16px; }
-.crumbs__item { display: inline-flex; align-items: center; min-width: 0; color: inherit; text-decoration: none; }
-.crumbs__item--link { flex-shrink: 3; min-width: 40px; padding: var(--space-2) var(--space-4); border-radius: var(--r-sm); }
-a.crumbs__item:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
-.crumbs__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* The crumbs are the one flexible part of the header (the edit buttons take room from them). When the box is under 150 px the
-   crumb of the folder hides, so the title keeps the room; its text ends with an ellipsis, and its tooltip has the full text. */
-.crumbs { container-type: inline-size; }
-@container (max-width: 149px) {
-  .crumbs__item--link:not(.crumbs__item--back), .crumbs__item--link:not(.crumbs__item--back) + .crumbs__sep, .crumbs > .crumbs__sep:first-child { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+/* The place of the page: on a dashboard, the selector of the dashboards (switcher.js; the look of .selector is in components.css). It is the one
+   flexible part of the header (the edit buttons take room from it): its text ends with an ellipsis and its tooltip has the full title. In the view
+   of a panel and in the panel editor, an arrow before it is the way back, and the name of the view follows it. */
+.location { display: flex; align-items: center; gap: var(--space-8); min-width: 0; color: var(--text); container-type: inline-size; }
+.location .switcher { flex: 0 1 22rem; min-width: 0; max-width: 22rem; }
+.location__back { flex: 0 0 28px; width: 28px; min-width: 0; height: 28px; min-height: 28px; padding: 0; overflow: hidden; }
+/* The button of the selector has a fixed width of 22 rem (less when the place is narrow, 12 rem at least when the place has 240 px or more). Its menu has
+   exactly the width of the button, so the two always agree. Under 100 px the selector and the name of the view hide, and the way back keeps the
+   place (the panel editor on a phone). */
+@container (min-width: 240px) {
+  .location .switcher { min-width: 12rem; }
 }
-/* The back link of the panel editor is the crumb of the dashboard. It has an arrow, and it never hides: under 100 px it is the
-   arrow alone (its name and its tooltip stay), and the last crumb hides. */
-.crumbs__item--back { flex-shrink: 3; min-width: 0; gap: var(--space-4); }
-.crumbs__item--back > .icon { flex: none; }
 @container (max-width: 99px) {
-  .crumbs__item--back .crumbs__text, .crumbs__item--back + .crumbs__sep, .crumbs__item--back ~ .crumbs__item--current { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .location .switcher { display: none; }
+  .location__back { flex-shrink: 1; width: auto; }
 }
-.crumbs__item--current { padding: var(--space-2) var(--space-4); color: var(--muted); font-weight: var(--fw-regular); }
-.crumbs__sep { display: inline-flex; flex: none; color: var(--muted); opacity: 0.7; }
 .header-theme { display: flex; flex: 0 0 auto; }
 
 /* --- Page parts shared by every page ------------------------------------------------------------------------------ */
@@ -201,10 +196,10 @@ a.crumbs__item:hover { color: var(--text); text-decoration: underline; text-unde
 @media (max-width: 640px) {
   .brand__name { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
-/* A narrow phone: the gaps are 4 px, the folder crumb hides, so the title keeps its room. */
+/* A narrow phone: the gaps are 4 px, so the selector keeps its room. */
 @media (max-width: 480px) {
   #app-header { column-gap: var(--space-4); padding: 0 var(--space-8); }
-  .crumbs__item--link:not(.crumbs__item--back), .crumbs__item--link:not(.crumbs__item--back) + .crumbs__sep, .crumbs > .crumbs__sep:first-child { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .location { gap: var(--space-4); }
 }
 
 /* --- Print: a light page with no chrome. The canvas charts keep the colours of the theme at the last draw. ------------- */

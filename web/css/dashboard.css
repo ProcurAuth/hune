@@ -144,21 +144,8 @@
 .panel__error-text { min-height: 0; overflow: auto; overflow-wrap: anywhere; color: var(--text); font-size: var(--fs-sm); user-select: text; }
 .panel__error .btn { flex: 0 0 auto; }
 
-/* Loading: the frame (title bar and box) is the skeleton and has its final size at once. After 300 ms of waiting (panel_frame.js sets the
-   classes) three pulsing dots show in the middle of the body: for a panel that has no content yet (`panel--wait`), and for a panel that
-   refreshes (`panel--progress`), which also dims its earlier content to 60 %. A fast answer changes nothing on the screen.
-   The dots are in an overlay that is out of the flow (absolute, no pointer events, aria-hidden), so nothing moves (9.26). The overlay of an
-   error, of a hint or of a note covers them. The overlay "No data" hides itself while the panel refreshes, so the dots show alone.
-   Reduced motion: no pulse; the dots stay as three still, dimmed dots (9.26). Print: no dots. */
-.panel__loader { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; gap: var(--space-6); pointer-events: none; }
-.panel--progress .panel__loader, .panel--wait .panel__content:empty ~ .panel__loader { display: flex; }
-.panel__loader i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-fill); opacity: 0.6; animation: panel-pulse var(--dur-pulse) ease-in-out infinite; }
-.panel__loader i:nth-child(2) { animation-delay: 0.15s; }
-.panel__loader i:nth-child(3) { animation-delay: 0.3s; }
-@keyframes panel-pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
-@media (prefers-reduced-motion: reduce) { .panel__loader i { animation: none; opacity: 0.6; transform: none; } }
-.panel--progress .panel__content:not(:empty) { opacity: 0.6; }
-.panel--progress .panel__overlay[data-kind="empty"] { visibility: hidden; }
+/* Loading: the frame (title bar and box) has its final size at once. The signs of a wait (the three dots and the preview of the panel type)
+   are in panel-loading.css. */
 
 /* One panel at full size (viewPanel). The height follows the window; the reserve is the header, the page padding, the
    variables bar and the back button. */

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser case B43 (16.10, 10.16): drag and resize of the panels in edit mode, against the real server.
-import { draftOf, enterEdit, makeSeed, saveDialog, waitDraft } from "../lib/ed.mjs";
+// Browser cases B43 and B229 (16.10, 10.16): drag and resize of the panels in edit mode, and what the edit mode leaves on the frames, against the real server.
+import { draftOf, enterEdit, exitEdit, makeSeed, saveDialog, waitDraft } from "../lib/ed.mjs";
 import { sleep, waitPanelsReady } from "../lib/h.mjs";
 
 const mouse = (p, type, x, y) => p.send("Input.dispatchMouseEvent", { type, x, y, button: "left", buttons: type === "mouseReleased" ? 0 : 1, clickCount: 1 });
@@ -93,6 +93,72 @@ export const cases = [
       const saved = await t.api.dashboard(uid);
       const panel = saved.json.document.sections[0].panels.find((x) => x.id === 3);
       t.eq(JSON.stringify(panel.grid), JSON.stringify({ x: 11, y: 0, w: 10, h: 9 }), "the saved document has the new grid");
+    },
+  },
+  {
+    id: "B229",
+    name: "editor: the resize handles, the drag mark and the key shortcuts of a panel are there in edit mode only: none in the view, one for each panel in edit mode, none after the switch goes off or after Discard in the exit dialog, one for each panel after Revert, and again after a new entry (10.16)",
+    async run(t) {
+      const uid = "ed229";
+      await makeSeed(t, uid);
+      const p = await t.open(t.dash(uid));
+      await waitPanelsReady(p, [1, 2, 3]);
+      // What the edit mode puts on a frame: the handle (`.panel__resize`), the mark of the title bar (`data-drag-handle`) and `aria-keyshortcuts`.
+      // The view grid uses the same frames again, so the count covers the whole document.
+      const marks = () => p.eval(`(() => {
+        const handles = [...document.querySelectorAll(".panel__resize")];
+        return {
+          handles: handles.length,
+          visible: handles.filter((e) => e.getBoundingClientRect().width > 0 && getComputedStyle(e).display !== "none").length,
+          dragMarks: document.querySelectorAll("[data-drag-handle]").length,
+          keys: document.querySelectorAll("[aria-keyshortcuts]").length,
+          editGrid: document.querySelectorAll(".edit-grid").length,
+        };
+      })()`);
+      const NONE = { handles: 0, visible: 0, dragMarks: 0, keys: 0, editGrid: 0 };
+      t.eq(await marks(), NONE, "the view has no handle, no drag mark and no key shortcut");
+
+      // Edit mode: one handle, one drag mark and one set of key shortcuts for each panel, and each handle shows.
+      await enterEdit(p);
+      const frames = await p.count('.edit-grid [data-testid^="panel-"][data-state]');
+      t.assert(frames >= 3, `the draft grid has the panels: ${frames}`);
+      t.eq(await marks(), { handles: frames, visible: frames, dragMarks: frames, keys: frames, editGrid: 1 }, "edit mode: one handle, one drag mark and one set of keys for each panel");
+
+      // The switch goes off with no change: the edit mode ends, and nothing stays on the frames of the view.
+      await exitEdit(p);
+      await p.waitFor(`document.querySelector('[data-testid="edit-bar"]') === null && document.querySelector(".edit-grid") === null`, { what: "the edit mode ends" });
+      await p.waitFor(`document.querySelectorAll('[data-testid^="panel-"][data-state]').length >= 3`, { what: "the view frames" });
+      t.eq(await marks(), NONE, "after the switch goes off: no handle, no drag mark and no key shortcut");
+      t.eq(await p.eval(`document.querySelectorAll('[data-testid^="panel-"][data-state] [data-drag-handle], [data-testid^="panel-"][data-state][aria-keyshortcuts]').length`), 0, "the frames of the view have neither the drag mark nor the key shortcuts");
+
+      // A new entry gives them again, one for each panel (no handle is made twice).
+      await enterEdit(p);
+      t.eq(await marks(), { handles: frames, visible: frames, dragMarks: frames, keys: frames, editGrid: 1 }, "a second entry: again one handle for each panel");
+
+      // A change, then the switch off and "Discard" in the exit dialog: the edit mode ends, and nothing stays.
+      const change = async () => {
+        await p.focus(p.tid("panel-3-menu"));
+        await p.press("ArrowLeft", { modifiers: 1 });
+        await p.waitFor(`!document.querySelector('[data-testid="discard-button"]').disabled`, { what: "the draft has a change" });
+      };
+      await change();
+      await exitEdit(p);
+      await p.waitSel(p.tid("exit-dialog"));
+      await p.clickText(`${p.tid("exit-dialog")} button`, "Discard");
+      await p.waitFor(`document.querySelector('[data-testid="edit-bar"]') === null && document.querySelector(".edit-grid") === null`, { what: "the edit mode ends after Discard" });
+      await p.waitFor(`document.querySelectorAll('[data-testid^="panel-"][data-state]').length >= 3`, { what: "the view frames" });
+      t.eq(await marks(), NONE, "after Discard in the exit dialog: no handle, no drag mark and no key shortcut");
+
+      // A third entry, a change, and "Revert all changes": the edit mode goes on, with one handle for each panel and none made twice.
+      await enterEdit(p);
+      await change();
+      await p.click(p.tid("discard-button"));
+      await p.clickText("dialog button, .dialog button", "Discard");
+      await p.waitFor(`document.querySelector('[data-testid="discard-button"]').disabled`, { what: "the draft is reverted" });
+      t.eq(await marks(), { handles: frames, visible: frames, dragMarks: frames, keys: frames, editGrid: 1 }, "after Revert: the edit mode goes on, one handle for each panel");
+      await exitEdit(p);
+      await p.waitFor(`document.querySelector('[data-testid="edit-bar"]') === null && document.querySelector(".edit-grid") === null`, { what: "the edit mode ends after Revert" });
+      t.eq(await marks(), NONE, "after Revert and the switch off: no handle, no drag mark and no key shortcut");
     },
   },
 ];

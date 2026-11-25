@@ -149,7 +149,7 @@ export const cases = [
       t.eq(await oneView(t, p, "panel editor"), { grid: false, panelView: false, editor: true }, "the editor alone");
       t.eq(await focused(p), "panel-editor", "the focus is in the editor region");
       t.eq(await histLen(p), before + 1, "Edit pushes one entry");
-      t.eq([await p.attr(p.tid("editor-back"), "aria-label"), await p.attr(p.tid("editor-back"), "title")], ["Back to panel view", "Back to panel view"], "the name and the tooltip of the back crumb");
+      t.eq([await p.attr(p.tid("editor-back"), "aria-label"), await p.attr(p.tid("editor-back"), "title")], ["Back to panel view", "Back to panel view"], "the name and the tooltip of the way back");
       // Back to panel view: a pop. The history does not grow, Forward shows the editor.
       await clearLog(p);
       await click(p, "editor-back");
@@ -253,7 +253,7 @@ export const cases = [
   },
   {
     id: "B74",
-    name: "the panel view: open, Escape, the crumb, the button at 400 px, View of the shown panel, History, changes of the range (10.2a)",
+    name: "the panel view: open, Escape, the way back, the same arrow at 400 px, View of the shown panel, History, changes of the range (10.2a)",
     async run(t) {
       const uid = "st74";
       await seed(t, uid);
@@ -291,12 +291,12 @@ export const cases = [
       t.eq((await navIndex(p))[0], i1 + 1, "close-view pushes");
       t.eq(await names(p), {}, "no view name");
       t.eq(await focused(p), "panel-2-menu", "the focus returns to the menu button of the panel");
-      // The crumb of the dashboard.
+      // The way back (the arrow before the selector) goes to the dashboard.
       await panelMenuItem(p, 2, "view");
       await waitView(p, "panel-view");
-      await p.eval(`(() => { const links = [...document.querySelectorAll(".crumbs a.crumbs__item--link")]; links[links.length - 1].click(); })()`);
+      await p.eval(`document.querySelector('[data-testid="view-back"]').click()`);
       await waitView(p, "view");
-      // The button at 400 px.
+      // The same arrow at 400 px: it never hides.
       const q = await openPage(t, t.dash(uid, "viewPanel=2"), { width: 400 });
       await waitView(q, "panel-view");
       await q.click(q.tid("view-back"));
@@ -367,11 +367,11 @@ export const cases = [
       await seed(t, uid);
       const p = await openPage(t, t.dash(uid));
       await ready(p);
-      // The walk by controls, with no leave: each step pushes an entry. V, PV, V (the crumb of the dashboard), E, PE, JSON, settings, history.
-      // The crumb of the dashboard in the panel editor is a leave (a pop), so the walk reaches E from the view.
+      // The walk by controls, with no leave: each step pushes an entry. V, PV, V (the way back), E, PE, JSON, settings, history.
+      // The way back in the panel editor is a leave (a pop), so the walk reaches E from the view.
       const steps = [
         () => panelMenuItem(p, 2, "view"),
-        () => p.eval(`(() => { const links = [...document.querySelectorAll(".crumbs a.crumbs__item--link")]; links[links.length - 1].click(); })()`),
+        () => p.eval(`document.querySelector('[data-testid="view-back"]').click()`),
         () => click(p, "edit-toggle"),
         () => panelMenuItem(p, 2, "edit"),
         () => moreItem(p, "json-tab"),
@@ -573,7 +573,7 @@ export const cases = [
   },
   {
     id: "B87",
-    name: "leave warnings: the brand and a crumb ask in each edit state, Back and Forward never ask, Resume from the view and the panel view, Discard of the notice (10.2, 10.8, 10.2a)",
+    name: "leave warnings: the brand and the selector ask in each edit state, Back and Forward never ask, Resume from the view and the panel view, Discard of the notice (10.2, 10.8, 10.2a)",
     async run(t) {
       const uid = "st87";
       await seed(t, uid);
@@ -596,8 +596,10 @@ export const cases = [
         t.eq(await view(p), name, `${name}: the brand link keeps the state until the answer`);
         await p.clickText("dialog .btn", "Stay");
         await p.waitGone("dialog[open]");
-        // The crumb of the folder goes to the list.
-        await p.eval(`document.querySelector(".crumbs a.crumbs__item--link").click()`);
+        // Another dashboard of the selector asks in the same way.
+        await p.click(p.tid("header-switcher"));
+        await p.waitSel('[data-testid="header-switcher-menu"] a.menu__item:not(.is-current)');
+        await p.eval(`document.querySelector('[data-testid="header-switcher-menu"] a.menu__item:not(.is-current)').click()`);
         await p.waitSel(p.tid("exit-dialog"));
         await p.clickText("dialog .btn", "Stay");
         await p.waitGone("dialog[open]");

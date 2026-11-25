@@ -51,8 +51,8 @@ export function createRefreshPicker({ choices = REFRESH_CHOICES, value, onChange
   function paint(v) {
     select.value = v === null || v === undefined ? "off" : v;
     root.classList.toggle("is-active", select.value !== "off");
-    // No interval: the button shows only its chevron, as in Grafana (the name for assistive technology still says "Off").
-    text.textContent = select.value === "off" ? "" : select.value;
+    // No interval: the button shows a dash before its chevron, so it is never empty (the name for assistive technology still says "Off").
+    text.textContent = select.value === "off" ? "-" : select.value;
     interval.setAttribute("aria-label", `Refresh interval: ${select.value === "off" ? "Off" : select.value}`);
   }
   paint(value);

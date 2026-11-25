@@ -26,36 +26,39 @@
 .group__menu { flex: none; width: 24px; min-height: 24px; height: 24px; }
 .group__empty { grid-column: 1 / -1; margin: 0 var(--space-2); }
 
-/* A card: the title on one line with an ellipsis, the note of the last change, then the tags. The title link is stretched over the card.
-   The buttons and the tag chips are siblings of the link, one layer above it. */
+/* A card: a head row with the title on one line (an ellipsis) and the badge of the last change at the right, then the tags. The buttons are at
+   the bottom right. The title link is stretched over the card. The buttons and the tag chips are siblings of the link, one layer above it. */
 .card {
   position: relative; display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; min-height: 92px; padding: 14px 14px 13px;
   border: 1px solid var(--border); border-radius: var(--r-card); background: var(--surface-panel); box-shadow: var(--shadow-card);
 }
 .card:hover { border-color: var(--accent-fill); }
 .card:has(.card__link:focus-visible) { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
-.card__title { height: 21px; margin: 0; overflow: hidden; font-size: 15px; font-weight: var(--fw-semibold); line-height: 21px; }
-.card--actions .card__title { padding-right: 96px; }
+.card__top { display: flex; align-items: flex-start; gap: var(--space-8); min-width: 0; }
+.card__title { flex: 1 1 auto; min-width: 0; height: 21px; margin: 0; overflow: hidden; font-size: 15px; font-weight: var(--fw-semibold); line-height: 21px; }
+/* The badge of the last change: a small pill with a clock. It has one height, so a card with and without it has the same rows. */
+.card__badge {
+  display: inline-flex; flex: none; align-items: center; gap: var(--space-4); height: 20px; padding: 0 var(--space-8);
+  border: 1px solid var(--border); border-radius: var(--r-pill); color: var(--muted);
+  font-size: var(--fs-xs); font-variant-numeric: tabular-nums; line-height: 18px; white-space: nowrap;
+}
+.card__badge > .icon { flex: none; }
 .card__link { display: block; overflow: hidden; color: var(--text); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
 .card__link::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-card); }
 .card__link:hover { color: var(--text); text-decoration: none; }
 .card__link:focus-visible { outline: none; }
-/* The note has a fixed height, so every card has the same rhythm. */
-.card__updated { height: 18px; margin: -6px 0 0; color: var(--muted); font-size: var(--fs-sm); font-variant-numeric: tabular-nums; line-height: 18px; }
-.card__tags { position: relative; z-index: var(--z-raised); display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-4); margin-top: auto; }
+.card__tags { position: relative; z-index: var(--z-raised); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-4) var(--space-4); margin-top: auto; }
 .card__tags:empty { display: none; }
 /* A chip that is only a picture lets the click go to the stretched link. */
 .card__tags > span.list-tag { pointer-events: none; }
 
-/* The buttons of a card: a wireframe pencil at the left, the menu, and a bin at the right, in fixed slots at the top right. They show for a card
-   that the user can edit (the same condition for the pencil and the bin). A read-only card has none. */
-.card__buttons { position: absolute; top: var(--space-8); right: var(--space-8); z-index: var(--z-raised); display: flex; gap: var(--space-2); }
-.card__buttons .btn { width: 28px; min-height: 28px; height: 28px; }
-.card__delete:hover { color: var(--danger); }
+/* The three dots of a card: one menu (Edit, Export, Move, Delete) at the right end of the head row, after the badge. The button is 24 px high, as
+   the head row is 21 px, so a card with and without it has the same rows. It lies above the stretched link. A read-only card has none. */
+.card__more { position: relative; z-index: var(--z-raised); flex: none; width: 24px; min-height: 24px; height: 24px; margin: -2px -4px -1px 0; padding: 0; }
 
 /* An entry that is not valid: the uid and the badge in place of the title, the toggle of the errors, then the errors in the card. */
 .card[data-state="invalid"] { border-color: var(--danger); background: var(--surface-panel); }
-.card__title--invalid { display: flex; align-items: center; gap: var(--space-8); padding-right: 40px; }
+.card__title--invalid { display: flex; align-items: center; gap: var(--space-8); }
 .card__title--invalid > .icon { color: var(--danger); }
 .card__uid { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .card__errors { position: relative; z-index: var(--z-raised); display: flex; flex-direction: column; align-items: flex-start; }
@@ -80,33 +83,10 @@ button.list-tag { cursor: pointer; }
 button.list-tag:hover { border-color: var(--tag-c); }
 button.list-tag:focus-visible { outline-offset: 1px; }
 
-/* The sort and the tag filter, in the header after the brand: two select-like buttons of 32 px. */
+/* The sort and the tag filter, in the header after the brand: two selects (components.css, .selector) of 32 px. */
 .list-filters { display: flex; flex: none; align-items: center; gap: var(--space-8); }
-.list-select {
-  display: flex; align-items: center; gap: 0; height: var(--control-h); padding: 0 var(--space-8);
-  border: 1px solid var(--border-strong); background: var(--input-bg); color: var(--muted);
-  font-size: var(--fs-md); line-height: 22px; text-align: left; cursor: pointer;
-}
-.list-select:hover:not(:disabled) { border-color: var(--control-border-hover); }
-.list-select[aria-expanded="true"] { border-color: var(--accent-fill); }
-.list-select:disabled { opacity: 0.6; cursor: default; }
-.list-select:focus-visible { outline-offset: 0; }
 .list-select--tags { width: 150px; }
 .list-select--sort { width: 150px; }
-.list-select__text { flex: 1; min-width: 0; margin: 0 var(--space-4) 0 var(--space-6); overflow: hidden; color: var(--text); text-overflow: ellipsis; white-space: nowrap; }
-.list-select__text--placeholder { color: var(--muted); }
-.list-select > .icon:last-child { margin-left: auto; }
-
-/* The popup of the tag filter: the menu surface, one chip and its count on each line, a scroll after eight lines. */
-.list-tagmenu { position: fixed; display: block; max-height: 304px; padding: var(--space-4); overflow-y: auto; }
-.list-tagmenu__item {
-  display: flex; align-items: center; gap: var(--space-8); width: 100%; height: 34px; padding: 0 var(--space-6);
-  border: 0; border-radius: var(--r-sm); background: none; color: var(--text); font-size: var(--fs-xs); text-align: left; cursor: pointer;
-}
-.list-tagmenu__item:hover, .list-tagmenu__item:focus-visible { background: var(--menu-item-hover); }
-.list-tagmenu__item[aria-selected="true"] { background: var(--selected-bg); box-shadow: inset 0 0 0 1px var(--selected-edge); }
-.list-tagmenu__item:focus-visible { outline-offset: -2px; }
-.list-tagmenu__count { color: var(--muted); font-variant-numeric: tabular-nums; }
 
 /* The folder menu and the menu of a card show on hover or focus with a pointer, and always on a touch screen. */
 @media (hover: hover) {
@@ -134,19 +114,12 @@ button.list-tag:focus-visible { outline-offset: 1px; }
 .il-glass { stroke: var(--text); }
 .il-accent { stroke: var(--accent-text); }
 
-/* The actions of the page (New folder, Import, New dashboard) are at the right of the header. Narrow windows: the header stays one row (9.6, 9.7).
-   Up to 1180 px the sort and the tag filter show their icon only. Up to 900 px the header shows one button "New" with a menu (the actions are in
-   it). Up to 480 px the controls are 32 px wide. */
-.list-actions { display: flex; flex: none; align-items: center; gap: var(--space-8); }
-.list-actions:empty { display: none; }
-.list-new { display: none; }
+/* The one button "New" of the page is at the right of the header (9.6, 9.7). Narrow windows: the header stays one row. Up to 1180 px the sort and the
+   tag filter show their icon only. Up to 480 px the controls are 32 px wide. */
+.list-new { flex: none; }
 @media (max-width: 1180px) {
   .list-select--tags, .list-select--sort { width: var(--tb-icon-w, 36px); padding: 0; justify-content: center; }
-  .list-select--tags .list-select__text, .list-select--sort .list-select__text, .list-select > .icon:last-child { display: none; }
-}
-@media (max-width: 900px) {
-  .list-actions { display: none; }
-  .list-new { display: inline-flex; flex: none; }
+  .list-select--tags .selector__text, .list-select--sort .selector__text, .list-select--tags > .icon:last-child, .list-select--sort > .icon:last-child { display: none; }
 }
 @media (max-width: 480px) {
   .list-filters { gap: var(--space-4); }
@@ -154,5 +127,3 @@ button.list-tag:focus-visible { outline-offset: 1px; }
   .list-page { padding: 0; }
 }
 
-/* The sort menu has the width of its button and Grafana's line height of 30 px. */
-[data-testid="list-sort-menu"] .menu__item { min-height: 30px; }

@@ -125,10 +125,10 @@ test("the states of the chrome follow ClickHouse Dash: edge of a popup, selected
   assert.match(components, /\.menu \{[^}]*border: 1px solid var\(--border-strong\)/);
   assert.match(components, /\.select__popup \{[^}]*border: 1px solid var\(--border-strong\)/);
   assert.match(components, /\[data-tooltip\]::after \{[^}]*border: 1px solid var\(--border-strong\)/);
-  assert.match(components, /\.theme-select__menu \{[^}]*border: 1px solid var\(--border-strong\)/);
   assert.match(components, /\.menu__item\[aria-checked="true"\][^{]*\{ background: var\(--selected-bg\); box-shadow: inset 0 0 0 1px var\(--selected-edge\)/);
   assert.match(components, /\.btn--tb-primary:hover \{ background: var\(--primary-hover\); \}/);
-  assert.match(read("css/list.css"), /\.list-tagmenu__item\[aria-selected="true"\] \{ background: var\(--selected-bg\)/);
+  assert.match(components, /\.menu--joined \.menu__item\[aria-checked="true"\], \.menu--joined \.menu__item\.is-current \{[^}]*background: var\(--selected-bg\)/);
+  assert.match(components, /\.selector\.is-joined-open, \.selector\.is-joined-open:hover:not\(:disabled\) \{[^}]*border-bottom-color: transparent/);
   assert.match(read("css/dashboard.css"), /\.listbox__item\[aria-selected="true"\] \{ background: var\(--selected-bg\)/);
   assert.match(read("css/panel-table.css"), /\.filter-popup \{[^}]*border: 1px solid var\(--border-strong\)/);
 });

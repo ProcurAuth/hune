@@ -37,7 +37,7 @@ test("the header has, in order: the group of the edit mode, the time control, th
   assert.match(dash, /setEditBar\(node\) \{[^}]*timeControl\.el\.before\(node\)/s);
   assert.ok(!/editSlot|header-edit-slot/.test(dash));
   const main = code("web/js/main.js");
-  assert.match(main, /headerEl\.append\(brand, startSlot, crumbs, actionsSlot, themeSlot, moreSlot\)/);
+  assert.match(main, /headerEl\.append\(brand, startSlot, placeNav, actionsSlot, themeSlot, moreSlot\)/);
   assert.match(main, /setMore\(node\)/);
 });
 
@@ -113,7 +113,10 @@ test("the header and the sizes of the controls: 44 px, fixed widths and the step
   // Up to 560 px the time control, the switch and Add are smaller; a phone has 32 px icon buttons.
   assert.match(css, /@media \(max-width: 560px\) \{\s*#app-header \{ --tb-range-w: 40px; --tb-edit-w: 36px; --tb-addmenu-w: 20px; --tb-int-w: 28px; \}/);
   assert.match(css, /@media \(max-width: 480px\) \{\s*#app-header \{ --tb-icon-w: 32px; \}/);
-  assert.match(base, /\.crumbs \{ container-type: inline-size; \}\s*@container \(max-width: 149px\)/);
+  assert.match(base, /\.location \.switcher \{ flex: 0 1 22rem; min-width: 0; max-width: 22rem; \}/);
+  assert.match(base, /@container \(max-width: 99px\) \{\s*\.location \.switcher \{ display: none; \}/);
+  assert.ok(!/location__tail/.test(base), "the css has no name of a view");
+  assert.ok(!/crumbs/.test(base), "the css has no breadcrumb");
   const list = read("web/css/list.css");
   // The sort and the tag filter are the start controls of the header, after the brand. The list has no search field.
   assert.match(base, /\.header-start \{ display: flex; align-items: center;/);
@@ -121,7 +124,7 @@ test("the header and the sizes of the controls: 44 px, fixed widths and the step
   assert.match(list, /\.list-select--tags \{ width: 150px; \}/);
   assert.match(list, /\.list-select--sort \{ width: 150px; \}/);
   assert.ok(!/list-search/.test(list) && !/list-search/.test(base), "no search field in the css");
-  assert.match(read("web/js/main.js"), /headerEl\.append\(brand, startSlot, crumbs, actionsSlot, themeSlot, moreSlot\)/);
+  assert.match(read("web/js/main.js"), /headerEl\.append\(brand, startSlot, placeNav, actionsSlot, themeSlot, moreSlot\)/);
   assert.ok(!/data-layout="stacked"/.test(list));
 });
 
@@ -139,24 +142,40 @@ test("the spec has the new rules and the hooks of the header", () => {
   assert.ok(!/in the row of the edit mode/.test(spec));
 });
 
-test("the panel editor has no row for the back button: the crumb of the dashboard is the way back", () => {
+test("the panel editor has no row for the back button: the arrow after the selector is the way back", () => {
   const editor = code("web/js/editor/panel_editor.js");
   assert.ok(!/peditor__bar|peditor__id|peditor__sep/.test(editor), "no top bar in the panel editor");
   assert.match(editor, /root\.append\(mainBox\)/);
   const edit = code("web/js/editor/edit_mode.js");
-  assert.match(edit, /backCrumb\(\) \{/);
+  assert.match(edit, /backLink\(\) \{/);
   assert.match(edit, /"Back to panel view" : page === "view" \? "Back to dashboard" : "Back to edit mode"/);
   assert.match(edit, /dataset: \{ testid: "editor-back" \}/);
-  assert.match(edit, /setCrumbTail\(plan\.kind === "panel" \? "Edit panel" : null, plan\.kind === "panel" \? this\.backCrumb\(\) : null\)/);
+  assert.match(edit, /setViewTail\(plan.kind === "panel", plan\.kind === "panel" \? this\.backLink\(\) : null\)/);
   // A click with a modifier key is not the event: the link keeps its address.
   assert.match(edit, /e\.metaKey \|\| e\.ctrlKey \|\| e\.shiftKey \|\| e\.altKey\) return;\s*e\.preventDefault\(\);/);
   const main = code("web/js/main.js");
-  assert.match(main, /\.\.\.part\.attrs \}, part\.icon \? icon\(part\.icon, 14\) : null/);
+  const switcher = code("web/js/switcher.js");
+  assert.match(switcher, /icon\("arrow-left", 16\)\)\);/);
+  // The arrow is pushed after the selector, and it needs no name of the view. The editor has no name: "Edit panel" is gone.
+  const nodes = switcher.slice(switcher.indexOf("export function locationNodes"));
+  assert.ok(nodes.indexOf("nodes.push(trigger)") < nodes.indexOf('class: "location__back'), "the selector, then the arrow");
+  assert.ok(!/location__tail|tail/.test(nodes), "the header has no name of a view");
+  assert.match(nodes, /if \(back\) \{/, "the arrow needs a way back, not a name");
+  assert.ok(!/tail && back/.test(nodes), "the arrow does not wait for a name");
+  for (const file of ["web/js/switcher.js", "web/js/dashboard.js", "web/js/editor/edit_mode.js", "web/js/editor/panel_editor.js"]) assert.ok(!/Edit panel/.test(code(file)), `no "Edit panel" in ${file}`);
+  const dash = code("web/js/dashboard.js");
+  assert.match(dash, /const inView = rt && Boolean\(viewTails\.edit \|\| viewTails\.view\);/);
+  assert.ok(!/const tail =/.test(dash), "no view has a name in the header");
+  assert.match(dash, /viewTails = \{ \.\.\.viewTails, view: true \};/, "the panel view only marks the state");
+  assert.match(dash, /setViewTail\(editing, back\) \{\s*viewTails = \{ \.\.\.viewTails, edit: editing === true \? true : null/);
+  assert.match(switcher, /\.\.\.\(back\.attrs \|\| \{\}\)/);
   const css = read("web/css/editor.css");
   assert.ok(!/\.peditor__bar|--peditor-bar-h/.test(css), "the css of the top bar is gone");
   const base = read("web/css/base.css");
-  assert.match(base, /@container \(max-width: 99px\) \{\s*\.crumbs__item--back \.crumbs__text/);
+  assert.match(base, /\.location__back \{ flex: 0 0 28px; width: 28px; min-width: 0;/);
+  assert.match(base, /\.location__back \{ flex-shrink: 1; width: auto; \}/);
   const spec = read("docs/04-frontend-editor.md");
   assert.match(spec, /The panel editor has no top bar and no row of its own\./);
+  assert.ok(!/arrow before the selector/.test(spec), "the arrow is after the selector");
   assert.match(spec, /"Back to edit mode"/);
 });

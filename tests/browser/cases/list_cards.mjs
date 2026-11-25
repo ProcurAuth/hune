@@ -39,7 +39,7 @@ const menuItems = (p) => p.eval(`[...document.querySelectorAll('.menu [role="men
 export const cases = [
   {
     id: "B228",
-    name: "list cards: the filters show above the threshold, the folder titles show for two folders, the grid has columns of 400 px and is centred, a writable card has a pencil, a menu and a bin, a read-only card has none",
+    name: "list cards: the filters show above the threshold, the folder titles show for two folders, the grid has columns of 400 px and is centred, a writable card has the three dots at the top right, after the badge, with Edit, Export, Move and Delete in their menu, a read-only card has none, the badge of the last change shows only for a recorded change, the dropdowns are joined to their button",
     async run(t) {
       // ---- the default threshold (6): three dashboards show no sort and no tag filter.
       const own = await t.ownServer("default", { prepare: TWO });
@@ -58,7 +58,7 @@ export const cases = [
       t.eq(await menuItems(p), ["Rename", "Delete"], "the menu of a folder: Rename and Delete");
       await p.press("Escape");
 
-      // The cards: columns of 400 px, the title on one line with an ellipsis and a title attribute, the note of the last change.
+      // The cards: columns of 400 px, the title on one line with an ellipsis and a title attribute, and no badge for a file of the volume.
       const geo = await p.eval(`(() => {
         const cards = [...document.querySelectorAll('article[data-testid^="row-"]')];
         const link = document.querySelector('[data-testid="row-a2"] .card__link');
@@ -66,14 +66,14 @@ export const cases = [
         return {
           widths: cards.map((c) => Math.round(c.getBoundingClientRect().width)),
           ellipsis: [s.textOverflow, s.whiteSpace, link.scrollWidth > link.clientWidth, link.title],
-          notes: cards.map((c) => c.querySelector(".card__updated").textContent),
-          noteHeights: cards.map((c) => c.querySelector(".card__updated").getBoundingClientRect().height),
+          badges: cards.map((c) => c.querySelectorAll(".card__badge").length),
+          heights: cards.map((c) => Math.round(c.getBoundingClientRect().height)),
         };
       })()`);
       t.eq(geo.widths, [400, 400, 400], "each card is 400 px wide");
       t.eq(geo.ellipsis, ["ellipsis", "nowrap", true, LONG], "the title is on one line, with an ellipsis and the full name in the title attribute");
-      t.assert(geo.notes.every((n) => /^(now|\d+m)$/.test(n)), "a new dashboard has the short note now or Nm: " + JSON.stringify(geo.notes));
-      t.eq(new Set(geo.noteHeights).size, 1, "the note has a fixed height");
+      t.eq(geo.badges, [0, 0, 0], "a file of the volume has no version that Hune saved: no badge of the last change (the date of a file is not a change)");
+      t.eq(new Set(geo.heights).size, 1, "the three cards have one height");
 
       // The block of cards is centred in the window, across and down, when it fits.
       const centre = await p.eval(`(() => { const s = document.querySelector(".list-stack").getBoundingClientRect(); return [Math.abs((s.left + s.right) / 2 - document.documentElement.clientWidth / 2), Math.abs((s.top + s.bottom) / 2 - (44 + window.innerHeight) / 2), document.documentElement.scrollHeight - window.innerHeight]; })()`);
@@ -81,21 +81,24 @@ export const cases = [
       t.assert(centre[1] <= 2, "centred down: " + centre[1]);
       t.eq(centre[2], 0, "the page does not scroll when the block fits");
 
-      // The buttons of a writable card: the pencil at the left, the menu, the bin at the right, in fixed slots.
-      const order = await p.eval(`(() => { const x = (id) => document.querySelector('[data-testid="' + id + '"]').getBoundingClientRect(); const a = x("card-edit-a1"), m = x("row-menu-a1"), d = x("card-delete-a1"); const card = x("row-a1"); return [a.right <= m.left, m.right <= d.left, card.right - d.right, d.top - card.top, document.querySelector('[data-testid="card-edit-a1"]').getAttribute("href")]; })()`);
-      t.eq([order[0], order[1]], [true, true], "the pencil, the menu and the bin are in this order");
-      t.assert(order[2] >= 6 && order[2] <= 12 && order[3] >= 6 && order[3] <= 12, "the buttons are at the top right: " + JSON.stringify(order));
-      t.eq(order[4], "d/a1/first-dashboard?edit=1", "the pencil opens the dashboard in the edit mode");
+      // The three dots of a writable card: one button at the right end of the head row, after the title (and the badge), and no other button.
+      const dots = await p.eval(`(() => { const card = document.querySelector('[data-testid="row-a1"]').getBoundingClientRect(); const m = document.querySelector('[data-testid="row-menu-a1"]').getBoundingClientRect(); const title = document.querySelector('[data-testid="row-a1"] .card__title').getBoundingClientRect(); return [Math.round(card.right - m.right), Math.round(m.top - card.top), m.left >= title.right - 0.5, Math.round(m.height), document.querySelectorAll('[data-testid="row-a1"] button:not(.list-tag):not([data-testid^="row-menu-"])').length, document.querySelectorAll('[data-testid="row-a1"] .card__buttons, [data-testid="row-a1"] .card__edit, [data-testid="row-a1"] .card__delete').length]; })()`);
+      t.assert(dots[0] >= 4 && dots[0] <= 14 && dots[1] >= 6 && dots[1] <= 16, "the three dots are at the top right of the card: " + JSON.stringify(dots));
+      t.eq([dots[2], dots[3], dots[4], dots[5]], [true, 24, 0, 0], "the dots are after the title, 24 px high, and the card has no pencil, no bin and no other button");
       await p.click(p.tid("row-menu-a1"));
-      t.eq(await menuItems(p), ["Export", "Move"], "the menu of a card holds Export and Move (Move is not in the menu of the dashboard page)");
+      t.eq(await menuItems(p), ["Edit", "Export", "Move", "Delete"], "the menu of a card holds Edit, Export, Move and Delete in this order (Move is not in the menu of the dashboard page)");
+      t.eq(await p.eval(`document.querySelector('[data-testid="card-edit-a1"]').getAttribute("href")`), "d/a1/first-dashboard?edit=1", "Edit opens the dashboard in the edit mode");
+      t.eq(await p.eval(`document.querySelector('[data-testid="card-delete-a1"]').classList.contains("menu__item--danger")`), true, "Delete has the danger colour");
       await p.press("Escape");
-      // The bin runs the delete dialog, which names the dashboard. The server decides: nothing is deleted here.
+      // Delete runs the delete dialog, which names the dashboard. The server decides: nothing is deleted here.
+      await p.click(p.tid("row-menu-a1"));
       await p.click(p.tid("card-delete-a1"));
       await p.waitSel(p.tid("delete-dashboard-dialog"));
       t.assert((await p.text(p.tid("delete-dashboard-dialog"))).includes("First dashboard"), "the dialog names the dashboard");
       await p.press("Escape");
       t.eq((await api(own).list()).json.items.length, 3, "the dashboards are still there");
-      // The pencil opens the edit mode.
+      // Edit opens the edit mode.
+      await p.click(p.tid("row-menu-a1"));
       await p.click(p.tid("card-edit-a1"));
       await p.waitFor(`location.pathname === "/d/a1/first-dashboard" && location.search === "?edit=1"`, { what: "the edit address" });
       await p.waitFor(`document.querySelector('[data-testid="edit-toggle"]') && document.querySelector('[data-testid="edit-toggle"]').getAttribute("aria-checked") === "true"`, { what: "the edit mode" });
@@ -122,6 +125,43 @@ export const cases = [
       await size(pb, 1280, 900);
       await cardsShown(pb);
       t.eq(await hidden(pb, ["list-sort", "list-tag-filter"]), [false, false], "3 dashboards, threshold 2: sort and tag filter");
+      // The sort and the tag filter use the joined menu of the app: it touches its button, which loses its bottom edge, and it opens with the keys.
+      t.eq(await pb.eval(`document.querySelector('[data-testid="list-sort"]').textContent.trim()`), "A–Z", "no saved choice: the button of the sort shows A–Z, not a placeholder");
+      await pb.click(pb.tid("list-sort"));
+      const joined = await pb.eval(`(() => { const button = document.querySelector('[data-testid="list-sort"]'); const b = button.getBoundingClientRect(); const menu = document.querySelector('[data-testid="list-sort-menu"]'); const r = menu.getBoundingClientRect(); return [menu.classList.contains("menu--joined"), button.classList.contains("is-joined-open"), button.getAttribute("aria-expanded"), Math.abs(r.top - (b.bottom - 1)) <= 1.5, Math.abs(r.left - b.left) <= 1.5, r.width >= b.width - 1.5, getComputedStyle(button).borderBottomColor === "rgba(0, 0, 0, 0)", menu.querySelectorAll(".menu__item").length]; })()`);
+      t.eq(joined, [true, true, "true", true, true, true, true, 2], "the sort menu is joined to its button");
+      await pb.click(pb.tid("list-sort"));
+      t.eq(await pb.eval(`document.querySelector('[data-testid="list-sort-menu"]')`), null, "a second click on the button closes the menu");
+      await pb.focus(pb.tid("list-sort"));
+      await pb.press("ArrowDown");
+      t.eq(await pb.eval(`document.activeElement.closest('[data-testid="list-sort-menu"]') !== null`), true, "the key Down on the button opens the menu with the focus on its first item");
+      await pb.press("Enter");
+      t.eq(await pb.eval(`document.querySelector('[data-testid="list-sort"]').textContent.trim()`), "A–Z", "Enter chooses the item, and the button shows it in short");
+      await pb.click(pb.tid("list-sort"));
+      t.eq(await pb.eval(`document.querySelectorAll('[data-testid="list-sort-menu"] .menu__check').length`), 1, "the chosen line has a check mark");
+      await pb.press("Escape");
+      t.eq(await pb.eval(`document.activeElement && document.activeElement.dataset.testid`), "list-sort", "Escape closes the menu and gives the focus back to the button");
+      await pb.click(pb.tid("list-tag-filter"));
+      const tagMenu = await pb.eval(`(() => { const items = [...document.querySelectorAll('[data-testid="list-tag-menu"] .menu__item')]; return [document.querySelector('[data-testid="list-tag-menu"]').classList.contains("menu--joined"), items.length > 0, items.every((e) => e.querySelector(".list-tag") && /^\\d+$/.test(e.querySelector(".menu__meta").textContent))]; })()`);
+      t.eq(tagMenu, [true, true, true], "the tag menu: one chip and one count on each line, joined to its button");
+      await pb.press("Escape");
+
+      // The badge of the last change: a dashboard that Hune saved has it, at the top right, and the cards keep one height.
+      const rec = await t.ownServer("recorded", { prepare: TWO, serverLines: ["list_filters_min_dashboards = 0"] });
+      const made = await api(rec).create("alpha", seedDocument("a3", "Saved by Hune"));
+      t.eq(made.status, 201, "the dashboard is created through the API");
+      const pg = await t.open(rec.url);
+      await size(pg, 1280, 900);
+      await pg.waitFor(`document.querySelectorAll('article[data-testid^="row-"]').length === 4`, { what: "four cards" });
+      const badge = await pg.eval(`(() => { const cards = [...document.querySelectorAll('article[data-testid^="row-"]')]; const card = document.querySelector('[data-testid="row-a3"]'); const b = card.querySelector(".card__badge"); const r = b ? b.getBoundingClientRect() : null; const c = card.getBoundingClientRect(); return { all: cards.map((e) => e.querySelectorAll(".card__badge").length), text: b ? b.textContent : null, title: b ? b.title : null, right: r ? Math.round(c.right - r.right) : null, top: r ? Math.round(r.top - c.top) : null, heights: [...new Set(cards.map((e) => Math.round(e.getBoundingClientRect().height)))] }; })()`);
+      t.eq(badge.all.reduce((a, b) => a + b, 0), 1, "one badge: only the dashboard that Hune saved");
+      t.assert(/^Last change (now|\d+m)$/.test(badge.text), "the text of the badge: " + badge.text);
+      t.assert(/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/.test(badge.title), "the full time is in the title attribute: " + badge.title);
+      // The three dots take the right end of the head row, so the badge is at their left (a gap of 8 px between them).
+      t.assert(badge.right >= 38 && badge.right <= 48 && badge.top >= 12 && badge.top <= 16, "the badge is at the top right, before the three dots: " + JSON.stringify([badge.right, badge.top]));
+      t.eq(await pg.eval(`(() => { const card = document.querySelector('[data-testid="row-a3"]'); const b = card.querySelector(".card__badge").getBoundingClientRect(); const m = card.querySelector('[data-testid="row-menu-a3"]').getBoundingClientRect(); return [b.right <= m.left + 0.5, Math.abs((b.top + b.bottom) / 2 - (m.top + m.bottom) / 2) <= 6]; })()`), [true, true], "the three dots are after the badge, on the same row");
+      t.eq(badge.heights.length, 1, "a card with the badge and a card without it have one height: " + JSON.stringify(badge.heights));
+
       // The text q of the address has no effect while the filters are hidden.
       const pq = await t.open(`${equal.url}?q=chain`);
       await cardsShown(pq);
@@ -132,7 +172,7 @@ export const cases = [
       const pr = await t.open(ro.url);
       await size(pr, 1280, 900);
       await cardsShown(pr);
-      t.eq(await pr.count('.card__buttons, .card__edit, [data-testid^="row-menu-"], [data-testid^="card-delete-"]'), 0, "a read-only card has no pencil, no menu and no bin");
+      t.eq(await pr.count('.card__more, [data-testid^="row-menu-"], [data-testid^="card-edit-"], [data-testid^="card-delete-"]'), 0, "a read-only card has no three dots");
       t.eq(await pr.count("article[data-testid^=\"row-\"] button:not(.list-tag)"), 0, "a read-only card has no button but its tag chips");
       t.assert(!/Can edit|Read only/.test(await pr.eval("document.body.textContent")), "no access word on the page");
     },

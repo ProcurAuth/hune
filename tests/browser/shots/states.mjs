@@ -55,7 +55,7 @@ state("empty-list", "List page of an empty volume", { server: "empty", themes: "
 state("list-tag-filter", "List page filtered by one tag", {}, async (c) => {
   await c.open(c.url(""));
   await c.page.click(T("list-tag-filter"));
-  await c.page.click('[data-testid="list-tag-menu"] [role="option"]');
+  await c.page.click('[data-testid="list-tag-menu"] .menu__item');
   await sleep(500);
   await c.settle();
 });
@@ -85,6 +85,7 @@ state("list-row-menu", "List page: the menu of a card", { view: "viewport" }, as
 
 state("new-dashboard-dialog", "Dialog: new dashboard", { view: "viewport" }, async (c) => {
   await c.open(c.url(""));
+  await c.page.click(T("list-new-menu"));
   await c.page.click(T("new-dashboard"));
   await c.page.waitSel(T("new-dashboard-dialog"));
   await sleep(200);
@@ -92,6 +93,7 @@ state("new-dashboard-dialog", "Dialog: new dashboard", { view: "viewport" }, asy
 
 state("new-folder-dialog", "Dialog: new folder", { view: "viewport" }, async (c) => {
   await c.open(c.url(""));
+  await c.page.click(T("list-new-menu"));
   await c.page.click(T("new-folder"));
   await c.page.waitSel(T("new-folder-dialog"));
   await sleep(200);
@@ -480,22 +482,16 @@ state("focus-variable", "Keyboard focus visible on a variable control", { view: 
   await sleep(150);
 });
 
-state("theme-selector", "Theme selector: the button hovered", { view: "viewport", themes: "all", widths: "all" }, async (c) => {
+state("theme-selector", "Theme button: hovered", { view: "viewport", themes: "all", widths: "all" }, async (c) => {
   await c.open(c.url(""));
   await hover(c.page, T("theme-toggle"));
 });
 
-state("theme-selector-open", "Theme selector: the menu open (System, Dark, Light), on a dashboard", { view: "viewport", themes: "all", widths: "all" }, async (c) => {
+// The theme button has no menu: a click gives the next choice (System, Dark, Light). The state clicks until the other theme shows.
+state("theme-selector-cycle", "Theme button: clicks until the other theme shows, on a dashboard", { view: "viewport", widths: "all" }, async (c) => {
   await c.open(c.url(`d/types-tour?${RANGE}`));
-  await c.page.click(T("theme-toggle"));
-  await sleep(250);
-});
-
-state("theme-selector-cycle", "Theme selector: one choice made (the other theme), on a dashboard", { view: "viewport", widths: "all" }, async (c) => {
-  await c.open(c.url(`d/types-tour?${RANGE}`));
-  const dark = await c.page.eval(`document.documentElement.getAttribute("data-theme") === "dark"`);
-  await c.page.click(T("theme-toggle"));
-  await c.page.click(T(dark ? "theme-light" : "theme-dark"));
+  const before = await c.page.eval(`document.documentElement.getAttribute("data-theme")`);
+  for (let i = 0; i < 3 && (await c.page.eval(`document.documentElement.getAttribute("data-theme")`)) === before; i++) await c.page.click(T("theme-toggle"));
   await c.settle();
 });
 
@@ -833,7 +829,7 @@ const ALL_WIDTH_STATES = [
   "page-dashboard-404", "page-dashboard-invalid", "page-dashboard-error",
   "time-picker-relative", "time-picker-error", "refresh-picker",
   "variable-multi-open", "variable-custom-open", "variable-single-open",
-  "focus-header", "focus-panel-menu", "focus-variable", "theme-selector", "theme-selector-open", "theme-selector-cycle",
+  "focus-header", "focus-panel-menu", "focus-variable", "theme-selector", "theme-selector-cycle",
   "section-collapsed", "section-expanded", "loading", "loading-progress",
   "tooltip-timeseries", "tooltip-bars", "tooltip-barchart", "tooltip-xychart", "tooltip-pie",
   "edit-panel-menu", "edit-panel-query", "edit-panel-options", "edit-panel-json", "edit-panel-json-error", "edit-panel-query-error",

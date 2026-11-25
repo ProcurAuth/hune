@@ -352,15 +352,26 @@ export function attachDrag({ view, panelsOf, commit, announce = () => {} }) {
   for (const id of sectionOf.keys()) {
     const frame = view.frames.get(id);
     if (!frame) continue;
+    // The frames stay in the page when the edit mode ends (the view grid uses them again). Everything that this step puts on a frame has a cleanup:
+    // the handle, the drag mark of the title bar, its listener and the keys that the frame announces. The view of a dashboard has none of them.
     const head = frame.el.querySelector(".panel__head");
     if (head) {
+      const onHead = (e) => begin("move", e, id);
       head.dataset.dragHandle = "move";
-      head.addEventListener("pointerdown", (e) => begin("move", e, id));
+      head.addEventListener("pointerdown", onHead);
+      cleanups.push(() => {
+        head.removeEventListener("pointerdown", onHead);
+        delete head.dataset.dragHandle;
+      });
     }
     const handle = el("span", { class: "panel__resize", "aria-hidden": "true", dataset: { testid: `panel-${id}-resize` } });
     handle.addEventListener("pointerdown", (e) => begin("resize", e, id));
     frame.el.append(handle);
     frame.el.setAttribute("aria-keyshortcuts", "Alt+ArrowLeft Alt+ArrowRight Alt+ArrowUp Alt+ArrowDown Alt+Shift+ArrowLeft Alt+Shift+ArrowRight Alt+Shift+ArrowUp Alt+Shift+ArrowDown");
+    cleanups.push(() => {
+      handle.remove();
+      frame.el.removeAttribute("aria-keyshortcuts");
+    });
   }
   root.addEventListener("keydown", onKey);
   cleanups.push(() => root.removeEventListener("keydown", onKey));

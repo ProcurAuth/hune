@@ -13,12 +13,13 @@ import { timeInMenu } from "./header_layout.js";
 import { createTimeControl } from "./pickers.js";
 import { Runtime } from "./runtime.js";
 import { REFRESH_CHOICES, cut, effectiveZone, isKnownZone, refreshToMs, resolveRange, shiftRange, zoneName, zoomOut } from "./time.js";
-import { buildSearch, dashboardPath, parseSearch } from "./url_state.js";
-import { selectionToUrl } from "./var_options.js";
+import { buildSearch, dashboardPath, parseSearch, shortQuery } from "./url_state.js";
+import { sameSelection, selectionToUrl } from "./var_options.js";
 import { createVarsBar } from "./vars.js";
 import { button, clear, closeMenu, dismissNotice, el, notify, openMenu } from "./ui.js";
 import { baseState, isEditorState, kindOf, nextState, normalSearch, originValue, parseView, readOrigin, sameState, viewNames } from "./view_state.js";
 import { exportDashboard } from "./list.js";
+import { locationNodes } from "./switcher.js";
 
 function errorPage(ctx, error) {
   const { fullPage } = ctx;
@@ -53,7 +54,7 @@ export async function mount(ctx) {
   let editSwitch = null; // the switch "Edit" of the header (10.2)
   let editActive = false; // true while the editor holds the draft: the switch is on
   let timeControl = null;
-  let crumbTails = { view: null, edit: null };
+  let viewTails = { view: null, edit: null }; // true while the page shows the view of a panel or the panel editor (the header then has the way back)
   let timePicker = null;
   let refreshPicker = null;
   let viewHost = null;
@@ -61,11 +62,9 @@ export async function mount(ctx) {
   let editHooks = null;
   let gridMarker = null;
   let viewFrame = null;
-  let viewBack = null;
   let refresh = null;
   let refreshTimer = 0;
   let skippedTick = false;
-  let folderTitle = "";
   let loaded = null; // { doc, etag, version, folder, access }
   let state = baseState(); // the state of the page (10.2a): what the URL names
   let shown = baseState(); // the state whose view is in the page now
@@ -78,10 +77,7 @@ export async function mount(ctx) {
   busy.begin();
   let answer;
   try {
-    const [dash, folders] = await Promise.all([api.dashboard(uid, controller.signal), api.folders(controller.signal).catch(() => ({ items: [] }))]);
-    answer = dash;
-    const folder = (folders.items || []).find((f) => f.id === dash.folder);
-    folderTitle = folder ? folder.title : dash.folder;
+    answer = await api.dashboard(uid, controller.signal);
   } catch (error) {
     busy.end();
     if (api.isAbort(error)) return { destroy() {} };
@@ -101,12 +97,24 @@ export async function mount(ctx) {
     return rt ? { fromText: rt.range.fromText, toText: rt.range.toText } : { fromText: loaded.doc.time.from, toText: loaded.doc.time.to };
   }
 
-  // The query part of the URL state (9.5): the range, the variables and the refresh, which every state keeps.
+  // The query part of the URL state (9.5): the range, the time zone, the variables and the refresh. A name is written only when its value differs
+  // from the default of the dashboard (`shortQuery`). A variable whose default is not known yet (a query variable before its options load) stays.
   function queryState() {
+    const doc = loaded.doc;
     const vars = new Map();
-    for (const v of rt.variables) vars.set(v.name, selectionToUrl(v, rt.selections.get(v.name)));
+    const defaultVars = new Map();
+    for (const v of rt.variables) {
+      vars.set(v.name, selectionToUrl(v, rt.selections.get(v.name)));
+      const known = rt.defaultSelection(v.name);
+      if (known) defaultVars.set(v.name, selectionToUrl(v, known));
+    }
     const r = currentRange();
-    return { from: r.fromText, to: r.toText, timezone: urlZone, vars, refresh: refresh === null ? "off" : refresh };
+    // A zone that is the zone of the document, or the zone that the document names resolves to, is the default zone.
+    const zone = urlZone && urlZone !== doc.time.timezone && urlZone !== effectiveZone(doc.time.timezone) ? urlZone : null;
+    return shortQuery(
+      { from: r.fromText, to: r.toText, timezone: zone, vars, refresh: refresh === null ? "off" : refresh },
+      { from: doc.time.from, to: doc.time.to, timezone: null, vars: defaultVars, refresh: doc.time.refresh ? doc.time.refresh : "off" },
+    );
   }
 
   // The URL state of a page state: the query part and the view names of that state (10.2a).
@@ -138,6 +146,8 @@ export async function mount(ctx) {
   // The URL after a change of the range, the refresh or a variable (10.2a, rule 12): replace, in the same state. The entry keeps its origin.
   // A push (the drag on a chart, 9.8) has no origin.
   function writeUrl(push = false) {
+    // The edit mode listens to this event: its button "Save" shows when the current range or refresh differs from the default (10.9).
+    document.dispatchEvent(new Event("hune-query"));
     if (!stillHere()) return;
     const url = new URL(relativeUrl(), document.baseURI);
     if (push) window.history.pushState(null, "", url);
@@ -164,6 +174,15 @@ export async function mount(ctx) {
     const url = new URL(relativeUrl(target), document.baseURI);
     if (how === "push") window.history.pushState(withOrigin ? originValue(relativeNow()) : null, "", url);
     else window.history.replaceState(window.history.state, "", url);
+  }
+
+  // A view ends with a Back to the entry that it started from (10.2a, rule 7). That entry holds the range, the refresh and the variables that the
+  // dashboard had before the view. A person who changed them in the view keeps them: the page keeps its own values over those of the entry, and it
+  // writes them in the entry. A Back or Forward of the browser has no such carry: it shows the values of the entry that it reaches.
+  let carriedQuery = null;
+  function popKeepingQuery() {
+    carriedQuery = { at: Date.now(), query: queryState() };
+    window.history.back();
   }
 
   // The URL of the view of one panel. `key` is the id of the panel, or `<id>-r<n>` for a copy of a repeat (9.8c).
@@ -229,6 +248,11 @@ export async function mount(ctx) {
     },
     get syncKey() {
       return loaded.doc.cursor_sync === "crosshair" ? `hune-${uid}` : "";
+    },
+    // The range and the refresh that the header controls show now (10.9: the Save dialog offers them as the defaults). `refresh` is null for off.
+    get currentTime() {
+      const r = currentRange();
+      return { from: r.fromText, to: r.toText, refresh };
     },
     linkContext,
     panelUrl,
@@ -418,9 +442,9 @@ export async function mount(ctx) {
     }
   }
 
-  // The header is one row (main.js, 9.6). From the left: the brand, the crumbs, the group of the edit mode (Add, Save, Revert), the time
+  // The header is one row (main.js, 9.6). From the left: the brand, the selector of the dashboards, the group of the edit mode (Add, Save, Revert), the time
   // control (the range, the refresh and the interval, joined), the switch "Edit", the theme selector and the button "More actions" (9.9).
-  // Only the brand and the crumbs change width. The variables are in their own row under the header (css .dash-toolbar).
+  // Only the brand and the selector change width. The variables are in their own row under the header (css .dash-toolbar).
   function canEdit() {
     return session.editing === true && loaded.access && loaded.access.write === true;
   }
@@ -465,12 +489,12 @@ export async function mount(ctx) {
 
   function renderHeader() {
     header.clear();
-    paintCrumbs();
+    paintLocation();
     const more = button("More actions", { "aria-haspopup": "menu", "aria-expanded": "false", dataset: { testid: "dashboard-menu", tooltipAlign: "end" } }, "more", { iconOnly: true, variant: "tb" });
     more.addEventListener("click", () => openMenu(more, moreItems(), { align: "end", gap: 8 }));
     editSwitch = null;
     editBar = null;
-    // The switch shows only with the right to write. The group of the edit mode takes room from the crumbs only.
+    // The switch shows only with the right to write. The group of the edit mode takes room from the selector only.
     if (canEdit()) {
       editSwitch = buildEditSwitch();
       paintEditSwitch();
@@ -487,22 +511,27 @@ export async function mount(ctx) {
   }
 
   // The view of one panel ends above the window edge: it needs the height of the row of the variables (css .view-panel).
+  // The row of the variables has a negative top margin: it lies over the padding of the page. The space that it takes under the padding is its
+  // height plus this margin, so the view of a panel subtracts that space and ends one page padding above the window edge.
   function syncViewHeight() {
-    if (viewHost && toolbar) viewHost.style.setProperty("--view-toolbar-h", `${toolbar.offsetHeight}px`);
+    if (!viewHost || !toolbar) return;
+    const lift = Number.parseFloat(getComputedStyle(toolbar).marginTop) || 0;
+    viewHost.style.setProperty("--view-toolbar-h", `${Math.max(0, toolbar.offsetHeight + lift)}px`);
   }
 
-  // The crumbs of the header (9.8): folder, dashboard and, in the view of one panel or the panel editor, the name of that view.
-  // The crumb of the dashboard is then the way back (a link); the view of one panel has no row of its own for it.
+  // The place of the page in the header (9.6): the selector of the dashboards and, in the view of one panel or the panel editor, a way back
+  // (an arrow) and the name of that view. The way back of the panel editor is the event `leave`; the way back of the view of a panel is a link.
   function dashboardUrlFor(edit) {
     return relativeUrl(edit ? { ...baseState(), page: "edit", editing: true } : baseState());
   }
 
-  function paintCrumbs() {
-    const tail = crumbTails.edit || crumbTails.view;
-    const parts = [{ text: folderTitle, href: "." }];
-    if (tail && rt) parts.push({ text: loaded.doc.title, href: dashboardUrlFor(Boolean(crumbTails.edit)), ...crumbTails.back }, { text: tail });
-    else parts.push({ text: loaded.doc.title });
-    header.setCrumbs(parts);
+  function paintLocation() {
+    // The view of a panel and the panel editor have the way back, an arrow at the right of the selector, and no name.
+    const inView = rt && Boolean(viewTails.edit || viewTails.view);
+    const back = inView
+      ? { href: dashboardUrlFor(Boolean(viewTails.edit)), label: "Back to dashboard", attrs: { dataset: { testid: "view-back" } }, ...viewTails.back }
+      : null;
+    header.setLocation(...locationNodes({ uid, title: loaded.doc.title, navigate: ctx.navigate, back }));
   }
 
   // --- the states of the page (10.2a) -------------------------------------------------------------------------------------------
@@ -579,7 +608,7 @@ export async function mount(ctx) {
     state = out.state;
     if (out.history === "push") writeEntry(out.state, "push", out.writeOrigin);
     else if (out.history === "replace") writeEntry(out.state, "replace", false);
-    else if (out.history === "pop") window.history.back();
+    else if (out.history === "pop") popKeepingQuery();
     return showState();
   }
 
@@ -611,7 +640,7 @@ export async function mount(ctx) {
     focusBack = true;
     await reloadDocument({ notice: false, to: target, op: out.history, before: () => {
       if (!isEditorState(target) && editHooks && editHooks.close) editHooks.close();
-      if (out.history === "pop") window.history.back();
+      if (out.history === "pop") popKeepingQuery();
     } });
   }
 
@@ -673,7 +702,7 @@ export async function mount(ctx) {
     dispatch,
     finishEdit,
     whenShown,
-    // The editor tells the page that the view of the state is in the page: the page follows (crumbs, the row of the variables, the hooks).
+    // The editor tells the page that the view of the state is in the page: the page follows (the header, the row of the variables, the hooks).
     shown(target) {
       settle(target);
       giveFocusBack();
@@ -701,11 +730,11 @@ export async function mount(ctx) {
       const h1 = main.querySelector(":scope > h1");
       if (toolbar && h1 && toolbar.parentElement !== main) h1.after(toolbar);
     },
-    // The last crumb of the header while the editor shows a view of a panel: "Edit panel" or nothing. `back` makes the crumb of the
-    // dashboard the way back (icon and attrs).
-    setCrumbTail(text, back) {
-      crumbTails = { ...crumbTails, edit: text || null, back: back || null };
-      paintCrumbs();
+    // The header while the editor shows a view of a panel: `editing` is true for the panel editor, which has the way back and no name. `back` gives
+    // the label and the attributes (test id, click) of the way back.
+    setViewTail(editing, back) {
+      viewTails = { ...viewTails, edit: editing === true ? true : null, back: back || null };
+      paintLocation();
     },
     // Hides the base grid (the editor draws the draft grid) and shows it again. The view of a panel closes first: one view at a time (10.2a, rule 2).
     pauseBase() {
@@ -764,19 +793,14 @@ export async function mount(ctx) {
     frame.el.classList.add("panel--view");
     clear(viewHost);
     viewHost.append(frame.el);
-    // The crumb of the dashboard is the way back. A narrow phone hides the link crumbs (base.css), so the toolbar row has a
-    // button there (css .dash-toolbar__back shows it under 481 px only).
-    if (viewBack) viewBack.remove();
-    viewBack = button("Back to dashboard", { class: "btn btn--tb dash-toolbar__back", dataset: { testid: "view-back" }, on: { click: () => dispatch("close-view") } }, "arrow-left", { variant: "tb" });
-    header.actions.prepend(viewBack);
     viewHost.hidden = false;
     syncViewHeight();
     viewFrame = { frame, panelId: id, record: panel };
     rt.setViewPanel(id);
     frame.update(true);
     for (const other of rt.panels.values()) if (other.panel.data.reuse && other.panel.data.reuse.panel === id) frame.update(true);
-    crumbTails = { ...crumbTails, view: "View panel" };
-    paintCrumbs();
+    viewTails = { ...viewTails, view: true };
+    paintLocation();
     // The focus moves to the view, so that Tab starts in the panel and a screen reader names the region. The view shows no ring (css)
     // and, being outside the frame, it does not show the menu button or the edge of the frame.
     whenShown(() => viewHost.focus({ preventScroll: true }));
@@ -790,12 +814,8 @@ export async function mount(ctx) {
     }
     clear(viewHost);
     viewHost.hidden = true;
-    if (viewBack) {
-      viewBack.remove();
-      viewBack = null;
-    }
-    crumbTails = { ...crumbTails, view: null };
-    paintCrumbs();
+    viewTails = { ...viewTails, view: null };
+    paintLocation();
     grid.hide(false);
     grid.sync();
     grid.resumeFrames();
@@ -849,14 +869,10 @@ export async function mount(ctx) {
     try {
       const keep = selectionsOf(rt);
       const range = currentRange();
-      const [fresh, folders] = await Promise.all([api.dashboard(uid, controller.signal), api.folders(controller.signal).catch(() => null)]);
+      const fresh = await api.dashboard(uid, controller.signal);
       if (destroyed) return;
       if (before) before();
       answer = fresh;
-      if (folders) {
-        const folder = (folders.items || []).find((f) => f.id === fresh.folder);
-        folderTitle = folder ? folder.title : fresh.folder;
-      }
       teardownPage();
       if (to) state = to;
       buildPage(range, new Map(), keep);
@@ -871,6 +887,8 @@ export async function mount(ctx) {
       if (!to || op === "replace") writeUrl();
       if (notice) notify({ level: "info", text: "The dashboard changed: Hune loaded the new version." });
       await rt.start(new Map());
+      // The options of the variables are loaded now, so their defaults are known: the address drops the names that equal their default (9.5).
+      if (!destroyed && rt) writeUrl();
     } catch (error) {
       if (!api.isAbort(error)) notify({ level: "error", text: `The dashboard did not reload: ${error.message}` });
     } finally {
@@ -883,8 +901,7 @@ export async function mount(ctx) {
       viewFrame.frame.destroy();
       viewFrame = null;
     }
-    crumbTails = { ...crumbTails, view: null };
-    viewBack = null;
+    viewTails = { ...viewTails, view: null };
     if (rt) rt.destroy();
     if (grid) grid.destroy();
     if (linksBar) linksBar.destroy();
@@ -896,6 +913,15 @@ export async function mount(ctx) {
   function locationChanged() {
     if (!rt || destroyed) return;
     const s = parseSearch(window.location.search);
+    // The end of a view by a Back that the page made: its own range, refresh and variables stay (see popKeepingQuery). The carry lasts 3 s.
+    const carried = carriedQuery && Date.now() - carriedQuery.at < 3000 ? carriedQuery.query : null;
+    carriedQuery = null;
+    if (carried) {
+      s.from = carried.from;
+      s.to = carried.to;
+      s.refresh = carried.refresh;
+      s.vars = carried.vars;
+    }
     // Range and refresh.
     const from = s.from !== null ? s.from : loaded.doc.time.from;
     const to = s.to !== null ? s.to : loaded.doc.time.to;
@@ -910,10 +936,10 @@ export async function mount(ctx) {
     // Variables.
     for (const v of rt.variables) {
       const values = s.vars.get(v.name);
-      if (!values) continue;
-      const sel = selectionFromUrl(v, values);
       const cur = rt.selections.get(v.name);
-      if (sel && (sel.all !== cur.all || sel.values.join("\u0000") !== cur.values.join("\u0000"))) rt.setSelection(v.name, sel);
+      // A name that the URL does not have means the default selection (9.5). A default that is not known yet changes nothing.
+      const sel = values ? selectionFromUrl(v, values) : rt.defaultSelection(v.name);
+      if (sel && !sameSelection(sel, cur)) rt.setSelection(v.name, sel);
     }
     // The state of the URL (10.2a, rule 1). Back and Forward never show a dialog: the dialogs close, and the draft stays (rule 9).
     const parsed = parseView(window.location.search, parseCtx());
@@ -930,6 +956,8 @@ export async function mount(ctx) {
     } else settle(state);
     showNotices(parsed.notices);
     normalise(next);
+    if (carried) writeUrl();
+    else document.dispatchEvent(new Event("hune-query"));
   }
 
   function selectionFromUrl(v, values) {

@@ -26,7 +26,8 @@ const shownQueue = []; // functions that wait for the release: a hidden element 
 const versionLine = el("span", { id: "brand-version", class: "brand__version", dataset: { testid: "app-version" }, text: boot.version, title: boot.versionTitle || null, hidden: !boot.version });
 const brand = el("a", { class: "brand", href: ".", title: boot.versionTitle || null, "aria-label": "Hune, the list of dashboards", "aria-describedby": "brand-version" },
   icon("logo", 20), el("span", { class: "brand__text" }, el("span", { class: "brand__name", text: "Hune" }), versionLine));
-const crumbs = el("nav", { class: "crumbs", "aria-label": "Location" });
+// The place of the page (9.6): on a dashboard, the selector of the dashboards (switcher.js). It is the one flexible part of the header.
+const placeNav = el("nav", { class: "location", "aria-label": "Location" });
 // The controls that follow the brand at the left (the sort and the tag filter of the list): the page puts them here with header.setStart().
 const startSlot = el("div", { class: "header-start", dataset: { testid: "header-start" } });
 // The controls of the page (9.6): the page puts its groups in this row with header.setActions().
@@ -36,12 +37,12 @@ const themeSlot = el("div", { class: "header-theme" });
 // The button "More actions" of a dashboard (9.9): it follows the theme selector. The list page and the pages of an error have none.
 const moreSlot = el("div", { class: "header-more" });
 
-// The header holds the brand, the start controls, the crumbs, the controls of the page, the theme selector and the button "More actions", on every page.
+// The header holds the brand, the start controls, the place of the page, the controls of the page, the theme selector and the button "More actions", on every page.
 // It is one row at every width (9.6): the css steps of header_layout.js make the controls smaller, and the narrowest steps move
 // controls into the menu.
 function buildHeader() {
   clear(headerEl);
-  headerEl.append(brand, startSlot, crumbs, actionsSlot, themeSlot, moreSlot);
+  headerEl.append(brand, startSlot, placeNav, actionsSlot, themeSlot, moreSlot);
   themeSlot.append(themeControl());
   headerMeasure = trackHeaderHeight();
 }
@@ -61,16 +62,12 @@ function trackHeaderHeight() {
 
 // The API that pages use to fill the header.
 const header = {
-  // parts: [{ text, href, icon, attrs }]: the folder title and the dashboard title. `attrs` and `icon` make the back link of the panel editor.
-  setCrumbs(parts) {
-    clear(crumbs);
-    for (const part of parts) {
-      crumbs.append(el("span", { class: "crumbs__sep", "aria-hidden": "true" }, icon("chevron-right", 12)));
-      if (part.href) crumbs.append(el("a", { class: "crumbs__item crumbs__item--link", href: part.href, title: part.text, ...part.attrs }, part.icon ? icon(part.icon, 14) : null, el("span", { class: "crumbs__text", text: part.text })));
-      else crumbs.append(el("span", { class: "crumbs__item crumbs__item--current", title: part.text, "aria-current": "page" }, el("span", { class: "crumbs__text", text: part.text })));
-    }
+  // The nodes of the place of the page: the selector of the dashboards, and on a view of a panel the way back and the name of the view.
+  setLocation(...nodes) {
+    clear(placeNav);
+    for (const node of nodes) if (node) placeNav.append(node);
   },
-  // The controls that follow the brand, before the crumbs. A page that has none leaves the slot empty.
+  // The controls that follow the brand, before the place of the page. A page that has none leaves the slot empty.
   setStart(...nodes) {
     clear(startSlot);
     for (const node of nodes) if (node) startSlot.append(node);
@@ -88,7 +85,7 @@ const header = {
     if (node) moreSlot.append(node);
   },
   clear() {
-    clear(crumbs);
+    clear(placeNav);
     clear(startSlot);
     clear(actionsRow);
     clear(moreSlot);

@@ -3,7 +3,7 @@
 // Side-by-side harness for the chrome: ClickHouse Dash (left) and Hune (right).
 //
 // Use:  node tests/browser/compare_chdash.mjs --hune http://127.0.0.1:8196 --out target/ws/f-theme/compare-chdash
-//       node tests/browser/compare_chdash.mjs --only header,theme-menu --themes dark --widths 1280
+//       node tests/browser/compare_chdash.mjs --only header,menu --themes dark --widths 1280
 //       node tests/browser/compare_chdash.mjs --list
 //
 // The Grafana sheets (compare.mjs) keep their role for the panels. These sheets compare the CHROME only: the header, a menu,
@@ -65,16 +65,6 @@ const click = (side, sel) => side.page.click(sel);
 const STATES = [
   { id: "header", text: "the header and the list page at rest", chdash: "list", hune: async (v) => v.open("/") },
   {
-    id: "theme-menu",
-    text: "the theme menu open",
-    chdash: "theme-menu",
-    hune: async (v) => {
-      await v.open("/");
-      await click(v, ".theme-select__button");
-      await sleep(400);
-    },
-  },
-  {
     id: "menu",
     text: "a menu open (Sort on the list page, a menu of options on ClickHouse Dash)",
     chdash: "menu",
@@ -90,6 +80,7 @@ const STATES = [
     chdash: "dialog",
     hune: async (v) => {
       await v.open("/");
+      await click(v, '[data-testid="list-new-menu"]');
       await click(v, '[data-testid="new-folder"]');
       await sleep(500);
     },
@@ -124,16 +115,11 @@ const states = STATES.filter((s) => wanted.includes(s.id));
 const MIME = { ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".html": "text/html; charset=utf-8", ".js": "text/javascript" };
 const STATIC = join(CHDASH_REPO, "src/static");
 
-function headerHtml(open) {
+function headerHtml() {
   let h = readFileSync(join(CHDASH_REPO, "src/shell/header.html"), "utf8");
   h = h.replace(/<!--[\s\S]*?-->/g, "").replace(/<script>[\s\S]*?<\/script>/g, "");
   h = h.replace("{{main.id}}", "main").replace("{{page.label}}", "Dashboards").replace(/\{\{[a-z.]+\}\}/g, "");
   h = h.replace(/\/static\/icons\.svg\?v=[0-9a-f]+/g, "/static/icons.svg");
-  if (open) {
-    h = h.replace('class="themeSelect themeSelect--icons"', 'class="themeSelect themeSelect--icons themeSelect--open"');
-    h = h.replace('aria-expanded="false"\n          aria-label="Theme: system"', 'aria-expanded="true"\n          aria-label="Theme: system"');
-    h = h.replace('<div id="themeSelectMenu" class="themeSelect__menu themeSelect__menu--icons" role="listbox" tabindex="-1" hidden>', '<div id="themeSelectMenu" class="themeSelect__menu themeSelect__menu--icons" role="listbox" tabindex="-1">');
-  }
   return h;
 }
 
@@ -162,7 +148,7 @@ function listBody() {
 }
 
 function specimen(kind, theme) {
-  const header = headerHtml(kind === "theme-menu");
+  const header = headerHtml();
   let body = listBody();
   let extra = "";
   if (kind === "menu") {

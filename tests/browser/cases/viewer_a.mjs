@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser cases B01, B02, B03, B10, B12, B13, B24, B25, B26, B27 (16.10).
+// Browser cases B01, B02, B03, B10, B12, B13, B24, B25, B26, B27 and B233 (16.10).
 import { allTypesDoc, doc, panel, section, SQL } from "../lib/docs.mjs";
 import { SEED_FROM, SEED_TO } from "../lib/env.mjs";
 import { optionQueries, panelIdOf, panelQueries, panelStates, sleep, viewData, waitPanelsReady } from "../lib/h.mjs";
@@ -22,21 +22,20 @@ export const cases = [
       t.assert(await p.exists(p.tid("folder-transit")), "folder group transit");
       // The volume has one folder: the page shows no folder title (9.7).
       t.eq(await p.count(".group__head"), 0, "one folder: no folder title");
-      // The valid card: a link to d/<uid>/<slug>, its tags, and the last change in the short form with an absolute title.
+      // The valid card: a link to d/<uid>/<slug>, its tags, and no badge of the last change: the dashboard is a file of the volume (no version saved by Hune).
       const row = await p.eval(`(() => {
         const r = document.querySelector('[data-testid="row-nodes"]');
         const a = r.querySelector("a.card__link");
-        const up = r.querySelector(".card__updated");
+        const up = r.querySelector(".card__badge");
         return { tag: r.tagName, href: a.getAttribute("href"), text: a.textContent, title: a.title, tags: [...r.querySelectorAll(".list-tag")].map((e) => e.textContent),
-                 changed: up.textContent, changedTitle: up.title, buttons: r.querySelectorAll("button, .card__edit").length, links: r.querySelectorAll("a").length };
+                 changed: up ? up.textContent : null, buttons: r.querySelectorAll("button, .card__more").length, links: r.querySelectorAll("a").length };
       })()`);
       t.eq(row.tag, "ARTICLE", "a card is not an anchor");
-      t.eq(row.links, 2, "the title link and the pencil: two links, none around the card");
+      t.eq(row.links, 1, "the title link only: the edit link is an item of the menu of the three dots, and no link is around the card");
       t.eq(row.href, "d/nodes/nodes", "card link");
       t.eq([row.text, row.title], ["Nodes", "Nodes"], "card title and its title attribute");
       t.eq(row.tags, ["chain"], "card tags");
-      t.assert(/^(now|\d+m|\d+h|\d+d|\d+w|\d+mo|\d+y)$/.test(row.changed), "short form of the last change: " + row.changed);
-      t.assert(/^\d{4}-\d\d-\d\d \d\d:\d\d:\d\d$/.test(row.changedTitle), "absolute time in the title attribute: " + row.changedTitle);
+      t.eq(row.changed, null, "a file of the volume has no badge of the last change");
       // The invalid card: the uid, "Not valid", no link to the dashboard, and the errors with their pointers.
       const bad = await p.eval(`(() => {
         const r = document.querySelector('[data-testid="row-grid-errors"]');
@@ -233,20 +232,23 @@ export const cases = [
       t.eq(await p.attr("html", "data-theme"), "dark", "system dark applies at first load");
       await p.emulateColorScheme("light");
       await p.waitFor(`document.documentElement.dataset.theme === "light"`, { what: "system change" });
-      // The theme selector (9.25): one icon button; its menu has System, Dark and Light, and the selected one is marked.
+      // The theme button (9.25): one icon button. A click gives the next choice in the order System, Dark, Light, and it opens no menu.
       const label = () => p.eval(`document.querySelector('[data-testid="theme-toggle"]').getAttribute("aria-label")`);
       const choose = async (value) => {
-        await p.click(p.tid("theme-toggle"));
-        await p.waitFor(`document.querySelector('[data-testid="theme-toggle"]').getAttribute("aria-expanded") === "true"`, { what: "the theme menu opens" });
-        await p.click(p.tid(`theme-${value}`));
-        await p.waitFor(`document.querySelector('[data-testid="theme-menu"]').hidden`, { what: "the theme menu closes" });
+        for (let i = 0; i < 3 && (await p.eval(`(document.documentElement.dataset.themeChoice || "system") !== ${JSON.stringify(value)}`)); i++) await p.click(p.tid("theme-toggle"));
       };
-      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="theme-menu"] [role="option"]')].map((e) => e.dataset.value)`), ["system", "dark", "light"], "order of the choices");
+      t.eq(await p.eval(`document.querySelectorAll('[data-testid="theme-menu"], [data-testid="theme-system"], [data-testid="theme-dark"], [data-testid="theme-light"]').length`), 0, "the button has no menu and no options");
       t.eq(await label(), "Theme: System", "first label");
+      await p.click(p.tid("theme-toggle"));
+      t.eq(await label(), "Theme: Dark", "a click: the second label is Dark, the order is System, Dark, Light");
+      await p.click(p.tid("theme-toggle"));
+      t.eq(await label(), "Theme: Light", "a click: the third label is Light");
+      await p.click(p.tid("theme-toggle"));
+      t.eq(await label(), "Theme: System", "a click: back to System");
       await choose("light");
-      t.eq(await label(), "Theme: Light", "second label");
+      t.eq(await label(), "Theme: Light", "light again");
       await choose("dark");
-      t.eq(await label(), "Theme: Dark", "third label");
+      t.eq(await label(), "Theme: Dark", "dark again");
       t.eq(await p.attr("html", "data-theme"), "dark", "dark theme set");
       const stored = await p.eval(`localStorage.getItem("hune.theme")`);
       t.eq(stored, "dark", "localStorage hune.theme");
@@ -458,6 +460,51 @@ export const cases = [
       void SEED_FROM;
       void SEED_TO;
       void optionQueries;
+    },
+  },
+
+  {
+    id: "B233",
+    name: "the view of one panel has no page scrollbar: the panel fills the window under the header and the row of the variables, with the page padding above and under it, at four sizes in the light and the dark theme, with and without variables (9.8)",
+    async run(t) {
+      await ensure(t, allTypesDoc("all-types"));
+      const p = await t.page();
+      const size = (w, h) => p.send("Emulation.setDeviceMetricsOverride", { width: w, height: h, deviceScaleFactor: 1, mobile: false });
+      // all-types has no variable (no row of the variables); nodes has three variables (a row under the header).
+      const pages = [["all-types", false], ["nodes", true]];
+      for (const [width, height] of [[1440, 900], [1280, 720], [768, 600], [390, 844]]) {
+        for (const scheme of ["light", "dark"]) {
+          for (const [uid, withVariables] of pages) {
+            const where = `${uid} at ${width}x${height}, ${scheme}`;
+            await size(width, height);
+            await p.emulateColorScheme(scheme);
+            await p.goto(t.dash(uid, "viewPanel=1&refresh=off"));
+            await p.waitFor(`!!document.querySelector('.panel--view')`, { what: `the view of a panel (${where})` });
+            // The page measures the row of the variables and gives its height to the view: wait for the measure before the check.
+            if (withVariables) await p.waitFor(`parseFloat(document.querySelector('[data-testid="view-panel"]').style.getPropertyValue("--view-toolbar-h")) > 0`, { what: `the row of the variables (${where})` });
+            await p.idle();
+            await sleep(300);
+            const m = await p.eval(`(() => {
+              const html = document.documentElement, panel = document.querySelector(".panel--view").getBoundingClientRect();
+              const header = document.querySelector("#app-header").getBoundingClientRect();
+              return { doc: html.scrollHeight, body: document.body.scrollHeight, win: html.clientHeight, bar: window.innerWidth - html.clientWidth,
+                       gapBelow: Math.round((window.innerHeight - panel.bottom) * 10) / 10, gapAbove: Math.round((panel.top - header.bottom) * 10) / 10, row: document.querySelector(".dash-toolbar").offsetHeight,
+                       pad: parseFloat(getComputedStyle(document.querySelector("#app-main")).paddingBottom) };
+            })()`);
+            t.assert(m.doc <= m.win, `${where}: the document is not taller than the window: ${m.doc} and ${m.win}`);
+            t.assert(m.body <= m.win, `${where}: the body is not taller than the window: ${m.body} and ${m.win}`);
+            t.eq(m.bar, 0, `${where}: no vertical scrollbar takes room from the page`);
+            t.eq(withVariables ? m.row > 0 : m.row === 0, true, `${where}: the row of the variables ${withVariables ? "shows" : "is empty"}: ${m.row}`);
+            if (!withVariables) {
+              // The page padding is above the panel (under the header) and under it (above the window edge): 16 px, and 12 px on a phone.
+              t.eq([m.gapAbove, m.gapBelow], [m.pad, m.pad], `${where}: the panel has the page padding above and under it`);
+              t.eq(m.pad, width <= 480 ? 12 : 16, `${where}: the page padding`);
+            } else {
+              t.assert(m.gapBelow >= m.pad, `${where}: the panel ends at least the page padding above the window edge: ${m.gapBelow}`);
+            }
+          }
+        }
+      }
     },
   },
 ];

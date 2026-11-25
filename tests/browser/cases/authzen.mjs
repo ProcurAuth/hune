@@ -24,7 +24,14 @@ async function openAs(t, a, sub, path, { wait = "idle" } = {}) {
 const rowIds = (p) => p.eval(`[...document.querySelectorAll('[data-testid^="row-"]:not([data-testid^="row-menu-"])')].map((e) => e.dataset.testid.slice(4))`);
 const folderIds = (p) => p.eval(`[...document.querySelectorAll('section[data-testid^="folder-"]')].map((e) => e.dataset.testid.slice(7))`);
 const menuItems = (p) => p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent)`);
-const toolbar = (p) => p.eval(`["new-dashboard", "import", "new-folder"].filter((id) => document.querySelector('[data-testid="' + id + '"]'))`);
+// The actions of the list are the items of the menu New (9.7). The helper opens the menu, reads the items in order, and closes it. No item: no button.
+const toolbar = async (p) => {
+  if (!(await p.eval(`!!document.querySelector('[data-testid="list-new-menu"]') && !document.querySelector('[data-testid="list-new-menu"]').hidden`))) return [];
+  await p.click(p.tid("list-new-menu"));
+  const ids = await p.eval(`[...document.querySelectorAll('[data-testid="list-new-menu-popup"] [role="menuitem"]')].map((e) => e.dataset.testid)`);
+  await p.press("Escape");
+  return ids;
+};
 
 /** The controls of the edit mode that must be absent. */
 const EDIT_CONTROLS = ["edit-toggle", "edit-bar", "save-button", "add-panel", "add-section", "json-tab", "discard-button", "edit-grid"];
@@ -52,7 +59,7 @@ export const cases = [
       {
         const p = await openAs(t, a, "admin", "");
         t.eq(await folderIds(p), ["desk", "lab", "secret", "transit"], "admin sees the four folders");
-        t.eq(await toolbar(p), ["new-dashboard", "import", "new-folder"], "admin toolbar");
+        t.eq(await toolbar(p), ["new-dashboard", "new-folder", "import"], "admin menu New");
         const api = p.requests.filter((r) => /\/api\//.test(r.url));
         t.assert(api.length >= 3, "the page made API calls");
         for (const r of api) t.assert(r.headers[HEADER] || r.headers[HEADER.toLowerCase()], `request ${r.url} carries ${HEADER}`);
@@ -73,7 +80,7 @@ export const cases = [
         t.eq(await p.count('.group__head button[aria-haspopup="menu"]'), 0, "no folder menu");
         // A reader has no button on a card (9.7): no pencil, no bin and no menu. The dashboard page has Export.
         t.eq(await p.count('[data-testid^="row-menu-"], [data-testid^="card-edit-"], [data-testid^="card-delete-"]'), 0, "no button on a card of a reader");
-        t.eq(await p.count("article[data-testid^=\"row-\"] button:not(.list-tag), article[data-testid^=\"row-\"] .card__edit"), 0, "a card of a reader holds no button but the tag chips");
+        t.eq(await p.count("article[data-testid^=\"row-\"] button:not(.list-tag), article[data-testid^=\"row-\"] .card__more"), 0, "a card of a reader holds no button but the tag chips");
         // The list shows only what the display filter gives.
         t.eq(await p.exists(p.tid("row-hidden-one")), false, "no hidden-one in the DOM");
         t.eq(await p.exists(p.tid("row-lab-a")), false, "no lab-a in the DOM");

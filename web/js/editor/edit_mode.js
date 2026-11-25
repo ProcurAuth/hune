@@ -21,6 +21,7 @@ import { loadDraft, removeStored, writeStored, draftKey } from "./draft_store.js
 import { canMove, movePanel } from "./layout.js";
 import { prettyJson } from "./json_check.js";
 import { openSaveDialog, announceSaved } from "./save.js";
+import { timeDifferences } from "./time_defaults.js";
 import { SaveAttempt } from "./save_logic.js";
 
 const fill = (bytes) => crypto.getRandomValues(bytes);
@@ -185,6 +186,8 @@ class Editor {
       if (local) notify({ level: "warning", key: "tab", text: "This dashboard is open for edit in another tab." });
     });
     this.listen(document, "click", (e) => this.guardLink(e), true);
+    // A change of the range, the refresh or a variable in the header: "Save" may become active or inactive (10.9).
+    this.listen(document, "hune-query", () => this.paintBar());
     this.listen(document, "keydown", (e) => {
       if (this.editing && (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
@@ -193,9 +196,9 @@ class Editor {
     });
   }
 
-  // The way back of the panel editor is the crumb of the dashboard in the header (10.3). Its name is the true target of the event
+  // The way back of the panel editor is the arrow in the header, before the selector (10.3). Its name is the true target of the event
   // `leave` (10.2a): the panel view, the dashboard or the edit mode. A click with no modifier key is the event; the address serves the others.
-  backCrumb() {
+  backLink() {
     const origin = this.api.origin;
     const page = origin ? origin.state.page : "edit";
     const label = page === "panel-view" ? "Back to panel view" : page === "view" ? "Back to dashboard" : "Back to edit mode";
@@ -205,7 +208,7 @@ class Editor {
       if (this.view && this.view.inst.flush) this.view.inst.flush();
       this.api.dispatch("leave");
     };
-    return { icon: "arrow-left", attrs: { class: "crumbs__item crumbs__item--link crumbs__item--back", title: label, "aria-label": label, dataset: { testid: "editor-back" }, on: { click } } };
+    return { label, attrs: { dataset: { testid: "editor-back" }, on: { click } } };
   }
 
   // The synchronous swap of the views for a state (10.2a).
@@ -223,7 +226,7 @@ class Editor {
       this.disposeView();
       const inst = plan.create();
       this.view = { kind: plan.kind, key: plan.key, inst };
-      this.api.setCrumbTail(plan.kind === "panel" ? "Edit panel" : null, plan.kind === "panel" ? this.backCrumb() : null);
+      this.api.setViewTail(plan.kind === "panel", plan.kind === "panel" ? this.backLink() : null);
       const host = this.api.editHost;
       clear(host);
       host.append(inst.el);
@@ -295,7 +298,7 @@ class Editor {
     const api2 = this.api;
     this.dispose();
     api2.setEditActive(false);
-    api2.setCrumbTail(null);
+    api2.setViewTail(null);
     api2.setEditHooks(null);
     api2.resumeBase();
   }
@@ -450,7 +453,7 @@ class Editor {
     if (!link || link.target || link.hasAttribute("download") || link.dataset.external === "true" || link.closest("dialog, .editor-host")) return;
     const url = new URL(link.href, document.baseURI);
     if (url.origin !== window.location.origin) return;
-    // A link to the edit mode of this dashboard (the crumb of the panel editor) does not leave it.
+    // A link to the edit mode of this dashboard (the way back of the panel editor) does not leave it.
     if (url.pathname === window.location.pathname && url.searchParams.get("edit") === "1") return;
     event.preventDefault();
     event.stopImmediatePropagation();
@@ -580,7 +583,7 @@ class Editor {
   }
 
   // The group of the edit mode in the header row (10.2), before the time control: "Add" (a split button), "Save" and "Revert". It is in the
-  // page only in edit mode and takes its room from the crumbs, so no button of the view moves. "Save" is the primary button. "Revert"
+  // page only in edit mode and takes its room from the selector, so no button of the view moves. "Save" is the primary button. "Revert"
   // discards all the changes after a question.
   buildBar() {
     const saveButton = button("Save", { dataset: { testid: "save-button" }, on: { click: () => this.save() } }, "save", { variant: "tb" });
@@ -672,13 +675,17 @@ class Editor {
   paintBar() {
     if (!this.bar) return;
     const dirty = this.dirty();
-    this.bar.saveButton.disabled = !dirty;
+    // "Save" is active when the draft changed, or when the current range or refresh differs from the default of the draft: the Save dialog then
+    // offers them as the defaults (10.9). "Revert" acts on the draft only.
+    const time = this.record ? timeDifferences(this.doc.time, this.api.pageApi.currentTime) : { range: false, refresh: false };
+    const timeOnly = !dirty && (time.range || time.refresh);
+    this.bar.saveButton.disabled = !dirty && !timeOnly;
     this.bar.discard.disabled = !dirty;
     // "Add" acts on the draft grid. In the other views it stays in its place and is not active, so the header does not change (10.2).
     const grid = Boolean(this.view) && this.view.kind === "grid";
     this.bar.addMain.disabled = !grid;
     this.bar.addMenu.disabled = !grid;
-    this.bar.saveButton.title = dirty ? "Save the changes" : "There are no changes to save";
+    this.bar.saveButton.title = dirty ? "Save the changes" : timeOnly ? "Save the time range or the refresh as the default" : "There are no changes to save";
     this.bar.state.dataset.dirty = String(dirty);
     this.bar.state.textContent = dirty ? "Unsaved changes" : "No changes";
   }

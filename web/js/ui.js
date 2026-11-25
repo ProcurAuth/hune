@@ -236,30 +236,37 @@ export function closeMenu({ restoreFocus = true } = {}) {
   if (restoreFocus) anchor.focus();
 }
 
-// items: [{ label, onSelect, href, disabled, separator, icon, danger, heading }]. The anchor button opens it.
+// items: [{ label, onSelect, href, disabled, separator, icon, danger, heading, node, meta, checked, current, group }]. The anchor button opens it.
+const FIT_MIN_WIDTH = 224;
+
 // A heading item is a small label that groups the items under it. It is not a menu item.
 // An item icon is the name of an icon of the sprite. It shows at 16 px, 8 px before the label (css .menu__item).
+// `node` is a DOM node that replaces the text of the label (a chip). `meta` is a short muted text at the right (a count). `testid` and `key` name
+// the item for the tests and for a refill. `checked` makes the item one choice of a group (role menuitemradio). `current` marks the page that
+// the item names (aria-current), as a chosen item. In a joined menu, a chosen item has a check mark at the right.
+// `group` is { label, icon, open, children, key, onToggle }: a row that opens and closes the list of its `children` under it (an accordion). The
+// keys Right and Left open and close it, Left on a child goes back to the row.
 // gap: the distance in pixels between the anchor and the menu.
-export function openMenu(anchor, items, { testid = null, align = "start", gap = 8 } = {}) {
+// joined: the menu follows the shape of ClickHouse Dash and Stowr: it touches the anchor, which loses its bottom edge, and it has the width of the
+// anchor at least. The popup has `update(items)` to fill it again (the data came after the open) with the focus kept on the same `key`.
+// fit: the joined menu has the width of the anchor exactly (not at least), or FIT_MIN_WIDTH when the anchor is narrower. A long label ends with an
+// ellipsis and has its full text as a tooltip.
+export function openMenu(anchor, items, { testid = null, align = "start", gap = null, joined = false, fit = false } = {}) {
   closeMenu({ restoreFocus: false });
-  const popup = el("div", { class: "menu", role: "menu", dataset: testid ? { testid } : {} });
-  const entries = [];
-  for (const item of items) {
-    if (item.separator) {
-      popup.appendChild(el("div", { class: "menu__sep", role: "separator" }));
-      continue;
-    }
-    if (item.heading) {
-      popup.appendChild(el("div", { class: "menu__label", role: "presentation", text: item.heading }));
-      continue;
-    }
+  const popup = el("div", { class: joined ? "menu menu--joined" : "menu", role: "menu", dataset: testid ? { testid } : {} });
+  const entries = () => [...popup.querySelectorAll(".menu__item:not([disabled])")].filter((node) => node.offsetParent !== null);
+
+  const itemNode = (item) => {
     // A checked item is one choice of a group (the refresh interval): role menuitemradio, with a neutral fill.
+    const chosen = item.checked === true || item.current === true;
     const attrs = {
-      class: `menu__item${item.danger ? " menu__item--danger" : ""}${item.checked !== undefined ? " menu__item--choice" : ""}`,
+      class: `menu__item${item.danger ? " menu__item--danger" : ""}${item.checked !== undefined ? " menu__item--choice" : ""}${item.current ? " is-current" : ""}`,
       role: item.checked !== undefined ? "menuitemradio" : "menuitem",
       "aria-checked": item.checked !== undefined ? String(item.checked === true) : null,
+      "aria-current": item.current ? "true" : null,
       tabIndex: -1,
       disabled: item.disabled,
+      title: item.title || null,
     };
     const onClick = (event) => {
       // An in-app link (with onSelect) changes the view with pushState. An external link keeps the action of the browser.
@@ -267,44 +274,118 @@ export function openMenu(anchor, items, { testid = null, align = "start", gap = 
       closeMenu();
       if (item.onSelect) item.onSelect(event);
     };
-    const glyph = item.icon ? icon(item.icon, 16) : null;
+    const parts = [item.icon ? icon(item.icon, 16) : null, item.node ? el("span", { class: "menu__text" }, item.node) : item.node === undefined && joined ? el("span", { class: "menu__text", text: item.label }) : item.label];
+    if (item.meta !== undefined && item.meta !== null) parts.push(el("span", { class: "menu__meta", text: String(item.meta) }));
+    if (joined && chosen) parts.push(el("span", { class: "menu__check" }, icon("check", 16)));
     const node = item.href
-      ? el("a", { ...attrs, href: item.href, target: item.blank ? "_blank" : null, rel: item.blank ? "noopener noreferrer" : null, dataset: item.external ? { external: "true" } : {}, on: { click: onClick } }, glyph, item.label)
-      : el("button", { ...attrs, type: "button", on: { click: onClick } }, glyph, item.label);
+      ? el("a", { ...attrs, href: item.href, target: item.blank ? "_blank" : null, rel: item.blank ? "noopener noreferrer" : null, dataset: item.external ? { external: "true" } : {}, on: { click: onClick } }, ...parts)
+      : el("button", { ...attrs, type: "button", on: { click: onClick } }, ...parts);
     if (item.testid) node.dataset.testid = item.testid;
-    popup.appendChild(node);
-    if (!item.disabled) entries.push(node);
+    if (item.key) node.dataset.menuKey = item.key;
+    node.dataset.menuLabel = String(item.label ?? "").toLowerCase();
+    return node;
+  };
+
+  const groupNodes = (item) => {
+    const kids = el("div", { class: "menu__children", role: "group", "aria-label": item.label, hidden: item.open !== true });
+    const row = el("button", {
+      type: "button", class: "menu__item menu__group", role: "menuitem", tabIndex: -1, "aria-expanded": String(item.open === true), title: item.label,
+      on: { click: () => setOpen(row, kids, row.getAttribute("aria-expanded") !== "true", item) },
+    }, el("span", { class: "menu__chevron" }, icon("chevron-right", 14)), item.icon ? icon(item.icon, 16) : null, el("span", { class: "menu__text", text: item.label }));
+    row.dataset.menuLabel = String(item.label ?? "").toLowerCase();
+    if (item.key) row.dataset.menuKey = item.key;
+    fillInto(kids, item.children || []);
+    return [row, kids];
+  };
+
+  function setOpen(row, kids, open, item) {
+    row.setAttribute("aria-expanded", String(open));
+    kids.hidden = !open;
+    if (item && item.onToggle) item.onToggle(open);
   }
+
+  function fillInto(container, list) {
+    for (const item of list) {
+      if (item.separator) container.appendChild(el("div", { class: "menu__sep", role: "separator" }));
+      else if (item.heading) container.appendChild(el("div", { class: "menu__label", role: "presentation", text: item.heading }));
+      else if (item.group) container.append(...groupNodes(item));
+      else container.appendChild(itemNode(item));
+    }
+  }
+
+  fillInto(popup, items);
   document.body.appendChild(popup);
-  const box = anchor.getBoundingClientRect();
-  const width = popup.offsetWidth;
-  const left = align === "end" ? box.right - width : box.left;
-  popup.style.left = `${Math.max(4, Math.min(left, window.innerWidth - width - 4))}px`;
-  popup.style.top = `${Math.max(4, Math.min(box.bottom + gap, window.innerHeight - popup.offsetHeight - 4))}px`;
+  const place = () => {
+    const box = anchor.getBoundingClientRect();
+    if (joined) popup.style.minWidth = `${Math.round(box.width)}px`;
+    // A narrow button (a phone) would give an unreadable menu: the menu is FIT_MIN_WIDTH wide at least, and never wider than the window.
+    if (joined && fit) popup.style.width = popup.style.maxWidth = `${Math.min(Math.max(Math.round(box.width), FIT_MIN_WIDTH), window.innerWidth - 8)}px`;
+    const width = popup.offsetWidth;
+    const left = align === "end" ? box.right - width : box.left;
+    const distance = gap === null ? (joined ? -1 : 8) : gap;
+    popup.style.left = `${Math.max(4, Math.min(left, window.innerWidth - width - 4))}px`;
+    popup.style.top = `${Math.max(4, Math.min(box.bottom + distance, window.innerHeight - popup.offsetHeight - 4))}px`;
+  };
+  place();
+  popup.update = (list) => {
+    const keep = document.activeElement && popup.contains(document.activeElement) ? document.activeElement.dataset.menuKey : null;
+    clear(popup);
+    fillInto(popup, list);
+    place();
+    if (keep) popup.querySelector(`[data-menu-key="${CSS.escape(keep)}"]`)?.focus();
+  };
   anchor.setAttribute("aria-haspopup", "menu");
   anchor.setAttribute("aria-expanded", "true");
+  if (joined) anchor.classList.add("is-joined-open");
   const onDocDown = (event) => {
     if (!popup.contains(event.target) && !anchor.contains(event.target)) closeMenu({ restoreFocus: false });
   };
+  let typed = "";
+  let typedAt = 0;
   const onKey = (event) => {
-    const at = entries.indexOf(document.activeElement);
+    const list = entries();
+    const at = list.indexOf(document.activeElement);
+    const target = document.activeElement;
+    const group = target && target.classList.contains("menu__group") ? target : null;
+    const parentRow = target && target.closest(".menu__children") ? target.closest(".menu__children").previousElementSibling : null;
     if (event.key === "Escape") {
       event.preventDefault();
       closeMenu();
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
-      entries[(at + 1) % entries.length]?.focus();
+      list[(at + 1) % list.length]?.focus();
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
-      entries[(at - 1 + entries.length) % entries.length]?.focus();
+      list[(at - 1 + list.length) % list.length]?.focus();
     } else if (event.key === "Home") {
       event.preventDefault();
-      entries[0]?.focus();
+      list[0]?.focus();
     } else if (event.key === "End") {
       event.preventDefault();
-      entries[entries.length - 1]?.focus();
+      list[list.length - 1]?.focus();
+    } else if (event.key === "ArrowRight" && group) {
+      event.preventDefault();
+      if (group.getAttribute("aria-expanded") !== "true") group.click();
+      else group.nextElementSibling.querySelector(".menu__item:not([disabled])")?.focus();
+    } else if (event.key === "ArrowLeft" && group && group.getAttribute("aria-expanded") === "true") {
+      event.preventDefault();
+      group.click();
+    } else if (event.key === "ArrowLeft" && parentRow) {
+      event.preventDefault();
+      parentRow.focus();
     } else if (event.key === "Tab") {
       closeMenu({ restoreFocus: false });
+    } else if (event.key.length === 1 && event.key !== " " && !(event.ctrlKey || event.metaKey || event.altKey)) {
+      // A typed prefix jumps to the next item that starts with it (ClickHouse Dash).
+      const now = Date.now();
+      typed = now - typedAt > 600 ? event.key.toLowerCase() : typed + event.key.toLowerCase();
+      typedAt = now;
+      const start = typed.length > 1 ? Math.max(0, at) : at + 1;
+      const hit = [...list.slice(start), ...list.slice(0, start)].find((node) => (node.dataset.menuLabel || "").startsWith(typed));
+      if (hit) {
+        event.preventDefault();
+        hit.focus();
+      }
     }
   };
   document.addEventListener("pointerdown", onDocDown, true);
@@ -316,10 +397,38 @@ export function openMenu(anchor, items, { testid = null, align = "start", gap = 
     cleanup() {
       document.removeEventListener("pointerdown", onDocDown, true);
       anchor.removeEventListener("keydown", onKey);
+      anchor.classList.remove("is-joined-open");
     },
   };
-  (entries.find((node) => node.getAttribute("aria-checked") === "true") || entries[0])?.focus();
+  const first = entries();
+  (first.find((node) => node.getAttribute("aria-checked") === "true" || node.classList.contains("is-current")) || first[0])?.focus();
   return popup;
+}
+
+// Binds a menu to its anchor button: a click opens it, a second click closes it, and the keys Down and Up on the button open it with the
+// focus on the first item (Down) or the last item (Up). `getItems()` gives the items at each open, so the menu always shows the current data.
+// It returns the function that opens the menu.
+export function bindMenu(anchor, getItems, options = {}) {
+  anchor.setAttribute("aria-haspopup", "menu");
+  anchor.setAttribute("aria-expanded", "false");
+  const isOpen = () => openMenuState !== null && openMenuState.anchor === anchor;
+  const open = () => {
+    if (isOpen()) {
+      closeMenu();
+      return null;
+    }
+    const items = getItems();
+    if (!items || !items.length) return null;
+    return openMenu(anchor, items, options);
+  };
+  anchor.addEventListener("click", () => open());
+  anchor.addEventListener("keydown", (event) => {
+    if (isOpen() || (event.key !== "ArrowDown" && event.key !== "ArrowUp")) return;
+    event.preventDefault();
+    const popup = open();
+    if (popup && event.key === "ArrowUp") [...popup.querySelectorAll(".menu__item:not([disabled])")].filter((n) => n.offsetParent !== null).pop()?.focus();
+  });
+  return open;
 }
 
 // --- dialogs ------------------------------------------------------------------------------------

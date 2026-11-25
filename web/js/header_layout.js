@@ -9,13 +9,11 @@ export const STEPS = Object.freeze({
   labelsMax: 1100,
   // The list page: the filters "tag" and "sort" show their icon only.
   listFiltersMax: 1180,
-  // The list page: the button "New" with its menu replaces the three actions.
-  listMenuMax: 900,
   // The range button shows its clock and chevron only, and each control of the time group is an icon.
   iconsMax: 768,
   // The time shift and the zoom out move into the menu "More actions".
   menuTimeMax: 900,
-  // "Add" shows its icon only (the edit buttons take room from the crumbs).
+  // "Add" shows its icon only (the edit buttons take room from the selector).
   addIconMax: 900,
   // "Revert" moves into the menu.
   revertMenuMax: 640,
@@ -23,7 +21,7 @@ export const STEPS = Object.freeze({
   compactMax: 560,
   // The product name hides.
   nameMax: 640,
-  // A phone: the gaps and the controls are smaller, the crumb of the folder hides, and the list keeps the search and its menu only.
+  // A phone: the gaps and the controls are smaller, the name of the view hides, and the list keeps the filters and the button "New" only.
   tightMax: 480,
 });
 
@@ -36,7 +34,6 @@ export function stepsAt(width) {
     version: width >= STEPS.versionMin,
     labels: width > STEPS.labelsMax,
     listFilterText: width > STEPS.listFiltersMax,
-    listMenu: width <= STEPS.listMenuMax,
     icons: width <= STEPS.iconsMax,
     timeInMenu: width <= STEPS.menuTimeMax,
     tight: width <= STEPS.tightMax,

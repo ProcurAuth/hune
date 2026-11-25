@@ -347,7 +347,7 @@ export const cases = [
       await p.click('.listbox__item[data-value="$__all"]');
       await p.click("#app-main");
       await p.idle();
-      t.eq((await params()).getAll("var-node"), ["$__all"], "var-node=$__all");
+      t.eq((await params()).getAll("var-node"), [], "var-node leaves the address when All is the default");
       // text variable: applies on Enter
       p.clearRequests();
       await p.fill(p.tid("variable-account-input"), "v0");

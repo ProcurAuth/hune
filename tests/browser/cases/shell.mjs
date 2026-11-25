@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser cases B49 to B54 (9.6, 9.7, 9.9, 9.25): the header bar, the theme selector and the version line.
-// The controls of the home page and of the dashboard page are in the header. The theme selector is the same on every page.
+// Browser cases B49 to B54 (9.6, 9.7, 9.9, 9.25): the header bar, the theme button and the version line.
+// The controls of the home page and of the dashboard page are in the header. The theme button is the same on every page.
 // The header is one row of 44 px at every width (wave K): History, Export and Delete and the actions of the edit mode are in the menu "More actions".
 import { enterEdit } from "../lib/ed.mjs";
 import { sleep, waitPanelsReady } from "../lib/h.mjs";
@@ -48,18 +48,15 @@ const insideHeader = (p, ids) =>
     return e.width > 0 && e.left >= h.left - 0.5 && e.right <= h.right + 0.5 && e.top >= h.top - 0.5 && e.bottom <= h.bottom + 0.5;
   })`);
 
-/** The visible state of the theme selector. */
+/** The visible state of the theme button: its name, its tooltip, the icon that shows, and the theme. The button has no menu. */
 const themeState = (p) =>
   p.eval(`(() => {
     const trigger = document.querySelector('[data-testid="theme-toggle"]');
-    const menu = document.querySelector('[data-testid="theme-menu"]');
     const icons = [...trigger.querySelectorAll(".theme-icon")].filter((e) => getComputedStyle(e).display !== "none").map((e) => e.getAttribute("class").replace(/.*theme-icon--/, ""));
     return {
       label: trigger.getAttribute("aria-label"),
-      expanded: trigger.getAttribute("aria-expanded"),
-      menuHidden: menu.hidden,
+      tooltip: trigger.getAttribute("data-tooltip"),
       icons,
-      selected: [...menu.querySelectorAll('[role="option"]')].filter((e) => e.getAttribute("aria-selected") === "true").map((e) => e.dataset.value),
       theme: document.documentElement.dataset.theme,
       choice: document.documentElement.dataset.themeChoice,
       stored: localStorage.getItem("hune.theme"),
@@ -77,17 +74,18 @@ const shape = (p) =>
     return { w: Math.round(b.width), h: Math.round(b.height), right: Math.round(header.right - b.right) - moreW, top: Math.round(b.top - header.top), count: document.querySelectorAll('[data-testid="theme-toggle"]').length };
   })()`);
 
+// One click of the button gives the next choice: System, Dark, Light, then System again (9.25). `choose` clicks until the choice is the wanted one.
 async function choose(p, value) {
-  await p.click(p.tid("theme-toggle"));
-  await p.waitFor(`document.querySelector('[data-testid="theme-toggle"]').getAttribute("aria-expanded") === "true"`, { what: "the theme menu opens" });
-  await p.click(p.tid(`theme-${value}`));
-  await p.waitFor(`document.querySelector('[data-testid="theme-menu"]').hidden`, { what: "the theme menu closes" });
+  for (let i = 0; i < 3; i++) {
+    if (await p.eval(`(document.documentElement.dataset.themeChoice || "system") === ${JSON.stringify(value)}`)) return;
+    await p.click(p.tid("theme-toggle"));
+  }
 }
 
 export const cases = [
   {
     id: "B49",
-    name: "theme selector: System, Dark and Light, the choice persists, the menu moves like the selector of ClickHouse Dash and stops with prefers-reduced-motion",
+    name: "theme button: one icon button, a click gives System, Dark, Light and System again, it has no menu, and the choice persists",
     async run(t) {
       const p = await t.page();
       await p.emulateColorScheme("dark");
@@ -95,16 +93,23 @@ export const cases = [
       await p.idle();
       // The first state: the choice System, and the icon of the choice shows before any click.
       let s = await themeState(p);
-      t.eq([s.label, s.icons, s.selected, s.theme, s.choice, s.menuHidden], ["Theme: System", ["system"], ["system"], "dark", "system", true], "system at the first load");
-      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="theme-menu"] [role="option"]')].map((e) => [e.dataset.value, e.getAttribute("aria-label")])`),
-        [["system", "System theme"], ["dark", "Dark theme"], ["light", "Light theme"]], "three options with their names");
-      // The three states, one after the other.
-      await choose(p, "light");
+      t.eq([s.label, s.tooltip, s.icons, s.theme, s.choice], ["Theme: System", "Theme: System", ["system"], "dark", "system"], "system at the first load");
+      // The button has no menu and no popup, before and after a click.
+      const noMenu = () => p.eval(`[document.querySelectorAll('[data-testid="theme-menu"], [data-testid="theme-select"], .theme-select__menu, .menu').length, document.querySelector('[data-testid="theme-toggle"]').hasAttribute("aria-haspopup"), document.querySelector('[data-testid="theme-toggle"]').hasAttribute("aria-expanded")]`);
+      t.eq(await noMenu(), [0, false, false], "no menu before a click");
+      // One click gives the next choice, with its name, its tooltip, its icon and its theme.
+      await p.click(p.tid("theme-toggle"));
       s = await themeState(p);
-      t.eq([s.label, s.icons, s.selected, s.theme, s.choice, s.stored], ["Theme: Light", ["light"], ["light"], "light", "light", "light"], "light");
+      t.eq([s.label, s.tooltip, s.icons, s.theme, s.choice, s.stored], ["Theme: Dark", "Theme: Dark", ["dark"], "dark", "dark", "dark"], "the first click: dark");
+      t.eq(await noMenu(), [0, false, false], "no menu after a click");
+      await p.click(p.tid("theme-toggle"));
+      s = await themeState(p);
+      t.eq([s.label, s.tooltip, s.icons, s.theme, s.choice, s.stored], ["Theme: Light", "Theme: Light", ["light"], "light", "light", "light"], "the second click: light");
+      await p.click(p.tid("theme-toggle"));
+      s = await themeState(p);
+      t.eq([s.label, s.icons, s.theme, s.choice, s.stored], ["Theme: System", ["system"], "dark", "system", "system"], "the third click: system again, and it follows the dark preference");
+      // A dark choice does not follow the system, and a system choice follows it.
       await choose(p, "dark");
-      s = await themeState(p);
-      t.eq([s.label, s.icons, s.selected, s.theme, s.choice, s.stored], ["Theme: Dark", ["dark"], ["dark"], "dark", "dark", "dark"], "dark");
       await p.emulateColorScheme("light");
       await sleep(150);
       t.eq((await themeState(p)).theme, "dark", "a dark choice does not follow the system");
@@ -117,64 +122,19 @@ export const cases = [
       await p.idle();
       s = await themeState(p);
       t.eq([s.label, s.icons, s.theme, s.choice], ["Theme: Dark", ["dark"], "dark", "dark"], "the choice stays after a reload");
-      // The keyboard: Arrow Down opens the menu on its first option, Escape closes it and gives the focus back to the button.
+      // The keyboard: Enter on the button gives the next choice, and the focus stays on the button.
       await p.focus(p.tid("theme-toggle"));
-      await p.press("ArrowDown");
-      await p.waitFor(`document.querySelector('[data-testid="theme-toggle"]').getAttribute("aria-expanded") === "true" && document.activeElement.dataset.value === "system"`, { what: "the menu opens on its first option" });
-      await p.press("ArrowDown");
-      t.eq(await p.eval(`document.activeElement.dataset.value`), "dark", "Arrow Down moves to the next option");
-      await p.press("Escape");
-      await p.waitFor(`document.querySelector('[data-testid="theme-menu"]').hidden && document.activeElement.dataset.testid === "theme-toggle"`, { what: "Escape closes the menu and the focus returns" });
-
-      // The motion: with no preference the menu has a transition of 160 ms; it stays in the page until the motion ends.
-      await p.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "no-preference" }] });
-      const motion = await p.eval(`(async () => {
-        const trigger = document.querySelector('[data-testid="theme-toggle"]');
-        const menu = document.querySelector('[data-testid="theme-menu"]');
-        const root = document.querySelector('[data-testid="theme-select"]');
-        // The closed menu is not shown (hidden): the test shows it for one read, with no class, to read the closed style.
-        menu.hidden = false;
-        const style = getComputedStyle(menu);
-        const closed = { duration: style.transitionDuration, opacity: style.opacity, visibility: style.visibility, transform: style.transform };
-        menu.hidden = true;
-        trigger.click();
-        const running = menu.getAnimations().length;
-        await new Promise((r) => setTimeout(r, 400));
-        const open = { opacity: getComputedStyle(menu).opacity, visibility: getComputedStyle(menu).visibility, transform: getComputedStyle(menu).transform };
-        trigger.click();
-        const closing = { hidden: menu.hidden, closingClass: root.classList.contains("theme-select--closing"), expanded: trigger.getAttribute("aria-expanded") };
-        await new Promise((r) => setTimeout(r, 400));
-        return { closed, running, open, closing, hiddenAfter: menu.hidden, closingAfter: root.classList.contains("theme-select--closing") };
-      })()`);
-      const durations = motion.closed.duration.split(",").map((d) => parseFloat(d));
-      t.assert(durations.every((d) => d <= 0.2) && durations.some((d) => d > 0), "the closed menu has a transition of at most 200 ms: " + motion.closed.duration);
-      t.eq([motion.closed.opacity, motion.closed.visibility], ["0", "hidden"], "the closed menu is invisible");
-      t.assert(motion.closed.transform !== "none", "the closed menu is moved up: " + motion.closed.transform);
-      t.assert(motion.running > 0, "opening runs a transition");
-      t.eq([motion.open.opacity, motion.open.visibility, motion.open.transform], ["1", "visible", "none"], "the open menu");
-      t.eq([motion.closing.hidden, motion.closing.closingClass, motion.closing.expanded], [false, true, "false"], "closing keeps the menu in place during the motion");
-      t.eq([motion.hiddenAfter, motion.closingAfter], [true, false], "the menu is hidden after the motion");
-
-      // prefers-reduced-motion: reduce: no transition, no move; the menu is hidden at once.
-      await p.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
-      const reduced = await p.eval(`(() => {
-        const trigger = document.querySelector('[data-testid="theme-toggle"]');
-        const menu = document.querySelector('[data-testid="theme-menu"]');
-        const durations = getComputedStyle(menu).transitionDuration;
-        trigger.click();
-        const running = menu.getAnimations().length;
-        const transform = getComputedStyle(menu).transform;
-        trigger.click();
-        return { durations, running, transform, hiddenAtOnce: menu.hidden };
-      })()`);
-      t.assert(reduced.durations.split(",").every((d) => parseFloat(d) === 0), "no transition with reduced motion: " + reduced.durations);
-      t.eq([reduced.running, reduced.transform, reduced.hiddenAtOnce], [0, "none", true], "reduced motion: no animation, no move, hidden at once");
+      await p.press("Enter");
+      s = await themeState(p);
+      t.eq([s.label, s.choice], ["Theme: Light", "light"], "Enter gives the next choice");
+      t.eq(await p.eval(`document.activeElement.dataset.testid`), "theme-toggle", "the focus stays on the button");
+      t.eq(await noMenu(), [0, false, false], "no menu after the key");
     },
   },
 
   {
     id: "B50",
-    name: "theme selector: the same control, at the same place (before the button More actions of a dashboard), on the list, a dashboard, the editor and the pages of an error",
+    name: "theme button: the same control, at the same place (before the button More actions of a dashboard), on the list, a dashboard, the editor and the pages of an error",
     async run(t) {
       const p = await t.page();
       t.allow(p, /Failed to load resource/);
@@ -230,22 +190,25 @@ export const cases = [
       await p.idle();
       await p.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"]')`, { what: "the list" });
       const filterIds = ["list-sort", "list-tag-filter"];
-      const actionIds = ["new-folder", "import", "new-dashboard"];
+      // One button New holds the actions (9.7): "New folder", "Import" and "New dashboard" are items of its menu, not buttons of the header.
+      const actionIds = ["list-new-menu"];
       let w = await where(p, filterIds.concat(actionIds));
       t.eq([w.header, w.main, w.missing], [filterIds.concat(actionIds), [], []], "1280: every control of the list is in the header");
       t.eq((await rowInfo(p)).height, 44, "1280: the header is one row of 44 px with its line");
       t.eq((await rowInfo(p)).centres.length, 1, "1280: the controls are in one row " + JSON.stringify(await rowInfo(p)));
-      t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').offsetParent === null`), true, "1280: no button New");
+      t.eq(await p.eval(`["new-folder", "import", "new-dashboard"].filter((id) => document.querySelector('[data-testid="' + id + '"]'))`), [], "1280: the three old buttons are gone while the menu is closed");
       t.eq(await insideHeader(p, filterIds.concat(actionIds)), true, "1280: each control is in the box of the header");
       t.eq(await noOverflow(p), true, "1280: no horizontal scroll");
       // The sort and the tag filter follow the brand, at the left. The actions are at the right. The page has no search field and no view control.
-      const order = await p.eval(`(() => { const x = (id) => document.querySelector('[data-testid="' + id + '"]').getBoundingClientRect(); const brand = document.querySelector(".brand").getBoundingClientRect(); return [brand.right <= x("list-sort").left, x("list-sort").right <= x("list-tag-filter").left, x("list-tag-filter").right <= x("import").left]; })()`);
+      const order = await p.eval(`(() => { const x = (id) => document.querySelector('[data-testid="' + id + '"]').getBoundingClientRect(); const brand = document.querySelector(".brand").getBoundingClientRect(); return [brand.right <= x("list-sort").left, x("list-sort").right <= x("list-tag-filter").left, x("list-tag-filter").right <= x("list-new-menu").left]; })()`);
       t.eq(order, [true, true, true], "1280: the brand, the sort, the tag filter, then the actions");
       t.eq(await p.eval(`["list-search", "list-layout-folders", "list-layout-list"].filter((id) => document.querySelector('[data-testid="' + id + '"]'))`), [], "1280: no search field, no view control");
       // The controls work from the header: the tag filter opens its list, New dashboard opens its dialog.
       await p.click(p.tid("list-tag-filter"));
       await p.waitSel(p.tid("list-tag-menu"));
       await p.press("Escape");
+      await p.click(p.tid("list-new-menu"));
+      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="list-new-menu-popup"] [role="menuitem"]')].map((e) => e.textContent.trim())`), ["New dashboard", "New folder", "Import"], "1280: the menu New has the three actions");
       await p.click(p.tid("new-dashboard"));
       await p.waitSel(p.tid("new-dashboard-dialog"));
       await p.press("Escape");
@@ -262,7 +225,7 @@ export const cases = [
       t.eq(await insideHeader(p, filterIds.concat(["list-new-menu"])), true, "390: each control is in the box of the header");
       t.eq(await noOverflow(p), true, "390: no horizontal scroll");
       await p.click(p.tid("list-new-menu"));
-      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="list-new-menu-popup"] [role="menuitem"]')].map((e) => e.textContent.trim())`), ["New dashboard", "Import", "New folder"], "390: the menu New");
+      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="list-new-menu-popup"] [role="menuitem"]')].map((e) => e.textContent.trim())`), ["New dashboard", "New folder", "Import"], "390: the menu New");
       await p.press("Escape");
 
       // A dashboard: the groups of buttons are in the header, at each width.

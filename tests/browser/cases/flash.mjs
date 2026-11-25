@@ -5,12 +5,13 @@
 // B59: the header sticks to the top of the window when the page scrolls. The height and the size of each button are fixed in every state
 //      (range text, refresh interval, refresh running, Save enabled or not, view, edit mode, each view of the editor, rights). No button of
 //      the view moves when the edit mode starts or ends: the group of the edit mode (Add, Save, Revert) is at the left of the time
-//      control and takes its room from the crumbs, which get narrower by the width of the group and one gap. The brand, the time control,
-//      the switch, the theme selector and the button More actions do not move (B150 measures the fixed four at five widths). The switch
+//      control and takes its room from the selector, which gets narrower by the width of the group and one gap. The brand, the time control,
+//      the switch, the theme button and the button More actions do not move (B150 measures the fixed four at five widths). The switch
 //      makes exactly two layouts, with no frame between them. The page has no Share control.
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { SQL, doc, panel, section } from "../lib/docs.mjs";
+import { SEED_FROM, SEED_TO } from "../lib/env.mjs";
 import { moreItem } from "../lib/ed.mjs";
 import { panelStates, sleep, waitPanelsReady } from "../lib/h.mjs";
 
@@ -35,7 +36,8 @@ function flashDoc(uid) {
       panel(21, "bargauge", "Gauge", SQL.bars, { grid: g(18, 12, 6, 8) }),
     ]),
   ], {
-    time: { from: "now-6h", to: "now", timezone: "browser", refresh: null },
+    // The default range is the range that `t.dash` writes in the address: the button Save is active when the range differs from the default (10.9).
+    time: { from: String(SEED_FROM), to: String(SEED_TO), timezone: "browser", refresh: null },
     variables: [{ kind: "query", name: "node", label: "Node", hide: "none", source: "prod", sql: ["SELECT DISTINCT node", "FROM analytics.seed", "ORDER BY node"], multi: true, include_all: true, all_value: null, refresh: "time_change", sort: "alpha_asc", regex: null, default: ["$__all"] }],
   });
 }
@@ -67,7 +69,7 @@ const PROBE = `(() => {
         sprite: !!document.getElementById("hune-sprite"),
         external: [...document.querySelectorAll("svg use")].filter((u) => !(u.getAttribute("href") || "").startsWith("#")).length,
         icons: document.querySelectorAll("svg.icon").length,
-        crumbs: header.querySelectorAll(".crumbs__item").length,
+        place: header.querySelectorAll(".location > *").length,
         scroll: [root.clientWidth, root.scrollHeight],
       });
     }
@@ -121,7 +123,7 @@ function judge(frames, final, expectTheme, label) {
   if (v0.buttons.length < 8) out.push(`${label}: the first frame has ${v0.buttons.length} header buttons`);
   if (!v0.font) out.push(`${label}: the font Inter is not loaded at the first frame`);
   if (!v0.sprite || v0.external > 0) out.push(`${label}: the icons are not inline at the first frame (sprite ${v0.sprite}, external ${v0.external})`);
-  if (v0.crumbs < 2) out.push(`${label}: the crumbs are not in the first frame`);
+  if (v0.place < 1) out.push(`${label}: the selector is not in the first frame`);
   if (v0.toolbar === null) out.push(`${label}: the variables row is not in the first frame`);
   // Nothing moves after it: the header, the buttons, the variables row and each panel frame (at the first frame, 100 ms later and at the end).
   const at100 = shown.find((f) => f.t >= v0.t + 100) || last;
@@ -154,14 +156,14 @@ const EXPECTED_BG = { dark: "rgb(14, 17, 22)", light: "rgb(246, 247, 249)" }; //
 const VIEW_BUTTONS = ["time-back", "time-picker-button", "time-forward", "zoom-out", "refresh-now", "refresh-interval", "edit-toggle", "dashboard-menu"];
 const EDIT_BUTTONS = ["add-button", "add-menu", "save-button", "discard-button"];
 const BUTTONS = [...VIEW_BUTTONS, ...EDIT_BUTTONS];
-// No element of the view moves when the edit mode starts. Only the width of the crumbs changes.
+// No element of the view moves when the edit mode starts. Only the width of the selector place changes.
 const NEVER_MOVE = ["brand", ...VIEW_BUTTONS, "theme"];
 const RECTS = `(() => {
   const out = {};
   const box = (e) => { if (!e || e.offsetParent === null) return null; const b = e.getBoundingClientRect(); return [b.left, b.top, b.width, b.height].map((v) => Math.round(v * 2) / 2); };
   for (const id of ${JSON.stringify(BUTTONS)}) out[id] = box(document.querySelector('[data-testid="' + id + '"]'));
   out.brand = box(document.querySelector(".brand"));
-  out.crumbs = box(document.querySelector(".crumbs"));
+  out.place = box(document.querySelector(".location"));
   out.theme = box(document.querySelector(".theme-select__button"));
   out.bar = box(document.querySelector('[data-testid="edit-bar"]'));
   out.header = [document.getElementById("app-header").getBoundingClientRect().height];
@@ -184,15 +186,15 @@ function resized(a, b, keys) {
   return out;
 }
 
-/** The rule for a reading `before` of the view and a reading `after` of the edit mode: nothing moves, the crumbs give the room. */
+/** The rule for a reading `before` of the view and a reading `after` of the edit mode: nothing moves, the selector gives the room. */
 function judgeEditMoves(before, after, label) {
   const out = [];
   const bar = after.bar;
   if (!bar) return [`${label}: the edit mode has no group of Add, Save and Revert`];
   // The distance: the width of the group and one gap of the row.
   const distance = bar[2] + after.gap[0];
-  // The crumbs keep their left edge and give the distance from their width.
-  if (Math.abs(after.crumbs[0] - before.crumbs[0]) > 0.5 || Math.abs(after.crumbs[2] - before.crumbs[2] + distance) > 0.5) out.push(`${label}: the crumbs went from ${JSON.stringify(before.crumbs)} to ${JSON.stringify(after.crumbs)}, expected a width smaller by ${distance}`);
+  // The place keep their left edge and give the distance from their width.
+  if (Math.abs(after.place[0] - before.place[0]) > 0.5 || Math.abs(after.place[2] - before.place[2] + distance) > 0.5) out.push(`${label}: the selector place went from ${JSON.stringify(before.place)} to ${JSON.stringify(after.place)}, expected a width smaller by ${distance}`);
   // No element of the view moves.
   out.push(...moved(before, after, NEVER_MOVE).map((m) => `${label}: ${m} (it must not move)`));
   // The group is at the left of the time control, one gap from it.
@@ -204,13 +206,13 @@ function judgeEditMoves(before, after, label) {
   return out;
 }
 
-/** In the view no blank is at the right: the theme selector follows the last control of the page after one gap. */
+/** In the view no blank is at the right: the theme button follows the last control of the page after one gap. */
 function judgeNoBlank(r, last, label) {
   const gap = r.theme[0] - (r[last][0] + r[last][2]);
-  return Math.abs(gap - r.gap[0]) > 0.5 ? [`${label}: ${gap} px between ${last} and the theme selector, expected ${r.gap[0]} (a blank slot?)`] : [];
+  return Math.abs(gap - r.gap[0]) > 0.5 ? [`${label}: ${gap} px between ${last} and the theme button, expected ${r.gap[0]} (a blank slot?)`] : [];
 }
 
-// The sampler of a transition: at each animation frame it records the layout of the header (the box of each control and of the crumbs).
+// The sampler of a transition: at each animation frame it records the layout of the header (the box of each control and of the selector place).
 // The layouts that it sees, in order, are the layouts that a viewer can see.
 const SAMPLER = `(() => {
   const ids = ${JSON.stringify([...BUTTONS, "edit-bar"])};
@@ -218,7 +220,7 @@ const SAMPLER = `(() => {
   const sig = () => {
     const box = (e) => { if (!e || e.offsetParent === null) return "-"; const b = e.getBoundingClientRect(); return [b.left, b.top, b.width, b.height].map((v) => Math.round(v * 2) / 2).join(","); };
     const parts = ids.map((id) => id + "=" + box(document.querySelector('[data-testid="' + id + '"]')));
-    parts.push("crumbs=" + box(document.querySelector(".crumbs")), "theme=" + box(document.querySelector(".theme-select__button")), "brand=" + box(document.querySelector(".brand")));
+    parts.push("place=" + box(document.querySelector(".location")), "theme=" + box(document.querySelector(".theme-select__button")), "brand=" + box(document.querySelector(".brand")));
     parts.push("h=" + document.getElementById("app-header").getBoundingClientRect().height, "w=" + document.documentElement.scrollWidth);
     return parts.join(" ");
   };
@@ -276,12 +278,12 @@ export const cases = [
   },
   {
     id: "B59",
-    name: "the header sticks to the top; each button has one height and one size in every state; no button of the view moves when the edit mode starts (the crumbs give the room), with two layouts and no frame between them; no Share control (9.6, 9.9, 10.2)",
+    name: "the header sticks to the top; each button has one height and one size in every state; no button of the view moves when the edit mode starts (the selector gives the room), with two layouts and no frame between them; no Share control (9.6, 9.9, 10.2)",
     async run(t) {
       const r = await t.api.create("transit", flashDoc(UID59));
       t.assert(r.status === 201, `create ${UID59}: ${r.status} ${r.text.slice(0, 300)}`);
       const found = [];
-      const keys = [...VIEW_BUTTONS, "theme", "brand", "crumbs"];
+      const keys = [...VIEW_BUTTONS, "theme", "brand", "place"];
 
       for (const width of [1920, 1280, 768, 390]) {
         const label = `${width}`;
@@ -348,10 +350,10 @@ export const cases = [
         await p.idle();
         const editor = await p.eval(RECTS);
         // The panel editor has no page scroll bar, so the whole header shifts by the width of the bar at the left edge only. The positions
-        // that count are the distances to the right edge of the header, and the left of the brand and of the crumbs.
-        const rel = (r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v && k !== "header" && k !== "gap" && k !== "brand" && k !== "crumbs" ? [v[0] - r.hw[0], ...v.slice(1)] : v]));
-        found.push(...moved(rel(edit2), rel(editor), [...keys.filter((k) => k !== "crumbs"), ...EDIT_BUTTONS]).map((m) => `${label} panel editor: ${m}`));
-        if (Math.abs(editor.crumbs[0] - edit2.crumbs[0]) > 0.5) found.push(`${label} panel editor: the crumbs start at ${editor.crumbs[0]}, was ${edit2.crumbs[0]}`);
+        // that count are the distances to the right edge of the header, and the left of the brand and of the selector place.
+        const rel = (r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v && k !== "header" && k !== "gap" && k !== "brand" && k !== "place" ? [v[0] - r.hw[0], ...v.slice(1)] : v]));
+        found.push(...moved(rel(edit2), rel(editor), [...keys.filter((k) => k !== "place"), ...EDIT_BUTTONS]).map((m) => `${label} panel editor: ${m}`));
+        if (Math.abs(editor.place[0] - edit2.place[0]) > 0.5) found.push(`${label} panel editor: the selector place starts at ${editor.place[0]}, was ${edit2.place[0]}`);
         await p.click(p.tid("editor-back"));
         await p.waitGone(p.tid("panel-editor"));
         await p.idle();

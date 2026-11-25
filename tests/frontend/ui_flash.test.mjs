@@ -72,6 +72,8 @@ test("the controls of the header have fixed widths in every state (9.9)", () => 
   assert.match(css, /\.picker__run \{ width: var\(--tb-icon-w\); padding: 0; \}/);
   assert.match(picker, /\.picker__interval \{ width: var\(--tb-int-w\);/);
   assert.ok(!/picker__interval:has\(\.picker__interval-text:empty\)/.test(css + picker), "the interval button has one width with and without text");
+  // With no interval the button shows a dash before its chevron: the text is never empty.
+  assert.match(read("web/js/pickers.js"), /text\.textContent = select\.value === "off" \? "-" : select\.value;/);
   assert.match(css, /#app-header \{ --tb-range-w: 220px; --tb-edit-w: 76px; --tb-add-w: 68px; --tb-addmenu-w: 28px; --tb-icon-w: 36px; --tb-int-w: 58px; \}/);
   assert.match(css, /\.edit-switch \{ flex: none; width: var\(--tb-edit-w\);/);
   assert.match(css, /\.add-main \{ width: var\(--tb-add-w\);/);
@@ -88,43 +90,56 @@ test("the edit mode has no row of its own and no reserved slot: its group comes 
   assert.ok(!/setEditSlots|toolbarSlots|header-edit-row|editSlot/.test(dash));
   const main = code("web/js/main.js");
   assert.ok(!/header-edit-row|editRow|setEditSlots/.test(main), "no row of the edit mode");
-  assert.match(main, /headerEl\.append\(brand, startSlot, crumbs, actionsSlot, themeSlot, moreSlot\)/);
+  assert.match(main, /headerEl\.append\(brand, startSlot, placeNav, actionsSlot, themeSlot, moreSlot\)/);
   const css = read("web/css/base.css");
   assert.ok(!/\.header-edit(?!-slot)|data-layout="stacked"|"edit edit edit edit"/.test(css));
   assert.ok(!/\.header-edit(?!-slot)|\.header-keep|\.header-slot/.test(read("web/css/components.css")));
 });
 
-test("a panel keeps its frame and shows no loader or dimming before 300 ms (9.11)", () => {
+test("a panel keeps its frame and shows no loader or preview before 300 ms, and a reload never dims (9.11)", () => {
   const js = code("web/js/panel_frame.js");
   assert.match(js, /const PROGRESS_MS = 300;/);
   assert.match(js, /const WAIT_MS = 300;/);
   assert.match(js, /classList\.add\("panel--wait"\)/);
   assert.match(js, /classList\.add\("panel--progress"\)/);
-  const css = read("web/css/dashboard.css");
-  assert.match(css, /\.panel--progress \.panel__content:not\(:empty\) \{ opacity: 0\.6; \}/);
-  // The dots show for a panel with no content (wait) and for a refresh (progress), and only then.
+  const css = read("web/css/panel-loading.css");
+  // The content of a reload stays as it is: no dim rule, in any file of the page.
+  for (const file of ["web/css/dashboard.css", "web/css/panel-loading.css", "web/css/components.css", "web/css/base.css"]) {
+    assert.ok(!/\.panel--progress[^{]*\.panel__content[^{]*\{[^}]*opacity/.test(read(file)), `no dim of the content in ${file}`);
+  }
+  // The dots show 300 ms after the wait starts (wait) or after the loading starts (progress), and only then.
   assert.match(css, /\.panel__loader \{[^}]*display: none;/);
-  assert.match(css, /\.panel--progress \.panel__loader, \.panel--wait \.panel__content:empty ~ \.panel__loader \{ display: flex; \}/);
-  // The old rules that dimmed and filled the panel at once are gone, and so are the bar and the grey block.
-  assert.ok(!/\.panel\[data-state="(queued|loading)"\] \.panel__content/.test(css));
-  assert.ok(!/\.panel--progress \.panel__head::after|\.panel--wait \.panel__content:empty::before/.test(css), "no bar and no grey block");
+  assert.match(css, /\.panel--wait > \.panel__head > \.panel__loader, \.panel--progress > \.panel__head > \.panel__loader \{ display: flex; \}/);
+  // The preview shows for a panel with nothing on the screen only (data-wait="first"), and after the wait class.
+  assert.match(css, /\.panel__skeleton \{[^}]*display: none;/);
+  assert.match(css, /\.panel--wait\[data-wait="first"\] \.panel__skeleton \{ display: block; \}/);
+  // The "No data" text of a panel that reloads stays: the old rule that hid it is gone.
+  assert.ok(!/visibility: hidden/.test(css), "no hidden overlay");
+  const dash = read("web/css/dashboard.css");
+  assert.ok(!/\.panel\[data-state="(queued|loading)"\] \.panel__content/.test(dash));
+  assert.ok(!/\.panel--progress \.panel__head::after|\.panel--wait \.panel__content:empty::before/.test(css + dash), "no bar and no grey block");
 });
 
-test("the loader is three pulsing dots in an overlay out of the flow (9.26)", () => {
+test("the loader is three pulsing dots in the title bar, out of the flow, and the preview is out of the flow too (9.26)", () => {
   const js = code("web/js/panel_frame.js");
   assert.match(js, /el\("div", \{ class: "panel__loader", "aria-hidden": "true" \}, el\("i"\), el\("i"\), el\("i"\)\)/);
-  assert.match(js, /el\("div", \{ class: "panel__body" \}, content, loader, overlay\)/, "the overlay of a state covers the dots");
-  const css = read("web/css/dashboard.css");
-  assert.match(css, /\.panel__loader \{ position: absolute; inset: 0; display: none;[^}]*pointer-events: none; \}/);
-  assert.match(css, /\.panel__loader i \{ width: 7px; height: 7px; border-radius: 50%; background: var\(--accent-fill\);[^}]*animation: panel-pulse var\(--dur-pulse\) ease-in-out infinite; \}/);
+  assert.match(js, /head\.append\(loader\);/, "the dots are in the title bar");
+  assert.match(js, /el\("div", \{ class: "panel__body" \}, content, skeleton, overlay\)/, "the overlay of a state covers the preview");
+  assert.match(js, /el\("div", \{ class: "panel__skeleton", "aria-hidden": "true"/);
+  const css = read("web/css/panel-loading.css");
+  assert.match(css, /\.panel__loader \{ position: absolute; top: 0; bottom: 0; right: calc\(var\(--space-8\) \+ var\(--space-20\) \+ var\(--space-4\)\); display: none;[^}]*pointer-events: none; \}/);
+  assert.match(css, /\.panel__loader i \{ width: 5px; height: 5px; border-radius: 50%; background: var\(--accent-fill\);[^}]*animation: panel-pulse var\(--dur-pulse\) ease-in-out infinite; \}/);
   assert.match(css, /\.panel__loader i:nth-child\(2\) \{ animation-delay: 0\.15s; \}/);
   assert.match(css, /\.panel__loader i:nth-child\(3\) \{ animation-delay: 0\.3s; \}/);
   assert.match(css, /@keyframes panel-pulse /);
-  // Reduced motion: three still, dimmed dots. Print: no dots.
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{ \.panel__loader i \{ animation: none; opacity: 0\.6; transform: none; \} \}/);
-  assert.match(css.slice(css.indexOf("@media print")), /\.panel__loader \{ display: none !important; \}/);
-  // The dots take no room: the loader never has a size in the flow, and the "No data" overlay leaves them alone.
-  assert.match(css, /\.panel--progress \.panel__overlay\[data-kind="empty"\] \{ visibility: hidden; \}/);
+  assert.match(css, /position: absolute; inset: var\(--panel-pad\); display: none; pointer-events: none;/);
+  // Reduced motion: three still, dimmed dots and still shapes. Print: nothing shows.
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.panel__loader i \{ animation: none; opacity: 0\.6; transform: none; \}\s*\.panel__skeleton i \{ animation: none; opacity: 0\.8; \}\s*\}/);
+  assert.match(css, /@media print \{ \.panel__skeleton \{ display: none !important; \} \}/);
+  assert.match(read("web/css/dashboard.css").slice(read("web/css/dashboard.css").indexOf("@media print")), /\.panel__loader \{ display: none !important; \}/);
+  // The CSS names tokens only: no colour literal.
+  assert.ok(!/#[0-9a-fA-F]{3,8}\b|rgba?\(|hsla?\(/.test(css), "no colour literal");
+  assert.match(read("web/shell.html"), /css\/panel-annotations\.css">\s*<link rel="stylesheet" href="static\/\{\{build\}\}\/css\/panel-loading\.css">/);
 });
 
 test("Hune has no Share feature: no button, no menu item, no copy code, no CSS, no route", () => {

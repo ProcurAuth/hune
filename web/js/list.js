@@ -3,7 +3,7 @@
 import * as api from "./api.js";
 import { loadEditorModule } from "./editor_loader.js";
 import { dashboardPath, listSearch, parseSearch } from "./url_state.js";
-import { absoluteTime, anchorPopup, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
+import { absoluteTime, bindMenu, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
 
 const SORT_KEY = "hune.list.sort";
 
@@ -69,6 +69,18 @@ export function filtersShown(session, count) {
 // What a card offers to the user (9.7). The pencil and the bin share one condition: editing is on and the item has the write right.
 export function cardRights(item, editing) {
   return { write: editing === true && Boolean(item.access && item.access.write) };
+}
+
+// The badge of the last change on a card (9.7): the short age and the full time, or null. Hune knows a change only when it records one: the
+// system must allow editing (`session.editing`), and the dashboard must have a version that Hune saved. A read-only system has no change:
+// the date of a file is not a change. The version 0 (no version in the history) and the author `external` (a change outside Hune, with the
+// date of the file) give no badge. A member that the list does not give gives no badge.
+export function lastChange(item, editing, now = Date.now()) {
+  if (editing !== true) return null;
+  if (!Number.isSafeInteger(item.version) || item.version < 1) return null;
+  if (typeof item.updated_by !== "string" || item.updated_by === "" || item.updated_by === "external") return null;
+  const age = shortAge(item.updated_at, now);
+  return age ? { age, title: absoluteTime(item.updated_at) } : null;
 }
 
 // Saves a text as a file in the browser.
@@ -177,6 +189,8 @@ function writePref(key, value) {
 }
 
 const SORT_LABELS = { az: "Alphabetically (A–Z)", za: "Alphabetically (Z–A)" };
+// The button of the sort shows the order that applies now, in short. No saved choice means the order A–Z (the default order of the page).
+const SORT_SHORT = { az: "A–Z", za: "Z–A" };
 
 export async function mount(ctx) {
   const controller = new AbortController();
@@ -192,21 +206,29 @@ export async function mount(ctx) {
   header.clear();
   document.title = "Dashboards - Hune";
 
-  const actionsBox = el("div", { class: "list-actions" });
-  // The actions are in the header. Up to 900 px the actions hide and one button "New" opens a menu with them. The menu runs the same buttons.
-  const newMenu = button("New", { class: "btn btn--tb list-new", "aria-haspopup": "menu", "aria-expanded": "false", hidden: true, dataset: { testid: "list-new-menu" } }, null, { variant: "tb" });
-  newMenu.append(icon("chevron-down", 16));
-  newMenu.addEventListener("click", () => {
-    const entries = [...actionsBox.querySelectorAll("[data-toolbar-action]")].reverse().map((node) => ({ label: node.textContent.trim(), onSelect: () => node.click() }));
-    if (entries.length) openMenu(newMenu, entries, { align: "end", gap: 4, testid: "list-new-menu-popup" });
-  });
+  // The one button of the actions of the page, as the button "Upload" of Stowr: a primary button with a plus, its name "New" and a chevron. Its menu
+  // has "New dashboard", "New folder" and "Import", only the ones that the user may use (9.7). The empty state shows the same button.
+  function newEntries() {
+    const entries = [];
+    if (canWrite()) entries.push({ label: "New dashboard", icon: "plus", testid: "new-dashboard", onSelect: () => callEditor("folders", "newDashboard") });
+    if (editing && folderAccess.create) entries.push({ label: "New folder", icon: "folder-plus", testid: "new-folder", onSelect: () => callEditor("folders", "newFolder") });
+    if (canWrite()) entries.push({ label: "Import", icon: "upload", testid: "import", onSelect: () => callEditor("import_export", "importDialog") });
+    return entries;
+  }
+  function makeNewButton(testid) {
+    const node = button("New", { class: "btn btn--tb-primary list-new", "aria-haspopup": "menu", "aria-expanded": "false", dataset: { testid } }, "plus", { variant: "tb-primary" });
+    node.append(icon("chevron-down", 16));
+    bindMenu(node, newEntries, { align: "end", gap: 4, testid: "list-new-menu-popup" });
+    return node;
+  }
+  const newMenu = makeNewButton("list-new-menu");
+  newMenu.hidden = true;
   // The live status says only the tag filter. It has no count (9.7).
   const status = el("p", { class: "list-status visually-hidden", role: "status" });
 
-  const tagButton = el("button", { type: "button", class: "list-select list-select--tags", "aria-haspopup": "listbox", "aria-expanded": "false", "aria-label": "Filter by tag", dataset: { testid: "list-tag-filter" }, on: { click: () => openTagMenu() } });
-  tagButton.addEventListener("keydown", onTagKey);
-  const sortLabel = el("span", { class: "list-select__text" });
-  const sortButton = el("button", { type: "button", class: "list-select list-select--sort", "aria-haspopup": "menu", "aria-expanded": "false", "aria-label": "Sort", dataset: { testid: "list-sort" }, on: { click: () => openSortMenu() } },
+  const tagButton = el("button", { type: "button", class: "selector list-select--tags", "aria-label": "Filter by tag", dataset: { testid: "list-tag-filter" } });
+  const sortLabel = el("span", { class: "selector__text" });
+  const sortButton = el("button", { type: "button", class: "selector list-select--sort", "aria-label": "Sort", dataset: { testid: "list-sort" } },
     glyph(SORT_ARROWS, 16), sortLabel, icon("chevron-down", 16));
   // The sort and the tag filter are the start controls of the header: they follow the brand (9.6, 9.7).
   const filters = el("div", { class: "list-filters" }, sortButton, tagButton);
@@ -217,10 +239,10 @@ export async function mount(ctx) {
   const page = el("section", { class: "list-page" }, status, body);
   main.append(page);
   header.setStart(filters);
-  header.setActions(actionsBox, newMenu);
+  header.setActions(newMenu);
   filters.hidden = true;
 
-  const editorCtx = () => ({ session, folders, dashboards: items, navigate: ctx.navigate, reload: load });
+  const editorCtx = () => ({ session, folders, dashboards: items, canCreateFolder: editing && folderAccess.create === true, navigate: ctx.navigate, reload: load });
 
   async function callEditor(name, fn, ...args) {
     const mod = await loadEditorModule(name);
@@ -232,16 +254,8 @@ export async function mount(ctx) {
 
   // New folder, Import and New dashboard (the one primary action of the page).
   function buildToolbar() {
-    clear(actionsBox);
-    newMenu.hidden = true;
-    if (!items.length) return; // an empty list has the actions in its empty state
-    const add = (label, handler, testid, iconName, variant = "tb") => actionsBox.append(button(label, { dataset: { toolbarAction: "1", testid }, on: { click: handler } }, iconName, { variant }));
-    if (editing && folderAccess.create) add("New folder", () => callEditor("folders", "newFolder"), "new-folder", "folder-plus");
-    if (canWrite()) {
-      add("Import", () => callEditor("import_export", "importDialog"), "import", "upload");
-      add("New dashboard", () => callEditor("folders", "newDashboard"), "new-dashboard", "plus", "tb-primary");
-    }
-    newMenu.hidden = actionsBox.childElementCount === 0;
+    // An empty list has the button in its empty state. The header shows it when the list has a dashboard and the user may use an entry.
+    newMenu.hidden = !items.length || newEntries().length === 0;
   }
 
   function errorsRow(item) {
@@ -274,9 +288,12 @@ export async function mount(ctx) {
   function dashboardCard(item, interactiveTags) {
     const valid = item.state !== "invalid";
     const rights = cardRights(item, editing);
-    const card = el("article", { class: `card${rights.write ? " card--actions" : ""}`, dataset: { testid: `row-${item.uid}`, state: item.state || "valid" } });
+    const card = el("article", { class: "card", dataset: { testid: `row-${item.uid}`, state: item.state || "valid" } });
+    // The head row: the title at the left, then the badge of the last change (only when Hune recorded a change), then the three dots.
+    const change = lastChange(item, editing);
+    const badge = change ? el("span", { class: "card__badge", title: change.title, dataset: { testid: `card-change-${item.uid}` } }, icon("clock", 12), el("span", { text: `Last change ${change.age}` })) : null;
     if (valid) {
-      card.append(el("h3", { class: "card__title" }, el("a", { class: "card__link", href: dashboardPath(item.uid, item.title), title: item.title, text: item.title })));
+      card.append(el("div", { class: "card__top" }, el("h3", { class: "card__title" }, el("a", { class: "card__link", href: dashboardPath(item.uid, item.title), title: item.title, text: item.title })), badge));
     } else {
       const panelId = uniqueId("errors");
       const chevron = el("span", { class: "errors-toggle__chevron" }, icon("chevron-down", 12));
@@ -288,32 +305,28 @@ export async function mount(ctx) {
         detail.hidden = open;
       } } }, toggleText, chevron);
       const detail = el("div", { id: panelId, class: "invalid-detail", hidden: true }, errorsRow(item));
-      card.append(el("h3", { class: "card__title card__title--invalid" }, icon("error", 14), el("code", { class: "card__uid", text: item.uid }), el("span", { class: "badge badge--error", text: "Not valid" })), el("div", { class: "card__errors" }, toggle, detail));
+      card.append(el("div", { class: "card__top" }, el("h3", { class: "card__title card__title--invalid" }, icon("error", 14), el("code", { class: "card__uid", text: item.uid }), el("span", { class: "badge badge--error", text: "Not valid" })), badge), el("div", { class: "card__errors" }, toggle, detail));
     }
-    // The note under the title: the last change in the short form. Its title attribute has the full time. The note has a fixed height.
-    card.append(el("p", { class: "card__updated", title: absoluteTime(item.updated_at), text: shortAge(item.updated_at) }));
     card.append(el("div", { class: "card__tags" }, ...(item.tags || []).map((t) => tagCardButton(t, interactiveTags))));
-    const buttons = [];
+    // The three dots are the one menu of the card, at the right end of the head row, after the badge. A card that the user can edit offers Edit,
+    // Export, Move and Delete; a read-only card has no menu. The server decides: a 403 shows the refusal. Edit opens the dashboard in the edit mode.
+    let entries = null;
     if (valid && rights.write) {
-      // The pencil opens the dashboard in the edit mode. The bin runs the delete dialog. The server decides: a 403 shows the refusal.
-      buttons.push(el("a", { class: "btn btn--ghost btn--icon card__edit", href: `${dashboardPath(item.uid, item.title)}?edit=1`, "aria-label": `Edit the dashboard ${item.title}`, dataset: { testid: `card-edit-${item.uid}`, tooltipAlign: "end" }, "data-tooltip": "Edit" }, icon("edit", 16)));
-      const more = cardButton(`Actions for ${item.title}`, `row-menu-${item.uid}`, "more", { "aria-haspopup": "menu", "aria-expanded": "false" });
-      more.addEventListener("click", () => openMenu(more, [
+      entries = [
+        { label: "Edit", icon: "edit", href: `${dashboardPath(item.uid, item.title)}?edit=1`, testid: `card-edit-${item.uid}` },
         { label: "Export", icon: "download", onSelect: () => exportDashboard(item.uid) },
         { label: "Move", icon: "folder", onSelect: () => callEditor("folders", "moveDashboard", item) },
-      ], { align: "end" }));
-      buttons.push(more);
-      const bin = cardButton(`Delete the dashboard ${item.title}`, `card-delete-${item.uid}`, "trash", { class: "btn btn--ghost btn--icon card__delete" });
-      bin.addEventListener("click", () => callEditor("folders", "deleteDashboard", item));
-      buttons.push(bin);
+        { label: "Delete", icon: "trash", danger: true, testid: `card-delete-${item.uid}`, onSelect: () => callEditor("folders", "deleteDashboard", item) },
+      ];
     } else if (!valid) {
-      const more = cardButton(`Actions for ${item.uid}`, `row-menu-${item.uid}`, "more", { "aria-haspopup": "menu", "aria-expanded": "false" });
-      const entries = [{ label: "Download", icon: "download", onSelect: () => exportDashboard(item.uid) }];
+      entries = [{ label: "Download", icon: "download", onSelect: () => exportDashboard(item.uid) }];
       if (rights.write) entries.push({ label: "Replace", icon: "upload", onSelect: () => callEditor("import_export", "importDialog", { uid: item.uid, etag: item.etag }) });
-      more.addEventListener("click", () => openMenu(more, entries, { align: "end" }));
-      buttons.push(more);
     }
-    if (buttons.length) card.append(el("div", { class: "card__buttons" }, ...buttons));
+    if (entries) {
+      const more = cardButton(`Actions for ${valid ? item.title : item.uid}`, `row-menu-${item.uid}`, "more", { class: "btn btn--ghost btn--icon card__more", "aria-haspopup": "menu", "aria-expanded": "false" });
+      more.addEventListener("click", () => openMenu(more, entries, { align: "end", gap: 4 }));
+      card.querySelector(".card__top").append(more);
+    }
     return card;
   }
 
@@ -324,92 +337,23 @@ export async function mount(ctx) {
     return [...counts].sort((a, b) => b[1] - a[1] || compareText(a[0], b[0]));
   }
 
-  // The tag filter: a select-like button that shows the active tag as its chip, and a popup with a chip and a count for each tag.
-  // The filter is the text q (9.7): a tag sets it, a second choice of the same tag clears it.
-  let tagMenu = null;
-  function closeTagMenu({ restoreFocus = true } = {}) {
-    if (!tagMenu) return;
-    const { popup, stop, onDown } = tagMenu;
-    tagMenu = null;
-    document.removeEventListener("pointerdown", onDown, true);
-    stop();
-    popup.remove();
-    tagButton.setAttribute("aria-expanded", "false");
-    if (restoreFocus) tagButton.focus();
-  }
+  // The tag filter: a select-like button that shows the active tag as its chip, and a joined menu with a chip and a count for each tag (the
+  // menu of the host selector of ClickHouse Dash). The filter is the text q (9.7): a tag sets it, a second choice of the same tag clears it.
+  const tagItems = () => tagCounts().map(([text, n]) => ({
+    key: text, label: text, node: tagChip(text), meta: n, checked: fold(query) === fold(text), testid: `tag-filter-${text}`, onSelect: () => toggleTag(text),
+  }));
+  bindMenu(tagButton, tagItems, { joined: true, testid: "list-tag-menu" });
 
-  function openTagMenu() {
-    if (tagMenu) {
-      closeTagMenu();
-      return;
-    }
-    closeMenu({ restoreFocus: false });
-    const counts = tagCounts();
-    if (!counts.length) return;
-    const options = [];
-    const popup = el("div", { class: "menu list-tagmenu", role: "listbox", "aria-label": "Tags", dataset: { testid: "list-tag-menu" } });
-    for (const [text, n] of counts) {
-      const selected = fold(query) === fold(text);
-      const option = el("button", {
-        type: "button",
-        class: "list-tagmenu__item",
-        role: "option",
-        "aria-selected": String(selected),
-        tabIndex: -1,
-        dataset: { testid: `tag-filter-${text}` },
-        on: { click: () => { closeTagMenu({ restoreFocus: false }); toggleTag(text); tagButton.focus(); } },
-      }, tagChip(text), el("span", { class: "list-tagmenu__count", text: `(${n})` }));
-      options.push(option);
-      popup.append(option);
-    }
-    document.body.append(popup);
-    popup.style.minWidth = `${tagButton.offsetWidth}px`;
-    const stop = anchorPopup(popup, tagButton, { gap: 3 });
-    tagButton.setAttribute("aria-expanded", "true");
-    const onDown = (event) => {
-      if (!popup.contains(event.target) && !tagButton.contains(event.target)) closeTagMenu({ restoreFocus: false });
-    };
-    document.addEventListener("pointerdown", onDown, true);
-    tagMenu = { popup, stop, onDown };
-    popup.addEventListener("keydown", onTagKey);
-    (options.find((o) => o.getAttribute("aria-selected") === "true") || options[0]).focus();
-  }
-
-  // Keys of the tag filter: on the button, ArrowDown opens the popup; in the popup the arrows move, Escape closes.
-  function onTagKey(event) {
-    if (!tagMenu) {
-      if (event.target === tagButton && (event.key === "ArrowDown" || event.key === "ArrowUp")) {
-        event.preventDefault();
-        openTagMenu();
-      }
-      return;
-    }
-    const options = [...tagMenu.popup.querySelectorAll('[role="option"]')];
-    const at = options.indexOf(document.activeElement);
-    if (event.key === "Escape") {
-      event.preventDefault();
-      closeTagMenu();
-    } else if (event.key === "Tab") {
-      closeTagMenu({ restoreFocus: false });
-    } else if (event.key === "ArrowDown" || event.key === "ArrowUp" || event.key === "Home" || event.key === "End") {
-      event.preventDefault();
-      const next = event.key === "Home" ? 0 : event.key === "End" ? options.length - 1 : (at + (event.key === "ArrowDown" ? 1 : -1) + options.length) % options.length;
-      options[next].focus();
-    }
-  }
-
-  function openSortMenu() {
-    const choose = (value) => () => {
-      sort = value;
-      writePref(SORT_KEY, sort);
-      render();
-    };
-    const popup = openMenu(sortButton, [
-      { label: SORT_LABELS.az, checked: sort === "az", onSelect: choose("az") },
-      { label: SORT_LABELS.za, checked: sort === "za", onSelect: choose("za") },
-    ], { gap: 3, testid: "list-sort-menu" });
-    popup.style.minWidth = `${sortButton.offsetWidth}px`;
-  }
+  // The sort: the two orders of the names, in the same joined menu.
+  const choose = (value) => () => {
+    sort = value;
+    writePref(SORT_KEY, sort);
+    render();
+  };
+  bindMenu(sortButton, () => [
+    { label: SORT_LABELS.az, checked: sort !== "za", onSelect: choose("az") },
+    { label: SORT_LABELS.za, checked: sort === "za", onSelect: choose("za") },
+  ], { joined: true, testid: "list-sort-menu" });
 
   function renderFilters(shown) {
     filters.hidden = !shown;
@@ -417,12 +361,11 @@ export async function mount(ctx) {
     const active = counts.find(([t]) => fold(t) === fold(query));
     clear(tagButton);
     tagButton.append(icon("tag", 16));
-    if (active) tagButton.append(el("span", { class: "list-select__text" }, tagChip(active[0])));
-    else tagButton.append(el("span", { class: "list-select__text list-select__text--placeholder", text: "Filter by tag" }));
+    if (active) tagButton.append(el("span", { class: "selector__text" }, tagChip(active[0])));
+    else tagButton.append(el("span", { class: "selector__text selector__text--placeholder", text: "Filter by tag" }));
     tagButton.append(icon("chevron-down", 16));
     tagButton.disabled = counts.length === 0;
-    sortLabel.textContent = sort ? SORT_LABELS[sort] : "Sort";
-    sortLabel.classList.toggle("list-select__text--placeholder", !sort);
+    sortLabel.textContent = SORT_SHORT[sort === "za" ? "za" : "az"];
   }
 
   // One empty state for an empty list and for a filter with no result: a picture, a title, a hint and the main action.
@@ -437,11 +380,10 @@ export async function mount(ctx) {
     const actions = [];
     let text;
     if (canWrite()) {
-      actions.push(button("New dashboard", { dataset: { testid: "new-dashboard" }, on: { click: () => callEditor("folders", "newDashboard") } }, "plus", { variant: "tb-primary" }));
-      actions.push(button("Import", { dataset: { testid: "import" }, on: { click: () => callEditor("import_export", "importDialog") } }, "upload", { variant: "tb" }));
+      actions.push(makeNewButton("new-menu-empty"));
       text = "Create a dashboard, or import a Grafana JSON file.";
     } else if (editing && folderAccess.create) {
-      actions.push(button("New folder", { dataset: { testid: "new-folder" }, on: { click: () => callEditor("folders", "newFolder") } }, "folder-plus", { variant: "tb-primary" }));
+      actions.push(makeNewButton("new-menu-empty"));
       text = "Create a folder first, then add dashboards to it.";
     } else if (session.mode === "authzen") text = "Ask an administrator to give you access to a folder.";
     else text = "A dashboard shows here when it is added to the store of Hune.";
@@ -470,7 +412,6 @@ export async function mount(ctx) {
   }
 
   function render() {
-    closeTagMenu({ restoreFocus: false });
     clear(body);
     body.removeAttribute("aria-busy");
     // The sort and the tag filter show only above the threshold of the session. Without them, the page uses the default order, and the
@@ -540,7 +481,7 @@ export async function mount(ctx) {
   return {
     destroy() {
       controller.abort();
-      closeTagMenu({ restoreFocus: false });
+      closeMenu({ restoreFocus: false });
     },
   };
 }
