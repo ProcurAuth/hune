@@ -2,6 +2,8 @@
 // (4.13a): each variable has one control in the page, and the registry below puts it in the right place.
 
 import { ALL, cut, isNumberText, isOpen, optionsOf, typedValueError } from "./var_options.js";
+import { chipsOf, fitCount, withoutLast, withoutValue } from "./var_chips.js";
+import { optionsErrorInfo } from "./var_errors.js";
 import { anchorPopup, clear, el, icon, uniqueId } from "./ui.js";
 import { labelOf, planHomes } from "./var_layout.js";
 import { adhocControl } from "./adhoc.js";
@@ -21,17 +23,42 @@ export function selectionText(variable, options, selection) {
   return values.length > 3 ? `${shown} + ${values.length - 3} more` : shown;
 }
 
+// The state of the options of a variable for its control: the runtime says it (`optionStateOf`). The runtime of the draft grid has no such state:
+// its controls are always ready.
+const stateOf = (rt, name) => (typeof rt.optionStateOf === "function" ? rt.optionStateOf(name) : { state: "ready", parent: null });
+const SPACE_CHIP_GAP = 4;
+
+// A small icon in front of a text of a control, with its classes (an SVG element takes its classes by `classList`).
+function lead(name, ...classes) {
+  const node = icon(name, 12);
+  node.classList.add("select__lead", ...classes);
+  return node;
+}
+
 function listControl(variable, rt, apply) {
   const labelText = variable.label || variable.name;
   const free = isOpen(variable);
-  const button = el("button", { type: "button", class: "btn select__button", "aria-haspopup": "listbox", "aria-expanded": "false", dataset: { testid: `variable-${variable.name}-button` } });
-  const valueEl = el("span", { class: "select__value" });
-  button.append(valueEl, icon("chevron-down", 12));
-  const errorEl = el("span", { class: "select__error", hidden: true });
-  const wrapper = el("div", { class: "select" }, button, errorEl);
+  // A variable that takes several values shows its selection as chips (9.10). The face then holds the chips, and the button lies over the face:
+  // it keeps the focus, the keys, the clicks on the empty room and the name for assistive technology.
+  const chipMode = chipsOf(variable, [], { all: true, values: [] }) !== null;
+  const button = el("button", { type: "button", class: chipMode ? "select__opener" : "btn select__button", "aria-haspopup": "listbox", "aria-expanded": "false", dataset: { testid: `variable-${variable.name}-button` } });
+  const valueEl = el("span", { class: chipMode ? "select__value visually-hidden" : "select__value" });
+  let face = null;
+  let chipsEl = null;
+  let stateEl = null;
+  if (chipMode) {
+    chipsEl = el("span", { class: "select__chips", role: "group", "aria-label": `${labelText}: selected values`, dataset: { testid: `variable-${variable.name}-chips` } });
+    stateEl = el("span", { class: "select__state", hidden: true, "aria-hidden": "true" });
+    face = el("div", { class: "btn select__button select__face" }, chipsEl, stateEl, icon("chevron-down", 12));
+    button.append(valueEl);
+  } else button.append(valueEl, icon("chevron-down", 12));
+  const wrapper = el("div", { class: chipMode ? "select select--chips" : "select" }, ...(chipMode ? [face, button] : [button]));
+  const box = chipMode ? face : button;
   let popup = null;
   let draft = null;
   let follow = null;
+  let lastSig = "";
+  let layoutQueued = false;
 
   const optionList = () => {
     const base = optionsOf(variable, rt.options.get(variable.name) || []);
@@ -39,20 +66,142 @@ function listControl(variable, rt, apply) {
   };
   const current = () => rt.selections.get(variable.name);
 
+  // A loading or waiting state shows in place of the value, and only while the options are not known: a reload keeps the options and the value on
+  // screen (nothing flashes), as the panels do (9.8).
+  function stateText(st, known) {
+    if (known) return "";
+    if (st.state === "loading") return "Loading…";
+    if (st.state === "waiting") return `waiting for ${st.parent || "the variable above"}`;
+    return "";
+  }
+
   function paint() {
     const loaded = rt.options.get(variable.name);
-    const text = selectionText(variable, optionsOf(variable, loaded || []), current());
+    const options = optionsOf(variable, loaded || []);
+    const sel = current();
+    const text = selectionText(variable, options, sel);
+    const st = stateOf(rt, variable.name);
     const err = rt.optionErrors.get(variable.name);
+    const busy = stateText(st, Array.isArray(loaded));
+    const failed = !busy && !!err && st.state === "error";
+    const info = failed ? optionsErrorInfo(err) : null;
     // A query variable whose options loaded with no row, and that has no value, shows "No options" (9.10).
-    const none = !text && !err && variable.kind === "query" && Array.isArray(loaded) && loaded.length === 0;
+    const none = !busy && !text && !err && variable.kind === "query" && Array.isArray(loaded) && loaded.length === 0;
     const shown = none ? "No options" : text;
-    // A write that changes nothing is skipped: the registry watches the page, and a write of the same value would wake it again.
-    if (valueEl.textContent !== shown) valueEl.textContent = shown;
-    valueEl.classList.toggle("muted", none);
-    button.setAttribute("aria-label", `${labelText}: ${none ? "no options" : text || "no value"}`);
-    if (errorEl.hidden !== !err) errorEl.hidden = !err;
-    const errText = err ? `Options failed: ${err.message}` : "";
-    if (errorEl.textContent !== errText) errorEl.textContent = errText;
+    const chips = chipsOf(variable, options, sel);
+    const sig = JSON.stringify([busy, failed && info.short, shown, none, chips]);
+    if (sig === lastSig) return;
+    lastSig = sig;
+    // The name for assistive technology.
+    const name = busy ? `${labelText}: ${busy}` : `${labelText}: ${none ? "no options" : text || "no value"}${failed ? `. Options failed: ${info.short}` : ""}`;
+    button.setAttribute("aria-label", name);
+    button.disabled = !!busy;
+    if (busy) button.setAttribute("aria-busy", "true");
+    else button.removeAttribute("aria-busy");
+    box.classList.toggle("is-loading", st.state === "loading" && !!busy);
+    box.classList.toggle("is-waiting", st.state === "waiting" && !!busy);
+    box.classList.toggle("is-failed", failed);
+    if (failed) box.setAttribute("title", info.short);
+    else box.removeAttribute("title");
+    // The text of the select. While the control loads or waits, the text of the selection keeps the width of the control (the ghost, in the style), so
+    // the bar does not change its rows when the options come.
+    const visible = busy || shown;
+    valueEl.dataset.ghost = busy && st.state === "loading" ? text : "";
+    valueEl.classList.toggle("muted", none || !!busy);
+    if (chipMode) {
+      if (valueEl.textContent !== visible) valueEl.textContent = visible;
+      paintChips(busy, none ? "No options" : "", chips);
+      return;
+    }
+    clear(valueEl);
+    if (busy && st.state === "loading") valueEl.append(lead("spinner", "icon--spin"));
+    valueEl.append(visible);
+  }
+
+  // The face of a variable with chips (9.10): a state or a text in place of the chips, else one chip for each value.
+  function paintChips(busy, noneText, chips) {
+    clear(stateEl);
+    clear(chipsEl);
+    const loading = !!busy && stateOf(rt, variable.name).state === "loading";
+    const stateLabel = busy || noneText;
+    stateEl.hidden = !stateLabel;
+    stateEl.classList.toggle("is-overlay", loading);
+    // While the control loads, the chips of the default selection stay as a ghost: they keep the width of the face, and the state lies over them.
+    // A control that waits or has no option shows its text alone, and the text takes its own room.
+    chipsEl.classList.toggle("is-ghost", loading);
+    chipsEl.hidden = !chips || (!!stateLabel && !loading);
+    if (stateLabel) {
+      if (loading) stateEl.append(lead("spinner", "icon--spin"));
+      stateEl.append(el("span", { class: "muted", text: stateLabel }));
+      if (!loading) return;
+    }
+    for (const chip of chips || []) chipsEl.append(makeChip(chip, loading));
+    queueLayout();
+  }
+
+  function makeChip(chip, ghost) {
+    const node = el("span", { class: `chip${chip.all ? " chip--all" : ""}`, dataset: { value: chip.value } });
+    // The text of a chip opens the selector (the click goes to the button for the mouse; the keyboard has the button).
+    node.append(el("span", { class: "chip__text", title: chip.text, "aria-hidden": "true", text: chip.text, ...(ghost ? {} : { on: { click: () => open() } }) }));
+    if (chip.removable && !ghost) {
+      const cross = el("button", { type: "button", class: "chip__x", "aria-label": `Remove ${chip.text}`, dataset: { testid: `variable-${variable.name}-remove`, value: chip.value },
+        on: { click: (event) => { event.stopPropagation(); removeChip(chip.value); }, keydown: (event) => { if (event.key === "Delete" || event.key === "Backspace") { event.preventDefault(); removeChip(chip.value); } } } },
+      icon("close", 10));
+      node.append(cross);
+    }
+    return node;
+  }
+
+  // The cross of a chip: the value goes at once and the page applies it, as a close of the popup does (9.10). The focus goes to the next cross, else to the button.
+  function removeChip(value) {
+    const before = current();
+    const next = withoutValue(before, value);
+    if (next === before) return;
+    const index = before.values.indexOf(value);
+    if (popup) close(false, false);
+    apply(variable.name, next);
+    const crosses = [...chipsEl.querySelectorAll(".chip__x")];
+    (crosses[Math.min(index, crosses.length - 1)] || button).focus();
+  }
+
+  // How many chips fit in the room of the face: the others are replaced by the chip "+n", which opens the selector (9.10). A layout read: it runs once
+  // after the chips are in the page, and again when the face changes its width.
+  function queueLayout() {
+    if (layoutQueued || typeof requestAnimationFrame !== "function") return;
+    layoutQueued = true;
+    requestAnimationFrame(() => {
+      layoutQueued = false;
+      layoutChips();
+    });
+  }
+
+  function layoutChips() {
+    if (!chipsEl || !chipsEl.isConnected || chipsEl.hidden) return;
+    const nodes = [...chipsEl.querySelectorAll(".chip:not(.chip--more)")];
+    chipsEl.querySelectorAll(".chip--more").forEach((n) => n.remove());
+    for (const n of nodes) {
+      n.hidden = false;
+      n.classList.remove("chip--fit");
+    }
+    if (nodes.length < 2) return;
+    const room = chipsEl.clientWidth;
+    if (chipsEl.scrollWidth <= room + 1) return;
+    const lead = chipsEl.querySelector(".select__lead");
+    const available = room - (lead ? lead.getBoundingClientRect().width + SPACE_CHIP_GAP : 0);
+    const widths = nodes.map((n) => n.getBoundingClientRect().width);
+    const more = el("span", { class: "chip chip--more", "aria-hidden": "true", on: { click: () => open() } });
+    chipsEl.append(more);
+    const plusWidth = (n) => {
+      more.textContent = `+${n}`;
+      return more.getBoundingClientRect().width;
+    };
+    const count = fitCount(widths, SPACE_CHIP_GAP, available, plusWidth);
+    nodes.forEach((n, i) => { n.hidden = i >= count; });
+    const hidden = nodes.length - count;
+    more.textContent = `+${hidden}`;
+    // One chip that is wider than the row with the chip "+n" gives room to it: its text is cut by the style, and "+n" stays in the row.
+    if (count === 1 && widths[0] + SPACE_CHIP_GAP + more.getBoundingClientRect().width > available) nodes[0].classList.add("chip--fit");
+    more.title = `${hidden} more selected`;
   }
 
   function close(applyChange, restoreFocus = true) {
@@ -64,6 +213,7 @@ function listControl(variable, rt, apply) {
     popup = null;
     draft = null;
     button.setAttribute("aria-expanded", "false");
+    box.classList.remove("is-open");
     // The list is gone: the reference to it must go too (9.26).
     button.removeAttribute("aria-controls");
     document.removeEventListener("pointerdown", onDown, true);
@@ -82,10 +232,24 @@ function listControl(variable, rt, apply) {
   }
 
   function onDown(event) {
-    if (popup && !popup.contains(event.target) && !button.contains(event.target)) {
+    if (popup && !popup.contains(event.target) && !button.contains(event.target) && !box.contains(event.target)) {
       // A click outside closes the popup. A change of a multi variable applies then.
       close(variable.multi, false);
     }
+  }
+
+  // The panel of a failed options request, or null when the options did not fail (9.10).
+  function failurePanel() {
+    const err = rt.optionErrors.get(variable.name);
+    if (!err || stateOf(rt, variable.name).state !== "error") return null;
+    const info = optionsErrorInfo(err);
+    const retry = el("button", { type: "button", class: "btn btn--sm select__retry", dataset: { testid: `variable-${variable.name}-retry` }, text: "Retry",
+      on: { click: () => { close(false); if (typeof rt.retryOptions === "function") rt.retryOptions(variable.name); } } });
+    if (typeof rt.retryOptions !== "function") retry.hidden = true;
+    const detail = el("details", { class: "select__detail", dataset: { testid: `variable-${variable.name}-detail` } }, el("summary", { text: "Details" }), el("pre", { class: "select__detail-text", text: info.detail }));
+    const node = el("div", { class: "select__fail", role: "group", "aria-label": "Options failed", dataset: { testid: `variable-${variable.name}-fail` } },
+      el("p", { class: "select__fail-text", text: info.short }), el("div", { class: "select__fail-actions" }, retry), detail);
+    return { node, retry };
   }
 
   function open() {
@@ -261,7 +425,19 @@ function listControl(variable, rt, apply) {
       return typedValueError(text) ? undefined : toggle({ value: text, text });
     }
 
+    // Backspace in an empty field removes the last value of a variable with chips: the same as the cross of the last chip (9.10).
+    function backspaceChip(event) {
+      if (event.key !== "Backspace" || search.value !== "" || !variable.multi || draft.all) return false;
+      const next = withoutLast(draft);
+      if (next === draft) return false;
+      event.preventDefault();
+      draft = next;
+      refreshItems();
+      return true;
+    }
+
     function comboKey(event) {
+      if (backspaceChip(event)) return;
       if (event.key === "Enter") { event.preventDefault(); comboEnter(); return; }
       if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
       event.preventDefault();
@@ -277,6 +453,7 @@ function listControl(variable, rt, apply) {
     });
     search.addEventListener("keydown", (event) => {
       if (free) return comboKey(event);
+      if (backspaceChip(event)) return undefined;
       if (event.key === "ArrowDown") { event.preventDefault(); visible()[0]?.node.focus(); }
       else if (event.key === "Enter") {
         event.preventDefault();
@@ -285,17 +462,26 @@ function listControl(variable, rt, apply) {
       }
       return undefined;
     });
-    popup = el("div", { class: "select__popup", on: { focusout: onFocusOut, keydown: (e) => { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(false); } } } }, search, ...(free ? [typedError] : []), ...(allRow ? [allRow] : []), list);
+    // A failed options request: the popup starts with the short sentence, the button Retry and the full text, folded (9.10). The room of the page does
+    // not change: the popup lies over it. A closed variable with no option has nothing else to show.
+    const failure = failurePanel();
+    const onlyFailure = !!failure && !free && all.length === 0;
+    popup = el("div", { class: "select__popup", on: { focusout: onFocusOut, keydown: (e) => { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); close(false); } } } },
+      ...(failure ? [failure.node] : []), ...(onlyFailure ? [] : [search, ...(free ? [typedError] : []), ...(allRow ? [allRow] : []), list]));
     wrapper.append(popup);
     follow = anchorPopup(popup, button, { align: "start", gap: -1 });
     button.setAttribute("aria-expanded", "true");
+    box.classList.add("is-open");
     button.setAttribute("aria-controls", listId);
     refreshItems();
     document.addEventListener("pointerdown", onDown, true);
-    search.focus();
+    if (onlyFailure) failure.retry.focus();
+    else search.focus();
   }
 
   button.addEventListener("click", open);
+  // The room of the chips changes with the width of the face (the bar, the grid, the window): the chip "+n" follows it.
+  if (chipMode && typeof ResizeObserver === "function") new ResizeObserver(queueLayout).observe(face);
   paint();
   return { el: wrapper, refresh: paint, focusTarget: button };
 }

@@ -19,8 +19,21 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The access tree names the place of these dashboards the node `folder:_root`. A grant on a real folder does not cover them. The options route lists `_root`, "Root (no folder)", as the first folder.
 - The list page shows the dashboards with no folder in a root group first, with no title. The root dashboards of a read-only store are the first group under its title. The header selector lists them first, each on its own.
 - The dialogs New dashboard, Import and Move have the entry "Root (no folder)" first, when the user can write at the root. The page sends `null` for the folder. A conflict after a move to the root says so.
+- The control of a `query` variable shows its state. While the options load, it shows a spinner and `Loading…`, and it is disabled. It keeps its width, so the bar and the grid do not move when the options come.
+- A variable below a variable waits for its parent. The control says `waiting for <label>`, and the page sends no request of options for it until the parent is ready.
+- A failed options request has a short sentence by type of error, for example "The query used too much memory." for the ClickHouse error 241. The popup of the control has a button "Retry" and the full text of the error, folded. The error lies over the page, so the bar does not move.
+- A variable keeps its selection when its options fail. The panels run with it. A person can type a value in a failed open variable.
+- The page keeps the answers of the options requests for 60 s (relative range) or 5 minutes (absolute range). A refresh sends no request of options when the answer is valid. A "Retry" ignores the cache.
+- The control of a `multi` variable shows chips. A click on a chip opens the selector, and the cross removes the value. "All" is one chip. The chip "+<n>" shows the chips that do not fit. `Backspace` in the field of an open variable removes the last value.
+- The browser cases B290 to B296.
+- The modules `var_errors.js`, `options_cache.js` and `var_chips.js`, and the style `var-select.css`.
+
 
 ### Changed
+
+- A refresh or a change of the range asks again only for the variables whose key changed. A `query` variable below a `time_change` variable asks again when the values of its parents changed, and not at each change of the range.
+- The page cancels the options requests that are in flight when the person leaves the dashboard. It also cancels them when a newer request of the same variable starts.
+- The page budget of the front is 1109 KB (9.30). The new modules and styles use the room.
 
 - The preview of a panel that loads for the first time follows the panel. A time series shows three smooth lines, an area, the labels of the axes and the legend of its options, in place of dots. The preview keeps the place of the axes and of the legend, so the plot does not move when the data arrive. The other panel types follow their options too: bar chart, pie chart, stat, gauge, bar gauge, table, heatmap, histogram, state timeline and logs.
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
@@ -28,6 +41,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Fixed
 
+- A request of options that ended after a newer request of the same variable removed the cancel of the newer request. A cancel at the exit of the page then missed it.
 - The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
 
 ## 0.2.0 - 2026-11-25

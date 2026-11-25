@@ -118,7 +118,8 @@ for (const [label, names] of [["absent", undefined], ["not an object", "x"], ["a
     assert.deepEqual([...rt.graph.parents.get("a")], ["b", "c"]);
     assert.deepEqual([...rt.graph.parents.get("c")], []);
     const before = api.calls.length;
-    await rt.setSelection("c", { all: false, values: ["a"] });
+    // A new value: the same value is a hit of the cache of the options and sends no request (9.10).
+    await rt.setSelection("c", { all: false, values: ["b"] });
     await tick();
     const later = api.calls.slice(before);
     assert.deepEqual(later.filter((c) => c.options).map((c) => c.options).sort(), ["a", "b"]);

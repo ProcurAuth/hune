@@ -65,13 +65,16 @@ test("FE-48 runtime: one notice at the load, one after a reload that removes the
       async panelQuery() { return { columns: [], values: [], rows: 0 }; },
     };
     const seen = [];
-    const rt = new Runtime({ uid: "d", doc: docOf(c.variable), etag: "e", api, widthOf: () => 500, range: { fromText: "now-6h", toText: "now" }, urlVars: new Map(c.url ? [["v", c.url]] : []), onNotice: (n) => seen.push(n) });
+    // The clock is the page clock: a reload after the time to live of the cache of the options (9.10) asks the server again.
+    let clock = Date.now();
+    const rt = new Runtime({ uid: "d", doc: docOf(c.variable), etag: "e", api, widthOf: () => 500, range: { fromText: "now-6h", toText: "now" }, urlVars: new Map(c.url ? [["v", c.url]] : []), onNotice: (n) => seen.push(n), now: () => clock });
     await rt.start(new Map(c.url ? [["v", c.url]] : []));
     assert.deepEqual(seen.map((n) => n.text), c.expect, c.name);
     assert.ok(seen.every((n) => n.name === "v"), c.name);
     if (c.reload) {
       seen.length = 0;
       list = c.reload;
+      clock += 61_000;
       rt.refreshNow();
       await tick();
       await tick();
