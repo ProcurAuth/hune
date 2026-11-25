@@ -703,7 +703,8 @@ mod tests {
     /// Waits until nobody holds the lock of the volume at `root`, for 5 s at most. A task of a store that blocks a thread can keep the
     /// volume for a short time after the store is dropped, so a command that runs at once after the drop could find the lock still taken.
     fn wait_until_unlocked(root: &Path) {
-        let file = std::fs::OpenOptions::new().read(true).write(true).open(root.join(".hune/lock")).unwrap();
+        // The file is open for reading only: a lock of flock needs no write right.
+        let file = std::fs::File::open(root.join(".hune/lock")).unwrap();
         for _ in 0..100 {
             if file.try_lock().is_ok() {
                 file.unlock().unwrap();
