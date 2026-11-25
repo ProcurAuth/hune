@@ -919,7 +919,7 @@ async fn with_editing_off_only_dashboard_read_is_published_and_no_question_comes
     let pdp = Pdp::start(allow_all()).await;
     let h = Harness::start_with(test_timing(), fill_two, |c| {
         authzen(c, &pdp.url(), Duration::ZERO);
-        c.server.editing = false;
+        super::harness::no_primary(c);
     })
     .await;
     let doc = get(h.addr, "/.well-known/procurauth/actions").await.json();

@@ -137,7 +137,7 @@ pub fn map_store_error(e: &StoreError) -> ApiError {
             c.saved_by.as_str(),
         ),
         StoreError::FolderNotEmpty => ApiError::new(Code::FolderNotEmpty, "The folder holds a dashboard."),
-        StoreError::ReadOnly => ApiError::new(Code::EditingDisabled, "The store is read-only."),
+        StoreError::ReadOnly => ApiError::new(Code::ReadOnlyStore, "The store of this item is read-only."),
         StoreError::Invalid(errors) => ApiError::stored_document_invalid(errors),
         StoreError::NotRestorable => ApiError::new(Code::NotRestorable, "This version cannot be restored."),
         StoreError::SaveIdReused => {
@@ -450,7 +450,7 @@ mod tests {
             (StoreError::VersionNotFound, NotFound),
             (StoreError::Exists { folder: None }, AlreadyExists),
             (StoreError::FolderNotEmpty, Code::FolderNotEmpty),
-            (StoreError::ReadOnly, EditingDisabled),
+            (StoreError::ReadOnly, ReadOnlyStore),
             (StoreError::Invalid(vec![]), StoredDocumentInvalid),
             (StoreError::NotRestorable, Code::NotRestorable),
             (StoreError::SaveIdReused, IdempotencyKeyReused),

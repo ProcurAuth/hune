@@ -23,7 +23,7 @@ use hune_core::error::ErrorCode;
 use hune_store::{AnyStore, Catalog, CatalogEntry, Etag, FolderId, Message, Store, Subject, VersionKind, WriteMeta};
 
 use super::{EXIT_CONFIG, EXIT_OK, fail, now, open};
-use crate::config::{self, StorageConfig};
+use crate::config;
 
 /// The oldest format that the command reads. The newer formats that it reads are before
 /// [`FORMAT_VERSION`].
@@ -123,9 +123,6 @@ pub(super) async fn run(
     out: &mut dyn Write,
     err: &mut dyn Write,
 ) -> u8 {
-    if write && matches!(&loaded.config.storage, StorageConfig::Volume(v) if v.read_only) {
-        return fail(err, "storage.volume.read_only is true: a migration with --write needs a writable volume");
-    }
     // A dry run opens a volume read-only, so it takes no lock. `--write` takes the lock (4.42, item 13).
     let store = match open(&loaded.config.storage, !write, config_path).await {
         Ok(s) => s,

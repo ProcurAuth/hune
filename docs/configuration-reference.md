@@ -20,8 +20,8 @@ Section 13 of the specification gives the checks after the key table, the contra
 | `log` | 1 | always | never |
 | `telemetry` | 1 | always | never |
 | `storage` | 1 | always | never |
-| `storage.volume` | 0 or 1 | `storage.backend = "volume"` | `storage.backend = "postgres"` |
-| `storage.postgres` | 0 or 1 | `storage.backend = "postgres"` | `storage.backend = "volume"` |
+| `storage.volume "<id>"` | 0 to 16 | always | never |
+| `storage.postgres` | 0 or 1 | no `storage.volume` block exists | never |
 | `storage.postgres.tls` | 0 or 1 | `storage.postgres.sslmode = "verify-full"` | `storage.postgres.sslmode = "disable"` |
 | `access` | 1 | always | never |
 | `access.identity` | 0 or 1 | `access.mode = "authzen"` | `access.mode = "open"` |
@@ -43,7 +43,6 @@ The two listeners and the limits of the server (section 14).
 | `server.listen` | an IP address and a port in canonical form | no | V | always | never | `"0.0.0.0:8080"` | The main listener (14.2). Give the canonical form of an IP address and a port. |
 | `server.ops_listen` | an IP address and a port in canonical form | no | V | always | never | `"0.0.0.0:9090"` | The listener of the probes and the metrics (14.2). Its port is not the port of `server.listen`. |
 | `server.base_path` | a text of 1 to 128 bytes with no control character | no | V | always | never | `"/"` | The prefix of the routes of `server.listen`. Give `/`, or a path that starts and ends with `/`. A segment has 1 to 64 characters from `A-Z a-z 0-9 . _ ~ -`, and is not `.` or `..`. |
-| `server.editing` | a boolean | no | V | always | never | `true` | The value `false` refuses each write route and unpublishes `dashboard.write` and `source.query` (11.18). |
 | `server.query_inspect` | a boolean | no | V | never (the key is optional) | never | `false` | The value `true` adds the expanded SQL to the answer of a panel query, for the menu item Inspect (6.20). The key is optional. The default is `false`. |
 | `server.repeat_max_per_panel` | an integer from 1 to 200 | no | V | never (the key is optional) | never | `24` | The most copies of one panel that repeats by a variable (4.13a). Above it, the page shows a message and no copy. The key is optional. The default is 24. The upper bound is the limit of panels of one document (4.35). |
 | `server.repeat_max_per_section` | an integer from 1 to 50 | no | V | never (the key is optional) | never | `12` | The most copies of one section that repeats by a variable (4.13a). The key is optional. The default is 12. The upper bound is the limit of sections of one document (4.35). |
@@ -83,22 +82,22 @@ The store of the dashboards (section 5).
 
 | Key | Type and range | Secret | Forms | Necessary when | Forbidden when | Reference value | Description |
 |---|---|---|---|---|---|---|---|
-| `storage.backend` | "volume" or "postgres" | no | V | always | never | `"volume"` (local), `"postgres"` (distributed) | The backend of the store (section 5). |
 
-## Block `storage.volume`
+## Block `storage.volume "<id>"`
 
-The volume backend: one file for each dashboard.
+One volume store: one file for each dashboard. The label is the store id. The store with `primary = true` is writable. Each other store is read-only.
 
 | Key | Type and range | Secret | Forms | Necessary when | Forbidden when | Reference value | Description |
 |---|---|---|---|---|---|---|---|
-| `storage.volume.path` | an absolute path of 1 to 4096 bytes | no | V | always | never | `"/var/lib/hune/dashboards"` (local), absent (distributed) | The directory of the dashboards. The path is canonical: it has no `.` or `..` segment and no repeated or last `/` (section 5). |
-| `storage.volume.read_only` | a boolean | no | V | always | never | `false` (local), absent (distributed) | The value `true` takes no lock and writes nothing (section 5). |
-| `storage.volume.rescan_interval` | a duration from 1s to 1h | no | V | always | never | `"5s"` (local), absent (distributed) | The period of the scan for changes made outside Hune. |
-| `storage.volume.history_keep` | an integer from 1 to 10000 | no | V | always | never | `100` (local), absent (distributed) | The versions kept for each dashboard. |
+| `storage.volume "<id>".path` | an absolute path of 1 to 4096 bytes | no | V | always | never | `"/var/lib/hune/dashboards"` (local), absent (distributed) | The directory of the dashboards. The path is canonical: it has no `.` or `..` segment and no repeated or last `/` (section 5). |
+| `storage.volume "<id>".title` | a text of 1 to 128 bytes with no control character | no | V | the store is not the primary | the store is the primary | `"Lab"` | The name of the root folder of the store in the page. A read-only store needs it, and the primary store has none (section 5). |
+| `storage.volume "<id>".primary` | a boolean | no | V | never (the key is optional) | another store has `primary = true` | `true` (local), absent (distributed) | The value `true` makes this store the primary store: the only store that accepts writes. At most one store has it. The key is optional (section 5). |
+| `storage.volume "<id>".rescan_interval` | a duration from 1s to 1h | no | V | always | never | `"5s"` (local), absent (distributed) | The period of the scan for changes made outside Hune. |
+| `storage.volume "<id>".history_keep` | an integer from 1 to 10000 | no | V | the store is the primary | the store is not the primary | `100` (local), absent (distributed) | The versions kept for each dashboard. Only the primary store has history. |
 
 ## Block `storage.postgres`
 
-The PostgreSQL backend: one row for each dashboard.
+The PostgreSQL store: one row for each dashboard. The store with `primary = true` is writable. Each other store is read-only.
 
 | Key | Type and range | Secret | Forms | Necessary when | Forbidden when | Reference value | Description |
 |---|---|---|---|---|---|---|---|
@@ -112,7 +111,9 @@ The PostgreSQL backend: one row for each dashboard.
 | `storage.postgres.connect_timeout` | a duration from 1s to 1m | no | V | always | never | absent (local), `"5s"` (distributed) | The longest wait for a connection. |
 | `storage.postgres.statement_timeout` | a duration from 100ms to 1m | no | V | always | never | absent (local), `"10s"` (distributed) | The longest statement. Hune also uses it as `idle_in_transaction_session_timeout` (section 5). |
 | `storage.postgres.poll_interval` | a duration from 1s to 5m | no | V | always | never | absent (local), `"5s"` (distributed) | The period of the poll of the catalog (section 5). |
-| `storage.postgres.history_keep` | an integer from 1 to 10000 | no | V | always | never | absent (local), `100` (distributed) | The versions kept for each dashboard. |
+| `storage.postgres.title` | a text of 1 to 128 bytes with no control character | no | V | the store is not the primary | the store is the primary | `"Archive"` | The name of the root folder of the store in the page. A read-only store needs it, and the primary store has none (section 5). |
+| `storage.postgres.primary` | a boolean | no | V | never (the key is optional) | another store has `primary = true` | absent (local), `true` (distributed) | The value `true` makes this store the primary store: the only store that accepts writes. At most one store has it. The key is optional (section 5). |
+| `storage.postgres.history_keep` | an integer from 1 to 10000 | no | V | the store is the primary | the store is not the primary | absent (local), `100` (distributed) | The versions kept for each dashboard. Only the primary store has history. |
 
 ## Block `storage.postgres.tls`
 

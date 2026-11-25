@@ -130,11 +130,11 @@ impl PgEnv {
             String::new()
         };
         let storage = format!(
-            "storage {{\n  backend = \"postgres\"\n\n  postgres {{\n    host              = \"{host}\"\n    \
+            "storage {{\n  postgres {{\n    host              = \"{host}\"\n    \
              port              = {port}\n    database          = \"{database}\"\n    user              = \"{user}\"\n    \
              password_file     = \"{pw}\"\n    sslmode           = \"{mode}\"\n    max_connections   = 8\n    \
              connect_timeout   = \"5s\"\n    statement_timeout = \"10s\"\n    poll_interval     = \"1s\"\n    \
-             history_keep      = 100\n{tls_block}  }}\n}}\n\n",
+             primary           = true\n    history_keep      = 100\n{tls_block}  }}\n}}\n\n",
             host = self.host,
             port = self.port,
             pw = pw_file.display(),

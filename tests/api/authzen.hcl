@@ -6,7 +6,6 @@ server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
-  editing                 = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "30s"
@@ -23,11 +22,9 @@ telemetry {
 }
 
 storage {
-  backend = "volume"
-
-  volume {
+  volume "main" {
     path            = "/var/lib/hune/dashboards"
-    read_only       = false
+    primary         = true
     rescan_interval = "1s"
     history_keep    = 100
   }

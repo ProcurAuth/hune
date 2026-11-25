@@ -15,8 +15,7 @@ static KEYS: [KeyDesc; 4] = [
         .refs(Ref::Str("Main"), Ref::Absent),
     KeyDesc::new("store.db.host", Kind::Text { min: 1, max: 20, rule: TextRule::NoControl }, "The host.")
         .refs(Ref::Absent, Ref::Str("db")),
-    KeyDesc::new("store.db.port", Kind::Integer { min: 1, max: 65535 }, "The port.")
-        .refs(Ref::Absent, Ref::Int(5432)),
+    KeyDesc::new("store.db.port", Kind::Integer { min: 1, max: 65535 }, "The port.").refs(Ref::Absent, Ref::Int(5432)),
 ];
 
 fn schema() -> Schema {
@@ -103,7 +102,11 @@ fn a_duplicate_label_and_a_wrong_count_name_the_block_with_its_parent() {
     let text = "store {\n  volume \"a\" {\n    title = \"t\"\n    path = \"/a\"\n  }\n  volume \"a\" {\n    title = \"t\"\n    path = \"/b\"\n  }\n}\n";
     let e = errors(text);
     assert_eq!(e.len(), 1, "{e:#?}");
-    assert!(e[0].starts_with("store.volume \"a\": duplicate label; the first block with this label is at line 2"), "{}", e[0]);
+    assert!(
+        e[0].starts_with("store.volume \"a\": duplicate label; the first block with this label is at line 2"),
+        "{}",
+        e[0]
+    );
 
     let mut many = String::from("store {\n");
     for n in 0..4 {
@@ -125,7 +128,10 @@ fn a_missing_key_of_a_labelled_block_names_its_label() {
 #[test]
 fn the_reference_writes_the_labelled_block_inside_its_parent() {
     let local = hclconf::render_hcl(&schema(), Profile::Local, &[]);
-    assert!(local.contains("store {\n  volume \"main\" {\n    path  = \"/data\"\n    title = \"Main\"\n  }\n}\n"), "{local}");
+    assert!(
+        local.contains("store {\n  volume \"main\" {\n    path  = \"/data\"\n    title = \"Main\"\n  }\n}\n"),
+        "{local}"
+    );
     let markdown = hclconf::render_markdown(
         &schema(),
         &hclconf::MarkdownSpec { title: "T", intro: &[], profile_names: ["local", "distributed"] },

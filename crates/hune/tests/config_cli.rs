@@ -190,7 +190,7 @@ fn k10_check_config_on_a_file_with_five_errors_prints_five_errors_and_exits_1() 
         .replace("level = \"info\"", "level = \"loud\"")
         .replace("history_keep    = 100", "history_keep    = 0")
         .replace("queue_wait         = \"5s\"", "queue_wait         = \"2m\"")
-        .replace("editing                 = true", "editing                 = true\n  colour = \"red\"");
+        .replace("base_path               = \"/\"", "base_path               = \"/\"\n  colour = \"red\"");
     let config = s.write("bad.hcl", &text_in);
     let out = hune(&["check-config", "--config", config.to_str().unwrap()], &[]);
     assert_eq!(out.status.code(), Some(1));
@@ -208,11 +208,9 @@ fn k10_check_config_on_a_file_with_five_errors_prints_five_errors_and_exits_1() 
     assert!(lines.iter().any(|l| {
         l.starts_with("log.level: expected \"error\", \"warn\", \"info\" or \"debug\", found \"loud\" (line ")
     }));
-    assert!(
-        lines
-            .iter()
-            .any(|l| l.starts_with("storage.volume.history_keep: expected an integer from 1 to 10000, found 0 (line "))
-    );
+    assert!(lines.iter().any(|l| {
+        l.starts_with("storage.volume \"main\".history_keep: expected an integer from 1 to 10000, found 0 (line ")
+    }));
     assert!(lines.iter().any(|l| {
         l.starts_with("clickhouse \"prod\".queue_wait: expected a duration from 0s to 1m, found \"2m\" (line ")
     }));
@@ -252,8 +250,8 @@ fn print_config_shows_the_key_query_inspect_with_its_default_and_its_source() {
     assert!(text(&out.stdout).contains("server.query_inspect = false  # default\n"), "{}", text(&out.stdout));
     // The key is in the file.
     let with = base.replace(
-        "  editing                 = true\n",
-        "  editing                 = true\n  query_inspect           = true\n",
+        "  base_path               = \"/\"\n",
+        "  base_path               = \"/\"\n  query_inspect           = true\n",
     );
     let config = s.write("true.hcl", &with);
     let out = hune(&["print-config", "-c", config.to_str().unwrap()], &[]);
@@ -263,8 +261,8 @@ fn print_config_shows_the_key_query_inspect_with_its_default_and_its_source() {
     let out = hune(&["print-config", "-c", config.to_str().unwrap()], &[("HUNE_QUERY_INSPECT", "false")]);
     assert!(text(&out.stdout).contains("server.query_inspect = true  # file\n"));
     let env_form = base.replace(
-        "  editing                 = true\n",
-        "  editing                 = true\n  query_inspect_env       = \"HUNE_QUERY_INSPECT\"\n",
+        "  base_path               = \"/\"\n",
+        "  base_path               = \"/\"\n  query_inspect_env       = \"HUNE_QUERY_INSPECT\"\n",
     );
     let config = s.write("env.hcl", &env_form);
     let out = hune(&["check-config", "-c", config.to_str().unwrap()], &[("HUNE_QUERY_INSPECT", "true")]);
@@ -272,8 +270,8 @@ fn print_config_shows_the_key_query_inspect_with_its_default_and_its_source() {
     assert!(text(&out.stderr).contains("server.query_inspect:"), "{}", text(&out.stderr));
     // A wrong type and the contradiction of the mode authzen.
     let bad = base.replace(
-        "  editing                 = true\n",
-        "  editing                 = true\n  query_inspect           = \"true\"\n",
+        "  base_path               = \"/\"\n",
+        "  base_path               = \"/\"\n  query_inspect           = \"true\"\n",
     );
     let config = s.write("type.hcl", &bad);
     let out = hune(&["check-config", "-c", config.to_str().unwrap()], &[]);
@@ -283,14 +281,19 @@ fn print_config_shows_the_key_query_inspect_with_its_default_and_its_source() {
         "{}",
         text(&out.stderr)
     );
-    let dist = s.config_text("distributed.hcl").replace(
-        "  editing                 = true\n",
-        "  editing                 = false\n  query_inspect           = true\n",
-    );
+    // No primary store: the PostgreSQL store is read-only and has a title.
+    let dist = s
+        .config_text("distributed.hcl")
+        .replace(
+            "  base_path               = \"/\"\n",
+            "  base_path               = \"/\"\n  query_inspect           = true\n",
+        )
+        .replace("    primary           = true\n", "    title             = \"Archive\"\n")
+        .replace("    history_keep      = 100\n", "");
     let config = s.write("c21.hcl", &dist);
     let out = hune(&["check-config", "-c", config.to_str().unwrap()], &[]);
     assert_eq!(out.status.code(), Some(1));
-    assert!(text(&out.stderr).contains("server.query_inspect, server.editing, access.mode:"), "{}", text(&out.stderr));
+    assert!(text(&out.stderr).contains("server.query_inspect, access.mode, storage:"), "{}", text(&out.stderr));
 }
 
 #[test]

@@ -391,10 +391,10 @@ pub fn run(checked: &Checked, mode: ReadMode) -> Result<Stage2, Vec<ConfigError>
             errors.push(ConfigError::at(block.display.clone(), "this build has no MongoDB driver", block.line));
         }
     }
-    let label_blocks = checked
-        .blocks()
-        .iter()
-        .filter(|b| matches!(b.path, "clickhouse" | "postgres" | "mongodb") && mode.checks_labels());
+    // The label of a volume is the id of a store: every mode checks it (13.10).
+    let label_blocks = checked.blocks().iter().filter(|b| {
+        b.path == "storage.volume" || (matches!(b.path, "clickhouse" | "postgres" | "mongodb") && mode.checks_labels())
+    });
     for block in label_blocks {
         if let Some(label) = &block.label
             && !valid_label(label)
@@ -415,6 +415,15 @@ pub fn run(checked: &Checked, mode: ReadMode) -> Result<Stage2, Vec<ConfigError>
         errors.sort_by_key(|e| e.line.unwrap_or(0));
         Err(hclconf::error::limit_errors(errors))
     }
+}
+
+/// True when a store has `primary = true`: edits are possible (13.10).
+pub fn has_primary(checked: &Checked) -> bool {
+    let volume = checked
+        .labels("storage.volume")
+        .into_iter()
+        .any(|l| matches!(checked.get_in(l, "storage.volume.primary").map(|k| &k.value), Some(Value::Bool(true))));
+    volume || matches!(checked.get("storage.postgres.primary").map(|k| &k.value), Some(Value::Bool(true)))
 }
 
 fn text_key(checked: &Checked, path: &str) -> Option<String> {
@@ -520,7 +529,7 @@ fn pep_inputs(checked: &Checked, stage: &Stage2) -> Option<PepInputs> {
         timeout: duration_key(checked, "access.pdp.timeout")?,
         cache_ttl: duration_key(checked, "access.pdp.cache_ttl")?,
         max_connections: usize::try_from(int_key(checked, "access.pdp.max_connections")?).ok()?,
-        editing: matches!(checked.get("server.editing")?.value, Value::Bool(true)),
+        editing: has_primary(checked),
         sources,
     })
 }

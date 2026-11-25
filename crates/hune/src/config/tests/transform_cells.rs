@@ -9,8 +9,8 @@ const KEY: &str = "server.transform_max_cells";
 fn with_line(fx: &Fx, line: &str) -> String {
     replace_once(
         &fx.local(),
-        "  editing                 = true\n",
-        &format!("  editing                 = true\n  {line}\n"),
+        "  base_path               = \"/\"\n",
+        &format!("  base_path               = \"/\"\n  {line}\n"),
     )
 }
 

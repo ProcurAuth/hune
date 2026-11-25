@@ -75,7 +75,7 @@ fn a_partial_mode_loads_a_file_whose_other_blocks_have_no_files() {
         assert_eq!(loaded.mode, mode);
         assert!(!loaded.mode.is_complete());
         // The block `storage` is read.
-        let StorageConfig::Postgres(pg) = &loaded.config.storage else { panic!("postgres expected") };
+        let Some(pg) = &loaded.config.storage.postgres else { panic!("postgres expected") };
         assert_eq!(pg.user, "app");
         assert_eq!(pg.password.expose(), "pgpass");
         assert!(!pg.tls.as_ref().unwrap().ca_pem.is_empty());
@@ -309,7 +309,7 @@ fn the_mode_nothing_reads_no_value_and_checks_the_values_of_the_file() {
     assert_eq!(entry(&loaded, "storage.postgres.user").value, "<not read>");
     assert_eq!(entry(&loaded, "storage.postgres.password").value, "<not read>");
     assert_eq!(entry(&loaded, "storage.postgres.password").source, format!("file:{}", fx.path("missing/pg-pw")));
-    let StorageConfig::Postgres(pg) = &loaded.config.storage else { panic!("postgres expected") };
+    let Some(pg) = &loaded.config.storage.postgres else { panic!("postgres expected") };
     assert_eq!(pg.user, "");
     assert_eq!(pg.password.expose(), "");
     // A bad value of the file is an error in this mode.
@@ -326,7 +326,7 @@ fn the_mode_local_reads_its_volume_and_no_clickhouse_file() {
         .replace(&fx.path("ch-ca.pem"), &fx.path("missing/ch-ca.pem"));
     for mode in PARTIAL {
         let loaded = fx.load_mode(&text, mode).unwrap_or_else(|e| panic!("{mode:?}: {e:#?}"));
-        let StorageConfig::Volume(v) = &loaded.config.storage else { panic!("volume expected") };
+        let v = &loaded.config.storage.volumes[0];
         assert_eq!(v.path.to_str(), Some("/var/lib/hune/dashboards"));
     }
     assert!(fx.errors(&text).iter().any(|e| e.contains("clickhouse \"prod\".password")));

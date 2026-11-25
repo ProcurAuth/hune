@@ -42,6 +42,19 @@ enum Sink {
     Memory(Mutex<Vec<u8>>),
 }
 
+/// The counts of the line `store.loaded` (14.7).
+#[derive(Debug, Clone, Copy)]
+pub struct StoreCounts {
+    /// Valid folders.
+    pub folders: u64,
+    /// Valid dashboards.
+    pub dashboards: u64,
+    /// Invalid entries and invalid folders.
+    pub invalid: u64,
+    /// Entries that the scan ignores.
+    pub ignored: u64,
+}
+
 /// The JSON line logger.
 pub struct Logger {
     level: LogLevel,
@@ -309,22 +322,24 @@ impl Logger {
     }
 
     /// Writes `store.loaded` (14.7).
-    pub fn store_loaded(
-        &self,
-        backend: &str,
-        folders: u64,
-        dashboards: u64,
-        invalid: u64,
-        ignored: u64,
-        elapsed_ms: u64,
-    ) {
+    pub fn store_loaded(&self, store: &str, backend: &str, counts: &StoreCounts, elapsed_ms: u64) {
         self.event(LogLevel::Info, "store.loaded")
+            .field("store", store)
             .field("backend", backend)
-            .field("folders", folders)
-            .field("dashboards", dashboards)
-            .field("invalid", invalid)
-            .field("ignored", ignored)
+            .field("folders", counts.folders)
+            .field("dashboards", counts.dashboards)
+            .field("invalid", counts.invalid)
+            .field("ignored", counts.ignored)
             .field("elapsed_ms", elapsed_ms)
+            .emit();
+    }
+
+    /// Writes `store.rescan_rejected` (14.7): a poll did not take a change of a store (5.42).
+    pub fn store_rescan_rejected(&self, store: &str, path: &str, reason: &str) {
+        self.event(LogLevel::Error, "store.rescan_rejected")
+            .field("store", store)
+            .field("path", path)
+            .field("reason", reason)
             .emit();
     }
 

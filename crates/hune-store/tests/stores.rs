@@ -42,14 +42,16 @@ async fn seed(root: &Path, folder: &str, folder_title: &str, dashboards: &[(&str
     }
 }
 
-fn spec(id: &str, store: AnyStore, root: &Path, primary: bool, store_title: Option<&str>, interval: Duration) -> StoreSpec {
+fn spec(
+    id: &str,
+    store: AnyStore,
+    root: &Path,
+    primary: bool,
+    store_title: Option<&str>,
+    interval: Duration,
+) -> StoreSpec {
     StoreSpec {
-        info: StoreInfo {
-            id: id.to_owned(),
-            kind: StoreKind::Volume,
-            title: store_title.map(str::to_owned),
-            primary,
-        },
+        info: StoreInfo { id: id.to_owned(), kind: StoreKind::Volume, title: store_title.map(str::to_owned), primary },
         path: Some(root.to_path_buf()),
         interval,
         store,
@@ -146,7 +148,8 @@ async fn a_folder_id_or_a_title_of_a_read_only_store_cannot_be_used_in_the_prima
 async fn without_a_primary_store_every_write_is_refused() {
     let (d, root) = dir();
     seed(&root, "ops", "Operations", &[("lab-one", "Lab one")]).await;
-    let stores = Stores::new(vec![spec("lab", open(&root, true).await, &root, false, Some("Lab"), Duration::from_secs(1))]);
+    let stores =
+        Stores::new(vec![spec("lab", open(&root, true).await, &root, false, Some("Lab"), Duration::from_secs(1))]);
     stores.open_checked().await.unwrap();
     assert_eq!(stores.primary_id(), None);
     let r = stores.create_folder(&fid("new"), &title("New")).await;

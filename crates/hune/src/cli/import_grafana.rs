@@ -34,7 +34,7 @@ use serde::de::{self, Deserializer, MapAccess, SeqAccess, Visitor};
 use serde_json::Value;
 
 use super::output::{self, Target};
-use crate::config::{self, CapturedEnvironment, LoadedConfig, StorageConfig};
+use crate::config::{self, CapturedEnvironment, LoadedConfig, PrimaryRef};
 
 /// Exit code: an item needs acceptance, or an acceptance line is stale.
 const EXIT_ACCEPT: u8 = 1;
@@ -663,9 +663,14 @@ async fn open_volume(
     err: &mut dyn Write,
 ) -> Result<AnyStore, u8> {
     let fail_code = if write { EXIT_WRITE } else { EXIT_INPUT };
-    let volume = match &loaded.config.storage {
-        StorageConfig::Volume(v) => v,
-        StorageConfig::Postgres(pg) => {
+    // The command works on the primary store only (5.40).
+    let volume = match loaded.config.storage.primary() {
+        None => {
+            let _ = writeln!(err, "hune import-grafana: {}", super::store_cmds::NO_PRIMARY);
+            return Err(fail_code);
+        }
+        Some(PrimaryRef::Volume(v)) => v,
+        Some(PrimaryRef::Postgres(pg)) => {
             let path = config_path.unwrap_or_else(|| std::path::Path::new("<file>"));
             return match super::store_cmds::open_postgres(pg, path).await {
                 Ok(store) => Ok(store),
@@ -676,18 +681,11 @@ async fn open_volume(
             };
         }
     };
-    if write && volume.read_only {
-        let _ = writeln!(
-            err,
-            "hune import-grafana: storage.volume.read_only = true: --write cannot write into a read-only volume"
-        );
-        return Err(EXIT_WRITE);
-    }
     let options = VolumeOptions {
         root: volume.path.clone(),
         read_only: !write,
         rescan_interval: volume.rescan_interval,
-        history_keep: volume.history_keep,
+        history_keep: volume.history_keep.unwrap_or(crate::server::startup::NO_HISTORY_KEEP),
     };
     match VolumeStore::open(options).await {
         Ok(store) => Ok(AnyStore::from(store)),
@@ -699,7 +697,7 @@ async fn open_volume(
             Err(EXIT_WRITE)
         }
         Err(e) => {
-            let _ = writeln!(err, "hune import-grafana: storage.volume: {e}");
+            let _ = writeln!(err, "hune import-grafana: storage.volume \"{}\": {e}", volume.id);
             Err(fail_code)
         }
     }

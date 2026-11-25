@@ -184,6 +184,28 @@ pub async fn unknown_with(ctx: &Ctx, message: &str, others: Others<'_>) -> ApiEr
     }
 }
 
+/// The refusal of a write whose target is in a read-only store (5.40, 11.31). Hune never asks `dashboard.write`
+/// for such a target: a grant of it changes nothing. In the mode `authzen`, one question comes first: `dashboard.read`
+/// on the dashboard `N(uid)`, or on the folder `F(folder)` when `uid` is `None`. A subject that cannot read the
+/// target gets the refusal of any other write (11.30), byte for byte, so the answer does not tell that the target
+/// exists. A subject that can read it gets `403 read_only_store`. The mode `open` answers `read_only_store` at once.
+pub async fn read_only_refusal(ctx: &Ctx, folder: &str, uid: Option<&str>) -> ApiError {
+    let refusal = ApiError::new(Code::ReadOnlyStore, "The store of this item is read-only.");
+    let (access, who) = match parts(ctx) {
+        Err(e) => return e,
+        Ok(None) => return refusal,
+        Ok(Some(p)) => p,
+    };
+    let node = match uid {
+        Some(u) => access.tree().dashboard(folder, u),
+        None => access.tree().folder(folder),
+    };
+    match decide_as(ctx, &access, &who, Operation::new(READ, node), true).await {
+        Ok(_) => refusal,
+        Err(e) => e,
+    }
+}
+
 /// `dashboard.read` on `N(uid)`: a read route and the routes of the queries (11.21).
 pub async fn dashboard_read(ctx: &Ctx, folder: &str, uid: &str) -> Result<Grant, ApiError> {
     let Some((access, who)) = parts(ctx)? else { return Ok(Grant::default()) };
@@ -262,6 +284,14 @@ pub async fn query_inspect(ctx: &Ctx, folder: &str, uid: &str, source: &str) -> 
     if !access.editing() {
         return false;
     }
+    // A dashboard of a read-only store has no `dashboard.write` question (5.40), so nobody gets its SQL here.
+    let in_read_only_store = ctx
+        .state
+        .services()
+        .is_some_and(|s| hune_core::ids::Uid::parse(uid).is_ok_and(|u| s.store.uid_is_read_only(&u)));
+    if in_read_only_store {
+        return false;
+    }
     let op = Operation::new(QUERY, access.tree().source(source)).also(WRITE, access.tree().dashboard(folder, uid));
     access.check(&who, op).await.unwrap_or(false)
 }
@@ -302,15 +332,20 @@ pub struct FolderFilter {
     pub create: bool,
 }
 
-/// Steps 1 and 2 of 11.25, then the flags: at most 2 questions for each folder and one for the service.
-pub async fn filter_folders(ctx: &Ctx, ids: &[String]) -> Result<Option<FolderFilter>, ApiError> {
+/// Steps 1 and 2 of 11.25, then the flags: at most 2 questions for each folder and one for the service. A folder of
+/// a read-only store (`read_only(id)`) has no question for `dashboard.write` and the flag `false` (5.40).
+pub async fn filter_folders(
+    ctx: &Ctx,
+    ids: &[String],
+    read_only: &(dyn Fn(&str) -> bool + Sync),
+) -> Result<Option<FolderFilter>, ApiError> {
     let Some((access, who)) = parts(ctx)? else { return Ok(None) };
     let perms = ids.iter().map(|f| Permission::new(READ, access.tree().folder(f))).collect();
     let seen = access.display(&who, perms).await?;
     let mut folders: Vec<Option<bool>> = seen.iter().map(|v| v.then_some(false)).collect();
     let mut create = false;
     if access.editing() {
-        let visible: Vec<usize> = (0..ids.len()).filter(|&i| seen[i]).collect();
+        let visible: Vec<usize> = (0..ids.len()).filter(|&i| seen[i] && !read_only(&ids[i])).collect();
         let mut ops: Vec<Operation> =
             visible.iter().map(|&i| Operation::new(WRITE, access.tree().folder(&ids[i]))).collect();
         ops.push(Operation::new(WRITE, access.tree().service()));
@@ -345,11 +380,12 @@ enum FolderState {
 
 /// The display filter of one page of dashboards (11.25). `rows` are the `(folder, uid)` of the rows
 /// in the order of the list. The filter asks at most 200 questions and stops when it holds `limit`
-/// items.
+/// items. A folder of a read-only store (`read_only(folder)`) has no question for `dashboard.write` (5.40).
 pub async fn filter_dashboards(
     ctx: &Ctx,
     rows: &[(String, String)],
     limit: usize,
+    read_only: &(dyn Fn(&str) -> bool + Sync),
 ) -> Result<Option<DashboardFilter>, ApiError> {
     let Some((access, who)) = parts(ctx)? else { return Ok(None) };
     let mut groups: Vec<(String, Range<usize>)> = Vec::new();
@@ -368,9 +404,10 @@ pub async fn filter_dashboards(
     // Step 3: `dashboard.read` and `dashboard.write` on each visible folder, with `check`.
     let visible: Vec<usize> = (0..groups.len()).filter(|&i| seen[i]).collect();
     let mut ops = Vec::new();
+    let asks_write = |g: usize| access.editing() && !read_only(&groups[g].0);
     for &g in &visible {
         ops.push(Operation::new(READ, access.tree().folder(&groups[g].0)));
-        if access.editing() {
+        if asks_write(g) {
             ops.push(Operation::new(WRITE, access.tree().folder(&groups[g].0)));
         }
     }
@@ -380,7 +417,7 @@ pub async fn filter_dashboards(
     let mut it = answers.into_iter();
     for &g in &visible {
         let read = it.next().unwrap_or(false);
-        let write = if access.editing() { it.next().unwrap_or(false) } else { false };
+        let write = if asks_write(g) { it.next().unwrap_or(false) } else { false };
         states[g] = if read { FolderState::All { write } } else { FolderState::Some { write } };
     }
     // Steps 4 and 5: the rows, in order.

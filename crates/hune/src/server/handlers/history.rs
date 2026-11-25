@@ -204,6 +204,9 @@ pub async fn restore(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         return Err(gate::unknown(&ctx, "No such dashboard.").await);
     };
     let folder_text = entry.folder().as_str().to_owned();
+    if services.store.uid_is_read_only(&uid) {
+        return Err(gate::read_only_refusal(&ctx, &folder_text, Some(uid.as_str())).await);
+    }
     // The use alone first: the others name the sources of the version, which Hune has not read yet (11.21).
     gate::dashboard_write_use(&ctx, &folder_text, uid.as_str()).await?;
     // The permit comes before the store read, so that a restore that waits holds no bytes of a version (6.27).
@@ -293,6 +296,13 @@ pub async fn move_to(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         // The other permission names the dashboard, which exists: it comes first, as for a folder that exists (11.23).
         let others = gate::Others::Dashboard { folder: entry.folder().as_str(), uid: uid.as_str() };
         return Err(gate::unknown_with(&ctx, "No such folder.", others).await);
+    }
+    // A move out of a read-only store, or into a folder of a read-only store, is refused (5.40).
+    if services.store.uid_is_read_only(&uid) {
+        return Err(gate::read_only_refusal(&ctx, entry.folder().as_str(), Some(uid.as_str())).await);
+    }
+    if services.store.folder_is_read_only(&target) {
+        return Err(gate::read_only_refusal(&ctx, target.as_str(), None).await);
     }
     gate::move_dashboard(&ctx, entry.folder().as_str(), uid.as_str(), target.as_str()).await?;
     let if_match = ctx.if_match.ok_or_else(ApiError::internal)?;

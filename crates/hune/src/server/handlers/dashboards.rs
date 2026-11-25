@@ -53,6 +53,48 @@ struct ListItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     errors: Option<Vec<ValidationError>>,
     access: Access,
+    /// True when the store of the dashboard is read-only (5.40). Then `access.write` is false.
+    read_only: bool,
+    /// The id of the store of the dashboard.
+    store: String,
+    /// `file_invalid` when the dashboard shows its last valid state because its file is not valid now (5.42).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    stale: Option<&'static str>,
+}
+
+/// The code of the warning of a dashboard that shows its last valid state (5.42).
+const STALE_CODE: &str = "file_invalid";
+
+/// The store of a dashboard for the page (5.40): its id, and true when it is read-only.
+fn store_facts(services: &crate::server::state::Services, uid: &Uid) -> (String, bool) {
+    match services.store.store_of_uid(uid) {
+        Some(info) => (info.id.clone(), !info.primary),
+        None => (services.store.primary_id().unwrap_or_default().to_owned(), false),
+    }
+}
+
+/// The refusal of a write on a dashboard of a read-only store, or `None` (5.40, 11.31).
+async fn read_only_dashboard(
+    ctx: &Ctx,
+    services: &crate::server::state::Services,
+    entry: &CatalogEntry,
+) -> Option<ApiError> {
+    if !services.store.uid_is_read_only(entry.uid()) {
+        return None;
+    }
+    Some(gate::read_only_refusal(ctx, entry.folder().as_str(), Some(entry.uid().as_str())).await)
+}
+
+/// The refusal of a write into a folder of a read-only store, or `None` (5.40, 11.31).
+pub(super) async fn read_only_folder(
+    ctx: &Ctx,
+    services: &crate::server::state::Services,
+    folder: &FolderId,
+) -> Option<ApiError> {
+    if !services.store.folder_is_read_only(folder) {
+        return None;
+    }
+    Some(gate::read_only_refusal(ctx, folder.as_str(), None).await)
 }
 
 #[derive(Serialize)]
@@ -126,7 +168,9 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     // The display filter of 11.25 (mode `authzen`). In mode `open`, each row shows.
     let keys: Vec<(String, String)> =
         rows.iter().map(|r| (r.entry.folder().as_str().to_owned(), r.entry.uid().as_str().to_owned())).collect();
-    let (rows, next, writes) = match gate::filter_dashboards(&ctx, &keys, limit).await? {
+    let in_read_only_store =
+        |folder: &str| FolderId::parse(folder).is_ok_and(|f| services.store.folder_is_read_only(&f));
+    let (rows, next, writes) = match gate::filter_dashboards(&ctx, &keys, limit, &in_read_only_store).await? {
         None => {
             let more = rows.len() > limit;
             rows.truncate(limit);
@@ -166,6 +210,9 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     };
     let mut items = Vec::with_capacity(rows.len());
     for (row, write) in rows.iter().zip(writes.iter().copied()) {
+        let (store, read_only) = store_facts(services, row.entry.uid());
+        let write = write && !read_only;
+        let stale = services.store.is_stale(row.entry.uid()).then_some(STALE_CODE);
         items.push(match &*row.entry {
             CatalogEntry::Valid { current, doc } => ListItem {
                 uid: current.uid.as_str().to_owned(),
@@ -179,6 +226,9 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                 state: "valid",
                 errors: None,
                 access: Access { write },
+                read_only,
+                store,
+                stale,
             },
             CatalogEntry::Invalid { uid, folder, etag, errors } => {
                 // The head version of the history gives the version and the author, when it exists.
@@ -195,6 +245,9 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                     state: "invalid",
                     errors: Some(errors.iter().take(20).cloned().collect()),
                     access: Access { write },
+                    read_only,
+                    store,
+                    stale: None,
                 }
             }
         });
@@ -255,17 +308,22 @@ pub async fn get(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     if download {
         return Ok(download_response(&uid, Bytes::copy_from_slice(doc.bytes()), &current.etag));
     }
-    let write = gate::write_flag(&ctx, current.folder.as_str(), uid.as_str()).await?;
+    let (store, read_only) = store_facts(services, &uid);
+    let write = !read_only && gate::write_flag(&ctx, current.folder.as_str(), uid.as_str()).await?;
+    let stale = if services.store.is_stale(&uid) { format!(",\"stale\":\"{STALE_CODE}\"") } else { String::new() };
     let q = |s: &str| Value::String(s.to_owned()).to_string();
     let head = format!(
-        "{{\"uid\":{},\"folder\":{},\"etag\":{},\"version\":{},\"updated_at\":{},\"updated_by\":{},\"access\":{{\"write\":{}}},\"document\":",
+        "{{\"uid\":{},\"folder\":{},\"etag\":{},\"version\":{},\"updated_at\":{},\"updated_by\":{},\"access\":{{\"write\":{}}},\"read_only\":{},\"store\":{}{},\"document\":",
         q(current.uid.as_str()),
         q(current.folder.as_str()),
         q(&current.etag.to_hex()),
         current.version,
         q(&current.saved_at.to_rfc3339()),
         q(current.saved_by.as_str()),
-        write
+        write,
+        read_only,
+        q(&store),
+        stale
     );
     // The names that each saved query names (6.14, 7.19): a pure function of the document, with no query.
     let names = doc.names_json();
@@ -473,7 +531,13 @@ pub async fn create(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
             // The same others as for a folder that exists, then the question of 11.23 (11.23, rule 1).
             return Err(gate::unknown_with(&ctx, "No such folder.", gate::Others::Sources(sources)).await);
         }
+        if let Some(refusal) = read_only_folder(&ctx, services, &folder).await {
+            return Err(refusal);
+        }
         gate::folder_write_with_sources(&ctx, folder.as_str(), sources).await?;
+    } else if let Some(refusal) = read_only_folder(&ctx, services(&ctx)?, &folder).await {
+        // The mode `open`: a draft or a create into a read-only store gets the same refusal (5.40).
+        return Err(refusal);
     }
     let (doc, warnings) = check_document(&ctx, &req, bytes, None).await?;
     if validate_only {
@@ -544,8 +608,19 @@ pub async fn save(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
             // The same others as for a uid that exists, then the question of 11.23 (11.23, rule 1).
             return Err(gate::unknown_with(&ctx, "No such dashboard.", gate::Others::Sources(sources)).await);
         };
+        if let Some(refusal) = read_only_dashboard(&ctx, services, &entry).await {
+            return Err(refusal);
+        }
         gate::dashboard_write(&ctx, entry.folder().as_str(), uid.as_str(), sources).await?;
         decided = Some(entry);
+    } else if let Ok(uid) = &uid {
+        // The mode `open`: a save or a validation of a dashboard of a read-only store gets the refusal (5.40).
+        let services = services(&ctx)?;
+        if let Some(entry) = services.catalog.get(uid)
+            && let Some(refusal) = read_only_dashboard(&ctx, services, &entry).await
+        {
+            return Err(refusal);
+        }
     }
     // The member uid of the document must equal the uid of the path: a fault gives `/uid` (6.15).
     let expected = uid.as_ref().ok();
@@ -614,6 +689,9 @@ pub async fn delete(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     let Some(entry) = services.catalog.get(&uid) else {
         return Err(gate::unknown(&ctx, "No such dashboard.").await);
     };
+    if let Some(refusal) = read_only_dashboard(&ctx, services, &entry).await {
+        return Err(refusal);
+    }
     gate::dashboard_write_use(&ctx, entry.folder().as_str(), uid.as_str()).await?;
     let if_match = ctx.if_match.ok_or_else(ApiError::internal)?;
     let folder: FolderId = entry.folder().clone();

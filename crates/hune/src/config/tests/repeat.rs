@@ -13,7 +13,11 @@ const KEYS: [(&str, &str, u64, u64); 3] = [
 
 fn with_lines(fx: &Fx, lines: &[String]) -> String {
     let add: String = lines.iter().map(|l| format!("  {l}\n")).collect();
-    replace_once(&fx.local(), "  editing                 = true\n", &format!("  editing                 = true\n{add}"))
+    replace_once(
+        &fx.local(),
+        "  base_path               = \"/\"\n",
+        &format!("  base_path               = \"/\"\n{add}"),
+    )
 }
 
 fn with(fx: &Fx, pairs: &[(&str, u64)]) -> String {
@@ -76,7 +80,7 @@ fn the_keys_are_in_the_table_the_reference_and_the_effective_order() {
     let fx = Fx::new();
     let order: Vec<String> = fx.load(&fx.local()).unwrap().effective.iter().map(|e| e.key.clone()).collect();
     let position = |name: &str| order.iter().position(|k| k == name).unwrap();
-    assert_eq!(position("server.query_inspect"), position("server.editing") + 1);
+    assert_eq!(position("server.query_inspect"), position("server.base_path") + 1);
     let mut previous = "server.query_inspect";
     for (key, _, default, bound) in KEYS {
         assert_eq!(position(key), position(previous) + 1, "{key}");

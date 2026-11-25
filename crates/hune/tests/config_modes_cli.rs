@@ -116,12 +116,12 @@ fn export_still_stops_on_a_fault_of_the_block_storage() {
     let bad = fx.variant("bad-range.hcl", |t| t.replace("rescan_interval = \"5s\"", "rescan_interval = \"1ms\""));
     let out = hune(&["export", "-c", &s(&bad), "--to", &s(&to)]);
     assert_eq!(out.code, 1, "{}", out.stderr);
-    assert!(out.stderr.contains("storage.volume.rescan_interval"), "{}", out.stderr);
+    assert!(out.stderr.contains("storage.volume \"main\".rescan_interval"), "{}", out.stderr);
     // A path that is not canonical: a check of 13.13 for the block `storage`.
     let bad = fx.variant("bad-path.hcl", |t| t.replace(&s(&fx.volume), &format!("{}/../volume", s(&fx.root))));
     let out = hune(&["export", "-c", &s(&bad), "--to", &s(&to)]);
     assert_eq!(out.code, 1, "{}", out.stderr);
-    assert!(out.stderr.contains("storage.volume.path"), "{}", out.stderr);
+    assert!(out.stderr.contains("storage.volume \"main\".path"), "{}", out.stderr);
     // The errors of the other blocks do not show in these runs.
     assert!(!out.stderr.contains("clickhouse"), "{}", out.stderr);
 }
@@ -245,5 +245,5 @@ fn import_grafana_write_uses_the_labels_of_the_clickhouse_blocks() {
     let bad = im.fx.variant("bad-storage.hcl", |t| t.replace("history_keep    = 100", "history_keep    = 0"));
     let out = im.run(&bad, &["--write"], "prod");
     assert_eq!(out.code, 2, "{}", out.stderr);
-    assert!(out.stderr.contains("storage.volume.history_keep"), "{}", out.stderr);
+    assert!(out.stderr.contains("storage.volume \"main\".history_keep"), "{}", out.stderr);
 }

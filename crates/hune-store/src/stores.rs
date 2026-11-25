@@ -582,9 +582,9 @@ impl Stores {
             }
         });
         d.marks.folders.retain(|id, _| !dropped_folders.contains(id));
-        d.marks.entries.retain(|key, _| {
-            !dropped_folders.contains(&key.1) && st.uid_owner.get(&key.0).is_none_or(|o| *o == i)
-        });
+        d.marks
+            .entries
+            .retain(|key, _| !dropped_folders.contains(&key.1) && st.uid_owner.get(&key.0).is_none_or(|o| *o == i));
     }
 }
 

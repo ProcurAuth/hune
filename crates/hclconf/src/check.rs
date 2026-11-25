@@ -457,6 +457,15 @@ enum Decision {
     Unknown,
 }
 
+/// The place of the keys of a block in the result: the rank of the top block, the index of the instance of a labelled
+/// block, and the position in the key table of the first key of the nearest labelled block.
+#[derive(Clone, Copy)]
+struct Order {
+    rank: usize,
+    instance: usize,
+    labelled: Option<usize>,
+}
+
 struct Finalizer<'a> {
     schema: &'a Schema,
     lookup: HashMap<&'static str, Value>,
@@ -521,14 +530,8 @@ impl Finalizer<'_> {
         "missing block".to_string()
     }
 
-    fn finalize(
-        &mut self,
-        inst: Inst,
-        rank: usize,
-        instance_idx: usize,
-        parent_line: Option<u32>,
-        labelled_rank: Option<usize>,
-    ) {
+    fn finalize(&mut self, inst: Inst, order: Order, parent_line: Option<u32>) {
+        let Order { rank, instance: instance_idx, labelled: labelled_rank } = order;
         // The keys of a labelled block stay together in the order of the table: the position of its first key.
         let labelled_rank = if inst.desc.labelled {
             let prefix = format!("{}.", inst.desc.path);
@@ -565,7 +568,8 @@ impl Finalizer<'_> {
                             line: res.line,
                             secret: key.secret,
                         };
-                        self.keys.push((resolved, (rank, labelled_rank.unwrap_or(schema_idx), instance_idx, schema_idx)));
+                        self.keys
+                            .push((resolved, (rank, labelled_rank.unwrap_or(schema_idx), instance_idx, schema_idx)));
                     }
                 }
                 (Decision::Yes, None) if matches!(key.applies, Applies::Always | Applies::When(_)) => {
@@ -581,7 +585,13 @@ impl Finalizer<'_> {
             children = rest;
             let shown = join_display(&inst.display, child_desc.name());
             let line = (!inst.desc.path.is_empty()).then_some(inst.line).or(parent_line);
-            self.finalize_children(child_desc, mine, &shown, line, rank, instance_idx, labelled_rank);
+            self.finalize_children(
+                child_desc,
+                mine,
+                &shown,
+                line,
+                Order { rank, instance: instance_idx, labelled: labelled_rank },
+            );
         }
     }
 
@@ -591,10 +601,9 @@ impl Finalizer<'_> {
         instances: Vec<Inst>,
         shown: &str,
         line: Option<u32>,
-        rank: usize,
-        instance_idx: usize,
-        labelled_rank: Option<usize>,
+        order: Order,
     ) {
+        let Order { rank, instance: instance_idx, labelled: labelled_rank } = order;
         if desc.labelled {
             if instances.len() < desc.min || instances.len() > desc.max {
                 self.errors.push(ConfigError::new(
@@ -610,7 +619,7 @@ impl Finalizer<'_> {
                 ));
             }
             for (i, inst) in instances.into_iter().enumerate() {
-                self.finalize(inst, rank, i, line, labelled_rank);
+                self.finalize(inst, Order { rank, instance: i, labelled: labelled_rank }, line);
             }
             return;
         }
@@ -632,7 +641,7 @@ impl Finalizer<'_> {
             }
             (_, false) => {
                 for inst in instances {
-                    self.finalize(inst, rank, instance_idx, line, labelled_rank);
+                    self.finalize(inst, Order { rank, instance: instance_idx, labelled: labelled_rank }, line);
                 }
             }
         }
@@ -707,7 +716,7 @@ pub fn check_text_with(
         children = rest;
         let rank = schema.keys.iter().position(|k| Schema::root_of(k.path) == desc.path).unwrap_or(usize::MAX);
         let before = fin.blocks.len();
-        fin.finalize_children(desc, mine, desc.name(), None, rank, 0, None);
+        fin.finalize_children(desc, mine, desc.name(), None, Order { rank, instance: 0, labelled: None });
         debug_assert!(fin.blocks.len() >= before);
     }
 

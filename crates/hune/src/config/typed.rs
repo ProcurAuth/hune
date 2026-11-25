@@ -173,7 +173,6 @@ fn build_inner(checked: &Checked, stage: &Stage2, partial: bool) -> Result<Confi
         listen: r.socket("server.listen")?,
         ops_listen: r.socket("server.ops_listen")?,
         base_path: r.text("server.base_path")?,
-        editing: r.boolean("server.editing")?,
         query_inspect: r.opt_boolean("server.query_inspect")?.unwrap_or(false),
         repeat_max_per_panel: r
             .opt_int32("server.repeat_max_per_panel")?
@@ -218,36 +217,44 @@ fn build_inner(checked: &Checked, stage: &Stage2, partial: bool) -> Result<Confi
         TelemetryConfig::Disabled
     };
 
-    let storage = match r.text("storage.backend")?.as_str() {
-        "volume" => StorageConfig::Volume(VolumeConfig {
-            path: r.path("storage.volume.path")?,
-            read_only: r.boolean("storage.volume.read_only")?,
-            rescan_interval: r.duration("storage.volume.rescan_interval")?,
-            history_keep: r.int32("storage.volume.history_keep")?,
-        }),
-        "postgres" => {
-            let sslmode = match r.text("storage.postgres.sslmode")?.as_str() {
-                "verify-full" => SslMode::VerifyFull,
-                "disable" => SslMode::Disable,
-                _ => return Err(internal("storage.postgres.sslmode", "an sslmode was expected")),
-            };
-            StorageConfig::Postgres(PostgresConfig {
-                host: r.text("storage.postgres.host")?,
-                port: r.int16("storage.postgres.port")?,
-                database: r.text("storage.postgres.database")?,
-                user: r.text("storage.postgres.user")?,
-                password: r.secret("storage.postgres.password")?,
-                sslmode,
-                tls: r.tls("storage.postgres.tls", stage)?,
-                max_connections: r.int32("storage.postgres.max_connections")?,
-                connect_timeout: r.duration("storage.postgres.connect_timeout")?,
-                statement_timeout: r.duration("storage.postgres.statement_timeout")?,
-                poll_interval: r.duration("storage.postgres.poll_interval")?,
-                history_keep: r.int32("storage.postgres.history_keep")?,
-            })
-        }
-        _ => return Err(internal("storage.backend", "a backend was expected")),
+    let mut volumes = Vec::new();
+    for label in checked.labels("storage.volume") {
+        let v = Reader { checked, label: Some(label), partial };
+        volumes.push(VolumeConfig {
+            id: label.to_string(),
+            title: v.opt_text("storage.volume.title")?,
+            primary: v.opt_boolean("storage.volume.primary")?.unwrap_or(false),
+            path: v.path("storage.volume.path")?,
+            rescan_interval: v.duration("storage.volume.rescan_interval")?,
+            history_keep: v.opt_int32("storage.volume.history_keep")?,
+        });
+    }
+    let postgres = if checked.has_block("storage.postgres") {
+        let sslmode = match r.text("storage.postgres.sslmode")?.as_str() {
+            "verify-full" => SslMode::VerifyFull,
+            "disable" => SslMode::Disable,
+            _ => return Err(internal("storage.postgres.sslmode", "an sslmode was expected")),
+        };
+        Some(PostgresConfig {
+            title: r.opt_text("storage.postgres.title")?,
+            primary: r.opt_boolean("storage.postgres.primary")?.unwrap_or(false),
+            host: r.text("storage.postgres.host")?,
+            port: r.int16("storage.postgres.port")?,
+            database: r.text("storage.postgres.database")?,
+            user: r.text("storage.postgres.user")?,
+            password: r.secret("storage.postgres.password")?,
+            sslmode,
+            tls: r.tls("storage.postgres.tls", stage)?,
+            max_connections: r.int32("storage.postgres.max_connections")?,
+            connect_timeout: r.duration("storage.postgres.connect_timeout")?,
+            statement_timeout: r.duration("storage.postgres.statement_timeout")?,
+            poll_interval: r.duration("storage.postgres.poll_interval")?,
+            history_keep: r.opt_int32("storage.postgres.history_keep")?,
+        })
+    } else {
+        None
     };
+    let storage = StorageConfig { volumes, postgres };
 
     let authzen = r.text("access.mode")? == "authzen";
     let access = if authzen {

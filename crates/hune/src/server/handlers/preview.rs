@@ -149,6 +149,17 @@ pub async fn preview(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     {
         return Err(gate::unknown(&ctx, "No such folder.").await);
     }
+    // A draft of a dashboard or of a folder of a read-only store is refused (5.40, 11.31).
+    if let (Some(f), Some(u)) = (&saved_folder, &uid)
+        && hune_core::ids::Uid::parse(u).is_ok_and(|u| services.store.uid_is_read_only(&u))
+    {
+        return Err(gate::read_only_refusal(&ctx, f, Some(u)).await);
+    }
+    if let Some(f) = &folder
+        && hune_core::ids::FolderId::parse(f).is_ok_and(|f| services.store.folder_is_read_only(&f))
+    {
+        return Err(gate::read_only_refusal(&ctx, f, None).await);
+    }
     // The decision comes before the validation of the draft and before the first byte to the source (11.20).
     let draft_ref = match (&saved_folder, &uid, &folder) {
         (Some(f), Some(u), _) => gate::Draft::Saved { folder: f, uid: u },

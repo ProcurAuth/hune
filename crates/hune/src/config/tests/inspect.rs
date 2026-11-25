@@ -6,8 +6,8 @@ use super::*;
 fn with_key(fx: &Fx, line: &str) -> String {
     replace_once(
         &fx.local(),
-        "  editing                 = true\n",
-        &format!("  editing                 = true\n  {line}\n"),
+        "  base_path               = \"/\"\n",
+        &format!("  base_path               = \"/\"\n  {line}\n"),
     )
 }
 
@@ -45,7 +45,7 @@ fn the_key_is_in_the_table_the_reference_and_the_effective_order() {
     let fx = Fx::new();
     let order: Vec<String> = fx.load(&fx.local()).unwrap().effective.iter().map(|e| e.key.clone()).collect();
     let position = |keys: &[String], name: &str| keys.iter().position(|k| k == name).unwrap();
-    assert_eq!(position(&order, "server.query_inspect"), position(&order, "server.editing") + 1);
+    assert_eq!(position(&order, "server.query_inspect"), position(&order, "server.base_path") + 1);
 }
 
 #[test]
@@ -66,36 +66,4 @@ fn a_wrong_form_or_value_stops_the_start() {
     // A duplicate attribute stops the start.
     let twice = with_key(&fx, "query_inspect = true\n  query_inspect = false");
     assert!(fx.errors(&twice).iter().any(|e| e.contains("query_inspect")));
-}
-
-#[test]
-fn c21_the_key_in_the_mode_authzen_needs_editing() {
-    let fx = Fx::new();
-    let text = replace_once(
-        &fx.distributed(),
-        "  editing                 = true\n",
-        "  editing                 = false\n  query_inspect           = true\n",
-    );
-    let errors = fx.errors(&text);
-    assert_eq!(errors.len(), 1, "{errors:?}");
-    assert!(errors[0].starts_with("server.query_inspect, server.editing, access.mode: "), "{}", errors[0]);
-    // editing true, or the key false, or the mode open: no contradiction.
-    let ok = replace_once(
-        &fx.distributed(),
-        "  editing                 = true\n",
-        "  editing                 = true\n  query_inspect           = true\n",
-    );
-    assert!(fx.errors(&ok).is_empty());
-    let off = replace_once(
-        &fx.distributed(),
-        "  editing                 = true\n",
-        "  editing                 = false\n  query_inspect           = false\n",
-    );
-    assert!(fx.errors(&off).is_empty());
-    let open = replace_once(
-        &fx.local(),
-        "  editing                 = true\n",
-        "  editing                 = false\n  query_inspect           = true\n",
-    );
-    assert!(fx.errors(&set(&open, "storage.volume.read_only", "true")).is_empty());
 }

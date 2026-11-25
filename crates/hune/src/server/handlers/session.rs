@@ -39,11 +39,25 @@ struct SessionGeomap<'a> {
     max_zoom: u8,
 }
 
+/// One store (6.10, 5.40): the page shows the title of a read-only store as the name of a root folder.
+#[derive(Serialize)]
+struct SessionStore<'a> {
+    id: &'a str,
+    kind: &'static str,
+    /// The name of the root folder of a read-only store. `null` for the primary store.
+    title: Option<&'a str>,
+    primary: bool,
+    read_only: bool,
+}
+
 #[derive(Serialize)]
 struct Session<'a> {
     mode: &'a str,
     subject: &'a str,
+    /// True when edits are possible: a store has `primary = true` (6.10, 13.10).
     editing: bool,
+    /// The stores, the volumes in file order and then the PostgreSQL store.
+    stores: Vec<SessionStore<'a>>,
     /// The value of `server.query_inspect` (6.10): the page shows the item Inspect only when it is true.
     query_inspect: bool,
     /// The values of the three keys `server.repeat_max_per_*` (6.10): the page checks a repeat with them.
@@ -62,10 +76,32 @@ struct Session<'a> {
 
 /// Gives the mode, the subject and the limits for the page.
 pub async fn session(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
+    let storage = &ctx.state.config.storage;
+    let mut stores: Vec<SessionStore<'_>> = storage
+        .volumes
+        .iter()
+        .map(|v| SessionStore {
+            id: &v.id,
+            kind: "volume",
+            title: v.title.as_deref(),
+            primary: v.primary,
+            read_only: !v.primary,
+        })
+        .collect();
+    if let Some(pg) = &storage.postgres {
+        stores.push(SessionStore {
+            id: crate::config::POSTGRES_STORE_ID,
+            kind: "postgres",
+            title: pg.title.as_deref(),
+            primary: pg.primary,
+            read_only: !pg.primary,
+        });
+    }
     let body = Session {
         mode: ctx.state.access_mode(),
         subject: &ctx.subject,
         editing: ctx.state.writes_enabled(),
+        stores,
         query_inspect: ctx.state.config.server.query_inspect,
         repeat_limits: RepeatLimits {
             panel: ctx.state.config.server.repeat_max_per_panel,

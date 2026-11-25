@@ -23,6 +23,10 @@ struct FolderItem<'a> {
     id: &'a str,
     title: &'a str,
     access: FolderAccess,
+    /// True when the store of the folder is read-only (5.40). Then `access.write` is false.
+    read_only: bool,
+    /// The id of the store of the folder.
+    store: String,
 }
 
 #[derive(Serialize)]
@@ -70,7 +74,13 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     let services = services(&ctx)?;
     let folders = services.catalog.folders();
     let ids: Vec<String> = folders.iter().map(|f| f.id.as_str().to_owned()).collect();
-    let body = match gate::filter_folders(&ctx, &ids).await? {
+    let facts = |f: &hune_store::FolderRecord| match services.store.store_of_folder(&f.id) {
+        Some(info) => (info.id.clone(), !info.primary),
+        None => (services.store.primary_id().unwrap_or_default().to_owned(), false),
+    };
+    let in_read_only_store =
+        |folder: &str| FolderId::parse(folder).is_ok_and(|f| services.store.folder_is_read_only(&f));
+    let body = match gate::filter_folders(&ctx, &ids, &in_read_only_store).await? {
         // Mode `authzen`: the display filter keeps some folders and gives the flags (11.25).
         Some(filter) => FolderList {
             access: ListAccess { create: filter.create },
@@ -78,10 +88,15 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                 .iter()
                 .zip(&filter.folders)
                 .filter_map(|(f, flag)| {
-                    flag.map(|write| FolderItem {
-                        id: f.id.as_str(),
-                        title: f.title.as_str(),
-                        access: FolderAccess { write },
+                    flag.map(|write| {
+                        let (store, read_only) = facts(f);
+                        FolderItem {
+                            id: f.id.as_str(),
+                            title: f.title.as_str(),
+                            access: FolderAccess { write: write && !read_only },
+                            read_only,
+                            store,
+                        }
                     })
                 })
                 .collect(),
@@ -92,7 +107,16 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                 access: ListAccess { create: write },
                 items: folders
                     .iter()
-                    .map(|f| FolderItem { id: f.id.as_str(), title: f.title.as_str(), access: FolderAccess { write } })
+                    .map(|f| {
+                        let (store, read_only) = facts(f);
+                        FolderItem {
+                            id: f.id.as_str(),
+                            title: f.title.as_str(),
+                            access: FolderAccess { write: write && !read_only },
+                            read_only,
+                            store,
+                        }
+                    })
                     .collect(),
             }
         }
@@ -132,6 +156,9 @@ async fn path_folder_gated(ctx: &Ctx) -> Result<FolderId, ApiError> {
         let services = services(ctx)?;
         if !services.catalog.folders().iter().any(|f| f.id == id) {
             return Err(gate::unknown(ctx, "No such folder.").await);
+        }
+        if services.store.folder_is_read_only(&id) {
+            return Err(gate::read_only_refusal(ctx, id.as_str(), None).await);
         }
         gate::folder_write_with_sources(ctx, id.as_str(), &[]).await?;
     }
