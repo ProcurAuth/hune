@@ -610,7 +610,7 @@ async fn write_dashboard(
 ) -> WriteResult {
     let uid = doc.uid().clone();
     let (file, sha) = (&source.0, &source.1);
-    let to_folder = FolderId::parse(folder).map_err(|e| (DashboardResult::StoreError, e.to_string()))?;
+    let to_folder = folder_from_text(folder).map_err(|e| (DashboardResult::StoreError, e.to_string()))?;
     let new_etag = doc.etag().to_hex();
     match act {
         Act::None => Ok(DashboardResult::Unchanged),
@@ -620,14 +620,14 @@ async fn write_dashboard(
             Ok(if saved.outcome == Outcome::Unchanged { DashboardResult::Unchanged } else { DashboardResult::Written })
         }
         Act::Save { if_match, folder: expected } => {
-            let expected = FolderId::parse(expected).map_err(|e| (DashboardResult::StoreError, e.to_string()))?;
+            let expected = folder_from_text(expected).map_err(|e| (DashboardResult::StoreError, e.to_string()))?;
             let meta = write_meta(file, sha, &format!("import-grafana:{uid}:{}:{new_etag}", if_match.to_hex()));
             let saved =
                 store.save(doc, if_match, &expected, VersionKind::Import, &meta).await.map_err(|e| failed(&e))?;
             Ok(if saved.outcome == Outcome::Unchanged { DashboardResult::Unchanged } else { DashboardResult::Replaced })
         }
         Act::Move { if_match, from } | Act::MoveSave { if_match, from } => {
-            let from = FolderId::parse(from).map_err(|e| (DashboardResult::StoreError, e.to_string()))?;
+            let from = folder_from_text(from).map_err(|e| (DashboardResult::StoreError, e.to_string()))?;
             let transition = format!("import-grafana:{uid}:{}:move:{folder}", if_match.to_hex());
             let meta = write_meta(file, sha, &transition);
             store.move_to(&uid, &to_folder, if_match, &from, &meta).await.map_err(|e| failed(&e))?;
@@ -1206,4 +1206,9 @@ mod tests {
         assert_eq!(id, save_id("import-grafana:x:none:abc").to_string());
         assert_ne!(id, save_id("import-grafana:x:none:abd").to_string());
     }
+}
+
+/// A folder text of the import: the text of the root (a dashboard without a folder), or a folder id (15.6).
+fn folder_from_text(text: &str) -> Result<FolderId, hune_core::ids::IdError> {
+    if text == hune_core::ids::ROOT_FOLDER_TEXT { Ok(FolderId::root()) } else { FolderId::parse(text) }
 }

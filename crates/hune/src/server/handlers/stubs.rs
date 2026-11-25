@@ -33,16 +33,22 @@ async fn options_route(ctx: &Ctx, access: &Arc<Access>) -> Result<Response, ApiE
     let parsed = parse_options_query(ctx.raw_query.as_deref(), access)?;
     let services = super::support::services(ctx)?;
     let mut children: Vec<OptionChild> = match parsed.query.type_name.as_str() {
-        "folder" => services
-            .catalog
-            .folders()
-            .iter()
-            .map(|f| OptionChild {
-                id: f.id.as_str().to_owned(),
-                label: cut_label(f.title.as_str()),
+        "folder" => {
+            // The node of the dashboards without a folder is the first item (ACCESS.md).
+            let root = OptionChild {
+                id: hune_core::ids::ROOT_FOLDER_TEXT.to_owned(),
+                label: "Root (no folder)".to_owned(),
                 has_children: true,
-            })
-            .collect(),
+            };
+            let folders = services.catalog.folders();
+            std::iter::once(root)
+                .chain(folders.iter().map(|f| OptionChild {
+                    id: f.id.as_str().to_owned(),
+                    label: cut_label(f.title.as_str()),
+                    has_children: true,
+                }))
+                .collect()
+        }
         "dashboard" => {
             let folder = parsed.query.parent.node().id.clone();
             services
@@ -64,7 +70,9 @@ async fn options_route(ctx: &Ctx, access: &Arc<Access>) -> Result<Response, ApiE
             .map(|c| OptionChild { id: c.id.to_owned(), label: cut_label(c.label), has_children: false })
             .collect(),
     };
-    children.sort_by(|a, b| a.id.as_bytes().cmp(b.id.as_bytes()));
+    // The root first, then the ids in byte order.
+    let is_other = |c: &OptionChild| c.id != hune_core::ids::ROOT_FOLDER_TEXT;
+    children.sort_by(|a, b| is_other(a).cmp(&is_other(b)).then_with(|| a.id.as_bytes().cmp(b.id.as_bytes())));
     let walk = walk_options(access, &who, &parsed, children).await?;
     ctx.state
         .logger

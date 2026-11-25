@@ -36,7 +36,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `pg-main` | `general` | 13 | 33 |
+| `blocked` | `pg-main` | no folder | 13 | 33 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -55,7 +55,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `pg-v2a` | `general` | 13 | 112 |
+| `blocked` | `pg-v2a` | no folder | 13 | 112 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -74,7 +74,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `pg-v2b` | `general` | 13 | 122 |
+| `blocked` | `pg-v2b` | no folder | 13 | 122 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -93,7 +93,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `pg-wrapped` | `general` | 13 | 40 |
+| `blocked` | `pg-wrapped` | no folder | 13 | 40 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|

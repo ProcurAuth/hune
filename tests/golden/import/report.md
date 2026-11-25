@@ -46,7 +46,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `would_write` | `g-301f976e365b83e3` | `general` | 1 | 13 |
+| `would_write` | `g-301f976e365b83e3` | no folder | 1 | 13 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -173,7 +173,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `would_write` | `monitor-v2b` | `general` | 19 | 256 |
+| `would_write` | `monitor-v2b` | no folder | 19 | 256 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -287,7 +287,7 @@ No item needs acceptance.
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `would_write` | `plain-raw` | `general` | 1 | 7 |
+| `would_write` | `plain-raw` | no folder | 1 | 7 |
 
 No item needs acceptance.
 
@@ -295,7 +295,7 @@ No item needs acceptance.
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `would_write` | `prod-main` | `general` | 1 | 13 |
+| `would_write` | `prod-main` | no folder | 1 | 13 |
 
 No item needs acceptance.
 

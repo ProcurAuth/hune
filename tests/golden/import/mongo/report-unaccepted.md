@@ -36,7 +36,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `mongo-main` | `general` | 18 | 23 |
+| `blocked` | `mongo-main` | no folder | 18 | 23 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -61,7 +61,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `mongo-v2a` | `general` | 18 | 119 |
+| `blocked` | `mongo-v2a` | no folder | 18 | 119 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -86,7 +86,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `mongo-v2b` | `general` | 18 | 129 |
+| `blocked` | `mongo-v2b` | no folder | 18 | 129 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|
@@ -111,7 +111,7 @@
 
 | Result | Hune uid | Folder | Panels | Metadata members |
 |---|---|---|---|---|
-| `blocked` | `mongo-wrapped` | `general` | 18 | 30 |
+| `blocked` | `mongo-wrapped` | no folder | 18 | 30 |
 
 | Id | Class | Panel | Member | Reason | Fallback | Accepted |
 |---|---|---|---|---|---|---|

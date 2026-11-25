@@ -93,12 +93,6 @@
   },
   "folders": [
     {
-      "grafana_uid": null,
-      "id": "general",
-      "title": "General",
-      "result": "would_create"
-    },
-    {
       "grafana_uid": "ae7r4kd0pq1z",
       "id": "nodes",
       "title": "Nodes",
@@ -139,7 +133,7 @@
     {
       "grafana_uid": "Prod_Main",
       "uid": "g-301f976e365b83e3",
-      "folder": "general",
+      "folder": null,
       "title": "Prod main again",
       "panels": 1,
       "metadata": 13,
@@ -1279,7 +1273,7 @@
     {
       "grafana_uid": "monitor-v2b",
       "uid": "monitor-v2b",
-      "folder": "general",
+      "folder": null,
       "title": "Node monitor",
       "panels": 19,
       "metadata": 256,
@@ -2370,7 +2364,7 @@
     {
       "grafana_uid": "plain-raw",
       "uid": "plain-raw",
-      "folder": "general",
+      "folder": null,
       "title": "Plain raw dashboard",
       "panels": 1,
       "metadata": 7,
@@ -2381,7 +2375,7 @@
     {
       "grafana_uid": "prod-main",
       "uid": "prod-main",
-      "folder": "general",
+      "folder": null,
       "title": "Prod main",
       "panels": 1,
       "metadata": 13,

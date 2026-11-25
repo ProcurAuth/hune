@@ -34,9 +34,20 @@ struct ListAccess {
     create: bool,
 }
 
+/// The place of the dashboards without a folder (6.11). It is not a folder: it has no id and no title.
+#[derive(Serialize)]
+struct RootItem {
+    access: FolderAccess,
+    /// True when no primary store exists: nothing can be created at the root.
+    read_only: bool,
+    /// The id of the primary store, or null when no primary store exists.
+    store: Option<String>,
+}
+
 #[derive(Serialize)]
 struct FolderList<'a> {
     access: ListAccess,
+    root: RootItem,
     items: Vec<FolderItem<'a>>,
 }
 
@@ -73,7 +84,15 @@ fn log_folder_changed(ctx: &Ctx, action: &str, folder: &str) {
 pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     let services = services(&ctx)?;
     let folders = services.catalog.folders();
-    let ids: Vec<String> = folders.iter().map(|f| f.id.as_str().to_owned()).collect();
+    let mut ids: Vec<String> = folders.iter().map(|f| f.id.as_str().to_owned()).collect();
+    // The node of the dashboards without a folder is the last question of the display filter (ACCESS.md).
+    ids.push(hune_core::ids::ROOT_FOLDER_TEXT.to_owned());
+    let primary = services.store.primary_id().map(str::to_owned);
+    let root_item = |write: bool| RootItem {
+        access: FolderAccess { write: write && primary.is_some() },
+        read_only: primary.is_none(),
+        store: primary.clone(),
+    };
     let facts = |f: &hune_store::FolderRecord| match services.store.store_of_folder(&f.id) {
         Some(info) => (info.id.clone(), !info.primary),
         None => (services.store.primary_id().unwrap_or_default().to_owned(), false),
@@ -84,6 +103,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         // Mode `authzen`: the display filter keeps some folders and gives the flags (11.25).
         Some(filter) => FolderList {
             access: ListAccess { create: filter.create },
+            root: root_item(filter.folders.last().copied().flatten().unwrap_or(false)),
             items: folders
                 .iter()
                 .zip(&filter.folders)
@@ -105,6 +125,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
             let write = ctx.state.writes_enabled();
             FolderList {
                 access: ListAccess { create: write },
+                root: root_item(write),
                 items: folders
                     .iter()
                     .map(|f| {

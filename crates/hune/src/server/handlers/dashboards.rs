@@ -4,7 +4,7 @@
 use super::gate;
 use super::paging::{DashboardKey, PageCursor, parse_limit};
 use super::support::{
-    SaveWarning, StoreOp, declared_sources, format_faults, log_dashboard_changed, map_store_error, read_folder_id,
+    SaveWarning, StoreOp, declared_sources, format_faults, log_dashboard_changed, map_store_error, read_folder_member, folder_json, folder_sort_key,
     read_message, services, validate_document, write_meta,
 };
 use crate::server::ctx::{Ctx, Request};
@@ -22,8 +22,9 @@ use hune_store::{CatalogEntry, Etag, FolderId, Outcome, Saved, Store, VersionKin
 use serde::Serialize;
 use serde_json::Value;
 
+static FOLDER_SHAPE: Shape = Shape::Str { min_chars: 1, max_chars: 40 };
 static MEMBERS: [Member; 3] = [
-    Member { name: "folder", shape: Shape::Str { min_chars: 1, max_chars: 40 }, required: true },
+    Member { name: "folder", shape: Shape::Nullable(&FOLDER_SHAPE), required: true },
     Member { name: "message", shape: Shape::Str { min_chars: 0, max_chars: 500 }, required: false },
     Member { name: "document", shape: Shape::Any, required: true },
 ];
@@ -42,7 +43,7 @@ struct Access {
 #[derive(Serialize)]
 struct ListItem {
     uid: String,
-    folder: String,
+    folder: Option<String>,
     title: String,
     tags: Vec<String>,
     etag: String,
@@ -134,13 +135,13 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         .catalog
         .entries()
         .into_iter()
-        .filter(|e| folder_filter.is_none_or(|f| e.folder().as_str() == f))
+        .filter(|e| folder_filter.is_none_or(|f| folder_sort_key(e.folder()) == f))
         .map(|entry| {
             let title = match &*entry {
                 CatalogEntry::Valid { doc, .. } => doc.title().to_owned(),
                 CatalogEntry::Invalid { uid, .. } => uid.as_str().to_owned(),
             };
-            let key = DashboardKey::new(entry.folder().as_str(), &title, entry.uid().as_str());
+            let key = DashboardKey::new(folder_sort_key(entry.folder()), &title, entry.uid().as_str());
             Row { key, entry }
         })
         .filter(|row| match &q {
@@ -216,7 +217,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         items.push(match &*row.entry {
             CatalogEntry::Valid { current, doc } => ListItem {
                 uid: current.uid.as_str().to_owned(),
-                folder: current.folder.as_str().to_owned(),
+                folder: current.folder.wire().map(str::to_owned),
                 title: doc.title().to_owned(),
                 tags: doc.document().tags.clone(),
                 etag: current.etag.to_hex(),
@@ -235,7 +236,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                 let head = services.store.history(uid, None, 1).await.ok().and_then(|v| v.into_iter().next());
                 ListItem {
                     uid: uid.as_str().to_owned(),
-                    folder: folder.as_str().to_owned(),
+                    folder: folder.wire().map(str::to_owned),
                     title: uid.as_str().to_owned(),
                     tags: Vec::new(),
                     etag: etag.to_hex(),
@@ -315,7 +316,7 @@ pub async fn get(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     let head = format!(
         "{{\"uid\":{},\"folder\":{},\"etag\":{},\"version\":{},\"updated_at\":{},\"updated_by\":{},\"access\":{{\"write\":{}}},\"read_only\":{},\"store\":{}{},\"document\":",
         q(current.uid.as_str()),
-        q(current.folder.as_str()),
+        folder_json(&current.folder),
         q(&current.etag.to_hex()),
         current.version,
         q(&current.saved_at.to_rfc3339()),
@@ -362,7 +363,7 @@ fn adhoc_member(state: &crate::server::state::AppState, doc: &hune_core::documen
 #[derive(Serialize)]
 struct WriteAnswer<'a> {
     uid: &'a str,
-    folder: &'a str,
+    folder: Option<&'a str>,
     etag: String,
     version: u64,
     saved_at: String,
@@ -415,7 +416,7 @@ pub(super) async fn write_answer(
     let etag = saved.etag.unwrap_or(*doc_etag);
     let body = WriteAnswer {
         uid: saved.uid.as_str(),
-        folder: saved.folder.as_str(),
+        folder: saved.folder.wire(),
         etag: etag.to_hex(),
         version: saved.version,
         saved_at,
@@ -514,7 +515,7 @@ fn validate_answer(doc: &CanonicalDocument, warnings: &[SaveWarning]) -> Respons
 pub async fn create(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     let body =
         parse_and_check_with(&req.body, &CREATE_SHAPE, &["document"], |v| format_faults(v, &["folder"], false, true))?;
-    let folder = read_folder_id(body.value["folder"].as_str().unwrap_or(""), "/folder")?;
+    let folder = read_folder_member(&body.value["folder"], "/folder")?;
     let message = read_message(&body.value)?;
     let validate_only = ctx.query.flag("validate_only")?;
     let bytes = body.member_bytes(&req.body, "document").ok_or_else(ApiError::internal)?;
@@ -527,7 +528,7 @@ pub async fn create(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         }
         let services = services(&ctx)?;
         let sources = asked.as_deref().unwrap_or(&[]);
-        if !services.catalog.folders().iter().any(|f| f.id == folder) {
+        if !folder.is_root() && !services.catalog.folders().iter().any(|f| f.id == folder) {
             // The same others as for a folder that exists, then the question of 11.23 (11.23, rule 1).
             return Err(gate::unknown_with(&ctx, "No such folder.", gate::Others::Sources(sources)).await);
         }
