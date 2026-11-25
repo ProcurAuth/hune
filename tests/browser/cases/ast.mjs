@@ -1262,7 +1262,7 @@ async function runB175(t) {
     await setText(p, FOLD_TEXT);
     await waitTree(p, { markers: 4 });
     const want = expectedFolds(FOLD_TEXT);
-    await p.eval(`(() => { const i = document.querySelector('${SQL}'); i.scrollTop = 0; i.dispatchEvent(new Event("scroll")); i.focus(); window.__anim = 0; document.addEventListener("animationstart", () => window.__anim++, true); document.addEventListener("transitionstart", () => window.__anim++, true); })()`);
+    await p.eval(`(() => { const i = document.querySelector('${SQL}'); i.scrollTop = 0; i.dispatchEvent(new Event("scroll")); i.focus(); window.__anim = 0; window.__animOutside = 0; const count = (e) => { if (e.target.closest && e.target.closest(".sqlbox")) window.__anim++; else window.__animOutside++; }; document.addEventListener("animationstart", count, true); document.addEventListener("transitionstart", count, true); })()`);
     await caretAt(p, FOLD_TEXT.indexOf("FROM metrics.cpu") + 5);
     await p.click(`${tid("sql-fold")}[data-from="${want[0].open + 1}"]`);
     await press(p, "KeyX", { key: "x" });
@@ -1270,8 +1270,11 @@ async function runB175(t) {
     const info = await p.eval(`(() => {
       const els = [document.querySelector(".sql"), ...document.querySelectorAll(".sql *")];
       const withAnim = els.filter((e) => { const c = getComputedStyle(e); return c.animationName !== "none" || parseFloat(c.transitionDuration) > 0; }).map((e) => e.className || e.tagName);
-      return { withAnim, running: document.querySelector(".sqlbox").getAnimations({ subtree: true }).length, events: window.__anim };
+      return { withAnim, running: document.querySelector(".sqlbox").getAnimations({ subtree: true }).length, events: window.__anim, outside: window.__animOutside };
     })()`);
+    // The events are counted for the editor only (.sqlbox), as the two other measures are. The page has other parts that move on their own, for
+    // example the three dots of the preview while it loads: they are not the fold, the band or the pair.
+    t.note(`B175 motion ${motion}: events outside the editor, not counted: ${info.outside}`);
     t.eq([info.withAnim, info.running, info.events], [[], 0, 0], `motion ${motion}: the fold, the band and the pair use no animation and no transition`);
   }
   t.note("B175 contrast: " + results.join("; ") + ". axe-core is not run: it is not available offline (as in B14 and B82); the scripted checks above replace it");
