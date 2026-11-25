@@ -142,13 +142,13 @@ export const cases = [
       t.eq([first("panel-2"), first("panel-2-r2"), first("panel-2-r3")], [2, 6, 10], "the copies of the panel 2");
       t.eq(["panel-2", "panel-2-r2", "panel-2-r3"].map((k) => rows[k][1]), ["9 / span 8", "9 / span 8", "9 / span 8"], "x and w of the copies");
       // The measure of Grafana: the top of the panels 5 to 8 relative to the panel 1.
-      const tops = await p.eval(`Object.fromEntries([5, 6, 7, 8].map((id) => [id, Math.round(document.querySelector('[data-testid="panel-' + id + '"]').getBoundingClientRect().top + scrollY)]))`);
+      const tops = await p.eval(`Object.fromEntries([5, 6, 7, 8].map((id) => [id, Math.round(document.querySelector('[data-testid="panel-' + id + '"]').getBoundingClientRect().top + document.getElementById("app-main").scrollTop)]))`);
       const base = await p.eval(`Math.round(document.querySelector('[data-testid="panel-1"]').getBoundingClientRect().top + scrollY)`);
       t.eq([5, 6, 7, 8].map((id) => tops[id] - base), [6, 14, 6, 16].map((y) => y * 38), "the tops of the panels 5 to 8 follow 38 px for each row unit");
       // No overlap and no horizontal scroll.
       const overlap = await p.eval(`(() => { const r = [...document.querySelectorAll('section.panel')].map((e) => [e.dataset.testid, e.getBoundingClientRect()]); const bad = []; for (let i = 0; i < r.length; i++) for (let j = i + 1; j < r.length; j++) { const a = r[i][1], b = r[j][1]; if (a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5) bad.push(r[i][0] + " " + r[j][0]); } return bad; })()`);
       t.eq(overlap, [], "no overlap");
-      t.eq(await p.eval("document.documentElement.scrollWidth <= document.documentElement.clientWidth"), true, "no horizontal scroll");
+      t.eq(await p.eval("(document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById('app-main').scrollWidth <= document.getElementById('app-main').clientWidth)"), true, "no horizontal scroll");
       // A panel with h: the stored x and w do not change the view (the copies have the full width).
       await ensure(t, doc("rep94h", "Repeat h stored", [section(null, [rstat(1, { x: 5, y: 0, w: 5, h: 3 }, { variable: "host", direction: "h", max_per_row: 3 })])], { variables: [hostVar(3)] }));
       const h = await t.open(t.dash("rep94h"));
@@ -275,7 +275,7 @@ export const cases = [
       t.assert(before.slice(0, 5).every((s) => s !== "repeat-limit" && s !== "repeat-empty"), `the first five repeat: ${before}`);
       t.eq(await b.text(b.tid("repeat-note-6")), "The repeats of this dashboard have more than 120 copies. Select fewer values of Many.", "the message of the dashboard");
       t.eq(await b.count('section.panel[data-repeat-count]'), 120, "120 copies");
-      await b.eval("window.scrollTo(0, document.body.scrollHeight)");
+      await b.eval(`document.getElementById("app-main").scrollTo(0, document.getElementById("app-main").scrollHeight)`);
       await sleep(300);
       t.eq(await states(b), before, "the same result after a scroll");
       await b.reload();
@@ -322,7 +322,7 @@ export const cases = [
       t.eq(optionsAtLoad, 1, "one request of options at the load");
       let guard = 0;
       while ((await a.eval("window.__fl.total")) < 24 && guard++ < 60) {
-        await a.eval("window.scrollBy(0, 700)");
+        await a.eval(`document.getElementById("app-main").scrollBy(0, 700)`);
         await sleep(250);
       }
       await a.idle();
@@ -652,7 +652,7 @@ export const cases = [
         const backdrop = (el) => { const chain = []; for (let e = el; e; e = e.parentElement) chain.push(parse(getComputedStyle(e).backgroundColor)); let c = { r: 255, g: 255, b: 255, a: 1 }; for (const layer of chain.reverse()) c = over(layer, c); return c; };
         const ratio = (fg, bg) => { const a = lum(fg), b = lum(bg); return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05); };`;
       const CHECK = `(() => {${CONTRAST}
-        const out = { scroll: document.documentElement.scrollWidth - document.documentElement.clientWidth, outside: [], overlap: [], ids: [], refs: [], contrast: [], notes: [], names: {}, order: [] };
+        const out = { scroll: Math.max(document.documentElement.scrollWidth - document.documentElement.clientWidth, document.getElementById("app-main").scrollWidth - document.getElementById("app-main").clientWidth), outside: [], overlap: [], ids: [], refs: [], contrast: [], notes: [], names: {}, order: [] };
         const frames = [...document.querySelectorAll('section.panel')];
         const wide = window.innerWidth > 768;
         const box = (e) => e.getBoundingClientRect();
@@ -663,7 +663,7 @@ export const cases = [
         }
         if (wide) for (let i = 0; i < frames.length; i++) for (let j = i + 1; j < frames.length; j++) { const a = box(frames[i]), b = box(frames[j]); if (a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5) out.overlap.push(frames[i].dataset.testid + " " + frames[j].dataset.testid); }
         // The DOM order is the order of the grid: the rows from top to bottom, and each row from left to right.
-        const geo = frames.map((f) => { const r = box(f); return { key: f.dataset.testid, top: r.top + scrollY, left: r.left, sec: f.closest("section.section").dataset.testid }; });
+        const geo = frames.map((f) => { const r = box(f); return { key: f.dataset.testid, top: r.top + document.getElementById("app-main").scrollTop, left: r.left, sec: f.closest("section.section").dataset.testid }; });
         for (let i = 1; i < geo.length; i++) { const a = geo[i - 1], b = geo[i]; if (a.sec === b.sec && (b.top < a.top - 2 || (Math.abs(b.top - a.top) <= 2 && b.left < a.left - 2))) out.order.push(a.key + " > " + b.key); }
         const seen = new Set();
         for (const e of document.querySelectorAll("[id]")) { if (seen.has(e.id)) out.ids.push(e.id); seen.add(e.id); }
@@ -723,7 +723,7 @@ export const cases = [
       await p.goto(t.dash("rep101"));
       await p.idle();
       await p.waitFor(`document.querySelectorAll('section.panel[data-repeat-count="9"]').length === 18`, { what: "18 copies" });
-      await p.eval("window.scrollTo(0, document.body.scrollHeight)");
+      await p.eval(`document.getElementById("app-main").scrollTo(0, document.getElementById("app-main").scrollHeight)`);
       await p.waitFor(`[...document.querySelectorAll('section.panel[data-repeat-count="9"]')].every((e) => ["ready", "error", "empty"].includes(e.dataset.state))`, { what: "each copy ends" });
       const info2 = await p.eval(`[...document.querySelectorAll('section.panel[data-repeat-count="9"]')].filter((e) => /^panel-2/.test(e.dataset.testid)).map((e) => ({ key: e.dataset.testid, state: e.dataset.state, code: (e.querySelector(".panel__error-code") || {}).textContent || null, text: (e.querySelector(".panel__error-text") || {}).textContent || null }))`);
       t.note(JSON.stringify(info2));

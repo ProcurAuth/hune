@@ -74,7 +74,7 @@ const PROBE = `(() => {
     if (main) {
       const tb = main.querySelector(".dash-toolbar");
       const first = main.querySelector('[data-testid="panel-1"]');
-      log.frames.push({ hold: document.documentElement.hasAttribute("data-hune-hold"), toolbar: tb ? Math.round(tb.getBoundingClientRect().height * 2) / 2 : 0, top: first ? Math.round((first.getBoundingClientRect().top + scrollY) * 2) / 2 : null });
+      log.frames.push({ hold: document.documentElement.hasAttribute("data-hune-hold"), toolbar: tb ? Math.round(tb.getBoundingClientRect().height * 2) / 2 : 0, top: first ? Math.round((first.getBoundingClientRect().top + document.getElementById("app-main").scrollTop) * 2) / 2 : null });
     }
     requestAnimationFrame(frame);
   };
@@ -236,7 +236,7 @@ export const cases = [
         await p.idle();
         await waitPanelsReady(p, [1]);
         // 1. The Tab order is the order of the grid: the bar, then env, node (section 0), min_weight (section 1).
-        await p.eval("document.activeElement && document.activeElement.blur(); window.scrollTo(0, 0)");
+        await p.eval("document.activeElement && document.activeElement.blur(); document.getElementById('app-main').scrollTo(0, 0)");
         const order = [];
         for (let i = 0; i < 40 && order.length < 4; i++) {
           await p.press("Tab");

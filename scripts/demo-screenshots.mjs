@@ -545,7 +545,8 @@ async function main() {
       let clip = rect;
       if (crop) clip = { x: 0, y: 0, width, height: crop };
       if (full) {
-        const h = await page.eval(`Math.max(document.documentElement.scrollHeight, document.body.scrollHeight)`);
+        // The content scrolls in #app-main under the header: the page is as high as the header and the content together.
+        const h = await page.eval(`Math.max(document.documentElement.scrollHeight, document.getElementById("app-header").offsetHeight + document.getElementById("app-main").scrollHeight)`);
         clip = { x: 0, y: 0, width, height: Math.min(h, maxHeight) };
       }
       let grown = false;

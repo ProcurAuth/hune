@@ -59,7 +59,7 @@ async function ready(p, ids = IDS) {
 
 const rect = (p, id) => p.eval(`(() => { const e = document.querySelector('[data-testid="${id}"]'); if (!e || e.offsetParent === null) return null; const b = e.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, width: b.width, height: b.height }; })()`);
 const active = (p) => p.eval(`(document.activeElement && (document.activeElement.dataset.testid || document.activeElement.tagName)) || null`);
-const noOverflow = (p) => p.eval(`document.documentElement.scrollWidth <= document.documentElement.clientWidth`);
+const noOverflow = (p) => p.eval(`(document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth)`);
 
 // The measure of the header: its height, the vertical centres of its controls (one value means one row), the width that its content
 // needs against the width that it has, and the height of each line of text of the selector (a wrap would give two lines).

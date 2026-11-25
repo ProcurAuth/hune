@@ -76,7 +76,7 @@ export const cases = [
       t.eq(new Set(geo.heights).size, 1, "the three cards have one height");
 
       // The block of cards is centred in the window, across and down, when it fits.
-      const centre = await p.eval(`(() => { const s = document.querySelector(".list-stack").getBoundingClientRect(); return [Math.abs((s.left + s.right) / 2 - document.documentElement.clientWidth / 2), Math.abs((s.top + s.bottom) / 2 - (44 + window.innerHeight) / 2), document.documentElement.scrollHeight - window.innerHeight]; })()`);
+      const centre = await p.eval(`(() => { const s = document.querySelector(".list-stack").getBoundingClientRect(); return [Math.abs((s.left + s.right) / 2 - document.documentElement.clientWidth / 2), Math.abs((s.top + s.bottom) / 2 - (44 + window.innerHeight) / 2), document.getElementById("app-main").scrollHeight - document.getElementById("app-main").clientHeight]; })()`);
       t.assert(centre[0] <= 2, "centred across: " + centre[0]);
       t.assert(centre[1] <= 2, "centred down: " + centre[1]);
       t.eq(centre[2], 0, "the page does not scroll when the block fits");
@@ -107,11 +107,11 @@ export const cases = [
       const q = await t.open(own.url);
       await size(q, 1280, 260);
       await cardsShown(q);
-      const tall = await q.eval(`(() => { const s = document.querySelector(".list-stack").getBoundingClientRect(); return [s.top < 80, document.documentElement.scrollHeight > window.innerHeight]; })()`);
+      const tall = await q.eval(`(() => { const s = document.querySelector(".list-stack").getBoundingClientRect(); return [s.top < 80, document.getElementById("app-main").scrollHeight > document.getElementById("app-main").clientHeight]; })()`);
       t.eq(tall, [true, true], "taller than the window: the block starts at the top and the page scrolls");
       // A phone: one column of the full width.
       await size(q, 390, 844);
-      const phone = await q.eval(`(() => { const cards = [...document.querySelectorAll('article[data-testid^="row-"]')].map((c) => c.getBoundingClientRect()); return [new Set(cards.map((c) => Math.round(c.left))).size, Math.max(...cards.map((c) => c.right)) <= 390, document.documentElement.scrollWidth <= 390]; })()`);
+      const phone = await q.eval(`(() => { const cards = [...document.querySelectorAll('article[data-testid^="row-"]')].map((c) => c.getBoundingClientRect()); return [new Set(cards.map((c) => Math.round(c.left))).size, Math.max(...cards.map((c) => c.right)) <= 390, document.getElementById("app-main").scrollWidth <= 390 && document.documentElement.scrollWidth <= 390]; })()`);
       t.eq(phone, [1, true, true], "390 px: one column, no horizontal scroll");
 
       // ---- the threshold: the filters show when the count is above it, and not when it is equal.

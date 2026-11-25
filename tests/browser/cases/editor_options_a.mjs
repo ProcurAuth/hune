@@ -378,7 +378,7 @@ export const cases = [
         for (const b of pane.querySelectorAll(".ogroup__head[aria-expanded=false]")) b.click();
         const body = document.querySelector(".peditor__obody");
         const problems = [];
-        if (document.documentElement.scrollWidth > innerWidth + 1) problems.push("page scroll " + document.documentElement.scrollWidth + " > " + innerWidth);
+        if (document.documentElement.scrollWidth > innerWidth + 1 || document.getElementById("app-main").scrollWidth - document.getElementById("app-main").clientWidth > 1) problems.push("page scroll " + document.documentElement.scrollWidth + " > " + innerWidth);
         if (body.scrollWidth > body.clientWidth + 1) problems.push("pane scroll " + body.scrollWidth + " > " + body.clientWidth);
         const box = pane.getBoundingClientRect();
         for (const row of pane.querySelectorAll(".orow[data-row]:not([hidden])")) {

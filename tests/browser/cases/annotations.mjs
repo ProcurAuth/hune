@@ -638,7 +638,7 @@ export const cases = [
         const h = await hook(p, 1);
         const [L, top, W, H] = h.plot;
         t.assert(h.marks.every((m) => m[0] >= L - 1 && m[0] <= L + W + 1 || m[2] === 1), `${label}: the marks are in the plot`);
-        t.eq(await p.eval(`document.documentElement.scrollWidth <= document.documentElement.clientWidth`), true, `${label}: no horizontal scroll`);
+        t.eq(await p.eval(`(document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth)`), true, `${label}: no horizontal scroll`);
         await moveTo(p, 1, h.marks[2][0], top + H - 5);
         const c = await cardState(p, 1);
         const panelBox = await p.eval(`(() => { const e = document.querySelector('[data-testid="panel-1"]').getBoundingClientRect(); const pl = document.querySelector('[data-testid="panel-1"] .chartCore__plot').getBoundingClientRect(); return { w: e.width, plotLeft: pl.left - e.left, plotW: pl.width }; })()`);

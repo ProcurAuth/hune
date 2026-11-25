@@ -651,7 +651,7 @@ export const cases = [
       const histogram = { ...panel(2, "table", "Histogram", raw(), { grid: { x: 0, y: 8, w: 24, h: 8 } }), type: "histogram", options: { bucket_count: 30, bucket_size: null, bucket_offset: 0, combine: false, stacking: "none", line_width: 1, fill_opacity: 80, legend: { show: true, placement: "bottom", mode: "list", values: [] }, tooltip: { mode: "single", sort: "none" } } };
       await ensure(t, one("hm148", [hp(1, "Heatmap", raw(), {}, { grid: { x: 0, y: 0, w: 24, h: 8 } }), histogram, hp(3, "Narrow", raw(), {}, { grid: { x: 0, y: 16, w: 6, h: 8 } })]));
       const fit = (p) => p.eval(`(() => {
-        const out = { scroll: document.documentElement.scrollWidth - window.innerWidth, panels: [] };
+        const out = { scroll: Math.max(document.documentElement.scrollWidth - window.innerWidth, document.getElementById("app-main").scrollWidth - document.getElementById("app-main").clientWidth), panels: [] };
         for (const id of [1, 2, 3]) {
           const frame = document.querySelector('[data-testid="panel-' + id + '"]').getBoundingClientRect();
           const c = document.querySelector('[data-testid="panel-' + id + '"] canvas.chartCore__canvas');

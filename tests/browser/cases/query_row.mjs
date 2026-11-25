@@ -46,7 +46,7 @@ const ROW = `(() => {
     return { i, tag: e.tagName.toLowerCase(), tid: e.dataset.testid || null, name: name(e), top: Math.round(b.top * 10) / 10, left: Math.round(b.left * 10) / 10, right: Math.round(b.right * 10) / 10, w: Math.round(b.width * 10) / 10, h: Math.round(b.height * 10) / 10 };
   });
   const box = bar.getBoundingClientRect();
-  return { list, bars: document.querySelectorAll('.qarea > .qbar').length, bar: { top: box.top, height: box.height }, scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth, win: innerWidth };
+  return { list, bars: document.querySelectorAll('.qarea > .qbar').length, bar: { top: box.top, height: box.height }, scroll: Math.max(document.documentElement.scrollWidth, document.getElementById("app-main").scrollWidth + (document.documentElement.clientWidth - document.getElementById("app-main").clientWidth)), client: document.documentElement.clientWidth, win: innerWidth };
 })()`;
 
 const tops = (list) => [...new Set(list.map((c) => Math.round(c.top)))];
@@ -205,7 +205,7 @@ export const cases = [
         t.eq(visual, r.list.map((c) => c.i), `${width}: the DOM order is the visual order`);
         for (const c of r.list) t.assert(c.w >= 24 && c.h >= 24, `${width}: the target ${c.name} is 24 px at least: ${c.w} x ${c.h}`);
         await s.click(s.tid("query-options"));
-        const box = await s.eval(`(() => { const r = document.querySelector('[data-testid="query-options-pop"]').getBoundingClientRect(); return { left: r.left, right: r.right, w: innerWidth, scroll: document.documentElement.scrollWidth, client: document.documentElement.clientWidth }; })()`);
+        const box = await s.eval(`(() => { const r = document.querySelector('[data-testid="query-options-pop"]').getBoundingClientRect(); return { left: r.left, right: r.right, w: innerWidth, scroll: Math.max(document.documentElement.scrollWidth, document.getElementById("app-main").scrollWidth + (document.documentElement.clientWidth - document.getElementById("app-main").clientWidth)), client: document.documentElement.clientWidth }; })()`);
         t.assert(box.left >= 0 && box.right <= box.w && box.scroll <= box.client, `${width}: the open popover is inside the window and gives no scroll: ${JSON.stringify(box)}`);
       }
     },
