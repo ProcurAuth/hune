@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { SELECTABLE, isDrag, labelOf } from "../../web/js/panels/copy_text.js";
-import { MAX_TEXTS, installTextLayer, parseFont, placeText, readingOrder, scaledFont, selectedLayerText, signature, textItems } from "../../web/js/panels/text_layer.js";
+import { MAX_TEXTS, forwardHover, installTextLayer, parseFont, placeText, readingOrder, scaledFont, selectedLayerText, signature, textItems } from "../../web/js/panels/text_layer.js";
 
 const read = (path) => readFileSync(new URL(`../../web/${path}`, import.meta.url), "utf8");
 const IDENTITY = [1, 0, 0, 1, 0, 0];
@@ -247,4 +247,43 @@ test("the page loads the two modules and the stylesheet, and the stylesheet lets
 test("the chart engine of the vendor copy is not changed by this feature", () => {
   const vendor = read("js/vendor/chdash/app_chart_core.js");
   assert.ok(!/textLayer|text_layer|copy_text/.test(vendor));
+});
+
+// A fake layer and a fake canvas for the hover: the layer keeps its listeners, the canvas keeps the events that it gets.
+function fakeHover() {
+  class Ev {
+    constructor(type, init) { this.type = type; Object.assign(this, init); }
+  }
+  const listeners = {};
+  const layer = {
+    addEventListener: (type, fn) => { listeners[type] = fn; },
+    contains: (node) => node && node.inLayer === true,
+  };
+  const got = [];
+  const canvas = { dispatchEvent: (e) => { got.push([e.type, e.clientX, e.clientY, e.bubbles]); }, ownerDocument: { defaultView: { PointerEvent: Ev, MouseEvent: Ev } } };
+  forwardHover(layer, canvas);
+  return { listeners, got, canvas };
+}
+
+test("a pointer over a text of the layer moves over the canvas too: the hover of the chart goes on", () => {
+  const h = fakeHover();
+  h.listeners.pointermove({ clientX: 40, clientY: 25, screenX: 1, screenY: 2, buttons: 0, pointerId: 1, pointerType: "mouse", isPrimary: true });
+  assert.deepEqual(h.got, [["pointermove", 40, 25, true], ["mousemove", 40, 25, true]]);
+});
+
+test("a pointer that leaves the layer for the page leaves the canvas; one that goes to the canvas or to another text does not", () => {
+  const h = fakeHover();
+  const out = (relatedTarget) => h.listeners.pointerout({ clientX: 5, clientY: 6, relatedTarget });
+  out(h.canvas);
+  out({ inLayer: true });
+  assert.deepEqual(h.got, []);
+  out({ inLayer: false });
+  out(null);
+  assert.deepEqual(h.got.map((g) => g[0]), ["pointerleave", "mouseleave", "pointerleave", "mouseleave"]);
+  assert.equal(h.got.every((g) => g[3] === false), true);
+});
+
+test("the layer sends no press and no click to the canvas: a drag that starts on a text only selects it", () => {
+  const h = fakeHover();
+  assert.deepEqual(Object.keys(h.listeners).sort(), ["pointermove", "pointerout"]);
 });

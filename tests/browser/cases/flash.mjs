@@ -163,6 +163,7 @@ const RECTS = `(() => {
   const box = (e) => { if (!e || e.offsetParent === null) return null; const b = e.getBoundingClientRect(); return [b.left, b.top, b.width, b.height].map((v) => Math.round(v * 2) / 2); };
   for (const id of ${JSON.stringify(BUTTONS)}) out[id] = box(document.querySelector('[data-testid="' + id + '"]'));
   out.brand = box(document.querySelector(".brand"));
+  out.lock = box(document.querySelector('[data-testid="read-only-lock"]'));
   out.place = box(document.querySelector(".location"));
   out.theme = box(document.querySelector(".theme-select__button"));
   out.bar = box(document.querySelector('[data-testid="edit-bar"]'));
@@ -388,7 +389,8 @@ export const cases = [
         if (!asEditor["edit-toggle"]) found.push(`${width}: the editor has no Edit button`);
         if (asViewer.bar) found.push(`${width}: the viewer has an edit bar`);
         found.push(...moved(asEditor, asViewer, ["dashboard-menu", "theme"]).map((m) => `${width} viewer: ${m}`));
-        found.push(...judgeNoBlank(asViewer, "refresh-interval", `${width} viewer`));
+        // A dashboard of a read-only store has a lock where the switch Edit would be (9.8): the lock is then the last control of the page.
+        found.push(...judgeNoBlank(asViewer, asViewer.lock ? "lock" : "refresh-interval", `${width} viewer`));
         if (asViewer.header[0] !== asEditor.header[0]) found.push(`${width}: the header height differs for a viewer (${asViewer.header[0]}, ${asEditor.header[0]})`);
       }
 

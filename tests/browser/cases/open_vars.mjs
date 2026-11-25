@@ -306,7 +306,8 @@ export const cases = [
         // Tab closes the popup, and a multi selection applies, as for a closed variable.
         await openPopup(p, "m1");
         await p.click(`${sel("m1")} .listbox [data-value="v2"]`);
-        t.eq(await urlVars(p, "m1"), ["v0"], `${scheme}: nothing applies before the popup closes`);
+        // v0 is the default selection of m1, and the address does not write a default: no name before the popup closes, and the name `v0,v2` after.
+        t.eq(await urlVars(p, "m1"), [], `${scheme}: nothing applies before the popup closes`);
         await p.press("Tab");
         await p.waitFor(`document.querySelector('${sel("m1")} .select__popup') === null`, { what: "Tab closes the popup" });
         await p.waitFor(`new URLSearchParams(location.search).getAll("var-m1").join() === "v0,v2"`, { what: "the multi selection applies" });
