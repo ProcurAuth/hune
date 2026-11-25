@@ -17,6 +17,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - A dashboard can have no folder. The API writes `null` for its folder. The create body and the move body take `"folder": null`. `GET /api/dashboards?folder=` with an empty value selects these dashboards, and `GET /api/folders` has the new member `root`.
 - A volume reads a file `<uid>.json` at the root of its path as a dashboard without a folder. In PostgreSQL, the column `folder_id` can be null after migration 2.
 - The access tree names the place of these dashboards the node `folder:_root`. A grant on a real folder does not cover them. The options route lists `_root`, "Root (no folder)", as the first folder.
+- The list page shows the dashboards with no folder in a root group first, with no title. The root dashboards of a read-only store are the first group under its title. The header selector lists them first, each on its own.
+- The dialogs New dashboard, Import and Move have the entry "Root (no folder)" first, when the user can write at the root. The page sends `null` for the folder. A conflict after a move to the root says so.
 
 ### Changed
 

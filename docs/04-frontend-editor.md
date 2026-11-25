@@ -400,7 +400,8 @@ The selector of the dashboards follows the host selector of ClickHouse Dash and 
 - When the user sees two folders or more, each folder is a row with a chevron and the folder icon. A click on the row opens or closes the list of its dashboards under it. A folder with no dashboard has no row.
 - The folder of the current dashboard is open at the first open of the menu. The page keeps the choice of the person until the page loads again.
 - When the user sees one folder, the menu lists the dashboards with no folder row. This is the rule of the list page for the folder title (9.7).
-- A read-only store is a row with a lock icon and its title. A click opens or closes the list under it. The list holds the folders of the store as rows, or its dashboards for one folder.
+- A dashboard with no folder (`folder` is `null`, 6.12) is a line of the menu on its own, with no row. These lines come first, in title order, before the folder rows. With a dashboard with no folder and one folder, the folder keeps its row, so the two are not mixed.
+- A read-only store is a row with a lock icon and its title. A click opens or closes the list under it. The list holds the dashboards of the store with no folder first, then its folders as rows, or its dashboards for one folder.
 - The rows at the root are the folders of the primary and the read-only stores. With one root group that is a store, the menu lists its folders, or its dashboards for one folder.
 - The store of the current dashboard is open at the first open of the menu, as its folder is.
 - The current dashboard has the selected fill, its edge and a check mark. A choice of another dashboard opens it as a link of the page does. The leave warning of 10.2a applies.
@@ -487,17 +488,19 @@ The badge of the last change:
 - In mode `open`, the author of a save is `-`. This is a recorded change, so the card has the badge.
 Folders:
 
-- A folder title shows above its cards only when the user sees two folders or more. It is the folder icon and the name, in small muted capitals. It spans the whole row.
-- With one folder, or with no folder, the page shows no folder title. An empty folder shows the text "This folder is empty." under its title.
+- A folder title shows above its cards only when the user sees two groups or more. It is the folder icon and the name, in small muted capitals. It spans the whole row.
+- With one group, or with no folder, the page shows no folder title. An empty folder shows the text "This folder is empty." under its title.
+- The dashboards with no folder (`folder` is `null`) form the root group of their store. The root group never has a title. It counts as a group, so the folders below it keep their titles. The hook is `data-testid="root-<store>"`, and `root-primary` when the server gives no store.
+- The root groups come first, then the folders in the order of this section. The root group of the primary is the top of the page. The sort "Z–A" reverses the folders and the cards, and the root groups stay first.
 - With `editing` `true` and `access.write` on a folder, the title has a menu with "Rename" and "Delete" (10.7). A user who sees one folder only has no title, and so has no menu of the folder. "New folder" is in the header (below).
 
 Stores:
 
 - The server has one primary store and read-only stores (6.10). The member `stores` of the session lists them. The folders of the primary show at the root, as above.
 - A read-only store is one root group. Its title is the `title` of the store, with a lock icon, in small capitals. The hook is `data-testid="store-<id>"`.
-- The folders of a read-only store show under its title. They have an indent of 16 px, and their title is smaller. Their hooks are the same as for the folders of the primary.
-- The groups at the root are the folders of the primary and the read-only stores. The title of a root group shows only when there are two groups or more.
-- When the title of the only root group is a store, its folders show their titles for two folders or more.
+- The root group of a read-only store is the first group under its title, before its folders. The folders of a read-only store show under its title. They have an indent of 16 px, and their title is smaller. Their hooks are the same as for the folders of the primary.
+- The groups at the root are the root group of the primary, the folders of the primary and the read-only stores. The title of a folder or of a store shows only when there are two groups or more.
+- When the title of the only root group is a store, its folders show their titles for two groups or more. Its own root group counts as one group.
 - The read-only stores come after the folders of the primary, in title order. The sort "Z–A" reverses the order of the stores.
 - The page has no visible title. It has one `h1` with the text "Dashboards" for assistive technology, hidden with `visually-hidden`.
 
@@ -5561,12 +5564,12 @@ Repeat (4.13a):
 These controls are on the list page (9.7). They exist only when `editing` is `true`, and when the `access` flags of
 6.11 and 6.12 permit them (11.25).
 
-- "New dashboard" opens a dialog with "Title" (necessary) and "Folder" (a select of the folders with `access.write`).
+- "New dashboard" opens a dialog with "Title" (necessary) and "Folder" (a select). The select has the entry "Root (no folder)" first, when the member `root` of `GET api/folders` has `access.write` (6.11). Then it has the folders with `access.write`. The first entry is the chosen one. The dialog opens when only the root accepts a dashboard.
   - The page makes a uid: 14 characters of `[a-z0-9]`, from `crypto.getRandomValues`, with no bias.
   - It makes the smallest valid document of 4.5 with this uid and this title: `description` empty, `tags = []`,
     `time = {from: "now-6h", to: "now", timezone: "browser", refresh: null}`, `cursor_sync = "off"` and
     `variables = []`. It has one section `{title: null, collapsed: false, panels: []}`.
-  - It sends `POST api/dashboards` with a new `save_id` (10.9). On `409 already_exists` it makes a new uid and tries
+  - It sends `POST api/dashboards` with a new `save_id` (10.9). The member `folder` is the id of the folder, or `null` for the root. On `409 already_exists` it makes a new uid and tries
     one more time.
   - It opens `d/<uid>?edit=1`.
 - "New folder" needs `access.create`. It is in the header of the list page (9.7). It opens a dialog with one field, "Title". It sends `POST api/folders`.
@@ -5576,8 +5579,8 @@ These controls are on the list page (9.7). They exist only when `editing` is `tr
 - "Rename" and "Delete" of a folder are in the menu on the folder title (9.7).
 - "Rename" sends `PUT api/folders/<id>`. "Delete" asks for a confirmation and sends
   `DELETE api/folders/<id>`. `409 folder_not_empty` gives "The folder holds dashboards. Move or delete them first.".
-- "Move" of a dashboard is in the menu of its card (9.7). It opens a select of the folders with `access.write`. It sends `POST api/dashboards/<uid>/move` with
-  `If-Match` (the etag of the list item) and a new `save_id`.
+- "Move" of a dashboard is in the menu of its card (9.7). It opens a select of the folders with `access.write`. The entry "Root (no folder)" is the first entry when the member `root` has `access.write` and the dashboard is not at the root. The chosen entry is the folder of the dashboard. It sends `POST api/dashboards/<uid>/move` with the folder (`null` for the root),
+  `If-Match` (the etag of the list item) and a new `save_id`. When the dashboard is there already, the notice says "The dashboard is already at the root." or "The dashboard is already in this folder.".
 - A dialog shows the message of each error of 6.8 under its fields.
 - The buttons of a dialog come in this order: the safe choice first ("Cancel" or "Stay"), the action last.
 - A modal dialog is 500 px wide, and the import dialog is 520 px wide (10.12). Its top edge is at 10 % of the window height. The radius is 10 px, and the title is 18 px. On a phone the dialog has the full width. The delete and exit dialogs keep their texts, and one click confirms.
@@ -5693,8 +5696,9 @@ Two other cases of the same `409`:
 
 - A move. When `current_etag` equals the base etag and `current_folder` differs from the folder of the page, the
   conflict comes from a move (5.5, rule 2). The screen shows no diff, and offers "Save in the new folder" and "Cancel".
-  Its text is: "The dashboard moved to the folder <title> after you opened it."
-- "Save in the new folder" sends the same `PUT` with a new `save_id`. The server updated its catalog after the
+  - After a move to a folder, the text is: "The dashboard moved to the folder <title> after you opened it."
+  - After a move to the root, the text is: "The dashboard moved to the root after you opened it."
+- "Save in the new folder" ("Save at the root" after a move to the root) sends the same `PUT` with a new `save_id`. The server updated its catalog after the
   conflict (6.15), so the save can pass.
 - A delete. When `GET api/dashboards/<uid>?download=true` gives `404` for "theirs", the dashboard was deleted after the
   conflict. The screen shows "The dashboard was deleted after you opened it." It offers "Download my draft" and
@@ -5761,7 +5765,7 @@ Import (the list page, when `editing` is `true` and one folder has `access.write
    - an `apiVersion` that starts with `dashboard.grafana.app/`;
    - the members `schemaVersion` and `panels`;
    - a member `dashboard` that holds `panels`.
-3. A dialog of 520 px shows the uid of the document and a select of the folders with `access.write`.
+3. A dialog of 520 px shows the uid of the document and a select. The select has the entry "Root (no folder)" first, when the member `root` has `access.write` (6.11), then the folders with `access.write`. The first entry is the chosen one. The page sends `folder: null` for the root, in the check and in the creation.
 
    With `access.create`, the select has the last entry "New folder...". The entry shows a field for the title of the folder. The page makes the folder with the rule of "New folder" (10.7) when the user chooses "Import". Then it makes the dashboard in it. A second try after a refusal of the dashboard uses the same folder.
 
