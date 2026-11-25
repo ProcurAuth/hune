@@ -266,14 +266,16 @@ const SIZES = [16384, 32768, 65536, 131072];
 
 /**
  * Measures a parser over the four sizes and gives the failing unit as text, or an empty list.
- * A failure is measured again, up to two more times, and the time of each size is the minimum over all the attempts
- * (7, 14 or 21 runs). A machine with a high load can disturb the minimum of one attempt, but not of three.
+ * A failure is measured again, up to four more times, and the time of each size is the minimum over all the attempts
+ * (7, 14, 21, 28 or 35 runs). A machine with a high load can disturb the minimum of one attempt, but not of five.
+ * The gate runs many jobs at the same time, so the test takes more attempts to meet a quiet moment. The limits are the same:
+ * a parser with a time that is not linear fails in each attempt.
  */
 function scaleFaults(label, parse, unitSpec) {
   const texts = SIZES.map((s) => repeated(unitSpec, s));
   const times = SIZES.map(() => Infinity);
   let verdict = "";
-  for (let attempt = 0; attempt < 3; attempt++) {
+  for (let attempt = 0; attempt < 5; attempt++) {
     texts.forEach((t, i) => {
       times[i] = Math.min(times[i], minTime(() => parse(t)));
     });

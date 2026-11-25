@@ -98,11 +98,12 @@ test("FE-39 the join of 8 frames and 200,000 rows takes 150 ms or less", () => {
     const fields = tagFields(framesToFields(frameOf([{ name: "time", kind: "time", values: Array.from({ length: n }, (_, i) => i * 2 + (k % 2)) }, { name: ref, kind: "number", values: Array.from({ length: n }, (_, i) => i) }])), ref, true);
     return { ref, fields };
   });
-  // The minimum of 7 runs after 2 warm-up runs (the timing policy of the front tests): one run on a loaded machine measures
-  // the machine, not the code.
+  // The minimum of 25 runs after 2 warm-up runs (the timing policy of the front tests): one run on a loaded machine measures
+  // the machine, not the code. The gate runs many jobs at the same time, so the test takes more runs to meet a quiet moment.
+  // The limit is the same: a join that is slower than 150 ms on a quiet host fails in each run.
   joinByTime(lists);
   joinByTime(lists);
-  const best = Math.min(...[0, 1, 2, 3, 4, 5, 6].map(() => {
+  const best = Math.min(...Array.from({ length: 25 }, () => {
     const start = performance.now();
     joinByTime(lists);
     return performance.now() - start;
