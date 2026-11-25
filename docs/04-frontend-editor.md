@@ -921,6 +921,13 @@ A person can select the text of a panel with the pointer and copy it. This holds
 13. The value at the end of a bar of the horizontal bar chart takes the pointer, so a person can select it. The text of a gauge cell of a table is selectable already.
 14. The page does not change the chart engine of the copy of ClickHouse Dash. The two modules wrap `fillText` and `clearRect` of the 2D context one time.
 15. The control of a variable is a select, and it does not offer its text for selection. The tooltip of a chart is a box that shows for a short time. The list page has its own rules (9.7).
+16. A log line is a row of cells: the time, the level and the body. A copy of a selection over log lines gives one text line for each log line. The cells are joined by one space, and one line end separates the lines. The module `row_copy.js` builds this text. A selection that starts or ends inside a cell gives the selected part of that cell.
+17. A selection inside one cell is the text of the cell. A selection that leaves the list of rows, and a selection that holds the details of a line, use the copy of the browser. A table keeps the copy of the browser, with a tab between two cells.
+18. The rows of the horizontal bar chart and of the bar gauge follow item 16. The name and the value are on one text line. A cell that is hidden from assistive technology is not in the copy.
+19. A triple click on a log line selects the whole line: the time, the level and the body. A double click selects a word. Neither leaves the details of the line changed. The second click gives back the toggle of the first click, and the third click does not toggle. A plain click toggles the details as before.
+20. The key Ctrl+A or Cmd+A with the focus on a log line selects the lines of the panel and not the whole page. A copy then gives all the lines, one text line for each.
+21. The cursor over the text of data is the text cursor. This holds for the cells of a log line, the label of a legend item and the cells of a table. It holds for the titles and the labels of an axis. It holds for the values of a stat, a gauge or a bar, and for the text of a text panel. A control keeps its own cursor: a button, a link, a select and a sortable header have the pointer. In the edit mode, the title bar of a panel keeps the cursor `move`.
+22. The right button never acts in a panel. A click of the right button on a selection keeps the selection. It toggles no line, no series and no sort, and it opens the menu of the browser. The page never stops this menu. The item Copy of the menu gives the same text as Ctrl+C, because both send the event `copy`.
 
 ### 9.9 Time picker and refresh
 
@@ -3944,7 +3951,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,060 KB at most (1,085,440 bytes), before compression. The limit is the measure (1,080,699 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,741 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,065 KB at most (1,090,560 bytes), before compression. The limit is the measure (1,085,868 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,692 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;

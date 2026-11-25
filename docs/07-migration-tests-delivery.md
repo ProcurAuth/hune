@@ -1475,7 +1475,8 @@ The stores in the page (9.6, 9.7, 9.8) add these tests to the groups of the tabl
 The select and copy rules (9.8e) add these tests to the groups of the table:
 
 - Front end: `tests/frontend/copy_text.test.mjs` tests the drag threshold and the place of a text: alignment, baseline, pixel ratio and turn. It tests the order of the texts, the signature and the cap of 400 texts. It tests the wrapper of `fillText` and `clearRect` on a fake context. It tests the text of a copy.
-- Browser: the cases B260 to B263. They use real mouse drags.
+- Front end: `tests/frontend/row_copy.test.mjs` tests the text of a copy of rows on a fake selection. The cases are whole rows, a partial cell, one cell and hidden cells. It tests the cases that use the copy of the browser, the marks of the logs panel and the cursor rules.
+- Browser: the cases B260 to B266. They use real mouse drags and clicks. A spy on the event `copy` reads the copied text. Chrome and Firefox run them.
 
 The default range and the default refresh (10.9) add these tests to the groups of the table:
 
@@ -2100,6 +2101,9 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B261 | Select and copy a link (9.8e). A drag over the text of a link in a table cell selects the text and does not follow the link. A plain click follows the link. |
 | B262 | Select and copy the text of a chart (9.8e). The line chart, the bar chart and the pie chart each have a layer of 1 to 400 texts that is hidden from assistive technology. A drag over the labels of the vertical axis selects them, and a copy gives one label on each line. A triple click selects a text of the pie chart. The tooltip shows over the plot, and the point of the plot is not under the layer. |
 | B263 | Select and copy a header (9.8e). A drag over a sortable header selects its text and does not sort. A plain click sorts. A drag over two cells selects text. |
+| B264 | Select and copy the lines of a logs panel (9.8e). A drag inside one cell uses the copy of the browser. A drag over a line, over two lines and from the middle of a cell copies one text line for each log line, with one space between the cells. A triple click selects the whole line and leaves the details closed, or open when they were open. A double click leaves the details as they were. A plain click toggles them. Ctrl+A with the focus on a line copies the six lines. |
+| B265 | Select and copy the rows of other panels (9.8e). A triple click and a drag over two lines of a logs panel with wrap copy one text line for each line. A drag over table cells uses the copy of the browser, with a tab and a line end. The rows of the horizontal bar chart and of the bar gauge copy as the name and the value on one text line. |
+| B266 | The cursor over text and the right button (9.8e). The cursor is the text cursor over a log line, a legend label, a table cell, a panel title and an axis label, and the pointer over a sortable header and a legend item. The right button on selected log lines, a legend label, axis labels and table cells keeps the selection and toggles no line, no series and no sort. No code of the page stops the menu of the browser. |
 | B270 | The look of the JSON view (10.4). In the light and the dark theme, each kind of text and each depth of bracket has the colour of its token. The editor, the line numbers, the selection with and without focus, and the scroll bar of 10 px have the values of the palettes. The layers take no pointer. |
 | B271 | The caret in the JSON view (10.4). A click puts the band and the strong number on its line. A caret that touches a bracket puts a box on it and on its pair, and the guide runs along the lines between them. A selection has no band and no box. A line with six spaces has a guide box of six columns and one row high. A syntax error has a wavy underline under its token, and it goes when the text is valid. |
 

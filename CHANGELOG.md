@@ -46,6 +46,9 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - A person can select and copy the text of a panel. A drag over a legend item, a sortable header or the link of a cell selects its text and does nothing else. A double click selects a word and a triple click selects the text. The key Ctrl+C on a focused legend item copies its text. The module is `web/js/panels/copy_text.js`.
 - A layer of transparent text over each chart canvas holds the axes, the titles and the labels that the chart draws. A person selects them and copies them, with one text on each line. A layer holds 400 texts at most. The module is `web/js/panels/text_layer.js`, and the chart engine of ClickHouse Dash is not changed.
 - The browser cases B260 to B263 for the select and copy rules, with real mouse drags.
+- A copy of a selection over log lines gives one text line for each log line, with the cells joined by one space. The rows of the horizontal bar chart and of the bar gauge give the name and the value on one line. The module is `web/js/panels/row_copy.js`.
+- A triple click on a log line selects the whole line and leaves its details as they were. The key Ctrl+A with the focus on a log line selects the lines of the panel. The cursor over the text of data is the text cursor.
+- The browser cases B264 to B266 for the logs, the cursor and the right button.
 
 ### Changed
 
