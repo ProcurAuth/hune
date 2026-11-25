@@ -42,8 +42,8 @@ Hune MUST support the two use cases below. One binary does both. The configurati
 
 | Use case | Storage | Instances | Typical place |
 |---|---|---|---|
-| LOCAL | `storage { backend = "volume" }`: one JSON file for each dashboard in a mounted folder | One writer process | A laptop, one server, a git checkout, a Docker Compose host |
-| DISTRIBUTED | `storage { backend = "postgres" }`: one row for each dashboard in PostgreSQL in high availability | Two or more instances | A Kubernetes cluster (for example K3s) with CloudNativePG |
+| LOCAL | `storage { volume "main" { primary = true } }`: one JSON file for each dashboard in a mounted folder | One writer process | A laptop, one server, a git checkout, a Docker Compose host |
+| DISTRIBUTED | `storage { postgres { primary = true } }`: one row for each dashboard in PostgreSQL in high availability | Two or more instances | A Kubernetes cluster (for example K3s) with CloudNativePG |
 
 Both backends store the same canonical bytes (4.38). The same `Store` trait and the same conformance suite apply to both (section 5). `hune copy-store` copies a store to the other kind in both directions (5.37).
 
@@ -127,7 +127,7 @@ The rule is: "minimise the work to the measured use of 1.3". A feature that the 
 | Operator | The person who runs Hune | Writes the configuration, runs the server, the migrations, the backups and the restores |
 | Migration operator | The person who runs the migration from Grafana | Runs `hune import-grafana`, checks the report and the side-by-side comparison, does the cutover |
 
-In mode `open`, every request has the same subject `-`, and `server.editing` decides if writes are possible. In mode `authzen`, the ProcurAuth subject decides each operation (section 11).
+In mode `open`, every request has the same subject `-`, and the primary store decides if writes are possible. In mode `authzen`, the ProcurAuth subject decides each operation (section 11).
 
 ### 1.6 Goal: use Hune in place of Grafana
 
@@ -170,9 +170,9 @@ Each line gives one design rule. The column "Section" names the section or the p
 | D13 | The server reads only the current `format_version`. A change of format: stop, `hune migrate-documents`, start. A stored document that is invalid or of another version is never served: 422 `stored_document_invalid`. | 4.42, 5.6, 5.8 |
 | D14 | Volume layout: `<root>/<folder>/<uid>.json`, `_folder.json`, `.history/<uid>/<n>.json` and `<n>.meta.json`. | 5.9, 5.11 |
 | D15 | Volume write order: history first, temporary file with `O_EXCL`, write, fsync, etag check under the lock of the uid, rename, directory fsync. | 5.13, 5.14 |
-| D16 | Volume: polling every `storage.volume.rescan_interval`. No inotify. | 5.17 |
+| D16 | Volume: polling every `rescan_interval` of its block. No inotify. | 5.17 |
 | D17 | Volume: one writer process with `flock` on `<root>/.hune/lock`. Several writers on one shared volume are not supported. | 5.16 |
-| D18 | Volume: no symbolic link is followed or created. The root is absolute and canonical. Read-only mode `storage.volume.read_only`. | 5.12, 5.19, 5.21 |
+| D18 | Volume: no symbolic link is followed or created. The root is absolute and canonical. A volume that is not the primary store is read-only. | 5.12, 5.19, 5.21 |
 | D19 | PostgreSQL: the document is `text`, not JSONB. Four tables. Client `tokio-postgres`, `deadpool-postgres`, `tokio-postgres-rustls`. | 5.23, 5.24 |
 | D20 | Schema migrations only by `hune migrate-store` under an advisory lock, with its own file and the owner role. `serve` uses a role with DML rights only, and stops at start when the schema version differs. | 5.25, 5.28, 5.29 |
 | D21 | Optimistic lock by etag and expected folder in one transaction that also inserts the version row (409 `conflict`). Idempotent saves by `save_id`; a reused `save_id` gives `idempotency_key_reused`. | 5.5, 5.27 |
@@ -181,7 +181,7 @@ Each line gives one design rule. The column "Section" names the section or the p
 | D24 | Reference HA: CloudNativePG. Failover test: a three-node Patroni cluster in Docker. | 5.32, 16 |
 | D25 | One `Store` trait, one conformance suite, `copy-store` in both directions. | 5.3, 5.33, 5.37 |
 | D26 | The block `access { mode = "open" \| "authzen" }` MUST be in the file. Run-time choice only, no Cargo feature. | 11 |
-| D27 | Mode `open`: no authentication, no token, no PDP, subject `-`, ProcurAuth routes answer 404, `config.warning` at start, writes follow `server.editing`. | 11 |
+| D27 | Mode `open`: no authentication, no token, no PDP, subject `-`, ProcurAuth routes answer 404, `config.warning` at start, writes follow the primary store. | 11 |
 | D28 | Mode `authzen`: PEP on `procurauth-pep` and `procurauth-core` (git, full commit, `default-features = false`, vendored) with an own rustls `PdpTransport` on a bounded blocking pool. | 3.7, 11 |
 | D29 | Tree `service/folder/dashboard` and `service/source` (depth 2). Service id = `access.identity.audience`. | 11 |
 | D30 | Actions `dashboard.read`, `dashboard.write`, `source.query`. Ceilings `max_rows` and `max_duration`. No budget in v1. | 11 |
@@ -334,7 +334,7 @@ The server runs on the multi-thread `tokio` runtime. The runtime builder sets `w
 | Accept loop of `server.listen` | 1 | Accepts connections up to `server.max_connections`; one task for each connection |
 | Accept loop of `server.ops_listen` | 1 | Serves `/livez`, `/readyz` and `/metrics` |
 | Connection task | one for each connection | Reads HTTP/1.1 requests with `hyper` and runs the router |
-| Catalog poller | 1 | Calls `Store::poll` every `storage.volume.rescan_interval` or `storage.postgres.poll_interval` (5.8) |
+| Catalog poller | 1 | Calls `Store::poll` every `rescan_interval` of a volume or `storage.postgres.poll_interval` (5.8, 5.42) |
 | Telemetry exporter | 0 or 1 | Sends OTLP data when `telemetry.enabled = true` (section 14) |
 | Signal task | 1 | Starts the graceful shutdown on SIGTERM or SIGINT (section 14) |
 | Source tasks | as section 8 | The tasks of the ClickHouse clients |
@@ -378,7 +378,7 @@ The table gives every cache of the server. No cache holds query results.
 
 1. The browser asks for `/d/{uid}/{slug}`. The server sends the shell page with `Cache-Control: no-cache`.
 2. The browser loads the static files from `/static/{build-hash}/`. These files have `immutable` caching.
-3. The browser calls `GET /api/session`. The answer gives the access mode, the value of `server.editing` and the subject.
+3. The browser calls `GET /api/session`. The answer gives the access mode, whether edits are possible, the stores and the subject.
 4. The browser calls `GET /api/dashboards/{uid}`.
 5. In mode `authzen`, the server asks `dashboard.read` on `service/folder:<f>/dashboard:<uid>` (section 11).
 6. The server reads the entry from the catalog. It sends the canonical document, the etag, the folder and the version (section 6).

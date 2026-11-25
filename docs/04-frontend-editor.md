@@ -5591,7 +5591,9 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 
 | State | The page |
 |---|---|
-| `editing = false` in the session (`server.editing = false`, or a read-only store) | No "Edit", "New dashboard", "New folder", "Import", "Move", "Delete", "Restore" or folder control. The history list, the views and the diffs stay. |
+| `editing = false` in the session (no store is the primary store) | No "Edit", "New dashboard", "New folder", "Import", "Move", "Delete", "Restore" or folder control. The history list, the views and the diffs stay. |
+| `read_only = true` on a dashboard or a folder (the store is read-only, 5.42) | A lock on the card and in the header of the editor. The editor opens read-only. The page offers "New dashboard", "New folder" and "Move" only in the primary store. A write that the page sends gets `403 read_only_store`, and the page shows its message. |
+| `stale = "file_invalid"` on a dashboard (5.44) | A warning on the card and in the header of the dashboard: the page shows the last valid state, and the file of the volume is not valid now. The text never holds a path or a message of the parser. |
 | `access.write = false` for a dashboard or a folder, or `access.create = false` (mode `authzen`, 11.25) | The same controls are absent for this dashboard or this folder. "New folder" is absent without `access.create`. |
 | A source of the dashboard is not in `GET api/sources` | Edit mode opens, with the notice "A save needs the query right on the source <id>." (6.9). "Run" is absent for this source. |
 | `503 storage_unavailable` on a write | The notice of 10.9. Edit mode stays. |

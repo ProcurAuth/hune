@@ -36,9 +36,9 @@ A secret (a password or a token) accepts only `_env` and `_file`. A secret in cl
 
 | Block | Role |
 | --- | --- |
-| `server` | The two listeners, the base path, the editing switch and the limits of the server. |
+| `server` | The two listeners, the base path and the limits of the server. |
 | `log` and `telemetry` | The log level and the OTLP exporter of traces. |
-| `storage` | The backend `volume` or `postgres`, with its own block. |
+| `storage` | The stores: the blocks `volume "<id>"` and `postgres`. The store with `primary = true` is the only store that accepts writes. |
 | `access` | The mode `open` or `authzen`, with the blocks `identity` and `pdp` for `authzen`. |
 | `clickhouse "<id>"`, `postgres "<id>"`, `mongodb "<id>"` | One block for each data source. At most 64 blocks for each kind. |
 | `geomap` | An optional tile source for the map panel. The map is off without it. |
@@ -52,7 +52,6 @@ server {
   listen                  = "127.0.0.1:8080"
   ops_listen              = "127.0.0.1:9090"
   base_path               = "/"
-  editing                 = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "30s"
@@ -65,10 +64,9 @@ log { level = "info" }
 telemetry { enabled = false }
 
 storage {
-  backend = "volume"
-  volume {
+  volume "main" {
     path            = "/var/lib/hune/dashboards"
-    read_only       = false
+    primary         = true
     rescan_interval = "5s"
     history_keep    = 100
   }

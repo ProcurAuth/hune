@@ -3449,7 +3449,7 @@ A file names one store or more. Each block `storage.volume "<id>"` is one volume
 The start stops with exit code 1 in each of these cases. The message names the store, and the file or the ids, and the reason.
 
 1. A volume store breaks a rule of 5.21.
-2. A file of a volume cannot be read, or it does not follow the format: a dashboard file, a folder file or a uid that is not unique in the volume. This rule applies to the primary volume too.
+2. A file of a volume cannot be read, or it breaks the format. This holds for a dashboard file, a folder file and a uid that is twice in the volume. This rule applies to the primary volume too.
 3. A read-only store has no dashboard. The primary store can be empty, so a person can create the first dashboard.
 4. A folder id exists in two stores.
 5. A dashboard uid exists in two stores.

@@ -6,6 +6,29 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+### Removed (breaking)
+
+- The key `storage.backend`. The blocks tell the stores now. An old file stops the start with the error `unknown attribute`.
+- The key `storage.volume.read_only`. A volume is read-only when it is not the primary store.
+- The key `server.editing`. Edits are possible if and only if a store is the primary store. A file with no primary store behaves as `editing = false` did: the nine write routes answer `403 editing_disabled`, and Hune publishes no `dashboard.write` and no `source.query`.
+- The contradiction C10 (`read_only` and `editing`) and the old text of C2 and C21.
+
+### Changed (breaking)
+
+- The block `storage.volume` becomes `storage.volume "<id>"`. It has `path`, `rescan_interval`, `title`, `primary` and `history_keep`. A file can have up to 16 volumes.
+- `history_keep` is only for the primary store, and it is necessary there. The block `storage.postgres` has `primary`, `title` and `history_keep` too.
+- A file of a volume that cannot be read or that is not valid stops the start, for each volume. The message names the label of the store, the file and the reason. A volume cannot show an invalid card any more. A row of PostgreSQL that is not valid still can.
+- The commands of the command line work on the primary store only. `migrate-store` needs `storage.postgres` as the primary store.
+- The folder ids and the dashboard uids are unique across the stores. The start stops when two stores share one.
+
+### Added
+
+- The key `primary = true` on one store block. The primary store is the only store that accepts writes. Each other store is read-only and needs a `title`, the name of its root folder.
+- The error code `read_only_store` (403). A write into a read-only store gets it. Hune asks `dashboard.read` first and never asks `dashboard.write` for such a target.
+- The members `read_only` and `store` on the items of the list, on a dashboard and on the folders. The member `stores` in the session. The contradictions C30 to C34.
+- The member `stale` with the code `file_invalid`. After the start, a file of a volume that becomes not valid keeps its last valid state, and the dashboard has this member. The log line `store.rescan_rejected` and the gauge `hune_store_invalid_files` tell it.
+- Each store has its own period of poll.
+
 ## 0.1.3 - 2026-11-25
 
 ### Added

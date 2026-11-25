@@ -60,9 +60,9 @@ Build the binary of the copy again after each change in `web/` or in the Rust co
 ## What the runner does
 
 1. It starts a ClickHouse container with the name `hune-test-browser-ch-<pid>`. The port is bound to 127.0.0.1. The seed data come from `tests/fixtures/clickhouse/init.sql`.
-2. It makes one volume for each server under `target/browser/`. The folder `transit` holds the dashboard `nodes`, and one file that is not valid.
+2. It makes one volume for each server under `target/browser/`. The folder `transit` holds the dashboard `nodes`. A volume holds no file that is not valid, because the start stops for such a file.
 3. It writes a configuration from `hune print-reference --format hcl --profile local`. It sets the ports, the volume, the ClickHouse URL and the password file. It removes the `tls` block. It adds the source `zdown`, which is always down.
-4. It starts three servers: one with `server.editing = true`, one with `server.editing = false`, and one with `server.base_path = "/dashboards/"`. Each of the three sets `server.list_filters_min_dashboards = 0`, so the sort control and the tag filter show on a volume of two items. B228 and B34 start servers of their own that use the default or another value.
+4. It starts three servers: one with a primary volume, one with no primary store, and one with `server.base_path = "/dashboards/"`. Each of the three sets `server.list_filters_min_dashboards = 0`, so the sort control and the tag filter show on a volume of two items. B228 and B34 start servers of their own that use the default or another value.
 5. It starts one Chrome and drives it with the DevTools protocol. Each case has its own browser context.
 6. It runs the cases. A case fails on a console error, an uncaught exception or a CSP violation, unless the case provokes it on purpose.
 7. It stops the servers with SIGTERM, removes the container and kills Chrome. This also happens when a case fails or when you press Ctrl+C.
@@ -101,7 +101,7 @@ The module `cases/mongo.mjs` asks the binary first. It runs `hune check-config` 
 
 A build with the driver gets a disposable container from `startMongo`. The container has the name `hune-test-browser-mongo-<pid>`, with TLS made by `openssl`, and its port is bound to 127.0.0.1. The module starts it only when the run selects B47 or B48, and it removes the container at exit.
 
-The cases B69 to B71 and B90 test the header (9.6, 9.9, 10.2). They use synthetic dashboards, and B70 and B71 also start a server with `server.editing = false`.
+The cases B69 to B71 and B90 test the header (9.6, 9.9, 10.2). They use synthetic dashboards, and B70 and B71 also start a server with no primary store.
 
 - B69: the joined time control. The groups, the buttons that join, no second refresh button, and the keyboard.
 - B70: the Edit switch (`role="switch"`, `aria-checked`, Space and Enter, the right to write). "Add", "Save" and "Revert" in edit mode. The confirmation of "Revert". "Save" that is not active with no change.

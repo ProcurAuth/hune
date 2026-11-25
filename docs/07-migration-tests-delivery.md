@@ -1130,10 +1130,10 @@ Preconditions:
 
 | When | Step |
 |---|---|
-| T − 14 d | Add the service `hune` to the compose file of the host, with `storage.volume.read_only = true` and `server.editing = false`. Add the nginx location `/dashboards/` (below). Run the first import with `--write`. The importer uses a second file, `import.hcl`, equal to the file of `serve` except `read_only = false` and `server.editing = true`. A read-only `serve` takes no lock (5.19), so the importer takes it (5.16). |
+| T − 14 d | Add the service `hune` to the compose file of the host, with the volume as a read-only store: no `primary = true`, no `history_keep`, and a `title`. Add the nginx location `/dashboards/` (below). Run the first import with `--write`. The importer uses a second file, `import.hcl`, equal to the file of `serve` except that the volume has `primary = true` and `history_keep`, and has no `title`. A read-only `serve` takes no lock (5.19), so the importer takes it (5.16). |
 | T − 14 d to T − 2 d | Parallel run. Grafana stays the editor and the source of truth. After each Grafana change, and at least one time each day, export and import again with `--write --replace`. Users compare the two tools. Hune fixes come as new releases. The operator reads the nginx log for `/grafana/public-dashboards/` and `/grafana/goto/` (19.2). |
 | T − 2 d | Edit freeze. Give the role Viewer to each Grafana user. When an environment variable of the Grafana service sets the role, create the container again without a build (`docker compose up -d --no-deps grafana`). Grafana then refuses saves. Tell the users about the freeze. |
-| T | Final export and final import with `--write --replace`. Run V3 again for each dashboard that changed after the last V3. Set `read_only = false` and `server.editing = true` on Hune and start it again. Set `GF_SERVER_ROOT_URL=/grafana-old/` on Grafana, create it again without a build, and route `/grafana-old/` to it. Replace the nginx location `/grafana/` with the redirects of 15.17. |
+| T | Final export and final import with `--write --replace`. Run V3 again for each dashboard that changed after the last V3. Give the volume of Hune `primary = true` and `history_keep`, remove its `title`, and start it again. Set `GF_SERVER_ROOT_URL=/grafana-old/` on Grafana, create it again without a build, and route `/grafana-old/` to it. Replace the nginx location `/grafana/` with the redirects of 15.17. |
 | T to T + 14 d | Grafana stays reachable read-only at `/grafana-old/`, behind the same login, for comparison. |
 | T + 14 d | Stop the Grafana container (`docker compose stop grafana`). Do not touch its data volume. |
 | T + 30 d | End of the rollback window. Remove the Grafana service and archive `grafana.db` (19.10). |
@@ -1179,7 +1179,7 @@ Rollback is possible from T to T + 30 d. These are its triggers:
 
 Rollback procedure:
 
-1. Set `server.editing = false` on Hune and start it again. This stops new edits.
+1. Remove `primary = true` and `history_keep` from the store of Hune, give it a `title`, and start it again. This stops new edits.
 2. Run `hune export -c <file> --to <dir>` (5.38) to a private directory. It keeps the edits that people made in Hune
    after T.
 3. Give the Grafana users their roles of before the freeze again. Remove `GF_SERVER_ROOT_URL` from the Grafana service. Start
@@ -1558,6 +1558,7 @@ sample, unchanged.
 | K20 | The key `server.compress_static` (13.8, 9.3): 4 tests in `crates/hune/src/config/tests/static_gzip.rs`. An absent key is `true` with the source `default`, and a key in the file has the source `file`. A text, an integer, a form `_env` or `_file`, a duplicate key and an unknown near name stop the start, and the error names the key, the type and the value. The answers of the static files: 7 tests in `crates/hune/src/server/tests/static_gzip.rs`. The encoder: 17 tests in `crates/hune/src/gzip/`, with round trips through `gzip -d` and Node.js. The parse of `Accept-Encoding`: 3 tests in `crates/hune/src/server/encoding.rs`. |
 | K21 | The key `server.transform_max_cells` (13.8, 4.35): 8 tests in `crates/hune/src/config/tests/transform_cells.rs`. An absent key is 10,000,000 with the source `default`. The values 1, 2,500,000 and 100,000,000 have the source `file`. The values 0 and 100,000,001, a wrong type, `_env` or `_file`, a duplicate and a near name stop the start, and the error names the key, the range and the value. No environment variable gives the value. The member `transform_max_cells` of `GET /api/session` (6.10) has 2 tests in `crates/hune/src/server/tests/core.rs`. |
 | K22 | The key `server.list_filters_min_dashboards` (13.8, 9.7): 6 tests in `crates/hune/src/config/tests/list_filters.rs`. An absent key is 6 with the source `default`. The values 0, 1, 25 and 1000 have the source `file`. The values 1001 and 4294967296, a wrong type, `_env` or `_file`, a duplicate and a near name stop the start, and the error names the key, the range and the value. No environment variable gives the value. The member `list_filters_min_dashboards` of `GET /api/session` (6.10) has 2 tests in `crates/hune/src/server/tests/core.rs`. |
+| K23 | The stores of 13.10: 14 tests in `crates/hune/src/config/tests/stores.rs`. One test for each of C2, C10 and C30 to C34, the labels, the limit of 16 volumes, the removed keys (`unknown attribute`), a file with no primary store, and a read-only PostgreSQL store next to a primary volume. |
 
 ### 16.6 Store conformance suite
 
@@ -1574,6 +1575,7 @@ the job has the two roles of 5.25: `migrate-store` uses the owner role, and the 
 | Case | Backend | Check |
 |---|---|---|
 | SX-01 | volume | An `fsync` error (fault injection in the test build): the save fails with `Unavailable`, the temporary file is removed, and the backend calls `fsync` no second time (5.13). |
+| SX-02 | stores | `Stores` (5.42 to 5.44): 14 tests in `crates/hune-store/tests/stores.rs`. The first load and the merge, the refusal of each write into a read-only store, the ids that two stores cannot share, each start rule, the primary store with no dashboard, the last valid state of a file that becomes not valid, a file that is new and not valid, the period of each store, and a write in the primary store that the catalog sees at once. |
 
 ### 16.8 API black-box suite
 
@@ -1589,7 +1591,7 @@ and reads nothing inside the process. The compose project holds these services:
 - `fake-pdp` of the pinned ProcurAuth commit.
 
 The cases A01 to A38 run four times: volume in mode `open`, PostgreSQL in mode `open`, and the same two with
-`server.editing = false`. The last two runs check the cases that name `server.editing`. The runs on PostgreSQL start at
+no primary store. The last two runs check the cases that name the primary store. The runs on PostgreSQL start at
 M5. The cases A39 to A45 run on the volume in mode `authzen` with `fake-pdp`, from M6. Their configuration is
 `tests/api/authzen.hcl`: the audience `hune-test`, the sources `prod` and `conf`, and `cache_ttl = "30s"`.
 
@@ -1618,9 +1620,9 @@ M5. The cases A39 to A45 run on the volume in mode `authzen` with `fake-pdp`, fr
 | A21 | A variable value that section 7 refuses: refused, and `system.query_log` of the test ClickHouse shows no new query. |
 | A22 | `POST /api/dashboards/{uid}/variables/{name}/options`: the options. A variable that depends on another variable gets its options with the value of the other. |
 | A23 | `GET /api/sources`: ids and labels, and no URL, user or secret. |
-| A24 | `POST /api/sources/{id}/preview` runs draft SQL. With `server.editing = false`: refused. |
+| A24 | `POST /api/sources/{id}/preview` runs draft SQL. With no primary store: refused. |
 | A25 | `GET /api/session`: the mode, the subject (`-` in mode `open`) and the editing flag. |
-| A26 | With `server.editing = false`, each write route is refused and each read route works. |
+| A26 | With no primary store, each write route is refused and each read route works. A write into a read-only store gives `403 read_only_store` (11.35). |
 | A27 | Write guard: `Sec-Fetch-Site: cross-site` is refused. No `Sec-Fetch-Site` and an `Origin` of another host is refused. A body that is not `application/json` is refused. An `OPTIONS` request gets no CORS header. |
 | A28 | A body above `server.max_request_bytes` is refused before the server reads all of it. A header block above 16 KiB is refused. A connection above `server.max_connections` is refused or waits, as section 14 says. |
 | A29 | Each class of answer (shell, static file, API, error) has the security headers of section 12, with the exact CSP text. |
@@ -1652,6 +1654,7 @@ M5. The cases A39 to A45 run on the volume in mode `authzen` with `fake-pdp`, fr
 | A55 | Mode `authzen`: the ceilings `max_rows` and `max_duration` lower the limits of a MongoDB query. A result above the ceiling gives `403 ceiling_exceeded`. |
 | A56 | The log holds no query text and no value of a MongoDB query. `query.run` has `source_kind` `mongodb` and the field `mongo_code`. The action document holds the `mongodb` source in `resources`. |
 | A60 | The parameter `tag` of 6.12. One dashboard has the tag `chain` and one has not. `tag=chain` lists the first. `tag=other` lists none. A tag of 65 bytes, an empty `tag` and two `tag` give `400 bad_request`. `tag` with `q` and `folder` keeps the dashboards that pass all. Mode `authzen`: a dashboard that the subject cannot see is not in the list, with or without `tag`. |
+| A61 | The stores (5.42 to 5.44, 6.10 to 6.14, 11.35). 15 tests in `crates/hune/src/server/tests/stores.rs`. The session lists the stores. The list, the folders and the read give `read_only`, `store` and `stale`. Each write into a read-only store gives `403 read_only_store` and changes nothing, in the mode `open` and in the mode `authzen`. Hune never asks `dashboard.write` for it. A subject with no right gets the same bytes for a target of a read-only store and for one that does not exist. Each start rule stops the start with the label, the file and the reason. A file that becomes not valid keeps its last valid state, with the warning, the log line and the gauge. |
 | A70 | Several queries (6.20, 4.15a). A panel with 3 queries answers 3 requests with `ref`, one for each query, each with its own `query_id`. A request with no `ref` runs the first query. A `ref` that no query has gives `404 not_found`. A body with an SQL member, a `source` member or a `ref` of a wrong type gives `400`. |
 | A71 | Hidden queries (6.20, T65). A request for a hidden query gives `400 bad_request`, with the `ref` and for a hidden first query with no `ref`. The log has no `query.run` line, and no query reaches the source. A panel with all queries hidden is a valid document. |
 | A72 | The save (7.18, 11.21). A save, a restore, an import and a `validate_only` check each query of a panel. A fault in the third query gives the pointer `/sections/0/panels/<n>/data/extra_queries/1/sql/<line>`. 8 queries are valid and 9 give `out_of_range`. A document with 401 queries gives `too_large`. A panel with `repeat` and `extra_queries` gives `not_permitted`. |
@@ -1869,7 +1872,7 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B19 | Conflict: a second browser context saves first. The first context gets the conflict screen with a line diff and the three choices of section 10. Each choice gives its result. |
 | B20 | History: list, read-only view with the note "Data not shown" in each panel and one "Show data" button for the page, diff, restore as a new version. |
 | B21 | Export and import of one document. Delete, then restore. |
-| B22 | With `server.editing = false`, no edit control is in the DOM. |
+| B22 | With no primary store, no edit control is in the DOM. |
 | B23 | Mode `authzen` with `fake-pdp`: no edit control without `dashboard.write`, no "Run" of a draft without `source.query`, and the notice of 9.6 when the PDP is down. |
 | B24 | A panel whose source is down shows its error. The other panels render. |
 | B25 | Data links follow 9.18: only `http`, `https` and relative URLs; each value is URL-encoded. A link with `target_blank` = `true` opens a new tab with `rel="noopener noreferrer"`. A link with `false` opens in the same tab. |
@@ -1926,7 +1929,7 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B76 | Back and Forward (10.2a, rules 9 and 6). A scripted walk goes through the seven states by their controls. Then the case presses Back to the start and Forward to the end. After each press, `data-hune-view` and the URL are the state of the entry, the page shows one view, and the page writes `replaceState` only for the normal form. With changes in the draft, a Back out of edit mode keeps the draft and shows the notice with "Resume" and "Discard". "Resume" opens the state `edit` with the draft. An open Save drawer closes at each press. |
 | B77 | Reload (10.2a, rule 10). For each of the seven states, the case reloads the page. The state, the URL and `data-hune-origin` are the same. A sampler of frames (`requestAnimationFrame`, from the first frame) sees no frame with the hold off and a view that is not the state, no frame with an empty main area, and no change of more than 0.5 px of the toolbar. `leave` after the reload uses `history.back()`. A draft comes back with the notice "Your draft is back.". |
 | B78 | Deep links (10.2a, rules 1, 3, 4 and 11). The case loads the vectors of `FE-26`: each URL with two or more view names, with an unknown id, with an unknown value and with the form `panel-<id>`. For each, `data-hune-view` is the state of the vector, the URL is the normal form, the page shows one view, and a notice shows for an id that does not exist. The URL with `editPanel` and `viewPanel` shows the panel editor and no panel view. |
-| B79 | Rights (10.2a, rule 8, and 10.14). On the server with `server.editing = false`: each deep link with edit names shows the state `view` or `panel-view`, the notice "You cannot edit this dashboard.", the URL with no edit name, and no "Resume" notice, also when a draft is in `localStorage`. The draft stays. `editview=history` shows the history with no "Restore". On the server with `server.editing = true`, the page injects `editing = false` in the session and presses Back and Forward over edit entries: the same result. A save that gets `403` keeps edit mode and the draft. |
+| B79 | Rights (10.2a, rule 8, and 10.14). On the server with no primary store: each deep link with edit names shows the state `view` or `panel-view`, the notice "You cannot edit this dashboard.", the URL with no edit name, and no "Resume" notice, also when a draft is in `localStorage`. The draft stays. `editview=history` shows the history with no "Restore". On the server with a primary store, the page injects `editing = false` in the session and presses Back and Forward over edit entries: the same result. A save that gets `403` keeps edit mode and the draft. |
 | B80 | Placed controls (4.7a, 9.10). A dashboard places `env` (select), `node` (multi, All, `hide = "label"`) and `min_weight` (number, title "Threshold", second section). `account` has no placement and `region` has `hide = "variable"`. Each hook `variable-<name>` occurs one time and is inside its frame. The frames have the grid places of the placements, and the bar shows `account` only. A change of `env` writes `var-env` and runs the stat with the new value. A change of `node` and an entry of `min_weight` that breaks the number grammar behave as in the bar (B08). A reload with `var-env` in the URL shows the value in the frame. |
 | B81 | The row under the header has no height when no variable is left (9.10). A dashboard whose variables are all placed (or have `hide = "variable"`) and that has no dashboard link shows no row: its height is 0, and the first panel starts at the same place at the first frame and after the load of the options (the probe of B58, no move of more than 0.5 px). With a dashboard link, the row stays and holds the link only. A dashboard with variables that have no placement shows the bar with exactly these variables. |
 | B82 | Keyboard and accessibility of a placed control (9.26). The Tab order is the order of the grid. `Enter`, `Space`, the arrows, `Escape` and the search field work in a frame as in the bar. After `Escape`, the focus returns to the button. A text control applies on `Enter` and on blur. The accessible names are `<label>: <text>`, also with `hide = "label"`. The frame has `role="group"` and the name of its title, else of its label. Scripted checks (unique ids, resolved references, contrast of the texts, focus ring of 3:1) run in both themes (axe-core needs the network). |
@@ -2531,7 +2534,7 @@ a job can only pass when its code exists:
 | M2 | also `source` | `api`: also A18 to A24 and K14a |
 | M3a | also `import` | no change |
 | M3b | also `frontend` and `browser` | no change |
-| M4 | also `store` on the volume | `store`: the common tests of 5.34 except SC-44 and SC-47, the volume tests of 5.35, SX-01; `api`: A01 to A38 and A46 on the volume, with and without `server.editing` |
+| M4 | also `store` on the volume | `store`: the common tests of 5.34 except SC-44 and SC-47, the volume tests of 5.35, SX-01; `api`: A01 to A38 and A46 on the volume, with and without a primary store |
 | M5 | `store` and `api` also on PostgreSQL 15 and 18; `failover` when its paths changed | `store`: every case, the restore drill included; `api`: A01 to A38 and A46 on both backends |
 | M6 | `api` also in mode `authzen`; `procurauth` when its paths changed | `api`: also A39 to A45 and K14b |
 | M7 | no new job | `api`: also K14c, with the OTLP exporter |
@@ -2934,7 +2937,6 @@ server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
-  editing                 = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "20s"
@@ -2951,11 +2953,9 @@ telemetry {
 }
 
 storage {
-  backend = "volume"
-
-  volume {
+  volume "main" {
     path            = "/var/lib/hune/dashboards"
-    read_only       = false
+    primary         = true
     rescan_interval = "5s"
     history_keep    = 100
   }
@@ -2996,7 +2996,7 @@ At a deployment behind an nginx that exists, the same file differs in these valu
 | Key | Value |
 |---|---|
 | `server.base_path` | `"/dashboards/"` |
-| `storage.volume.read_only`, `server.editing` | `true` and `false` during the parallel run; `false` and `true` from T (15.15) |
+| `primary` of the volume | absent during the parallel run (a read-only store); `true` from T (15.15) |
 | `clickhouse "prod".url` | `"https://<clickhouse host>:8443"` |
 | `clickhouse "prod".database` | `"<database>"` |
 | `clickhouse "prod".user` | the account of 19.6 |
@@ -3173,8 +3173,6 @@ volume. `deploy/compose/postgres/config.hcl` is the file of 17.6 with this `stor
 
 ```hcl
 storage {
-  backend = "postgres"
-
   postgres {
     host              = "postgres"
     port              = 5432
@@ -3186,6 +3184,7 @@ storage {
     connect_timeout   = "5s"
     statement_timeout = "10s"
     poll_interval     = "5s"
+    primary           = true
     history_keep      = 100
   }
 }
@@ -3305,7 +3304,6 @@ data:
       listen                  = "0.0.0.0:8080"
       ops_listen              = "0.0.0.0:9090"
       base_path               = "/"
-      editing                 = true
       max_connections         = 1024
       idle_timeout            = "75s"
       shutdown_grace          = "20s"
@@ -3322,8 +3320,6 @@ data:
     }
 
     storage {
-      backend = "postgres"
-
       postgres {
         host              = "postgresql-rw.data.svc"
         port              = 5432
@@ -3335,6 +3331,7 @@ data:
         connect_timeout   = "5s"
         statement_timeout = "10s"
         poll_interval     = "5s"
+        primary           = true
         history_keep      = 100
 
         tls {

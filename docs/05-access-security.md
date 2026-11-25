@@ -838,7 +838,7 @@ them: each flag is `false`, and `GET /api/sources` gives no source. A folder or 
 `access.write` equal to `false` with no question for `dashboard.write` (11.35).
 
 In the mode `open`, each item shows. The flag `access.create` is `true` when a primary store exists. The flag `access.write` is `true`
-for each item of the primary store when a primary store exists, and `false` for each item of a read-only store. `GET
+for an item of the primary store, and `false` for an item of a read-only store. `GET
 /api/sources` gives each source when a primary store exists, and no source when none exists.
 
 A PDP failure during a list gives `503 pdp_unavailable`. A list never shows a result that a failure made empty (fail
@@ -1177,17 +1177,17 @@ A `mongodb` block is a node `source:<id>` of the tree of 11.15, as a `clickhouse
 
 A configuration can have a primary store. Each other store is read-only (5.42). Hune never writes into a read-only store, whatever the PDP says.
 
-1. The rule applies to a create into a folder, a save, a delete, a restore, a move, a rename of a folder and a delete of a folder. It applies to a draft of a dashboard or of a folder of a read-only store (the preview and `validate_only`).
+1. The rule applies to a create, a save, a delete, a restore, a move and a change of a folder. It applies to a draft of a dashboard or of a folder (the preview and `validate_only`).
 2. A move needs the primary store for the dashboard and for the target folder.
 3. Hune finds the store of the target in the catalog, with no read of the store.
 4. In the mode `open`, Hune answers `403 read_only_store` at once.
 5. In the mode `authzen`, Hune asks one question first: `dashboard.read` on `N(uid)`, or on `F(folder)` for a folder. The question uses no kept answer (11.27).
 6. When the PDP answers `false`, the answer is the `403 forbidden` of any other write of the route, with the member `action` equal to `dashboard.write` (11.30). The body does not show that the target is in a read-only store. The same holds for a uid or a folder that does not exist (11.23).
 7. When the PDP answers `true`, the answer is `403 read_only_store`. Hune never asks `dashboard.write` for the target. A grant of `dashboard.write` on the service, on a folder or on a dashboard of a read-only store changes nothing.
-8. The display answers follow the rule: the flag `access.write` of a folder and of a dashboard of a read-only store is `false`, with no question (11.25). The right to see the SQL (`server.query_inspect`) needs `dashboard.write`, so nobody has it on a dashboard of a read-only store in the mode `authzen`.
+8. The flag `access.write` of a folder and of a dashboard of a read-only store is `false`, with no question (11.25). The right to see the SQL needs `dashboard.write`. So nobody has it on a dashboard of a read-only store in the mode `authzen`.
 9. The action document is the same as for any configuration with a primary store (11.18). It names the actions by type of resource, not by store. For a resource of a read-only store, the actions that matter are `dashboard.read` and `source.query` of the query routes. Hune never uses `dashboard.write` for such a resource.
 
-The case K321 holds for a target of a read-only store: a subject with no right on it gets the same answer for a target that exists and for one that does not.
+The case K321 holds for a target of a read-only store. A subject with no right on it gets the same answer for a target that exists and for one that does not.
 
 ## 12. Security
 

@@ -259,7 +259,7 @@ In mode `authzen`, Hune asks this question at each request, with no kept answer 
 permissions of the route that name only items that exist come first, as for a uid that exists.
 
 The write routes are: `POST`, `PUT` and `DELETE` of folders and dashboards, `restore`, `move` and `preview`. The query,
-options and annotation routes use `POST` but they are reads: the check for a primary store (6.28, rule 6) does not apply to them.
+options and annotation routes use `POST`, but they are reads. The check for a primary store (6.28, rule 6) does not apply to them.
 
 ### 6.10 Session
 
@@ -378,8 +378,8 @@ Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forb
 ```
 
 - `read_only` is `true` when the store of the dashboard is read-only (5.42). `store` is the id of this store. For a read-only dashboard, `access.write` is `false` with no question to the PDP.
-- `stale` is present, with the value `file_invalid`, when the dashboard shows its last valid state because its file in a volume is not valid now (5.44). The member has no other value. It never holds a path or a message of the parser. Each subject that can read the dashboard gets it.
-- `state` is `valid`, or `invalid` when the stored bytes break section 4 (5.8, item 5). Only a row of the PostgreSQL store gives `invalid`. An `invalid` item has the uid
+- `stale` is present when the dashboard shows its last valid state, because its file in a volume is not valid now (5.44). Its value is `file_invalid`. It never holds a path or a message of the parser. Each subject that can read the dashboard gets it. Only a row of the PostgreSQL store gives the state `invalid`.
+- `state` is `valid`, or `invalid` when the stored bytes break section 4 (5.8, item 5). An `invalid` item has the uid
   as its `title` and an empty `tags` list. Its member `errors` has 20 items at most, in the form of 4.37. Hune does
   not serve this document: `GET` gives `422 stored_document_invalid`, and `GET` with `download=true` gives its stored
   bytes (6.14). A save with `If-Match` equal to its `etag` can replace it (4.39).
