@@ -772,13 +772,51 @@ pub async fn sc_52(b: &impl Backend) {
     let _ = sid(0);
 }
 
+/// SC-53: a dashboard without a folder: create, read, move into a folder and back, history, delete and restore.
+pub async fn sc_53(b: &impl Backend) {
+    let fx = b.new_store(100).await;
+    mkfolder(&fx.store, "f").await;
+    let root = hune_core::ids::FolderId::root();
+    let d = doc("r1", "Rooted");
+    let saved = fx.store.create(&root, &d, VersionKind::Create, &meta(1)).await.expect("create at the root");
+    assert!(saved.folder.is_root(), "SC-53");
+    let cur = fx.store.get(&uid("r1")).await.unwrap();
+    assert!(cur.folder.is_root(), "SC-53");
+    let snap = fx.store.load().await.unwrap();
+    assert_eq!(snap.folders.len(), 1, "SC-53: the root is not a folder");
+    assert!(snap.entries.iter().any(|e| e.uid().as_str() == "r1" && e.folder().is_root()), "SC-53");
+    // A create of the same uid in a folder finds the uid at the root.
+    let e = fx.store.create(&fid("f"), &doc("r1", "Twin"), VersionKind::Create, &meta(2)).await.unwrap_err();
+    assert!(matches!(e, StoreError::Exists { .. }), "SC-53: {e:?}");
+    // Move into the folder and back.
+    let into = fx.store.move_to(&uid("r1"), &fid("f"), d.etag(), &root, &meta(3)).await.unwrap();
+    assert_eq!(into.folder, fid("f"), "SC-53");
+    assert_eq!(fx.store.get(&uid("r1")).await.unwrap().folder, fid("f"), "SC-53");
+    let back = fx.store.move_to(&uid("r1"), &root, d.etag(), &fid("f"), &meta(4)).await.unwrap();
+    assert!(back.folder.is_root(), "SC-53");
+    // The history keeps the place of each version: the create at the root, the move into the folder, the move back to the root.
+    let h = versions(&fx.store, "r1").await;
+    let places: Vec<bool> = h.iter().rev().map(|v| v.folder.is_root()).collect();
+    assert_eq!(places, vec![true, false, true], "SC-53: {h:?}");
+    // Delete, then restore: the restored dashboard is at the place of the restored version.
+    fx.store.delete(&uid("r1"), d.etag(), &root, &meta(5)).await.unwrap();
+    assert!(matches!(fx.store.get(&uid("r1")).await, Err(StoreError::NotFound)), "SC-53");
+    let restored = fx.store.restore(&uid("r1"), 2, None, None, &meta(6)).await;
+    // Version 2 is the move into the folder: the restore puts the dashboard back in that folder.
+    assert_eq!(restored.expect("restore").folder, fid("f"), "SC-53");
+    // Version 3 is the move back to the root: a restore of it gives the root.
+    fx.store.delete(&uid("r1"), d.etag(), &fid("f"), &meta(7)).await.unwrap();
+    let again = fx.store.restore(&uid("r1"), 3, None, None, &meta(8)).await.expect("restore");
+    assert!(again.folder.is_root(), "SC-53");
+}
+
 /// The ids of the common tests that this backend-agnostic suite implements.
 pub const IMPLEMENTED: &[&str] = &[
     "SC-01", "SC-02", "SC-03", "SC-04", "SC-05", "SC-06", "SC-07", "SC-08", "SC-09", "SC-10", "SC-11", "SC-12",
     "SC-13", "SC-14", "SC-15", "SC-16", "SC-17", "SC-18", "SC-19", "SC-20", "SC-21", "SC-22", "SC-23", "SC-24",
     "SC-25", "SC-26", "SC-27", "SC-28", "SC-29", "SC-30", "SC-31", "SC-32", "SC-33", "SC-34", "SC-35", "SC-36",
     "SC-37", "SC-38", "SC-39", "SC-40", "SC-41", "SC-42", "SC-43", "SC-45", "SC-46", "SC-48", "SC-49", "SC-50",
-    "SC-51", "SC-52",
+    "SC-51", "SC-52", "SC-53",
 ];
 
 #[allow(dead_code)]

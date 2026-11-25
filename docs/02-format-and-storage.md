@@ -3315,6 +3315,7 @@ No instance restarts. `/readyz` stays at 200 (section 14).
 | SC-50 | The current document is not valid (hook); a save with `if_match` equal to the SHA-256 of its raw bytes | A version `external` without bytes, with that etag, then the version of the save. `version` of the `external` version gives no bytes; `restore` of it gives `NotRestorable`; a `move_to` before the save gives `Invalid`. |
 | SC-51 | A uid with a current document and no version (hook) | `get` gives version 0 and `saved_by` `external`; `history` gives an empty list |
 | SC-52 | Retention with `history_keep` = 2; a save S with a `save_id`, then 2 other saves, then S again | `Conflict` (5.5, rule 15) |
+| SC-53 | A dashboard without a folder: a create at the root, a create of its uid in a folder, a move into a folder and back, a delete and a restore | The root is not a folder in `load`. The create of the twin gives `Exists`. Each version keeps its place, and the restore gives the place of the restored version |
 
 ### 5.35 Conformance suite: volume tests
 
