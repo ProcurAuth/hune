@@ -50,12 +50,12 @@ the same in both modes.
 | Subject in the history, the audit and the logs | `-` | The claim `sub` of the token. | 14.11 |
 | `GET /.well-known/procurauth/actions` | 404 | 200, no token, no question. | 11.18 |
 | `GET /.well-known/procurauth/resources` | 404 | 200 with a valid token. | 11.26 |
-| Display filter of lists and controls | Off. Each item shows. The edit controls follow `server.editing`. | On. | 11.25 |
+| Display filter of lists and controls | Off. Each item shows. The edit controls follow the primary store (13.10). | On. | 11.25 |
 | Ceilings `max_rows` and `max_duration` | Off. The limits of the source apply alone. | On. | 11.24 |
 | Check of `source.query` at a save and at a draft run | Off. | On. | 11.21 |
 | Unknown dashboard uid or folder id | 404, no question. | 403 or 404 by the rule of 11.23. | 11.23 |
 | Concurrency limit for each subject | Off. The key `max_concurrent_per_subject` is forbidden. | On. The key is necessary. | 13.12 |
-| Edits (save, create, delete, move, restore, folder changes) | Permitted when `server.editing = true`. | Permitted when `server.editing = true` and the PDP answers `true`. | 11.21 |
+| Edits (save, create, delete, move, restore, folder changes) | Permitted when a store is the primary store, and only in this store (11.35). | Permitted when a store is the primary store, only in this store, and the PDP answers `true`. | 11.21 |
 | Answers 401 `unauthenticated` and 503 `pdp_unavailable` | Never. | Possible. | 11.30 |
 | Log events `access.*` | Never. | Yes. | 14.7 |
 | Metrics `hune_pdp_*` | Present, always 0. | Yes. | 14.8 |
@@ -463,8 +463,8 @@ Both backends give the same tree, because the tree comes from the catalog above 
 
 | Node | Volume backend | PostgreSQL backend |
 |---|---|---|
-| `folder:<f>` | The directory `<storage.volume.path>/<f>/` | The row of the table of folders with the id `<f>` |
-| `dashboard:<u>` | The file `<storage.volume.path>/<f>/<u>.json`, whose member `uid` is `<u>` | The row of the table of dashboards with the uid `<u>` and the folder id `<f>` |
+| `folder:<f>` | The directory `<path of the volume>/<f>/` | The row of the table of folders with the id `<f>` |
+| `dashboard:<u>` | The file `<path of the volume>/<f>/<u>.json`, whose member `uid` is `<u>` | The row of the table of dashboards with the uid `<u>` and the folder id `<f>` |
 | `source:<s>` | The block `clickhouse "<s>"` or `postgres "<s>"` of the configuration | The block `clickhouse "<s>"` or `postgres "<s>"` of the configuration |
 
 A move changes the chain of a dashboard. The grants on the old folder no longer apply to it, and the grants
@@ -481,7 +481,7 @@ PDP nothing, also when the request has a bad token. Hune builds the document one
 `ActionDocumentBuilder` of the library. It serves the same bytes at each read, with `Content-Type: application/json`. In
 the mode `open`, the route answers 404.
 
-The document for `audience = "dashboards"`, `server.editing = true` and two sources, `prod` (label `Production`,
+The document for `audience = "dashboards"`, a primary store and two sources, `prod` (label `Production`,
 `max_result_rows = 100000`, `max_execution_time = "60s"`) and `preprod` (label `Pre-production`,
 `max_result_rows = 50000`, `max_execution_time = "30s"`):
 
@@ -526,7 +526,7 @@ These rules make the document:
 - `server` is `access.identity.audience`.
 - The three types and the two limit declarations never change.
 - `dashboard.read` is always in `actions`. `dashboard.write` and `source.query` are in `actions` only when
-  `server.editing = true` (P 5.2a). Hune sends no question for an action that it does not publish.
+  a store is the primary store (P 5.2a). Hune sends no question for an action that it does not publish.
 - `resources` has one item for each source block of both kinds, sorted by the id in byte order. Its `path` is `source:<id>` and
   its `label` is the key `label` of the block. When `source.query` is not published, `resources` is absent, because no
   published action takes the type `source`.
@@ -547,7 +547,7 @@ These rules make the document:
 | P 5.2: `resource_types` of an action holds `service` or declared types, each one time. | Yes. |
 | P 5.2: each limit name of an action is declared, one time. | `max_rows` and `max_duration` are declared. |
 | P 5.2: a resource path is `<type>:<id>` segments, each id percent-encoded. | `source:<id>`. The id rule needs no encoding. |
-| P 5.2a: only the served actions. | `dashboard.write` and `source.query` need `server.editing = true`. |
+| P 5.2a: only the served actions. | `dashboard.write` and `source.query` need a primary store (13.10). |
 | P 5.3c: 64 KiB, 64 actions, 16 types, 256 resources, 16 limits, a label of 60 characters, a description of 300 characters, a unit of 20 characters. | At most 64 sources in all (13.7), 3 actions, 3 types, 2 limits. Labels have 60 characters at most (13.12, 13.12a). The largest document is less than 64 KiB. |
 | P 5.4: labels and descriptions in English. | Yes. |
 | P 6.1: a ceiling has `min` and `max`, whole numbers, `min` not above `max`. | `min` is 1. `max` is 1 or more, because each source limit is 1 or more. |
@@ -565,7 +565,7 @@ Each request on `server.listen` passes these steps in this order. A step that re
    the limit of the route (12.16). Refusal: 400, 404, 405, 413, 414 or 431.
 2. Write guard, on each `POST`, `PUT` and `DELETE` (12.7). Refusal: 403 `cross_site_request` or 415.
 3. Token check, in the mode `authzen`, on each route except the action document (11.8). Refusal: 401.
-4. Process ceiling: a write route with `server.editing = false` gets `403 editing_disabled` and no question. This
+4. Process ceiling: a write route, when no store is the primary store, gets `403 editing_disabled` and no question. This
    includes `POST /api/sources/{id}/preview`.
 5. Body read, within the limit of the route (12.16). A chunked body above the limit gets 413. A body that does not
    arrive within 30 s gets 408.
@@ -678,7 +678,7 @@ Rules for the table:
 ### 11.22 Questions in the mode open
 
 The mode `open` sends no question. The process ceiling of step 4 of 11.20 still applies: each write route needs
-`server.editing = true`. Each other operation runs within the limits of the process (12.16).
+a primary store. Each other operation runs within the limits of the process (12.16).
 
 ### 11.23 The unknown-uid rule
 
@@ -833,11 +833,13 @@ The page uses these flags. It hides the edit, save, delete, move and restore con
 The source picker and "Run draft" of the editor show only the sources of `GET /api/sources`. The move dialog offers
 only the folders with `access.write`.
 
-With `server.editing = false`, `dashboard.write` and `source.query` are not published. Hune then asks no question for
-them: each flag is `false`, and `GET /api/sources` gives no source.
+When no store is the primary store, `dashboard.write` and `source.query` are not published. Hune then asks no question for
+them: each flag is `false`, and `GET /api/sources` gives no source. A folder or a dashboard of a read-only store has the flag
+`access.write` equal to `false` with no question for `dashboard.write` (11.35).
 
-In the mode `open`, each item shows. Each flag `access.write` and `access.create` equals `server.editing`. `GET
-/api/sources` gives each source when `server.editing = true`, and no source when it is `false`.
+In the mode `open`, each item shows. The flag `access.create` is `true` when a primary store exists. The flag `access.write` is `true`
+for each item of the primary store when a primary store exists, and `false` for each item of a read-only store. `GET
+/api/sources` gives each source when a primary store exists, and no source when none exists.
 
 A PDP failure during a list gives `503 pdp_unavailable`. A list never shows a result that a failure made empty (fail
 closed). Section 6 gives the place of each flag in each answer.
@@ -886,7 +888,7 @@ The children:
 | `source` | The `clickhouse` blocks | The key `label` of the block | `false` | `source.query` |
 
 For each child, Hune asks the published actions of the table with the match `subtree` and no usage. It stops at the
-first `true` answer. A child with one `true` answer is in the list (P 5.6). With `server.editing = false`, a folder or
+first `true` answer. A child with one `true` answer is in the list (P 5.6). When no store is the primary store, a folder or
 a dashboard needs `dashboard.read`, and no source is in the list.
 
 The items are sorted by the id in byte order. One answer has 50 items at most. One request asks at most 200 questions.
@@ -997,7 +999,7 @@ These routes need the token but ask no question:
 |---|---|
 | The pages `/` and `/d/{uid}[/{slug}]` | The shell is the same for each uid. It holds no data of a dashboard. |
 | The files under `/static/{build-hash}/` | They hold the code of the page, not data. |
-| `GET /api/session` | It gives the subject of the token, the mode and `server.editing`. |
+| `GET /api/session` | It gives the subject of the token, the mode, `editing` (a primary store exists) and the stores. |
 
 The routes of `server.ops_listen` (`/livez`, `/readyz`, `/metrics`) need no token. They are on a second listener that
 the edge does not reach (14.2). Thus no route through the edge is exempt from the token, except the action document,
@@ -1024,7 +1026,8 @@ layer uses these codes:
 | 403 | `forbidden` | A `false` answer (also with `budget_exceeded`), an answer that Hune treats as `false`, or a route with no rule. | `false` |
 | 403 | `approval_cannot_wait` | A `false` answer to a question with a reason of 17.1 (`approval_required`, `approval_pending`, `approval_denied` or `approval_expired`). Hune has no approval flow. The body is `{"error": "approval_cannot_wait"}` and has no other member (P 17.7a). | `false` |
 | 403 | `ceiling_exceeded` | A query above an effective limit that a ceiling gave (11.24). The body also has `action`, `ceiling` and `limit`. | `false` |
-| 403 | `editing_disabled` | `server.editing = false` on a write route. No question. | `false` |
+| 403 | `editing_disabled` | A write route when no store is the primary store. No question. | `false` |
+| 403 | `read_only_store` | A write whose target is in a read-only store, after a `true` answer for `dashboard.read` (11.35). | `false` |
 | 404 | `not_found` | An unknown item after the rule of 11.23, or a ProcurAuth route in the mode `open`. | `false` |
 | 400 | `invalid_options_request` | A query string of the options route that is not valid. | `false` |
 | 409 | `already_exists` | A create of a uid that exists and that the subject can read (11.23). | `false` |
@@ -1095,7 +1098,7 @@ values:
 - `access.mode = "authzen"`, `identity.audience = "hune-conf"`, and the test JWK Set of ProcurAuth in
   `public_keys_file`.
 - `pdp.url = "http://127.0.0.1:8181"`, `plain_http = true`, a `token_file`, `timeout = "2s"` and `cache_ttl = "0s"`.
-- `server.editing = true` and the volume backend on the fixture.
+- A primary volume on the fixture.
 - One block `clickhouse "conf"` with the URL `http://127.0.0.1:8123`, `user = "hune"`, `database = "analytics"` and
   `password_file = "/conformance/clickhouse_password"`. The file holds the test password of the init file.
 
@@ -1169,6 +1172,22 @@ A `mongodb` block is a node `source:<id>` of the tree of 11.15, as a `clickhouse
 - A grant of `source.query` gives each read that the user of the source permits (8b.13), on the databases and the collections of the block. It gives no write: the user cannot write, and the connection sends only read commands.
 - The query text, the collection and the database are not facts of a question. A rule of the PDP cannot permit one collection and refuse another. The operator uses one source block for each set of collections that needs another rule.
 - The series U (11.32) needs no change. Its fixtures use ClickHouse.
+
+### 11.35 A write into a read-only store
+
+A configuration can have a primary store. Each other store is read-only (5.42). Hune never writes into a read-only store, whatever the PDP says.
+
+1. The rule applies to a create into a folder, a save, a delete, a restore, a move, a rename of a folder and a delete of a folder. It applies to a draft of a dashboard or of a folder of a read-only store (the preview and `validate_only`).
+2. A move needs the primary store for the dashboard and for the target folder.
+3. Hune finds the store of the target in the catalog, with no read of the store.
+4. In the mode `open`, Hune answers `403 read_only_store` at once.
+5. In the mode `authzen`, Hune asks one question first: `dashboard.read` on `N(uid)`, or on `F(folder)` for a folder. The question uses no kept answer (11.27).
+6. When the PDP answers `false`, the answer is the `403 forbidden` of any other write of the route, with the member `action` equal to `dashboard.write` (11.30). The body does not show that the target is in a read-only store. The same holds for a uid or a folder that does not exist (11.23).
+7. When the PDP answers `true`, the answer is `403 read_only_store`. Hune never asks `dashboard.write` for the target. A grant of `dashboard.write` on the service, on a folder or on a dashboard of a read-only store changes nothing.
+8. The display answers follow the rule: the flag `access.write` of a folder and of a dashboard of a read-only store is `false`, with no question (11.25). The right to see the SQL (`server.query_inspect`) needs `dashboard.write`, so nobody has it on a dashboard of a read-only store in the mode `authzen`.
+9. The action document is the same as for any configuration with a primary store (11.18). It names the actions by type of resource, not by store. For a resource of a read-only store, the actions that matter are `dashboard.read` and `source.query` of the query routes. Hune never uses `dashboard.write` for such a resource.
+
+The case K321 holds for a target of a read-only store: a subject with no right on it gets the same answer for a target that exists and for one that does not.
 
 ## 12. Security
 
@@ -1344,7 +1363,7 @@ At each start in the mode `open`, Hune writes one `config.warning` line with `ke
 route of server.listen."
 
 In the mode `open`, each request that reaches `server.listen` can read each dashboard and run its queries. With
-`server.editing = true`, it can also change each dashboard. A change of the SQL runs that SQL with the ClickHouse
+a primary store, it can also change each dashboard of this store. A change of the SQL runs that SQL with the ClickHouse
 account of Hune. The mode `open` is thus safe only behind a proxy that authenticates each request.
 
 The mode `open` fits a deployment where the proxy guards the whole prefix with `auth_request`. A proxy can guard the prefix
@@ -1542,7 +1561,7 @@ The secrets are the passwords of the ClickHouse, `postgres` and `mongodb` source
 - The volume: section 5 gives the rules. The root is absolute and canonical, and Hune opens it one time as a
   directory. Each later access uses `openat` with `O_NOFOLLOW`. Each name comes from a validated id. Hune follows and
   makes no symbolic link, in both modes.
-- Each path of the configuration (`_file` values, `ca_file`, `storage.volume.path`) MUST be absolute. A relative path
+- Each path of the configuration (`_file` values, `ca_file`, `path` of a volume) MUST be absolute. A relative path
   stops the start (13.6).
 - A `_file` value and a CA file must be regular files. Hune does not follow a symbolic link in their last part.
 - Hune never builds a path from a value of a request, except from an id that passed the id rule of section 4.
