@@ -416,6 +416,9 @@ input.toggle:checked::before { background: var(--toggle-thumb-on); transform: tr
 /* --- The theme selector (header) and the variables row of the dashboard ------------------------------------------------- */
 
 /* The theme button of the header (9.25): one icon button that shows the choice. A click goes to the next choice (System, Dark, Light). */
+/* The lock of a dashboard of a read-only store: it stands in the header where the switch "Edit" would be. It has the size of an icon button of the header. */
+.header-lock { display: inline-flex; flex: none; align-items: center; justify-content: center; width: var(--tb-icon-w, 36px); height: var(--control-h); color: var(--muted); cursor: default; }
+.header-lock:hover, .header-lock:focus-visible { color: var(--text); }
 .theme-select__button { width: var(--tb-icon-w, 36px); padding: 0; color: var(--muted); transition: color var(--dur-quick) var(--ease), background-color var(--dur-quick) var(--ease), border-color var(--dur-quick) var(--ease); }
 .theme-select__button:hover, .theme-select__button:focus-visible { color: var(--text); }
 .theme-select__current { display: inline-flex; }

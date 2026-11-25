@@ -25,6 +25,10 @@
 .group__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .group__menu { flex: none; width: 24px; min-height: 24px; height: 24px; }
 .group__empty { grid-column: 1 / -1; margin: 0 var(--space-2); }
+/* A read-only store is a root group: a lock and its title, in the text colour. Its folders nest below it: one indent, a smaller title with the regular
+   weight. The store title shows only when the page has two root groups or more (9.7). */
+.group__head--store { color: var(--text); }
+.group__head--nested { margin-top: var(--space-8); padding-left: var(--space-16); font-size: var(--fs-xs); font-weight: var(--fw-regular); }
 
 /* A card: a head row with the title on one line (an ellipsis) and the badge of the last change at the right, then the tags. The buttons are at
    the bottom right. The title link is stretched over the card. The buttons and the tag chips are siblings of the link, one layer above it. */
@@ -43,6 +47,10 @@
   font-size: var(--fs-xs); font-variant-numeric: tabular-nums; line-height: 18px; white-space: nowrap;
 }
 .card__badge > .icon { flex: none; }
+/* The marks at the right of the head row: the lock of a read-only store and the warning of a file that is not valid. A mark is a picture 20 px high, so
+   a card has the same rows with and without it. It lies above the stretched link, for its tooltip. */
+.card__mark { position: relative; z-index: var(--z-raised); display: inline-flex; flex: none; align-items: center; height: 20px; color: var(--muted); }
+.card__mark--stale { color: var(--warning); }
 .card__link { display: block; overflow: hidden; color: var(--text); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; }
 .card__link::after { content: ""; position: absolute; inset: 0; border-radius: var(--r-card); }
 .card__link:hover { color: var(--text); text-decoration: none; }

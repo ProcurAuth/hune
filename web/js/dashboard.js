@@ -16,10 +16,11 @@ import { REFRESH_CHOICES, cut, effectiveZone, isKnownZone, refreshToMs, resolveR
 import { buildSearch, dashboardPath, parseSearch, shortQuery } from "./url_state.js";
 import { sameSelection, selectionToUrl } from "./var_options.js";
 import { createVarsBar } from "./vars.js";
-import { button, clear, closeMenu, dismissNotice, el, notify, openMenu } from "./ui.js";
+import { button, clear, closeMenu, dismissNotice, el, icon, notify, openMenu } from "./ui.js";
 import { baseState, isEditorState, kindOf, nextState, normalSearch, originValue, parseView, readOrigin, sameState, viewNames } from "./view_state.js";
 import { exportDashboard } from "./list.js";
 import { locationNodes } from "./switcher.js";
+import { READ_ONLY_TEXT, STALE_PAGE_TEXT, isStale } from "./stores.js";
 
 function errorPage(ctx, error) {
   const { fullPage } = ctx;
@@ -48,6 +49,7 @@ export async function mount(ctx) {
   let linksBar = null; // the group of the dashboard links in the toolbar row (9.8a)
   let zoneNoticeFor = null; // the zone name that the last notice of an unknown zone named
   let urlZone = null; // the known zone of the URL name `timezone`, the zone of the view (9.5)
+  let staleNoticed = false; // true after the notice of a file that is not valid: it shows once for the page
   let namesNoticed = false; // true after the notice of a member `names` that is absent or wrong (9.10): it shows once for the page
   let toolbar = null; // the row of the variables bar, under the header (9.9)
   let editBar = null; // the group of the edit mode (Add, Save, Revert), before the time control (10.2)
@@ -65,7 +67,7 @@ export async function mount(ctx) {
   let refresh = null;
   let refreshTimer = 0;
   let skippedTick = false;
-  let loaded = null; // { doc, etag, version, folder, access }
+  let loaded = null; // { doc, etag, version, folder, access, readOnly, stale }
   let state = baseState(); // the state of the page (10.2a): what the URL names
   let shown = baseState(); // the state whose view is in the page now
   let opener = null; // the hook of the control that opened the state that closes now, for the focus after a leave (10.2a, rule 14)
@@ -287,6 +289,14 @@ export async function mount(ctx) {
 
   // The member `names` of the answer of 6.14 is absent or wrong (9.10): the runtime runs each query on each change of a variable, and the page says it
   // once, with the hook `data-notice="names"`.
+  // The file of the dashboard is not valid now: the server shows the last valid state (11.36). The page says it once, with the hook `data-notice="stale"`.
+  function noticeStale() {
+    if (!loaded.stale || staleNoticed) return;
+    staleNoticed = true;
+    const node = notify({ level: "warning", key: "stale", text: STALE_PAGE_TEXT });
+    if (node) node.dataset.notice = "stale";
+  }
+
   function noticeNames() {
     if (!rt.namesError || namesNoticed) return;
     namesNoticed = true;
@@ -314,7 +324,7 @@ export async function mount(ctx) {
   }
 
   function buildPage(initialRange, urlVars, keepSelections) {
-    loaded = { doc: answer.document, etag: answer.etag, version: answer.version, folder: answer.folder, access: answer.access || { write: false } };
+    loaded = { doc: answer.document, etag: answer.etag, version: answer.version, folder: answer.folder, access: answer.access || { write: false }, readOnly: answer.read_only === true, stale: isStale(answer) };
     const doc = loaded.doc;
     document.title = `${doc.title} - Hune`;
     rt = new Runtime({
@@ -379,6 +389,7 @@ export async function mount(ctx) {
     grid = createGrid({ doc: gridDoc(doc), rt, makeFrame });
     if (!urlZone) noticeZone(doc.time.timezone);
     noticeNames();
+    noticeStale();
 
     timeControl = createTimeControl({
       time: {
@@ -499,7 +510,12 @@ export async function mount(ctx) {
       editSwitch = buildEditSwitch();
       paintEditSwitch();
     }
-    header.setActions(timeControl.el, editSwitch);
+    // A dashboard of a read-only store has no switch "Edit" (its access.write is false: the path of a user with no right to write). A lock stands
+    // where the switch would be, with its name for assistive technology and a tooltip.
+    const lock = loaded.readOnly
+      ? el("span", { class: "header-lock", role: "img", tabindex: "0", "aria-label": READ_ONLY_TEXT, "data-tooltip": READ_ONLY_TEXT, "data-tooltip-align": "end", dataset: { testid: "read-only-lock" } }, icon("lock", 18))
+      : null;
+    header.setActions(timeControl.el, lock, editSwitch);
     header.setMore(more);
     linksBar = buildLinks();
     toolbar = el("div", { class: "dash-toolbar", dataset: { testid: "dashboard-toolbar" } }, bar.el, ...(linksBar ? [linksBar.el] : []));
@@ -531,7 +547,7 @@ export async function mount(ctx) {
     const back = inView
       ? { href: dashboardUrlFor(Boolean(viewTails.edit)), label: "Back to dashboard", attrs: { dataset: { testid: "view-back" } }, ...viewTails.back }
       : null;
-    header.setLocation(...locationNodes({ uid, title: loaded.doc.title, navigate: ctx.navigate, back }));
+    header.setLocation(...locationNodes({ uid, title: loaded.doc.title, navigate: ctx.navigate, back, session }));
   }
 
   // --- the states of the page (10.2a) -------------------------------------------------------------------------------------------

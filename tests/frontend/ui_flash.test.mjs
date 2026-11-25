@@ -85,7 +85,7 @@ test("the controls of the header have fixed widths in every state (9.9)", () => 
 
 test("the edit mode has no row of its own and no reserved slot: its group comes after the switch in the controls row", () => {
   const dash = code("web/js/dashboard.js");
-  assert.match(dash, /header\.setActions\(timeControl\.el, editSwitch\)/);
+  assert.match(dash, /header\.setActions\(timeControl\.el, lock, editSwitch\)/);
   assert.match(dash, /header\.setMore\(more\)/);
   assert.ok(!/setEditSlots|toolbarSlots|header-edit-row|editSlot/.test(dash));
   const main = code("web/js/main.js");

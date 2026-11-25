@@ -5,6 +5,7 @@
 
 import * as api from "./api.js";
 import { groupDashboards } from "./list.js";
+import { groupByStore, rootGroupCount } from "./stores.js";
 import { dashboardPath } from "./url_state.js";
 import { bindMenu, el, icon } from "./ui.js";
 
@@ -14,35 +15,49 @@ const MENU_TESTID = "header-switcher-menu";
 let tree = null;
 const folderOpen = new Map();
 
+// The session of the page, for the table of the stores. A call of locationNodes sets it.
+let sessionRef = null;
+
 async function readTree() {
   const [folders, items] = await Promise.all([api.folders(), api.dashboards()]);
-  tree = { folders: folders.items || [], items };
+  tree = { folders: folders.items || [], items, session: sessionRef };
   return tree;
 }
 
-// The items of the menu for an answer. One folder: the dashboards alone, as the list page shows no folder title for one folder (9.7).
-// An entry that is not valid has no page to open: it is not in the menu. The folder of the current dashboard is open until the person closes it.
+// The items of the menu for an answer. The root rows are the folders of the primary store and the read-only stores (stores.js). One root group
+// and it is the primary: the dashboards alone, as the list page shows no folder title for one folder (9.7). A read-only store is a row with a lock
+// that opens its folders (its dashboards, for one folder). An entry that is not valid has no page to open: it is not in the menu. The row of the
+// current dashboard is open until the person closes it.
 export function switcherItems(data, uid, navigate) {
   const groups = groupDashboards(data.folders, data.items.filter((item) => item.state !== "invalid")).filter((group) => group.items.length);
+  const split = groupByStore(groups, data.session || null);
   const entry = (item) => {
     const href = dashboardPath(item.uid, item.title);
     return { key: item.uid, label: item.title, title: item.title, href, current: item.uid === uid, testid: `switcher-item-${item.uid}`, onSelect: () => navigate(href) };
   };
-  if (groups.length <= 1) return groups.flatMap((group) => group.items.map(entry));
-  return groups.map((group) => ({
-    group: true,
-    key: `folder:${group.folder.id}`,
-    label: group.folder.title,
-    icon: "folder",
-    open: folderOpen.has(group.folder.id) ? folderOpen.get(group.folder.id) : group.items.some((item) => item.uid === uid),
-    onToggle: (open) => folderOpen.set(group.folder.id, open),
-    children: group.items.map(entry),
-  }));
+  const isOpen = (key, items) => (folderOpen.has(key) ? folderOpen.get(key) : items.some((item) => item.uid === uid));
+  const folderRow = (group) => {
+    const key = `folder:${group.folder.id}`;
+    return { group: true, key, label: group.folder.title, icon: "folder", open: isOpen(key, group.items), onToggle: (open) => folderOpen.set(key, open), children: group.items.map(entry) };
+  };
+  const storeChildren = (block) => (block.groups.length === 1 ? block.groups[0].items.map(entry) : block.groups.map(folderRow));
+  const roots = rootGroupCount(split);
+  if (roots === 0) return [];
+  if (roots === 1) return split.primary.length === 1 ? split.primary[0].items.map(entry) : storeChildren(split.stores[0]);
+  return [
+    ...split.primary.map(folderRow),
+    ...split.stores.map((block) => {
+      const key = `store:${block.store.id}`;
+      const all = block.groups.flatMap((group) => group.items);
+      return { group: true, key, label: block.store.title, icon: "lock", open: isOpen(key, all), onToggle: (open) => folderOpen.set(key, open), children: storeChildren(block) };
+    }),
+  ];
 }
 
 // The nodes of the header for a dashboard page: the selector and, when the page shows a view of a panel or the panel editor, a way back (a link with
 // an arrow, at the right of the selector). The views have no visible name. `back` is { href, label, attrs }: `attrs` can have a click handler and a test id.
-export function locationNodes({ uid, title, navigate, back = null }) {
+export function locationNodes({ uid, title, navigate, back = null, session = null }) {
+  sessionRef = session;
   const nodes = [];
   const trigger = el("button", { type: "button", class: "selector switcher", title, dataset: { testid: "header-switcher" } },
     icon("grid", 16), el("span", { class: "selector__text", text: title }), icon("chevron-down", 16));

@@ -10,6 +10,7 @@ import { makeSaveId, makeUid } from "./draft.js";
 import { scanJson } from "./json_check.js";
 import { isGrafanaFile } from "./save_logic.js";
 import { folderIdFromTitle, folderIdWithSuffix } from "./folder_id.js";
+import { READ_ONLY_ERROR_TEXT } from "../stores.js";
 
 const fill = (b) => crypto.getRandomValues(b);
 
@@ -17,6 +18,7 @@ const fill = (b) => crypto.getRandomValues(b);
 const NEW_FOLDER = "::new-folder::";
 
 const errorText = (error) => {
+  if (error.code === "read_only_store") return READ_ONLY_ERROR_TEXT;
   const list = error.extra && error.extra.errors;
   return list && list.length ? list.map((e) => `${e.pointer || "document"}: ${e.message}`).join(" ") : error.message;
 };

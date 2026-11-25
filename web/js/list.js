@@ -4,6 +4,7 @@ import * as api from "./api.js";
 import { loadEditorModule } from "./editor_loader.js";
 import { dashboardPath, listSearch, parseSearch } from "./url_state.js";
 import { absoluteTime, bindMenu, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
+import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, groupByStore, rootGroupCount } from "./stores.js";
 
 const SORT_KEY = "hune.list.sort";
 
@@ -21,7 +22,7 @@ const compareText = (a, b) => {
 export function groupDashboards(folders, items, { descending = false } = {}) {
   const byFolder = new Map(folders.map((f) => [f.id, { folder: f, items: [] }]));
   for (const item of items) {
-    if (!byFolder.has(item.folder)) byFolder.set(item.folder, { folder: { id: item.folder, title: item.folder, access: { write: false } }, items: [] });
+    if (!byFolder.has(item.folder)) byFolder.set(item.folder, { folder: { id: item.folder, title: item.folder, access: { write: false }, read_only: item.read_only, store: item.store }, items: [] });
     byFolder.get(item.folder).items.push(item);
   }
   const groups = [...byFolder.values()].sort((a, b) => compareText(a.folder.title, b.folder.title) || compareText(a.folder.id, b.folder.id));
@@ -236,7 +237,8 @@ export async function mount(ctx) {
   const body = el("div", { class: "list-body", dataset: { testid: "list" }, "aria-busy": "true" },
     el("div", { class: "list-skeleton", "aria-hidden": "true" }, el("span", { class: "skeleton" }), el("span", { class: "skeleton" }), el("span", { class: "skeleton" })));
   clear(main);
-  const page = el("section", { class: "list-page" }, status, body);
+  // The page has no visible title (9.7), but it has one heading for assistive technology: the name of the page.
+  const page = el("section", { class: "list-page" }, el("h1", { class: "visually-hidden", text: "Dashboards" }), status, body);
   main.append(page);
   header.setStart(filters);
   header.setActions(newMenu);
@@ -292,8 +294,14 @@ export async function mount(ctx) {
     // The head row: the title at the left, then the badge of the last change (only when Hune recorded a change), then the three dots.
     const change = lastChange(item, editing);
     const badge = change ? el("span", { class: "card__badge", title: change.title, dataset: { testid: `card-change-${item.uid}` } }, icon("clock", 12), el("span", { text: `Last change ${change.age}` })) : null;
+    // The marks at the right of the head row: the mark of a file that is not valid now, and the lock of a read-only store. Each is a picture with a name for
+    // assistive technology and a tooltip. A card has the same height with and without them.
+    const marks = cardMarks(item);
+    const markNodes = [];
+    if (marks.stale) markNodes.push(el("span", { class: "card__mark card__mark--stale", role: "img", "aria-label": STALE_CARD_TEXT, "data-tooltip": STALE_CARD_TEXT, "data-tooltip-align": "end", dataset: { testid: `card-stale-${item.uid}` } }, icon("warning", 16)));
+    if (marks.readOnly) markNodes.push(el("span", { class: "card__mark card__mark--lock", role: "img", "aria-label": READ_ONLY_TEXT, "data-tooltip": READ_ONLY_TEXT, "data-tooltip-align": "end", dataset: { testid: `card-lock-${item.uid}` } }, icon("lock", 16)));
     if (valid) {
-      card.append(el("div", { class: "card__top" }, el("h3", { class: "card__title" }, el("a", { class: "card__link", href: dashboardPath(item.uid, item.title), title: item.title, text: item.title })), badge));
+      card.append(el("div", { class: "card__top" }, el("h3", { class: "card__title" }, el("a", { class: "card__link", href: dashboardPath(item.uid, item.title), title: item.title, text: item.title })), badge, ...markNodes));
     } else {
       const panelId = uniqueId("errors");
       const chevron = el("span", { class: "errors-toggle__chevron" }, icon("chevron-down", 12));
@@ -305,7 +313,7 @@ export async function mount(ctx) {
         detail.hidden = open;
       } } }, toggleText, chevron);
       const detail = el("div", { id: panelId, class: "invalid-detail", hidden: true }, errorsRow(item));
-      card.append(el("div", { class: "card__top" }, el("h3", { class: "card__title card__title--invalid" }, icon("error", 14), el("code", { class: "card__uid", text: item.uid }), el("span", { class: "badge badge--error", text: "Not valid" })), badge), el("div", { class: "card__errors" }, toggle, detail));
+      card.append(el("div", { class: "card__top" }, el("h3", { class: "card__title card__title--invalid" }, icon("error", 14), el("code", { class: "card__uid", text: item.uid }), el("span", { class: "badge badge--error", text: "Not valid" })), badge, ...markNodes), el("div", { class: "card__errors" }, toggle, detail));
     }
     card.append(el("div", { class: "card__tags" }, ...(item.tags || []).map((t) => tagCardButton(t, interactiveTags))));
     // The three dots are the one menu of the card, at the right end of the head row, after the badge. A card that the user can edit offers Edit,
@@ -397,8 +405,8 @@ export async function mount(ctx) {
   }
 
   // The folder title above a group: the folder icon and the name, with the menu of the folder when the user can write in it.
-  function folderHead(group) {
-    const head = el("h2", { class: "group__head" }, icon("folder", 14), el("span", { class: "group__title", text: group.folder.title }));
+  function folderHead(group, nested = false) {
+    const head = el("h2", { class: `group__head${nested ? " group__head--nested" : ""}` }, icon("folder", 14), el("span", { class: "group__title", text: group.folder.title }));
     if (editing && group.folder.access && group.folder.access.write && folders.some((f) => f.id === group.folder.id)) {
       const menuButton = button(`Actions for the folder ${group.folder.title}`, { "aria-haspopup": "menu", "aria-expanded": "false", class: "btn btn--ghost btn--icon group__menu", dataset: { tooltipAlign: "end" } }, "more", { iconOnly: true, variant: "ghost" });
       menuButton.addEventListener("click", () => openMenu(menuButton, [
@@ -437,18 +445,29 @@ export async function mount(ctx) {
       }));
       return;
     }
-    // A folder title shows only when the user sees two folders or more (9.7).
-    const showFolders = groups.length >= 2;
+    // The groups at the root are the folders of the primary store and the read-only stores (stores.js). A title shows above each root group only when
+    // the user sees two or more (9.7). The folders of a read-only store show under its title; when that title is hidden (it is the only root group),
+    // they show only for two folders or more.
+    const split = groupByStore(visible, session, { descending });
+    const showRoots = rootGroupCount(split) >= 2;
     const stack = el("div", { class: "list-stack" });
-    for (const group of visible) {
-      if (!group.items.length && active) continue;
-      const section = el("section", { class: "group", dataset: { testid: `folder-${group.folder.id}` } });
-      if (showFolders) section.append(folderHead(group));
+    const addGroup = (group, showTitle, nested = false) => {
+      if (!group.items.length && active) return;
+      const section = el("section", { class: `group${nested ? " group--nested" : ""}`, dataset: { testid: `folder-${group.folder.id}` } });
+      if (showTitle) section.append(folderHead(group, nested));
       const cards = el("div", { class: "cards" });
       if (group.items.length) for (const item of group.items) cards.append(dashboardCard(item, shown));
       else cards.append(el("p", { class: "group__empty muted", text: "This folder is empty." }));
       section.append(cards);
       stack.append(section);
+    };
+    for (const group of split.primary) addGroup(group, showRoots);
+    for (const block of split.stores) {
+      const folderCount = block.groups.filter((g) => g.items.length || !active).length;
+      if (!folderCount) continue;
+      if (showRoots) stack.append(el("h2", { class: "group__head group__head--store", dataset: { testid: `store-${block.store.id}` } }, icon("lock", 14), el("span", { class: "group__title", text: block.store.title })));
+      const showFolderTitles = showRoots || folderCount >= 2;
+      for (const group of block.groups) addGroup(group, showFolderTitles, showRoots);
     }
     body.append(stack);
   }

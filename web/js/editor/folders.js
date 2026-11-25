@@ -8,6 +8,7 @@ import { button, clear, el, notify, openDialog } from "../ui.js";
 import { ensureCss, labelled } from "./form.js";
 import { makeSaveId, makeUid, smallestDocument } from "./draft.js";
 import { folderIdFromTitle, folderIdWithSuffix } from "./folder_id.js";
+import { READ_ONLY_ERROR_TEXT } from "../stores.js";
 import { removeStored } from "./draft_store.js";
 import { deleteRetryIsDone } from "./save_logic.js";
 
@@ -20,6 +21,7 @@ async function writableFolders(ctx) {
 
 // The text of an error under the fields (10.7). A bad_request lists each fault with its pointer.
 function errorText(error) {
+  if (error.code === "read_only_store") return READ_ONLY_ERROR_TEXT;
   const list = error.extra && error.extra.errors;
   if (list && list.length) return list.map((e) => `${e.pointer || "request"}: ${e.message}`).join(" ");
   return error.message;

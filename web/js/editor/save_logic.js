@@ -2,6 +2,7 @@
 // Pure module: no DOM access.
 
 import { makeSaveId } from "./draft.js";
+import { READ_ONLY_ERROR_TEXT } from "../stores.js";
 
 // A save attempt keeps one save_id. A change of the draft ends the attempt (10.9, rule 5).
 export class SaveAttempt {
@@ -36,6 +37,7 @@ export function classifySaveError(error) {
   if (code === "storage_unavailable" || code === "network_error" || code === "request_timeout" || status === 0) {
     return { kind: "retry", text: "Saving is not possible now. Your draft is kept in this browser." };
   }
+  if (code === "read_only_store") return { kind: "show", text: READ_ONLY_ERROR_TEXT };
   if (code === "forbidden" || code === "editing_disabled") return { kind: "show", text: error.message };
   if (code === "payload_too_large") return { kind: "show", text: "The dashboard is too large." };
   if (code === "storage_full") return { kind: "show", text: "The store is full. Tell the operator." };
