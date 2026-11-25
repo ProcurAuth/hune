@@ -2574,7 +2574,7 @@ Each job and each task writes its output to `target/ci-logs/<name>.log`. The scr
 
 The vendor step runs one time. It does nothing when `Cargo.lock` has not changed since its last run. A second vendor run writes each source file again, and cargo then builds the git dependencies and `hune` again, which takes more than 3 minutes. A new commit also builds the release binary again, because the binary holds the commit and its date (17.2).
 
-**Resources.** The full gate needs Docker, 22 cores and 93 GB of memory for the times of 16.17b. A host with fewer cores gives longer times, and `--max-jobs` limits the load. The `target/` folder of a gate run takes about 25 GB of disk, of which each debug folder takes about 5 to 10 GB. Make sure that 40 GB of disk are free.
+**Resources.** The full gate needs Docker. On a host with 22 cores and 93 GB of memory, a full run with a cold cache takes about 11 minutes. A host with fewer cores takes longer, and `--max-jobs` limits the load. The `target/` folder of a run takes about 25 GB of disk: `target/debug` takes 13 GB and `target/host` takes 6 GB. Make sure that 40 GB of disk are free.
 
 The jobs that are off the longest chain run with a low CPU weight (`nice` and `--cpu-shares`). The longest chain is the release build and the jobs that use its binary.
 
