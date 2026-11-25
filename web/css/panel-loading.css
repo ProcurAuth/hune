@@ -1,0 +1,48 @@
+/* The wait of a panel (9.11). Two signs, and nothing moves (9.26):
+   - The three dots. They sit at the top right of the title bar, left of the menu, out of the flow (absolute, no pointer events, aria-hidden).
+     They show 300 ms after a panel starts to wait, for a first load (`panel--wait`) and for a reload (`panel--progress`). A reload keeps the
+     content on the screen as it is: no dim, no blank, no flash.
+   - The preview of the panel type. It shows for a first load only (`data-wait="first"` and `panel--wait`): a panel with nothing on the screen.
+     It is some shapes in the body, under the overlay, so an error, a hint or a note covers it. The shapes change their opacity only.
+   Reduced motion: no animation; the dots are still and dimmed, the shapes are still (9.26). Print: nothing shows. */
+.panel__loader { position: absolute; top: 0; bottom: 0; right: calc(var(--space-8) + var(--space-20) + var(--space-4)); display: none; align-items: center; gap: 3px; pointer-events: none; }
+.panel--wait > .panel__head > .panel__loader, .panel--progress > .panel__head > .panel__loader { display: flex; }
+.panel__loader i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-fill); opacity: 0.6; animation: panel-pulse var(--dur-pulse) ease-in-out infinite; }
+.panel__loader i:nth-child(2) { animation-delay: 0.15s; }
+.panel__loader i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes panel-pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
+
+/* The preview. The shapes use percentages of the body (the custom properties --x, --y, --w and --h) and the step --n of the delay. */
+.panel__skeleton {
+  --skel-dur: 1800ms; --skel-step: 120ms;
+  --skel-fill: color-mix(in srgb, var(--text) 11%, transparent);
+  --skel-edge: color-mix(in srgb, var(--text) 19%, transparent);
+  position: absolute; inset: var(--panel-pad); display: none; pointer-events: none;
+}
+.panel--wait[data-wait="first"] .panel__skeleton { display: block; }
+.panel__skeleton i {
+  position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h);
+  border-radius: var(--r-sm); background: var(--skel-edge);
+  animation: panel-skel var(--skel-dur) ease-in-out infinite; animation-delay: calc(var(--n) * var(--skel-step));
+}
+@keyframes panel-skel { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+.panel__skeleton i[data-s="cell"], .panel__skeleton i[data-s="blob"] { background: var(--skel-fill); }
+.panel__skeleton i[data-s="blob"] { border-radius: 46% 54% 50% 50% / 50% 44% 56% 50%; }
+.panel__skeleton i[data-s="line"] { height: 1px; border-radius: 0; background: var(--skel-fill); animation: none; }
+/* A dot is centred on its point. */
+.panel__skeleton i[data-s="dot"] { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; }
+/* A ring is centred on the middle of the body and takes its size from its height. The gauge is open at its foot. */
+.panel__skeleton i[data-s="ring"] {
+  left: 50%; width: auto; aspect-ratio: 1; box-sizing: border-box; border: 10px solid var(--skel-fill); border-radius: 50%; background: transparent;
+  transform: translateX(-50%);
+}
+.panel__skeleton i[data-s="ring"][data-parts] { border-color: var(--skel-edge) var(--skel-fill) var(--skel-edge) var(--skel-fill); }
+.panel__skeleton[data-kind="gauge"] i[data-s="ring"] { border-color: var(--skel-edge); border-bottom-color: transparent; }
+/* The tracks of a bar gauge are lighter than their fills. */
+.panel__skeleton[data-kind="bar-gauge"] i:nth-child(odd) { background: var(--skel-fill); }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel__loader i { animation: none; opacity: 0.6; transform: none; }
+  .panel__skeleton i { animation: none; opacity: 0.8; }
+}
+@media print { .panel__skeleton { display: none !important; } }

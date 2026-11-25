@@ -8,6 +8,7 @@ import { computeFieldConfig } from "./fields.js";
 import { buildLink } from "./links.js";
 import { baseDisplayNames, displayNames } from "./names.js";
 import { noteTooltip, panelRange, timeNote } from "./panel_time.js";
+import { rangeKey, sameFrames, SKELETONS, skeletonKind, WAITING, waitMode } from "./panel_wait.js";
 import { mentionsVariable } from "./repeat.js";
 import { badgeText, failedRefs, failedSlots, firstError, hasExtra, maxRows, slotsOf } from "./queries.js";
 import { preparePanelFrames } from "./transform.js";
@@ -37,15 +38,11 @@ const LOADERS = {
 const VALUE_TYPES = new Set(["stat", "bargauge", "piechart"]);
 const VIEW_DATA_CAP = 5000;
 const PROGRESS_MS = 300;
-// A panel that waits (no result yet, queued or loading) shows the dots of its loader and, on a refresh, dims its content after this time only:
-// a result that comes sooner replaces the empty frame with no flash of the loader.
+// A panel that waits (no result yet, queued or loading) shows the dots of its loader, and the preview of its type when it has nothing on the
+// screen, after this time only: a result that comes sooner replaces the empty frame with no flash of the loader.
 const WAIT_MS = 300;
-const WAITING = new Set(["idle", "queued", "loading"]);
 // The icons of the panel menu: the three own items, and the items that the editor adds (found by their label).
 const EXTRA_ICONS = { Edit: "edit", Duplicate: "copy", "Move up": "arrow-up", "Move down": "arrow-down", Delete: "trash" };
-
-// True when the frames of the new answers are the frames that the panel drew (the same objects, in the same order).
-const sameItems = (a, b) => !!a && a.length === b.length && a.every((x, i) => x.ref === b[i].ref && x.frame === b[i].frame);
 
 // The data attributes of the frame element: the test hooks (9.29), and `data-transparent` (present, empty) when the
 // panel has `transparent` = true (4.13). The CSS hook `.panel[data-transparent]` removes the fill and the edge at rest.
@@ -53,6 +50,18 @@ const sameItems = (a, b) => !!a && a.length === b.length && a.every((x, i) => x.
 export function frameDataset(panel, instance = null) {
   const copy = instance && instance.n !== null && instance.n !== undefined ? { repeatN: String(instance.n), repeatCount: String(instance.count) } : {};
   return { testid: `panel-${instance ? instance.key : panel.id}`, state: "idle", type: panel.type, ...copy, ...(panel.transparent === true ? { transparent: "" } : {}) };
+}
+
+// The preview of a panel type (9.11): a few shapes in an element out of the flow. The shapes change their opacity only. A panel type with no
+// preview (a text) gets none.
+function buildSkeleton(type) {
+  const kind = skeletonKind(type);
+  if (!kind) return null;
+  const shapes = SKELETONS[kind].map((p) => el("i", {
+    dataset: { s: p.s, ...(p.parts ? { parts: "" } : {}) },
+    style: { "--x": `${p.x}%`, "--y": `${p.y}%`, "--w": `${p.w}%`, "--h": `${p.h}%`, "--n": String(p.d) },
+  }));
+  return el("div", { class: "panel__skeleton", "aria-hidden": "true", dataset: { kind } }, ...shapes);
 }
 
 // --- CSV of "View data" (9.11) ----------------------------------------------------------------------------------
@@ -250,10 +259,13 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   paintTexts();
   const content = el("div", { class: "panel__content" });
   const overlay = el("div", { class: "panel__overlay" });
-  // The loader: three dots in the middle of the body. CSS shows them (dashboard.css, classes `panel--wait` and `panel--progress`). They sit
-  // under the overlay, so an error, a hint or a note hides them. They take no room, take no click and have no accessible name.
+  // The loader: three dots at the top right of the title bar, left of the menu. CSS shows them (panel-loading.css, classes `panel--wait` and
+  // `panel--progress`). They take no room, take no click and have no accessible name. The preview of the panel type is in the body, under the
+  // overlay, so an error, a hint or a note hides it. Only a panel with nothing on the screen shows it (`data-wait="first"`).
   const loader = el("div", { class: "panel__loader", "aria-hidden": "true" }, el("i"), el("i"), el("i"));
-  const body = el("div", { class: "panel__body" }, content, loader, overlay);
+  head.append(loader);
+  const skeleton = buildSkeleton(panel.type);
+  const body = el("div", { class: "panel__body" }, content, skeleton, overlay);
   const root = el("section", {
     class: "panel",
     dataset: frameDataset(panel, inst),
@@ -269,7 +281,8 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   root.dataset.span = g.w <= 12 ? "half" : "full";
 
   let instance = null;
-  let rendered = null; // the frame object that is drawn
+  let rendered = null; // the answers (the frames) that are drawn
+  let renderedRange = ""; // the range of the panel at the last drawing (see `rangeKey`)
   let last = null; // { fields, names, baseNames } after the transformations, for "View data"
   let progressTimer = 0;
   let waitTimer = 0;
@@ -286,7 +299,8 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   // A time series draws its x axis over the range that its context gives (timeseries.js). For a panel with a time override that is the range of
   // the panel (9.8b), not the range of the dashboard. The other panel types read the context for their data links only: they keep the range
   // of the dashboard, which is the range of the tokens `${__from}` and `${__to}` (9.8b, step 8).
-  const chartContext = (panel.type === "timeseries" || panel.type === "state_timeline" || panel.type === "status_history" || panel.type === "heatmap") && typeof rt.rangeOf === "function"
+  const drawsRange = panel.type === "timeseries" || panel.type === "state_timeline" || panel.type === "status_history" || panel.type === "heatmap";
+  const chartContext = drawsRange && typeof rt.rangeOf === "function"
     ? () => {
       const r = rt.rangeOf(key);
       const base = page.linkContext();
@@ -314,8 +328,18 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     return { p: own, source, state: rec.state, slots, items, error, retryId: source ? source.id : key };
   }
 
+  // What a waiting panel shows (9.11): `first` (nothing on the screen: the preview and the dots) or `reload` (the earlier content stays: the
+  // dots only). The attribute is set with the state. The classes below show the signs after 300 ms.
+  function paintWait(state) {
+    const shown = content.firstChild ? "content" : overlay.dataset.kind === "empty" && !overlay.hidden ? "empty" : "nothing";
+    const mode = waitMode(state, shown);
+    if (mode) root.dataset.wait = mode;
+    else delete root.dataset.wait;
+  }
+
   function setRootState(state) {
     root.dataset.state = state;
+    paintWait(state);
     clearTimeout(progressTimer);
     root.classList.remove("panel--progress");
     if (state === "loading") progressTimer = setTimeout(() => root.classList.add("panel--progress"), PROGRESS_MS);
@@ -406,6 +430,22 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
       : preparedFields;
     const noValue = fields.length && fields[0].config.no_value;
     last = { fields: preparedFields, names: displayNames(preparedFields), baseNames: baseDisplayNames(preparedFields) };
+    // The module of the type loads before the old drawing goes. A reload then swaps the old drawing for the new one in one step: no frame is
+    // painted with an empty body between them (9.11).
+    let mod = null;
+    if (rows > 0 || panel.type === "stat" || panel.type === "bargauge" || panel.type === "gauge" || VALUE_TYPES.has(panel.type)) {
+      busy.begin();
+      try {
+        mod = await LOADERS[panel.type]();
+      } catch (error) {
+        console.error(error);
+        showError(error.message, null, info.retryId);
+        return;
+      } finally {
+        busy.end();
+      }
+      if (destroyed || mine !== token) return;
+    }
     destroyInstance();
     clear(content);
     // A stat and a bar gauge draw their own "No data" for zero rows (9.14), as Grafana does: a big text in the colour of the base step.
@@ -418,7 +458,6 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     showOverlay("none", null);
     busy.begin();
     try {
-      const mod = await LOADERS[panel.type]();
       if (destroyed || mine !== token) return;
       if (warnings.length) content.append(el("p", { class: "panel__warning", role: "status" }, icon("warning", 14), ` ${warnings.join(" ")}`));
       const holder = el("div", { class: "panel__plot" });
@@ -514,8 +553,12 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
       return;
     }
     if (info.state === "ready" && info.items.length) {
-      if (force || !sameItems(rendered, info.items)) {
+      // A new answer with the same data and the same range draws nothing again: the panel does not blink at a refresh. A chart draws its
+      // x axis over the range, so a new range draws again.
+      const at = drawsRange && typeof rt.rangeOf === "function" ? rangeKey(rt.rangeOf(key)) : "";
+      if (force || at !== renderedRange || !sameFrames(rendered, info.items)) {
         rendered = info.items;
+        renderedRange = at;
         draw(info);
       } else setRootState(["empty", "error", "timeline-limit", "bucket-limit", "geo-limit"].includes(root.dataset.state) ? root.dataset.state : "ready");
       return;

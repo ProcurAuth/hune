@@ -83,7 +83,8 @@ function mapFrame(uid, id = 1) {
     const before = urls.length;
     rec.frame = makeFrame();
     change(panel);
-    frame.update();
+    // The harness draws again each time (forced): it tests the redraw with a new frame object. An unforced refresh with the same data draws nothing (panel_wait.js).
+    frame.update(true);
     await sleep(400); // the delay of 200 ms and the failures of all the tiles, 6 at a time
     return urls.length - before;
   };
@@ -94,7 +95,7 @@ function mapFrame(uid, id = 1) {
     await sleep(400);
     return urls.length - before;
   };
-  return { frame, hook, refresh, act };
+  return { frame, hook, refresh, act, rec, makeFrame };
 }
 
 test("FE-85 frame: a failed tile is asked one time only in a view, also through the refreshes (new frame objects)", async () => {
@@ -149,4 +150,19 @@ test("FE-85 frame: the same panel key in another dashboard has its own view", as
   await b.refresh();
   assert.equal(b.hook().lat, 48.85, "the start view of the other dashboard");
   b.frame.destroy();
+});
+
+test("a refresh with the same data draws nothing again, and new data draw again (9.11)", async () => {
+  const m = mapFrame("dash-same");
+  await m.refresh();
+  const plot = m.frame.el.querySelector(".panel__plot");
+  m.rec.frame = m.makeFrame();
+  m.frame.update();
+  await sleep(50);
+  assert.equal(m.frame.el.querySelector(".panel__plot"), plot, "the same data: the same picture, no new drawing");
+  m.rec.frame = { ...m.makeFrame(), values: [[48.9], [2.35]] };
+  m.frame.update();
+  await sleep(50);
+  assert.notEqual(m.frame.el.querySelector(".panel__plot"), plot, "new data: a new drawing");
+  m.frame.destroy();
 });

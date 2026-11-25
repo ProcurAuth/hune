@@ -21,7 +21,7 @@ test("panels/heatmap.js writes no markup, makes no request and keeps 12 % of com
 test("the panel frame loads the heatmap, gives it the range of the panel and shows its note in View data", () => {
   const frame = code("panel_frame.js");
   assert.match(frame, /heatmap: \(\) => import\("\.\/panels\/heatmap\.js"\)/);
-  assert.match(frame, /panel\.type === "heatmap"\) && typeof rt\.rangeOf/);
+  assert.match(frame, /const drawsRange = [^;]*panel\.type === "heatmap";\s*const chartContext = drawsRange && typeof rt\.rangeOf/);
   assert.match(frame, /instance\.note/);
   assert.match(code("queries.js"), /JOINED = new Set\(\[[^\]]*"heatmap"/);
 });
