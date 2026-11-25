@@ -61,6 +61,7 @@ web/
     base.css                 reset, layout of the shell, header, focus rules
     components.css           buttons, menus, dialogs, forms, theme button, header controls
     picker.css               the time picker and the refresh picker, the popup of the time range (9.9)
+    var-select.css           the states, the error and the chips of the control of a variable (9.10)
     list.css                 list page: cards, folder titles, tag chips, header controls (9.7)
     dashboard.css            grid, sections, panel frames, colour tokens of 9.16
     panel-table.css          table panel (9.20)
@@ -92,6 +93,9 @@ web/
     zone.js                  the text of a time in a zone: `formatTime(ms, zone, pattern)` (9.15, 9.19)
     runtime.js               time range, variable graph, query scheduler, results (9.8, 9.10)
     vars.js                  variables bar and the control of a variable (9.10)
+    var_errors.js            the short sentence of a failed options request, by code of the API and by ClickHouse number (9.10)
+    options_cache.js         the cache of the options: key, period, time of life, size (9.10)
+    var_chips.js             the chips of a selection and the count of the chips that fit (9.10)
     adhoc.js                 the ad hoc filters: the URL form, the checks and the control of an adhoc variable (9.10a)
     var_layout.js            the placement of a variable: placed items of the grid, the home of each control (4.7a, 9.10)
     markdown.js              the Markdown parser: lines to a tree, with limits and no DOM access (9.19b)
@@ -331,6 +335,7 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/base.css">
   <link rel="stylesheet" href="static/{{build}}/css/components.css">
   <link rel="stylesheet" href="static/{{build}}/css/picker.css">
+  <link rel="stylesheet" href="static/{{build}}/css/var-select.css">
   <link rel="stylesheet" href="static/{{build}}/css/dashboard.css">
   <link rel="stylesheet" href="static/{{build}}/css/list.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-table.css">
@@ -1112,7 +1117,7 @@ Refresh:
 - A variable that is open (`allow_custom_value` = `true`, 4.8, 4.9) has a select with free entry: its popup has an editable combobox. A closed variable has the popup that this section describes first. The text below says what is different for the open variable.
 - A `text` variable has a text field. A change applies on `Enter` or when the field loses the focus. With
   `value_type = "number"`, a value that breaks the number grammar of 7.7 shows an error and does not apply.
-- The select shows the selected texts joined by " + ", the first three only, then " + <n> more". Its popup has a list
+- The select of one value shows its text. The select of a `multi` variable shows chips (below). Its name for assistive technology has the selected texts joined by " + ", the first three only, then " + <n> more". Its popup has a list
   with `role="listbox"` and a search field. The search keeps the texts that hold it, with letters folded to lower case.
 - The cost of a large selection. The select finds the texts of the three values that it shows only, in one pass over the options. The popup keeps the selected values in a set. Thus a paint of the select and a key in the search field take a time that is linear in the count of options. With 10,000 selected values of 1,005 characters and 10,000 options, each one takes 100 ms or less (`page_security_v3_low`).
 - The popup of a `multi` variable that has options has a row "Selected (n)" before the list. The number n is the count of
@@ -1131,7 +1136,7 @@ Placed controls (4.7a):
 - The control is the same code as the control of the bar (`vars.js`). It has the same popup, the same keys, the same search field and the same option rules. A `custom` or a `query` variable has the select of this section. A `text` variable has the text field.
 - The control has one selection for each variable (`rt.selections`). A change in the grid has the same effects as a change in the bar. It writes the URL value `var-<name>` and reloads the options of the variables below it. It also runs the panels whose SQL names it. A change of a variable that a `repeat` names also makes the copies again (9.8c). The values of the copies come from the options that this variable loaded.
 - The frame has the place and the size of the `placement` in the grid of its section (4.14). The label follows `hide`: `none` shows the label chip at the left of the control, as in the bar. `label` shows the control only. The chip has an ellipsis when the width is short, and the control takes the rest of the frame.
-- The control keeps its hooks `variable-<name>`, `variable-<name>-button`, `variable-<name>-input` and `variable-<name>-search` (9.29). A variable has one control in the page, so each hook occurs one time.
+- The control keeps its hooks `variable-<name>`, `variable-<name>-button`, `variable-<name>-input` and `variable-<name>-search` (9.29). A variable has one control in the page, so each hook occurs one time. The states and the chips add the hooks `variable-<name>-chips`, `variable-<name>-remove`, `variable-<name>-fail`, `variable-<name>-retry` and `variable-<name>-detail`.
 - The bar has zero height when it has no control: no margin, no border and no gap. The row under the header (9.9) has `display: none` when the bar and the group of the dashboard links (9.8a) are both empty. When the dashboard has links, the row stays for the links, and the bar part of the row has zero width.
 - A variable with no `placement` stays in the bar. A new variable has no `placement`, so it shows in the bar until a person places it (10.3b, 10.6).
 - A placed control in a collapsed section (4.12) is hidden with the section. The variable stays out of the bar, so the person opens the section to change the value. The value still applies and shows in the print line (9.8). The other choice, which Hune does not use, shows in the bar each variable whose frame is not visible.
@@ -1172,7 +1177,7 @@ Notice of a replaced value:
 - The page shows one notice for a variable when it drops at least one requested value and the variable has an option. An open variable drops only a text that is not a typed value. The level is `info`. The hook is `data-notice="variable"`. The key of the notice is `variable-` and the name of the variable, so a new notice of this variable replaces the old one.
 - The text is: `This value is not an option of <label>: "<value>". The page used "<text>".` With more than one value, the first words are "These values are", and the list has 3 values and then "and <n> more". A value of more than 40 characters is cut, with `...`. The text after "used" is the text of the first 3 selected options, or "All", or "no value".
 - The runtime tells the page with the option `onNotice` of its constructor. The call comes after the selection is set. The page writes the new value of this variable in the URL with `history.replaceState` (9.5) and keeps the rest of the query. Thus a reload of this URL shows no second notice.
-- The page shows no notice when the options query failed, because the control shows the error. It shows no notice for an empty list, because the control shows "No options".
+- The page shows no notice when the options query failed, because the control shows the error and keeps its selection (below). It shows no notice for an empty list, because the control shows "No options".
 - The notice uses the area of the notices (9.6, 9.26): `role="status"` with `aria-live="polite"`.
 
 No options:
@@ -1187,7 +1192,7 @@ Free entry:
 - The field has `role="combobox"`, `aria-expanded="true"`, `aria-controls` (the list), `aria-autocomplete="list"` and `aria-activedescendant`.
 - The text in the field filters the options, as the search of a closed variable does. When the text is a typed value, the list ends with the row `Use "<text>"` (hook `variable-<name>-use`). The text of the row is cut at 40 characters. The row is absent when the text is the `value` or the `text` of a row, and when the text is not a typed value.
 - A typed value is a text of 1 to 1,024 bytes with no control character, and it is not `$__all`. For another text, the field shows an error below it. The error has `role="alert"` and the field has `aria-describedby` to it. The text is "A value has 1 to 1024 bytes.", "A value has no control character." or "This value is reserved.". The row `Use` is absent. An empty field shows no error.
-- A typed value that the selection holds is a row of the list, before the options. It has `aria-selected="true"`. A `multi` variable shows each typed value as a checked row, in the order of the selection. A click on a checked row removes the value, and the row leaves the list. This is the chip of the design: no other chip exists.
+- A typed value that the selection holds is a row of the list, before the options. It has `aria-selected="true"`. A `multi` variable shows each typed value as a checked row, in the order of the selection. A click on a checked row removes the value, and the row leaves the list. The control shows the same value as a chip (below).
 - The DOM focus stays in the field. The arrow keys move the active row (`aria-activedescendant`) through the visible rows, with the row `Use` last. `Enter` chooses the active row. With no active row, it adds the typed text, or chooses the row whose `value` or `text` equals the text.
 - A variable that is not `multi` applies the choice and closes the popup. A `multi` variable keeps the popup open, empties the field and toggles the value. `Enter` in an empty field closes the popup and applies the selection. `Enter` on a text that is not a typed value does nothing.
 - `Space` types a space. `Escape` closes the popup with no change. `Tab` and a click outside close the popup, and a `multi` selection applies, as for a closed variable. `Home` and `End` move the cursor in the field. The row "Selected (n)" is not in the Tab order of an open variable.
@@ -1225,16 +1230,109 @@ Variable graph:
   The runtime of the page gets its member from the server and never imports them. The tests of the runtime make the member with the scan of the editor.
 - The editor does not give the draft to the runtime of the page. The draft grid uses the runtime of the saved document (10.2). Thus the member
   `names` of the saved document is the only one that the runtime reads.
-- At load, the page loads the options in the order of the graph (document order between variables with no link).
+- At load, the page loads the options in the order of the graph (document order between variables with no link). A variable that has a parent waits for it (below).
 - A change of a variable reloads the options of each `query` variable below it in the graph, in graph order. Then the
   page runs each panel whose SQL names a changed variable. A reuse panel follows its source (9.23).
-- A `query` variable with `refresh = "time_change"` also reloads its options at each change of the time range. It does
-  the same at each refresh, before the panels run. With `refresh = "load"`, it reloads only at load and after a change of a parent.
+- A `query` variable with `refresh = "time_change"` also asks for its options at each change of the time range. It does
+  the same at each refresh, before the panels run. The cache (below) can answer in place of a request. With `refresh = "load"`, it asks only at load and after a change of a parent.
 - The query request holds each variable of the document, so that it never depends on the lexer of the page (7.7
   permits the extra members). For "All" without `all_value` on a `query` variable, `values` holds the options that
   the bar shows.
 - A query body above its limit of 256 KiB (6.27) gives `413 payload_too_large`, for example with a long "All" list.
   The panel then shows the error "The selection of the variables is too large. Select fewer values."
+
+State of the control:
+
+- A `query` variable has one state: `loading`, `waiting`, `ready` or `error`. The other kinds of variable are always `ready`.
+- At load, a variable with no `query` parent is `loading`. A variable with a `query` parent is `waiting` until its parent is `ready`.
+- A control that is `loading` shows a spinner and the text `Loading…`. It is disabled and has `aria-busy="true"`. Its name for assistive technology is `<label>: Loading…`.
+- A control that is `waiting` shows the muted text `waiting for <label>`, where `<label>` is the label of the parent (or its name). It is disabled. Its name is `<label>: waiting for <parent label>`.
+- The control keeps its width and its height in each state. While the control loads, the ghost of the current selection holds the room. Thus the bar and the grid do not move when the options come (case B290).
+- A selection that the page already has stays in the URL and in the requests of the panels while the control loads.
+
+Error of the options:
+
+- A request of options that fails sets the state `error`. The control keeps its selection and its text. It has a red edge (`is-failed`), and its name is `<label>: <text>. Options failed: <short sentence>`.
+- The control shows no text of error in the bar. The error lies in the popup, over the page. Thus the bar and the grid do not move (case B291). The bar has no element `select__error`.
+- The popup of a failed control has the hook `variable-<name>-fail`. It shows the short sentence, a button "Retry" (hook `variable-<name>-retry`) and a folded `<details>` (hook `variable-<name>-detail`) with the full text of the error. An open variable (4.8) also has its field, so a person can type a value.
+- A click on "Retry" closes the popup and sends one new request for this variable and for the variables below it. It ignores the cache. The other variables send no request.
+- The short sentence comes from the first rule that fits: the code of the API error, then the ClickHouse number, then a general sentence. The ClickHouse number is the member `clickhouse_code` of a `query_error`. Else it is the number in the text (`Code: <number>.`), else the name in the text, before `(version ...)`. The page never changes the text of the source: the folded part holds it in full.
+
+| Code of the API | Short sentence |
+|---|---|
+| `query_memory_limit` | The query used too much memory. |
+| `query_timeout` | The query took too long. |
+| `query_limit` | The query stopped at a limit of the source. |
+| `sql_invalid` | The SQL of the variable is not valid. |
+| `sql_too_large` | The SQL of the variable is too large. |
+| `source_access_denied` | The account of Hune has no right for this query. |
+| `source_misconfigured` | The login or the certificate for the source failed. |
+| `source_unavailable` | Hune cannot reach the source. |
+| `source_busy` | The source is busy. |
+| `server_busy` | Hune is busy. |
+| `source_bad_response` | The source gave an answer that Hune cannot read. |
+| `pdp_unavailable` | The access check did not answer. |
+| `forbidden` | You may not read these options. |
+| `not_found` | The variable or its source does not exist. |
+| `network_error` | Hune does not answer. |
+| `request_timeout` | Hune did not answer in time. |
+| `internal_error` | Hune had a fault. |
+| `query_error` | The sentence of the ClickHouse number, else "The source refused the query." |
+| another code | The sentence of the ClickHouse number, else "The options did not load." |
+
+| ClickHouse number | Short sentence |
+|---|---|
+| 47 | The query names a column that does not exist. |
+| 60 | The query names a table that does not exist. |
+| 62 | The query has a syntax error. |
+| 159 | The query took too long. |
+| 202 | ClickHouse has too many queries at this time. |
+| 209 | ClickHouse did not answer in time. |
+| 210 | Hune could not reach ClickHouse. |
+| 241 | The query used too much memory. |
+| 497 | The account of Hune has no right for this query. |
+| 516 | ClickHouse refused the login of Hune. |
+
+- The API gives the code `query_memory_limit` for the memory limit of ClickHouse, and its body has no `clickhouse_code`. Thus the code of the API gives the sentence of the number 241. The body of a `query_error` has `clickhouse_code`, and the page reads it.
+
+A variable that waits:
+
+- A variable below a variable (7.14) sends no request of options while its parent is `loading`, `waiting` or `error`. Its state is `waiting`, with the name of the parent.
+- When the parent is `ready`, the variable loads. When the parent failed, the variable stays `waiting` until a "Retry" of the parent succeeds.
+- Variables that name each other in a cycle load in document order. A failure blocks only the variables that name the failed variable.
+
+A failure blocks nothing:
+
+- A variable whose options failed keeps its selection: the URL value, else the current selection, else `default`. This holds for `$__all`, for several values and for a typed value.
+- A variable that waits keeps its selection in the same way. The page does not write the default value in the URL (9.5).
+- The panels run with these values. They wait for no option. A panel whose SQL names a failed variable runs with the value that the variable has (case B293).
+- The popup of a failed open variable (4.8) takes a typed value. A change applies as for a variable with options.
+
+The cache of the options:
+
+- The runtime keeps the answers of the options requests of the page. The key is the name of the variable, the requested values of its parents and the period.
+- The period is empty when `refresh` is not `time_change`. For a relative range, it is the two texts of the range and the zone, and an answer is valid for 60 s. For an absolute range, it is the two times, and an answer is valid for 5 minutes.
+- The cache holds 64 answers at most. It drops the least recent answer first. It never keeps a failed answer.
+- A refresh, a change of the period and a change of a parent look in the cache first. A request leaves only when no valid answer exists. A "Retry" ignores the cache.
+- At load, each variable sends one request. A refresh inside the time of the cache sends none. A quick range that the page showed before sends none (case B294).
+- A variable below a `time_change` variable reloads when its key changes: that is a new value of a parent. The same values of the parent, in the same period, give a cached answer.
+
+Cancel of the requests:
+
+- Each variable has at most one request of options in flight. A newer request for the variable cancels the older one (`AbortController`).
+- When the person leaves the dashboard (the brand, the browser back, a link of the page), the runtime cancels each request of options in flight. The runtime of the next page does not receive an answer for them (case B295).
+
+Chips of the selected values:
+
+- The control of a `multi` variable (`custom` or `query`) shows its selection as chips. A control of one value keeps its text. The `interval` and `adhoc` variables have their own controls (9.10a).
+- Each value is one chip. "All" is one chip with the text "All". The chip has the text of the option, with an ellipsis after 160 px, and a cross.
+- The chip has a cross when the selection has two values or more. The chip "All" and the last chip have no cross, because a selection is never empty.
+- A click on the text of a chip, or on the empty room of the control, opens the popup. A click on a cross removes the value and applies it at once. The same keys work: the cross is a `button` in the Tab order, with the name `Remove <value>` and the hook `variable-<name>-remove`.
+- The key `Enter` or `Space` on the cross removes the value. The focus goes to the next cross, or to the control when no cross is left.
+- `Backspace` in the empty field of the combobox of an open variable (4.8) removes the last value of the draft. It does nothing when only one value is left.
+- The chips that do not fit in the row are hidden, and the chip "+<n>" shows the count. A click on it opens the popup. At least one chip shows, with its text cut when needed (case B296).
+- The control keeps its height (32 px) when it has more chips. The chips use the tokens of the page and have the contrast of the light and the dark theme (9.25).
+- The hidden element `select__value` of the control keeps the text of the selection (`a + b + c`). Thus the name of the control for assistive technology does not change.
 
 ### 9.10a The control of an `adhoc` variable
 
