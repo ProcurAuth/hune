@@ -2666,7 +2666,7 @@ The catalog is the copy of the store in the memory of each instance. It is in `h
 | `uid` | text | The uid. It MUST equal the name of the directory. |
 | `version` | integer | 1 to 9223372036854775807. It MUST equal `<n>` of the file name. |
 | `kind` | enum | A version kind (5.2) |
-| `folder` | text | The folder id of the dashboard at this version |
+| `folder` | text or null | The folder id of the dashboard at this version, or `null` for a dashboard without a folder |
 | `etag` | text or null | The etag of `<n>.json`. For an `external` version without bytes: the SHA-256 of the raw bytes of the invalid file. `null` exactly when `kind` is `delete`. |
 | `saved_at` | text | A `UtcMillis` text |
 | `saved_by` | text | A subject of 1 to 256 characters, or a reserved text `-`, `external` or `import-grafana` (5.2) |

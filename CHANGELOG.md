@@ -6,6 +6,18 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+### Added
+
+- A dashboard can have no folder. The API writes `null` for its folder. The create body and the move body take `"folder": null`. `GET /api/dashboards?folder=` with an empty value selects these dashboards, and `GET /api/folders` has the new member `root`.
+- A volume reads a file `<uid>.json` at the root of its path as a dashboard without a folder. In PostgreSQL, the column `folder_id` can be null after migration 2.
+- The access tree names the place of these dashboards the node `folder:_root`. A grant on a real folder does not cover them. The options route lists `_root`, "Root (no folder)", as the first folder.
+
+### Changed (breaking)
+
+- The PostgreSQL schema goes to version 2. Run `hune migrate-store` before `serve`. The step is one way: a binary of schema version 1 refuses a database of schema version 2.
+- A file `<name>.json` at the root of a volume, with a name that fits the uid rule, was ignored. It is now a dashboard. A file that is not a valid dashboard, for example `package.json`, stops the start.
+- The importer of Grafana puts the dashboards of the root of Grafana in no folder. The id `general` is no more reserved for the root. The report shows `null` for their folder.
+
 ## 0.2.0 - 2026-11-25
 
 ### Removed (breaking)
