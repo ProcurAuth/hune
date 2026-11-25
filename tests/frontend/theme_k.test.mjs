@@ -202,3 +202,20 @@ test("the accent has 3:1 against the white line of the logo, and the fixed accen
   assert.ok(ratio(white, rgba(favicon, [0, 0, 0])) >= 4.5);
   assert.equal(favicon, THEMES.light["--accent-fill"]);
 });
+
+// The comment of the SQL editor over the band of the current block (4 % of the text colour, as in editor.css) and over the editor itself: 4.5:1 in
+// both themes. The copied tokens mix the muted colour at 90 % for the comment, which is too pale over the band in the light theme (4.36:1).
+function commentColour(theme, under) {
+  const v = theme["--sql-comment"];
+  const m = /^color-mix\(in srgb, var\((--[a-z-]+)\) (\d+)%, transparent\)$/.exec(v);
+  if (m) return mixRgb(rgba(theme[m[1]], under), under, Number(m[2]) / 100);
+  return rgba(v, under);
+}
+test("the comment of the SQL editor has 4.5:1 over the editor and over the band of the block, in both themes", () => {
+  for (const [name, t] of Object.entries(THEMES)) {
+    const bg = rgba(t["--editor-solid-bg"], [0, 0, 0]);
+    const band = mixRgb(rgba(t["--text"], bg), bg, 0.04);
+    assert.ok(ratio(commentColour(t, bg), bg) >= 4.5, `${name} the comment on the editor: ${ratio(commentColour(t, bg), bg).toFixed(2)}`);
+    assert.ok(ratio(commentColour(t, band), band) >= 4.5, `${name} the comment on the band: ${ratio(commentColour(t, band), band).toFixed(2)}`);
+  }
+});
