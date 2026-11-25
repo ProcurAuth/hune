@@ -132,12 +132,7 @@ async fn a18_panel_query_gives_a_frame() {
 #[tokio::test]
 async fn a19_stale_etag_gives_409_and_a_newer_store_is_read_once() {
     let fake = Fake::start(queries(FRAME_BODY)).await;
-    let h = start_with_fake(&fake, fill, |c| {
-        if let crate::config::StorageConfig::Volume(v) = &mut c.storage {
-            v.rescan_interval = Duration::from_secs(3600);
-        }
-    })
-    .await;
+    let h = start_with_fake(&fake, fill, |c| c.storage.volumes[0].rescan_interval = Duration::from_secs(3600)).await;
     let e0 = etag(&h, "nodes").await;
     // An etag that nobody has: 409 with the current etag, and nothing runs.
     let bogus = "0".repeat(64);
@@ -857,7 +852,7 @@ async fn a24_preview_refusals() {
 #[tokio::test]
 async fn a24_preview_is_a_write_route() {
     let fake = Fake::start(queries(FRAME_BODY)).await;
-    let h = start_with_fake(&fake, fill, |c| c.server.editing = false).await;
+    let h = start_with_fake(&fake, fill, super::harness::no_primary).await;
     let r = post_preview(&h, "prod", &preview_body(json!({}))).await;
     assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"));
     let r = call(

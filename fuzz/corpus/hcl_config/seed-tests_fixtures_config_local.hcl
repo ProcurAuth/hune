@@ -1,11 +1,10 @@
 # Hune configuration, profile local: volume storage, access mode open, no telemetry.
-# Each key that applies is in the file, except the four keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section` and `server.repeat_max_per_dashboard`.
+# Each key that applies is in the file, except the seven keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static`, `server.transform_max_cells` and `server.list_filters_min_dashboards`.
 
 server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
-  editing                 = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "30s"
@@ -22,11 +21,9 @@ telemetry {
 }
 
 storage {
-  backend = "volume"
-
-  volume {
+  volume "main" {
     path            = "/var/lib/hune/dashboards"
-    read_only       = false
+    primary         = true
     rescan_interval = "5s"
     history_keep    = 100
   }

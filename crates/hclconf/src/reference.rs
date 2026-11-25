@@ -92,13 +92,18 @@ fn cell(text: &str) -> String {
 }
 
 fn key_display(schema: &Schema, key: &KeyDesc) -> String {
-    let root = Schema::root_of(key.path);
-    match schema.block(root) {
-        Some(b) if b.labelled => {
-            let rest = key.path.strip_prefix(root).unwrap_or("");
-            format!("{root} \"<id>\"{rest}")
+    path_with_label(schema, key.path)
+}
+
+/// Write a path with the label of its nearest labelled block, for example
+/// `storage.volume "<id>".path`.
+fn path_with_label(schema: &Schema, path: &str) -> String {
+    match schema.labelled_block_of(path) {
+        Some(b) => {
+            let rest = path.strip_prefix(b.path).unwrap_or("");
+            format!("{} \"<id>\"{rest}", b.path)
         }
-        _ => key.path.to_string(),
+        None => path.to_string(),
     }
 }
 
@@ -130,14 +135,7 @@ fn forms_text(forms: Forms) -> &'static str {
 /// The path of a block, with the label of its labelled root block, for example
 /// `clickhouse "<id>".tls`.
 fn block_path_display(schema: &Schema, desc: &BlockDesc) -> String {
-    let root = Schema::root_of(desc.path);
-    match schema.block(root) {
-        Some(b) if b.labelled => {
-            let rest = desc.path.strip_prefix(root).unwrap_or("");
-            format!("{root} \"<id>\"{rest}")
-        }
-        _ => desc.path.to_string(),
-    }
+    path_with_label(schema, desc.path)
 }
 
 fn block_heading(schema: &Schema, desc: &BlockDesc) -> String {

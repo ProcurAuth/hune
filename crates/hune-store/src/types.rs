@@ -441,7 +441,8 @@ pub enum StoreError {
     Conflict(Box<ConflictInfo>),
     /// The folder holds a dashboard or another entry. 409 `folder_not_empty`.
     FolderNotEmpty,
-    /// The volume has `read_only = true`. 403 `editing_disabled`.
+    /// The store is read-only: it is not the primary store, or it is a volume that a command opened read-only.
+    /// 403 `read_only_store`.
     ReadOnly,
     /// A stored document is not valid in the current format. 422 `stored_document_invalid`.
     Invalid(Vec<ValidationError>),

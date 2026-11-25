@@ -22,6 +22,18 @@ const JWKS: &str = include_str!("../../../../tests/fixtures/config/jwks.json");
 const ED_PEM: &str = include_str!("../../../../tests/fixtures/config/ed25519.pub.pem");
 const REFERENCE_DOC: &str = include_str!("../../../../docs/configuration-reference.md");
 
+/// The local file with its volume as a read-only store: no primary store, a title, no history.
+fn stores_read_only_main(text: &str) -> String {
+    let t = replace_once(text, "    primary         = true\n", "    title           = \"Main\"\n");
+    replace_once(&t, "    history_keep    = 100\n", "")
+}
+
+/// The distributed file with its PostgreSQL store as a read-only store.
+fn stores_read_only_postgres(text: &str) -> String {
+    let t = replace_once(text, "    primary           = true\n", "    title             = \"Archive\"\n");
+    replace_once(&t, "    history_keep      = 100\n", "")
+}
+
 /// The secret files that the example files name, and the test files that replace them.
 const FILES: [(&str, &str, &str); 14] = [
     ("/run/secrets/clickhouse/password", "ch-pw", "chpass\n"),
@@ -253,7 +265,9 @@ fn k13_the_reference_document_equals_the_output() {
 #[test]
 fn the_reference_document_has_a_row_for_each_key() {
     for key in SCHEMA.keys {
-        let shown = if key.path.starts_with("clickhouse.") {
+        let shown = if key.path.starts_with("storage.volume.") {
+            key.path.replacen("storage.volume", "storage.volume \"<id>\"", 1)
+        } else if key.path.starts_with("clickhouse.") {
             key.path.replacen("clickhouse", "clickhouse \"<id>\"", 1)
         } else if key.path.starts_with("postgres.") {
             key.path.replacen("postgres", "postgres \"<id>\"", 1)
@@ -303,6 +317,8 @@ fn print_config_lists_keys_in_the_order_of_the_key_table() {
         let path = entry.key.clone();
         let schema_path = if path.starts_with("clickhouse \"prod\"") {
             path.replacen("clickhouse \"prod\"", "clickhouse", 1)
+        } else if path.starts_with("storage.volume \"main\"") {
+            path.replacen("storage.volume \"main\"", "storage.volume", 1)
         } else {
             path
         };
@@ -319,7 +335,7 @@ fn the_typed_config_holds_the_values_of_the_local_file() {
     assert_eq!(c.server.listen.to_string(), "0.0.0.0:8080");
     assert_eq!(c.server.ops_listen.port(), 9090);
     assert_eq!(c.server.base_path, "/");
-    assert!(c.server.editing);
+    assert!(c.storage.editing());
     assert_eq!(c.server.max_connections, 1024);
     assert_eq!(c.server.idle_timeout, Duration::from_secs(75));
     assert_eq!(c.server.shutdown_grace, Duration::from_secs(30));
@@ -328,11 +344,13 @@ fn the_typed_config_holds_the_values_of_the_local_file() {
     assert_eq!(c.log.level, LogLevel::Info);
     assert!(matches!(c.telemetry, TelemetryConfig::Disabled));
     assert!(matches!(c.access, AccessConfig::Open));
-    let StorageConfig::Volume(v) = &c.storage else { panic!("volume expected") };
+    assert!(c.storage.postgres.is_none());
+    assert_eq!(c.storage.volumes.len(), 1);
+    let v = &c.storage.volumes[0];
+    assert_eq!((v.id.as_str(), v.primary, v.title.as_deref()), ("main", true, None));
     assert_eq!(v.path, std::path::PathBuf::from("/var/lib/hune/dashboards"));
-    assert!(!v.read_only);
     assert_eq!(v.rescan_interval, Duration::from_secs(5));
-    assert_eq!(v.history_keep, 100);
+    assert_eq!(v.history_keep, Some(100));
     assert_eq!(c.clickhouse.len(), 1);
     let ch = &c.clickhouse[0];
     assert_eq!((ch.id.as_str(), ch.label.as_str()), ("prod", "Production"));
@@ -358,13 +376,15 @@ fn the_typed_config_holds_the_values_of_the_local_file() {
 fn the_typed_config_holds_the_values_of_the_distributed_file() {
     let fx = Fx::new();
     let c = fx.load(&fx.distributed()).unwrap().config;
-    let StorageConfig::Postgres(p) = &c.storage else { panic!("postgres expected") };
+    assert!(c.storage.volumes.is_empty());
+    let Some(p) = &c.storage.postgres else { panic!("postgres expected") };
+    assert!(p.primary && p.title.is_none());
     assert_eq!((p.host.as_str(), p.port, p.database.as_str(), p.user.as_str()), ("hune-pg-rw", 5432, "hune", "app"));
     assert_eq!(p.password.expose(), "pgpass", "one line end \\r\\n is removed");
     assert_eq!(p.sslmode, SslMode::VerifyFull);
     assert_eq!(p.tls.as_ref().unwrap().ca_pem, CA_B.as_bytes());
     assert_eq!(p.tls.as_ref().unwrap().ca_file, std::path::PathBuf::from(fx.path("pg-ca.crt")));
-    assert_eq!((p.max_connections, p.history_keep), (8, 100));
+    assert_eq!((p.max_connections, p.history_keep), (8, Some(100)));
     assert_eq!(p.statement_timeout, Duration::from_secs(10));
     assert_eq!(p.poll_interval, Duration::from_secs(5));
     let AccessConfig::Authzen(a) = &c.access else { panic!("authzen expected") };
@@ -402,7 +422,7 @@ fn start_log_objects_follow_13_22() {
     let config: serde_json::Value = serde_json::from_str(&start_log_config_json(&loaded)).unwrap();
     assert_eq!(config["server.listen"], "0.0.0.0:8080");
     assert_eq!(config["server.max_connections"], 1024);
-    assert_eq!(config["server.editing"], true);
+    assert_eq!(config["storage.volume \"main\".primary"], true);
     assert_eq!(config["server.idle_timeout"], "75s");
     assert_eq!(config["clickhouse \"prod\".password"], "<hidden>");
     assert_eq!(config.as_object().unwrap().len(), loaded.effective.len());
@@ -429,6 +449,13 @@ fn base_text_for(fx: &Fx, path: &str) -> String {
         || path == "postgres.max_concurrent_per_subject"
         || path == "mongodb.max_concurrent_per_subject";
     let mut text = if distributed { fx.distributed() } else { fx.local() };
+    // A title is only in a read-only store: the reference files have none.
+    if path == "storage.volume.title" {
+        text = stores_read_only_main(&text);
+    }
+    if path == "storage.postgres.title" {
+        text = stores_read_only_postgres(&text);
+    }
     if path.starts_with("postgres.") {
         let authzen = path == "postgres.max_concurrent_per_subject";
         text = append(&if authzen { fx.distributed() } else { fx.local() }, &fx.substitute(&postgres::block(authzen)));
@@ -453,8 +480,8 @@ fn base_text_for(fx: &Fx, path: &str) -> String {
         };
         text = replace_once(
             &text,
-            "  editing                 = true\n",
-            &format!("  editing                 = true\n  {attr:<23} = {initial}\n"),
+            "  base_path               = \"/\"\n",
+            &format!("  base_path               = \"/\"\n  {attr:<23} = {initial}\n"),
         );
     }
     if path.starts_with("telemetry.") {
@@ -521,7 +548,9 @@ fn k01_each_numeric_key_accepts_its_minimum_and_maximum_and_refuses_the_values_o
             let text = set(&base, &attr_key, &value);
             let errors = stage1(&text);
             assert_eq!(errors.len(), 1, "{} = {value}: {errors:?}", key.path);
-            let shown = if key.path.starts_with("clickhouse.") {
+            let shown = if key.path.starts_with("storage.volume.") {
+                key.path.replacen("storage.volume", "storage.volume \"main\"", 1)
+            } else if key.path.starts_with("clickhouse.") {
                 key.path.replacen("clickhouse", "clickhouse \"prod\"", 1)
             } else if key.path.starts_with("postgres.") {
                 key.path.replacen("postgres", "postgres \"metrics\"", 1)
@@ -580,8 +609,8 @@ fn k02_a_wrong_type_stops_the_start_with_no_coercion() {
         ("server.max_connections", "1e3", "expected an integer from 16 to 65536, found 1e3"),
         ("server.max_connections", "-1", "expected an integer from 16 to 65536, found -1"),
         ("server.max_connections", "01024", "expected an integer from 16 to 65536, found 01024"),
-        ("server.editing", "\"true\"", "expected a boolean, found \"true\""),
-        ("server.editing", "1", "expected a boolean, found 1"),
+        ("telemetry.enabled", "\"true\"", "expected a boolean, found \"true\""),
+        ("telemetry.enabled", "1", "expected a boolean, found 1"),
         ("server.max_request_bytes", "\"32MiB\"", "expected a size in bytes from 4259840 to 67108864, found \"32MiB\""),
     ];
     for (key, value, message) in cases {
@@ -657,8 +686,8 @@ fn k03_unknown_and_duplicate_things_stop_the_start() {
     let local = fx.local();
     let text = replace_once(
         &local,
-        "  editing                 = true\n",
-        "  editing                 = true\n  colour = \"red\"\n",
+        "  base_path               = \"/\"\n",
+        "  base_path               = \"/\"\n  colour = \"red\"\n",
     );
     assert_eq!(fx.one(&text), format!("server.colour: unknown attribute (line {})", line_of(&text, "colour")));
     let text = append(&local, "extra {\n}\n");
@@ -944,35 +973,6 @@ fn c1_the_blocks_identity_and_pdp_exist_only_in_the_mode_authzen() {
 }
 
 #[test]
-fn c2_the_block_of_the_backend_exists_and_the_other_block_does_not() {
-    let fx = Fx::new();
-    let local = fx.local();
-    let text = replace_once(&local, "  backend = \"volume\"\n", "  backend = \"postgres\"\n");
-    let errors = fx.errors(&text);
-    // The errors come in the order of the lines of the file.
-    assert_eq!(
-        errors,
-        vec![
-            format!(
-                "storage.postgres: missing block; expected when `storage.backend` is \"postgres\" (line {})",
-                line_of(&text, "storage {")
-            ),
-            format!(
-                "storage.volume: not permitted when `storage.backend` is \"postgres\"; the key is only for `storage.backend` = \"volume\" (line {})",
-                line_of(&text, "  volume {")
-            ),
-        ]
-    );
-    let dist = fx.distributed();
-    let text = replace_once(&dist, "  backend = \"postgres\"\n", "  backend = \"volume\"\n");
-    assert!(
-        fx.errors(&text)
-            .iter()
-            .any(|e| e.starts_with("storage.postgres: not permitted when `storage.backend` is \"volume\""))
-    );
-}
-
-#[test]
 fn c3_the_keys_of_telemetry_exist_only_with_enabled_true() {
     let fx = Fx::new();
     let local = fx.local();
@@ -1185,19 +1185,6 @@ fn c9_the_two_listeners_use_different_ports_or_hosts_that_do_not_overlap() {
 }
 
 #[test]
-fn c10_a_read_only_volume_needs_editing_false() {
-    let fx = Fx::new();
-    let local = fx.local();
-    let text = set(&local, "storage.volume.read_only", "true");
-    assert_eq!(
-        fx.one(&text),
-        "storage.volume.read_only, server.editing: `storage.volume.read_only` (true) needs `server.editing` = false; found `server.editing` (true)"
-    );
-    assert!(fx.errors(&set(&text, "server.editing", "false")).is_empty());
-    assert!(fx.errors(&set(&local, "server.editing", "false")).is_empty());
-}
-
-#[test]
 fn c11_the_memory_budget_is_at_least_two_times_the_result_bytes_of_each_source() {
     let fx = Fx::new();
     let local = fx.local();
@@ -1254,10 +1241,11 @@ fn c13_max_concurrent_per_subject_exists_only_in_the_mode_authzen() {
 #[test]
 fn k06_a_contradiction_error_names_both_keys_and_both_values() {
     let fx = Fx::new();
-    let e = fx.one(&set(&fx.local(), "storage.volume.read_only", "true"));
+    let e = fx.one(&set(&fx.local(), "server.ops_listen", "\"0.0.0.0:8080\""));
     let (keys, rest) = e.split_once(": ").unwrap();
     assert_eq!(keys.split(", ").count(), 2);
-    assert!(rest.contains("(true)") && rest.contains("= false") && !e.contains("(line"));
+    assert_eq!(rest.matches("(\"0.0.0.0:8080\")").count(), 2, "{e}");
+    assert!(!e.contains("(line"));
 }
 
 // ---------------------------------------------------------------------------------------
@@ -1474,10 +1462,11 @@ fn volume_path_must_be_canonical_and_absolute() {
     for bad in ["/var/lib/", "/var//lib", "/var/../lib", "/var/./lib"] {
         let e = fx.one(&set(&local, "storage.volume.path", &quoted(bad)));
         assert!(e.contains("expected an absolute canonical path"), "{bad}: {e}");
+        assert!(e.starts_with("storage.volume \"main\".path: "), "{bad}: {e}");
     }
     let e = fx.one(&set(&local, "storage.volume.path", "\"relative\""));
     assert!(
-        e.starts_with("storage.volume.path: expected an absolute path of 1 to 4096 bytes, found \"relative\""),
+        e.starts_with("storage.volume \"main\".path: expected an absolute path of 1 to 4096 bytes, found \"relative\""),
         "{e}"
     );
 }
@@ -1648,14 +1637,14 @@ fn a_stage_runs_only_when_the_stage_before_it_has_no_error() {
     // Stage 1 error, stage 2 error and a contradiction: only stage 1 shows.
     let text = set(
         &set(&set(&local, "server.max_connections", "1"), "server.base_path", "\"x\""),
-        "storage.volume.read_only",
-        "true",
+        "server.ops_listen",
+        "\"0.0.0.0:8080\"",
     );
     let e = fx.errors(&text);
     assert_eq!(e.len(), 1);
     assert!(e[0].starts_with("server.max_connections:"));
     // Stage 2 error and a contradiction: only stage 2 shows.
-    let text = set(&set(&local, "server.base_path", "\"x\""), "storage.volume.read_only", "true");
+    let text = set(&set(&local, "server.base_path", "\"x\""), "server.ops_listen", "\"0.0.0.0:8080\"");
     let e = fx.errors(&text);
     assert_eq!(e.len(), 1);
     assert!(e[0].starts_with("server.base_path:"));
@@ -1754,8 +1743,8 @@ fn the_effective_entries_have_the_three_members() {
     assert_eq!(hidden.value, "<hidden>");
     assert_eq!(hidden.json, "\"<hidden>\"");
     assert_eq!(fx.back(&hidden.source), "file:/run/secrets/clickhouse/password");
-    let editing = loaded.effective.iter().find(|e| e.key == "server.editing").unwrap();
-    assert_eq!((editing.value.as_str(), editing.json.as_str(), editing.source.as_str()), ("true", "true", "file"));
+    let primary = loaded.effective.iter().find(|e| e.key == "storage.volume \"main\".primary").unwrap();
+    assert_eq!((primary.value.as_str(), primary.json.as_str(), primary.source.as_str()), ("true", "true", "file"));
 }
 
 #[test]
@@ -1803,4 +1792,5 @@ mod pep;
 mod postgres;
 mod repeat;
 mod static_gzip;
+mod stores;
 mod transform_cells;

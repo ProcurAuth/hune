@@ -67,17 +67,17 @@ def command_config(args):
     _, tail = rest.split("\naccess {", 1)
     if args.backend == "volume":
         storage = (
-            'storage {\n  backend = "volume"\n\n  volume {\n    path            = "%s"\n'
-            "    read_only       = false\n    rescan_interval = \"1s\"\n    history_keep    = 100\n  }\n}\n\n"
+            'storage {\n  volume "main" {\n    path            = "%s"\n'
+            "    primary         = true\n    rescan_interval = \"1s\"\n    history_keep    = 100\n  }\n}\n\n"
             % args.path
         )
     else:
         storage = (
-            'storage {\n  backend = "postgres"\n\n  postgres {\n    host              = "%s"\n'
+            'storage {\n  postgres {\n    host              = "%s"\n'
             "    port              = %d\n    database          = \"%s\"\n    user              = \"%s\"\n"
             '    password_file     = "%s"\n    sslmode           = "disable"\n    max_connections   = 8\n'
             '    connect_timeout   = "5s"\n    statement_timeout = "30s"\n    poll_interval     = "1s"\n'
-            "    history_keep      = 100\n  }\n}\n\n"
+            "    primary           = true\n    history_keep      = 100\n  }\n}\n\n"
             % (args.host, args.port, args.database, args.user, args.password_file)
         )
     text = head + storage + "access {" + tail
@@ -257,7 +257,8 @@ def command_seed(args):
         etag_of[RESTORED_UID] = answer["etag"]
         # One delete. The uid stays deleted: step 7 of 16.14 restores it with `hune restore`.
         server.write("DELETE", "/api/dashboards/" + DELETED_UID, None, etag_of[DELETED_UID], expect=(200,))
-        # The hook of 5.14: a writer outside Hune puts an invalid file. Hune sees it at its next scan.
+        # The hook of 5.14: a writer outside Hune puts an invalid file. Hune sees it at its next scan and keeps the last
+        # valid state of the dashboard, with the warning `stale` (5.44).
         path = os.path.join(root, folder_of[HOOK_UID], HOOK_UID + ".json")
         if not os.path.isfile(path):
             die("the hook target %s does not exist" % path)
@@ -267,19 +268,31 @@ def command_seed(args):
         while True:
             _, _, raw = server.call("GET", "/api/dashboards?limit=100", expect=(200,))
             item = next(i for i in json.loads(raw)["items"] if i["uid"] == HOOK_UID)
-            if item["state"] == "invalid":
+            if item.get("stale") == "file_invalid":
                 break
             if time.time() > deadline:
                 die("Hune did not see the invalid file of %s" % HOOK_UID)
             time.sleep(0.2)
-        if item["etag"] != summary["hook_etag"]:
-            die("the etag of the invalid file is %s, not the SHA-256 of its bytes" % item["etag"])
+        if item["state"] != "valid":
+            die("the dashboard %s must keep its last valid state, found %s" % (HOOK_UID, item["state"]))
+        # A save with the etag of the last valid state gets 409: the etag of the file on disk is the SHA-256 of its raw
+        # bytes (5.14, step 4). The answer holds this etag.
+        status, _, raw = server.call(
+            "PUT",
+            "/api/dashboards/" + HOOK_UID,
+            {"message": "Repair after the hook", "document": make_document(2, 9)},
+            {"Idempotency-Key": str(uuid.uuid4()), "If-Match": '"%s"' % item["etag"]},
+            expect=(409,),
+        )
+        current_etag = json.loads(raw)["error"]["current_etag"]
+        if current_etag != summary["hook_etag"]:
+            die("the etag of the invalid file is %s, not the SHA-256 of its bytes" % current_etag)
         # A save with the etag of the raw bytes replaces the invalid file (5.14, step 8).
         answer = server.write(
             "PUT",
             "/api/dashboards/" + HOOK_UID,
             {"message": "Repair after the hook", "document": make_document(2, 9)},
-            item["etag"],
+            current_etag,
             expect=(200,),
         )
         etag_of[HOOK_UID] = answer["etag"]

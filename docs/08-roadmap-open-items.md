@@ -206,7 +206,7 @@ Content:
 - The save with `If-Match` and `Idempotency-Key`, the draft in `localStorage`, the conflict screen.
 - The history list, the read-only view, the diff and the restore. The export and the import of one document. The delete
   and `hune restore`.
-- The write guard and `server.editing` (sections 12 and 13).
+- The write guard and the primary store (sections 12 and 13).
 
 Exit criteria:
 
@@ -1279,6 +1279,30 @@ The seeded random tests of `hune-core` run their seeds on all cores. The other c
 The threads made the test 12 times faster (17 s). They need no change of the profile and have no compile cost. The seeds, the cases and the checks did not change.
 
 The owner MUST read again these choices. They are the parallel run on one host, the resources that it needs, and the threads for the random tests. The options of `all.sh` (`--only`, `--from`, `--max-jobs`) are the last choice. The jobs `pgsource` and `mongosource` also run their two versions at the same time now.
+
+### 19.37 Several stores, the primary store and the read-only stores
+
+A file can name several stores. The store with `primary = true` is the only store that accepts writes. Each other store is read-only. The text of 5.42 to 5.44, 11.35 and 13.10 gives the rules.
+
+The owner set the shape of the blocks and the key `primary` on a block. The owner set the removal of three keys and the title of a read-only store. The owner set the failure at start for a volume and the last valid state after the start. The owner MUST read again these choices, which the owner did not set:
+
+- The ids. The id of a volume is its label, and the id of the PostgreSQL store is `postgres`. A volume cannot have this label (C33). A file has 16 volumes at most. A `title` has 1 to 128 bytes.
+- The `title`. A read-only store needs it and the primary store has none (C30). The titles of two read-only stores are different (C34). A read-only store shows as one root folder, and its folders are below it. The primary store shows at the root with no title.
+- The `history_keep`. Only the primary store has it, and it needs it (C31). A read-only store has no history: the list is empty and the version is `404`.
+- The clashes between stores. A folder id and a dashboard uid exist in one store only. A folder of the primary store has not the title of a read-only store. A break stops the start. A `create_folder` or a `rename_folder` with such a title gives `409 already_exists`. After the start, the catalog keeps the entry of the store that holds the id and ignores the other.
+- The error `read_only_store`, status 403. Hune asks `dashboard.read` of the target first. A subject that cannot read it gets the refusal of any other write, with the same bytes (the case K321). A subject that can read it gets `read_only_store`. Hune never asks `dashboard.write` for a target of a read-only store. The mode `open` answers `read_only_store` at once.
+- The routes that the rule covers. A move needs the primary store for the dashboard and for the target folder. The preview of a draft of a read-only dashboard or folder, and `validate_only` of a save or a create, are refused too. Nobody gets the SQL (`server.query_inspect`) of a read-only dashboard in the mode `authzen`, because this right needs `dashboard.write`.
+- The flags. `access.write` of a read-only item is `false` with no question to the PDP. The item has `read_only` and `store`. The session keeps the name `editing`, and it adds `stores`.
+- The empty store. The primary store can be empty, so the owner can create the first dashboard. A read-only store with no dashboard stops the start.
+- The files that are not valid. A file of a volume that cannot be read, or that is not valid, stops the start. This holds for each volume, also the primary volume. The message has the label, the file and the reason. A foreign entry is still ignored, as before. A row of the PostgreSQL store that is not valid stays an invalid entry.
+- The last valid state. After the start, a file that becomes not valid keeps its last valid state. The dashboard has `stale = "file_invalid"` for each subject that can read it. The member never holds the path or the message of the parser. A new file that is not valid is ignored. The log line is `store.rescan_rejected`, and the gauge is `hune_store_invalid_files{store}`.
+- The period of the poll. Each store has its own period. The poller wakes at the shortest period.
+- The commands. They work on the primary store only. A file with no primary store gives an error, also for a dry run. `migrate-store` needs `storage.postgres` as the primary store.
+- The replicas. A primary volume that more than one instance writes needs a shared volume and the lock. A read-only volume can be a copy for each instance. For the homelab, the PostgreSQL store is the primary store, and the volumes of the repository are read-only stores.
+- The loss. A replica cannot be made view-only on a shared PostgreSQL primary with the same file any more. It needs a file in which the PostgreSQL store has a `title` and no `primary`. Its folders then show below a root folder.
+- The version. The change removes keys, so it is a minor version.
+
+Open question: are these choices right? Default today: the text of the sections above.
 
 ## 20. Glossary and references
 

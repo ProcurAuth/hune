@@ -32,6 +32,7 @@ mod restore_once;
 mod same_cost;
 mod same_refusal;
 mod static_gzip;
+mod stores;
 mod telemetry;
 mod text_panel;
 mod timeline_panels;

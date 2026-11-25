@@ -1020,22 +1020,22 @@ fn a_held_volume_lock_gives_exit_code_3_and_a_dry_run_works() {
 }
 
 #[test]
-fn a_read_only_volume_refuses_write_and_a_missing_volume_stops_the_run() {
-    // 13.10 and 15.13: the store is the judge of a write.
+fn a_file_with_no_primary_store_refuses_the_command_and_a_missing_volume_stops_the_run() {
+    // 13.10 and 15.13: the command works on the primary store, so a file with no primary store is refused.
     let fx = Fx::new();
     let read_only = fx.root.join("ro.hcl");
     fs::write(
         &read_only,
         text(&fx.config)
-            .replace("read_only       = false", "read_only       = true")
-            .replace("editing                 = true", "editing                 = false"),
+            .replace("    primary         = true\n", "    title           = \"Main\"\n")
+            .replace("    history_keep    = 100\n", ""),
     )
     .unwrap();
     let mut args = fx.base(&fx.export);
     args.extend(["-c".into(), s(&read_only), "--write".into()]);
     let out = hune(&args);
     assert_eq!(out.code, 3, "{}", out.stderr);
-    assert!(out.stderr.contains("read_only"), "{}", out.stderr);
+    assert!(out.stderr.contains("the file has no primary store"), "{}", out.stderr);
     let gone = fx.root.join("gone.hcl");
     fs::write(&gone, text(&fx.config).replace(&s(&fx.volume), &s(&fx.root.join("no-volume")))).unwrap();
     let mut args = fx.base(&fx.export);

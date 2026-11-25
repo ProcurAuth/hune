@@ -4,12 +4,18 @@
 
 use super::lifecycle::StartError;
 use super::state::{AppState, Services, StopStage};
-use crate::config::{LogLevel, PostgresConfig, SslMode, StorageConfig};
+use crate::config::{LogLevel, POSTGRES_STORE_ID, PostgresConfig, SslMode};
+use crate::log::StoreCounts;
 use hune_store::{
-    AnyStore, Catalog, PgOptions, PgSslMode, PgStore, StoreEvent, SyncTransition, VolumeOptions, VolumeStore,
+    AnyStore, Catalog, PgOptions, PgSslMode, PgStore, StoreEvent, StoreInfo, StoreKind, StoreSpec, Stores,
+    SyncTransition, VolumeOptions, VolumeStore,
 };
 use std::sync::Arc;
 use std::time::Instant;
+
+/// The versions that a store keeps when it is not the primary store. A store that is not the primary store never
+/// writes a version, so the value has no effect. The configuration has no key for it (13.10).
+pub(crate) const NO_HISTORY_KEEP: u32 = 1;
 
 /// Builds the options of the PostgreSQL backend from the block `storage.postgres` (13.10, 5.23).
 ///
@@ -37,7 +43,7 @@ pub(crate) fn pg_options(pg: &PostgresConfig, check_role: bool) -> Result<PgOpti
         connect_timeout: pg.connect_timeout,
         statement_timeout: pg.statement_timeout,
         poll_interval: pg.poll_interval,
-        history_keep: pg.history_keep,
+        history_keep: pg.history_keep.unwrap_or(NO_HISTORY_KEEP),
         check_role,
     })
 }
@@ -93,6 +99,7 @@ pub fn log_store_events(state: &AppState, events: Vec<StoreEvent>) {
             StoreEvent::LockUnsupported { path, errno } => {
                 log.event(LogLevel::Warn, "store.lock_unsupported").field("path", path).field("errno", errno).emit();
             }
+            StoreEvent::RescanRejected { store, path, reason } => log.store_rescan_rejected(&store, &path, &reason),
             // The store keeps the first entry that blocks a folder delete. The answer is 409.
             StoreEvent::FolderNotEmpty { .. } => {}
         }
@@ -106,46 +113,78 @@ pub fn update_document_metrics(state: &AppState, catalog: &Catalog) {
     state.metrics.documents("invalid", s.invalid as u64);
 }
 
-/// Opens the store, loads the catalog one time and starts the poller (14.12 steps 6 to 9).
+/// Opens the stores, loads the catalog one time and starts the poller (14.12 steps 6 to 9).
+///
+/// Each `storage.volume` block gives a volume store. The primary store opens for writes. Each other store opens
+/// read-only: it takes no lock and writes nothing (5.42). The first load checks the start rules of 5.43.
 pub async fn open_store(state: Arc<AppState>) -> Result<Services, StartError> {
-    let store = match &state.config.storage {
-        StorageConfig::Volume(v) => {
-            let options = VolumeOptions {
-                root: v.path.clone(),
-                read_only: v.read_only,
-                rescan_interval: v.rescan_interval,
-                history_keep: v.history_keep,
-            };
-            let volume = VolumeStore::open(options)
-                .await
-                .map_err(|e| StartError::new("store.open", format!("storage.volume: {e}")))?;
-            AnyStore::Volume(volume)
-        }
-        StorageConfig::Postgres(pg) => open_postgres(&state, pg).await?,
-    };
+    let storage = &state.config.storage;
+    let mut specs: Vec<StoreSpec> = Vec::new();
+    for v in &storage.volumes {
+        let options = VolumeOptions {
+            root: v.path.clone(),
+            read_only: !v.primary,
+            rescan_interval: v.rescan_interval,
+            history_keep: v.history_keep.unwrap_or(NO_HISTORY_KEEP),
+        };
+        let volume = VolumeStore::open(options)
+            .await
+            .map_err(|e| StartError::new("store.open", format!("storage.volume \"{}\": {e}", v.id)))?;
+        specs.push(StoreSpec {
+            info: StoreInfo { id: v.id.clone(), kind: StoreKind::Volume, title: v.title.clone(), primary: v.primary },
+            path: Some(v.path.clone()),
+            interval: v.rescan_interval,
+            store: AnyStore::Volume(volume),
+        });
+    }
+    if let Some(pg) = &storage.postgres {
+        let store = open_postgres(&state, pg).await?;
+        specs.push(StoreSpec {
+            info: StoreInfo {
+                id: POSTGRES_STORE_ID.to_owned(),
+                kind: StoreKind::Postgres,
+                title: pg.title.clone(),
+                primary: pg.primary,
+            },
+            path: None,
+            interval: pg.poll_interval,
+            store,
+        });
+    }
+    let store = Stores::new(specs);
     let begin = Instant::now();
+    let reports = store.open_checked().await.map_err(|e| StartError::new("store.open", e.to_string()))?;
     let catalog = Catalog::load(&store)
         .await
         .map_err(|e| StartError::new("catalog.load", format!("the first load of the catalog failed: {e}")))?;
     let catalog = Arc::new(catalog);
-    let stats = catalog.stats();
     log_store_events(&state, catalog.take_events());
-    state.logger.store_loaded(
-        store.backend_name(),
-        stats.folders as u64,
-        stats.dashboards as u64,
-        (stats.invalid + stats.invalid_folders) as u64,
-        0,
-        u64::try_from(begin.elapsed().as_millis()).unwrap_or(u64::MAX),
-    );
+    let elapsed = u64::try_from(begin.elapsed().as_millis()).unwrap_or(u64::MAX);
+    for r in &reports {
+        let counts = StoreCounts {
+            folders: r.folders as u64,
+            dashboards: r.dashboards as u64,
+            invalid: r.invalid as u64,
+            ignored: 0,
+        };
+        state.logger.store_loaded(&r.info.id, r.info.kind.name(), &counts, elapsed);
+    }
     state.metrics.store_up(true);
     update_document_metrics(&state, &catalog);
+    update_invalid_file_metrics(&state, &store);
     spawn_poller(state.clone(), store.clone(), catalog.clone());
     Ok(Services { store, catalog })
 }
 
+/// Sets the gauge `hune_store_invalid_files` of each volume (5.44).
+pub fn update_invalid_file_metrics(state: &AppState, store: &Stores) {
+    for (id, n) in store.invalid_files() {
+        state.metrics.store_invalid_files(&id, n as u64);
+    }
+}
+
 /// Starts the task that polls the catalog every `poll_interval` (14.12 step 9).
-fn spawn_poller(state: Arc<AppState>, store: AnyStore, catalog: Arc<Catalog>) {
+fn spawn_poller(state: Arc<AppState>, store: Stores, catalog: Arc<Catalog>) {
     let mut stop = state.stop_signal();
     tokio::spawn(async move {
         let interval = store.poll_interval();
@@ -171,6 +210,7 @@ fn spawn_poller(state: Arc<AppState>, store: AnyStore, catalog: Arc<Catalog>) {
                     state.health.sync_ok();
                     state.metrics.store_up(true);
                     update_document_metrics(&state, &catalog);
+                    update_invalid_file_metrics(&state, &store);
                 }
                 Err(_) => {
                     state.health.sync_failed();

@@ -33,8 +33,8 @@ The document holds no storage data. The store keeps the folder, the version, the
 
 | Store | Key | Layout | Instances |
 | --- | --- | --- | --- |
-| Volume | `storage.backend = "volume"` | One file `<folder>/<uid>.json` for each dashboard. A folder `.history` keeps each version. | One writer process. It holds a lock on the folder. |
-| PostgreSQL | `storage.backend = "postgres"` | The tables `hune_folders`, `hune_dashboards`, `hune_versions` and `hune_schema`. | Two or more instances. |
+| Volume | A block `storage.volume "<id>"` | One file `<folder>/<uid>.json` for each dashboard. A folder `.history` keeps each version. | One writer process for the primary volume. It holds a lock on the folder. A read-only volume takes no lock. |
+| PostgreSQL | The block `storage.postgres` | The tables `hune_folders`, `hune_dashboards`, `hune_versions` and `hune_schema`. | Two or more instances. |
 
 Both stores keep the same canonical bytes and follow the same contract and the same test suite (section 5). Each save writes a history version first, then the document. A save carries the etag of its base, so a stale save gets a conflict and no data is lost. The editor shows a conflict screen. The commands `copy-store`, `export`, `import` and `restore` move documents between stores (5.37 to 5.40).
 

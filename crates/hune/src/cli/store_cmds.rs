@@ -23,7 +23,7 @@ use hune_store::{
 };
 
 use super::{EXIT_CONFIG, EXIT_OK};
-use crate::config::{self, CapturedEnvironment, LogLevel, PostgresConfig, StorageConfig};
+use crate::config::{self, CapturedEnvironment, LogLevel, PostgresConfig, PrimaryRef, StorageConfig};
 use crate::log::Logger;
 use crate::server::startup::pg_options;
 
@@ -166,21 +166,29 @@ pub(super) async fn open_postgres(pg: &PostgresConfig, config_path: &Path) -> Re
         .map_err(|e| e.with_config_file(&config_path.display().to_string()).message)
 }
 
-/// Opens the store of a configuration. `read_only` opens a volume without the lock and with no
-/// write. A volume that the file marks read-only stays read-only. `config_path` is the file that
-/// gave `storage`: it names the file in the errors of PostgreSQL.
+/// The text of the error of a command that needs the primary store when the file has none (5.42).
+pub(super) const NO_PRIMARY: &str =
+    "the file has no primary store; the command works on the primary store, so give `primary = true` to one store";
+
+/// Opens the primary store of a configuration: a command works on this store only (5.42). `read_only` opens a volume
+/// without the lock and with no write. `config_path` is the file that gave `storage`: it names the file in the
+/// errors of PostgreSQL.
 async fn open(storage: &StorageConfig, read_only: bool, config_path: &Path) -> Result<AnyStore, String> {
-    match storage {
-        StorageConfig::Volume(v) => {
+    match storage.primary() {
+        None => Err(NO_PRIMARY.to_owned()),
+        Some(PrimaryRef::Volume(v)) => {
             let options = VolumeOptions {
                 root: v.path.clone(),
-                read_only: read_only || v.read_only,
+                read_only,
                 rescan_interval: v.rescan_interval,
-                history_keep: v.history_keep,
+                history_keep: v.history_keep.unwrap_or(crate::server::startup::NO_HISTORY_KEEP),
             };
-            VolumeStore::open(options).await.map(AnyStore::from).map_err(|e| format!("storage.volume: {e}"))
+            VolumeStore::open(options)
+                .await
+                .map(AnyStore::from)
+                .map_err(|e| format!("storage.volume \"{}\": {e}", v.id))
         }
-        StorageConfig::Postgres(pg) => open_postgres(pg, config_path).await,
+        Some(PrimaryRef::Postgres(pg)) => open_postgres(pg, config_path).await,
     }
 }
 
@@ -341,8 +349,11 @@ async fn migrate_store_command(
     err: &mut dyn Write,
 ) -> u8 {
     let Some(loaded) = load(config, env, err) else { return EXIT_CONFIG };
-    let StorageConfig::Postgres(pg) = &loaded.config.storage else {
-        return fail(err, "migrate-store: storage.backend is \"volume\"; this command needs \"postgres\"");
+    let Some(PrimaryRef::Postgres(pg)) = loaded.config.storage.primary() else {
+        return fail(
+            err,
+            "migrate-store: the primary store is not the PostgreSQL store; this command needs `primary = true` on `storage.postgres`",
+        );
     };
     let options = match pg_options(pg, false) {
         Ok(o) => o,
@@ -384,16 +395,21 @@ mod tests {
     }
 
     /// Writes a configuration file for a volume.
+    /// A configuration of the volume `volume`. With `read_only`, the volume is a read-only store and the file has no
+    /// primary store.
     fn config_for(dir: &Path, name: &str, volume: &Path, read_only: bool) -> PathBuf {
         crate::tests::files::put(dir.join("pw"), "pw\n");
         crate::tests::files::duplicate(Path::new(FIXTURES).join("config/ca-a.pem"), dir.join("ca.pem"));
-        let text = std::fs::read_to_string(Path::new(FIXTURES).join("config/local.hcl"))
+        let mut text = std::fs::read_to_string(Path::new(FIXTURES).join("config/local.hcl"))
             .unwrap()
             .replace("/run/secrets/clickhouse/password", &dir.join("pw").display().to_string())
             .replace("/run/secrets/clickhouse/ca.pem", &dir.join("ca.pem").display().to_string())
-            .replace("/var/lib/hune/dashboards", &volume.display().to_string())
-            .replace("read_only       = false", &format!("read_only       = {read_only}"))
-            .replace("editing                 = true", &format!("editing                 = {}", !read_only));
+            .replace("/var/lib/hune/dashboards", &volume.display().to_string());
+        if read_only {
+            text = text
+                .replace("    primary         = true\n", "    title           = \"Main\"\n")
+                .replace("    history_keep    = 100\n", "");
+        }
         let path = dir.join(name);
         crate::tests::files::put(&path, text);
         path
@@ -859,7 +875,7 @@ mod tests {
     }
 
     #[test]
-    fn migrate_documents_refuses_write_on_a_read_only_volume() {
+    fn a_command_needs_the_primary_store_so_a_file_with_read_only_stores_only_is_refused() {
         let dir = tempfile::tempdir().unwrap();
         let d = std::fs::canonicalize(dir.path()).unwrap();
         let a = volume(&d, "a");
@@ -869,11 +885,11 @@ mod tests {
         let cfg = cfg.to_str().unwrap();
         let (code, _, err) = run_text(&["migrate-documents", "-c", cfg, "--write"]);
         assert_eq!(code, 1);
-        assert!(err.contains("storage.volume.read_only is true"), "{err}");
-        // The dry run works on a read-only volume.
-        let (code, out, _) = run_text(&["migrate-documents", "-c", cfg]);
-        assert_eq!(code, 0);
-        assert!(out.contains("transit/old: format 1, migrates to format 3"), "{out}");
+        assert!(err.contains("the file has no primary store"), "{err}");
+        // A dry run works on the primary store too, so it is refused as well.
+        let (code, _, err) = run_text(&["migrate-documents", "-c", cfg]);
+        assert_eq!(code, 1);
+        assert!(err.contains("the file has no primary store"), "{err}");
         assert_eq!(std::fs::read_to_string(a.join("transit/old.json")).unwrap(), old);
     }
 }

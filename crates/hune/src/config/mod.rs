@@ -81,8 +81,6 @@ pub struct ServerConfig {
     pub ops_listen: std::net::SocketAddr,
     /// The prefix of the routes of `listen`.
     pub base_path: String,
-    /// False refuses each write route.
-    pub editing: bool,
     /// True adds the expanded SQL to the answer of a panel query (6.20). The default is false.
     pub query_inspect: bool,
     /// The most copies of one panel that repeats (4.13a). The default is `MAX_REPEAT_PER_PANEL`.
@@ -156,26 +154,68 @@ pub struct TelemetryEnabled {
     pub export_interval: Duration,
 }
 
-/// The block `storage`.
+/// The block `storage` (13.10): the stores of the dashboards.
+///
+/// The store with `primary = true` is the only store that accepts writes. Editing exists if and only if a primary
+/// store exists. Each other store is read-only.
 #[derive(Debug, Clone)]
-pub enum StorageConfig {
-    /// The volume backend.
-    Volume(VolumeConfig),
-    /// The PostgreSQL backend.
-    Postgres(PostgresConfig),
+pub struct StorageConfig {
+    /// The blocks `storage.volume "<id>"`, in file order.
+    pub volumes: Vec<VolumeConfig>,
+    /// The block `storage.postgres`, or `None`.
+    pub postgres: Option<PostgresConfig>,
 }
 
-/// The block `storage.volume` (13.10).
+/// The id of the PostgreSQL store. A volume cannot have this label.
+pub const POSTGRES_STORE_ID: &str = "postgres";
+
+/// The primary store of a configuration.
+#[derive(Debug, Clone, Copy)]
+pub enum PrimaryRef<'a> {
+    /// A volume store.
+    Volume(&'a VolumeConfig),
+    /// The PostgreSQL store.
+    Postgres(&'a PostgresConfig),
+}
+
+impl StorageConfig {
+    /// The primary store, or `None` when no store has `primary = true`.
+    pub fn primary(&self) -> Option<PrimaryRef<'_>> {
+        if let Some(v) = self.volumes.iter().find(|v| v.primary) {
+            return Some(PrimaryRef::Volume(v));
+        }
+        self.postgres.as_ref().filter(|p| p.primary).map(PrimaryRef::Postgres)
+    }
+
+    /// True when edits are possible: a primary store exists (13.10).
+    pub fn editing(&self) -> bool {
+        self.primary().is_some()
+    }
+
+    /// The id of the primary store: the label of the volume, or `postgres`.
+    pub fn primary_id(&self) -> Option<&str> {
+        match self.primary()? {
+            PrimaryRef::Volume(v) => Some(&v.id),
+            PrimaryRef::Postgres(_) => Some(POSTGRES_STORE_ID),
+        }
+    }
+}
+
+/// The block `storage.volume "<id>"` (13.10).
 #[derive(Debug, Clone)]
 pub struct VolumeConfig {
+    /// The label of the block: the id of the store.
+    pub id: String,
+    /// The name of the root folder in the page. `None` for the primary store.
+    pub title: Option<String>,
+    /// True for the primary store.
+    pub primary: bool,
     /// The directory of the dashboards.
     pub path: PathBuf,
-    /// True takes no lock and writes nothing.
-    pub read_only: bool,
     /// The period of the scan for changes made outside Hune.
     pub rescan_interval: Duration,
-    /// The versions kept for each dashboard.
-    pub history_keep: u32,
+    /// The versions kept for each dashboard. `Some` for the primary store only.
+    pub history_keep: Option<u32>,
 }
 
 /// The value of `storage.postgres.sslmode`.
@@ -190,6 +230,10 @@ pub enum SslMode {
 /// The block `storage.postgres` (13.10).
 #[derive(Debug, Clone)]
 pub struct PostgresConfig {
+    /// The name of the root folder in the page. `None` for the primary store.
+    pub title: Option<String>,
+    /// True for the primary store.
+    pub primary: bool,
     /// The host.
     pub host: String,
     /// The port.
@@ -212,8 +256,8 @@ pub struct PostgresConfig {
     pub statement_timeout: Duration,
     /// The period of the poll of the catalog.
     pub poll_interval: Duration,
-    /// The versions kept for each dashboard.
-    pub history_keep: u32,
+    /// The versions kept for each dashboard. `Some` for the primary store only.
+    pub history_keep: Option<u32>,
 }
 
 /// A block `tls`.
@@ -443,7 +487,7 @@ const HIDDEN_VALUE: &str = "<hidden>";
 /// `server.transform_max_cells` and `server.list_filters_min_dashboards` are constants of the key table, because the server never builds a frame.
 fn defaulted_keys() -> [(&'static str, String, &'static str); 7] {
     [
-        ("server.query_inspect", "false".to_string(), "server.editing"),
+        ("server.query_inspect", "false".to_string(), "server.base_path"),
         ("server.repeat_max_per_panel", hune_core::limits::MAX_REPEAT_PER_PANEL.to_string(), "server.query_inspect"),
         (
             "server.repeat_max_per_section",

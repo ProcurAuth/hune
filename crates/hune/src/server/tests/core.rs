@@ -34,6 +34,11 @@ async fn session_in_mode_open() {
     assert_eq!(j["mode"], "open");
     assert_eq!(j["subject"], "-");
     assert_eq!(j["editing"], true);
+    // The stores (6.10): one primary volume, with no title.
+    assert_eq!(
+        j["stores"],
+        serde_json::json!([{"id": "main", "kind": "volume", "title": null, "primary": true, "read_only": false}])
+    );
     assert_eq!(j["version"], env!("CARGO_PKG_VERSION"));
     assert_eq!(j["build"], BUILD_HASH);
     assert_eq!(j["refresh_choices"], serde_json::json!(["10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]));
@@ -41,7 +46,7 @@ async fn session_in_mode_open() {
     assert_eq!(j["limits"]["query_body_bytes"], 262_144);
     assert_eq!(j["limits"]["max_data_points"], 10_000);
     let keys: Vec<&str> = j.as_object().unwrap().keys().map(String::as_str).collect();
-    assert_eq!(keys.len(), 12);
+    assert_eq!(keys.len(), 13);
     // The block `geomap` is absent: the member is `null` (6.10, 13.12c).
     assert_eq!(j["geomap"], serde_json::Value::Null);
     assert_eq!(j["query_inspect"], false);
@@ -91,16 +96,23 @@ async fn session_gives_the_repeat_limits_of_the_configuration() {
 }
 
 #[tokio::test]
-async fn session_editing_follows_the_configuration() {
-    let h = Harness::start(|c| c.server.editing = false).await;
-    assert_eq!(get(h.addr, "/api/session").await.json()["editing"], false);
-    let h = Harness::start(|c| {
-        if let crate::config::StorageConfig::Volume(v) = &mut c.storage {
-            v.read_only = true;
-        }
-    })
-    .await;
-    assert_eq!(get(h.addr, "/api/session").await.json()["editing"], false);
+async fn session_editing_follows_the_primary_store() {
+    // A primary store: editing is on.
+    let h = Harness::start(|_| {}).await;
+    let j = get(h.addr, "/api/session").await.json();
+    assert_eq!(j["editing"], true);
+    assert_eq!(
+        j["stores"],
+        serde_json::json!([{"id": "main", "kind": "volume", "title": null, "primary": true, "read_only": false}])
+    );
+    // No primary store: editing is off, and the store is a read-only store with its title.
+    let h = Harness::start_with(test_timing(), super::api::fill, super::harness::no_primary).await;
+    let j = get(h.addr, "/api/session").await.json();
+    assert_eq!(j["editing"], false);
+    assert_eq!(
+        j["stores"],
+        serde_json::json!([{"id": "main", "kind": "volume", "title": "Main", "primary": false, "read_only": true}])
+    );
 }
 
 #[tokio::test]
@@ -324,7 +336,7 @@ async fn write_guard_matrix_over_http() {
 
 #[tokio::test]
 async fn editing_disabled_on_write_routes_only() {
-    let h = Harness::start(|c| c.server.editing = false).await;
+    let h = Harness::start_with(test_timing(), super::api::fill, super::harness::no_primary).await;
     let json = ("Content-Type", "application/json");
     let writes: &[(&str, &str)] = &[
         ("POST", "/api/folders"),

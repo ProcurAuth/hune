@@ -2428,7 +2428,7 @@ The optional member `allow_custom_value` of a `query` and of a `custom` variable
 
 ### 5.1 Two backends, one contract
 
-Hune has two storage backends: the volume backend (use case LOCAL) and the PostgreSQL backend (use case DISTRIBUTED). The key `storage.backend` selects one (section 13).
+Hune has two storage backends: the volume backend (use case LOCAL) and the PostgreSQL backend (use case DISTRIBUTED). A file names one store or more with the blocks `storage.volume "<id>"` and `storage.postgres` (5.42, section 13).
 
 1. Both backends implement the one `Store` trait of 5.3, with the semantics of 5.4 and 5.5.
 2. Both backends store the canonical bytes of 4.38 and give the same etags (4.39).
@@ -2436,6 +2436,7 @@ Hune has two storage backends: the volume backend (use case LOCAL) and the Postg
 4. The catalog (5.8) sits above the trait. The server reads dashboards from the catalog.
 5. The enum `AnyStore { Volume(VolumeStore), Postgres(PgStore) }` dispatches the calls (3.4, R8).
 6. `hune copy-store`, `hune export` and `hune import` move a store between the two kinds (5.37 to 5.39).
+7. The type `Stores` holds the stores of one process behind the same trait: one primary store and the read-only stores (5.42 to 5.44).
 
 ### 5.2 Types
 
@@ -2576,7 +2577,7 @@ These rules apply to both backends. The conformance suite checks each rule.
 | `Exists` | The uid (current or with versions) or the folder id exists. For a uid, it carries the folder of the current dashboard, or of the head version of a deleted dashboard. | 409 `already_exists` | no |
 | `Conflict` | `if_match` differs from the current etag, or the folder differs from `expected_folder`. It carries the `Current` of the dashboard (etag, version, folder, `saved_at`, `saved_by`). | 409 `conflict` | no |
 | `FolderNotEmpty` | The folder holds a dashboard or another entry | 409 `folder_not_empty` | no |
-| `ReadOnly` | The volume has `read_only = true` | 403 `editing_disabled` | no |
+| `ReadOnly` | The store is read-only: it is not the primary store (5.42), or a command opened a volume read-only | 403 `read_only_store` | no |
 | `Invalid` | A stored document is not valid in the current format, for a `get` or a `move_to`. It carries the errors of 4.37. | 422 `stored_document_invalid` | no |
 | `NotRestorable` | The version is a tombstone or an `external` version without bytes, or its bytes are not valid in the current format | 422 `not_restorable` | no |
 | `SaveIdReused` | The `save_id` belongs to a version of another request (5.5, rule 4) | 422 `idempotency_key_reused` | no |
@@ -2602,17 +2603,17 @@ A `create` above `MAX_DASHBOARDS` or a `create_folder` above `MAX_FOLDERS` retur
 The catalog is the copy of the store in the memory of each instance. It is in `hune-store`, above the trait. The server reads the list, the documents and the SQL of the panels from it.
 
 1. At start, the catalog calls `Store::load` one time. When PostgreSQL does not answer, it tries again after each `storage.postgres.connect_timeout` (5.29). `/readyz` answers 200 after the first load (section 14).
-2. Then the catalog calls `Store::poll` with its marks every `storage.volume.rescan_interval` or `storage.postgres.poll_interval`, and applies the changes.
+2. Then the catalog calls `Store::poll` with its marks and applies the changes. Each store has its own period: `rescan_interval` of its volume block, or `storage.postgres.poll_interval` (5.42, rule 9).
 3. After a write of this instance, the catalog applies the result at once. A save is visible to the same instance before the answer goes to the client.
 4. A valid entry holds the canonical bytes, the typed document and the lexed SQL of each panel and variable (section 7).
-5. An invalid entry holds its errors. The list of dashboards shows it with its errors, and the server does not serve it. Section 6 gives the answers of the API for an invalid entry.
+5. An invalid entry holds its errors. The list of dashboards shows it with its errors, and the server does not serve it. Section 6 gives the answers of the API for an invalid entry. Only the PostgreSQL store gives an invalid entry: a volume stops the start (5.43) or keeps the last valid state (5.44).
 6. When a poll fails, the catalog keeps its content and serves it. The metric `hune_store_up` goes to 0, and the log line `store.sync_failed` occurs one time. The next poll tries again. The first poll that succeeds writes `store.sync_recovered` and sets `hune_store_up` to 1.
 7. A change between two polls is visible after one poll period, plus the time of the poll.
 
 ### 5.9 Volume: layout
 
 ```text
-<root>/                                storage.volume.path: absolute and canonical
+<root>/                                path of the volume block: absolute and canonical
   .hune/                              reserved; made by a writer; mode 0750
     lock                               flock target; holds "<host name> <pid> <UtcMillis>" of the holder
   .history/                            reserved; mode 0750
@@ -2693,7 +2694,7 @@ Example: `<root>/.history/nodes/7.meta.json`
 
 ### 5.12 Volume: path safety
 
-1. `storage.volume.path` MUST be absolute. No component is empty, `.` or `..`. It has no `/` at the end. The canonical path (`realpath`) MUST equal the text, so no component is a symbolic link.
+1. `path` of the volume block MUST be absolute. No component is empty, `.` or `..`. It has no `/` at the end. The canonical path (`realpath`) MUST equal the text, so no component is a symbolic link.
 2. At start, the backend opens the root one time with `O_DIRECTORY | O_NOFOLLOW` and keeps the descriptor.
 3. Each later access is relative to a directory descriptor: `openat`, `mkdirat`, `renameat`, `unlinkat` and `fstatat`, through `rustix`. Each call uses `O_NOFOLLOW` or `AT_SYMLINK_NOFOLLOW`.
 4. Each name comes from a checked id or a fixed name of 5.9. A name never holds `/`, and it is never `.` or `..`. No name comes from the raw text of a client.
@@ -2722,7 +2723,7 @@ When a step fails, the backend removes the temporary file and returns the error.
 
 Input: the document D with uid U, canonical bytes B and etag E_new; the value `if_match` E_if; the kind; the meta.
 
-1. When `read_only = true`, return `ReadOnly`.
+1. When the volume is open read-only, return `ReadOnly`. A volume is open read-only when it is not the primary store (5.42).
 2. Take the store lock in shared mode, then the lock of U (5.16).
 3. Find the folder F of U. Look first in the folder that the catalog gives, then in each folder directory. When no folder holds `<U>.json`, return `NotFound`.
 4. Read `<F>/<U>.json`. Compute its etag E_cur: the canonical etag when the file is valid, else the SHA-256 of the raw bytes.
@@ -2748,7 +2749,7 @@ A writer outside Hune that changes the file between steps 12 and 13 can lose its
 
 ### 5.15 Volume: the other writes
 
-Each write below starts with the check of `read_only` and returns `ReadOnly` when it is `true`.
+Each write below starts with the check of the read-only mode and returns `ReadOnly` when the volume is open read-only (5.19).
 
 `create(F, D, kind, meta)`:
 
@@ -2818,7 +2819,7 @@ The volume has one writer process. A writer takes the lock of the volume at star
 4. When the lock is held (`EWOULDBLOCK`), the process stops with exit code 1. The message names the path and gives the content of the lock file.
 5. When the lock succeeds, the writer writes `<host name> <pid> <UtcMillis>` and a line end into the file, then calls `fsync`.
 6. When the file system has no `flock` (`ENOLCK`, `EOPNOTSUPP` or `EINVAL`), the writer writes the log line `store.lock_unsupported` and continues. One writer is then the duty of the operator.
-7. A process with `read_only = true` takes no lock.
+7. A volume that is open read-only takes no lock. A volume that is not the primary store is open read-only (5.19).
 
 `flock` is best effort on NFS and FUSE. Several writers on one shared volume are not supported: use PostgreSQL. These commands are writers and take the same lock: `import-grafana --write`, `migrate-documents --write`, `import`, `copy-store` with a volume target, and `restore`. Each one stops when `serve` holds the lock.
 
@@ -2826,7 +2827,7 @@ Inside the process, the backend has two kinds of locks. The store lock is one as
 
 ### 5.17 Volume: polling
 
-The catalog calls `Store::poll` every `storage.volume.rescan_interval`. The volume backend then does these steps:
+The catalog calls `Store::poll` every `rescan_interval` of the volume block. The volume backend then does these steps:
 
 1. List the root. For each folder directory, read the signature of `_folder.json` and list the directory.
 2. For each dashboard file, read its signature with `fstatat`. The signature is `(dev, ino, size, mtime_ns, ctime_ns)`.
@@ -2848,7 +2849,7 @@ These rules apply to the poll:
 
 1. The versions of a uid are the files `<n>.meta.json` in `.history/<uid>`. The head version is the one with the highest `<n>`.
 2. `history` reads the metadata files only. `version` reads the metadata file and `<n>.json`, when the version has this file (5.11, rule 2).
-3. After each written version, the backend applies the retention. While the uid has more than `storage.volume.history_keep` versions, it removes the oldest version: first `<n>.meta.json`, then `<n>.json`. Then it calls `fsync` on `.history/<uid>`.
+3. After each written version, the backend applies the retention. While the uid has more than `history_keep` versions (the primary volume only), it removes the oldest version: first `<n>.meta.json`, then `<n>.json`. Then it calls `fsync` on `.history/<uid>`.
 4. A tombstone counts as a version.
 5. The versions of a deleted dashboard stay until a new write on the same uid applies the retention.
 6. Section 13 gives the range of `history_keep`.
@@ -2856,13 +2857,13 @@ These rules apply to the poll:
 
 ### 5.19 Volume: read-only mode
 
-With `storage.volume.read_only = true`:
+A volume is open read-only when its block has no `primary = true`, and in a dry run of a command:
 
 1. The backend takes no lock, makes no directory, writes no temporary file and removes nothing.
 2. Each write returns `ReadOnly`.
-3. Reads and polling work as in a writer.
+3. Reads and polling work as in a writer. A read-only volume has no `.hune` and no `.history`.
 4. Several read-only processes can share a volume. One writer can write it at the same time, for example `import-grafana --write` or a job that updates a git checkout. Each write is a rename, so a reader sees each file complete, and it sees each change after one rescan.
-5. Section 13 gives the contradiction between `read_only = true` and `server.editing = true`. Section 11 gives the effect on the published actions.
+5. Section 11 gives the effect on the published actions.
 
 ### 5.20 Volume: permissions and file systems
 
@@ -2876,14 +2877,14 @@ With `storage.volume.read_only = true`:
 
 The start stops with exit code 1 and a message that names the path in each of these cases:
 
-1. `storage.volume.path` breaks a rule of 5.12, item 1.
+1. `path` of the volume block breaks a rule of 5.12, item 1.
 2. The root does not exist, is not a directory, or the process cannot read it.
 3. Others can write the root.
 4. `.hune` or `.history` exists and is not a directory.
 5. A writer cannot write the root. The writer checks it with a probe file `.hune/probe-<16 hex>`: create with `O_EXCL`, write, `fsync`, remove.
 6. The lock is held by another process (5.16).
 
-The start does not stop for an invalid document, an invalid folder or a foreign entry. These are data errors, not configuration errors.
+The start stops for a file of the volume that cannot be read or that is not valid (5.43). The start does not stop for a foreign entry: Hune ignores it and writes `store.entry_ignored` (5.10).
 
 After it takes the lock, a writer removes the temporary files of 5.9. It looks in the root, in each folder and in each directory of `.history`. It also removes each `<n>.json` without its metadata file. The lock makes sure that no other writer owns these files. A version with its metadata file stays, also when a crash came before its effect. A retry with its `save_id` applies it (5.5, rule 14).
 
@@ -3169,7 +3170,7 @@ Each write is one transaction at the level `READ COMMITTED`. A step that returns
 
 `hune migrate-store --config <migrate.hcl>` applies the schema migrations. It is the only code that changes the schema. `serve` never migrates (rule: no migration in the start code). It uses the owner role of 5.25 through `migrate.hcl`: the key `storage.postgres.user` of this file names the owner role.
 
-1. Read and check the configuration file. When `storage.backend` is not `postgres`, stop with exit code 1.
+1. Read and check the configuration file. When the primary store is not `storage.postgres`, stop with exit code 1.
 2. Open one direct session, outside the pool.
 3. Send P1. When the encoding is not `UTF8`, stop with exit code 1.
 4. Send P28. When it gives `false`, stop with exit code 1 and the message `another hune migrate-store holds the lock`.
@@ -3426,3 +3427,49 @@ An error of 5.4 stops the command with exit code 1 and the error text. A dashboa
 1. The operator schedules `hune export` each day, for example with a Kubernetes CronJob. Section 17 gives no CronJob manifest.
 2. CI runs a restore drill: export, import into the other backend, export again, byte equality (SC-44 and section 16).
 3. Each restore procedure is a manual step of the operator.
+
+### 5.42 The stores of the process
+
+A file names one store or more. Each block `storage.volume "<id>"` is one volume store. The block `storage.postgres` is the PostgreSQL store. The type `Stores` of `hune-store` holds them behind the `Store` trait (5.3).
+
+1. The primary store is the store with `primary = true`. At most one store has it. It is the only store that accepts a write.
+2. A file with no primary store has no edit. The nine write routes answer `403 editing_disabled`, and the page shows no edit control. Hune publishes no `dashboard.write` and no `source.query`, and `GET /api/sources` is empty (section 11, section 13).
+3. The id of a volume store is its label. The id of the PostgreSQL store is `postgres`. A volume cannot have the label `postgres`.
+4. Each other store is read-only. A read-only volume takes no lock and writes no file (5.19). A read-only PostgreSQL store sends no write to the database.
+5. A write whose target is in a read-only store returns `ReadOnly`. The target is the store of the folder or of the uid. A move needs the primary store for the dashboard and for the target folder.
+6. The content of the primary store shows at the root of the page. Each read-only store shows as one root folder. The `title` of the store is the name of this folder, and the folders of the store are below it.
+7. A folder id is unique across all stores. A dashboard uid is unique across all stores. The title of a read-only store is not the title of a folder of the primary store. A `create_folder` or a `rename_folder` with such a title returns `Exists`.
+8. Only the primary store has history. `history` of a dashboard of a read-only store gives an empty list. `version` gives `VersionNotFound`.
+9. Each store has its own period of poll. The poller wakes at the shortest period, and `Stores` polls a store when its period has passed.
+10. A command of the command line works on the primary store only. A file with no primary store gives an error. `migrate-store` needs `storage.postgres` as the primary store.
+11. A primary volume that more than one instance writes needs a volume that the instances share, with the lock of 5.16. A read-only volume can be a copy for each instance. The PostgreSQL store is shared by all instances.
+
+### 5.43 Stores: checks at start
+
+The start stops with exit code 1 in each of these cases. The message names the store, and the file or the ids, and the reason.
+
+1. A volume store breaks a rule of 5.21.
+2. A file of a volume cannot be read, or it breaks the format. This holds for a dashboard file, a folder file and a uid that is twice in the volume. This rule applies to the primary volume too.
+3. A read-only store has no dashboard. The primary store can be empty, so a person can create the first dashboard.
+4. A folder id exists in two stores.
+5. A dashboard uid exists in two stores.
+6. A folder of the primary store has the title of a read-only store.
+7. A label, a path or a title that two stores share, and two paths where one holds the other (section 13).
+
+A foreign entry in a volume stays a data error: Hune ignores it and writes `store.entry_ignored` (5.10). The PostgreSQL store keeps a row that is not valid as an invalid entry (5.8, rule 5). Hune writes one line `store.loaded` for each store, with its label, its folders, its dashboards and its invalid entries.
+
+After the start, a folder id or a uid that a second store adds is not taken. The catalog keeps the entry of the store that holds the id, and Hune writes `store.rescan_rejected`.
+
+### 5.44 Stores: a file that is not valid after the start
+
+At start, each file of a volume is valid (5.43). After the start, a person or a tool can change a file, for example with `git pull`.
+
+1. When a file becomes not valid, the catalog keeps the last valid state of the dashboard. A folder file follows the same rule.
+2. Hune writes the log line `store.rescan_rejected` one time for each change of the file. The line holds the store, the path and the reason. It stays in the log: the API never gives it.
+3. The API gives the member `stale` with the code `file_invalid` for this dashboard (section 6). The page shows a warning. Each subject that can read the dashboard sees the member.
+4. A file that is new and not valid has no last valid state. The catalog ignores it, and Hune writes the log line one time.
+5. The gauge `hune_store_invalid_files` with the label `store` counts the files of a volume that are not valid now. It counts the stale entries, the new files and the folders.
+6. A file that becomes valid again clears the member `stale` and the count at the next poll.
+7. A file that is deleted leaves the catalog. The rule keeps no state for it.
+8. A dashboard of the PostgreSQL store stays an invalid entry (5.8, rule 5). The rule of this section is for volumes.
+9. A save of a stale dashboard of the primary volume, with the etag of the last valid state, gives `409 conflict`. The answer holds the etag of the file on disk (5.14, step 4). A save with this etag replaces the file.

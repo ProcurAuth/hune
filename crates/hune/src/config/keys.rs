@@ -9,8 +9,6 @@ use hune_core::limits::{
 };
 
 const AUTHZEN: &[Term] = &[Term { key: "access.mode", equals: "authzen" }];
-const BACKEND_VOLUME: &[Term] = &[Term { key: "storage.backend", equals: "volume" }];
-const BACKEND_POSTGRES: &[Term] = &[Term { key: "storage.backend", equals: "postgres" }];
 const SSL_VERIFY_FULL: &[Term] = &[Term { key: "storage.postgres.sslmode", equals: "verify-full" }];
 const TELEMETRY_ON: &[Term] = &[Term { key: "telemetry.enabled", equals: "true" }];
 const PLAIN_HTTP_OFF: &[Term] = &[Term { key: "access.pdp.plain_http", equals: "false" }];
@@ -37,16 +35,27 @@ pub const LIST_FILTERS_MIN_DEFAULT: u32 = 6;
 /// filters hidden, so the bound only stops a typing error.
 pub const LIST_FILTERS_MIN_BOUND: u32 = 1000;
 
+/// The most `storage.volume` blocks of a file (13.10).
+pub const MAX_VOLUMES: usize = 16;
+
 /// The blocks, in table order. A parent comes before its children.
 static BLOCKS: [BlockDesc; 17] = [
     BlockDesc::new("server", "server", "The two listeners and the limits of the server (section 14)."),
     BlockDesc::new("log", "log", "The log level (14.6)."),
     BlockDesc::new("telemetry", "telemetry", "The export of the spans with OTLP (14.9)."),
     BlockDesc::new("storage", "storage", "The store of the dashboards (section 5)."),
-    BlockDesc::new("storage.volume", "storage.volume", "The volume backend: one file for each dashboard.")
-        .when(BACKEND_VOLUME),
-    BlockDesc::new("storage.postgres", "storage.postgres", "The PostgreSQL backend: one row for each dashboard.")
-        .when(BACKEND_POSTGRES),
+    BlockDesc::new(
+        "storage.volume",
+        "storage.volume",
+        "One volume store: one file for each dashboard. The label is the store id. The store with `primary = true` is writable. Each other store is read-only.",
+    )
+    .labelled(0, MAX_VOLUMES, "main"),
+    BlockDesc::new(
+        "storage.postgres",
+        "storage.postgres",
+        "The PostgreSQL store: one row for each dashboard. The store with `primary = true` is writable. Each other store is read-only.",
+    )
+    .manual("no `storage.volume` block exists", "never"),
     BlockDesc::new("storage.postgres.tls", "storage.postgres.tls", "The TLS link to PostgreSQL (12.14).")
         .when(SSL_VERIFY_FULL),
     BlockDesc::new("access", "access", "The access mode (section 11)."),
@@ -95,7 +104,7 @@ const MONGO_DIRECT: &str = "`topology = \"direct\"`";
 const MONGO_REPLICA_SET: &str = "`topology = \"replica_set\"`";
 
 /// The keys, in table order.
-static KEYS: [KeyDesc; 113] = [
+static KEYS: [KeyDesc; 114] = [
     // 13.8: server
     KeyDesc::new(
         "server.listen",
@@ -115,12 +124,6 @@ static KEYS: [KeyDesc; 113] = [
         "The prefix of the routes of `server.listen`. Give `/`, or a path that starts and ends with `/`. A segment has 1 to 64 characters from `A-Z a-z 0-9 . _ ~ -`, and is not `.` or `..`.",
     )
     .both(Ref::Str("/")),
-    KeyDesc::new(
-        "server.editing",
-        Kind::Bool,
-        "The value `false` refuses each write route and unpublishes `dashboard.write` and `source.query` (11.18).",
-    )
-    .both(Ref::Bool(true)),
     KeyDesc::new(
         "server.query_inspect",
         Kind::Bool,
@@ -232,23 +235,25 @@ static KEYS: [KeyDesc; 113] = [
         .doc_ref(Ref::Str("15s")),
     // 13.10: storage
     KeyDesc::new(
-        "storage.backend",
-        Kind::Enum(&["volume", "postgres"]),
-        "The backend of the store (section 5).",
-    )
-    .refs(Ref::Str("volume"), Ref::Str("postgres")),
-    KeyDesc::new(
         "storage.volume.path",
         Kind::Path,
         "The directory of the dashboards. The path is canonical: it has no `.` or `..` segment and no repeated or last `/` (section 5).",
     )
     .refs(Ref::Str("/var/lib/hune/dashboards"), Ref::Absent),
     KeyDesc::new(
-        "storage.volume.read_only",
-        Kind::Bool,
-        "The value `true` takes no lock and writes nothing (section 5).",
+        "storage.volume.title",
+        text(1, 128, TextRule::NoControl),
+        "The name of the root folder of the store in the page. A read-only store needs it, and the primary store has none (section 5).",
     )
-    .refs(Ref::Bool(false), Ref::Absent),
+    .manual("the store is not the primary", "the store is the primary")
+    .doc_ref(Ref::Str("Lab")),
+    KeyDesc::new(
+        "storage.volume.primary",
+        Kind::Bool,
+        "The value `true` makes this store the primary store: the only store that accepts writes. At most one store has it. The key is optional (section 5).",
+    )
+    .manual("never (the key is optional)", "another store has `primary = true`")
+    .refs(Ref::Bool(true), Ref::Absent),
     KeyDesc::new(
         "storage.volume.rescan_interval",
         seconds(1, 3600),
@@ -258,8 +263,9 @@ static KEYS: [KeyDesc; 113] = [
     KeyDesc::new(
         "storage.volume.history_keep",
         Kind::Integer { min: 1, max: 10_000 },
-        "The versions kept for each dashboard.",
+        "The versions kept for each dashboard. Only the primary store has history.",
     )
+    .manual("the store is the primary", "the store is not the primary")
     .refs(Ref::Int(100), Ref::Absent),
     KeyDesc::new("storage.postgres.host", text(1, 253, TextRule::HostOrIp), "The host of the PostgreSQL server.")
         .refs(Ref::Absent, Ref::Str("hune-pg-rw")),
@@ -308,10 +314,25 @@ static KEYS: [KeyDesc; 113] = [
     )
     .refs(Ref::Absent, Ref::Str("5s")),
     KeyDesc::new(
+        "storage.postgres.title",
+        text(1, 128, TextRule::NoControl),
+        "The name of the root folder of the store in the page. A read-only store needs it, and the primary store has none (section 5).",
+    )
+    .manual("the store is not the primary", "the store is the primary")
+    .doc_ref(Ref::Str("Archive")),
+    KeyDesc::new(
+        "storage.postgres.primary",
+        Kind::Bool,
+        "The value `true` makes this store the primary store: the only store that accepts writes. At most one store has it. The key is optional (section 5).",
+    )
+    .manual("never (the key is optional)", "another store has `primary = true`")
+    .refs(Ref::Absent, Ref::Bool(true)),
+    KeyDesc::new(
         "storage.postgres.history_keep",
         Kind::Integer { min: 1, max: 10_000 },
-        "The versions kept for each dashboard.",
+        "The versions kept for each dashboard. Only the primary store has history.",
     )
+    .manual("the store is the primary", "the store is not the primary")
     .refs(Ref::Absent, Ref::Int(100)),
     // 13.11: access
     KeyDesc::new("access.mode", Kind::Enum(&["open", "authzen"]), "The access mode (11.2).")

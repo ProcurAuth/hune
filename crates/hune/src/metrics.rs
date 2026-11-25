@@ -260,6 +260,7 @@ pub struct Metrics {
     store_up: Gauge,
     store_catalog_age: Gauge,
     documents: GaugeVec,
+    store_invalid_files: GaugeVec,
     pdp_requests: CounterVec,
     pdp_duration: HistogramVec,
     pdp_questions: CounterVec,
@@ -305,6 +306,7 @@ impl Metrics {
             store_up: Gauge::default(),
             store_catalog_age: Gauge::default(),
             documents: GaugeVec::default(),
+            store_invalid_files: GaugeVec::default(),
             pdp_requests: CounterVec::new(&pdp_seed),
             pdp_duration: HistogramVec::new(&WAIT_BUCKETS, &[&[]]),
             pdp_questions: CounterVec::new(&[&["true"], &["false"]]),
@@ -407,6 +409,10 @@ impl Metrics {
     /// Sets the documents of the catalog. `state` is `valid`, `invalid` or `ignored`.
     pub fn documents(&self, state: &str, n: u64) {
         self.documents.set(&[state], i64::try_from(n).unwrap_or(i64::MAX));
+    }
+    /// Sets `hune_store_invalid_files` for one volume: the files that are not valid now (5.44).
+    pub fn store_invalid_files(&self, store: &str, n: u64) {
+        self.store_invalid_files.set(&[store], i64::try_from(n).unwrap_or(i64::MAX));
     }
     /// Counts a request to the PDP. `result` is `ok`, `timeout`, `transport`, `status`, `invalid` or `pool_busy`.
     pub fn pdp_request(&self, result: &str) {
@@ -546,6 +552,13 @@ impl Metrics {
             &self.store_catalog_age,
         );
         write_gauge_vec(&mut out, "hune_documents", "The documents of the catalog.", &["state"], &self.documents);
+        write_gauge_vec(
+            &mut out,
+            "hune_store_invalid_files",
+            "The files of a volume that are not valid now. The catalog keeps the last valid state of each of them.",
+            &["store"],
+            &self.store_invalid_files,
+        );
         write_counter_vec(
             &mut out,
             "hune_pdp_requests_total",
@@ -625,6 +638,7 @@ mod tests {
         ("hune_store_up", "gauge", &[]),
         ("hune_store_catalog_age_seconds", "gauge", &[]),
         ("hune_documents", "gauge", &["state"]),
+        ("hune_store_invalid_files", "gauge", &["store"]),
         ("hune_pdp_requests_total", "counter", &["result"]),
         ("hune_pdp_duration_seconds", "histogram", &[]),
         ("hune_pdp_questions_total", "counter", &["decision"]),
@@ -648,6 +662,7 @@ mod tests {
         m.observe_store_op("volume", "get", "ok", Duration::from_millis(1));
         m.store_up(true);
         m.documents("valid", 3);
+        m.store_invalid_files("lab", 1);
         m.pdp_request("ok");
         m.observe_pdp(Duration::from_millis(1));
         m

@@ -68,4 +68,4 @@ The command `hune export --to <dir>` writes a store as a volume layout. The comm
 | `403 ceiling_exceeded` | A result went above a ceiling of the PDP or a key of the source. The body names the limit. |
 | `503 pdp_unavailable` | The PDP does not answer or the answer is not valid. Hune never grants in this case. |
 | The volume does not start | Another process holds the lock. The message names the path and the holder. |
-| A change on the volume does not show | The catalog polls each `storage.volume.rescan_interval`. |
+| A change on the volume does not show | The catalog polls each volume at the `rescan_interval` of its block. |

@@ -108,7 +108,9 @@ Hune builds each chain from its own catalog. It never uses a value of the reques
 | `dashboard.write` | service, folder, dashboard | none | Create, change, move, restore and delete dashboards. Change folders. |
 | `source.query` | service, source | `max_rows`, `max_duration` | Run a query that is not saved. Save a dashboard whose query uses the source. |
 
-With `server.editing = false`, Hune publishes `dashboard.read` only. It asks no question for the other actions.
+When no store is the primary store, Hune publishes `dashboard.read` only. It asks no question for the other actions.
+
+A store that is not the primary store is read-only. Hune refuses each write into it with `403 read_only_store`, before it asks `dashboard.write`. It asks `dashboard.read` of the target first, so a subject that cannot read the target gets the refusal of any other write. A grant of `dashboard.write` on a resource of a read-only store changes nothing. For such a resource, the actions that matter are `dashboard.read` and `source.query`.
 
 Two facts need care.
 

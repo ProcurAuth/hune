@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The contradiction checks C5 to C12, C14 to C18, C20 to C24 and C26 to C29 (stage 3 of 13.19) and the
-//! warnings W1 to W9 (13.15).
+//! The contradiction checks C2, C5 to C12, C14 to C18, C20 to C24, C26 to C29 and C30 to C34 (stage 3 of 13.19)
+//! and the warnings W1 to W9 (13.15).
 //!
-//! The engine finds C1 to C4, C6, C13, C19 and C25 as mode errors in stage 1.
+//! The engine finds C1, C3, C4, C6, C13, C19 and C25 as mode errors in stage 1.
 
 use std::net::{IpAddr, SocketAddr};
 
@@ -167,23 +167,17 @@ pub fn contradictions(c: &Checked, stage: &Stage2) -> Vec<ConfigError> {
         ));
     }
 
-    // C10: storage.volume.read_only and server.editing.
-    if let (Some(true), Some(true)) = (boolean(c, "storage.volume.read_only"), boolean(c, "server.editing")) {
-        errors.push(contradiction(
-            "storage.volume.read_only, server.editing",
-            "`storage.volume.read_only` (true) needs `server.editing` = false; found `server.editing` (true)"
-                .to_string(),
-        ));
-    }
+    // C2, C10 and C30 to C34: the stores.
+    store_rules(c, &mut errors);
 
     // C21: server.query_inspect and the right to see the SQL in the mode authzen. The right needs
-    // `source.query` and `dashboard.write`, and `server.editing` = false does not publish them (11.18).
-    if let (Some(true), Some(false), Some("authzen")) =
-        (boolean(c, "server.query_inspect"), boolean(c, "server.editing"), text(c, "access.mode"))
+    // `source.query` and `dashboard.write`, and a deployment with no primary store does not publish them (11.18).
+    if let (Some(true), Some("authzen")) = (boolean(c, "server.query_inspect"), text(c, "access.mode"))
+        && !super::stage2::has_primary(c)
     {
         errors.push(contradiction(
-            "server.query_inspect, server.editing, access.mode",
-            "`server.query_inspect` (true) in the mode `authzen` needs `server.editing` = true, because the right to see the SQL is `source.query` with `dashboard.write`; found `server.editing` (false)"
+            "server.query_inspect, access.mode, storage",
+            "`server.query_inspect` (true) in the mode `authzen` needs a primary store (`primary = true` on one store), because the right to see the SQL is `source.query` with `dashboard.write`; found no primary store"
                 .to_string(),
         ));
     }
@@ -417,9 +411,160 @@ fn mongodb_limits(c: &Checked, memory: Option<u64>, errors: &mut Vec<ConfigError
     }
 }
 
+/// One store of the block `storage`, for the checks C2, C10 and C30 to C34.
+struct StoreView<'a> {
+    /// The path of the block in the form of `print-config`: `storage.volume "lab"` or `storage.postgres`.
+    shown: String,
+    /// The id of the store: the label of the volume, or `postgres`.
+    id: &'a str,
+    primary: bool,
+    title: Option<&'a str>,
+    history_keep: Option<&'a Value>,
+    path: Option<&'a str>,
+}
+
+fn store_views(c: &Checked) -> Vec<StoreView<'_>> {
+    let mut stores = Vec::new();
+    for label in c.labels("storage.volume") {
+        stores.push(StoreView {
+            shown: format!("storage.volume {}", quote(label)),
+            id: label,
+            primary: matches!(c.get_in(label, "storage.volume.primary").map(|k| &k.value), Some(Value::Bool(true))),
+            title: text_in(c, label, "storage.volume.title"),
+            history_keep: c.get_in(label, "storage.volume.history_keep").map(|k| &k.value),
+            path: text_in(c, label, "storage.volume.path"),
+        });
+    }
+    if c.has_block("storage.postgres") {
+        stores.push(StoreView {
+            shown: "storage.postgres".to_string(),
+            id: "postgres",
+            primary: matches!(c.get("storage.postgres.primary").map(|k| &k.value), Some(Value::Bool(true))),
+            title: text(c, "storage.postgres.title"),
+            history_keep: c.get("storage.postgres.history_keep").map(|k| &k.value),
+            path: None,
+        });
+    }
+    stores
+}
+
+/// True when the path `outer` holds the path `inner`: the paths are equal or `inner` starts with `outer` and `/`.
+fn path_holds(outer: &str, inner: &str) -> bool {
+    inner == outer || inner.strip_prefix(outer).is_some_and(|rest| rest.starts_with('/'))
+}
+
+/// C2, C10 and C30 to C34: at least one store, one primary store at most, the keys that follow the primary,
+/// the paths and the titles of the stores (13.10).
+fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
+    let stores = store_views(c);
+    // C2: at least one store.
+    if stores.is_empty() {
+        errors.push(contradiction(
+            "storage.volume, storage.postgres",
+            "the file has no store; give at least one block `storage.volume \"<id>\"` or the block `storage.postgres`"
+                .to_string(),
+        ));
+        return;
+    }
+    // C10: at most one primary store. Each later primary store is an error that names the first one.
+    let primaries: Vec<&StoreView<'_>> = stores.iter().filter(|s| s.primary).collect();
+    for later in primaries.iter().skip(1) {
+        let first = &primaries[0];
+        errors.push(contradiction(
+            &format!("{}.primary, {}.primary", first.shown, later.shown),
+            format!(
+                "`{}.primary` (true) and `{}.primary` (true): at most one store has `primary = true`",
+                first.shown, later.shown
+            ),
+        ));
+    }
+    for s in &stores {
+        // C30: a read-only store needs a title, and the primary store has none.
+        match (s.primary, s.title) {
+            (true, Some(title)) => errors.push(contradiction(
+                &format!("{}.title, {}.primary", s.shown, s.shown),
+                format!(
+                    "`{}.title` ({}) is not permitted on the primary store; the primary store shows at the root of the page",
+                    s.shown,
+                    quote(title)
+                ),
+            )),
+            (false, None) => errors.push(contradiction(
+                &format!("{}.title, {}.primary", s.shown, s.shown),
+                format!(
+                    "`{}.title` is necessary: the store is read-only and the title is the name of its root folder",
+                    s.shown
+                ),
+            )),
+            _ => {}
+        }
+        // C31: only the primary store has history.
+        match (s.primary, s.history_keep) {
+            (true, None) => errors.push(contradiction(
+                &format!("{}.history_keep, {}.primary", s.shown, s.shown),
+                format!("`{}.history_keep` is necessary: the store is the primary store", s.shown),
+            )),
+            (false, Some(value)) => errors.push(contradiction(
+                &format!("{}.history_keep, {}.primary", s.shown, s.shown),
+                format!(
+                    "`{}.history_keep` ({}) is not permitted: only the primary store has history",
+                    s.shown,
+                    value.print()
+                ),
+            )),
+            _ => {}
+        }
+    }
+    // C32: the paths of the volumes are different, and no path holds another one.
+    for (i, a) in stores.iter().enumerate() {
+        for b in &stores[i + 1..] {
+            let (Some(pa), Some(pb)) = (a.path, b.path) else { continue };
+            let what = if pa == pb {
+                "is the same path"
+            } else if path_holds(pa, pb) {
+                "is inside the first path"
+            } else if path_holds(pb, pa) {
+                "holds the first path"
+            } else {
+                continue;
+            };
+            errors.push(contradiction(
+                &format!("{}.path, {}.path", a.shown, b.shown),
+                format!("`{}.path` ({}) and `{}.path` ({}): the second {what}", a.shown, quote(pa), b.shown, quote(pb)),
+            ));
+        }
+    }
+    // C33: the id `postgres` is the id of the PostgreSQL store.
+    for s in stores.iter().filter(|s| s.path.is_some() && s.id == super::POSTGRES_STORE_ID) {
+        errors.push(contradiction(
+            &s.shown,
+            format!("the label {} is the id of the PostgreSQL store; give another label", quote(s.id)),
+        ));
+    }
+    // C34: the titles of the read-only stores are different: each is the name of one root folder.
+    let titled: Vec<(&StoreView<'_>, &str)> =
+        stores.iter().filter(|s| !s.primary).filter_map(|s| s.title.map(|t| (s, t))).collect();
+    for (i, (a, ta)) in titled.iter().enumerate() {
+        for (b, tb) in &titled[i + 1..] {
+            if ta == tb {
+                errors.push(contradiction(
+                    &format!("{}.title, {}.title", a.shown, b.shown),
+                    format!(
+                        "`{}.title` ({}) and `{}.title` ({}) name the same root folder",
+                        a.shown,
+                        quote(ta),
+                        b.shown,
+                        quote(tb)
+                    ),
+                ));
+            }
+        }
+    }
+}
+
 /// C17, C18 and C20: the limits of each `postgres` block and its role.
 fn postgres_limits(c: &Checked, memory: Option<u64>, errors: &mut Vec<ConfigError>) {
-    let store_postgres = text(c, "storage.backend") == Some("postgres");
+    let store_postgres = c.has_block("storage.postgres");
     for label in c.labels("postgres") {
         let name = |key: &str| format!("postgres {}.{key}", quote(label));
         if let (Some(memory), Some(bytes)) = (memory, int_in(c, label, "postgres.max_result_bytes"))

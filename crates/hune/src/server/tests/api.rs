@@ -68,42 +68,29 @@ pub(super) async fn current(h: &Harness, uid: &str) -> Resp {
 }
 
 #[tokio::test]
-async fn a01_list_shows_valid_and_invalid_documents() {
-    let h = Harness::start_with(
-        test_timing(),
-        |root| {
-            fill(root);
-            std::fs::write(root.join("transit/broken.json"), b"{ not json").unwrap();
-        },
-        |_| {},
-    )
-    .await;
+async fn a01_list_shows_the_dashboards_with_their_store() {
+    let h = Harness::start_with(test_timing(), fill, |_| {}).await;
     let r = get(h.addr, "/api/dashboards").await;
     assert_eq!(r.status, 200);
     assert_eq!(r.header("cache-control"), Some("no-store"));
     let j = r.json();
     assert!(j["next"].is_null());
     let items = j["items"].as_array().unwrap();
-    assert_eq!(items.len(), 2);
-    // Order: folder, title, uid. Both are in `transit`: "broken" (the uid is the title) before "Nodes".
-    assert_eq!(items[0]["uid"], "broken");
-    assert_eq!(items[0]["state"], "invalid");
-    assert_eq!(items[0]["title"], "broken");
-    assert_eq!(items[0]["tags"], json!([]));
-    assert!(!items[0]["errors"].as_array().unwrap().is_empty());
-    assert_eq!(items[0]["errors"][0]["code"], "syntax");
-    assert!(items[0]["etag"].as_str().unwrap().len() == 64);
-    assert_eq!(items[1]["uid"], "nodes");
-    assert_eq!(items[1]["state"], "valid");
-    assert_eq!(items[1]["folder"], "transit");
-    assert_eq!(items[1]["title"], "Nodes");
-    assert_eq!(items[1]["tags"], json!(["chain"]));
-    assert_eq!(items[1]["access"]["write"], true);
-    assert!(items[1].get("errors").is_none());
-    let etag = items[1]["etag"].as_str().unwrap();
+    assert_eq!(items.len(), 1);
+    assert_eq!(items[0]["uid"], "nodes");
+    assert_eq!(items[0]["state"], "valid");
+    assert_eq!(items[0]["folder"], "transit");
+    assert_eq!(items[0]["title"], "Nodes");
+    assert_eq!(items[0]["tags"], json!(["chain"]));
+    assert_eq!(items[0]["access"]["write"], true);
+    // The store of the dashboard (5.42): the primary store, so it is not read-only and it has no warning.
+    assert_eq!((items[0]["read_only"].as_bool(), items[0]["store"].as_str()), (Some(false), Some("main")));
+    assert!(items[0].get("stale").is_none());
+    assert!(items[0].get("errors").is_none());
+    let etag = items[0]["etag"].as_str().unwrap();
     assert_eq!(etag.len(), 64);
-    assert_eq!(items[1]["version"], 0);
-    assert!(items[1]["updated_at"].as_str().unwrap().ends_with('Z'));
+    assert_eq!(items[0]["version"], 0);
+    assert!(items[0]["updated_at"].as_str().unwrap().ends_with('Z'));
     // The filters and the search.
     let r = get(h.addr, "/api/dashboards?folder=ops").await;
     assert_eq!(r.json()["items"], json!([]));
@@ -111,8 +98,8 @@ async fn a01_list_shows_valid_and_invalid_documents() {
     assert_eq!(r.json()["items"], json!([]));
     let r = get(h.addr, "/api/dashboards?q=NODE").await;
     assert_eq!(r.json()["items"].as_array().unwrap().len(), 1);
-    let r = get(h.addr, "/api/dashboards?q=ROKE").await;
-    assert_eq!(r.json()["items"][0]["uid"], "broken");
+    let r = get(h.addr, "/api/dashboards?q=ZZZ").await;
+    assert_eq!(r.json()["items"], json!([]));
     for bad in ["q=", "limit=0", "limit=501", "limit=x", "after=nonsense", "after=", "extra=1"] {
         let r = get(h.addr, &format!("/api/dashboards?{bad}")).await;
         assert_eq!((r.status, r.code().as_str()), (400, "bad_request"), "{bad}");
@@ -206,52 +193,6 @@ async fn a02_get_and_download() {
     }
     let r = get(h.addr, "/api/dashboards/nodes?download=maybe").await;
     assert_eq!(r.status, 400);
-}
-
-#[tokio::test]
-async fn a02_invalid_entry_gives_422_on_get() {
-    let h = Harness::start_with(
-        test_timing(),
-        |root| {
-            fill(root);
-            std::fs::write(root.join("transit/broken.json"), b"{ not json").unwrap();
-        },
-        |_| {},
-    )
-    .await;
-    let r = get(h.addr, "/api/dashboards/broken").await;
-    assert_eq!((r.status, r.code().as_str()), (422, "stored_document_invalid"));
-    assert_eq!(r.json()["error"]["errors"][0]["code"], "syntax");
-}
-
-#[tokio::test]
-async fn a02_download_of_an_invalid_entry_gives_the_stored_bytes() {
-    let stored: &[u8] = b"{ not json\n";
-    let h = Harness::start_with(
-        test_timing(),
-        |root| {
-            fill(root);
-            std::fs::write(root.join("transit/broken.json"), b"{ not json\n").unwrap();
-        },
-        |_| {},
-    )
-    .await;
-    let dl = get(h.addr, "/api/dashboards/broken?download=true").await;
-    assert_eq!(dl.status, 200, "{}", dl.text());
-    assert_eq!(dl.header("content-type"), Some("application/json"));
-    assert_eq!(dl.header("content-disposition"), Some("attachment; filename=\"broken.json\""));
-    assert_eq!(dl.body, stored, "the bytes are as stored");
-    // The etag is the one of the list item, and the SHA-256 of the bytes (4.39).
-    let list = get(h.addr, "/api/dashboards").await.json();
-    let item = list["items"].as_array().unwrap().iter().find(|i| i["uid"] == "broken").unwrap();
-    assert_eq!(item["state"], "invalid");
-    assert_eq!(item["etag"], etag_of(&dl));
-    use sha2::{Digest, Sha256};
-    let digest: String = Sha256::digest(stored).iter().map(|b| format!("{b:02x}")).collect();
-    assert_eq!(digest, etag_of(&dl));
-    // The plain read keeps the answer 422.
-    let r = get(h.addr, "/api/dashboards/broken").await;
-    assert_eq!((r.status, r.code().as_str()), (422, "stored_document_invalid"));
 }
 
 #[tokio::test]
@@ -831,7 +772,10 @@ async fn a17_folders() {
     assert_eq!(r.status, 200);
     let j = r.json();
     assert_eq!(j["access"]["create"], true);
-    assert_eq!(j["items"][0], json!({"id": "ops", "title": "Operations", "access": {"write": true}}));
+    assert_eq!(
+        j["items"][0],
+        json!({"id": "ops", "title": "Operations", "access": {"write": true}, "read_only": false, "store": "main"})
+    );
     assert_eq!(j["items"][1]["id"], "transit");
     assert_eq!(j["items"][1]["title"], "Transit desk");
     // Create.
@@ -972,7 +916,7 @@ async fn a23_sources_list_has_ids_and_labels_only() {
         assert!(!text.contains(secret), "{secret}");
     }
     // With `server.editing` false the list is empty (6.22).
-    let h = Harness::start_with(test_timing(), fill, |c| c.server.editing = false).await;
+    let h = Harness::start_with(test_timing(), fill, super::harness::no_primary).await;
     assert_eq!(get(h.addr, "/api/sources").await.json(), json!({"items": []}));
 }
 
@@ -984,13 +928,13 @@ async fn a25_session_has_mode_subject_and_editing() {
         (j["mode"].as_str(), j["subject"].as_str(), j["editing"].as_bool()),
         (Some("open"), Some("-"), Some(true))
     );
-    let h = Harness::start_with(test_timing(), fill, |c| c.server.editing = false).await;
+    let h = Harness::start_with(test_timing(), fill, super::harness::no_primary).await;
     assert_eq!(get(h.addr, "/api/session").await.json()["editing"], false);
 }
 
 #[tokio::test]
 async fn a26_with_editing_off_each_write_route_is_refused_and_each_read_route_works() {
-    let h = Harness::start_with(test_timing(), fill, |c| c.server.editing = false).await;
+    let h = Harness::start_with(test_timing(), fill, super::harness::no_primary).await;
     let e0 = etag_of(&current(&h, "nodes").await);
     let ifm = format!("\"{e0}\"");
     type WriteCase = (&'static str, String, Vec<(&'static str, String)>, Vec<u8>);
@@ -1046,19 +990,6 @@ async fn a26_with_editing_off_each_write_route_is_refused_and_each_read_route_wo
     }
     assert_eq!(get(h.addr, "/api/dashboards/nodes").await.status, 200);
     assert_eq!(etag_of(&current(&h, "nodes").await), e0);
-}
-
-#[tokio::test]
-async fn a26_a_read_only_volume_refuses_the_writes_too() {
-    let h = Harness::start_with(test_timing(), fill, |c| {
-        if let crate::config::StorageConfig::Volume(v) = &mut c.storage {
-            v.read_only = true;
-        }
-    })
-    .await;
-    let r = call(h.addr, "POST", "/api/folders", &[JSON], br#"{"id":"x","title":"X"}"#).await;
-    assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"));
-    assert_eq!(get(h.addr, "/api/folders").await.status, 200);
 }
 
 #[tokio::test]
@@ -1286,7 +1217,6 @@ async fn start_tags() -> Harness {
             std::fs::write(root.join("ops/alpha.json"), doc_tags("alpha", "Alpha", &["chain", "infra"])).unwrap();
             std::fs::write(root.join("ops/beta.json"), doc_tags("beta", "Beta", &[])).unwrap();
             std::fs::write(root.join("ops/gamma.json"), doc_tags("gamma", "Gamma", &["Chain", "ch"])).unwrap();
-            std::fs::write(root.join("ops/broken.json"), b"{ \"tags\": [\"chain\"] ").unwrap();
         },
         |_| {},
     )
@@ -1306,8 +1236,8 @@ async fn a60_a_tag_lists_only_the_dashboards_that_have_it() {
     assert_eq!(uids(&r), ["alpha", "nodes"]);
     assert_eq!(r.json()["items"][0]["tags"], json!(["chain", "infra"]));
     assert_eq!(uids(&get(h.addr, "/api/dashboards?tag=infra").await), ["alpha"]);
-    // Without the parameter, each entry shows (4 valid, 1 invalid).
-    assert_eq!(get(h.addr, "/api/dashboards").await.json()["items"].as_array().unwrap().len(), 5);
+    // Without the parameter, each entry shows (4 valid).
+    assert_eq!(get(h.addr, "/api/dashboards").await.json()["items"].as_array().unwrap().len(), 4);
 }
 
 #[tokio::test]
@@ -1322,16 +1252,13 @@ async fn a60_a_tag_that_no_dashboard_has_gives_an_empty_list() {
 }
 
 #[tokio::test]
-async fn a60_the_comparison_is_exact_and_an_invalid_entry_never_matches() {
+async fn a60_the_comparison_is_exact() {
     let h = start_tags().await;
     // `Chain` is not `chain`, and `ch` is not a part match of `chain`.
     assert_eq!(uids(&get(h.addr, "/api/dashboards?tag=Chain").await), ["gamma"]);
     assert_eq!(uids(&get(h.addr, "/api/dashboards?tag=ch").await), ["gamma"]);
     assert_eq!(uids(&get(h.addr, "/api/dashboards?tag=CHAIN").await), Vec::<String>::new());
     assert_eq!(uids(&get(h.addr, "/api/dashboards?tag=olana").await), Vec::<String>::new());
-    // The invalid entry `broken` has the text `chain` in its bytes. It has no tag in the list (6.12).
-    let all = uids(&get(h.addr, "/api/dashboards?tag=chain").await);
-    assert!(!all.contains(&"broken".to_owned()), "{all:?}");
 }
 
 #[tokio::test]

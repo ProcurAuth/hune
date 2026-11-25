@@ -15,6 +15,7 @@ pub enum Code {
     Forbidden,
     CeilingExceeded,
     EditingDisabled,
+    ReadOnlyStore,
     CrossSiteRequest,
     NotFound,
     MethodNotAllowed,
@@ -56,13 +57,14 @@ pub enum Code {
 
 impl Code {
     /// Every code, in the order of the table of 6.8.
-    pub const ALL: [Code; 43] = [
+    pub const ALL: [Code; 44] = [
         Code::BadRequest,
         Code::InvalidOptionsRequest,
         Code::Unauthenticated,
         Code::Forbidden,
         Code::CeilingExceeded,
         Code::EditingDisabled,
+        Code::ReadOnlyStore,
         Code::CrossSiteRequest,
         Code::NotFound,
         Code::MethodNotAllowed,
@@ -111,6 +113,7 @@ impl Code {
             Code::Forbidden => "forbidden",
             Code::CeilingExceeded => "ceiling_exceeded",
             Code::EditingDisabled => "editing_disabled",
+            Code::ReadOnlyStore => "read_only_store",
             Code::CrossSiteRequest => "cross_site_request",
             Code::NotFound => "not_found",
             Code::MethodNotAllowed => "method_not_allowed",
@@ -156,7 +159,11 @@ impl Code {
         let n = match self {
             Code::BadRequest | Code::InvalidOptionsRequest => 400,
             Code::Unauthenticated => 401,
-            Code::Forbidden | Code::CeilingExceeded | Code::EditingDisabled | Code::CrossSiteRequest => 403,
+            Code::Forbidden
+            | Code::CeilingExceeded
+            | Code::EditingDisabled
+            | Code::ReadOnlyStore
+            | Code::CrossSiteRequest => 403,
             Code::NotFound => 404,
             Code::MethodNotAllowed => 405,
             Code::RequestTimeout => 408,
@@ -419,6 +426,7 @@ mod tests {
         ("forbidden", 403, false, &["action"]),
         ("ceiling_exceeded", 403, false, &["action", "ceiling", "limit"]),
         ("editing_disabled", 403, false, &[]),
+        ("read_only_store", 403, false, &[]),
         ("cross_site_request", 403, false, &[]),
         ("not_found", 404, false, &[]),
         ("method_not_allowed", 405, false, &[]),

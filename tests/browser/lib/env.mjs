@@ -359,8 +359,7 @@ export function makeVolume(dir) {
   mkdirSync(join(dir, "transit"), { recursive: true });
   writeFileSync(join(dir, "transit/_folder.json"), JSON.stringify({ format_version: 1, title: "Transit desk" }, null, 2) + "\n");
   writeFileSync(join(dir, "transit/nodes.json"), seedDashboardText());
-  // A file that is not a valid document (B01): the list shows it as invalid, with its errors.
-  cpSync(join(ROOT, "tests/fixtures/dashboards/invalid/grid_w_and_extra_member.json"), join(dir, "transit/grid-errors.json"));
+  // A volume has no file that is not valid: the start stops (5.41). The cases of the invalid card use a PostgreSQL store.
 }
 
 /** Build the configuration text from `print-reference` with the values of this run. */
@@ -377,17 +376,22 @@ export function makeConfig({ listen, ops, volume, chUrl, passwordFile, editing =
   set("listen", JSON.stringify(listen));
   set("ops_listen", JSON.stringify(ops));
   set("base_path", JSON.stringify(basePath));
-  set("editing", String(editing));
-  // `server.query_inspect` has no line in the reference (its default is `false`): the line is added after `editing` (B46).
+  // No edit is possible without a primary store (13.10): `editing = false` makes the volume a read-only store, with a title.
+  if (!editing) {
+    if (!/^\s*primary\s*=\s*true\n/m.test(t)) throw new Error("no primary store in the reference");
+    t = t.replace(/^(\s*)primary\s*=\s*true\n/m, (m, a) => `${a}title           = "Transit"\n`);
+    t = t.replace(/^\s*history_keep\s*=\s*\d+\n/m, "");
+  }
+  // `server.query_inspect` has no line in the reference (its default is `false`): the line is added after `base_path` (B46).
   if (queryInspect !== null) {
     if (/^\s*query_inspect\s*=/m.test(t)) throw new Error("query_inspect is already in the reference");
-    t = t.replace(/^(\s*)(editing\s*=.*)$/m, (m, a) => `${m}\n${a}query_inspect = ${queryInspect ? "true" : "false"}`);
+    t = t.replace(/^(\s*)(base_path\s*=.*)$/m, (m, a) => `${m}\n${a}query_inspect = ${queryInspect ? "true" : "false"}`);
   }
-  // More keys of the block `server` (B101: `repeat_max_per_*`): each line is added after `editing`. A key that the reference has is an error.
+  // More keys of the block `server` (B101: `repeat_max_per_*`): each line is added after `base_path`. A key that the reference has is an error.
   for (const line of serverLines) {
     const key = line.split("=")[0].trim();
     if (new RegExp(`^\\s*${key}\\s*=`, "m").test(t)) throw new Error(`${key} is already in the reference`);
-    t = t.replace(/^(\s*)(editing\s*=.*)$/m, (m, a) => `${m}\n${a}${line}`);
+    t = t.replace(/^(\s*)(base_path\s*=.*)$/m, (m, a) => `${m}\n${a}${line}`);
   }
   set("path", JSON.stringify(volume));
   set("rescan_interval", JSON.stringify("1s"));

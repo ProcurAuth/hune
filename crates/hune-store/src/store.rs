@@ -149,6 +149,16 @@ pub enum StoreEvent {
         /// The error number.
         errno: i32,
     },
+    /// `store.rescan_rejected`: a poll of a store did not take a change: a file of a volume that is not valid, or a
+    /// folder id or a uid that another store holds (5.44).
+    RescanRejected {
+        /// The id of the store.
+        store: String,
+        /// The path of the file, or the folder and the uid.
+        path: String,
+        /// The reason. It never goes to a client.
+        reason: String,
+    },
     /// A `delete_folder` found an entry in the folder (5.15, SV-23).
     FolderNotEmpty {
         /// The folder.

@@ -25,7 +25,6 @@ pub fn test_config(volume: &Path) -> Config {
             listen: "127.0.0.1:0".parse().unwrap(),
             ops_listen: "127.0.0.1:0".parse().unwrap(),
             base_path: "/".to_owned(),
-            editing: true,
             query_inspect: false,
             repeat_max_per_panel: 24,
             repeat_max_per_section: 12,
@@ -41,12 +40,17 @@ pub fn test_config(volume: &Path) -> Config {
         },
         log: LogConfig { level: LogLevel::Debug },
         telemetry: TelemetryConfig::Disabled,
-        storage: StorageConfig::Volume(VolumeConfig {
-            path: volume.to_owned(),
-            read_only: false,
-            rescan_interval: Duration::from_millis(100),
-            history_keep: 100,
-        }),
+        storage: StorageConfig {
+            volumes: vec![VolumeConfig {
+                id: "main".to_owned(),
+                title: None,
+                primary: true,
+                path: volume.to_owned(),
+                rescan_interval: Duration::from_millis(100),
+                history_keep: Some(100),
+            }],
+            postgres: None,
+        },
         access: AccessConfig::Open,
         clickhouse: vec![ClickHouseConfig {
             id: "prod".to_owned(),
@@ -75,6 +79,29 @@ pub fn test_config(volume: &Path) -> Config {
         mongo_sources: Vec::new(),
         geomap: None,
     }
+}
+
+/// Makes the volume of the test a read-only store: no store is the primary store, so no edit is possible (13.10).
+/// The volume needs a dashboard before the start, because a read-only store with no dashboard stops the start.
+pub fn no_primary(c: &mut Config) {
+    for v in &mut c.storage.volumes {
+        v.primary = false;
+        v.title = Some("Main".to_owned());
+        v.history_keep = None;
+    }
+}
+
+/// Adds a read-only volume store `lab` with the title `Lab` at `path`. The directory must hold a dashboard before the
+/// start.
+pub fn add_read_only_volume(c: &mut Config, path: &Path) {
+    c.storage.volumes.push(VolumeConfig {
+        id: "lab".to_owned(),
+        title: Some("Lab".to_owned()),
+        primary: false,
+        path: path.to_owned(),
+        rescan_interval: Duration::from_millis(100),
+        history_keep: None,
+    });
 }
 
 /// The timing of a test: a short drain.

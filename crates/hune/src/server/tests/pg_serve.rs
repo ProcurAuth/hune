@@ -26,6 +26,8 @@ use tokio::task::JoinHandle;
 fn pg_config(env: &PgEnv, database: &str, role: Role, tls: bool) -> PostgresConfig {
     let (user, password) = env.credentials(role);
     PostgresConfig {
+        title: None,
+        primary: true,
         host: env.host.clone(),
         port: env.port,
         database: database.to_owned(),
@@ -41,7 +43,7 @@ fn pg_config(env: &PgEnv, database: &str, role: Role, tls: bool) -> PostgresConf
         connect_timeout: Duration::from_secs(2),
         statement_timeout: Duration::from_secs(10),
         poll_interval: Duration::from_millis(200),
-        history_keep: 100,
+        history_keep: Some(100),
     }
 }
 
@@ -56,7 +58,7 @@ async fn migrate(env: &PgEnv, database: &str) {
 fn config_for(pg: PostgresConfig) -> Config {
     let dir = tempfile::tempdir().unwrap();
     let mut config = test_config(dir.path());
-    config.storage = StorageConfig::Postgres(pg);
+    config.storage = StorageConfig { volumes: Vec::new(), postgres: Some(pg) };
     config
 }
 
@@ -68,7 +70,12 @@ async fn try_start(pg: PostgresConfig) -> (Result<Running, lifecycle::StartError
 }
 
 async fn start_pg(pg: PostgresConfig) -> Harness {
-    Harness::start_with(test_timing(), |_| {}, |c| c.storage = StorageConfig::Postgres(pg)).await
+    Harness::start_with(
+        test_timing(),
+        |_| {},
+        |c| c.storage = StorageConfig { volumes: Vec::new(), postgres: Some(pg) },
+    )
+    .await
 }
 
 fn events_of(logger: &Logger) -> Vec<Value> {
@@ -83,6 +90,8 @@ fn count(events: &[Value], name: &str) -> usize {
 
 fn sample(sslmode: SslMode, tls: Option<TlsConfig>) -> PostgresConfig {
     PostgresConfig {
+        title: None,
+        primary: true,
         host: "pg.example.internal".to_owned(),
         port: 5433,
         database: "hune_db".to_owned(),
@@ -94,7 +103,7 @@ fn sample(sslmode: SslMode, tls: Option<TlsConfig>) -> PostgresConfig {
         connect_timeout: Duration::from_secs(3),
         statement_timeout: Duration::from_secs(11),
         poll_interval: Duration::from_secs(4),
-        history_keep: 42,
+        history_keep: Some(42),
     }
 }
 

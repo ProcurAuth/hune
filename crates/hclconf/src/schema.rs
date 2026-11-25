@@ -533,8 +533,8 @@ impl Schema {
             if !block.parent_path().is_empty() && self.block(block.parent_path()).is_none() {
                 return Err(format!("block {} has no parent", block.path));
             }
-            if block.labelled && !block.parent_path().is_empty() {
-                return Err(format!("labelled block {} must be at the top", block.path));
+            if block.labelled && self.labelled_block_of(block.parent_path()).is_some() {
+                return Err(format!("labelled block {} is inside another labelled block", block.path));
             }
             self.validate_applies(block.path, &block.applies, block.necessary_text, block.forbidden_text)?;
         }
@@ -571,6 +571,23 @@ impl Schema {
     }
 
     fn block_has_labels(&self, block_path: &str) -> bool {
-        self.block(Self::root_of(block_path)).is_some_and(|b| b.labelled)
+        self.labelled_block_of(block_path).is_some()
+    }
+
+    /// The nearest block that has a label: the block `path` itself, or the closest parent
+    /// block that has a label. A key path gives the labelled block of its block.
+    pub fn labelled_block_of(&self, path: &str) -> Option<&'static BlockDesc> {
+        let mut current = path;
+        loop {
+            if let Some(b) = self.block(current) {
+                if b.labelled {
+                    return Some(b);
+                }
+            }
+            match current.rsplit_once('.') {
+                Some((parent, _)) => current = parent,
+                None => return None,
+            }
+        }
     }
 }

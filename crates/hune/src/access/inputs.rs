@@ -96,7 +96,7 @@ impl PepInputs {
             timeout: a.pdp.timeout,
             cache_ttl: a.pdp.cache_ttl,
             max_connections: a.pdp.max_connections as usize,
-            editing: config.server.editing,
+            editing: config.storage.editing(),
             sources: crate::server::source_blocks::blocks(config)
                 .into_iter()
                 .map(|b| SourceInfo {

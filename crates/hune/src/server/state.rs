@@ -3,13 +3,13 @@
 //! the stop phase, the health and the services of the store.
 
 use crate::access::Access;
-use crate::config::{AccessConfig, Config, StorageConfig};
+use crate::config::{AccessConfig, Config, PrimaryRef};
 use crate::log::Logger;
 use crate::metrics::Metrics;
 use crate::telemetry::Telemetry;
 use bytes::Bytes;
 use hune_source::AnySource;
-use hune_store::{AnyStore, Catalog};
+use hune_store::{Catalog, Stores};
 use std::collections::{BTreeMap, HashMap};
 use std::sync::atomic::{AtomicBool, AtomicU8, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, PoisonError};
@@ -40,8 +40,8 @@ pub enum StopStage {
 
 /// The services that need the store. The start hook makes them (14.12 steps 6 to 9).
 pub struct Services {
-    /// The store of the process (R8: an enum).
-    pub store: AnyStore,
+    /// The stores of the process: the primary store and the read-only stores (5.42).
+    pub store: Stores,
     /// The catalog in memory.
     pub catalog: Arc<Catalog>,
 }
@@ -315,20 +315,18 @@ impl AppState {
         }
     }
 
-    /// True when the process accepts writes: `server.editing = true` and the store is not read-only (6.10).
+    /// True when the process accepts writes: a store has `primary = true` (6.10).
     pub fn writes_enabled(&self) -> bool {
-        let read_only = match &self.config.storage {
-            StorageConfig::Volume(v) => v.read_only,
-            StorageConfig::Postgres(_) => false,
-        };
-        self.config.server.editing && !read_only
+        self.config.storage.editing()
     }
 
-    /// The name of the storage backend: `volume` or `postgres`.
+    /// The name of the backend of the primary store: `volume` or `postgres`. It is `none` when no store is the
+    /// primary store.
     pub fn backend_name(&self) -> &'static str {
-        match self.config.storage {
-            StorageConfig::Volume(_) => "volume",
-            StorageConfig::Postgres(_) => "postgres",
+        match self.config.storage.primary() {
+            Some(PrimaryRef::Volume(_)) => "volume",
+            Some(PrimaryRef::Postgres(_)) => "postgres",
+            None => "none",
         }
     }
 }

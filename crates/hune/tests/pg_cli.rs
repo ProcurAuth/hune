@@ -272,7 +272,9 @@ fn migrate_store_refuses_a_volume_configuration() {
     assert_eq!(out.status.code(), Some(1));
     assert!(out.stdout.is_empty());
     assert!(
-        text(&out.stderr).contains("storage.backend is \"volume\"; this command needs \"postgres\""),
+        text(&out.stderr).contains(
+            "the primary store is not the PostgreSQL store; this command needs `primary = true` on `storage.postgres`"
+        ),
         "{}",
         text(&out.stderr)
     );

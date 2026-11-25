@@ -6,7 +6,6 @@ server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
-  editing                 = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "20s"
@@ -23,8 +22,6 @@ telemetry {
 }
 
 storage {
-  backend = "postgres"
-
   postgres {
     host              = "postgres"
     port              = 5432
@@ -36,6 +33,7 @@ storage {
     connect_timeout   = "5s"
     statement_timeout = "10s"
     poll_interval     = "5s"
+    primary           = true
     history_keep      = 100
   }
 }

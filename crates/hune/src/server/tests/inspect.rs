@@ -343,8 +343,8 @@ fn loaded_password(form: &str) -> (Config, String) {
         .replace("/run/secrets/clickhouse/ca.pem", &ca.display().to_string())
         .replace("/var/lib/hune/dashboards", &std::fs::canonicalize(&volume).unwrap().display().to_string())
         .replace(
-            "  editing                 = true\n",
-            "  editing                 = true\n  query_inspect           = true\n",
+            "  base_path               = \"/\"\n",
+            "  base_path               = \"/\"\n  query_inspect           = true\n",
         );
     let env: Vec<(String, String)> = if form == "env" {
         text = text.replace(

@@ -1,5 +1,7 @@
 storage {
-  backend = "volume"
+  volume "main" {
+    primary = true
+  }
 }
 storage.volume {
   path = "/data"
