@@ -9,7 +9,8 @@ import { hasTimeOverride, panelRange } from "./panel_time.js";
 import { DEFAULT_LIMITS, buildPlan, canRepeatBy, copyVariables, orderedValues, splitKey } from "./repeat.js";
 import { failedSlots, isWholeError, panelState, queriesOf, requestBody } from "./queries.js";
 import { effectiveZone, resolveRange } from "./time.js";
-import { gridDoc } from "./var_layout.js";
+import { OptionsCache, cacheKey, periodKey, ttlOf } from "./options_cache.js";
+import { gridDoc, labelOf } from "./var_layout.js";
 import { ALL, buildOptions, defaultSelection, expandText, interpolateText, optionsOf, placeholderInfo, replacement, requestValue, resolveSelection } from "./var_options.js";
 
 export const MAX_IN_FLIGHT = 6;
@@ -109,10 +110,15 @@ export class Runtime {
     }));
     this.options = new Map();
     this.optionErrors = new Map();
+    // The state of the options of each query variable, for its control (9.10): `loading` (queued or running), `waiting` (a variable above it failed or
+    // waits, so it sends no request), `ready` or `error`. The cache keeps the answers of the options for the period and the values above them.
+    this.optionState = new Map();
+    this.optionsCache = new OptionsCache({ now });
     this.selections = new Map();
     this.range = { fromText: range.fromText, toText: range.toText, from_ms: 0, to_ms: 1, error: null };
     this.recomputeRange();
     this.graph = this.buildGraph();
+    for (const v of this.variables) if (v.kind === "query") this.optionState.set(v.name, { state: this.graph.parents.get(v.name).some((n) => this.varByName.get(n).kind === "query") ? "waiting" : "loading", parent: null });
     this.panels = new Map(); // the instances: the key is the id of a panel and of its first copy, else `<id>-r<n>` (9.8c)
     this.expanded = new Map(); // the sections and the copies of a section, by key
     this.order = [];
@@ -430,29 +436,74 @@ export class Runtime {
     return out;
   }
 
-  async loadOptions(variable, signal) {
+  // The values that the request of the options of `variable` sends for the variables its SQL names (the key of the cache, 9.10).
+  parentValues(variable) {
+    const all = this.requestVariables();
+    return this.graph.parents.get(variable.name).map((n) => [n, all[n]]);
+  }
+
+  // The options of a variable: from the cache when the key is known and young, else from the server (9.10). `force` skips the cache (Retry).
+  async loadOptions(variable, signal, force = false) {
+    const period = periodKey(variable, this.range, this.zone);
+    const key = cacheKey(variable, this.parentValues(variable), period);
+    if (!force) {
+      const hit = this.optionsCache.get(key);
+      if (hit) return hit;
+    }
     const body = { etag: this.etag, from_ms: this.range.from_ms, to_ms: this.range.to_ms, variables: this.requestVariables() };
     const answer = await this.api.variableOptions(this.uid, variable.name, body, signal);
-    return buildOptions(answer.options || [], variable);
+    const options = buildOptions(answer.options || [], variable);
+    this.optionsCache.set(key, options, ttlOf(period));
+    return options;
+  }
+
+  // The state of the options of a variable for its control: { state, parent }. A variable that is not a query variable is always `ready`.
+  optionStateOf(name) {
+    return this.optionState.get(name) || { state: "ready", parent: null };
+  }
+
+  setOptionState(name, state, parent = null) {
+    this.optionState.set(name, { state, parent });
   }
 
   // Loads the options of the query variables `names`, in order, and resolves their selections.
-  // It returns the names whose selection changed.
-  async reloadOptions(names, { keepUrl = null } = {}) {
+  // It returns the names whose selection changed. A variable whose options fail keeps its selection, and the panels run with it (9.10).
+  async reloadOptions(names, { keepUrl = null, force = false } = {}) {
     const changed = [];
+    const handled = new Set(names);
+    // The variables of this reload whose options failed or that wait: a variable below one of them waits too and sends no request (9.10).
+    const unavailable = new Set();
     this.optionsLoading += 1;
     busy.begin();
     try {
+      // At once: a variable that has a query variable above it in this reload waits, the others are in the queue.
+      for (const name of names) {
+        const above = this.graph.parents.get(name).find((n) => handled.has(n) && this.varByName.get(n).kind === "query");
+        this.setOptionState(name, above ? "waiting" : "loading", above ? labelOf(this.varByName.get(above)) : null);
+      }
+      this.emit("vars");
       for (const name of names) {
         if (this.destroyed) break;
         const variable = this.varByName.get(name);
+        const blocked = this.graph.parents.get(name).find((n) => unavailable.has(n));
+        if (blocked) {
+          unavailable.add(name);
+          this.optionErrors.delete(name);
+          this.setOptionState(name, "waiting", labelOf(this.varByName.get(blocked)));
+          this.emit("vars");
+          continue;
+        }
+        this.setOptionState(name, "loading");
+        this.emit("vars");
         const controller = new AbortController();
         this.optionController.get(name)?.abort();
         this.optionController.set(name, controller);
         let options;
+        let failed = false;
         try {
-          options = await this.loadOptions(variable, controller.signal);
+          options = await this.loadOptions(variable, controller.signal, force);
           this.optionErrors.delete(name);
+          this.setOptionState(name, "ready");
         } catch (error) {
           if (error.aborted || this.destroyed) {
             this.optionController.delete(name);
@@ -463,17 +514,21 @@ export class Runtime {
             this.handleStale(error);
             return changed;
           }
+          unavailable.add(name);
           this.optionErrors.set(name, error);
-          options = [];
+          this.setOptionState(name, "error");
+          // The options that the page knew stay: the person can still choose in them. The selection stays as it is (9.10).
+          options = this.options.get(name) || [];
+          failed = true;
         }
         this.optionController.delete(name);
         this.options.set(name, options);
         const before = this.selections.get(name);
         const current = before.all ? [ALL] : before.values;
-        const after = resolveSelection(variable, options, keepUrl ? keepUrl.get(name) : undefined, current);
+        const after = failed ? before : resolveSelection(variable, options, keepUrl ? keepUrl.get(name) : undefined, current);
         if (!sameSelection(before, after)) changed.push(name);
         this.selections.set(name, after);
-        if (!this.optionErrors.has(name)) this.notify(variable, options, keepUrl ? keepUrl.get(name) : undefined, current, after);
+        if (!failed) this.notify(variable, options, keepUrl ? keepUrl.get(name) : undefined, current, after);
         if (this.repeats) this.rebuild();
         this.emit("vars");
       }
@@ -482,6 +537,22 @@ export class Runtime {
       busy.end();
     }
     return changed;
+  }
+
+  // The Retry of the control of a variable (9.10): the options of the variable and of the variables below it load again, without the cache. The panels
+  // that name a variable whose selection changed query again.
+  retryOptions(name) {
+    const variable = this.varByName.get(name);
+    if (!variable || variable.kind !== "query" || this.stale) return undefined;
+    const names = [name, ...this.descendantsOf([name])];
+    for (const n of names) this.optionsCache.forget(n);
+    this.varChain = this.varChain.then(async () => {
+      if (this.destroyed || this.stale) return;
+      const changed = new Set(await this.reloadOptions(names, { force: true }));
+      this.markPanelsDirty(changed);
+      this.schedule();
+    });
+    return this.varChain;
   }
 
   // The query variables that a change of time must reload: refresh = "time_change", and what is below them.
