@@ -6,6 +6,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+## 0.2.0 - 2026-11-25
+
 ### Removed (breaking)
 
 - The key `storage.backend`. The blocks tell the stores now. An old file stops the start with the error `unknown attribute`.

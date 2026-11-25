@@ -211,7 +211,7 @@ fn the_run_reports_the_kind_of_each_source_that_the_types_give() {
 #[test]
 fn the_report_equals_its_golden_file() {
     let meta = ReportMeta {
-        hune_version: "0.1.3".to_owned(),
+        hune_version: "0.2.0".to_owned(),
         created_at: "2026-11-20T09:12:44Z".to_owned(),
         input_dir: "/private/grafana-export-pg".to_owned(),
         source_map: pg_options("").source_map.clone(),

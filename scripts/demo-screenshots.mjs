@@ -68,7 +68,7 @@ function die(message) {
 const OUT = resolve(opt("--out", join(REPO, "docs/assets/img")));
 const CH_URL_GIVEN = opt("--ch-url");
 const KEEP_PNG = args.includes("--keep-png");
-const HUNE = opt("--hune") || process.env.HUNE_BIN || [join(REPO, "dist/hune_0.1.3_linux_amd64/hune"), join(REPO, "target/release/hune")].find(existsSync);
+const HUNE = opt("--hune") || process.env.HUNE_BIN || [join(REPO, "dist/hune_0.2.0_linux_amd64/hune"), join(REPO, "target/release/hune")].find(existsSync);
 
 // ---- cleanup on each path ----
 const cleanups = []; // Async functions. They run in the reverse order.
