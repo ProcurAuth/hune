@@ -3,7 +3,7 @@
 This demo runs Hune on a local ClickHouse database. All data are synthetic.
 The data cover the 24 hours before you load `init.sql`.
 
-You need the binary `hune` (version 0.1.2 or later), `curl`, and Docker with the image
+You need the binary `hune` (version 0.1.3 or later), `curl`, and Docker with the image
 `clickhouse/clickhouse-server:26.8.34.13`. Run each command in this folder.
 
 1. Start ClickHouse on 127.0.0.1. Then load the data and the read-only user.

@@ -6,6 +6,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+## 0.1.3 - 2026-11-25
+
 ### Added
 
 - The key `server.list_filters_min_dashboards`. It is a whole number from 0 to 1000, and the default is 6. The list page shows the sort control and the tag filter only when the user sees more dashboards than this number. The session gives the number to the page.

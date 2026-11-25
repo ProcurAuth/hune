@@ -764,7 +764,7 @@ Dashboards are in the order of their Grafana uid, and items in the order of thei
 ```json
 {
   "report_version": 1,
-  "hune_version": "0.1.2",
+  "hune_version": "0.1.3",
   "created_at": "2026-11-20T09:12:44Z",
   "mode": "dry_run",
   "input": {
@@ -2882,7 +2882,7 @@ install -d -m 0750 -o 65532 -g 65532 dashboards
 install -d -m 0700 secrets
 install -m 0400 -o 65532 -g 65532 /path/to/clickhouse_password secrets/clickhouse_password
 install -m 0444 /path/to/clickhouse_ca.pem secrets/clickhouse_ca.pem
-docker build -t hune:0.1.2 /path/to/hune_0.1.2_linux_amd64
+docker build -t hune:0.1.3 /path/to/hune_0.1.3_linux_amd64
 ```
 
 `deploy/compose/volume/compose.yaml`:
@@ -2893,7 +2893,7 @@ docker build -t hune:0.1.2 /path/to/hune_0.1.2_linux_amd64
 name: hune-volume
 services:
   hune:
-    image: hune:0.1.2
+    image: hune:0.1.3
     pull_policy: never
     user: "65532:65532"
     read_only: true
@@ -3045,7 +3045,7 @@ services:
     restart: unless-stopped
 
   migrate:
-    image: hune:0.1.2
+    image: hune:0.1.3
     pull_policy: never
     user: "65532:65532"
     read_only: true
@@ -3077,7 +3077,7 @@ services:
     restart: "no"
 
   hune-a: &hune
-    image: hune:0.1.2
+    image: hune:0.1.3
     pull_policy: never
     user: "65532:65532"
     read_only: true
@@ -3221,8 +3221,8 @@ The image never comes from a registry. The operator builds it from the release a
 Deployment uses `imagePullPolicy: Never`:
 
 ```sh
-docker build -t hune:0.1.2 /path/to/hune_0.1.2_linux_amd64
-docker save hune:0.1.2 | sudo k3s ctr images import -
+docker build -t hune:0.1.3 /path/to/hune_0.1.3_linux_amd64
+docker save hune:0.1.3 | sudo k3s ctr images import -
 ```
 
 The secrets never enter a file of the repository. The operator makes them once:
@@ -3418,7 +3418,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: migrate
-          image: hune:0.1.2
+          image: hune:0.1.3
           imagePullPolicy: Never
           args: ["migrate-store", "-c", "/etc/hune/migrate.hcl"]
           securityContext:
@@ -3485,7 +3485,7 @@ spec:
               app.kubernetes.io/name: hune
       containers:
         - name: hune
-          image: hune:0.1.2
+          image: hune:0.1.3
           imagePullPolicy: Never
           args: ["serve", "-c", "/etc/hune/config.hcl"]
           ports:

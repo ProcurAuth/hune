@@ -22,7 +22,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: migrate
-          image: hune:0.1.2
+          image: hune:0.1.3
           imagePullPolicy: Never
           args: ["migrate-store", "-c", "/etc/hune/migrate.hcl"]
           securityContext:
