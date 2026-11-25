@@ -47,12 +47,18 @@ async function drag(p, x0, y0, x1, y1) {
   return p.eval(`window.getSelection().toString()`);
 }
 
-// n quick clicks at a point (a double click, a triple click). It gives the selected text.
+// n quick clicks at a point (a double click, a triple click). It gives the selected text. Chrome takes `clickCount` as the number of the click in the
+// series, so the series is n presses. The BiDi layer of Firefox makes n clicks for one press with `clickCount` n.
 async function clicks(p, x, y, n) {
   await p.eval(`window.getSelection().removeAllRanges()`);
-  for (let i = 1; i <= n; i++) {
-    await mouse(p, "mousePressed", x, y, { clickCount: i });
-    await mouse(p, "mouseReleased", x, y, { clickCount: i });
+  if (process.env.HUNE_BROWSER === "firefox") {
+    await mouse(p, "mousePressed", x, y, { clickCount: n });
+    await mouse(p, "mouseReleased", x, y, { clickCount: n });
+  } else {
+    for (let i = 1; i <= n; i++) {
+      await mouse(p, "mousePressed", x, y, { clickCount: i });
+      await mouse(p, "mouseReleased", x, y, { clickCount: i });
+    }
   }
   await sleep(200);
   return p.eval(`window.getSelection().toString()`);

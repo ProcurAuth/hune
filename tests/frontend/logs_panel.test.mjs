@@ -237,8 +237,61 @@ test("keys: one tab stop; arrows, Home and End move it; Enter and Space toggle t
   assert.ok(!key(lines[0], "ArrowRight"), "the side arrows scroll the list");
   const off = draw(frame(2), { details: false }).list;
   assert.equal(off.tabIndex, 0);
-  assert.equal(off.listeners.get("click"), undefined);
+  // With the details off the click listener only selects a line on a triple click: a plain click opens nothing.
+  assert.equal(off.listeners.get("click").length, 1);
+  click(off, off.querySelectorAll(".logs__line")[0]);
+  assert.equal(off.querySelectorAll(".logs__details").length, 0);
   assert.deepEqual(off.querySelectorAll(".logs__line").map((l) => [l.getAttribute("role"), l.getAttribute("aria-expanded")]), [["listitem", null], ["listitem", null]]);
+});
+
+test("clicks: a plain click toggles the details, a double click gives the toggle back, a triple click selects the line and changes nothing (9.8e)", () => {
+  const selected = [];
+  globalThis.getSelection = () => ({ toString: () => "", selectAllChildren: (node) => selected.push(node) });
+  try {
+    const { list } = draw(frame(2), {});
+    const [line] = list.querySelectorAll(".logs__line");
+    const series = (n) => { for (let detail = 1; detail <= n; detail++) for (const fn of list.listeners.get("click")) fn({ type: "click", target: line, detail }); };
+    const open = () => line.getAttribute("aria-expanded");
+    series(1);
+    assert.equal(open(), "true", "a plain click opens");
+    series(1);
+    assert.equal(open(), "false", "a second plain click closes");
+    series(2);
+    assert.equal(open(), "false", "a double click on a closed line leaves it closed");
+    series(3);
+    assert.equal(open(), "false", "a triple click on a closed line leaves it closed");
+    assert.deepEqual(selected, [line], "a triple click selects the whole line, and a double click selects nothing by code");
+    series(1);
+    assert.equal(open(), "true");
+    series(3);
+    assert.equal(open(), "true", "a triple click on an open line leaves it open");
+    assert.equal(list.querySelectorAll(".logs__details").length, 1);
+  } finally {
+    delete globalThis.getSelection;
+  }
+});
+
+test("Ctrl+A or Cmd+A with the focus on a line selects the lines of the panel, and no other key does", () => {
+  const selected = [];
+  globalThis.getSelection = () => ({ toString: () => "", selectAllChildren: (node) => selected.push(node) });
+  try {
+    const { list } = draw(frame(3), {});
+    const [line] = list.querySelectorAll(".logs__line");
+    const press = (e) => {
+      let prevented = false;
+      for (const fn of list.listeners.get("keydown")) fn({ target: line, preventDefault: () => { prevented = true; }, ...e });
+      return prevented;
+    };
+    assert.equal(press({ key: "a", ctrlKey: true }), true);
+    assert.equal(press({ key: "A", metaKey: true }), true);
+    assert.deepEqual(selected, [list, list]);
+    assert.equal(press({ key: "a" }), false, "a plain a does nothing");
+    assert.equal(press({ key: "a", ctrlKey: true, shiftKey: true }), false);
+    assert.equal(press({ key: "c", ctrlKey: true }), false);
+    assert.equal(selected.length, 2);
+  } finally {
+    delete globalThis.getSelection;
+  }
 });
 
 // --- the time -------------------------------------------------------------------------------------------------------------------

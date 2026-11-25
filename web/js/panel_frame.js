@@ -17,6 +17,7 @@ import { allRows, buildTable } from "./panels/annotate.js";
 import { createText } from "./panels/text.js";
 import { createVariableFrame } from "./panels/variable.js";
 import { installCopyText } from "./panels/copy_text.js";
+import { installRowCopy } from "./panels/row_copy.js";
 import { installTextLayer } from "./panels/text_layer.js";
 import { button, clear, copyText, el, emptyState, icon, notify, openDialog, openMenu } from "./ui.js";
 
@@ -24,6 +25,7 @@ import { button, clear, copyText, el, emptyState, icon, notify, openDialog, open
 // links of cells) and the text that a chart draws on its canvas. Both are made one time for the page, before the first panel draws.
 installCopyText();
 installTextLayer();
+installRowCopy();
 
 const LOADERS = {
   table: () => import("./panels/table.js"),

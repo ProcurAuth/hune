@@ -100,7 +100,8 @@ export function renderHorizontalBars(host, model, panel) {
   root.style.setProperty("--fa", `${o.fill_opacity ?? 80}%`);
   root.style.setProperty("--lw", `${o.line_width ?? 1}px`);
   const plot = el("div", { class: "hbar__plot" });
-  const rowsEl = el("div", { class: "hbar__rows" });
+  // The copy of rows (9.8e): row_copy.js gives one text line for each row, the name and the value with one space.
+  const rowsEl = el("div", { class: "hbar__rows", dataset: { copyRows: "1" } });
   const axisEl = el("div", { class: "hbar__axis" });
   // P14: the band of the value axis is `axis_width` px high; a border is a line and ticks of 4 px in the colour of the axis, and the labels go 4 px down.
   const axisColor = look.color ? look.color() : null;
@@ -149,7 +150,7 @@ export function renderHorizontalBars(host, model, panel) {
       track.append(bar, label);
       bars.push({ s, k, bar, label });
     });
-    const row = el("div", { class: "hbar__row", dataset: { index: i } }, name, track);
+    const row = el("div", { class: "hbar__row", dataset: { index: i, copyRow: "1" } }, name, track);
     rowsEl.append(row);
     rows.push({ i, row, name, track, bars });
   }

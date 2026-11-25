@@ -165,6 +165,8 @@ export function render(host, ctx) {
   list.className = `logs${o.wrap === true ? " logs--wrap" : ""}`;
   list.setAttribute("role", "list");
   list.dataset.testid = `logs-${key}`;
+  // The copy of a selection gives one text line for each line of the panel (9.8e): row_copy.js reads these two marks.
+  list.dataset.copyRows = "1";
   // The test hook of 9.29: the count of the lines, the rows of the frame and the cap.
   list.dataset.logs = JSON.stringify({ lines: m.lines.length, total: m.total, cut: m.cut });
   // The level column is as wide as the longest level text of the panel, 1 character at least (Grafana 12.4.2).
@@ -182,6 +184,7 @@ export function render(host, ctx) {
     const row = doc.createElement("div");
     row.className = "logs__line";
     row.dataset.i = String(els.length);
+    row.dataset.copyRow = "1";
     if (details) {
       row.setAttribute("role", "button");
       row.setAttribute("aria-expanded", "false");
@@ -206,6 +209,7 @@ export function render(host, ctx) {
     const box = doc.createElement("div");
     box.className = "logs__details";
     box.dataset.testid = `logs-${key}-details`;
+    box.dataset.copySkip = "1";
     const items = detailsOf(fields, m, m.lines[i].row);
     box.append(span(doc, "logs__dhead", "Fields"));
     if (items.length === 0) box.append(span(doc, "logs__dnone", "The line has no other field."));
@@ -232,11 +236,39 @@ export function render(host, ctx) {
     to.tabIndex = 0;
     to.focus();
   };
+  // The first click of a click toggles the details. A double click selects a word and a triple click selects the line (9.8e), and neither leaves the
+  // details changed: the second click gives back the toggle of the first, and the third click selects the whole line (time, level and body).
   // A click that ends a selection of text keeps the details as they are, so that a person can copy a part of a line.
+  let toggledByFirst = null;
   const onClick = (e) => {
     const row = lineOf(e.target);
+    if (!row) return;
+    if (e.detail >= 3) {
+      toggledByFirst = null;
+      const selection = typeof getSelection === "function" ? getSelection() : null;
+      if (selection) selection.selectAllChildren(row);
+      return;
+    }
+    if (!details) return;
+    if (e.detail === 2) {
+      if (toggledByFirst === row) toggle(row);
+      toggledByFirst = null;
+      return;
+    }
+    toggledByFirst = null;
     const picked = typeof getSelection === "function" && String(getSelection()) !== "";
-    if (row && !picked) toggle(row);
+    if (!picked) {
+      toggle(row);
+      toggledByFirst = row;
+    }
+  };
+  // Ctrl+A or Cmd+A with the focus in the panel selects the lines of the panel and not the whole page.
+  const onSelectAll = (e) => {
+    if (!(e.ctrlKey || e.metaKey) || e.altKey || e.shiftKey || e.key.toLowerCase() !== "a") return;
+    const selection = typeof getSelection === "function" ? getSelection() : null;
+    if (!selection) return;
+    selection.selectAllChildren(list);
+    e.preventDefault();
   };
   const onKey = (e) => {
     const row = lineOf(e.target);
@@ -248,10 +280,9 @@ export function render(host, ctx) {
     else return;
     e.preventDefault();
   };
-  if (details) {
-    list.addEventListener("click", onClick);
-    list.addEventListener("keydown", onKey);
-  }
+  list.addEventListener("keydown", onSelectAll);
+  list.addEventListener("click", onClick);
+  if (details) list.addEventListener("keydown", onKey);
   host.append(list);
   return { destroy: () => list.remove() };
 }

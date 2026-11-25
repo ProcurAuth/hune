@@ -104,7 +104,8 @@ export function render(host, ctx) {
   const items = reduceItems(ctx, o.reduce);
   const vertical = o.orientation === "vertical";
   const orient = vertical ? "vertical" : "horizontal";
-  const root = el("div", { class: `bargauge bargauge--${orient}`, dataset: { testid: `bargauge-${panel.id}`, mode: o.display_mode } });
+  // The copy of rows (9.8e): row_copy.js gives one text line for each item, the name and the value with one space.
+  const root = el("div", { class: `bargauge bargauge--${orient}`, dataset: { testid: `bargauge-${panel.id}`, mode: o.display_mode, copyRows: "1" } });
   const lcd = [];
   const bars = []; // the fills of the basic and the gradient mode, painted again when the theme changes
   const entries = [];
@@ -152,7 +153,7 @@ export function render(host, ctx) {
     } else inner.append(el("span", { class: "bargauge__num", text: item.text }));
     valueEl.append(inner);
     const float = vertical && !o.show_unfilled;
-    const itemEl = el("div", { class: `bargauge__item${float ? " bargauge__item--float" : ""}` }, label, track, valueEl, probe);
+    const itemEl = el("div", { class: `bargauge__item${float ? " bargauge__item--float" : ""}`, dataset: { copyRow: "1" } }, label, track, valueEl, probe);
     entries.push({ itemEl, label, probe, valueEl, inner, track, colorIn, float, fill });
     root.append(itemEl);
   }

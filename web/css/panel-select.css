@@ -14,3 +14,18 @@ a.cell-link { -webkit-user-drag: none; }
 .textLayer > span::selection { background: color-mix(in srgb, var(--accent-fill) 35%, transparent); color: transparent; }
 /* The value at the end of a bar of the horizontal bar chart took no pointer: a person could not select it. It takes the pointer now. */
 .hbar__value { pointer-events: auto; user-select: text; -webkit-user-select: text; }
+
+/* The cursor over text. A person selects the text of data as in a text file: the pointer over a text is the vertical bar. The controls keep their
+   own cursor: the icon buttons, the menus, the links, the selects and the sortable headers (a header is a control: its text takes a drag selection,
+   and a plain click sorts). A legend item and a log line are controls too, but their text is data: the label of an item and the cells of a line show the
+   bar, and a plain click on them still acts. In the edit mode the title bar of a panel keeps the cursor `move`. */
+.logs__line, .logs__line[role="button"], .logs__line > span, .logs__details dt, .logs__details dd, .logs__dhead, .chartCore__legendItem > span,
+.stat__num, .stat__unit, .hbar__name, .hbar__value, .hbar__tick, .gauge__title, .heat__labels > span,
+.pie__legend-name, .pie__legend-value, .bargauge__name, .bargauge__num, .bargauge__unit, .var__label,
+.vtable td, .vtable__foot-name, .vtable__foot-value, .cell-gauge__text, .inspect__sql, .inspect__meta,
+.panel__title, .panel__time-text,
+.panel[data-type="text"] :is(p, li, h1, h2, h4, h5, h6, blockquote, pre, td, th, code) {
+  cursor: text;
+}
+.edit-grid .panel__head, .edit-grid .panel__head .panel__title { cursor: move; }
+.edit-grid .panel__head :is(button, a, [tabindex]) { cursor: pointer; }
