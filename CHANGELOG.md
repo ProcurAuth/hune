@@ -6,6 +6,12 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+### Changed
+
+- The preview of a panel that loads for the first time follows the panel. A time series shows three smooth lines, an area, the labels of the axes and the legend of its options, in place of dots. The preview keeps the place of the axes and of the legend, so the plot does not move when the data arrive. The other panel types follow their options too: bar chart, pie chart, stat, gauge, bar gauge, table, heatmap, histogram, state timeline and logs.
+- One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
+- The module `panel_preview.js` makes the elements of the preview. The function `previewOf` of `panel_wait.js` gives the tree of shapes. The list `SKELETONS` is gone.
+
 ## 0.2.0 - 2026-11-25
 
 ### Removed (breaking)
