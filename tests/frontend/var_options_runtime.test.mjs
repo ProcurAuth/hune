@@ -236,3 +236,18 @@ test("a new request for a variable cancels the older one", async () => {
   assert.equal(older.aborted, true, "the first request is cancelled");
   rt.destroy();
 });
+
+test("the newer request of a variable is still cancelled by destroy after the older one ended", async () => {
+  const hold = { name: "solo", release: null };
+  const api = fakeApi({ hold });
+  const rt = make(api);
+  rt.start();
+  await tick();
+  rt.retryOptions("solo");
+  await tick();
+  // The older request has ended with its cancel. It must not forget the controller of the newer request.
+  const newer = api.signals.get("solo");
+  assert.equal(newer.aborted, false, "the newer request runs");
+  rt.destroy();
+  assert.equal(newer.aborted, true, "the newer request is cancelled when the runtime is destroyed");
+});

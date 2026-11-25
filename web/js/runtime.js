@@ -506,11 +506,11 @@ export class Runtime {
           this.setOptionState(name, "ready");
         } catch (error) {
           if (error.aborted || this.destroyed) {
-            this.optionController.delete(name);
+            this.releaseOptionController(name, controller);
             return changed;
           }
           if (error.code === "dashboard_changed") {
-            this.optionController.delete(name);
+            this.releaseOptionController(name, controller);
             this.handleStale(error);
             return changed;
           }
@@ -521,7 +521,7 @@ export class Runtime {
           options = this.options.get(name) || [];
           failed = true;
         }
-        this.optionController.delete(name);
+        this.releaseOptionController(name, controller);
         this.options.set(name, options);
         const before = this.selections.get(name);
         const current = before.all ? [ALL] : before.values;
@@ -650,6 +650,11 @@ export class Runtime {
     const at = this.queue.indexOf(job);
     if (at >= 0) this.queue.splice(at, 1);
     this.releaseBusy(job);
+  }
+
+  // A request that ends forgets its own controller only: a newer request of the same variable has put its own in the map (9.10).
+  releaseOptionController(name, controller) {
+    if (this.optionController.get(name) === controller) this.optionController.delete(name);
   }
 
   abortAll() {
