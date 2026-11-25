@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
+// Browser cases B240, B270 and B271 (10.4). The row of the area is 20 px (css `--json-row`, script `ROW`).
 // Browser case B240 (10.4): the JSON view of the edit mode has colours (4.5:1 in both themes), marks in the gutter for the lines that differ from the
 // saved dashboard (added, modified, a border where lines are gone, a band under the number of a syntax error), a revert that clears them, a height
 // that fills the page at four window sizes, and the caps of the colour layer.
@@ -10,7 +11,7 @@ const SIZES = [[1440, 900], [1280, 720], [768, 900], [390, 800]];
 
 // The marks of the gutter as "kind@line" and "kind@linexlines".
 const marks = (p) => p.eval(`[...document.querySelectorAll(".jarea__mark")].map((m) => m.dataset.kind + "@" + m.dataset.line + "x" + m.dataset.lines)`);
-const text = (p) => p.eval(`document.querySelector('[data-testid="json-text"]').value`);
+const text_ = (p) => p.eval(`document.querySelector('[data-testid="json-text"]').value`);
 
 // The contrast of the colours of the area against its background, and of the bars of the gutter, for one theme.
 const CONTRAST = `(theme) => {
@@ -47,6 +48,30 @@ async function setSize(p, width, height) {
   await sleep(350);
 }
 
+// The colour that a custom property gives, as the browser writes it (a probe element takes the property as its background).
+const TOKEN = (name) => `(() => { const e = document.createElement("i"); e.style.cssText = "position:fixed;background:var(${name})"; document.body.append(e); const v = getComputedStyle(e).backgroundColor; e.remove(); return v; })()`;
+
+// Makes the seed dashboard and opens its JSON view.
+async function openJson(t, uid) {
+  await makeSeed(t, uid);
+  const p = await t.open(t.dash(uid));
+  await waitPanelsReady(p, [1, 2, 3]);
+  await enterEdit(p);
+  await moreItem(p, "json-tab");
+  await p.waitSel(p.tid("json-text"));
+  await sleep(600);
+  return p;
+}
+
+// A real click at a row and a column of the text area (the first row is 0). The width of a column is the width of the first character, "{".
+async function clickAt(p, row, col) {
+  const at = await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); const r = a.getBoundingClientRect(); const ch = document.querySelector(".jarea__code span").getBoundingClientRect().width;
+    return { x: r.left + 10 + ${col} * ch + 1, y: r.top + 8 + ${row} * 20 + 10 - a.scrollTop }; })()`);
+  await p.send("Input.dispatchMouseEvent", { type: "mousePressed", x: at.x, y: at.y, button: "left", clickCount: 1 });
+  await p.send("Input.dispatchMouseEvent", { type: "mouseReleased", x: at.x, y: at.y, button: "left", clickCount: 1 });
+  await sleep(250);
+}
+
 export const cases = [
   {
     id: "B240",
@@ -59,7 +84,7 @@ export const cases = [
       await moreItem(p, "json-tab");
       await p.waitSel(p.tid("json-text"));
       await sleep(600);
-      const saved = await text(p);
+      const saved = await text_(p);
       const lines = saved.split("\n");
 
       // 1. Colours: each kind that the seed has is coloured, in both themes with 4.5:1, and the bars of the gutter have 3:1.
@@ -140,13 +165,129 @@ export const cases = [
       await sleep(500);
       const drawn = await p.eval(`document.querySelector(".jarea__code").textContent.split("\\n").length`);
       t.assert(drawn > 40 && drawn < 500, `a window of rows is drawn, not the 6,000 lines: ${drawn}`);
-      await p.eval(`(() => { const t = document.querySelector('[data-testid="json-text"]'); t.scrollTop = 3000 * 18; t.dispatchEvent(new Event("scroll")); return true; })()`);
+      await p.eval(`(() => { const t = document.querySelector('[data-testid="json-text"]'); t.scrollTop = 3000 * 20; t.dispatchEvent(new Event("scroll")); return true; })()`);
       await sleep(300);
-      const middle = await p.eval(`(() => { const t = document.querySelector('[data-testid="json-text"]'); const row = Math.floor(t.scrollTop / 18); return document.querySelector(".jarea__code").textContent.includes(t.value.split("\\n")[row]); })()`);
+      const middle = await p.eval(`(() => { const t = document.querySelector('[data-testid="json-text"]'); const row = Math.floor(t.scrollTop / 20); return document.querySelector(".jarea__code").textContent.includes(t.value.split("\\n")[row]); })()`);
       t.assert(middle, "after a jump the layer draws the row at the top");
       await p.eval(`(() => { const t = document.querySelector('[data-testid="json-text"]'); t.value = JSON.stringify({ a: Array.from({ length: 2500 }, (_, i) => ({ id: i, on: true })) }); t.scrollTop = 0; t.dispatchEvent(new Event("input", { bubbles: true })); return true; })()`);
       await sleep(500);
       t.eq(await p.eval(`document.querySelectorAll(".jarea__code span").length`), 2000, "one line has 2,000 coloured parts at most");
+    },
+  },
+  {
+    id: "B270",
+    name: "JSON view: the look of VS Code Light+ and Dark+: colours by kind and depth, surface, selection, gutter, scroll bars (10.4)",
+    async run(t) {
+      const p = await openJson(t, "jv70");
+      const text = await text_(p);
+      for (const theme of ["light", "dark"]) {
+        await p.eval(`document.documentElement.dataset.theme = ${JSON.stringify(theme)}; true`);
+        await sleep(200);
+        await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); a.scrollTop = 0; a.dispatchEvent(new Event("scroll")); return true; })()`);
+        await sleep(200);
+        // 1. Each kind has the colour of its token. The first { has the first bracket colour, and the [ of the tags (one level deep) the second.
+        const kinds = { "jt-key": "--json-key", "jt-str": "--json-str", "jt-num": "--json-num", "jt-bool": "--json-const", "jt-punct": "--json-punct", "jt-b0": "--json-bracket-1", "jt-b1": "--json-bracket-2" };
+        for (const [cls, token] of Object.entries(kinds)) {
+          const probe = await p.eval(`(() => { const e = document.querySelector(".jarea__code .${cls}"); return e ? [getComputedStyle(e).color, ${TOKEN(token)}] : null; })()`);
+          if (probe === null) {
+            t.assert(cls === "jt-bool", `${theme}: the layer has a span ${cls}`);
+            continue;
+          }
+          t.eq(probe[0], probe[1], `${theme}: ${cls} has the colour of ${token}`);
+        }
+        const first = await p.eval(`document.querySelector(".jarea__code span").className`);
+        t.eq(first, "jt-b0", `${theme}: the first bracket of the document is the first bracket colour`);
+        // 2. The surface, the font and the row: 14 px text and a row of 20 px (1.43), the editor background, no border between the gutter and the text.
+        const surface = await p.eval(`(() => { const f = document.querySelector(".jframe"); const g = document.querySelector(".jarea__gutter"); const a = document.querySelector('[data-testid="json-text"]');
+          return { bg: getComputedStyle(f).backgroundColor, bgToken: ${TOKEN("--editor-solid-bg")}, size: getComputedStyle(f).fontSize, line: getComputedStyle(f).lineHeight, border: getComputedStyle(g).borderRightWidth,
+            gutter: getComputedStyle(g).color, gutterToken: ${TOKEN("--json-lineno")}, tab: getComputedStyle(a).tabSize, fontOk: /mono|Menlo|Consolas/i.test(getComputedStyle(f).fontFamily) }; })()`);
+        t.eq(surface.bg, surface.bgToken, `${theme}: the editor has the editor background`);
+        t.eq([surface.size, surface.line, surface.border, surface.tab], ["14px", "20px", "0px", "2"], `${theme}: size, row, border and tab of the area`);
+        t.eq(surface.gutter, surface.gutterToken, `${theme}: the line numbers have the colour of --json-lineno`);
+        t.assert(surface.fontOk, `${theme}: the area has a monospace font`);
+        // 3. The selection has the colour of VS Code: the blue with the focus, a paler grey without it. The coloured text stays over it.
+        await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); a.focus(); a.setSelectionRange(0, 40); a.dispatchEvent(new Event("select")); return true; })()`);
+        await sleep(150);
+        const selection = await p.eval(`[getComputedStyle(document.querySelector('[data-testid="json-text"]'), "::selection").backgroundColor, ${TOKEN("--json-selection")}]`);
+        t.eq(selection[0], selection[1], `${theme}: the selection has the colour of --json-selection`);
+        const stack = await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); const r = a.getBoundingClientRect(); const e = document.elementFromPoint(r.left + 40, r.top + 60); return e === a; })()`);
+        t.assert(stack, `${theme}: a pointer on the text reaches the text area (the layers take no pointer)`);
+        // 4. The scroll bar is 10 px wide, thin as in VS Code.
+        const bar = await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); return a.offsetWidth - a.clientWidth; })()`);
+        t.eq(bar, 10, `${theme}: the scroll bar of the area is 10 px wide`);
+        await p.eval(`(() => { document.querySelector('[data-testid="json-text"]').blur(); return true; })()`);
+      }
+      await p.eval(`document.documentElement.dataset.theme = "light"; true`);
+      t.assert(text.length > 100, "the document has text");
+    },
+  },
+  {
+    id: "B271",
+    name: "JSON view: the line of the caret, its number, the bracket and its pair, the guide of the pair, the wavy line of an error (10.4)",
+    async run(t) {
+      const p = await openJson(t, "jv71");
+      await p.eval(`document.documentElement.dataset.theme = "light"; true`);
+      const lines = (await text_(p)).split("\n");
+      const tags = lines.findIndex((l) => /^\s*"tags": \[$/.test(l));
+      const state = () => p.eval(`(() => { const q = (s) => document.querySelector(s); const vis = (e) => !!e && !e.hidden;
+        const matches = [...document.querySelectorAll(".jarea__match")].filter(vis).map((e) => [e.style.getPropertyValue("--r"), e.style.getPropertyValue("--c")]);
+        const g = q(".jarea__guide");
+        return { band: vis(q(".jarea__band")) ? q(".jarea__band").style.getPropertyValue("--r") : null, num: q(".jarea__active-num").textContent, numShown: vis(q(".jarea__active-num")), matches,
+          guide: vis(g) ? [g.style.getPropertyValue("--r"), g.style.getPropertyValue("--c"), g.style.getPropertyValue("--n")] : null }; })()`);
+      if (tags < 0) {
+        t.assert(false, "the seed has a member tags with an open bracket at the end of its line");
+        return;
+      }
+      // 1. A click on a line puts the band and the strong number on it. The band has the colour of the token.
+      await clickAt(p, 1, 6);
+      let s = await state();
+      t.eq([s.band, s.num], ["1", "2"], "the band and the number are on the clicked line");
+      const bandColour = await p.eval(`[getComputedStyle(document.querySelector(".jarea__band")).backgroundColor, ${TOKEN("--json-line-active")}, getComputedStyle(document.querySelector(".jarea__active-num")).color, ${TOKEN("--json-lineno-active")}]`);
+      t.eq(bandColour[0], bandColour[1], "the band has the colour of --json-line-active");
+      t.eq(bandColour[2], bandColour[3], "the number of the caret line has the colour of --json-lineno-active");
+      // 2. A caret right after the [ of tags: the box is on the [ and on its ], and the guide runs along the lines between them.
+      const open = lines[tags].lastIndexOf("[");
+      await clickAt(p, tags, open + 1);
+      s = await state();
+      const close = lines.findIndex((l, i) => i > tags && /^\s*\],?$/.test(l));
+      t.eq(s.matches.map((m) => m[0]).sort(), [String(tags), String(close)].sort(), "the box is on the bracket and on its pair");
+      t.assert(s.guide !== null && s.guide[0] === String(tags + 1) && s.guide[2] === String(close - tags - 1), `the guide runs along the lines between the brackets: ${JSON.stringify(s.guide)}`);
+      t.eq(Number(s.guide[1]), lines[tags].length - lines[tags].trimStart().length, "the guide is at the indent of the open line");
+      // 3. A caret in a name: no box. A selection of text: no band, no box.
+      await clickAt(p, 1, 6);
+      s = await state();
+      t.eq(s.matches, [], "no box when the caret touches no bracket");
+      await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); a.setSelectionRange(2, 30); a.dispatchEvent(new Event("select")); return true; })()`);
+      await sleep(250);
+      s = await state();
+      t.eq([s.band, s.matches], [null, []], "a selection has no band and no box");
+      // 4. The guides of the indent: a line with 6 spaces has a box of 6 columns with the guide image, and the line is drawn with the same text.
+      const deep = lines.findIndex((l) => /^ {6}\S/.test(l));
+      const guide = await p.eval(`(() => { const e = [...document.querySelectorAll(".jarea__code .jt-ind")].find((s) => s.textContent === "      ");
+        return e ? { image: getComputedStyle(e).backgroundImage.includes("repeating-linear-gradient"), width: e.getBoundingClientRect().width, ch: document.querySelector(".jarea__code span").getBoundingClientRect().width, height: e.getBoundingClientRect().height } : null; })()`);
+      t.assert(deep > 0 && guide !== null, "the layer has a guide box for a line with 6 spaces");
+      t.assert(guide.image, "the box draws guides with a gradient");
+      t.assert(Math.abs(guide.width - 6 * guide.ch) < 1.5, `the box is 6 columns wide: ${guide.width} for ${guide.ch}`);
+      t.eq(guide.height, 20, "the box has the height of a row, so the guide has no gap between rows");
+      // 5. A syntax error has a wavy line under its token, in the colour of the token, and the line number has the red band.
+      const broken = [...lines];
+      broken[tags] = `${broken[tags]} oops`;
+      await p.fill(p.tid("json-text"), broken.join("\n"));
+      // The insert of the text moves the caret to the end of the text, and the area scrolls there: the layer draws the rows near the visible rows only.
+      await sleep(400);
+      await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); a.scrollTop = 0; a.dispatchEvent(new Event("scroll")); return true; })()`);
+      await p.waitFor(`!!document.querySelector(".jarea__code .jt-err")`, { what: "the wavy line" });
+      const err = await p.eval(`(() => { const e = document.querySelector(".jarea__code .jt-err"); const c = getComputedStyle(e); return { text: e.textContent, line: c.textDecorationLine, style: c.textDecorationStyle, colour: c.textDecorationColor, token: ${TOKEN("--json-squiggle")} }; })()`);
+      t.eq([err.text, err.line, err.style], ["oops", "underline", "wavy"], "the faulty word has a wavy underline");
+      t.eq(err.colour, err.token, "the wavy line has the colour of --json-squiggle");
+      t.assert(await p.eval(`!!document.querySelector(".jarea__mark--error")`), "the number of the line has the red band");
+      // The text of the layer is the text of the area: the wavy line adds no character.
+      t.eq(await p.eval(`document.querySelector(".jarea__code").textContent.split("\\n")[${tags}]`), broken[tags], "the layer draws the same line");
+      // 6. The text is valid again: the wavy line goes.
+      await p.fill(p.tid("json-text"), lines.join("\n"));
+      await sleep(400);
+      await p.eval(`(() => { const a = document.querySelector('[data-testid="json-text"]'); a.scrollTop = 0; a.dispatchEvent(new Event("scroll")); return true; })()`);
+      await p.waitFor(`!document.querySelector(".jarea__code .jt-err")`, { what: "no wavy line" });
     },
   },
 ];
