@@ -1,0 +1,16 @@
+/* Select and copy the text of a panel (9.8e). The legend items, the sortable headers and the links of the cells are controls: the browser does not let
+   a person select their text, so web/js/panels/copy_text.js does it from the pointer. These rules let the text show its selection and stop a link
+   from starting the drag of the link. The layer of text over a chart canvas (web/js/panels/text_layer.js) holds the texts that the chart draws:
+   they are transparent, they take the pointer over their own box only, and they show the selection. */
+.chartCore__legendItem, .chartCore__legendItem *, .dataTable__sort, .dataTable__sort *, .cell-link {
+  user-select: text; -webkit-user-select: text;
+}
+a.cell-link { -webkit-user-drag: none; }
+.textLayer { position: absolute; overflow: hidden; pointer-events: none; }
+.textLayer > span {
+  position: absolute; top: 0; left: 0; transform-origin: 0 0; white-space: pre; color: transparent;
+  pointer-events: auto; cursor: text; user-select: text; -webkit-user-select: text;
+}
+.textLayer > span::selection { background: color-mix(in srgb, var(--accent-fill) 35%, transparent); color: transparent; }
+/* The value at the end of a bar of the horizontal bar chart took no pointer: a person could not select it. It takes the pointer now. */
+.hbar__value { pointer-events: auto; user-select: text; -webkit-user-select: text; }

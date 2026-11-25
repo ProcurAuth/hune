@@ -16,7 +16,14 @@ import { app } from "./config.js";
 import { allRows, buildTable } from "./panels/annotate.js";
 import { createText } from "./panels/text.js";
 import { createVariableFrame } from "./panels/variable.js";
+import { installCopyText } from "./panels/copy_text.js";
+import { installTextLayer } from "./panels/text_layer.js";
 import { button, clear, copyText, el, emptyState, icon, notify, openDialog, openMenu } from "./ui.js";
+
+// A person can select and copy the text of a panel (9.8e): the controls that a browser does not let one select (legend items, sortable headers,
+// links of cells) and the text that a chart draws on its canvas. Both are made one time for the page, before the first panel draws.
+installCopyText();
+installTextLayer();
 
 const LOADERS = {
   table: () => import("./panels/table.js"),
