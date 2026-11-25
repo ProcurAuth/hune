@@ -29,6 +29,9 @@ export function createJsonEditor(E, { embedded = false } = {}) {
 
   area.value = E.record.json_text !== null && E.record.json_text !== undefined ? E.record.json_text : E.canonical || prettyJson(E.doc);
   frame.paint();
+  // The gutter marks each line that differs from the saved document (10.4). The saved text is the document of the base in the same form as the
+  // text of an unchanged draft, so a draft with no change has no mark. A save or a revert gives a new base: `onChange` draws the marks again.
+  frame.setBase(() => prettyJson(E.base.doc));
 
   function showErrors(errors, warnings = []) {
     clear(list);
@@ -66,6 +69,8 @@ export function createJsonEditor(E, { embedded = false } = {}) {
     lastCheck = null;
     apply.disabled = true;
     format.disabled = true;
+    // The line of the syntax error has its number marked in the gutter (a text that is not valid stops at its first fault).
+    frame.setErrorLine(scan.ok ? 0 : (scan.errors.find((e) => e.line) || {}).line || 0);
     if (!scan.ok) {
       status.textContent = "The JSON is not valid.";
       showErrors(scan.errors);
@@ -135,6 +140,22 @@ export function createJsonEditor(E, { embedded = false } = {}) {
   return {
     el: root,
     hasUnapplied: () => E.record.json_text !== null && E.record.json_text !== undefined,
+    // The draft changed from elsewhere (a revert, an apply): when the draft holds no text that is not applied, the area shows the text of the draft
+    // again (a revert shows the saved dashboard), and the marks follow it.
+    onChange() {
+      if (E.record && (E.record.json_text === null || E.record.json_text === undefined)) {
+        const text = E.canonical || prettyJson(E.doc);
+        if (area.value !== text) {
+          area.value = text;
+          frame.paint();
+          lastCheck = null;
+          apply.disabled = true;
+          format.disabled = true;
+          check();
+        }
+      }
+      frame.paintMarks();
+    },
     focusPointer(pointer) {
       const scan = scanJson(area.value);
       if (scan.positions.size) {
@@ -144,6 +165,7 @@ export function createJsonEditor(E, { embedded = false } = {}) {
     },
     destroy() {
       clearTimeout(timer);
+      frame.destroy();
       controller.abort();
     },
   };

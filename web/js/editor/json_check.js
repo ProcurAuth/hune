@@ -167,3 +167,134 @@ export function locatePointer(positions, pointer) {
 export function prettyJson(value) {
   return `${JSON.stringify(value, null, 2)}\n`;
 }
+
+// --- Colour and change marks of the JSON area (10.4) ------------------------------------------------------------------------
+// Both parts are pure and work on text that is not valid: a person types in the area, so the text is often a draft. A JSON string never holds
+// a line feed, so each line has its own colours and the window of drawn rows needs no state from the rows above it.
+
+/** The most tokens that one line gets. A line with more tokens (a document of one line) keeps its text, and its end has no colour. */
+export const MAX_TOKENS_PER_LINE = 2000;
+
+const NUMBER = /-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?/y;
+const WORD = /[A-Za-z]+/y;
+
+/**
+ * The coloured parts of one line, in order: [start, end, kind]. The kind is `key` (a text before a colon), `str`, `num`, `bool`, `null` or `punct`.
+ * A text with no closing quote runs to the end of the line. Other characters, and white space, have no token (they stay plain text).
+ * This is a lexer for colours. It does not decide that a document is valid: `scanJson` does.
+ */
+export function lineTokens(line) {
+  const tokens = [];
+  let i = 0;
+  while (i < line.length && tokens.length < MAX_TOKENS_PER_LINE) {
+    const c = line[i];
+    if (c === '"') {
+      let j = i + 1;
+      while (j < line.length && line[j] !== '"') j += line[j] === "\\" ? 2 : 1;
+      const end = Math.min(j + 1, line.length);
+      let k = end;
+      while (k < line.length && (line[k] === " " || line[k] === "\t")) k++;
+      tokens.push([i, end, line[k] === ":" && j < line.length ? "key" : "str"]);
+      i = end;
+    } else if (c === "-" || (c >= "0" && c <= "9")) {
+      NUMBER.lastIndex = i;
+      const m = NUMBER.exec(line);
+      if (m) {
+        tokens.push([i, i + m[0].length, "num"]);
+        i += m[0].length;
+      } else i++;
+    } else if (c === "{" || c === "}" || c === "[" || c === "]" || c === "," || c === ":") {
+      tokens.push([i, i + 1, "punct"]);
+      i++;
+    } else if ((c >= "a" && c <= "z") || (c >= "A" && c <= "Z")) {
+      WORD.lastIndex = i;
+      const word = WORD.exec(line)[0];
+      if (word === "true" || word === "false") tokens.push([i, i + word.length, "bool"]);
+      else if (word === "null") tokens.push([i, i + word.length, "null"]);
+      i += word.length;
+    } else i++;
+  }
+  return tokens;
+}
+
+/** The most cells (rows of the saved text times rows of the new text, after the common start and end are cut) that the line diff computes. */
+export const MAX_DIFF_CELLS = 1_000_000;
+
+// The steps of the shortest edit between two arrays of lines: [type, indexInA, indexInB] with type "=", "-" or "+". Longest common subsequence.
+function editSteps(a, b) {
+  const n = a.length;
+  const m = b.length;
+  const w = m + 1;
+  const table = new Uint32Array((n + 1) * w);
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      table[i * w + j] = a[i] === b[j] ? table[(i + 1) * w + j + 1] + 1 : Math.max(table[(i + 1) * w + j], table[i * w + j + 1]);
+    }
+  }
+  const steps = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (a[i] === b[j]) {
+      steps.push(["=", i++, j++]);
+    } else if (table[(i + 1) * w + j] >= table[i * w + j + 1]) steps.push(["-", i++, j]);
+    else steps.push(["+", i, j++]);
+  }
+  while (i < n) steps.push(["-", i++, j]);
+  while (j < m) steps.push(["+", i, j++]);
+  return steps;
+}
+
+/**
+ * The lines of `text` that differ from `savedText`, for the gutter. The result is { added, modified, deleted }, three arrays of line indexes
+ * in `text` (the first line is 0), each in order:
+ *   - `modified`: a line that replaces a line of the saved text;
+ *   - `added`: a line that has no line of the saved text in its place;
+ *   - `deleted`: the index of the line before which one or more saved lines are gone (the number of lines when they were the last ones).
+ * The common start and the common end are cut first, so a small change in a long text costs little. When the rest is larger than
+ * MAX_DIFF_CELLS cells (a change of more than 1,000 lines at the start and at the end both), the lines are compared in pairs by their place: a line
+ * that moved shows as modified, and no changed line goes without a mark.
+ */
+export function diffLines(savedText, text) {
+  const result = { added: [], modified: [], deleted: [] };
+  if (savedText === text) return result;
+  const a = savedText.split("\n");
+  const b = text.split("\n");
+  let start = 0;
+  while (start < a.length && start < b.length && a[start] === b[start]) start++;
+  let endA = a.length;
+  let endB = b.length;
+  while (endA > start && endB > start && a[endA - 1] === b[endB - 1]) {
+    endA--;
+    endB--;
+  }
+  const midA = a.slice(start, endA);
+  const midB = b.slice(start, endB);
+  let steps;
+  if (midA.length * midB.length <= MAX_DIFF_CELLS) steps = editSteps(midA, midB);
+  else {
+    steps = [];
+    const common = Math.min(midA.length, midB.length);
+    for (let k = 0; k < common; k++) steps.push(...(midA[k] === midB[k] ? [["=", k, k]] : [["-", k, k], ["+", k, k]]));
+    for (let k = common; k < midA.length; k++) steps.push(["-", k, midB.length]);
+    for (let k = common; k < midB.length; k++) steps.push(["+", midA.length, k]);
+  }
+  // A run of steps that are not "=" is one change: its removed lines and its added lines pair up as modified lines, then the rest.
+  let s = 0;
+  while (s < steps.length) {
+    if (steps[s][0] === "=") {
+      s++;
+      continue;
+    }
+    let removed = 0;
+    const added = [];
+    for (; s < steps.length && steps[s][0] !== "="; s++) {
+      if (steps[s][0] === "-") removed++;
+      else added.push(start + steps[s][2]);
+    }
+    const paired = Math.min(removed, added.length);
+    for (let k = 0; k < added.length; k++) (k < paired ? result.modified : result.added).push(added[k]);
+    if (removed > added.length) result.deleted.push(added.length ? added[added.length - 1] + 1 : start + (s < steps.length ? steps[s][2] : midB.length));
+  }
+  return result;
+}
