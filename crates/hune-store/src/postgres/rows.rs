@@ -6,6 +6,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use hune_core::document::validate;
 use hune_core::error::{ErrorCode, ValidationError};
+use hune_core::ids::ROOT_FOLDER_TEXT;
 use hune_core::limits::MAX_DOCUMENT_BYTES;
 use tokio_postgres::Row;
 
@@ -54,7 +55,24 @@ pub(super) fn parse_uid(s: &str) -> Result<Uid, StoreError> {
 }
 
 pub(super) fn parse_folder(s: &str) -> Result<FolderId, StoreError> {
+    // A value of a column `folder_id` that was null is the root text (see `folder_text`): a dashboard without a folder.
+    if s == ROOT_FOLDER_TEXT {
+        return Ok(FolderId::root());
+    }
     FolderId::parse(s).map_err(|e| corrupt(format!("the folder id {s:?}: {e}")))
+}
+
+/// Reads a column `folder_id`. A null is a dashboard without a folder: the text of the root (5.24, rule 9).
+pub(super) fn folder_text<I: tokio_postgres::row::RowIndex + std::fmt::Display>(
+    row: &Row,
+    index: I,
+) -> Result<String, tokio_postgres::Error> {
+    Ok(row.try_get::<_, Option<String>>(index)?.unwrap_or_else(|| ROOT_FOLDER_TEXT.to_owned()))
+}
+
+/// The value to bind for a column `folder_id`: null for the root text, else the text.
+pub(super) fn folder_param(text: &str) -> Option<&str> {
+    if text == ROOT_FOLDER_TEXT { None } else { Some(text) }
 }
 
 fn parse_subject(s: &str) -> Result<Subject, StoreError> {
@@ -134,7 +152,7 @@ impl DashRow {
         let h_etag: Option<String> = row.try_get("h_etag")?;
         Ok(DashRow {
             uid: row.try_get("uid")?,
-            folder: row.try_get("folder_id")?,
+            folder: folder_text(row, "folder_id")?,
             etag: row.try_get("etag")?,
             document: row.try_get("document")?,
             updated_at: row.try_get("updated_at")?,

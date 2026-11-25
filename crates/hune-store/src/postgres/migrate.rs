@@ -17,7 +17,10 @@ pub struct Migration {
 
 /// The migrations of this binary, in the order of the versions. The SQL of each step is a file
 /// of `hune-store/migrations/`.
-pub const MIGRATIONS: &[Migration] = &[Migration { version: 1, sql: include_str!("../../migrations/0001.sql") }];
+pub const MIGRATIONS: &[Migration] = &[
+    Migration { version: 1, sql: include_str!("../../migrations/0001.sql") },
+    Migration { version: 2, sql: include_str!("../../migrations/0002.sql") },
+];
 
 /// The schema version of this binary (M in 5.28 and 5.29).
 pub const SCHEMA_VERSION: i32 = MIGRATIONS[MIGRATIONS.len() - 1].version;

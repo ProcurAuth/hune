@@ -9,7 +9,7 @@ use deadpool_postgres::Object;
 use tokio_postgres::IsolationLevel;
 use tokio_postgres::types::ToSql;
 
-use super::rows::{DashRow, classify, current_fields, folder_state, parse_etag, parse_folder, parse_uid};
+use super::rows::{DashRow, classify, current_fields, folder_state, folder_text, parse_etag, parse_folder, parse_uid};
 use super::{Fail, PgStore, R, cl_opt, cl_q, sql, tx_q};
 use crate::store::{Delta, EntryKey, EntryMark, EntryProbe, FolderMark, FolderState, Marks, Problem, Snapshot};
 use crate::types::{CatalogEntry, Current, Etag, FolderId, MAX_HISTORY_PAGE, StoreError, Uid, Version, VersionMeta};
@@ -73,7 +73,7 @@ impl PgStore {
         for r in &heads {
             out.push((
                 r.try_get::<_, String>("uid")?,
-                r.try_get::<_, String>("folder_id")?,
+                folder_text(&r, "folder_id")?,
                 r.try_get::<_, String>("etag")?,
             ));
         }
@@ -181,7 +181,7 @@ impl PgStore {
                 uid,
                 r.try_get(0)?,
                 &r.try_get::<_, String>(1)?,
-                &r.try_get::<_, String>(2)?,
+                &folder_text(&r, 2)?,
                 r.try_get::<_, Option<String>>(3)?.as_deref(),
                 r.try_get(4)?,
                 &r.try_get::<_, String>(5)?,
@@ -223,7 +223,7 @@ impl PgStore {
             uid,
             n,
             &r.try_get::<_, String>(0)?,
-            &r.try_get::<_, String>(1)?,
+            &folder_text(&r, 1)?,
             r.try_get::<_, Option<String>>(3)?.as_deref(),
             r.try_get(4)?,
             &r.try_get::<_, String>(5)?,

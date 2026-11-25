@@ -12,7 +12,9 @@ use deadpool_postgres::{Object, Transaction};
 use tokio_postgres::error::SqlState;
 use tokio_postgres::types::ToSql;
 
-use super::rows::{HeadRow, classify, corrupt, current_fields, now, parse_etag, parse_folder, to_system};
+use super::rows::{
+    HeadRow, classify, corrupt, current_fields, folder_param, folder_text, now, parse_etag, parse_folder, to_system,
+};
 use super::{Fail, PgStore, R, sql, tx_opt, tx_x};
 use crate::types::{
     CanonicalDocument, ConflictInfo, Etag, FolderId, FolderTitle, MAX_DASHBOARDS, MAX_FOLDERS, Outcome, Saved,
@@ -87,7 +89,7 @@ fn fk(e: tokio_postgres::Error) -> Fail {
 async fn lock_cur(tx: &Transaction<'_>, uid: &Uid) -> R<Option<CurRow>> {
     let Some(r) = tx_opt(tx, sql::P9, &[&uid.as_str()]).await? else { return Ok(None) };
     Ok(Some(CurRow {
-        folder: r.try_get("folder_id")?,
+        folder: folder_text(&r, "folder_id")?,
         etag: r.try_get("etag")?,
         document: r.try_get("document")?,
         updated_at: r.try_get("updated_at")?,
@@ -98,7 +100,7 @@ async fn lock_cur(tx: &Transaction<'_>, uid: &Uid) -> R<Option<CurRow>> {
 /// P11: the head version.
 async fn head_of(tx: &Transaction<'_>, uid: &Uid) -> R<Option<Head>> {
     let Some(r) = tx_opt(tx, sql::P11, &[&uid.as_str()]).await? else { return Ok(None) };
-    Ok(Some(Head { version: r.try_get("version")?, etag: r.try_get("etag")?, folder: r.try_get("folder_id")? }))
+    Ok(Some(Head { version: r.try_get("version")?, etag: r.try_get("etag")?, folder: folder_text(&r, "folder_id")? }))
 }
 
 /// P12: the lock of the creates.
@@ -109,6 +111,10 @@ async fn lock_creates(tx: &Transaction<'_>) -> R<()> {
 
 /// P14: the folder exists. It also takes a share lock on the row.
 async fn folder_exists(tx: &Transaction<'_>, folder: &FolderId) -> R<bool> {
+    // The root is not a row: it always exists.
+    if folder.is_root() {
+        return Ok(true);
+    }
     Ok(tx_opt(tx, sql::P14, &[&folder.as_str()]).await?.is_some())
 }
 
@@ -135,6 +141,7 @@ async fn insert_version(
     message: &str,
     save_id: Option<String>,
 ) -> R<()> {
+    let folder = folder_param(folder);
     let p: [&(dyn ToSql + Sync); 10] =
         [&uid.as_str(), &n, &kind.as_str(), &folder, &document, &etag, &saved_at, &saved_by, &message, &save_id];
     tx_x(tx, sql::P15, &p).await?;
@@ -186,7 +193,7 @@ impl PgStore {
         let Some(r) = tx_opt(tx, sql::P10, &[&uid.as_str(), &text]).await? else { return Ok(None) };
         let version: i64 = r.try_get("version")?;
         let kind: String = r.try_get("kind")?;
-        let folder: String = r.try_get("folder_id")?;
+        let folder = folder_text(&r, "folder_id")?;
         let etag: Option<String> = r.try_get("etag")?;
         let kind = VersionKind::parse(&kind).ok_or_else(|| corrupt(format!("the kind {kind:?}")))?;
         let folder = parse_folder(&folder)?;
@@ -270,9 +277,10 @@ impl PgStore {
             meta.save_id.map(|s| s.to_string()),
         )
         .await?;
+        let cur_folder_bind = folder_param(&cur.folder);
         let p: [&(dyn ToSql + Sync); 9] = [
             &uid.as_str(),
-            &cur.folder,
+            &cur_folder_bind,
             &n,
             &nd.hex,
             &nd.format_version,
@@ -346,9 +354,10 @@ impl PgStore {
         }
         let n = head.as_ref().map_or(0, |h| h.version) + 1;
         let at = to_system(meta.saved_at);
+        let folder_bind = folder.wire();
         let p: [&(dyn ToSql + Sync); 9] = [
             &uid.as_str(),
-            &folder.as_str(),
+            &folder_bind,
             &n,
             &nd.hex,
             &nd.format_version,
@@ -359,7 +368,7 @@ impl PgStore {
         ];
         if tx_x(tx, sql::P16, &p).await.map_err(fk)? == 0 {
             let existing = match tx_opt(tx, sql::P_FOLDER_OF, &[&uid.as_str()]).await? {
-                Some(r) => Some(parse_folder(&r.try_get::<_, String>(0)?)?),
+                Some(r) => Some(parse_folder(&folder_text(&r, 0)?)?),
                 None => None,
             };
             return Err(Fail::Store(StoreError::Exists { folder: existing }));
@@ -481,9 +490,10 @@ impl PgStore {
         )
         .await?;
         let format_version = i32::try_from(doc.format_version()).unwrap_or(i32::MAX);
+        let target_bind = target.wire();
         let p: [&(dyn ToSql + Sync); 9] = [
             &uid.as_str(),
-            &target.as_str(),
+            &target_bind,
             &n,
             &cur.etag,
             &format_version,
@@ -586,7 +596,7 @@ impl PgStore {
         // The row tells that the version still has its bytes: the retention can remove it after the read of the
         // caller. The caller validated these bytes, so the row gives only the folder of the version.
         let kind: String = v.try_get("kind")?;
-        let vfolder: String = v.try_get("folder_id")?;
+        let vfolder = folder_text(&v, "folder_id")?;
         let has_bytes = v.try_get::<_, Option<&str>>("document")?.is_some();
         restorable(&kind, v.try_get("etag")?, has_bytes, &nd.hex).map_err(Fail::Store)?;
         let cur = lock_cur(&tx, uid).await?;

@@ -104,7 +104,7 @@ impl PgExporter {
                 uid,
                 r.try_get("version").map_err(db)?,
                 &r.try_get::<_, String>("kind").map_err(db)?,
-                &r.try_get::<_, String>("folder_id").map_err(db)?,
+                &super::rows::folder_text(r, "folder_id").map_err(db)?,
                 etag.as_deref(),
                 r.try_get::<_, SystemTime>("saved_at").map_err(db)?,
                 &r.try_get::<_, String>("saved_by").map_err(db)?,

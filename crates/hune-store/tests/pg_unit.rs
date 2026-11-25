@@ -78,7 +78,7 @@ fn migration_texts() {
         MigrateError::Newer { database: 3, binary: 1 }.to_string(),
         "database schema 3 is newer than this binary (1)"
     );
-    assert_eq!(postgres::SCHEMA_VERSION, 1);
+    assert_eq!(postgres::SCHEMA_VERSION, 2);
     assert_eq!(postgres::MIGRATIONS.len(), 1);
     assert!(postgres::MIGRATIONS[0].sql.contains("CREATE TABLE hune_versions"));
 }

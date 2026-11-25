@@ -55,7 +55,8 @@ struct MetaIn {
     uid: String,
     version: u64,
     kind: String,
-    folder: String,
+    #[serde(deserialize_with = "present")]
+    folder: Option<String>,
     #[serde(deserialize_with = "present")]
     etag: Option<String>,
     saved_at: String,
@@ -71,7 +72,7 @@ struct MetaOut<'a> {
     uid: &'a str,
     version: u64,
     kind: &'a str,
-    folder: &'a str,
+    folder: Option<&'a str>,
     etag: Option<String>,
     saved_at: String,
     saved_by: &'a str,
@@ -86,7 +87,7 @@ pub(crate) fn encode_meta(m: &VersionMeta) -> Vec<u8> {
         uid: m.uid.as_str(),
         version: m.version,
         kind: m.kind.as_str(),
-        folder: m.folder.as_str(),
+        folder: m.folder.wire(),
         etag: m.etag.map(|e| e.to_hex()),
         saved_at: m.saved_at.to_rfc3339(),
         saved_by: m.saved_by.as_str(),
@@ -113,7 +114,7 @@ pub(crate) fn decode_meta(bytes: &[u8], dir_uid: &Uid, n: u64) -> Result<Version
         return Err(format!("member version {} differs from the file name {n}", m.version));
     }
     let kind = VersionKind::parse(&m.kind).ok_or_else(|| format!("unknown kind {:?}", m.kind))?;
-    let folder = FolderId::parse(&m.folder).map_err(|e| e.to_string())?;
+    let folder = FolderId::from_wire(m.folder.as_deref()).map_err(|e| e.to_string())?;
     let etag = match (&m.etag, kind) {
         (None, VersionKind::Delete) => None,
         (Some(_), VersionKind::Delete) => return Err("a delete version has no etag".to_owned()),

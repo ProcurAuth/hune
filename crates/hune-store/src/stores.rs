@@ -334,7 +334,8 @@ impl Stores {
                         invalid += 1;
                         if m.info.kind == StoreKind::Volume {
                             return Err(StartIssue(format!(
-                                "{shown}: the file {root}/{folder}/{uid}.json is not valid: {}",
+                                "{shown}: the file {root}/{} is not valid: {}",
+                                crate::types::dashboard_file(folder, uid),
                                 reasons(errors)
                             )));
                         }
@@ -489,7 +490,7 @@ impl Stores {
                     entries.push(e);
                 }
                 CatalogEntry::Invalid { uid, folder, etag, errors } => {
-                    let path = format!("{root}/{folder}/{uid}.json");
+                    let path = format!("{root}/{}", crate::types::dashboard_file(folder, uid));
                     let reason = reasons(errors);
                     if let Some(good) = st.known_entries.get(&key).cloned() {
                         if st.stale.get(&key) != Some(etag) {
@@ -573,7 +574,7 @@ impl Stores {
                 Some(&o) if o != i => {
                     st.events.push(StoreEvent::RescanRejected {
                         store: m.info.id.clone(),
-                        path: format!("{}/{}", e.folder(), e.uid()),
+                        path: crate::types::dashboard_file(e.folder(), e.uid()),
                         reason: format!("the uid is in the store \"{}\"", self.member(o).info.id),
                     });
                     false
