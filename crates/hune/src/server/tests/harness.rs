@@ -192,7 +192,9 @@ impl Client {
 
     /// Reads one answer. `head_only` is true for the answer to a `HEAD` request.
     pub async fn read(&mut self, head_only: bool) -> Resp {
-        let timeout = Duration::from_secs(10);
+        // The wait for a read is a guard against a hang, not a check of a time. The gate runs many jobs at the same time,
+        // and a busy host can delay an answer by more than 10 s, so the guard is 30 s. A hang still fails the test.
+        let timeout = Duration::from_secs(30);
         loop {
             if let Some(end) = find(&self.buf, b"\r\n\r\n") {
                 let head = String::from_utf8_lossy(&self.buf[..end]).into_owned();

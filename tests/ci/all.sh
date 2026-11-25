@@ -152,7 +152,7 @@ target_dir_of() {
 # gets the CPU first on a host that is full.
 is_low() {
     case $1 in
-    build-debug | policy | rust | pgsource | mongosource | source) return 0 ;;
+    build-debug | policy | pgsource | mongosource | source) return 0 ;;
     *) return 1 ;;
     esac
 }
