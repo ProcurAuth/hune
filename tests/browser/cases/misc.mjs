@@ -96,7 +96,8 @@ const CONTRAST = `(() => {
     const e = n.parentElement;
     if (!e || seen.has(e)) continue;
     seen.add(e);
-    if (e.closest("canvas, svg, [hidden], .visually-hidden, [disabled], [aria-disabled=true], script, style")) continue;
+    // .textLayer holds the transparent copy of the text that a chart draws on its canvas: it exists to select and copy that text, its colour is transparent on purpose and the visible text is on the canvas.
+    if (e.closest("canvas, svg, [hidden], .visually-hidden, .textLayer, [disabled], [aria-disabled=true], script, style")) continue;
     const s = getComputedStyle(e);
     if (s.visibility === "hidden" || s.display === "none") continue;
     const r = e.getBoundingClientRect();
