@@ -538,12 +538,15 @@ test("FE-56 2,000 random JSON texts: tokens kept, idempotent", () => {
 
 // ---- The time. ----
 
-/** The best of seven runs after a warm-up, in milliseconds. */
+/**
+ * The best of 21 runs after a warm-up, in milliseconds. The gate runs many jobs at the same time, so the test takes more
+ * runs to meet a quiet moment. The limit is the same: a format that is slower than the limit on a quiet host fails in each run.
+ */
 function best7(fn) {
   fn();
   fn();
   let best = Infinity;
-  for (let k = 0; k < 7; k++) {
+  for (let k = 0; k < 21; k++) {
     const t0 = performance.now();
     fn();
     best = Math.min(best, performance.now() - t0);
@@ -551,7 +554,7 @@ function best7(fn) {
   return best;
 }
 
-test("FE-57 time: a 262,144-byte input formats in 300 ms or less (best of 7; the aim is 150 ms)", () => {
+test("FE-57 time: a 262,144-byte input formats in 300 ms or less (best of 21; the aim is 150 ms)", () => {
   // The text is nearly in the style: the output must stay under the cap of the input, so the input is the largest one
   // that gives an output of 262,144 bytes or less (a tab is one byte, the style has two spaces).
   const unit =
@@ -586,7 +589,7 @@ test("FE-57 time: a 262,144-byte input formats in 300 ms or less (best of 7; the
   js += '\t{"$limit": 1}\n]';
   assert.equal(formatJson(js).reason, null);
   const tj = best7(() => formatJson(js));
-  console.log(`format time, best of 7: ClickHouse ${t.toFixed(1)} ms (${sql.length} bytes), PostgreSQL ${tp.toFixed(1)} ms (${pg.length} bytes), JSON ${tj.toFixed(1)} ms (${js.length} bytes)`);
+  console.log(`format time, best of 21: ClickHouse ${t.toFixed(1)} ms (${sql.length} bytes), PostgreSQL ${tp.toFixed(1)} ms (${pg.length} bytes), JSON ${tj.toFixed(1)} ms (${js.length} bytes)`);
   assert.ok(t <= 300, `ClickHouse ${t} ms`);
   assert.ok(tp <= 300, `PostgreSQL ${tp} ms`);
   assert.ok(tj <= 300, `JSON ${tj} ms`);

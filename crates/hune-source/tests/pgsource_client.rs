@@ -37,6 +37,23 @@ fn expect_err(r: Result<hune_core::frame::Frame, SourceError>) -> SourceError {
     }
 }
 
+/// The first query of a source opens its probe and its session. On a busy host that takes more than the short
+/// `queue_wait` of a test, so the warm-up repeats on `source_busy`. It is a step of the set-up and not a check.
+async fn warm_up(source: &hune_source::PostgresSource) {
+    let mut last = None;
+    for _ in 0..50 {
+        match run(source, "SELECT 1", wide()).await {
+            Ok(_) => return,
+            Err(e) if e.code() == "source_busy" => {
+                last = Some(e);
+                tokio::time::sleep(Duration::from_millis(200)).await;
+            }
+            Err(e) => panic!("warm up: {e:?}"),
+        }
+    }
+    panic!("warm up: {last:?}");
+}
+
 // PS04: limits.
 
 #[tokio::test(flavor = "multi_thread")]
@@ -512,7 +529,7 @@ async fn ps14_admission_queue_wait_and_subject_limit() {
     config.max_concurrent = 1;
     config.queue_wait = Duration::from_millis(400);
     let source = make_source(config);
-    run(&source, "SELECT 1", wide()).await.expect("warm up: the first probe and a session");
+    warm_up(&source).await;
     let slow = {
         let source = source.clone();
         tokio::spawn(async move { run(&source, "SELECT pg_sleep(2)::text", wide()).await })
@@ -540,7 +557,7 @@ async fn ps14_admission_queue_wait_and_subject_limit() {
     config.queue_wait = Duration::from_millis(300);
     config.max_concurrent_per_subject = Some(1);
     let source = make_source(config);
-    run(&source, "SELECT 1", wide()).await.expect("warm up");
+    warm_up(&source).await;
     let alice = {
         let source = source.clone();
         tokio::spawn(async move {
