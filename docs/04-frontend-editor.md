@@ -59,7 +59,7 @@ web/
     tokens.css               tokens of Hune on top of the copied tokens: type, geometry, roles, series colours (9.25)
     look.css                 the tokens of the calm look (surfaces, accent, buttons, fields, tag chips) in the four theme contexts (9.25)
     base.css                 reset, layout of the shell, header, focus rules
-    components.css           buttons, menus, dialogs, forms, theme selector, header controls
+    components.css           buttons, menus, dialogs, forms, theme button, header controls
     picker.css               the time picker and the refresh picker, the popup of the time range (9.9)
     list.css                 list page: cards, folder titles, tag chips, header controls (9.7)
     dashboard.css            grid, sections, panel frames, colour tokens of 9.16
@@ -72,11 +72,12 @@ web/
     panel-bucket.css         the heatmap and histogram panels: the colour bar, the card, the message of a cap and the glyph of the histogram (9.19e, 9.19f)
     panel-logs.css           the logs panel: the lines, the level colours, the details row and the glyph of the type (9.19h)
     panel-annotations.css    the marks layer, the card and the keys of the annotations (9.19d)
+    panel-loading.css        the dots and the preview of a panel that waits (9.11)
     editor.css               edit mode, panel editor, history, diff (loaded with the editor)
     vendor/chdash/           copied CSS of 9.24
   js/
     boot_theme.js            classic script: sets data-theme before the first paint (9.25)
-    theme.js                 theme selector of the header (9.25)
+    theme.js                 theme button of the header (9.25)
     header_layout.js         one row or two rows of the header (9.6)
     ui.js                    elements, menus, dialogs, notices
     pickers.js               the time control of the header and the refresh picker (9.9)
@@ -105,6 +106,7 @@ web/
     sql_lex_pg.js            lexer of the dialect `postgres` (7.20), only for sqlscan.js
     grid.js                  sections and grid (9.8)
     panel_frame.js           panel header, menu, states, View data (9.11)
+    panel_wait.js            the wait of a panel: first load and reload, the preview of each type, the test of the same data: pure functions (9.11)
     frame.js                 frame to fields (9.12)
     names.js                 display names (9.13)
     fields.js                field configuration and matchers (9.14)
@@ -250,9 +252,19 @@ An `interval` variable writes one `var-<name>` with the text of the option, or `
   The rules of 10.2a say which change uses `push`, `replace` or `pop`. The browser "Back" returns to the previous view.
 - The page writes the names in this order: `from`, `to`, `timezone`, the `var-<name>` in document order, `refresh`, then the view
   names. It ignores an unknown name and drops it when it writes the URL. Grafana writes `orgId=1`: the page drops it.
-- Hune has no "Share" button and no "Share" menu item. The URL of the browser holds the whole
-  view: the time range, the variables, the refresh and, for one panel, `viewPanel`. A user copies it from the address bar.
+- The page writes a name only when its value differs from the default of the dashboard. The default is the value that the page uses when the URL has no such name. When all values are at the default, the address has the view names only, for example `?edit=1`.
+- These rules say when a value is at the default:
+  - `from` and `to` are one unit. The page leaves both out when they equal `time.from` and `time.to` of the document. When one of them differs, the page writes both.
+  - `timezone` is left out when it equals `time.timezone` of the document, or the zone that this member gives (9.9).
+  - `refresh` is left out when it equals `time.refresh` of the document. A document with no refresh has the default `off`.
+  - A `var-<name>` is left out when the selection equals the selection that the page picks with no URL value (9.10). The All flag and the values MUST be the same, in the same order.
+  - A `constant` writes no `var-<name>`. The default of a `query` variable is known after its options load. Until then, the page keeps the name.
+- A name that the URL does not have gives the default, also after "Back" and "Forward" of the browser. A link that names a value at the default still works. The page writes the short form at its next change of the address.
+- A `pop` that the page makes is the one exception: it keeps the values that the person set (10.2a, rule 12).
+- Hune has no "Share" button and no "Share" menu item. The URL of the browser holds the view: the time range, the variables, the refresh and,
+  for one panel, `viewPanel`. A name at the default is not in it. A user copies the address from the address bar.
   Hune has no short link and no public dashboard.
+- A copied address does not fix a value that equals the default. When the document changes a default, an old address shows the new default.
 - During 6 months after the cutover, an nginx `map` sends `/grafana/d/<old uid>/...` to the new prefix (15). The query
   names `from`, `to`, `timezone`, `var-<name>`, `refresh` and `viewPanel` are the names of Grafana.
 
@@ -323,6 +335,7 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/panel-table.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-chart.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-annotations.css">
+  <link rel="stylesheet" href="static/{{build}}/css/panel-loading.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-stat.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-variable.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-text.css">
@@ -354,9 +367,9 @@ The header is one bar. It is opaque, and it has a line of 1 px below it. The bar
 
 1. The brand: a logo of 20 px, the product name "Hune" and the version line. The brand is a link to the list. The logo is a square with round corners and one line that goes up. The square has the colour `--accent-fill`, and the line is white.
 2. The start controls. The list page puts its sort control and its tag filter here, after the brand (9.7). Other pages leave the slot empty.
-3. The crumbs: the folder title and the dashboard title. The text is 12 px high, with a line of 16 px. A thin chevron of 12 px is between two crumbs. The last crumb is muted. A crumb that is too long ends with an ellipsis, and its tooltip gives the whole text.
+3. The place of the page. On a dashboard it holds the selector of the dashboards (see below). In the view of one panel and in the panel editor, a way back comes after the selector. These views have no name in the header. The list page leaves the place empty.
 4. The controls of the page. The list page and the dashboard page put their controls here (9.7, 9.9). A full page of an error has none.
-5. The theme selector (9.25).
+5. The theme button (9.25).
 6. The button "More actions" (9.9). Only the dashboard page has it. It is the last control of the header.
 
 The controls have fixed sizes (9.9), and they do not depend on the state of the page. The header never has a second row.
@@ -371,15 +384,35 @@ When the window is narrow, the controls get smaller in steps. The last steps mov
 | 768 px or less | The range button shows its clock and its chevron only. It is 52 px wide. |
 | 640 px or less | The product name hides. The button "Revert" of the edit mode is not in the header. The menu "More actions" has it (10.2). |
 | 560 px or less | The range button is 40 px wide and the switch "Edit" is 36 px wide. The menu part of "Add" is 20 px wide. The interval button shows its chevron only. The gaps of the time control and of the edit group are 4 px. |
-| 480 px or less | The gaps are 4 px, and the icon buttons are 32 px. The crumbs that are links hide, so the title keeps its room. |
+| 480 px or less | The gaps are 4 px, and the icon buttons are 32 px. The name of a view hides, so the selector keeps its room. The way back stays. |
 
-The edit mode adds a group of controls at the left of the time control (9.9, 10.2). The group takes its room from the crumbs only. The steps of 900 px, 640 px and 560 px keep this room. At each width of 390 px or more, the crumbs keep a width of 24 px or more, and the header has no horizontal scroll. When the crumbs are less than 150 px wide, the crumb of the folder hides, so the title keeps the room. The title ends with an ellipsis, and its tooltip has the whole text.
+The edit mode adds a group of controls at the left of the time control (9.9, 10.2). The group takes its room from the selector only. The steps of 900 px, 640 px and 560 px keep this room. At each width of 390 px or more, the place of the page keeps a width of 24 px or more. The header has no horizontal scroll. The title in the selector ends with an ellipsis, and the tooltip of the button has the whole text.
+
+The selector of the dashboards follows the host selector of ClickHouse Dash and the bucket selector of Stowr. These rules apply:
+
+- The button shows the title of the dashboard, with a grid icon before it and a chevron after it. It is 32 px high. It is 22 rem wide, and narrower when the place is narrow. It is 12 rem wide at least when the place has 240 px or more.
+- The menu has the width of the button exactly. When the button is narrower than 224 px (a phone), the menu is 224 px wide, and never wider than the window. A long title ends with an ellipsis in the button and in the menu. The full title is the tooltip.
+- The way back is 28 px wide, after the button. Under 100 px the selector hides, and the way back may get narrower. The hook is `data-testid="header-switcher"`.
+- A click on the button opens the menu, and a second click closes it. The key Down or Up on the button opens the menu too.
+- The menu touches the button. The button loses its bottom edge and the menu has no top edge, so the two make one shape (see the joined menu in 9.7). The menu has the hook `data-testid="header-switcher-menu"`.
+- The menu lists the dashboards that the user can see. It reads the same list as the list page (`GET api/dashboards`). A dashboard that is not valid is not in the menu.
+- When the user sees two folders or more, each folder is a row with a chevron and the folder icon. A click on the row opens or closes the list of its dashboards under it. A folder with no dashboard has no row.
+- The folder of the current dashboard is open at the first open of the menu. The page keeps the choice of the person until the page loads again.
+- When the user sees one folder, the menu lists the dashboards with no folder row. This is the rule of the list page for the folder title (9.7).
+- The current dashboard has the selected fill, its edge and a check mark. A choice of another dashboard opens it as a link of the page does. The leave warning of 10.2a applies.
+- The menu reads the folders and the dashboards at each open. It shows the last answer at once. At the first open it shows the disabled line `Loading…` until the answer comes. The new answer fills the menu again, and the focus stays on the same row.
+- The page never waits for this read to draw the dashboard. A read that fails shows "The list did not load." in the menu.
+- Down and Up move from row to row. Home and End go to the first and to the last row. A letter goes to the next row that starts with it.
+- Right opens a folder row, and a second Right goes to its first dashboard. Left closes an open folder row. On a dashboard, Left goes to the folder row.
+- Enter and Space choose the row. Escape closes the menu and gives the focus back to the button. Tab closes the menu.
 
 The header sticks to the top of the window at every width. The header scrolls with the page in one case. This case is a window that is 760 px wide or less and 600 px high or less. A name or a line that hides for the eye stays for assistive technology.
 
 This bar replaces the controls row below the header of Grafana. ClickHouse Dash also has its actions in the header. The deviation from the Grafana parity of 9.8 and 9.9 is on purpose.
 
-The edit mode has no row of its own: its actions are in the header or in the menu "More actions" (10.2). The header of Grafana 12.4.2 is 48 px high, and the header of Hune is 44 px high. The variables bar (9.10) keeps its own row under the header. Some views add a last crumb: "View panel" (9.8) and "Edit panel" (10.3).
+The edit mode has no row of its own: its actions are in the header or in the menu "More actions" (10.2). The header of Grafana 12.4.2 is 48 px high, and the header of Hune is 44 px high. The variables bar (9.10) keeps its own row under the header.
+
+Some views add a way back after the selector: the view of one panel (9.8) and the panel editor (10.3). These views have no name in the header. The way back is a link with an arrow only. Its name and its tooltip say the target.
 
 The content of each view starts under the header with a gap of one token, `--page-pad`. The token is 16 px, and 12 px at 600 px or less. The view of the dashboard, the settings, the JSON, the history and the panel editor use the same token. In the panel editor, the preview and the top of the options pane start at this gap. The row of the variables starts there too. The browser case B208 measures the gap.
 
@@ -402,7 +435,7 @@ The first paint is held. A reload then shows one stable render:
   For a URL that names an editor state (10.2a), the first view is complete only when the editor view is in the page. The page then shows no frame of the plain dashboard before it.
 - A route that another route replaced (the entry redirect of 9.7) does not remove the attribute. The last route removes it. The pages "You are not signed in" and "Hune does not answer." remove it at once.
 - `boot_theme.js` removes the attribute after 2 s in all cases. Thus a page whose script does not load, or does not end, is never hidden.
-- `data-theme` is set before the first paint (9.25). Thus the first frame has the right colours and the right icon in the theme selector.
+- `data-theme` is set before the first paint (9.25). Thus the first frame has the right colours and the right icon in the theme button.
 - `main.js` reads `icons.svg` and puts its symbols in one hidden `<svg id="hune-sprite">` at the start of `<body>`. Each symbol has the id prefix `hune-icon-`. The function `icon()` writes `<use href="#hune-icon-<name>">`. An icon thus shows with its element. A reference to the file would draw the icon after its element.
 - The page starts to load the module of the route (`dashboard.js` or `list.js`) while `GET api/session` runs.
 - After the first frame, nothing of the page moves or goes away. The header, its buttons, the row of the variables and each panel frame keep their place and their size. The browser case B58 checks this.
@@ -425,16 +458,23 @@ The list page is a set of cards on the page background. It has no title, no sear
 
 - The page reads all the pages of `GET api/dashboards` (`limit=500`, then each `next`) and `GET api/folders`.
 - The page shows one card for each dashboard. A folder has no box around its cards. The folders are in the order of their titles. The comparison folds ASCII letters to lower case. In a folder, the cards are in title order.
-- A card has three parts. The first is the title. The second is a small note with the last change. The third is the tags.
+- A card has two parts. The first is a row with the title at the left, then the badge of the last change and the three dots at the right. The second is the tags.
 - The title is on one line. It ends with an ellipsis when it is too long. Its `title` attribute holds the whole name.
-- The note gives the age of `updated_at` in a short form: `now` (less than one minute), `<n>m`, `<n>h`, `<n>d`, `<n>w`, `<n>mo` or `<n>y`. The unit is the largest that fits, and the number is rounded down.
-- A week is 7 days, a month is 30 days and a year is 365 days. A time in the future gives `now`. The `title` attribute of the note holds the absolute time in the browser zone. The note has a fixed height, so each card has the same rhythm.
 - A card shows no description, no uid, no number, no shape and no count of panels. It has no word about the access of the user, such as "Can edit" or "Read only". The page has no counter of dashboards.
 - A card is an `article`. Its title is a link to `d/<uid>/<slug>`. The link covers the whole card with a pseudo-element. The buttons and the tag chips are siblings of the link, one layer above it. A card is never one anchor around buttons.
-- A tag is a chip. Its colour comes from a hash of the tag text over the 29 tag colours of Grafana 12.4.2. The chip shows this colour as a tint. The fill is 14 % of the colour, and the edge is 28 %. The text is the colour mixed with the ink of the theme. The ink is black at 25 % in the light theme, and white at 60 % in the dark theme.
+- A tag is a chip. Its colour comes from a hash of the tag text over the 29 tag colours of Grafana 12.4.2. The chip shows this colour as a tint. The fill is 32 % of the colour, and the edge is 65 %. The text is the colour mixed with the ink of the theme. The ink is black at 30 % in the light theme, and white at 60 % in the dark theme.
 - Each chip has 4.5:1 or more on each surface that holds it, in both themes.
 - A tag chip filters the list when the page shows the filters. A second click on the same chip clears the filter. When the page hides the filters, a chip is only a picture.
 
+The badge of the last change:
+
+- The badge is a small pill at the top right of the card. It has a clock icon and the text `Last change <age>`, for example `Last change 1d`. The badge is 20 px high. The row that holds it has one height, so a card with a badge and a card without one have the same rows.
+- The age is the age of `updated_at` in a short form: `now` (less than one minute), `<n>m`, `<n>h`, `<n>d`, `<n>w`, `<n>mo` or `<n>y`. The unit is the largest that fits, and the number is rounded down. A week is 7 days, a month is 30 days and a year is 365 days. A time in the future gives `now`.
+- The `title` attribute of the badge holds the absolute time in the browser zone. The hook is `data-testid="card-change-<uid>"`.
+- Hune knows a change only when it records one. A system that cannot record changes has no last change. The date of a file is not a change.
+- The badge shows only when all these conditions are true. `editing` is `true` (6.10). The item has a `version` of 1 or more (6.12). The member `updated_by` is a text, and it is not `external` and not empty. The time is a valid time.
+- A dashboard that comes from a read-only volume or from git has `version` 0 or the author `external` (5.2). A dashboard that a person changed outside Hune has the author `external`. These cards have no badge.
+- In mode `open`, the author of a save is `-`. This is a recorded change, so the card has the badge.
 Folders:
 
 - A folder title shows above its cards only when the user sees two folders or more. It is the folder icon and the name, in small muted capitals. It spans the whole row.
@@ -446,28 +486,41 @@ The grid:
 - The cards are in a grid of columns of 400 px. The folders share the columns, so the cards of two folders do not align by folder. At 440 px or less, there is one column of the full width.
 - The whole block of cards is centred, across and down, in the window below the header. When the block is taller than the window, it starts at the top and the page scrolls.
 
-The buttons of a card:
+The three dots of a card:
 
-- A card that the user can edit has three buttons at its top right, in fixed slots. The pencil is at the left, the menu is in the middle, and the bin is at the right.
-- A button has no visible label. Its accessible name and its tooltip give the name.
-- The user can edit a card when `editing` is `true` (6.10) and the item has `access.write` (6.12). The pencil, the menu and the bin have this one condition. The bin needs `dashboard.write`, as the route `DELETE api/dashboards/<uid>` does.
-- The pencil is a link to `d/<uid>/<slug>?edit=1`. It opens the dashboard in edit mode.
-- The menu of a card has "Export" and "Move". The menu "More actions" of the dashboard page has "Export" but not "Move" (9.9). Thus the menu of the card is the way to "Move" (10.7).
-- The bin runs the delete flow of 10.13 and names the dashboard in its dialog. The server decides. A `403` shows the usual refusal.
+- A card that the user can edit has one button, the three dots. It is at the right end of the first row, after the badge. It is 24 px high, and it keeps the height of the row, so a card with and without it has the same rows.
+- The button has no visible label. Its accessible name and its tooltip give the name.
+- The user can edit a card when `editing` is `true` (6.10) and the item has `access.write` (6.12). The three dots have this one condition. "Delete" needs `dashboard.write`, as the route `DELETE api/dashboards/<uid>` does.
+- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Delete" has the danger colour.
+- "Edit" is a link to `d/<uid>/<slug>?edit=1`. It opens the dashboard in edit mode.
+- The menu "More actions" of the dashboard page has "Export" but not "Move" (9.9). Thus the menu of the card is the way to "Move" (10.7).
+- "Delete" runs the delete flow of 10.13 and names the dashboard in its dialog. The server decides. A `403` shows the usual refusal.
 - A card that the user cannot edit has no button. The user finds "Export" in the menu "More actions" of the dashboard page.
 
 An item that is not valid (6.12):
 
-- Its card shows the uid in place of the title, and the badge "Not valid". It has no link to the dashboard, no pencil and no bin.
+- Its card shows the uid in place of the title, and the badge "Not valid". It has no link to the dashboard and no "Edit" or "Delete".
 - The button "Show errors" opens the errors in the card, each with its pointer and its message.
-- The menu of the card has "Download", which reads `GET api/dashboards/<uid>?download=true` (6.14). With `editing = true` and `access.write`, it also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
+- The three dots of the card open a menu with "Download", which reads `GET api/dashboards/<uid>?download=true` (6.14). With `editing = true` and `access.write`, it also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
 
 The header (9.6):
 
-- The sort control and the tag filter follow the brand, at the left. "New folder", "Import" and "New dashboard" are at the right. The theme selector follows them. The page body has no control.
-- "New dashboard" and "Import" show when `editing` is `true` and one folder has `access.write` (6.11). "New folder" shows when `editing` and `access.create` are `true`.
-- The sort control has "Alphabetically (A-Z)" and "Alphabetically (Z-A)". Without a choice, the order is the order of the folders and cards above. The page keeps the choice in `localStorage` key `hune.list.sort`.
-- The button "Filter by tag" opens a list of the tags, with the number of dashboards of each tag. The most used tag comes first, then the tags in text order. A choice sets the filter and puts the tag in `q` of the URL. A card stays when one of its tags is this tag, with ASCII letters folded.
+- The sort control and the tag filter follow the brand, at the left. One primary button "New" is at the right, with a plus icon and a chevron. The theme button follows it. The page body has no control.
+- The button "New" opens a menu with "New dashboard", "New folder" and "Import", in this order (`data-testid` `list-new-menu`, `list-new-menu-popup`, `new-dashboard`, `new-folder`, `import`). It is the same button at every width.
+- "New dashboard" and "Import" show when `editing` is `true` and one folder has `access.write` (6.11). "New folder" shows when `editing` and `access.create` are `true`. The button is hidden when the menu has no item.
+- The sort control has "Alphabetically (A–Z)" and "Alphabetically (Z–A)". Its button shows the order that applies in short, "A–Z" or "Z–A", and never a placeholder. Without a choice, the order is the order of the folders and cards above, which is A–Z. The button then shows "A–Z", and the menu marks "Alphabetically (A–Z)". The page keeps the choice in `localStorage` key `hune.list.sort`.
+- The button "Filter by tag" opens a menu of the tags. Each line has the chip of the tag and the number of dashboards of this tag at the right. The most used tag comes first, then the tags in text order. A choice sets the filter and puts the tag in `q` of the URL. A card stays when one of its tags is this tag, with ASCII letters folded.
+- The sort control, the tag filter and the selector of the dashboards (9.6) use one component: the joined menu. The next rules apply to each of them.
+
+The joined menu follows the host selector of ClickHouse Dash and the bucket selector of Stowr:
+
+- The button shows the chosen value and a chevron. When the menu is open, the button has a square bottom, no bottom edge and the surface of the menu. The chevron turns. The menu touches the button, and it has no top edge, so the two make one shape.
+- The menu is as wide as the button at least, and 480 px at most. The menu of the selector of the header is as wide as its button exactly (9.6). It scrolls when it is higher than 70 % of the window, or 520 px. A line is 35 px high.
+- The chosen line has the selected fill, its edge and a check mark at the right. A short fact, such as a count, is at the right of the line in the muted colour. A line that is too long ends with an ellipsis.
+- A click on the button opens the menu, and a second click closes it. The keys Down and Up on the button open it. At the open, the focus goes to the chosen line, or to the first line.
+- In the menu, Down and Up move from line to line. Home and End go to the first and to the last line. A letter goes to the next line that starts with it. Enter and Space choose the line. Escape closes the menu and gives the focus back to the button. Tab closes the menu.
+- A group is a line with a chevron. It opens and closes the lines under it. Right opens it, and Left closes it.
+- One menu is open at a time. A click outside the menu closes it.
 - The page has no search field, no view control and no way to collapse a folder. The URL parameter `q` holds one tag name.
 
 The threshold of the filters:
@@ -481,9 +534,9 @@ States and widths:
 
 - While the list loads, the body shows three empty cards and has `aria-busy`. A hidden live status names the tag filter when it is active. It gives no count.
 - A tag filter with no result shows "No dashboard has this tag." with the button "Clear the filter".
-- An empty list shows only its empty state, with no toolbar. The title is "No dashboard yet.". In mode `authzen` it is "No dashboard is visible to you.". The state also has a hint and the main actions that the subject can use.
+- An empty list shows only its empty state, with no toolbar. The title is "No dashboard yet.". In mode `authzen` it is "No dashboard is visible to you.". The state also has a hint and the same button "New" (`data-testid` `new-menu-empty`), with the items that the subject can use.
 - The header of the list page is one row at every width (9.6). The sort control and the tag filter are 150 px wide. Up to 1180 px they show their icon only, and they are 36 px wide. Their names and tooltips stay. At 480 px or less the icon controls are 32 px wide.
-- Up to 900 px, one button "New" with a menu replaces the three actions. The menu has "New dashboard", "Import" and "New folder", as the user can use them.
+- The button "New" has no other form at a narrow width. Up to 480 px it has less padding and a smaller gap. The header has no 900 px rule for the actions.
 
 The entry redirect:
 
@@ -496,7 +549,7 @@ The entry redirect:
 - The redirect does not read `access.create`. A user who can create a folder or a dashboard also goes to the dashboard. The redirect can later depend on this right, so that a user who can create stays on the list. This is an open item (19.35).
 - In mode `authzen`, the list is the list that the display filter gives (11.25), so a subject who can see one dashboard goes to it.
 - The redirect goes to `d/<uid>/<slug>` with `history.replaceState`. Thus the browser "Back" does not return to the list.
-- A navigation in the page never causes a redirect. The brand link, a crumb, "Go to the list", "Back" and "Forward" show
+- A navigation in the page never causes a redirect. The brand link, the selector, "Go to the list", "Back" and "Forward" show
   the list with its cards.
 - At each redirect, the page writes the uid and the time in `sessionStorage` key `hune.entry.redirect`. A second
   redirect to the same uid in the same tab does not run during 10 seconds. This stops a loop of full page loads. A
@@ -582,10 +635,12 @@ The scheduler of `runtime.js`:
 
 `viewPanel=<id>` shows one panel in all the main area, below the row of the variables bar. `Escape` closes it. The other panels do not query.
 
-- The view has no row of its own for the way back. The way back is the crumb of the dashboard, a link without `viewPanel`. The last crumb reads "View panel".
-  The key Escape, the button "Back to dashboard" and the crumb of the dashboard are the event `close-view` of 10.2a. The panel menu of the view has the item "View", which does nothing for the panel that the view shows.
+- The view has no row of its own for the way back. The way back is the arrow after the selector in the header, a link without `viewPanel` (`data-testid="view-back"`).
+- The page has no scrollbar in this view. The panel fills the window under the header and the row of the variables. The page padding is above it and under it.
+- The padding is 16 px, and 12 px at 480 px or less. The browser case B233 checks this at four sizes, in both themes, with and without variables.
+  The key Escape and the arrow are the event `close-view` of 10.2a. The panel menu of the view has the item "View", which does nothing for the panel that the view shows.
 - When the view opens, the focus moves to the view (`role="region"`, `aria-label` "View panel"). A pointer user sees no focus ring there.
-- At 480 px or less the crumbs hide. The controls of the header then have the button "Back to dashboard" (`data-testid="view-back"`).
+- The arrow stays at every width.
 
 ### 9.8a Dashboard links
 
@@ -823,13 +878,13 @@ The controls of the dashboard page are in the header (9.6), in one row. The vari
 
 The controls come in this order, from the left:
 
-1. The group of the edit mode (10.2): the button "Add" with its menu, "Save" and "Revert". It is in the page in edit mode only. It takes its room from the crumbs, so no button of the view moves.
+1. The group of the edit mode (10.2): the button "Add" with its menu, "Save" and "Revert". It is in the page in edit mode only. It takes its room from the selector, so no button of the view moves.
 2. The time control, which is one joined control.
 3. The switch "Edit" (10.2). It shows only with `editing` true and `access.write` (10.2).
-4. The theme selector (9.25).
+4. The theme button (9.25).
 5. The button "More actions" (`data-testid="dashboard-menu"`).
 
-The first three are in the controls part of the header. The theme selector and "More actions" follow them. Each control keeps its `data-testid` and its accessible name. The order of the keyboard focus is the same as this visual order.
+The first three are in the controls part of the header. The theme button and "More actions" follow them. Each control keeps its `data-testid` and its accessible name. The order of the keyboard focus is the same as this visual order.
 
 The menu "More actions" has these items, in this order. An item shows only when the user has the right for it:
 
@@ -850,10 +905,10 @@ Each button of the header has one place and one size in each state. Above 1100 p
 
 - The range button is 220 px wide. The text takes the room between the clock and the chevron. A longer text, such as an absolute range, ends with an ellipsis. The tooltip and the accessible name give the whole text.
 - The refresh button is an icon button of 36 px. The spinner has the size of the icon. The accessible name and the tooltip stay "Refresh".
-- The interval button is 58 px wide, with a text or with no text.
+- The interval button is 58 px wide, with a value or with a dash.
 - The switch "Edit" is 76 px wide. A user with no right to write has no switch and no group of the edit mode.
 - The button "Add" has a main part of 68 px and a menu part of 28 px. The two parts touch. "Save" is 64 px wide and "Revert" is 36 px wide. The gap between them is 8 px.
-- "More actions" and the theme selector have the same size in each state. "Add", "Save" and "Revert" keep their size when they are not active.
+- "More actions" and the theme button have the same size in each state. "Add", "Save" and "Revert" keep their size when they are not active.
 
 The sizes change in steps on a narrow window (9.6):
 
@@ -869,11 +924,11 @@ Tooltips and accessible names stay at each width. The header sticks to the top a
 
 The height and the size of each button are fixed. No button of the view changes its place when the edit mode starts or ends. These rules apply:
 
-- The time control, the switch "Edit", the theme selector and "More actions" keep their x and y between the view and the edit mode. The browser case B150 measures this at 1920, 1280, 900, 768 and 390 px, in the light and the dark theme.
-- The group of the edit mode is at the left of the time control, one gap from it. Its width pushes only the crumbs.
-- The crumbs and the brand are the only parts that change width. The crumbs get smaller by the width of the group plus one gap. The crumbs end with an ellipsis, and their tooltip has the whole text.
+- The time control, the switch "Edit", the theme button and "More actions" keep their x and y between the view and the edit mode. The browser case B150 measures this at 1920, 1280, 900, 768 and 390 px, in the light and the dark theme.
+- The group of the edit mode is at the left of the time control, one gap from it. Its width pushes only the selector.
+- The selector and the brand are the only parts that change width. The selector gets smaller by the width of the group plus one gap. Its title ends with an ellipsis, and the tooltip has the whole text.
 - The gap is 8 px, and 4 px up to 560 px for the time control and the group. The height of the header does not change.
-- The switch "Edit" does not move, so it stays under the pointer. The size of the crumbs is the only change that the eye sees.
+- The switch "Edit" does not move, so it stays under the pointer. The size of the selector is the only change that the eye sees.
 - The switch makes two layouts, the layout of the view and the layout of the edit mode, and no layout between them. The page puts the group in the same step in which it shows the editor view (10.2a). A sampler of the frames in the browser case B59 checks this. The end of the edit mode is one step too.
 - The other views of the editor keep the group in its place. These views are the panel editor, the JSON, the settings and the history. "Add" is not active there.
 
@@ -972,7 +1027,7 @@ Refresh:
   Refresh is off.".
 - The refresh group has two buttons: "Refresh" and the interval button. They are part of the time control and they touch the time group.
 - A click on "Refresh" always refreshes. The key Enter or Space on the focused button does the same. It aborts the queries in flight and runs them again. While queries run, a spinner replaces the icon of the button. The name stays "Refresh".
-- The interval button is a small chevron. It shows the value, such as `30s`, beside the chevron when an interval runs. It shows no text when there is no interval, and its accessible name stays "Refresh interval: Off".
+- The interval button is a small chevron. It shows the value, such as `30s`, beside the chevron when an interval runs. It shows a dash, "-", when there is no interval, so it is never empty, and its accessible name stays "Refresh interval: Off".
 - The interval button opens a menu with the items "Off" and the values of `refresh_choices`. The key Enter or Space opens it on the current item. The arrow keys move, Enter chooses, and Escape closes it and gives the focus back to the button.
 - The items are radio items (`role="menuitemradio"`). The current item has a neutral fill, no check mark and `aria-checked="true"`.
 - The key Tab goes through the time control in the order of the picture. The order is: "Shift the time range back", the range button, "Shift the time range forward", "Zoom out", "Refresh" and the interval button.
@@ -1175,7 +1230,7 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 |---|---|
 | `idle` | The empty frame: the panel is not near the viewport, or the variables load. |
 | `queued` | The empty frame: the request waits in the queue. |
-| `loading` | The empty frame, or the earlier content on a refresh. Three pulsing dots in the middle of the body, 300 ms after the request starts. Nothing moves. |
+| `loading` | The empty frame, or the earlier content on a refresh. Three pulsing dots at the top right of the title bar, 300 ms after the request starts. The empty frame also shows the preview of its panel type. Nothing moves. |
 | `ready` | The panel type with the data. |
 | `empty` | "No data": zero rows after the transformations. The text is plain: 18 px, weight 400, muted colour, centred, with no icon. A `stat` with zero rows does not use this state: it draws its own "No data" (9.19). |
 | `error` | A red badge at the left of the title, with the message as its tooltip. The body shows the code and the message of the error, and a "Retry" button. The frame stays neutral. A panel with several queries shows this state when no query gave a frame (9.8d). |
@@ -1191,11 +1246,35 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - A panel with several queries (9.8d) can have the state `ready` and a red badge. The badge lists each failed query. The frame has the attribute `data-failed` with the refs. A table with several queries has a select under the table (9.22a, rule 9). The select is part of the frame: it takes its height from the body, and it does not change the size of the frame.
 - "Inspect" of a panel with several queries shows one block for each query that has an answer, in the order of the queries. Each block has the title "Query <ref>", the facts of the answer and the expanded SQL. Each block has its own button "Copy SQL". The footer has the button "Close" only. A panel with one query shows the dialog of today.
 - The test hooks of a block are `inspect-<id>-meta-<ref>`, `inspect-<id>-sql-<ref>`, `inspect-<id>-none-<ref>` and `inspect-copy-<ref>`. The hooks of a panel with one query do not change.
-- A panel that waits (`idle`, `queued` or `loading`) and has no content shows its empty frame. After 300 ms with no result, the body shows the loader: three dots that pulse (class `panel--wait`). A result that comes sooner replaces the empty frame at once, with no loader between.
-- A refresh keeps the earlier content on the screen. After 300 ms of `loading`, the page dims the content to 60 % and shows the loader (class `panel--progress`). A faster answer changes nothing before the new data shows. The text "No data" of an empty panel is hidden while the loader shows.
-- The loader is the only sign of a wait in a panel. The title bar has no spinner, no bar and no other mark. The title and the icon of the description do not move.
-- The loader is an element `panel__loader` in the body, with `aria-hidden="true"`. It is out of the flow (`position: absolute`), has `pointer-events: none`, and takes no room. The overlay of an error, of a hint or of a note covers it.
-- The three dots are circles of 7 px, with 6 px between them. Their colour is the token `--accent-fill`. Each dot pulses for 1 s (the token `--dur-pulse`, the curve `ease-in-out`). Its opacity goes from 0.2 to 1, and its scale from 0.8 to 1. The second dot starts 0.15 s after the first, and the third dot 0.15 s after the second.
+- A panel that waits (`idle`, `queued` or `loading`) is in one of two cases. The attribute `data-wait` of the frame says which case.
+- First load (`data-wait="first"`): nothing is on the screen. This is the first wait of the panel, or the wait after an error. The frame shows its empty frame. After 300 ms with no result, the body shows the preview of the panel type and the title bar shows the dots (class `panel--wait`). A result that comes sooner replaces the empty frame at once, with no preview between.
+- Reload (`data-wait="reload"`): the panel has content, or the text "No data". They stay as they are. After 300 ms of `loading`, the title bar shows the dots (class `panel--progress`). The page does not dim the content. A faster answer changes nothing before the new data shows.
+- A reload that gives the same data and the same range draws nothing again, so the panel does not blink. The data are the columns, the interval and the values of the answers. The members `query_id`, `stats`, `sql` and `etag` are not data. An answer of more than 500,000 cells counts as new data.
+- A time series, a state timeline, a status history and a heatmap draw their x axis over the range of the panel. They draw again when the range changes, also when the data are the same.
+- A new picture replaces the old one in one step. The page loads the module of the panel type before it removes the old picture. No frame has an empty body between them.
+- A reload that fails gives the state `error`, as in the table above. The page does not keep the old data, because old data can look current.
+- The dots are the only sign of a reload, and the dots with the preview are the only sign of a first load. The title bar has no spinner, no bar and no other mark. The title and the icon of the description do not move.
+- The loader is an element `panel__loader` in the title bar, with `aria-hidden="true"`. It is out of the flow (`position: absolute`), has `pointer-events: none`, and takes no room. Its right edge is 4 px left of the menu button.
+- The three dots are circles of 5 px, with 3 px between them. Their colour is the token `--accent-fill`. Each dot pulses for 1 s (the token `--dur-pulse`, the curve `ease-in-out`). Its opacity goes from 0.2 to 1, and its scale from 0.8 to 1. The second dot starts 0.15 s after the first, and the third dot 0.15 s after the second.
+- The preview is an element `panel__skeleton` in the body, with `aria-hidden="true"`. It is out of the flow, has `pointer-events: none`, and sits under the overlay. The overlay of an error, of a hint or of a note covers it. A text panel has no preview.
+- The preview is a set of simple shapes (bars, dots, lines, cells, rings and blobs). Each shape has a position and a size in per cent of the body, and keeps them. A shape changes its opacity only, from 0.45 to 1 in 1.8 s. The shapes start one after the other, 0.12 s apart. The colours are 11 % and 19 % of the token `--text`.
+- The preview of each panel type:
+
+  | Panel type | Preview |
+  |---|---|
+  | `timeseries`, `xychart` | Four grid lines and a wave of sixteen dots |
+  | `barchart` | A base line and seven bars |
+  | `stat` | A big value, a caption and a run of five dots |
+  | `gauge` | A ring that is open at its foot, and the value in its middle |
+  | `bargauge` | Three tracks, each one with a fill |
+  | `table` | A header row and five rows of three cells |
+  | `piechart` | A ring of four parts |
+  | `heatmap` | A grid of eight by four cells |
+  | `histogram` | A base line and ten bars side by side, as a bell |
+  | `state_timeline`, `status_history` | Three rows of segments |
+  | `logs` | Six lines, each one with a dot |
+  | `geomap` | Two map shapes and five markers |
+
 - The page starts no timer for the loader in a panel that is not near the viewport, beyond the timer of the first wait. A print has no loader.
 - "View data" opens a dialog with the fields of the panel after the transformations, as a table. The header is the
   display name, and the cells are the display texts. This table is the text alternative of the chart (9.26).
@@ -3566,13 +3645,12 @@ The lock file is `web/js/vendor/chdash/chdash.lock.json`:
 - The choice is in `localStorage` key `hune.theme`: `system` (the default), `light` or `dark`. `system` follows `prefers-color-scheme` and changes when it changes. Another tab that changes the key changes the theme of this page (the `storage` event).
 - `boot_theme.js` is a classic script in `<head>`. It sets `data-theme` before the first paint, so the page does not
   change colour after it shows. It reads `localStorage` once, and it does not wait for any request. The shell holds its first paint (9.6): the first frame has the final theme, also on a reload with a cold cache.
-- The theme selector is in the header (9.6), on every page: the list, the dashboard, the editor and the pages of an error. It is the selector of ClickHouse Dash, written as Hune code. Its size and its height are the same on each page. On the dashboard page the button "More actions" (9.9) follows it. Its distance from the right edge is then larger by the width of that button and one gap.
-- The selector is one icon button of 36 px by 32 px (32 px by 32 px at 480 px or less). It shows the icon of the choice: a screen for "System", a moon for "Dark" and a sun for "Light". The accessible name is `Theme: System`, `Theme: Dark` or `Theme: Light`. The three icons are in the button, and the CSS shows the one of `data-theme-choice`. Thus the first paint has the right icon.
-- A press on the button opens a menu of three icon options, in this order: "System", "Dark" and "Light" (`role="listbox"`, `role="option"`). The menu hangs from the button and is as wide as the button. The button loses its lower corners and its lower border, so the two parts look like one shape. The current option has `aria-selected="true"` and a selected fill. Each option has the accessible name `System theme`, `Dark theme` or `Light theme`.
-- A press on an option sets the choice, closes the menu and puts the focus back on the button. A press outside the menu closes it. `Escape` closes it and puts the focus back on the button. `Tab` closes it. The keys `ArrowDown` and `ArrowUp` on the button open the menu on its first or last option. In the menu, `ArrowDown`, `ArrowUp`, `Home` and `End` move the focus, and they wrap.
-- The menu has a motion of 160 ms (the token `--dur-base`, the curve `--ease`). It opens with a fade from 0 to 1 and a move of 6 px down to its place. The height scales from 0.98 to 1. The origin is the top of the menu. It closes the same way and leaves the page when the motion ends (class `theme-select--closing`). The motion is the same as in ClickHouse Dash, and it is shorter than the 200 ms of 9.26.
-- With `prefers-reduced-motion: reduce` the menu has no transition and no move. It shows and hides at once.
-- Each page has the same selector, with the same `data-testid` (9.29). A change of the choice sends the event `hune-theme` on `document`. The pages that draw on a canvas draw again.
+- The theme button is in the header (9.6), on every page: the list, the dashboard, the editor and the pages of an error. Its size and its height are the same on each page. On the dashboard page the button "More actions" (9.9) follows it. Its distance from the right edge is then larger by the width of that button and one gap.
+- The button is one icon button of 36 px by 32 px (32 px by 32 px at 480 px or less). It shows the icon of the choice: a screen for "System", a moon for "Dark" and a sun for "Light". The accessible name and the tooltip are `Theme: System`, `Theme: Dark` or `Theme: Light`. The three icons are in the button, and the CSS shows the one of `data-theme-choice`. Thus the first paint has the right icon.
+- A click on the button sets the next choice, in this order: "System", "Dark", "Light", then "System" again. A stored value that is not a choice counts as "System", and the next one is "Dark". The function `nextChoice` gives the next choice.
+- The button opens no menu and no popup. It has no `aria-haspopup`, no `aria-expanded` and no options. The keys Enter and Space click it, and the focus stays on it. This differs from ClickHouse Dash on purpose: Hune has one button and no menu.
+- The button has no motion of its own. The change of the choice has the colour transition of the page only, and `prefers-reduced-motion: reduce` has no effect on the button.
+- Each page has the same button, with the same `data-testid` (9.29). A change of the choice sends the event `hune-theme` on `document`. The pages that draw on a canvas draw again.
 - The chart engine and the pie chart draw again when the theme changes. The named colours (9.16) have the same names in both themes. The series palette has one hex for each theme (9.16). `text` follows the theme.
 
 Fonts and type:
@@ -3619,9 +3697,9 @@ Colours of the chrome:
 | Success text | `--success` | `#34d399` | `#137333` |
 | Shadow of a card | `--shadow-card` | `0 1px 2px rgba(0, 0, 0, 0.4)` and `0 6px 18px rgba(0, 0, 0, 0.25)` | `0 1px 2px rgba(15, 23, 42, 0.06)` and `0 4px 14px rgba(15, 23, 42, 0.05)` |
 | Shadow of an overlay | `--shadow-overlay` | `0 8px 24px rgba(0, 0, 0, 0.45)` and a ring of 1 px | `0 8px 24px rgba(15, 18, 25, 0.12)` and a ring of 1 px |
-| Ink of a tag chip: the base and the share of the tag colour | `--tag-ink-base`, `--tag-ink-share` | `#ffffff` and 40 % | `#000000` and 75 % |
+| Ink of a tag chip: the base and the share of the tag colour | `--tag-ink-base`, `--tag-ink-share` | `#ffffff` and 40 % | `#000000` and 70 % |
 
-The fill of a tag chip is 14 % of the colour of the tag, and its edge is 28 % (`--tag-fill-share`, `--tag-edge-share`). The 29 colours of the tags give 4.5:1 or more for the text on the fill, on `--panel`, `--bg`, `--raised` and `--selected-bg`, in both themes. A unit test checks it.
+The fill of a tag chip is 32 % of the colour of the tag, and its edge is 65 % (`--tag-fill-share`, `--tag-edge-share`). The 29 colours of the tags give 4.5:1 or more for the text on the fill, on `--panel`, `--bg`, `--raised` and `--selected-bg`, in both themes. A unit test checks it.
 
 The primary button is light in the dark theme, so its text is dark (`--on-fill`). The white line of the logo has 3:1 or more on `--accent-fill` in both themes. The favicon and the images of the site use the fixed accent `#2f5bd8`, which has 4.5:1 with the white line.
 
@@ -3653,8 +3731,8 @@ The primary button is light in the dark theme, so its text is dark (`--on-fill`)
 - A coloured value text of a stat has 4.5:1 with the panel (9.19). A large text of 24 px or more has 3:1. A coloured text of a table cell has 4.5:1 (9.20).
 - The ink on a stat tile with a background colour has 3:1 or more (9.19). The ink on a table cell with a background colour has 4.5:1 or more (9.20). Where Grafana has less, Hune uses the ink with the better contrast.
 - Notices use `aria-live="polite"`. An error of a form field has `aria-describedby`.
-- No animation is longer than 200 ms. With `prefers-reduced-motion: reduce`, the page has no animation. The pulse of the loader of a panel (9.11) is the only exception. It repeats each 1 s and stops when the panel has its result.
-- With `prefers-reduced-motion: reduce`, the loader has no pulse. It shows three still dots at 60 % of their opacity. The dots are decoration, so they have `aria-hidden="true"` and no contrast rule.
+- No animation is longer than 200 ms. With `prefers-reduced-motion: reduce`, the page has no animation. The pulse of the loader of a panel and the glow of its preview (9.11) are the only exceptions. The pulse repeats each 1 s, and the glow each 1.8 s. They stop when the panel has its result.
+- With `prefers-reduced-motion: reduce`, the loader has no pulse and the preview has no glow. The dots show at 60 % and the shapes at 80 % of their opacity. They are decoration, so they have `aria-hidden="true"` and no contrast rule.
 - A copy of a repeat, of a panel or of a section, has the accessible name `<title>` after the replacement of the variables (9.8c). When this title has no placeholder of the repeat variable, the name is the title, a comma and the option text of the copy. Thus a person with a screen reader tells the copies apart.
 - The copies are in the DOM order of the grid: the displayed `y`, then `x`, then the number n (9.8). The Tab order follows this order.
 - The messages of the states `repeat-empty` and `repeat-limit` have `role="note"`. The page does not announce them, because the person changed the selection and sees the result.
@@ -3732,7 +3810,7 @@ JavaScript.
 | `data-testid="history-button"`, `"export-button"`, `"delete-button"`, `"menu-time-back"`, `"menu-time-forward"`, `"menu-zoom-out"` | The items of the menu "More actions" (9.9). The items `menu-*` show up to 900 px. |
 | `data-testid="header-actions"` | The controls part of the header (9.6). |
 | `data-testid="app-version"` | The version line beside the product name (9.6). |
-| `data-testid="theme-select"`, `"theme-toggle"`, `"theme-menu"`, `"theme-system"`, `"theme-dark"`, `"theme-light"` | The theme selector, its button, its menu and its three options (9.25). |
+| `data-testid="theme-toggle"` | The theme button (9.25). It has no menu and no option. |
 | `data-testid="variables-bar"`, `"variable-<name>"` | The bar and each control. A control is in the bar or in the frame of its placement (9.10): one place at a time. |
 | `data-testid="variable-<name>-use"` | The row `Use "<text>"` of the popup of an open variable (9.10). |
 | `data-notice="variable"` on a notice | The notice of a value that a closed variable dropped (9.10). |
@@ -3816,7 +3894,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,018 KB at most (1,042,432 bytes), before compression. The limit is the measure (1,037,796 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,636 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,034 KB at most (1,058,816 bytes), before compression. The limit is the measure (1,054,240 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,576 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;
@@ -3954,8 +4032,11 @@ The forms of 10.3a and 10.3b edit the overrides, the mappings, the data links, t
 - "Add" acts on the draft grid. In the other views of the editor it keeps its place and it is not active, so the header does not change. Up to 900 px, "Add" shows its icon only (9.6, 9.9). A viewer has no "Add".
 - "Save" is the primary button. It opens the dialog of 10.9. The key Ctrl+S or Cmd+S does the same. Above 1100 px it shows the text "Save". Up to 1100 px it shows the icon, and its name stays "Save".
 - "Revert" is an icon button with the name "Revert all changes". Up to 640 px it has no button in the header (9.6). The menu "More actions" has the item "Revert all changes" (`discard-menu`) at its top. It discards all the changes and goes back to the last saved version. It asks first when there are changes, with the dialog "Discard your changes". The dialog says "Discard your changes and show the saved dashboard?" Its buttons are "Stay" and "Discard". "Revert" does not leave the edit mode.
-- The state of the draft has no visible text. The page shows no label, no dot and no pill for it. "Save" and "Revert" show the state. They are active when the draft is not the base document. They are not active when the draft is the base document.
-- "Save" has a `title`. It reads "Save the changes" when the button is active, and "There are no changes to save" when it is not. A live region that only a screen reader can read says "Unsaved changes" or "No changes". The protections do not change: the event `beforeunload` (10.8) and the dialog "Exit edit mode" stay.
+- The state of the draft has no visible text. The page shows no label, no dot and no pill for it. "Save" and "Revert" show the state.
+- "Revert" is active when the draft is not the base document. "Save" is active in that case too.
+- "Save" is also active when the current range or the current refresh differs from the default of the draft (10.9).
+- "Save" has a `title`. It reads "Save the changes" when the draft has changes. It reads "Save the time range or the refresh as the default" when only the range or the refresh differs. It reads "There are no changes to save" when the button is not active.
+- A live region that only a screen reader can read says "Unsaved changes" or "No changes". These two texts follow the draft only. The protections do not change: the event `beforeunload` (10.8) and the dialog "Exit edit mode" stay.
 - The other actions of the edit mode are in the menu "More actions" (9.9), at its top. Each keeps its `data-testid`:
   - "Dashboard JSON" (`json-tab`) and "Settings" (`dash-settings`, 10.3b) show in each view of the editor except their own view.
   - The variables and the dashboard links are in "Settings" (10.3b).
@@ -3983,7 +4064,7 @@ Data in edit mode:
 The dashboard page has one state at a time. The URL names this state (9.5), and the page shows only its view. A reload, a pasted URL, and the browser "Back" and "Forward" give the state that the URL names.
 This section gives the rule for each change of the state. It names events, not buttons, so a new layout of the header does not change it.
 
-The states are in this table. `<q>` stands for the names `from`, `to`, `var-<name>` and `refresh` (9.5), which every state keeps.
+The states are in this table. `<q>` stands for the names `from`, `to`, `timezone`, `var-<name>` and `refresh` (9.5). Every state keeps their values. A name shows only when its value differs from the default of the dashboard.
 
 | State | Name | Names in the URL, after `<q>` | The main area shows |
 |---|---|---|---|
@@ -4007,12 +4088,12 @@ The events are these:
 | Event | Meaning |
 |---|---|
 | `view-panel` | The user opens the view of a panel: the item "View" of the panel menu, or a link to a `viewPanel` URL. |
-| `close-view` | The key Escape, the button "Back to dashboard" of the panel view, or the crumb of the dashboard in the panel view. |
+| `close-view` | The key Escape, or the arrow after the selector in the panel view. |
 | `edit-on`, `edit-off` | The Edit switch changes to on or to off. The button "Exit edit" is `edit-off`. |
 | `panel-edit` | The item "Edit" of a panel menu, or "Add panel" (a new panel). |
 | `open-json`, `open-settings`, `open-history` | The items "Dashboard JSON", "Settings" and "History" of the menu "More actions", and the links to them in an error box. |
 | `history-nav`, `up` | In the history: a version, a diff or the list. `history-nav` opens a version or a diff, and `up` goes back to the list. |
-| `leave` | The control that goes up one level: the crumb of the dashboard in the panel editor (10.3), "Back to dashboard" of the JSON tab and of the settings view, and "Back to the dashboard" of the history. A restore of a version in the history is a `leave` too. |
+| `leave` | The control that goes up one level: the arrow after the selector in the panel editor (10.3), "Back to dashboard" of the JSON tab and of the settings view, and "Back to the dashboard" of the history. A restore of a version in the history is a `leave` too. |
 | `save`, `discard` | A save that succeeds (10.9). A "Discard" that the user confirms (10.2). |
 | `back`, `forward` | The buttons of the browser. |
 | `reload` | The key F5, or a reload of the page. |
@@ -4090,12 +4171,14 @@ The rules are these:
    The page shows the notice "You cannot edit this dashboard.". When a draft exists, the notice adds "Your draft stays in this browser.".
    The page shows no "Resume" to a user who cannot edit, and it does not remove the draft.
 9. Back and Forward. The browser cannot stop a `back` or a `forward`. When one of them ends edit mode and the draft has changes, the page keeps the draft.
-   It shows the notice with "Resume" and "Discard" (10.8). Each open dialog of the page closes at once.
+   It shows the notice with "Resume" and "Discard" (10.8), and each open dialog of the page closes at once.
+   The page sets the range, the refresh and the variables to those of the entry. A name that the entry lacks gives the default (9.5).
 10. Reload. A reload gives the same state, the same URL and the same origin (`history.state` stays). The draft comes back with the notice "Your draft is back.".
     The page holds the first paint (9.6) until the view of the state is complete. For an editor state, this view includes the editor. The reload shows no frame of a state that the URL does not name.
 11. Deep link. A pasted URL has no origin. `leave` then goes to the dashboard in edit mode by `replace`. The URL of a deep link is in normal form when rule 1 gives its state, removes no name and has no form `panel-<id>`.
     The order of the names does not count. The page writes the form `panel-<id>` as the number (9.5).
-12. Time, refresh and variables. A `change` uses `replaceState` and keeps the view names, in every state. A drag on a time series is a `push` (9.8).
+12. Time, refresh and variables. A `change` uses `replaceState` and keeps the view names, in every state. It writes the names of 9.5 that differ from the defaults. A drag on a time series is a `push` (9.8).
+    A `pop` that the page makes keeps the values that the person set: the page writes them in the entry that it reaches. A Back or Forward of the browser shows the values of that entry.
 13. Entry redirect. The redirect of 9.7 runs only in the list page. It uses `replace`. A state URL never gives a redirect.
 14. Focus. When `panel-view` opens, also after a `leave`, the focus goes to the view (9.8). When an editor state opens, the focus goes to its region (`role="region"`), which shows no ring to a pointer user. The state `edit` that the Edit switch opens keeps the focus on the switch.
     After a `leave` or a `close-view`, the focus goes to the control that opened the state. This is the menu button of the panel, or the button "More actions".
@@ -4116,7 +4199,7 @@ The rules are these:
     - The grid is not in the page while the panel editor shows, and the engine then releases its canvas. A chart that returns to the page draws in the task that shows the state. It draws before the page writes the hook `data-hune-view` (9.29).
     - For this, the page sends the event `hune-shown` on `document` just before it writes the hook. Each chart that had no width draws at once. Thus no paint and no script after the change finds a blank canvas.
     - The grid sends the same event at the end of the expand of a section (9.8).
-    - These transitions send no query, because no data changed. No frame shows the state `idle`, `queued` or `loading`, the loader or the dim (9.11) for them.
+    - These transitions send no query, because no data changed. No frame shows the state `idle`, `queued` or `loading`, the loader or the preview (9.11) for them.
     - The browser case B207 checks this rule in both themes, with a panel and a section that repeat. Its probe reads the frames after each paint and at the end of the task that writes the hook. Its steps wait for states, not for a fixed time.
 
 An invariant covers all the rules. For each state, `parse(render(state))` is that state. For each URL, `render(parse(url))` is the normal form of the URL. The unit tests of 16.10a check this with the vectors `FE-26`.
@@ -4127,7 +4210,7 @@ An invariant covers all the rules. For each state, `parse(render(state))` is tha
 
 - The panel editor has no top bar and no row of its own. The editor starts at the foot of the header, so it has 48 px more height than before.
 - The box of the editor starts at the foot of the header and has a top padding of `--page-pad` (9.6). The preview, the row of the variables and the top of the options pane start at this gap. The preview never touches the header. Without a row of the variables, the top of the options pane and the top of the preview are at the same height. The pane keeps its place at the right edge of the window.
-- The way back is the crumb of the dashboard in the header (see below). The editor has no visible text for the state of the draft, no "Save" and no "Discard". The header has "Save" and "Revert" (10.2). The last crumb of the header is "Edit panel". The header keeps all its controls, with the switch "Edit" on.
+- The way back is the arrow after the selector in the header (see below). The editor has no visible text for the state of the draft, no "Save" and no "Discard". The header has "Save" and "Revert" (10.2). The header has no name for this view. The header keeps all its controls, with the switch "Edit" on.
 - The time controls are in the header (9.9). The row of the variables bar is under the header, over the preview.
 - The preview shows the panel with the draft and its current result. Under it is the query area, with three tabs of 38 px: "Query", "Panel" and "JSON". The preview and the query area have the same height.
 - The preview is a panel frame like the frame of the view (9.8). It has the fill and the edge of the theme. When the draft has `transparent` = `true`, it has neither of them.
@@ -4142,16 +4225,15 @@ A few controls change the draft and not the picture of the preview. Each one is 
 
 The forms for the options of each type are in 10.3h. The tab "JSON" stays. It edits the whole panel, with the same members as the forms. A change in a form shows in the tab, and a valid change in the tab shows in the forms.
 
-The way back of the panel editor is the crumb of the dashboard in the header. These rules apply:
+The way back of the panel editor is the arrow after the selector in the header. These rules apply:
 
-- The crumb is a link with an arrow before its text. It has the hook `data-testid="editor-back"`.
+- The way back is a link with an arrow and no text. It has the hook `data-testid="editor-back"`.
 - A click with no modifier key is the event `leave` of 10.2a. It shows the state from which the editor was opened.
 - The name and the tooltip tell the true target. For a panel view they are "Back to panel view". For the dashboard view they are "Back to dashboard".
 - For edit mode, and for an entry with no origin, they are "Back to edit mode".
 - A click with Ctrl, Shift, Alt or Meta, or with another button, does not send the event. The browser then uses the address of the link.
 - The key Enter on the link is a click.
-- When the crumbs are less than 150 px wide, the crumb of the folder hides.
-- When they are less than 100 px wide, the crumb shows its arrow alone, and the last crumb hides. The name and the tooltip stay. This crumb never hides.
+- The arrow never hides, at any width. The name and the tooltip stay.
 - The focus goes back as in 10.2a, rule 14. It does not depend on the control that sent the event.
 - The key Escape and the "Back" of the browser do not change. The browser case B151 checks these rules.
 
@@ -4444,6 +4526,8 @@ Tab "Time":
 | From, To | `time.from`, `time.to` | A time text (4.4). The page uses the check of the time picker (9.9). When both are absolute, From must be below To. |
 | Time zone | `time.timezone` | A select with `browser`, `utc` and "Other". "Other" opens a text with the list of `Intl.supportedValuesOf("timeZone")` when the browser has it. The error is "The time zone is not valid." when the text breaks 4.6. A name that the browser does not know gives the warning "This browser does not know this time zone." The draft keeps the name. |
 | Refresh | `time.refresh` | A select: "Off" (`null`) and the values of `REFRESH_CHOICES`. |
+
+The Save dialog (10.9) is the short way to make the current range and the current refresh the defaults. This tab sets them by hand.
 
 Tab "Links" (`links`, 0 to 16 items):
 
@@ -5250,6 +5334,17 @@ The form of F30 stays, with its hooks. These are its groups and rows. Its two ch
 
 - The text starts as the canonical text of the draft (6.15). When it has none, it is the JSON with an indent of two.
 - Each JSON text area has `spellcheck="false"`, as the SQL text area has (10.3). The browser draws no wavy line in it.
+- The JSON view fills the page. Its box has the height of the window, less the header and less the padding of the page above and below. The area takes the room that the bar and the list of errors leave, with 160 px at least. The page has no scroll of its own for the area, at any width of the window. The tab "JSON" of the settings view (10.3b) has the same rule (case B240).
+- The text has colours. A key, a text, a number, `true` or `false`, `null` and the punctuation each have a colour. The colours are the tokens of the SQL colours: `--sql-keyword` for a key, `--sql-string`, `--sql-number`, `--sql-function` for `true` and `false`, `--sql-null`, and `--muted` for the punctuation. Each colour has 4.5:1 or more on the area, in both themes (9.26). A text that is not valid has colours too.
+- The text area is transparent, and a layer under it draws the colours with the same text metrics as the SQL area (10.3). The text area keeps the text, the selection, the caret and the scroll bars. The layer draws only the visible rows and 100 rows above and below. A scroll that comes within 30 rows of the edge of the drawn rows draws them again.
+- A JSON text never holds a line feed inside a text, so each row has its own colours. A row has 2,000 coloured parts at most. The rest of the row keeps the plain colour. A key does not read the scroll position or the size of the area from the page. A text of 6,600 lines then does not slow the key.
+- The gutter has the line numbers and the marks of the changes. A mark shows a line that differs from the saved dashboard. The saved text is the JSON of the saved document with an indent of two. A draft with no change has the same text, so it has no mark.
+  - A green bar at the left edge of the gutter is a line that is added. A blue bar is a line that is modified. A small red arrow on the border between two lines shows that one or more lines of the saved text are gone there.
+  - A red band under a line number marks the first syntax fault of the check in the page. The list of errors gives the same line.
+  - The marks follow the text 120 ms after each key. A revert or an apply of the draft draws them again. After a revert the area shows the saved text, so no mark stays.
+  - The page compares the two texts line by line. It cuts the common start and the common end first. A change can leave more than 1,000 lines at the start and at the end both. The page then compares the lines by their place, and a line that moved shows as modified. The gutter draws 500 marks at most.
+  - The gutter and its marks are hidden from assistive technology (`aria-hidden="true"`). The marks are an aid for sight. The bar of the edit mode says "Unsaved changes" (10.2), and the list of errors gives each syntax fault as text.
+- The JSON area of the panel (10.3) has the same colours and the same layers. It has no marks.
 - The page checks the text 1 s after the last change, and when the user selects "Check":
   1. In the page: the JSON syntax and duplicate members, with their line and column.
   2. On the server: `PUT api/dashboards/<uid>?validate_only=true`, or `POST api/dashboards?validate_only=true` for a
@@ -5376,8 +5471,10 @@ These controls are on the list page (9.7). They exist only when `editing` is `tr
   - It sends `POST api/dashboards` with a new `save_id` (10.9). On `409 already_exists` it makes a new uid and tries
     one more time.
   - It opens `d/<uid>?edit=1`.
-- "New folder" needs `access.create`. It is in the header of the list page (9.7). It opens a dialog with "Id" (the rule of 4.3 shows under the field) and
-  "Title". It sends `POST api/folders`.
+- "New folder" needs `access.create`. It is in the header of the list page (9.7). It opens a dialog with one field, "Title". It sends `POST api/folders`.
+  - The page makes the id from the title (4.3). The id has lower-case letters and digits, one dash for each run of other characters, and 40 characters at most.
+  - A title with no letter and no digit gives `folder-` and four random characters.
+  - When the id exists (`already_exists`), the page adds a dash and four random characters. It sends again, three times at most.
 - "Rename" and "Delete" of a folder are in the menu on the folder title (9.7).
 - "Rename" sends `PUT api/folders/<id>`. "Delete" asks for a confirmation and sends
   `DELETE api/folders/<id>`. `409 folder_not_empty` gives "The folder holds dashboards. Move or delete them first.".
@@ -5434,6 +5531,14 @@ The key is `hune.draft.v1.<uid>`. The value is:
    `POST api/dashboards` (10.7).
 4. The page acts on the answer with the table below.
 5. A change of the draft after a save that failed removes `save_id`. Thus the next save is a new attempt.
+6. The tab "Details" has two boxes under the field "Message". Both are off at first. A box shows only when its value differs from the default of the draft.
+   - "Save the current time range as the default" shows when the current range differs from `time.from` or `time.to`. A change of one end counts as a change of the range.
+   - "Save the current refresh as the default" shows when the current refresh differs from `time.refresh`.
+   - Each box has a hint with the current value and the default, for example "Now: 30s. Default: Off."
+   - The values are those of the header controls. The range gives `time.from` and `time.to`, and the refresh gives `time.refresh` (`null` for off).
+   - Before the first send, the page puts each chosen value in the draft. It checks the range with the rules of the tab "Time" (10.3b). A range that fails is not saved, and the dialog shows the reason.
+   - A retry sends the same document with the same `save_id`. The page puts the values in the draft once.
+   - After the save, the dashboard has the new defaults. The address then names only the values that still differ (9.5).
 
 | Answer | The page |
 |---|---|
@@ -5454,6 +5559,8 @@ The drawer of the save dialog (`data-testid="save-dialog"`) has this look:
 - It has a title, a muted subtitle with the title of the dashboard, and a close button.
 - It has two tabs, "Details" and "Changes". The arrow keys move between the tabs.
 - "Details" has the field "Message" with its count of characters (500 at most), the buttons "Cancel" and "Save", and the table of errors. The buttons hide on "Changes".
+- "Details" also has the two boxes of rule 6 when a value differs.
+- The tab "Changes" shows the diff with the boxes that are on. The hooks are `save-defaults`, `save-default-range` and `save-default-refresh`.
 - "Changes" shows the line diff from the stored version to the draft (10.15). The tab shows the number of changed lines. When the diff fails, the tab shows "The changes are not available now.".
 - The test ids and the answers of the table above do not change.
 
@@ -5556,7 +5663,11 @@ Import (the list page, when `editing` is `true` and one folder has `access.write
    - an `apiVersion` that starts with `dashboard.grafana.app/`;
    - the members `schemaVersion` and `panels`;
    - a member `dashboard` that holds `panels`.
-3. A dialog of 520 px shows the uid of the document and a select of the folders with `access.write`. The dialog has a drop zone for the file. The zone has the title "Upload dashboard JSON file" and the hint "Drag and drop here or click to browse". It also has a button "Choose file" and the name of the chosen file. A file that the user drops on the zone counts as a chosen file.
+3. A dialog of 520 px shows the uid of the document and a select of the folders with `access.write`.
+
+   With `access.create`, the select has the last entry "New folder...". The entry shows a field for the title of the folder. The page makes the folder with the rule of "New folder" (10.7) when the user chooses "Import". Then it makes the dashboard in it. A second try after a refusal of the dashboard uses the same folder.
+
+   The dialog has a drop zone for the file. The zone has the title "Upload dashboard JSON file" and the hint "Drag and drop here or click to browse". It also has a button "Choose file" and the name of the chosen file. A file that the user drops on the zone counts as a chosen file.
 4. The page sends `POST api/dashboards?validate_only=true` with the exact text, as 10.4 does. Each error shows with its
    pointer, and the import stops until the user gives a valid file.
 5. The page reads `GET api/dashboards/<uid>`. When it gives `200`, the uid exists. The dialog then offers two choices.
@@ -5576,7 +5687,7 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 
 ### 10.13 Delete and restore of a dashboard
 
-- "Delete" exists in the menu "More actions" of the dashboard page (9.9) and as the bin of a card in the list page (9.7). It needs `editing` `true` and `access.write`. It opens the dialog "Delete the dashboard <title>? It leaves the list. An operator can bring it back."
+- "Delete" exists in the menu "More actions" of the dashboard page (9.9) and in the menu of a card (9.7). It needs `editing` `true` and `access.write`. It opens the dialog "Delete the dashboard <title>? It leaves the list. An operator can bring it back."
   with "Delete" and "Cancel".
 - The page sends `DELETE api/dashboards/<uid>` with `If-Match` = the etag that it holds and a new `save_id` (6.16).
   The store keeps a deletion version and the history (5.4).

@@ -6,6 +6,45 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+### Added
+
+- The JSON area has colours. A key, a text, a number, `true` and `false`, `null` and the punctuation each have one. The colours are the tokens of the SQL colours, with 4.5:1 or more in both themes. The JSON area of the panel has them too.
+- The gutter of the dashboard JSON view marks each line that differs from the saved dashboard. A green bar is an added line, a blue bar is a modified line, and a red arrow shows where lines are gone. A red band shows the line of a syntax fault.
+- The case B240 (`tests/browser/cases/json_view.mjs`) and the tests of `tests/frontend/json_area.test.mjs`.
+- The file `web/js/switcher.js`: the selector of the dashboards in the header. The button shows the title of the dashboard. Its menu lists the dashboards that the user can see. When the user sees two folders or more, each folder is a row that opens and closes its dashboards.
+- The function `bindMenu` in `web/js/ui.js`. A button opens its menu with a click or with the keys Down and Up. A letter goes to the next line that starts with it.
+- A preview for a panel that loads for the first time. It has simple shapes for the type of the panel: dots, bars, a ring, cells or lines. The shapes change their opacity only. They stop under `prefers-reduced-motion`.
+- The file `web/js/panel_wait.js` and the style sheet `web/css/panel-loading.css`.
+- The Save dialog has two boxes, "Save the current time range as the default" and "Save the current refresh as the default". A box shows when its value differs from the default of the draft. Both are off at first.
+
+### Changed
+
+- The JSON view of the edit mode fills the page, down to one page padding above the bottom edge of the window. Before, it stopped about 84 px above the edge at 1440 by 900 px. The tab "JSON" of the settings view has the same rule.
+- The page writes a name of the address (`from`, `to`, `timezone`, `var-<name>`, `refresh`) only when its value differs from the default of the dashboard. The address of the edit mode is `?edit=1` with the defaults. A copied address does not fix a value at the default.
+- The theme control is one icon button. Each click gives the next choice in the order System, Dark, Light and System again. It has no menu and no popup. This differs from ClickHouse Dash on purpose: Hune has one button and no menu.
+- The function `nextChoice` in `web/js/theme.js` gives the next theme choice. The exports `menuTarget` and `THEME_MOTION_MS` are gone.
+- One primary button "New" replaces the buttons "New folder", "Import" and "New dashboard" in the header of the list page and in its empty state. It has a plus icon and a chevron. Its menu has "New dashboard", "New folder" and "Import", as the user may use them. It is the same button at every width.
+- The tag chips are more vivid: the fill is 32 % of the colour of the tag and the edge is 65 %. The ink of the light theme is black at 30 %.
+- The menu of the selector of the dashboards has the width of its button exactly. The button has a fixed width of 22 rem, or less in a narrow place. On a phone the menu is 224 px wide at least. A long title ends with an ellipsis.
+- The button of the sort on the list page shows the order that applies, "A–Z" or "Z–A", and never the text "Sort".
+- The dialog "New folder" has the field "Title" only. The page makes the id from the title, and adds a short suffix when the id exists.
+- The dialog "Import" has the entry "New folder..." in the select of the folders, when the user can create a folder.
+- The interval button of the time control shows a dash, "-", when the refresh is off.
+- The selector of the dashboards replaces the crumbs of the header. In the view of one panel and in the panel editor, an arrow after the selector is the way back. These views have no name in the header: the texts "View panel" and "Edit panel" are gone. The button "Back to dashboard" of the view of one panel is gone: the arrow stays at every width.
+- The sort control, the tag filter and the selector of the dashboards use one menu. The menu touches its button, as in ClickHouse Dash and in Stowr. The chosen line has a check mark. A count is at the right of its line.
+- The badge `Last change <age>` is at the top right of a card, and the three dots are after it. The menu of the three dots has "Edit", "Export", "Move" and "Delete". The pencil and the bin are gone, and a card that the user cannot edit has no button. The badge shows only for a change that Hune recorded, when `server.editing` is `true`. A dashboard of a read-only volume has no badge.
+- The three dots of a panel that waits are at the top right of the title bar, left of the menu. Before, they were in the middle of the body.
+- The button "Save" is also active when the current range or refresh differs from the default. "Revert" follows the draft only.
+- A panel that reloads keeps its content as it is. The page does not dim it any more, and the text "No data" stays.
+- A reload that gives the same data and the same range draws nothing again. A new picture replaces the old one in one step, with no empty frame between them.
+
+### Fixed
+
+- A revert shows the saved text in the JSON view again. Before, the text of the discarded draft stayed in the area.
+- The range, the refresh and the variables that a person sets in a view stay when the view ends. Before, the Back that ends it gave the old values.
+- The resize handles of the panels no longer stay after the edit mode ends. The drag mark and the key shortcuts of a panel are also removed.
+- The view of one panel has no page scrollbar any more: the panel fills the window with the page padding above and under it.
+
 ## 0.1.3 - 2026-11-25
 
 ### Added
