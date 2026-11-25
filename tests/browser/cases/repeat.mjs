@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 import { doc, panel, section } from "../lib/docs.mjs";
 import { api as apiOf } from "../lib/env.mjs";
 import { draftOf, enterEdit, moreItem, openPanelEditor, backToDashboard, waitDraft } from "../lib/ed.mjs";
-import { panelQueries, panelIdOf, optionQueries, sleep, waitPanelsReady } from "../lib/h.mjs";
+import { openVariable, optionQueries, panelIdOf, panelQueries, sleep, waitPanelsReady } from "../lib/h.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const vectors = JSON.parse(readFileSync(join(HERE, "../../frontend/vectors/FE-27-repeat.json"), "utf8"));
@@ -256,12 +256,12 @@ export const cases = [
       t.eq(await q25.text(q25.tid("section-1-note")), "13 values of Sec are selected. A section repeats 12 times at most. Select fewer values.", "message of the section");
       t.eq(panelQueries(q25).length, 0, "no request");
       // A change of the selection moves the panel between the states at once: remove one value (24), add it again (25).
-      await q25.click(q25.tid("variable-many-button"));
+      await openVariable(q25, "many");
       await q25.click(`.listbox__item[data-value="${manyValues[24]}"]`);
       await q25.click("h1.visually-hidden, #app-main", {});
       await q25.waitFor(`document.querySelectorAll('section.panel[data-repeat-count="24"]').length === 24`, { what: "24 copies after the change" });
       await q25.waitFor(`document.querySelector('[data-testid="panel-1"]').dataset.state === "ready"`, { what: "the first copy is a panel again" });
-      await q25.click(q25.tid("variable-many-button"));
+      await openVariable(q25, "many");
       await q25.click(`.listbox__item[data-value="${manyValues[24]}"]`);
       await q25.click("h1.visually-hidden, #app-main", {});
       await q25.waitFor(`document.querySelector('[data-testid="panel-1"]').dataset.state === "repeat-limit"`, { what: "repeat-limit again" });
@@ -342,7 +342,7 @@ export const cases = [
       t.assert(mid.open <= 6 && mid.max <= 6, `at most 6 open requests: ${JSON.stringify(mid)}`);
       t.eq(mid.open, 6, `the queue keeps 6 requests open: ${JSON.stringify(mid)}`);
       // A new value in the selection: the value 0 comes first in the order of the options, so each copy has a new value. The old requests are aborted.
-      await b.click(b.tid("variable-region-button"));
+      await openVariable(b, "region");
       await b.click('.listbox__item[data-value="0"]');
       await b.click("h1.visually-hidden, #app-main", {});
       await b.waitFor(`window.__fl.aborted >= 6`, { what: "the open requests are aborted" });
@@ -415,7 +415,7 @@ export const cases = [
       // A change of the selection that removes the viewed copy closes the view with the notice.
       const gone = await t.open(t.dash("rep98", "viewPanel=1-r3"));
       await gone.waitFor(`document.querySelector('[data-testid="view-panel"] [data-testid="panel-1-r3"]').dataset.state === "ready"`, { what: "the copy 3" });
-      await gone.click(gone.tid("variable-host-button"));
+      await openVariable(gone, "host");
       await gone.click('.listbox__item[data-value="a"]');
       await gone.click("h1.visually-hidden, #app-main", {});
       await gone.waitFor(`document.documentElement.getAttribute("data-hune-view") === "view"`, { what: "the view closes" });

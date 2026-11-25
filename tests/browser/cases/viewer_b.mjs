@@ -370,8 +370,10 @@ export const cases = [
       await p.idle();
       const names = optionQueries(p).map((r) => /variables\/([^/]+)\/options/.exec(r.url)[1]);
       t.assert(names.includes("node"), "node reloads at a time change: " + names);
-      // 9.10: a variable below a time_change variable reloads with it (its parent options are new).
-      t.assert(names.includes("blk"), "blk, below node, reloads with it: " + names);
+      // 9.10: a variable below a time_change variable asks again when what its request holds changed: the values of the variables above it. The
+      // values of `node` are the same after this change of range, so the key of `blk` is known and the cache answers: `blk` sends no request.
+      // (A new value of `node` makes `blk` ask: the part of this case above, and the runtime test of the options.)
+      t.assert(!names.includes("blk"), "blk, below node, has the same key and sends no request: " + names);
       t.assert(!names.includes("solo"), "solo (refresh load, no parent) does not reload at a time change: " + names);
       // load from a URL with repeated values and from $__all
       const p2 = await t.open(t.dash("vars-test", "var-node=v0&var-node=v2&var-account=&var-env=prod"));

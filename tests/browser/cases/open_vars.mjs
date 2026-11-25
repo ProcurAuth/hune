@@ -52,7 +52,12 @@ const lastBody = (p, id) => {
   return list.length ? JSON.parse(list[list.length - 1].body) : null;
 };
 async function openPopup(p, n) {
-  await p.click(p.tid(`variable-${n}-button`));
+  // A variable with several values shows chips: under the centre of its control there can be the text or the cross of a chip, and a click there opens
+  // the selector or removes a value. The key Enter on the button opens the selector in every case (the clicks on the chips have their own cases).
+  if (await p.exists(`${sel(n)} .select__face`)) {
+    await p.eval(`document.querySelector('${p.tid(`variable-${n}-button`)}').focus()`);
+    await p.press("Enter");
+  } else await p.click(p.tid(`variable-${n}-button`));
   await p.waitSel(`${sel(n)} .select__popup`);
 }
 /** The visible rows of the list of a popup: value (null for the row Use), text, aria-selected, id and class. */
@@ -124,7 +129,7 @@ export const cases = [
       await ensure(t, bad);
       p = await t.open(t.dash("ov160b", "var-broken=zzz"));
       t.allow(p, /Failed to load resource/);
-      await p.waitFor(`document.querySelector('${sel("broken")} .select__error') && !document.querySelector('${sel("broken")} .select__error').hidden`, { what: "the options error" });
+      await p.waitFor(`!!document.querySelector('${sel("broken")} .select__button.is-failed')`, { what: "the options error" });
       t.eq((await notices(p)).length, 0, "no notice for an options error");
     },
   },

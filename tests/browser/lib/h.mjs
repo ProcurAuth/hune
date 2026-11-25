@@ -48,6 +48,16 @@ export function optionQueries(page) {
 
 export const panelIdOf = (r) => Number(/\/panels\/(\d+)\/query$/.exec(r.url)[1]);
 
+/**
+ * Opens the popup of the control of a variable with the key Enter on its button. A variable with several values shows chips: under the centre of
+ * its control there can be the text or the cross of a chip, so a click at the centre can open the selector or remove a value (9.10). The key
+ * opens the selector for every control. The clicks on chips have their own cases.
+ */
+export async function openVariable(page, name) {
+  await page.eval(`document.querySelector('${page.tid(`variable-${name}-button`)}').focus()`);
+  await page.press("Enter");
+}
+
 export function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
