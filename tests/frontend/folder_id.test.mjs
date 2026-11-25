@@ -83,7 +83,7 @@ test("the dialog Import has the entry New folder, only when the person can creat
   assert.ok(!ID_RULE.test(read("js/editor/import_export.js").match(/NEW_FOLDER = "([^"]+)"/)[1]), "the value of the entry is never a folder id");
   assert.match(js, /const canCreateFolder = ctx\.canCreateFolder === true;/);
   assert.match(js, /\.\.\.\(canCreateFolder \? \[el\("option", \{ value: NEW_FOLDER, text: "New folder\.\.\." \}\)\] : \[\]\)/);
-  assert.match(js, /if \(!folders\.length && !canCreateFolder\)/, "no folder and no right to create one: the old warning");
+  assert.match(js, /if \(!folders\.length && !rootOk && !canCreateFolder\)/, "no folder, no root and no right to create a folder: the old warning");
   assert.match(js, /folderIdFromTitle\(title, fill\)/);
   assert.match(js, /folderIdWithSuffix\(id, fill\)/);
   assert.match(js, /testid: "import-new-folder-title"/);
