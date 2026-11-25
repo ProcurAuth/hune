@@ -47,7 +47,9 @@ export const cases = [
       await size(p, 1280, 900);
       await cardsShown(p);
       t.eq(await hidden(p, ["list-sort", "list-tag-filter"]), [true, true], "3 dashboards, default threshold 6: no sort, no tag filter");
-      t.eq(await p.eval(`document.querySelector("h1")`), null, "no page title");
+      // The page has one h1 for assistive technology, hidden with the class visually-hidden: no title shows on the screen.
+      t.eq(await p.eval(`[...document.querySelectorAll("h1")].filter((e) => !e.classList.contains("visually-hidden") && e.getBoundingClientRect().width > 1 && e.getBoundingClientRect().height > 1).length`), 0, "no page title shows");
+      t.eq(await p.eval(`document.querySelectorAll("h1.visually-hidden").length`), 1, "one h1 for assistive technology");
       t.assert(!/Can edit|Read only|dashboards in|\d+ dashboards/.test(await p.eval("document.body.textContent")), "no access word and no counter on the page");
 
       // The folder titles: two folders, two titles, in capitals.
