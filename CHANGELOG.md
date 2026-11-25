@@ -23,7 +23,9 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Added
 
-- The JSON area has colours. A key, a text, a number, `true` and `false`, `null` and the punctuation each have one. The colours are the tokens of the SQL colours, with 4.5:1 or more in both themes. The JSON area of the panel has them too.
+- The JSON view of the edit mode looks like the editor of VS Code. It has the palettes Light+ and Dark+ (the tokens `--json-*`) with 4.5:1 or more in both themes. The JSON area of the panel has them too. The SQL area does not change.
+- Brackets have three colours by depth. A band marks the line of the caret, and its number has the strong colour. A caret on a bracket puts a box on it and on its pair. The white space at the start of a line has guides, and the guide of the pair that holds the caret is darker.
+- The selection has the colours of VS Code. The first syntax error has a wavy line. The scroll bars are 10 px wide. The row is 20 px. The area does not fold lines and has no minimap.
 - The gutter of the dashboard JSON view marks each line that differs from the saved dashboard. A green bar is an added line, a blue bar is a modified line, and a red arrow shows where lines are gone. A red band shows the line of a syntax fault.
 - The case B240 (`tests/browser/cases/json_view.mjs`) and the tests of `tests/frontend/json_area.test.mjs`.
 - The list page shows a read-only store as one root group with a lock and its title, and its folders under it. A card of a read-only store has a lock and no three dots. A card whose file is not valid now has a warning mark, and it shows the last valid state.

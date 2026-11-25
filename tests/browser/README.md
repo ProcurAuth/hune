@@ -1,6 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B244 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 226 cases.
+This suite runs the browser cases B01 to B271 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 233 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -153,7 +153,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13, B24 to B27 and B233: the viewer, the page of one panel without a scrollbar, the list (cards, tags, no search field) and the base path. |
 | `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the three dots and the menu of a card, and the read-only card (9.7). |
 | `cases/stores.mjs` | The cases B241 to B244: a read-only store (`makeLabVolume`), the lock, the warning of a file that is not valid after the start (`breakFile`), the header selector and the refusal of a write. |
-| `cases/json_view.mjs` | The case B240: the JSON view of the edit mode, its colours and their contrast, the marks of the gutter, the revert, the full height at four sizes and the caps of the colour layer |
+| `cases/json_view.mjs` | The cases B240, B270 and B271: the JSON view of the edit mode, its colours and their contrast, the marks of the gutter, the revert, the full height at four sizes and the caps of the colour layer; the look of VS Code (the palettes, the selection, the scroll bar); the band of the caret line, the boxes of the brackets, the guides and the wavy line of an error |
 | `cases/editor_a.mjs`, `cases/editor_b.mjs` | The cases B16 to B22 and B230: the editor, conflict, history, import and export, delete, no editing, the id of a new folder. |
 | `cases/misc.mjs` | The cases B14 and B15: the scripted accessibility audit. |
 | `cases/authzen.mjs` | The case B23: the mode `authzen` with `fake-pdp`. |

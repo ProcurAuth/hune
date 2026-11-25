@@ -1465,7 +1465,7 @@ The card view of the list page (9.7) adds these tests to the groups of the table
 The JSON view of the edit mode (10.4) adds these tests to the groups of the table:
 
 - Front end: `tests/frontend/json_area.test.mjs` tests the colour of each kind of token, a text that is not valid and the cap of 2,000 parts for a row. It tests the line diff for the marks of the gutter. The cases are an added, a modified and a deleted line. Other cases are the two ends of the text, a long text and the compare by place above the cap. It also reads the CSS: the colour tokens, the metrics of the two layers and the rule of the height.
-- Browser: the case B240.
+- Browser: the cases B240, B270 and B271.
 
 The stores in the page (9.6, 9.7, 9.8) add these tests to the groups of the table:
 
@@ -2100,6 +2100,8 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B261 | Select and copy a link (9.8e). A drag over the text of a link in a table cell selects the text and does not follow the link. A plain click follows the link. |
 | B262 | Select and copy the text of a chart (9.8e). The line chart, the bar chart and the pie chart each have a layer of 1 to 400 texts that is hidden from assistive technology. A drag over the labels of the vertical axis selects them, and a copy gives one label on each line. A triple click selects a text of the pie chart. The tooltip shows over the plot, and the point of the plot is not under the layer. |
 | B263 | Select and copy a header (9.8e). A drag over a sortable header selects its text and does not sort. A plain click sorts. A drag over two cells selects text. |
+| B270 | The look of the JSON view (10.4). In the light and the dark theme, each kind of text and each depth of bracket has the colour of its token. The editor, the line numbers, the selection with and without focus, and the scroll bar of 10 px have the values of the palettes. The layers take no pointer. |
+| B271 | The caret in the JSON view (10.4). A click puts the band and the strong number on its line. A caret that touches a bracket puts a box on it and on its pair, and the guide runs along the lines between them. A selection has no band and no box. A line with six spaces has a guide box of six columns and one row high. A syntax error has a wavy underline under its token, and it goes when the text is valid. |
 
 A build made with `--no-default-features` has no MongoDB driver and refuses the `mongodb` block at start (8b.2). The runner then reports B47 and B48 as `skip`, with the reason "no MongoDB driver in this build". It detects this case from the exit status and the message of `hune check-config`. A build with the driver (the default build) runs both cases against a disposable MongoDB 8.0 with `openssl` and `docker`.
 
