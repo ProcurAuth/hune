@@ -672,7 +672,8 @@ async fn a_dashboard_without_a_folder_in_a_read_only_store_is_read_only_and_a_ro
     assert!(one["folder"].is_null());
     assert_eq!(one["read_only"], true);
     // The root dashboards come first in the list.
-    let order: Vec<String> = list["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect();
+    let order: Vec<String> =
+        list["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect();
     assert_eq!(order[0], "lab-root", "{order:?}");
     // A save, a move to the root of the primary and a delete give `read_only_store` and change nothing.
     let etag = one["etag"].as_str().unwrap().to_owned();
@@ -732,7 +733,8 @@ async fn a_file_at_the_root_of_a_volume_that_is_no_dashboard_stops_the_start_and
         lifecycle::start(Arc::new(test_config(&root)), logger, test_timing(), startup::open_store).await.err().unwrap();
     assert_eq!(e.step, "store.open");
     assert!(
-        e.error.starts_with(&format!("storage.volume \"main\": the file {}/package.json is not valid: ", root.display())),
+        e.error
+            .starts_with(&format!("storage.volume \"main\": the file {}/package.json is not valid: ", root.display())),
         "{}",
         e.error
     );
@@ -741,16 +743,22 @@ async fn a_file_at_the_root_of_a_volume_that_is_no_dashboard_stops_the_start_and
     std::fs::write(root.join("Notes.json"), b"{}").unwrap();
     std::fs::write(root.join("README.md"), b"text").unwrap();
     let r = root.clone();
-    let h = Harness::start_with(test_timing(), move |dst| {
-        for e in std::fs::read_dir(&r).unwrap() {
-            let e = e.unwrap();
-            if e.path().is_file() {
-                std::fs::copy(e.path(), dst.join(e.file_name())).unwrap();
+    let h = Harness::start_with(
+        test_timing(),
+        move |dst| {
+            for e in std::fs::read_dir(&r).unwrap() {
+                let e = e.unwrap();
+                if e.path().is_file() {
+                    std::fs::copy(e.path(), dst.join(e.file_name())).unwrap();
+                }
             }
-        }
-        fill(dst);
-    }, |_| {}).await;
+            fill(dst);
+        },
+        |_| {},
+    )
+    .await;
     let list = get_json(&h, "/api/dashboards").await;
-    let uids: Vec<String> = list["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect();
+    let uids: Vec<String> =
+        list["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect();
     assert_eq!(uids, vec!["nodes".to_owned()]);
 }

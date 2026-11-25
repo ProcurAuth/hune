@@ -18,7 +18,8 @@ fn root_body(doc: &str) -> Vec<u8> {
 }
 
 async fn create_root(h: &Harness, uid: &str, title: &str) -> Resp {
-    call(h.addr, "POST", "/api/dashboards", &[JSON, ("Idempotency-Key", &key())], &root_body(&doc_text(uid, title))).await
+    call(h.addr, "POST", "/api/dashboards", &[JSON, ("Idempotency-Key", &key())], &root_body(&doc_text(uid, title)))
+        .await
 }
 
 async fn move_to(h: &Harness, uid: &str, etag: &str, folder: Value) -> Resp {
@@ -81,8 +82,10 @@ async fn the_list_has_null_for_the_folder_puts_the_root_first_and_filters_with_a
     assert_eq!(r.status, 200, "{}", r.text());
     let body = r.json();
     let items = body["items"].as_array().unwrap().clone();
-    let order: Vec<(String, Option<String>)> =
-        items.iter().map(|i| (i["uid"].as_str().unwrap().to_owned(), i["folder"].as_str().map(str::to_owned))).collect();
+    let order: Vec<(String, Option<String>)> = items
+        .iter()
+        .map(|i| (i["uid"].as_str().unwrap().to_owned(), i["folder"].as_str().map(str::to_owned)))
+        .collect();
     assert_eq!(order, vec![("zz-root".to_owned(), None), ("nodes".to_owned(), Some("transit".to_owned()))]);
     // The filter with an empty value gives the dashboards without a folder, and only them.
     let r = get(h.addr, "/api/dashboards?folder=").await;
@@ -144,7 +147,8 @@ async fn the_folders_answer_has_the_member_root_and_no_root_item() {
     assert_eq!(j["root"]["access"]["write"], true, "{}", r.text());
     assert_eq!(j["root"]["read_only"], false);
     assert!(j["root"]["store"].is_string());
-    let ids: Vec<String> = j["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
+    let ids: Vec<String> =
+        j["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
     assert_eq!(ids, vec!["ops", "transit"], "the root is not a folder");
 }
 
@@ -154,7 +158,8 @@ async fn a_delete_and_a_restore_keep_the_place_without_a_folder() {
     let r = create_root(&h, "gone", "Gone").await;
     let etag = etag_of(&r);
     let ifm = format!("\"{etag}\"");
-    let r = call(h.addr, "DELETE", "/api/dashboards/gone", &[("If-Match", &ifm), ("Idempotency-Key", &key())], b"").await;
+    let r =
+        call(h.addr, "DELETE", "/api/dashboards/gone", &[("If-Match", &ifm), ("Idempotency-Key", &key())], b"").await;
     assert_eq!(r.status, 200, "{}", r.text());
     assert!(r.json()["folder"].is_null(), "{}", r.text());
     assert_eq!(current(&h, "gone").await.status, 404);

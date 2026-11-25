@@ -71,11 +71,7 @@ impl PgStore {
         let folders = folders_of(&folders)?;
         let mut out = Vec::with_capacity(heads.len());
         for r in &heads {
-            out.push((
-                r.try_get::<_, String>("uid")?,
-                folder_text(&r, "folder_id")?,
-                r.try_get::<_, String>("etag")?,
-            ));
+            out.push((r.try_get::<_, String>("uid")?, folder_text(r, "folder_id")?, r.try_get::<_, String>("etag")?));
         }
         Ok((folders, out))
     }
@@ -181,7 +177,7 @@ impl PgStore {
                 uid,
                 r.try_get(0)?,
                 &r.try_get::<_, String>(1)?,
-                &folder_text(&r, 2)?,
+                &folder_text(r, 2)?,
                 r.try_get::<_, Option<String>>(3)?.as_deref(),
                 r.try_get(4)?,
                 &r.try_get::<_, String>(5)?,

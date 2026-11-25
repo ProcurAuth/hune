@@ -1089,6 +1089,11 @@ pub fn run(cmd: ImportCommand, env: &CapturedEnvironment, out: &mut dyn Write, e
     code
 }
 
+/// A folder text of the import: the text of the root (a dashboard without a folder), or a folder id (15.6).
+fn folder_from_text(text: &str) -> Result<FolderId, hune_core::ids::IdError> {
+    if text == hune_core::ids::ROOT_FOLDER_TEXT { Ok(FolderId::root()) } else { FolderId::parse(text) }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1206,9 +1211,4 @@ mod tests {
         assert_eq!(id, save_id("import-grafana:x:none:abc").to_string());
         assert_ne!(id, save_id("import-grafana:x:none:abd").to_string());
     }
-}
-
-/// A folder text of the import: the text of the root (a dashboard without a folder), or a folder id (15.6).
-fn folder_from_text(text: &str) -> Result<FolderId, hune_core::ids::IdError> {
-    if text == hune_core::ids::ROOT_FOLDER_TEXT { Ok(FolderId::root()) } else { FolderId::parse(text) }
 }

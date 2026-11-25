@@ -4,8 +4,8 @@
 use super::gate;
 use super::paging::{DashboardKey, PageCursor, parse_limit};
 use super::support::{
-    SaveWarning, StoreOp, declared_sources, format_faults, log_dashboard_changed, map_store_error, read_folder_member, folder_json, folder_sort_key,
-    read_message, services, validate_document, write_meta,
+    SaveWarning, StoreOp, declared_sources, folder_json, folder_sort_key, format_faults, log_dashboard_changed,
+    map_store_error, read_folder_member, read_message, services, validate_document, write_meta,
 };
 use crate::server::ctx::{Ctx, Request};
 use crate::server::error::ApiError;

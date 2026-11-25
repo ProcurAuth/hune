@@ -10,7 +10,9 @@ use std::time::Duration;
 use hune_core::ids::FolderId;
 use hune_store::conformance::{doc, doc_text, fid, meta, uid};
 use hune_store::volume::{VolumeOptions, VolumeStore};
-use hune_store::{AnyStore, Catalog, FolderTitle, Store, StoreError, StoreInfo, StoreKind, StoreSpec, Stores, VersionKind};
+use hune_store::{
+    AnyStore, Catalog, FolderTitle, Store, StoreError, StoreInfo, StoreKind, StoreSpec, Stores, VersionKind,
+};
 
 fn dir() -> (tempfile::TempDir, PathBuf) {
     let d = tempfile::tempdir().unwrap();
@@ -56,12 +58,11 @@ async fn a_dashboard_without_a_folder_belongs_to_the_store_that_holds_its_uid() 
     fs::write(lab_root.join("lab-root.json"), doc_text("lab-root", "Lab root")).unwrap();
     fs::write(main_root.join("main-root.json"), doc_text("main-root", "Main root")).unwrap();
     let lab = open(&lab_root, true).await;
-    let stores = Stores::new(vec![
-        spec("main", main, &main_root, true, None),
-        spec("lab", lab, &lab_root, false, Some("Lab")),
-    ]);
+    let stores =
+        Stores::new(vec![spec("main", main, &main_root, true, None), spec("lab", lab, &lab_root, false, Some("Lab"))]);
     let reports = stores.open_checked().await.unwrap();
-    let counts: Vec<(String, usize, usize)> = reports.iter().map(|r| (r.info.id.clone(), r.folders, r.dashboards)).collect();
+    let counts: Vec<(String, usize, usize)> =
+        reports.iter().map(|r| (r.info.id.clone(), r.folders, r.dashboards)).collect();
     assert_eq!(counts, vec![("main".into(), 1, 2), ("lab".into(), 1, 2)]);
     let _ = stores.load().await.unwrap();
     assert_eq!(stores.store_of_uid(&uid("lab-root")).unwrap().id, "lab");
@@ -76,9 +77,13 @@ async fn a_dashboard_without_a_folder_belongs_to_the_store_that_holds_its_uid() 
     let lab_etag = stores.get(&uid("lab-root")).await.unwrap().etag;
     let changed = doc("lab-root", "Changed");
     assert!(ro(stores.save(&changed, &lab_etag, &FolderId::root(), VersionKind::Save, &meta(9)).await.map(|_| ())));
-    assert!(ro(stores.move_to(&uid("lab-root"), &fid("home"), &lab_etag, &FolderId::root(), &meta(9)).await.map(|_| ())));
+    assert!(ro(stores
+        .move_to(&uid("lab-root"), &fid("home"), &lab_etag, &FolderId::root(), &meta(9))
+        .await
+        .map(|_| ())));
     // A write to the root of the primary works, and the file is at the root of the primary volume.
-    let created = stores.create(&FolderId::root(), &doc("main-new", "New"), VersionKind::Create, &meta(10)).await.unwrap();
+    let created =
+        stores.create(&FolderId::root(), &doc("main-new", "New"), VersionKind::Create, &meta(10)).await.unwrap();
     assert!(created.folder.is_root());
     assert_eq!(stores.store_of_uid(&uid("main-new")).unwrap().id, "main");
     assert!(main_root.join("main-new.json").is_file());

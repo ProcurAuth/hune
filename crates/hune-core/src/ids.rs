@@ -191,7 +191,12 @@ mod tests {
         assert_eq!(serde_json::to_string(&FolderId::root()).unwrap(), "null");
         assert_eq!(serde_json::to_string(&FolderId::parse("ops").unwrap()).unwrap(), "\"ops\"");
         // The root comes first, also before an id that starts with a number.
-        let mut ids = vec![FolderId::parse("b").unwrap(), FolderId::parse("0a").unwrap(), FolderId::root(), FolderId::parse("a").unwrap()];
+        let mut ids = [
+            FolderId::parse("b").unwrap(),
+            FolderId::parse("0a").unwrap(),
+            FolderId::root(),
+            FolderId::parse("a").unwrap(),
+        ];
         ids.sort();
         assert_eq!(ids.iter().map(|f| f.to_string()).collect::<Vec<_>>(), ["_root", "0a", "a", "b"]);
     }

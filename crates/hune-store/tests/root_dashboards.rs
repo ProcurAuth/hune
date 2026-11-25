@@ -18,8 +18,12 @@ fn dir() -> (tempfile::TempDir, PathBuf) {
 }
 
 async fn open(root: &Path) -> AnyStore {
-    let opts =
-        VolumeOptions { root: root.to_path_buf(), read_only: false, rescan_interval: Duration::from_secs(1), history_keep: 100 };
+    let opts = VolumeOptions {
+        root: root.to_path_buf(),
+        read_only: false,
+        rescan_interval: Duration::from_secs(1),
+        history_keep: 100,
+    };
     AnyStore::Volume(VolumeStore::open(opts).await.unwrap())
 }
 
@@ -31,7 +35,8 @@ fn title(s: &str) -> FolderTitle {
 async fn a_dashboard_without_a_folder_is_written_at_the_root_and_read_back() {
     let (_d, root) = dir();
     let s = open(&root).await;
-    let saved = s.create(&FolderId::root(), &doc("rooted", "At the root"), VersionKind::Create, &meta(1)).await.unwrap();
+    let saved =
+        s.create(&FolderId::root(), &doc("rooted", "At the root"), VersionKind::Create, &meta(1)).await.unwrap();
     assert!(saved.folder.is_root());
     assert!(root.join("rooted.json").is_file(), "the file is at the root of the volume");
     let cur = s.get(&uid("rooted")).await.unwrap();

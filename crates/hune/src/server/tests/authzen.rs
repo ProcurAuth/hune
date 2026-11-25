@@ -1267,7 +1267,8 @@ fn uids_in(r: &Resp) -> Vec<String> {
 // The dashboards without a folder (ACCESS.md, 5.9): the node `folder:_root`. A grant on a real folder does not cover them.
 #[tokio::test]
 async fn a_dashboard_without_a_folder_is_under_the_node_root_and_a_folder_grant_does_not_cover_it() {
-    let rights = vec![("dashboard.read", "folder:transit"), ("dashboard.write", "folder:transit"), ("source.query", "")];
+    let rights =
+        vec![("dashboard.read", "folder:transit"), ("dashboard.write", "folder:transit"), ("source.query", "")];
     let pdp = Pdp::start(grants(rights)).await;
     let h = start_root(&pdp).await;
     // The subject has rights on a real folder only: the list does not show the root dashboard.
@@ -1298,7 +1299,8 @@ async fn a_dashboard_without_a_folder_is_under_the_node_root_and_a_folder_grant_
     assert_eq!(r.json()["root"]["access"]["write"], false, "{}", r.text());
     // The options route does not list the node `_root` for this subject: no grant is on it or below it.
     let r = rget(&h, "/.well-known/procurauth/resources?type=folder", "user:alice").await;
-    let ids: Vec<String> = r.json()["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
+    let ids: Vec<String> =
+        r.json()["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
     assert_eq!(ids, vec!["transit".to_owned()]);
     // A grant on the node `_root` shows the root dashboard, lets the subject create there, and lists the node.
     let rights = vec![("dashboard.read", "folder:_root"), ("dashboard.write", "folder:_root"), ("source.query", "")];
@@ -1318,6 +1320,7 @@ async fn a_dashboard_without_a_folder_is_under_the_node_root_and_a_folder_grant_
     let r = rget(&h, "/.well-known/procurauth/resources?type=folder", "user:alice").await;
     assert_eq!(r.json()["items"][0]["id"], "_root", "{}", r.text());
     let r = rget(&h, "/.well-known/procurauth/resources?type=dashboard&parent=folder%3A_root", "user:alice").await;
-    let ids: Vec<String> = r.json()["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
+    let ids: Vec<String> =
+        r.json()["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
     assert!(ids.contains(&"root-one".to_owned()), "{}", r.text());
 }

@@ -311,7 +311,9 @@ impl Inner {
         };
         if ctx & CTX_FOLDER_INVALID != 0 {
             let reason = match folder_state {
-                Some(FolderState::Invalid { errors, .. }) => errors.first().map(|e| e.message.clone()).unwrap_or_default(),
+                Some(FolderState::Invalid { errors, .. }) => {
+                    errors.first().map(|e| e.message.clone()).unwrap_or_default()
+                }
                 _ => String::new(),
             };
             return invalid(one_error(
