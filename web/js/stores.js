@@ -7,6 +7,13 @@ export const STALE_CARD_TEXT = "The file is not valid. The last valid version is
 export const STALE_PAGE_TEXT = "The file of this dashboard is not valid. The last valid version is shown.";
 export const READ_ONLY_ERROR_TEXT = "This dashboard is in a read-only store. It cannot be changed.";
 
+// True when the member `root` of the answer of GET /api/folders says that the user can write at the root (a dashboard with no folder). An older server
+// has no member `root`: false. The right never comes from a folder.
+export const rootWritable = (root) => Boolean(root) && Boolean(root.access) && root.access.write === true;
+
+// True for the group of the dashboards with no folder (list.js groupDashboards). Its title never shows.
+export const isRootGroup = (group) => Boolean(group) && Boolean(group.folder) && group.folder.root === true;
+
 // True for an item or a folder that the server marks as part of a read-only store.
 export const isReadOnly = (entity) => Boolean(entity) && entity.read_only === true;
 

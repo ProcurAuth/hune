@@ -5,7 +5,7 @@
 
 import * as api from "./api.js";
 import { groupDashboards } from "./list.js";
-import { groupByStore, rootGroupCount } from "./stores.js";
+import { groupByStore, isRootGroup, rootGroupCount } from "./stores.js";
 import { dashboardPath } from "./url_state.js";
 import { bindMenu, el, icon } from "./ui.js";
 
@@ -24,8 +24,8 @@ async function readTree() {
   return tree;
 }
 
-// The items of the menu for an answer. The root rows are the folders of the primary store and the read-only stores (stores.js). One root group
-// and it is the primary: the dashboards alone, as the list page shows no folder title for one folder (9.7). A read-only store is a row with a lock
+// The items of the menu for an answer. The root rows are the dashboards with no folder, the folders of the primary store and the read-only stores
+// (stores.js). One root group and it is the primary: the dashboards alone, as the list page shows no folder title for one folder (9.7). A read-only store is a row with a lock
 // that opens its folders (its dashboards, for one folder). An entry that is not valid has no page to open: it is not in the menu. The row of the
 // current dashboard is open until the person closes it.
 export function switcherItems(data, uid, navigate) {
@@ -40,12 +40,15 @@ export function switcherItems(data, uid, navigate) {
     const key = `folder:${group.folder.id}`;
     return { group: true, key, label: group.folder.title, icon: "folder", open: isOpen(key, group.items), onToggle: (open) => folderOpen.set(key, open), children: group.items.map(entry) };
   };
-  const storeChildren = (block) => (block.groups.length === 1 ? block.groups[0].items.map(entry) : block.groups.map(folderRow));
+  // The dashboards with no folder (a root group) are listed first, each one on its own with no folder row. A folder is a row that opens. With one
+  // group only, the dashboards are listed alone; a root group and one folder stay apart: the folder keeps its row.
+  const rowsOf = (groups) => groups.flatMap((group) => (isRootGroup(group) ? group.items.map(entry) : [folderRow(group)]));
+  const storeChildren = (block) => (block.groups.length === 1 ? block.groups[0].items.map(entry) : rowsOf(block.groups));
   const roots = rootGroupCount(split);
   if (roots === 0) return [];
   if (roots === 1) return split.primary.length === 1 ? split.primary[0].items.map(entry) : storeChildren(split.stores[0]);
   return [
-    ...split.primary.map(folderRow),
+    ...rowsOf(split.primary),
     ...split.stores.map((block) => {
       const key = `store:${block.store.id}`;
       const all = block.groups.flatMap((group) => group.items);
