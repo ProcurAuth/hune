@@ -166,7 +166,7 @@ picture("table", "Table panel with cell colours, links, a gauge cell and a foote
 picture("list", "The dashboard list with folders", async (c) => {
   // The page centres the cards in the window when they fit. A low window makes the cards start at the top of the page.
   const p = await c.open("main", "", "light", { panels: false, height: 360 });
-  await p.waitSel(T("new-dashboard"));
+  await p.waitSel(T("list-new-menu"));
   await p.waitSel('[data-testid^="row-"]');
   const bottom = await p.eval(`Math.ceil(Math.max(...[...document.querySelectorAll('[data-testid^="row-"]')].map((e) => e.getBoundingClientRect().bottom + scrollY)))`);
   await c.shot("list", p, { rect: { x: 0, y: 0, width: WIDE.width, height: bottom + 24 } });
