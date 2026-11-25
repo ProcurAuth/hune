@@ -62,16 +62,19 @@ export async function openConflict(E, error) {
   if (kind === "move") {
     // The text names the folder by its title (10.10). The id stands in when the list of folders does not answer.
     let folderTitle = extra.current_folder;
-    try {
-      const answer = await api.folders();
-      const hit = (answer.items || []).find((f) => f.id === extra.current_folder);
-      if (hit && hit.title) folderTitle = hit.title;
-    } catch (err) {
-      // Keep the id.
+    if (extra.current_folder !== null) {
+      try {
+        const answer = await api.folders();
+        const hit = (answer.items || []).find((f) => f.id === extra.current_folder);
+        if (hit && hit.title) folderTitle = hit.title;
+      } catch (err) {
+        // Keep the id.
+      }
     }
-    content.append(el("p", { text: `The dashboard moved to the folder ${folderTitle} after you opened it.` }));
+    // A dashboard that moved to the root has no folder: the text says it so (10.10).
+    content.append(el("p", { text: extra.current_folder === null ? "The dashboard moved to the root after you opened it." : `The dashboard moved to the folder ${folderTitle} after you opened it.` }));
     actions.append(
-      button("Save in the new folder", { class: "btn btn--primary", dataset: { testid: "conflict-new-folder" }, on: { click: () => overwrite(extra.current_etag) } }),
+      button(extra.current_folder === null ? "Save at the root" : "Save in the new folder", { class: "btn btn--primary", dataset: { testid: "conflict-new-folder" }, on: { click: () => overwrite(extra.current_etag) } }),
       cancel);
   } else {
     let theirs = null;

@@ -8,16 +8,15 @@ import { button, clear, el, notify, openDialog } from "../ui.js";
 import { ensureCss, labelled } from "./form.js";
 import { makeSaveId, makeUid, smallestDocument } from "./draft.js";
 import { folderIdFromTitle, folderIdWithSuffix } from "./folder_id.js";
+import { folderValue, folderWire, loadTargets, targetEntries } from "./root_target.js";
 import { READ_ONLY_ERROR_TEXT } from "../stores.js";
 import { removeStored } from "./draft_store.js";
 import { deleteRetryIsDone } from "./save_logic.js";
 
 const fill = (b) => crypto.getRandomValues(b);
 
-async function writableFolders(ctx) {
-  const list = ctx.folders || (await api.folders()).items || [];
-  return list.filter((f) => f.access && f.access.write);
-}
+// The places where the user can write: the folders with the right to write, and the root when the member `root` allows it (root_target.js).
+const writableTargets = (ctx) => loadTargets(ctx, api);
 
 // The text of an error under the fields (10.7). A bad_request lists each fault with its pointer.
 function errorText(error) {
@@ -27,10 +26,11 @@ function errorText(error) {
   return error.message;
 }
 
-function folderSelect(folders, value) {
+// A select of places: `entries` are { value, label } (root_target.js targetEntries). The root entry is the first one.
+function folderSelect(entries, value) {
   const s = el("select", { class: "input", "aria-label": "Folder", dataset: { testid: "folder-select" } });
-  for (const f of folders) s.append(el("option", { value: f.id, text: f.title }));
-  if (value) s.value = value;
+  for (const e of entries) s.append(el("option", { value: e.value, text: e.label }));
+  if (value && entries.some((e) => e.value === value)) s.value = value;
   return s;
 }
 
@@ -64,13 +64,13 @@ function actionDialog({ title, testid, build, label, run, danger = false }) {
 }
 
 export async function newDashboard(ctx) {
-  const folders = await writableFolders(ctx);
-  if (!folders.length) {
+  const { folders, rootOk } = await writableTargets(ctx);
+  if (!folders.length && !rootOk) {
     notify({ level: "warning", text: "No folder accepts a new dashboard." });
     return;
   }
   const title = el("input", { class: "input", type: "text", "aria-label": "Title", dataset: { testid: "new-title" } });
-  const folder = folderSelect(folders);
+  const folder = folderSelect(targetEntries(folders, rootOk));
   actionDialog({
     title: "New dashboard",
     testid: "new-dashboard-dialog",
@@ -82,7 +82,7 @@ export async function newDashboard(ctx) {
       for (let attempt = 0; attempt < 2; attempt++) {
         const uid = makeUid(fill);
         try {
-          await editorRoutes.createDashboard({ folder: folder.value, message: "", document: smallestDocument(uid, text) }, makeSaveId(fill));
+          await editorRoutes.createDashboard({ folder: folderWire(folder.value), message: "", document: smallestDocument(uid, text) }, makeSaveId(fill));
           ctx.navigate(`${dashboardPath(uid, text)}?edit=1`);
           return null;
         } catch (error) {
@@ -160,8 +160,9 @@ export function deleteFolder(ctx, folder) {
 }
 
 export async function moveDashboard(ctx, item) {
-  const folders = await writableFolders(ctx);
-  const select = folderSelect(folders, item.folder);
+  const { folders, rootOk } = await writableTargets(ctx);
+  // A dashboard at the root has no entry "Root" in its own dialog: it is there already.
+  const select = folderSelect(targetEntries(folders, rootOk && item.folder !== null), folderValue(item.folder));
   const saveId = makeSaveId(fill);
   actionDialog({
     title: `Move the dashboard ${item.title}`,
@@ -169,8 +170,9 @@ export async function moveDashboard(ctx, item) {
     build: (body) => body.append(labelled("Folder", select)),
     run: async () => {
       try {
-        const answer = await editorRoutes.moveDashboard(item.uid, { folder: select.value, message: "" }, item.etag, saveId);
-        if (answer && answer.noop) notify({ level: "info", text: "The dashboard is already in this folder." });
+        const wire = folderWire(select.value);
+        const answer = await editorRoutes.moveDashboard(item.uid, { folder: wire, message: "" }, item.etag, saveId);
+        if (answer && answer.noop) notify({ level: "info", text: wire === null ? "The dashboard is already at the root." : "The dashboard is already in this folder." });
         await ctx.reload();
         return null;
       } catch (error) {

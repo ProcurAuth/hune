@@ -10,6 +10,7 @@ import { makeSaveId, makeUid } from "./draft.js";
 import { scanJson } from "./json_check.js";
 import { isGrafanaFile } from "./save_logic.js";
 import { folderIdFromTitle, folderIdWithSuffix } from "./folder_id.js";
+import { folderWire, loadTargets, targetEntries } from "./root_target.js";
 import { READ_ONLY_ERROR_TEXT } from "../stores.js";
 
 const fill = (b) => crypto.getRandomValues(b);
@@ -26,10 +27,11 @@ const errorText = (error) => {
 // replace: { uid, etag } when the import comes from the "Replace" of an invalid row.
 export async function importDialog(ctx, replace = null) {
   ensureCss();
-  const folders = ((ctx.folders || (await api.folders()).items || [])).filter((f) => f.access && f.access.write);
+  // The places that take a dashboard: the folders with the right to write, and the root (the entry "Root (no folder)") when the member `root` allows it.
+  const { folders, rootOk } = await loadTargets(ctx, api);
   // A person who can create a folder makes one in the dialog (the entry "New folder..."), so a store with no folder can still take an import.
   const canCreateFolder = ctx.canCreateFolder === true;
-  if (!folders.length && !canCreateFolder) {
+  if (!folders.length && !rootOk && !canCreateFolder) {
     notify({ level: "warning", text: "No folder accepts a dashboard." });
     return;
   }
@@ -53,7 +55,7 @@ export async function importDialog(ctx, replace = null) {
     file.dispatchEvent(new Event("change", { bubbles: true }));
   });
   const select = el("select", { class: "input", "aria-label": "Folder", dataset: { testid: "import-folder" } },
-    ...folders.map((f) => el("option", { value: f.id, text: f.title })),
+    ...targetEntries(folders, rootOk).map((e) => el("option", { value: e.value, text: e.label })),
     ...(canCreateFolder ? [el("option", { value: NEW_FOLDER, text: "New folder..." })] : []));
   const newTitle = el("input", { class: "input", type: "text", "aria-label": "Title of the new folder", placeholder: "Title of the new folder", hidden: true, dataset: { testid: "import-new-folder-title" } });
   select.addEventListener("change", () => {
@@ -64,7 +66,7 @@ export async function importDialog(ctx, replace = null) {
   let madeFolder = null;
   // The folder for the dashboard: the chosen id, or a new folder made from the title (the id follows the title, as in the dialog "New folder").
   async function targetFolder() {
-    if (select.value !== NEW_FOLDER) return select.value;
+    if (select.value !== NEW_FOLDER) return folderWire(select.value);
     if (madeFolder && madeFolder.title === newTitle.value.trim()) return madeFolder.id;
     const title = newTitle.value.trim();
     if (!title || [...title].length > 256) throw Object.assign(new Error("The title of the new folder is necessary and has 256 characters at most."), { code: "bad_title" });
@@ -81,8 +83,13 @@ export async function importDialog(ctx, replace = null) {
     }
     return id;
   }
-  // The folder that the check of a file uses. A new folder does not exist yet: the check uses the first folder that takes a dashboard, or none.
-  const folderForCheck = () => (select.value === NEW_FOLDER ? (folders[0] ? folders[0].id : null) : select.value);
+  // The folder that the check of a file uses: a folder id, or `null` for the root. A new folder does not exist yet: the check uses the first folder
+  // that takes a dashboard, else the root, else `undefined` (no check before the creation).
+  const folderForCheck = () => {
+    if (select.value !== NEW_FOLDER) return folderWire(select.value);
+    if (folders[0]) return folders[0].id;
+    return rootOk ? null : undefined;
+  };
   const info = el("span", { class: "field__hint", text: "A JSON file saved from a Hune dashboard. Grafana files use the command hune import-grafana." });
   const errors = el("div", { class: "errors", role: "alert", hidden: true, dataset: { testid: "import-errors" } });
   const choices = el("span", { class: "import__choices" });
@@ -122,7 +129,7 @@ export async function importDialog(ctx, replace = null) {
     doc.uid = makeUid(fill);
     try {
       const check = folderForCheck();
-      if (check !== null) await editorRoutes.validateDocument({ folder: check }, JSON.stringify(doc));
+      if (check !== undefined) await editorRoutes.validateDocument({ folder: check }, JSON.stringify(doc));
     } catch (error) {
       fail([errorText(error)]);
       return;
@@ -197,7 +204,7 @@ export async function importDialog(ctx, replace = null) {
     info.textContent = `Uid of the document: ${value.uid}`;
     try {
       const check = folderForCheck();
-      canonical = check === null ? text : (await editorRoutes.validateDocument({ folder: check }, text)).canonical;
+      canonical = check === undefined ? text : (await editorRoutes.validateDocument({ folder: check }, text)).canonical;
     } catch (error) {
       return fail(errorText(error).split(/(?<=\.) /));
     }
