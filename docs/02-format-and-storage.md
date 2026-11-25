@@ -51,7 +51,7 @@ Format 2 added the panel member `transparent` to format 1 (4.13). Format 3 adds 
 1. A uid and a folder id have lower-case letters only. Thus a case-insensitive file system cannot merge two ids. The 13 real uids of the reference Grafana fit this rule.
 2. The client always gives the uid, in the member `uid` of the document that it creates. The server never makes a uid. A uid that exists gives `Exists` (5.6). The page of the editor makes the uid of a new dashboard (10.7). The importer keeps or makes the uid of each Grafana dashboard (section 15).
 3. The folder id does not change after the folder is created. The folder title can change (5.4).
-4. The folder id `general` has no special rule in the store. The importer puts the Grafana root dashboards in it (section 15).
+4. A folder id `general` has no special rule in the store. A dashboard can have no folder: the store keeps no folder for it, and the API writes `null` (section 6). The importer puts the Grafana root dashboards in no folder (section 15). The access tree names the place of these dashboards `_root` (the file ACCESS.md). The id `_root` is not a folder id, so no folder can have it.
 5. The format does not check that a source id names a block of the configuration. Thus a document is valid on every instance. The document does not hold the kind of a source: the member `query` is the same for each kind. Section 7 checks the source at save and at run, with the dialect of its kind (7.19).
 6. A panel id does not change when the document is saved. The editor gives a new panel the highest id of the document plus 1 (section 10).
 7. A variable name that starts with `__` is reserved for the built-in names of section 7.
@@ -2620,13 +2620,14 @@ The catalog is the copy of the store in the memory of each instance. It is in `h
     <uid>/                             the versions of one uid; mode 0750
       <n>.json                         the document bytes of version n (absent for a delete)
       <n>.meta.json                    the metadata of version n (5.11); written last
+  <uid>.json                           one dashboard without a folder: its document; mode 0640
   <folder id>/                         one folder; mode 0750
     _folder.json                       the folder file (4.41)
     <uid>.json                         one dashboard: its document; mode 0640
     .<name>.tmp-<16 hex>               a temporary file during a write
 ```
 
-1. A dashboard file is `<root>/<folder id>/<uid>.json`. The file stem is the uid of the document.
+1. A dashboard file is `<root>/<folder id>/<uid>.json`, or `<root>/<uid>.json` for a dashboard without a folder. The file stem is the uid of the document.
 2. The number `<n>` is a decimal integer from 1, without a `0` before the first other digit.
 3. A temporary file has the name `.<final name>.tmp-<16 hex>`, with 64 random bits in lower-case hex. It is in the directory of its final file.
 4. The underscore of `_folder.json` cannot start a uid, so no name collides.
@@ -2639,7 +2640,8 @@ The catalog is the copy of the store in the memory of each instance. It is in `h
 | root | `.hune` | Reserved. It MUST be a directory. The scan does not read it. |
 | root | `.history` | Reserved. It MUST be a directory. The scan does not read it. |
 | root | Another name that starts with `.` (for example `.git`) | Ignored, without a log line |
-| root | Another entry: a file, a symbolic link, a directory with a wrong name | Ignored, with the log line `store.entry_ignored` |
+| root | `<uid>.json`, a regular file whose stem fits the uid rule | A dashboard without a folder |
+| root | Another entry: another file, a symbolic link, a directory with a wrong name | Ignored, with the log line `store.entry_ignored` |
 | folder | `_folder.json`, a regular file | The folder file (4.41) |
 | folder | `<uid>.json`, a regular file whose stem fits the uid rule | A dashboard |
 | folder | A name that starts with `.` | Ignored, without a log line (temporary files, files of an editor) |
@@ -2651,8 +2653,10 @@ The catalog is the copy of the store in the memory of each instance. It is in `h
 
 1. The log line `store.entry_ignored` (section 14) gives the path relative to the root and the reason. It occurs one time for each entry, and again after the entry changes.
 2. A folder directory without a valid `_folder.json` is an invalid folder. The list shows it with the error of its folder file. Its dashboards are invalid entries with one error `not_permitted` that names the folder. The server does not serve them.
-3. When two folders hold a file with the same uid, both entries are invalid with the error `not_unique`. The server serves neither of them.
+3. When two places hold a file with the same uid, both entries are invalid with the error `not_unique`. A place is a folder or the root. The server serves neither of them.
 4. A file of more than `MAX_DOCUMENT_BYTES` is an invalid entry with the error `too_large`. The scan reads at most `MAX_DOCUMENT_BYTES` plus 1 bytes of it.
+5. A file `<name>.json` at the root is a dashboard when `<name>` fits the uid rule. This holds for a file that is no dashboard, for example `package.json`: it is an invalid entry, and the start stops (5.43). A file with another kind of name, for example `README.md` or `Notes.json`, is ignored.
+6. A dashboard without a folder is in the root of the volume. Its folder is none: the API writes `null` (section 6). The access tree names the place of such a dashboard `_root` (the file ACCESS.md).
 
 ### 5.11 Volume: history metadata file
 
@@ -2933,7 +2937,7 @@ A read (`load`, `poll`, `get`, `history`, `version`) that meets a connection err
 
 ### 5.24 PostgreSQL: DDL
 
-Migration 1 creates the schema of v1. `hune migrate-store` applies it in one transaction (5.28). The SQL is in the binary as `hune-store/migrations/0001.sql`.
+Migration 1 creates the schema. Migration 2 lets a dashboard have no folder. `hune migrate-store` applies each migration in one transaction (5.28). The SQL is in the binary as `hune-store/migrations/0001.sql` and `0002.sql`.
 
 ```sql
 -- Migration 1 of the Hune schema.
@@ -3007,6 +3011,16 @@ END $$;
 5. The database encoding MUST be `UTF8` (5.29).
 6. A later migration k ends with `UPDATE hune_schema SET version = k, updated_at = now() WHERE id`.
 7. A `delete` version has no document and no etag. An `external` version of a current document that is not valid has no document, and its etag is the SHA-256 of the stored text (5.2). Each other version has a document and an etag.
+9. A dashboard without a folder has `folder_id` null in `hune_dashboards`, and in each of its rows of `hune_versions`. Migration 2 is this text, and it goes with no change of the data:
+
+```sql
+-- Migration 2 of the Hune schema: a dashboard can have no folder.
+ALTER TABLE hune_dashboards ALTER COLUMN folder_id DROP NOT NULL;
+ALTER TABLE hune_versions ALTER COLUMN folder_id DROP NOT NULL;
+UPDATE hune_schema SET version = 2, updated_at = now() WHERE id;
+```
+
+   The migration is one way. A binary of schema version 1 refuses a database of schema version 2 (5.29, rule 5). Run `hune migrate-store` before `serve`.
 8. Hune writes `etag` and `document` of a row together, and `etag` is the SHA-256 of the canonical form of `document`. `load`, `poll` (P7) and `get` compute the etag of `document` again. The entry is invalid when this etag differs from the column `etag`, or when `document` is not canonical. Its one error has the code `not_permitted` and names the column (4.37). A tool that changes a row outside Hune MUST write both columns.
 
 ### 5.25 PostgreSQL: roles and rights
@@ -3175,7 +3189,7 @@ Each write is one transaction at the level `READ COMMITTED`. A step that returns
 3. Send P1. When the encoding is not `UTF8`, stop with exit code 1.
 4. Send P28. When it gives `false`, stop with exit code 1 and the message `another hune migrate-store holds the lock`.
 5. Send P2 and P3. The database version V is 0 when the table `hune_schema` does not exist.
-6. Let M be the schema version of the binary (1 in v1). When V is greater than M, release the lock (P29) and stop with exit code 1: `database schema V is newer than this binary (M)`.
+6. Let M be the schema version of the binary (2). When V is greater than M, release the lock (P29) and stop with exit code 1: `database schema V is newer than this binary (M)`.
 7. For each step k from V + 1 to M: `BEGIN`, the SQL of step k, `COMMIT`. Then write the log line `store.migrated` with k.
 8. When a step fails, send `ROLLBACK` and P29, and stop with exit code 1. The message gives k and the PostgreSQL error. The schema stays at version k - 1.
 9. Send P29. Print `schema version M` and exit with code 0. When V equals M, print `schema version M, nothing to do` and exit with code 0.

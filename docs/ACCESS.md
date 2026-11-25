@@ -98,6 +98,10 @@ A `clickhouse` block, a `postgres` block and a `mongodb` block are each a node `
 
 A grant on a folder covers each dashboard of the folder, now and later. A grant on the service covers each node. A move changes the chain of a dashboard, so the grants of the new folder apply at once.
 
+A dashboard without a folder has the chain `service`, `folder:_root`, `dashboard:<uid>`. The id `_root` is not a folder. The id rule of a folder (4.3) refuses a name that starts with an underscore, so no folder can have it. The PDP gets one more node of the type `folder`, and the chain keeps its two levels. The type and the actions do not change. The node `_root` is the same for the root of each store, because a uid is unique in all stores.
+
+A grant on `folder:_root` covers each dashboard without a folder, now and later. A grant on a real folder does not cover them. A person who has rights only on real folders does not see a dashboard without a folder. Hune fails closed here. The author of a policy adds a grant on `folder:_root`, or a grant on the service, for each person who needs these dashboards.
+
 Hune builds each chain from its own catalog. It never uses a value of the request.
 
 ## The actions
@@ -128,7 +132,7 @@ Section 11.21 of the specification has the complete table. The questions are the
 
 - A read route asks `dashboard.read` on the dashboard.
 - A save, a restore or a create asks `source.query` on each source of the document, then `dashboard.write`. The check applies also when the SQL did not change.
-- A move asks `dashboard.write` on the dashboard, then `dashboard.write` on the target folder.
+- A move asks `dashboard.write` on the dashboard, then `dashboard.write` on the target folder. The target of a move to the root is the node `_root`. A create without a folder asks `dashboard.write` on the node `_root`.
 - A query route asks `dashboard.read` and applies the ceilings of the answer.
 - A preview asks `dashboard.write` on the dashboard or the folder, then `source.query` on the source.
 - `validate_only=true` asks the use question only.
@@ -172,7 +176,7 @@ These answers are refusals.
 
 The page shows each person the items that the person can use. The server checks each operation again. A `subtree` answer never lets an operation run.
 
-- The list of folders keeps the folders with `true` for `dashboard.read`.
+- The list of folders keeps the folders with `true` for `dashboard.read`. The member `root` of this list has `access.write`: the display answer for `dashboard.write` on the node `_root`. The node `_root` is not an item of the list.
 - The list of dashboards keeps the dashboards of a visible folder when the folder grant covers them. Else Hune asks one question for each dashboard.
 - Each folder and each dashboard carries the flag `access.write`. The list of folders carries `access.create`.
 - `GET /api/sources` lists the sources with `true` for `source.query`. Each item has the member `kind`: `clickhouse`, `postgres` or `mongodb`. It holds no host, no user and no secret.
@@ -186,10 +190,12 @@ One page of dashboards asks 200 questions at most. A page can hold fewer items t
 | Parameter | Rule |
 |---|---|
 | `type` | Necessary: `folder`, `source` or `dashboard`. |
-| `parent` | Necessary for `dashboard`: `folder%3A<id>`. Absent for the other types. |
+| `parent` | Necessary for `dashboard`: `folder%3A<id>`, or `folder%3A_root` for the dashboards without a folder. Absent for the other types. |
 | `q` | Optional search text of 256 bytes at most. It matches a substring of the id or of the label. |
 | `limit` | Optional, from 1. A value above 50 gives 50. |
 | `after` | The value `next` of the previous answer. |
+
+The list of the type `folder` has one more item with the id `_root` and the label "Root (no folder)", as the first item. It is the node of the dashboards without a folder.
 
 Hune asks the published actions for each child with the match `subtree`. It stops at the first `true` answer. A query that is not valid gives `400 invalid_options_request`.
 

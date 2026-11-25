@@ -660,7 +660,7 @@ Folders and objects outside the dashboards:
 | Object | Class | Hune | Reason or fallback |
 |---|---|---|---|
 | folder with a uid that fits the folder id rule of 4.3 | mapped | folder id and the `title` of its folder file (4.41) | 15.7. |
-| root of Grafana | mapped | folder `general` (4.3) | Title `General`. |
+| root of Grafana | mapped | no folder (4.3) | The dashboards of the root have no folder. |
 | folder with a parent (`parentUid`) | unsupported | none | Folders have one level. Fallback: its dashboards are not imported. |
 | version history (138 versions measured) | not imported | none | Not in the export. The report header says so. |
 | public dashboard (1 measured) | not imported | none | Public dashboards are removed in v1 (section 18). |
@@ -683,7 +683,7 @@ The file of `--folders` is JSON with a closed schema:
 | Member | Type | Rule |
 |---|---|---|
 | `grafana_uid` | text | Necessary. A folder uid of `folders.json`. Unique in the file. |
-| `id` | text | Necessary. The folder id rule of 4.3. The value `general` is reserved for the root. |
+| `id` | text | Necessary. The folder id rule of 4.3. |
 | `title` | text | Optional. 1 to 256 characters (4.41). When absent, the importer takes the Grafana title. |
 
 A folder without an entry gets its Grafana uid as its id when the uid fits the rule. Otherwise its dashboards are
@@ -2413,7 +2413,7 @@ a written reason. `docs/CONFORMANCE.md` records the counts of passed, failed and
 | I06 | Idempotence: the second `--write` run gives `unchanged` for each dashboard, writes no history version and exits 0. The volume tree is byte-equal. |
 | I07 | `--replace`: a changed dashboard gets one version with the author `import-grafana`. An equal dashboard gets none. |
 | I08 | The uid rule of 15.8, with a collision that gives the `g-` form. |
-| I09 | Folders: the root gives `general`; the folder map applies; a folder uid that breaks the rule and has no entry blocks its dashboards; two folders to one id give exit code 2. |
+| I09 | Folders: the root gives no folder; the folder map applies; a folder uid that breaks the rule and has no entry blocks its dashboards; two folders to one id give exit code 2. |
 | I10 | Sources: a mapped ClickHouse source; an unmapped one is `unsupported`; a MongoDB query that 7.28 to 7.33 refuse is `unsupported`, the panel is removed, and the report holds its JSON cut to 200 characters. |
 | I11 | `--link-prefix` rewrites the links. The nginx map equals its golden file. `$` is encoded as `%24`. Short links get their targets. |
 | I12 | Each written document passes the validation of section 4 and the statement check of section 7. |
