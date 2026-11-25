@@ -3,8 +3,9 @@
      They show 300 ms after a panel starts to wait, for a first load (`panel--wait`) and for a reload (`panel--progress`). A reload keeps the
      content on the screen as it is: no dim, no blank, no flash.
    - The preview of the panel type. It shows for a first load only (`data-wait="first"` and `panel--wait`): a panel with nothing on the screen.
-     It is some shapes in the body, under the overlay, so an error, a hint or a note covers it. The shapes change their opacity only.
-   Reduced motion: no animation; the dots are still and dimmed, the shapes are still (9.26). Print: nothing shows. */
+     It is a drawing of the panel in the body, under the overlay, so an error, a hint or a note covers it: the lines or the bars of a chart, the
+     axes and the legend, in the places that the real panel takes (panel_wait.js, previewOf). One soft light sweeps over the drawing.
+   Reduced motion: no animation; the dots are still and dimmed, the drawing is still (9.26). Print: nothing shows. */
 .panel__loader { position: absolute; top: 0; bottom: 0; right: calc(var(--space-8) + var(--space-20) + var(--space-4)); display: none; align-items: center; gap: 3px; pointer-events: none; }
 .panel--wait > .panel__head > .panel__loader, .panel--progress > .panel__head > .panel__loader { display: flex; }
 .panel__loader i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent-fill); opacity: 0.6; animation: panel-pulse var(--dur-pulse) ease-in-out infinite; }
@@ -12,37 +13,155 @@
 .panel__loader i:nth-child(3) { animation-delay: 0.3s; }
 @keyframes panel-pulse { 0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
 
-/* The preview. The shapes use percentages of the body (the custom properties --x, --y, --w and --h) and the step --n of the delay. */
+/* The preview. It has the place of the chart of the real panel: inside the padding of the body. The sizes in px (the gutters of the plot, the legend)
+   come from the model, as custom properties on the nodes (--left, --right, --top, --bottom, --legend). */
 .panel__skeleton {
-  --skel-dur: 1800ms; --skel-step: 120ms;
-  --skel-fill: color-mix(in srgb, var(--text) 11%, transparent);
-  --skel-edge: color-mix(in srgb, var(--text) 19%, transparent);
-  position: absolute; inset: var(--panel-pad); display: none; pointer-events: none;
+  --skel-dur: 2000ms;
+  --skel-fill: color-mix(in srgb, var(--text) 9%, transparent);
+  --skel-edge: color-mix(in srgb, var(--text) 17%, transparent);
+  --skel-line: color-mix(in srgb, var(--accent-fill) 55%, var(--text) 12%);
+  --skel-grid: color-mix(in srgb, var(--text) 10%, transparent);
+  --skel-sweep: color-mix(in srgb, var(--surface-panel) 72%, transparent);
+  position: absolute; inset: var(--panel-pad); display: none; overflow: hidden; pointer-events: none;
 }
 .panel--wait[data-wait="first"] .panel__skeleton { display: block; }
-.panel__skeleton i {
-  position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h);
-  border-radius: var(--r-sm); background: var(--skel-edge);
-  animation: panel-skel var(--skel-dur) ease-in-out infinite; animation-delay: calc(var(--n) * var(--skel-step));
+/* The light: one band that crosses the drawing from the left to the right, with a transform only (no repaint of the shapes). */
+.panel__skeleton::after {
+  content: ""; position: absolute; inset: 0; transform: translateX(-100%);
+  background: linear-gradient(100deg, transparent 35%, var(--skel-sweep) 50%, transparent 65%);
+  animation: panel-skel var(--skel-dur) ease-in-out infinite;
 }
-@keyframes panel-skel { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
-.panel__skeleton i[data-s="cell"], .panel__skeleton i[data-s="blob"] { background: var(--skel-fill); }
-.panel__skeleton i[data-s="blob"] { border-radius: 46% 54% 50% 50% / 50% 44% 56% 50%; }
-.panel__skeleton i[data-s="line"] { height: 1px; border-radius: 0; background: var(--skel-fill); animation: none; }
-/* A dot is centred on its point. */
-.panel__skeleton i[data-s="dot"] { width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; }
-/* A ring is centred on the middle of the body and takes its size from its height. The gauge is open at its foot. */
-.panel__skeleton i[data-s="ring"] {
-  left: 50%; width: auto; aspect-ratio: 1; box-sizing: border-box; border: 10px solid var(--skel-fill); border-radius: 50%; background: transparent;
-  transform: translateX(-50%);
+@keyframes panel-skel { 0% { transform: translateX(-100%); } 70%, 100% { transform: translateX(100%); } }
+
+.skel { position: absolute; inset: 0; display: flex; flex-direction: column; }
+.skel[data-legend="right"] { flex-direction: row; }
+.skel i, .skel div { box-sizing: border-box; }
+
+/* The plot: a box that takes what the legend leaves. The chart of a pie is a box too. */
+.skel__chart { position: relative; flex: 1 1 0; min-width: 0; min-height: 0; }
+.skel__area { position: absolute; left: var(--left); right: var(--right); top: var(--top); bottom: var(--bottom); }
+.skel__grid { position: absolute; left: 0; right: 0; top: var(--y); height: 1px; background: var(--skel-grid); }
+.skel__svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.skel__line { fill: none; stroke: var(--skel-line); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.skel__line:nth-child(n + 3) { stroke: var(--skel-edge); }
+.skel__fill { fill: color-mix(in srgb, var(--accent-fill) 10%, transparent); stroke: none; }
+.skel__spark .skel__fill { fill: var(--skel-fill); }
+.skel__spark .skel__line { stroke: var(--skel-edge); }
+
+/* The labels of the axes: short bars, in the places of the real labels. The y labels are right aligned 9 px before the plot. */
+.skel__ycol { position: absolute; left: 0; width: calc(var(--left) - 9px); top: var(--top); bottom: var(--bottom); }
+.skel__ylab { position: absolute; right: 0; top: var(--y); width: var(--w); height: 6px; margin-top: -3px; border-radius: 3px; background: var(--skel-fill); }
+.skel__xrow { position: absolute; left: var(--left); right: var(--right); bottom: 0; height: var(--h); }
+.skel__xlab { position: absolute; left: var(--x); top: 8px; width: 26px; height: 6px; margin-left: -13px; border-radius: 3px; background: var(--skel-fill); }
+
+/* The bars of a vertical bar chart, of a bar series and of a histogram. They start on the base line of the plot. */
+.skel__bar { position: absolute; left: var(--x); bottom: 0; width: var(--w); height: var(--h); border-radius: 2px 2px 0 0; background: var(--skel-edge); }
+.skel__bar--stack { background: linear-gradient(to top, var(--skel-edge) 58%, var(--skel-fill) 58%); }
+.skel__bar--flush { border-radius: 0; box-shadow: inset 0 0 0 1px var(--skel-fill); }
+
+/* A horizontal bar chart and a state timeline: rows with a label column at the left, the tracks, and the value axis under them. */
+.skel__hbars { position: absolute; left: 0; right: var(--right); top: var(--top); bottom: var(--bottom); }
+.skel__vgrids { position: absolute; left: var(--label); right: 0; top: 0; bottom: 0; }
+.skel__vgrid { position: absolute; top: 0; bottom: 0; left: var(--x); width: 1px; background: var(--skel-grid); }
+.skel__hrow, .skel__lane { position: absolute; left: 0; right: 0; top: calc(var(--i) * 100% / var(--n)); height: calc(100% / var(--n)); display: flex; align-items: center; }
+.skel__hname { flex: none; width: var(--label); padding-right: 8px; display: flex; justify-content: flex-end; }
+.skel__htrack, .skel__ltrack { position: relative; flex: 1 1 0; height: 66%; }
+.skel__hbar { height: 100%; width: var(--w); border-radius: 0 3px 3px 0; background: var(--skel-edge); }
+.skel__hbar--stack { background: linear-gradient(to right, var(--skel-edge) 62%, var(--skel-fill) 62%); }
+.skel__hval { position: absolute; left: calc(var(--x) + 6px); top: 50%; width: 18px; height: 6px; margin-top: -3px; border-radius: 3px; background: var(--skel-fill); }
+.skel__seg { position: absolute; left: var(--x); width: var(--w); top: 0; bottom: 0; border-radius: 2px; background: var(--skel-edge); }
+
+/* The legend: under the plot (its height is --legend) or beside it (its width is --legend). An item is a swatch and a name bar. */
+.skel__legend { flex: none; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 4px 0; padding: 8px 4px 4px; }
+.skel[data-legend="bottom"] > .skel__legend { height: var(--legend); }
+.skel[data-legend="right"] > .skel__legend { width: var(--legend); flex-direction: column; flex-wrap: nowrap; padding: 8px 0 4px 8px; }
+.skel__item { display: flex; align-items: center; gap: 8px; height: 18px; padding-right: 10px; }
+.skel__sw { flex: none; background: var(--skel-line); }
+.skel__sw--pill { width: 14px; height: 4px; border-radius: 999px; }
+.skel__sw--dot { width: 10px; height: 10px; border-radius: 50%; }
+.skel__sw--square { width: 10px; height: 10px; border-radius: 2px; }
+.skel__item:nth-child(2n) .skel__sw, .skel__lrow:nth-child(2n) .skel__sw { background: var(--skel-edge); }
+.skel__txt { flex: none; width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); }
+/* A legend in table mode: a head and rows, a name column and a column for each value. At the bottom it takes 35 % of the panel at most. */
+.skel[data-mode="table"] > .skel__legend { display: block; padding: 0; overflow: hidden; }
+.skel[data-legend="bottom"][data-mode="table"] > .skel__legend { height: min(var(--legend), 35%); }
+/* The legend of a pie: its items are centered, under the plot (one line, after a gap of 4 px) or beside it (in the middle of its height). */
+.skel[data-kind="pie"] > .skel__legend { justify-content: center; }
+.skel[data-kind="pie"][data-legend="bottom"] > .skel__legend { height: calc(var(--legend) - 4px); margin-top: 4px; padding: 0; align-content: center; }
+.skel[data-kind="pie"][data-legend="right"] > .skel__legend { padding: 0 0 0 12px; }
+.skel[data-kind="pie"] .skel__lname .skel__txt { width: 36px; }
+.skel[data-kind="pie"] .skel__lval { width: 36px; }
+.skel__lrow { display: flex; align-items: center; height: 22px; padding-left: 4px; border-top: 1px solid var(--skel-grid); }
+.skel__lhead { height: 28px; border-top: 0; }
+.skel__lhead .skel__sw { background: transparent; }
+.skel__lhead .skel__txt { background: var(--skel-line); }
+.skel__lcell { display: flex; align-items: center; gap: 8px; }
+.skel__lname { flex: 1 1 0; }
+.skel__lval { flex: none; width: 40px; justify-content: flex-end; padding-right: 4px; }
+.skel__lval .skel__txt { width: 26px; }
+.skel__lhead .skel__lval .skel__txt { width: 30px; }
+
+/* A pie chart: a ring or a disc in the middle of the plot, as large as the plot allows. */
+.skel__chart--pie { container-type: size; display: grid; place-items: center; }
+.skel__pie {
+  width: min(88cqw, 88cqh); aspect-ratio: 1; border-radius: 50%;
+  background: conic-gradient(var(--skel-edge) 0 36%, var(--skel-fill) 36% 68%, color-mix(in srgb, var(--skel-edge) 70%, var(--skel-fill)) 68% 100%);
+  -webkit-mask: radial-gradient(circle, transparent 54%, black 55%); mask: radial-gradient(circle, transparent 54%, black 55%);
 }
-.panel__skeleton i[data-s="ring"][data-parts] { border-color: var(--skel-edge) var(--skel-fill) var(--skel-edge) var(--skel-fill); }
-.panel__skeleton[data-kind="gauge"] i[data-s="ring"] { border-color: var(--skel-edge); border-bottom-color: transparent; }
-/* The tracks of a bar gauge are lighter than their fills. */
-.panel__skeleton[data-kind="bar-gauge"] i:nth-child(odd) { background: var(--skel-fill); }
+.skel__pie--disc { -webkit-mask: none; mask: none; }
+
+/* A stat: the value, a caption and a line. The shapes use percentages of the body. */
+.skel__value { position: absolute; left: calc((100% - var(--w)) / 2); top: var(--y); width: var(--w); height: var(--h); border-radius: var(--r-sm); background: var(--skel-edge); }
+.skel__caption { position: absolute; left: calc((100% - var(--w)) / 2); top: var(--y); width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-fill); }
+.skel__spark { position: absolute; left: 0; right: 0; bottom: 0; height: 36%; }
+
+/* A gauge: an arc open at its foot and a value, one for each value of the data when the option asks for it. */
+.skel[data-kind="gauge"] { flex-direction: row; }
+.skel__gauge { position: relative; flex: 1 1 0; min-width: 0; }
+.skel__gauge .skel__svg { overflow: visible; }
+.skel__track { fill: none; stroke: var(--skel-fill); stroke-width: 6; stroke-linecap: round; }
+.skel__arc { fill: none; stroke: var(--skel-line); stroke-width: 6; stroke-linecap: round; stroke-dasharray: var(--fill) 100; }
+
+/* A bar gauge: a name and a track with a fill, in rows or in columns. */
+.skel[data-kind="bar-gauge"] { gap: 12px; padding: 4px 0; }
+.skel[data-kind="bar-gauge"][data-orient="vertical"] { flex-direction: row; }
+.skel__bg { flex: 1 1 0; min-width: 0; display: flex; align-items: center; gap: 10px; }
+.skel__bgtrack { position: relative; flex: 1 1 0; height: 14px; overflow: hidden; border-radius: 3px; background: var(--skel-fill); }
+.skel__bgfill { position: absolute; left: 0; top: 0; bottom: 0; width: var(--fill); background: var(--skel-line); }
+.skel__bg--lcd .skel__bgfill { -webkit-mask: repeating-linear-gradient(to right, black 0 8px, transparent 8px 10px); mask: repeating-linear-gradient(to right, black 0 8px, transparent 8px 10px); }
+.skel[data-orient="vertical"] .skel__bg { flex-direction: column-reverse; justify-content: flex-end; }
+.skel[data-orient="vertical"] .skel__bgtrack { flex: 1 1 0; width: 36px; height: auto; max-width: 60%; }
+.skel[data-orient="vertical"] .skel__bgfill { top: auto; width: auto; height: var(--fill); right: 0; }
+.skel[data-orient="vertical"] .skel__bg--lcd .skel__bgfill { -webkit-mask: repeating-linear-gradient(to top, black 0 8px, transparent 8px 10px); mask: repeating-linear-gradient(to top, black 0 8px, transparent 8px 10px); }
+
+/* A table: a head row, rows of 36 px, and a foot row when a field has a footer. The rows that do not fit are cut. */
+.skel__thead, .skel__row, .skel__tfoot { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); align-items: center; padding: 0 6px; border-bottom: 1px solid var(--skel-grid); }
+.skel__thead { height: 34px; flex: none; }
+.skel__thead .skel__txt { background: var(--skel-line); }
+.skel__rows { flex: 1 1 0; min-height: 0; overflow: hidden; }
+.skel__row { height: 36px; }
+.skel__cell { height: 8px; width: var(--w); border-radius: 4px; background: var(--skel-fill); }
+.skel__tfoot { height: 36px; flex: none; border-top: 1px solid var(--skel-grid); border-bottom: 0; }
+
+/* A heatmap: cells in a plot with a grid, and a color scale under it when the option asks for it (a bar of 300 px and its two ends). */
+.skel__hcell { position: absolute; left: var(--c); top: var(--r); width: 9%; height: 18%; border-radius: 1px; background: var(--skel-edge); opacity: calc(0.45 + var(--d) * 0.1); }
+.skel[data-kind="heatmap"] > .skel__scale { flex: none; height: var(--legend); padding: 12px 0 0 var(--gutter, 54px); }
+.skel__ramp { width: min(300px, 70%); height: 10px; border-radius: 2px; background: linear-gradient(to right, var(--skel-fill), var(--skel-line)); }
+.skel__ends { width: min(300px, 70%); display: flex; justify-content: space-between; margin-top: 6px; }
+
+/* Logs: rows of 28 px with a time, a level and a message. */
+.skel[data-kind="logs"] { padding: 0 4px; }
+.skel__log { display: flex; align-items: center; gap: 10px; height: 28px; flex: none; }
+.skel__ltime { flex: none; width: 166px; height: 8px; border-radius: 4px; background: var(--skel-fill); }
+.skel__llevel { flex: none; width: 34px; height: 8px; border-radius: 4px; background: var(--skel-line); }
+.skel__lmsg { width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); }
+
+/* A map: two shapes of land and some markers (rings). */
+.skel__blob { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); border-radius: 46% 54% 50% 50% / 50% 44% 56% 50%; background: var(--skel-fill); }
+.skel__pin { position: absolute; left: var(--x); top: var(--y); width: 10px; height: 10px; margin: -5px 0 0 -5px; border: 2px solid var(--skel-line); border-radius: 50%; }
 
 @media (prefers-reduced-motion: reduce) {
   .panel__loader i { animation: none; opacity: 0.6; transform: none; }
-  .panel__skeleton i { animation: none; opacity: 0.8; }
+  .panel__skeleton::after { animation: none; display: none; }
 }
 @media print { .panel__skeleton { display: none !important; } }
