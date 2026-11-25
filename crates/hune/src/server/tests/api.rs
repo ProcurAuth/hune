@@ -83,7 +83,7 @@ async fn a01_list_shows_the_dashboards_with_their_store() {
     assert_eq!(items[0]["title"], "Nodes");
     assert_eq!(items[0]["tags"], json!(["chain"]));
     assert_eq!(items[0]["access"]["write"], true);
-    // The store of the dashboard (5.40): the primary store, so it is not read-only and it has no warning.
+    // The store of the dashboard (5.42): the primary store, so it is not read-only and it has no warning.
     assert_eq!((items[0]["read_only"].as_bool(), items[0]["store"].as_str()), (Some(false), Some("main")));
     assert!(items[0].get("stale").is_none());
     assert!(items[0].get("errors").is_none());

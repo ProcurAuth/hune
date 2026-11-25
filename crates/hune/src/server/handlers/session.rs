@@ -39,7 +39,7 @@ struct SessionGeomap<'a> {
     max_zoom: u8,
 }
 
-/// One store (6.10, 5.40): the page shows the title of a read-only store as the name of a root folder.
+/// One store (6.10, 5.42): the page shows the title of a read-only store as the name of a root folder.
 #[derive(Serialize)]
 struct SessionStore<'a> {
     id: &'a str,

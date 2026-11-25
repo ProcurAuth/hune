@@ -184,7 +184,7 @@ pub async fn unknown_with(ctx: &Ctx, message: &str, others: Others<'_>) -> ApiEr
     }
 }
 
-/// The refusal of a write whose target is in a read-only store (5.40, 11.31). Hune never asks `dashboard.write`
+/// The refusal of a write whose target is in a read-only store (5.42, 11.35). Hune never asks `dashboard.write`
 /// for such a target: a grant of it changes nothing. In the mode `authzen`, one question comes first: `dashboard.read`
 /// on the dashboard `N(uid)`, or on the folder `F(folder)` when `uid` is `None`. A subject that cannot read the
 /// target gets the refusal of any other write (11.30), byte for byte, so the answer does not tell that the target
@@ -284,7 +284,7 @@ pub async fn query_inspect(ctx: &Ctx, folder: &str, uid: &str, source: &str) -> 
     if !access.editing() {
         return false;
     }
-    // A dashboard of a read-only store has no `dashboard.write` question (5.40), so nobody gets its SQL here.
+    // A dashboard of a read-only store has no `dashboard.write` question (5.42), so nobody gets its SQL here.
     let in_read_only_store = ctx
         .state
         .services()
@@ -333,7 +333,7 @@ pub struct FolderFilter {
 }
 
 /// Steps 1 and 2 of 11.25, then the flags: at most 2 questions for each folder and one for the service. A folder of
-/// a read-only store (`read_only(id)`) has no question for `dashboard.write` and the flag `false` (5.40).
+/// a read-only store (`read_only(id)`) has no question for `dashboard.write` and the flag `false` (5.42).
 pub async fn filter_folders(
     ctx: &Ctx,
     ids: &[String],
@@ -380,7 +380,7 @@ enum FolderState {
 
 /// The display filter of one page of dashboards (11.25). `rows` are the `(folder, uid)` of the rows
 /// in the order of the list. The filter asks at most 200 questions and stops when it holds `limit`
-/// items. A folder of a read-only store (`read_only(folder)`) has no question for `dashboard.write` (5.40).
+/// items. A folder of a read-only store (`read_only(folder)`) has no question for `dashboard.write` (5.42).
 pub async fn filter_dashboards(
     ctx: &Ctx,
     rows: &[(String, String)],

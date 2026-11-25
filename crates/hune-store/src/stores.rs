@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The stores of the process (5.40): the primary store and the read-only stores behind one `Store`.
+//! The stores of the process (5.42): the primary store and the read-only stores behind one `Store`.
 //!
 //! One member of [`Stores`] is a volume or the PostgreSQL store. The primary member is the only one that accepts
 //! writes: a write that targets another member gives `StoreError::ReadOnly`. The first load checks the start rules of
-//! 5.41. After the start, the poll of a volume keeps the last valid state of a file that becomes invalid (5.42).
+//! 5.43. After the start, the poll of a volume keeps the last valid state of a file that becomes invalid (5.44).
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::PathBuf;
@@ -87,7 +87,7 @@ pub struct MemberReport {
     pub invalid: usize,
 }
 
-/// A start rule that the first load found broken (5.41). The text names the store, the file and the reason.
+/// A start rule that the first load found broken (5.43). The text names the store, the file and the reason.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct StartIssue(pub String);
 
@@ -116,7 +116,7 @@ struct State {
     known_entries: BTreeMap<EntryKey, Arc<CatalogEntry>>,
     /// The last valid state of each folder of a volume.
     known_folders: BTreeMap<FolderId, FolderState>,
-    /// The entries of a volume that show their last valid state because the file is not valid now (5.42). The value is
+    /// The entries of a volume that show their last valid state because the file is not valid now (5.44). The value is
     /// the etag of the invalid file that the log already reported.
     stale: BTreeMap<EntryKey, Etag>,
     /// The files of a volume that are not valid and have no last valid state: the catalog has no entry for them.
@@ -223,7 +223,7 @@ impl Stores {
         self.store_of_uid(uid).is_some_and(|s| !s.primary)
     }
 
-    /// True when the dashboard shows its last valid state because its file is not valid now (5.42).
+    /// True when the dashboard shows its last valid state because its file is not valid now (5.44).
     pub fn is_stale(&self, uid: &Uid) -> bool {
         let st = self.state();
         let Some(&owner) = st.uid_owner.get(uid) else { return false };
@@ -286,7 +286,7 @@ impl Stores {
         self.primary().map_or(0, AnyStore::restore_checks)
     }
 
-    /// Reads each store one time and checks the start rules of 5.41. The result gives the counts of each store for
+    /// Reads each store one time and checks the start rules of 5.43. The result gives the counts of each store for
     /// the log. The next call of `Store::load` gives the same state without a second read.
     pub async fn open_checked(&self) -> Result<Vec<MemberReport>, StartIssue> {
         let mut snapshots = Vec::with_capacity(self.inner.members.len());
@@ -473,7 +473,7 @@ impl Stores {
         Ok(())
     }
 
-    /// Keeps the last valid state of the files of a volume that are not valid now (5.42).
+    /// Keeps the last valid state of the files of a volume that are not valid now (5.44).
     fn filter_volume_delta(&self, st: &mut State, i: usize, d: &mut Delta) {
         let m = self.member(i);
         let root = m.path.as_ref().map(|p| p.display().to_string()).unwrap_or_default();
@@ -549,7 +549,7 @@ impl Stores {
     }
 
     /// Drops what a store adds after the start and another store already holds: a folder id or a uid that exists in
-    /// two stores (5.41).
+    /// two stores (5.43).
     fn reject_clashes(&self, st: &mut State, i: usize, d: &mut Delta) {
         let m = self.member(i);
         let mut dropped_folders: BTreeSet<FolderId> = BTreeSet::new();
@@ -703,7 +703,7 @@ impl Store for Stores {
         meta: &WriteMeta,
     ) -> Result<Saved, StoreError> {
         let store = self.write_folder(folder)?;
-        // A uid of another store is not free: the uid is unique across the stores (5.41).
+        // A uid of another store is not free: the uid is unique across the stores (5.43).
         if self.state().uid_owner.get(doc.uid()).is_some_and(|o| Some(*o) != self.inner.primary) {
             return Err(StoreError::Exists { folder: None });
         }
@@ -760,7 +760,7 @@ impl Store for Stores {
     }
 
     async fn history(&self, uid: &Uid, before: Option<u64>, limit: u32) -> Result<Vec<VersionMeta>, StoreError> {
-        // Only the primary store has history (5.40).
+        // Only the primary store has history (5.42).
         let Some(p) = self.inner.primary else { return Ok(Vec::new()) };
         if self.uid_is_read_only(uid) {
             return Ok(Vec::new());
@@ -778,7 +778,7 @@ impl Store for Stores {
 
     async fn create_folder(&self, id: &FolderId, title: &FolderTitle) -> Result<(), StoreError> {
         let Some(p) = self.inner.primary else { return Err(StoreError::ReadOnly) };
-        // The folder id is unique across the stores (5.41).
+        // The folder id is unique across the stores (5.43).
         if self.state().folder_owner.get(id).is_some_and(|o| *o != p) {
             return Err(StoreError::Exists { folder: None });
         }

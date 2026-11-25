@@ -149,7 +149,7 @@ pub async fn preview(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     {
         return Err(gate::unknown(&ctx, "No such folder.").await);
     }
-    // A draft of a dashboard or of a folder of a read-only store is refused (5.40, 11.31).
+    // A draft of a dashboard or of a folder of a read-only store is refused (5.42, 11.35).
     if let (Some(f), Some(u)) = (&saved_folder, &uid)
         && hune_core::ids::Uid::parse(u).is_ok_and(|u| services.store.uid_is_read_only(&u))
     {

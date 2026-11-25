@@ -53,19 +53,19 @@ struct ListItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     errors: Option<Vec<ValidationError>>,
     access: Access,
-    /// True when the store of the dashboard is read-only (5.40). Then `access.write` is false.
+    /// True when the store of the dashboard is read-only (5.42). Then `access.write` is false.
     read_only: bool,
     /// The id of the store of the dashboard.
     store: String,
-    /// `file_invalid` when the dashboard shows its last valid state because its file is not valid now (5.42).
+    /// `file_invalid` when the dashboard shows its last valid state because its file is not valid now (5.44).
     #[serde(skip_serializing_if = "Option::is_none")]
     stale: Option<&'static str>,
 }
 
-/// The code of the warning of a dashboard that shows its last valid state (5.42).
+/// The code of the warning of a dashboard that shows its last valid state (5.44).
 const STALE_CODE: &str = "file_invalid";
 
-/// The store of a dashboard for the page (5.40): its id, and true when it is read-only.
+/// The store of a dashboard for the page (5.42): its id, and true when it is read-only.
 fn store_facts(services: &crate::server::state::Services, uid: &Uid) -> (String, bool) {
     match services.store.store_of_uid(uid) {
         Some(info) => (info.id.clone(), !info.primary),
@@ -73,7 +73,7 @@ fn store_facts(services: &crate::server::state::Services, uid: &Uid) -> (String,
     }
 }
 
-/// The refusal of a write on a dashboard of a read-only store, or `None` (5.40, 11.31).
+/// The refusal of a write on a dashboard of a read-only store, or `None` (5.42, 11.35).
 async fn read_only_dashboard(
     ctx: &Ctx,
     services: &crate::server::state::Services,
@@ -85,7 +85,7 @@ async fn read_only_dashboard(
     Some(gate::read_only_refusal(ctx, entry.folder().as_str(), Some(entry.uid().as_str())).await)
 }
 
-/// The refusal of a write into a folder of a read-only store, or `None` (5.40, 11.31).
+/// The refusal of a write into a folder of a read-only store, or `None` (5.42, 11.35).
 pub(super) async fn read_only_folder(
     ctx: &Ctx,
     services: &crate::server::state::Services,
@@ -536,7 +536,7 @@ pub async fn create(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         }
         gate::folder_write_with_sources(&ctx, folder.as_str(), sources).await?;
     } else if let Some(refusal) = read_only_folder(&ctx, services(&ctx)?, &folder).await {
-        // The mode `open`: a draft or a create into a read-only store gets the same refusal (5.40).
+        // The mode `open`: a draft or a create into a read-only store gets the same refusal (5.42).
         return Err(refusal);
     }
     let (doc, warnings) = check_document(&ctx, &req, bytes, None).await?;
@@ -614,7 +614,7 @@ pub async fn save(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         gate::dashboard_write(&ctx, entry.folder().as_str(), uid.as_str(), sources).await?;
         decided = Some(entry);
     } else if let Ok(uid) = &uid {
-        // The mode `open`: a save or a validation of a dashboard of a read-only store gets the refusal (5.40).
+        // The mode `open`: a save or a validation of a dashboard of a read-only store gets the refusal (5.42).
         let services = services(&ctx)?;
         if let Some(entry) = services.catalog.get(uid)
             && let Some(refusal) = read_only_dashboard(&ctx, services, &entry).await

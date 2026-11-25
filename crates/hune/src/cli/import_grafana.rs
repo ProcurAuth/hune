@@ -663,7 +663,7 @@ async fn open_volume(
     err: &mut dyn Write,
 ) -> Result<AnyStore, u8> {
     let fail_code = if write { EXIT_WRITE } else { EXIT_INPUT };
-    // The command works on the primary store only (5.40).
+    // The command works on the primary store only (5.42).
     let volume = match loaded.config.storage.primary() {
         None => {
             let _ = writeln!(err, "hune import-grafana: {}", super::store_cmds::NO_PRIMARY);

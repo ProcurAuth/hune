@@ -116,7 +116,7 @@ pub fn update_document_metrics(state: &AppState, catalog: &Catalog) {
 /// Opens the stores, loads the catalog one time and starts the poller (14.12 steps 6 to 9).
 ///
 /// Each `storage.volume` block gives a volume store. The primary store opens for writes. Each other store opens
-/// read-only: it takes no lock and writes nothing (5.40). The first load checks the start rules of 5.41.
+/// read-only: it takes no lock and writes nothing (5.42). The first load checks the start rules of 5.43.
 pub async fn open_store(state: Arc<AppState>) -> Result<Services, StartError> {
     let storage = &state.config.storage;
     let mut specs: Vec<StoreSpec> = Vec::new();
@@ -176,7 +176,7 @@ pub async fn open_store(state: Arc<AppState>) -> Result<Services, StartError> {
     Ok(Services { store, catalog })
 }
 
-/// Sets the gauge `hune_store_invalid_files` of each volume (5.42).
+/// Sets the gauge `hune_store_invalid_files` of each volume (5.44).
 pub fn update_invalid_file_metrics(state: &AppState, store: &Stores) {
     for (id, n) in store.invalid_files() {
         state.metrics.store_invalid_files(&id, n as u64);

@@ -150,7 +150,7 @@ pub enum StoreEvent {
         errno: i32,
     },
     /// `store.rescan_rejected`: a poll of a store did not take a change: a file of a volume that is not valid, or a
-    /// folder id or a uid that another store holds (5.42).
+    /// folder id or a uid that another store holds (5.44).
     RescanRejected {
         /// The id of the store.
         store: String,

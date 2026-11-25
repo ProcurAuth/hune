@@ -40,7 +40,7 @@ pub enum StopStage {
 
 /// The services that need the store. The start hook makes them (14.12 steps 6 to 9).
 pub struct Services {
-    /// The stores of the process: the primary store and the read-only stores (5.40).
+    /// The stores of the process: the primary store and the read-only stores (5.42).
     pub store: Stores,
     /// The catalog in memory.
     pub catalog: Arc<Catalog>,

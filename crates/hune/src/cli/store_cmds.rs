@@ -166,11 +166,11 @@ pub(super) async fn open_postgres(pg: &PostgresConfig, config_path: &Path) -> Re
         .map_err(|e| e.with_config_file(&config_path.display().to_string()).message)
 }
 
-/// The text of the error of a command that needs the primary store when the file has none (5.40).
+/// The text of the error of a command that needs the primary store when the file has none (5.42).
 pub(super) const NO_PRIMARY: &str =
     "the file has no primary store; the command works on the primary store, so give `primary = true` to one store";
 
-/// Opens the primary store of a configuration: a command works on this store only (5.40). `read_only` opens a volume
+/// Opens the primary store of a configuration: a command works on this store only (5.42). `read_only` opens a volume
 /// without the lock and with no write. `config_path` is the file that gave `storage`: it names the file in the
 /// errors of PostgreSQL.
 async fn open(storage: &StorageConfig, read_only: bool, config_path: &Path) -> Result<AnyStore, String> {

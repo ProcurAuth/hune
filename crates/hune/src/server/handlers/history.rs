@@ -297,7 +297,7 @@ pub async fn move_to(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         let others = gate::Others::Dashboard { folder: entry.folder().as_str(), uid: uid.as_str() };
         return Err(gate::unknown_with(&ctx, "No such folder.", others).await);
     }
-    // A move out of a read-only store, or into a folder of a read-only store, is refused (5.40).
+    // A move out of a read-only store, or into a folder of a read-only store, is refused (5.42).
     if services.store.uid_is_read_only(&uid) {
         return Err(gate::read_only_refusal(&ctx, entry.folder().as_str(), Some(uid.as_str())).await);
     }

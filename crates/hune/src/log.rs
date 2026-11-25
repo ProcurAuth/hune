@@ -334,7 +334,7 @@ impl Logger {
             .emit();
     }
 
-    /// Writes `store.rescan_rejected` (14.7): a poll did not take a change of a store (5.42).
+    /// Writes `store.rescan_rejected` (14.7): a poll did not take a change of a store (5.44).
     pub fn store_rescan_rejected(&self, store: &str, path: &str, reason: &str) {
         self.event(LogLevel::Error, "store.rescan_rejected")
             .field("store", store)

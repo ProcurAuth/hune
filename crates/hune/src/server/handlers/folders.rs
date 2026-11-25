@@ -23,7 +23,7 @@ struct FolderItem<'a> {
     id: &'a str,
     title: &'a str,
     access: FolderAccess,
-    /// True when the store of the folder is read-only (5.40). Then `access.write` is false.
+    /// True when the store of the folder is read-only (5.42). Then `access.write` is false.
     read_only: bool,
     /// The id of the store of the folder.
     store: String,

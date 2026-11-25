@@ -410,7 +410,7 @@ impl Metrics {
     pub fn documents(&self, state: &str, n: u64) {
         self.documents.set(&[state], i64::try_from(n).unwrap_or(i64::MAX));
     }
-    /// Sets `hune_store_invalid_files` for one volume: the files that are not valid now (5.42).
+    /// Sets `hune_store_invalid_files` for one volume: the files that are not valid now (5.44).
     pub fn store_invalid_files(&self, store: &str, n: u64) {
         self.store_invalid_files.set(&[store], i64::try_from(n).unwrap_or(i64::MAX));
     }

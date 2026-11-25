@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The stores of the process (5.40 to 5.42): one primary store and read-only stores behind one `Store`.
+//! The stores of the process (5.42 to 5.44): one primary store and read-only stores behind one `Store`.
 #![cfg(feature = "conformance")]
 
 use std::fs;

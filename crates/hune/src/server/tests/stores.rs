@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-//! The primary store and the read-only stores (5.40 to 5.42, 6.10, 6.8, 11.31): the fields of the page, the refusal
+//! The primary store and the read-only stores (5.42 to 5.44, 6.10, 6.8, 11.35): the fields of the page, the refusal
 //! of a write, the start rules and the warning of a file that is not valid after the start.
 
 use super::api::{JSON, doc_text, fill, post_body, put_body};
@@ -300,7 +300,7 @@ async fn with_no_primary_store_the_write_routes_give_editing_disabled_and_the_re
     assert_eq!((one["read_only"].as_bool(), one["access"]["write"].as_bool()), (Some(true), Some(false)));
 }
 
-// ---- The start rules (5.41) ----
+// ---- The start rules (5.43) ----
 
 async fn try_start(edit: impl FnOnce(&mut crate::config::Config)) -> lifecycle::StartError {
     let dir = tempfile::tempdir().unwrap();
@@ -429,7 +429,7 @@ async fn the_store_loaded_line_comes_once_for_each_store() {
     assert_eq!(loaded, vec![("main", "volume", 2, 1), ("lab", "volume", 1, 1)]);
 }
 
-// ---- A file that is not valid after the start (5.42) ----
+// ---- A file that is not valid after the start (5.44) ----
 
 async fn wait_for(h: &Harness, what: &str, check: impl Fn(&Value) -> bool) -> Value {
     for _ in 0..100 {
@@ -491,7 +491,7 @@ async fn a_new_file_that_is_not_valid_after_the_start_has_no_entry() {
     panic!("the metric");
 }
 
-// ---- The mode authzen (11.31) ----
+// ---- The mode authzen (11.35) ----
 
 fn lab_uid_questions(pdp: &Pdp, action: &str) -> usize {
     pdp.asked().iter().filter(|q| q.action == action && q.resource.contains(LAB_UID)).count()

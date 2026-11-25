@@ -426,6 +426,7 @@ mod tests {
         ("forbidden", 403, false, &["action"]),
         ("ceiling_exceeded", 403, false, &["action", "ceiling", "limit"]),
         ("editing_disabled", 403, false, &[]),
+        ("read_only_store", 403, false, &[]),
         ("cross_site_request", 403, false, &[]),
         ("not_found", 404, false, &[]),
         ("method_not_allowed", 405, false, &[]),
