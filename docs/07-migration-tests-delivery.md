@@ -2563,7 +2563,7 @@ Some jobs wait for a build task. Each task runs one time, and its result serves 
 | `build-debug` | `cargo test --workspace --locked --no-run` in the builder: the debug artifacts of the test profile. | `policy`, `rust`, `frontend` |
 | `build-binary` | Fetch the sources of `Cargo.lock` one time, then build the release musl binary one time (17.2). | `store`, `image`, `procurauth`, `frontend`; `api` and `browser` when their compose files exist |
 
-The job `frontend` waits for the two long builds, because its timing tests need a host that no long build loads. The jobs `pgsource`, `mongosource` and `source` run `cargo` on the host and wait for no task. 
+The job `frontend` waits for the two long builds and for the other jobs of the run, except `image`. Its timing tests need a quiet host. The jobs `pgsource`, `mongosource` and `source` run `cargo` on the host and wait for no task. 
 The jobs `pgsource` and `mongosource` build their tests in the background while their containers start. They also run their two versions at the same time. Each version has its own compose project, ports and output.
 
 Each job and each task writes its output to `target/ci-logs/<name>.log`. The script prints one line when a task starts and one line when it ends. It prints one line each minute that names the tasks that run. At the end it prints a table with the duration of each task and the total. It also shows the failed lines and the last 40 lines of the log of each failed task.

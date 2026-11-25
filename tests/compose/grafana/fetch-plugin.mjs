@@ -14,7 +14,20 @@ if (!m || !dir) {
   console.error(`fetch-plugin: PLUGIN_REF needs the form <https URL>@sha256:<digest>; pin the archive in tests/images.lock`);
   process.exit(2);
 }
-const res = await fetch(m[1]);
+// The download goes over the network. A connect timeout or a 5xx answer is a fault of the network, not of the archive,
+// so the tool tries up to 5 times. The check of the digest below stays the same for each try.
+let res;
+for (let attempt = 1; attempt <= 5; attempt++) {
+  try {
+    res = await fetch(m[1]);
+    if (res.status < 500) break;
+    console.error(`fetch-plugin: HTTP ${res.status} (try ${attempt} of 5)`);
+  } catch (e) {
+    console.error(`fetch-plugin: ${e.message}: ${e.cause?.code ?? "no code"} (try ${attempt} of 5)`);
+    if (attempt === 5) throw e;
+  }
+  await new Promise((resolve) => setTimeout(resolve, 3000 * attempt));
+}
 if (!res.ok) {
   console.error(`fetch-plugin: HTTP ${res.status} for the archive`);
   process.exit(1);

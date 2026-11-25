@@ -14,7 +14,8 @@ import { Runtime } from "../../web/js/runtime.js";
 import { expandText, interpolateText } from "../../web/js/var_options.js";
 import { fakeDocument } from "./markdown_helpers.mjs";
 
-const best = (fn, runs = 7) => {
+// The gate runs many jobs at the same time, so the timing tests take 21 runs to meet a quiet moment. The limits are the same.
+const best = (fn, runs = 21) => {
   let min = Infinity;
   for (let i = 0; i < runs; i++) {
     const t0 = performance.now();

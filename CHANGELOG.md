@@ -28,7 +28,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The vendor step does nothing when `Cargo.lock` has not changed, so the release binary is not built again for it.
 - The jobs `pgsource` and `mongosource` run their two versions at the same time.
 - The seeded random tests of `hune-core` run their seeds on all cores. The seeds 1 to 64, the cases and the checks did not change.
-- Two timing tests of the front end take more runs under load. Their limits did not change.
+- Four timing tests of the front end take more runs under load, and the job `frontend` of the gate runs when the other jobs end. The limits did not change.
+- The test of the PostgreSQL source PS14 repeats its warm-up when the source is busy. The tool `fetch-plugin.mjs` tries the download of the plugin up to 5 times. The check of the digest did not change.
 
 ### Removed
 

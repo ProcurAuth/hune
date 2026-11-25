@@ -17,8 +17,8 @@
 # Order of the run: the jobs start at the same time, except for these needs.
 #   The task `setup` builds the builder image. It runs first.
 #   The task `build-debug` builds the debug test artifacts of the workspace one time (`cargo test --workspace
-#   --no-run`). The jobs policy and rust wait for it. The job frontend waits for build-debug and build-binary: its
-#   timing tests need a host that no long build loads.
+#   --no-run`). The jobs policy and rust wait for it. The job frontend waits for build-debug and build-binary, and
+#   for the other jobs except image and the ones that do not run: its timing tests need a quiet host.
 #   The jobs pgsource, mongosource and source run cargo on the host. The host builds do not share artifacts with
 #   the builder builds, because the paths of the registry differ. These three jobs build in the folder target/host.
 #   The task `build-binary` fetches the sources one time and builds the release musl binary one time. The jobs
@@ -114,7 +114,7 @@ needs_of() {
     case $1 in
     build-debug | build-binary | import) echo setup ;;
     policy | rust) echo build-debug ;;
-    # The timing tests of the front end need a quiet host: they start when the long builds end.
+    # The timing tests of the front end need a quiet host: they start when the long builds end (and see after_of).
     frontend) echo build-debug build-binary ;;
     store | image | procurauth) echo build-binary ;;
     api)
@@ -124,6 +124,14 @@ needs_of() {
     browser)
         if [ -f tests/browser/Dockerfile ] && [ -f tests/compose/browser.yaml ]; then echo build-binary; fi
         ;;
+    esac
+}
+
+# after_of TASK : print the tasks that TASK also waits for when they are in the run. The task does not need their
+# result, and their failure does not stop it. The timing tests of the front end run when only the light tasks remain.
+after_of() {
+    case $1 in
+    frontend) echo policy rust pgsource mongosource source import store procurauth ;;
     esac
 }
 
@@ -366,6 +374,16 @@ while :; do
                 ok) ;;
                 failed) dead=$n ;;
                 *) ready=0 ;;
+                esac
+            done
+            for n in $(after_of "$t"); do
+                case " $TASKS " in
+                *" $n "*)
+                    case $(state_of "$n") in
+                    ok | failed) ;;
+                    *) ready=0 ;;
+                    esac
+                    ;;
                 esac
             done
             if [ -n "$dead" ]; then
