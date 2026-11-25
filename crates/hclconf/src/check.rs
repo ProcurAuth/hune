@@ -461,7 +461,7 @@ struct Finalizer<'a> {
     schema: &'a Schema,
     lookup: HashMap<&'static str, Value>,
     errors: Vec<ConfigError>,
-    keys: Vec<(ResolvedKey, (usize, usize, usize))>,
+    keys: Vec<(ResolvedKey, (usize, usize, usize, usize))>,
     blocks: Vec<BlockInstance>,
 }
 
@@ -521,7 +521,21 @@ impl Finalizer<'_> {
         "missing block".to_string()
     }
 
-    fn finalize(&mut self, inst: Inst, rank: usize, instance_idx: usize, parent_line: Option<u32>) {
+    fn finalize(
+        &mut self,
+        inst: Inst,
+        rank: usize,
+        instance_idx: usize,
+        parent_line: Option<u32>,
+        labelled_rank: Option<usize>,
+    ) {
+        // The keys of a labelled block stay together in the order of the table: the position of its first key.
+        let labelled_rank = if inst.desc.labelled {
+            let prefix = format!("{}.", inst.desc.path);
+            self.schema.keys.iter().position(|k| k.path.starts_with(&prefix)).or(labelled_rank)
+        } else {
+            labelled_rank
+        };
         self.errors.extend(inst.errors);
         self.blocks.push(BlockInstance {
             path: inst.desc.path,
@@ -551,7 +565,7 @@ impl Finalizer<'_> {
                             line: res.line,
                             secret: key.secret,
                         };
-                        self.keys.push((resolved, (rank, instance_idx, schema_idx)));
+                        self.keys.push((resolved, (rank, labelled_rank.unwrap_or(schema_idx), instance_idx, schema_idx)));
                     }
                 }
                 (Decision::Yes, None) if matches!(key.applies, Applies::Always | Applies::When(_)) => {
@@ -567,7 +581,7 @@ impl Finalizer<'_> {
             children = rest;
             let shown = join_display(&inst.display, child_desc.name());
             let line = (!inst.desc.path.is_empty()).then_some(inst.line).or(parent_line);
-            self.finalize_children(child_desc, mine, &shown, line, rank, instance_idx);
+            self.finalize_children(child_desc, mine, &shown, line, rank, instance_idx, labelled_rank);
         }
     }
 
@@ -579,23 +593,24 @@ impl Finalizer<'_> {
         line: Option<u32>,
         rank: usize,
         instance_idx: usize,
+        labelled_rank: Option<usize>,
     ) {
         if desc.labelled {
             if instances.len() < desc.min || instances.len() > desc.max {
                 self.errors.push(ConfigError::new(
-                    desc.name(),
+                    shown,
                     format!(
                         "expected {} to {} blocks `{} \"<label>\"`, found {}",
                         desc.min,
                         desc.max,
-                        desc.name(),
+                        shown,
                         instances.len()
                     ),
                     None,
                 ));
             }
             for (i, inst) in instances.into_iter().enumerate() {
-                self.finalize(inst, rank, i, line);
+                self.finalize(inst, rank, i, line, labelled_rank);
             }
             return;
         }
@@ -617,7 +632,7 @@ impl Finalizer<'_> {
             }
             (_, false) => {
                 for inst in instances {
-                    self.finalize(inst, rank, instance_idx, line);
+                    self.finalize(inst, rank, instance_idx, line, labelled_rank);
                 }
             }
         }
@@ -643,7 +658,7 @@ fn collect_lookup(inst: &Inst, out: &mut HashMap<&'static str, Value>) {
             out.insert(path, value.clone());
         }
     }
-    for child in &inst.children {
+    for child in inst.children.iter().filter(|c| !c.desc.labelled) {
         collect_lookup(child, out);
     }
 }
@@ -692,7 +707,7 @@ pub fn check_text_with(
         children = rest;
         let rank = schema.keys.iter().position(|k| Schema::root_of(k.path) == desc.path).unwrap_or(usize::MAX);
         let before = fin.blocks.len();
-        fin.finalize_children(desc, mine, desc.name(), None, rank, 0);
+        fin.finalize_children(desc, mine, desc.name(), None, rank, 0, None);
         debug_assert!(fin.blocks.len() >= before);
     }
 
