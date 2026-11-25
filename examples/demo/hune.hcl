@@ -8,7 +8,6 @@ server {
   listen                  = "127.0.0.1:8080"
   ops_listen              = "127.0.0.1:9090"
   base_path               = "/"
-  editing                 = true
   query_inspect           = true
   max_connections         = 1024
   idle_timeout            = "75s"
@@ -26,11 +25,9 @@ telemetry {
 }
 
 storage {
-  backend = "volume"
-
-  volume {
+  volume "main" {
     path            = "/tmp/hune-demo/dashboards"
-    read_only       = false
+    primary         = true
     rescan_interval = "5s"
     history_keep    = 100
   }

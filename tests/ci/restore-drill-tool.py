@@ -67,17 +67,17 @@ def command_config(args):
     _, tail = rest.split("\naccess {", 1)
     if args.backend == "volume":
         storage = (
-            'storage {\n  backend = "volume"\n\n  volume {\n    path            = "%s"\n'
-            "    read_only       = false\n    rescan_interval = \"1s\"\n    history_keep    = 100\n  }\n}\n\n"
+            'storage {\n  volume "main" {\n    path            = "%s"\n'
+            "    primary         = true\n    rescan_interval = \"1s\"\n    history_keep    = 100\n  }\n}\n\n"
             % args.path
         )
     else:
         storage = (
-            'storage {\n  backend = "postgres"\n\n  postgres {\n    host              = "%s"\n'
+            'storage {\n  postgres {\n    host              = "%s"\n'
             "    port              = %d\n    database          = \"%s\"\n    user              = \"%s\"\n"
             '    password_file     = "%s"\n    sslmode           = "disable"\n    max_connections   = 8\n'
             '    connect_timeout   = "5s"\n    statement_timeout = "30s"\n    poll_interval     = "1s"\n'
-            "    history_keep      = 100\n  }\n}\n\n"
+            "    primary           = true\n    history_keep      = 100\n  }\n}\n\n"
             % (args.host, args.port, args.database, args.user, args.password_file)
         )
     text = head + storage + "access {" + tail

@@ -6,7 +6,6 @@ server {
   listen                  = "127.0.0.1:8080"
   ops_listen              = "127.0.0.1:9090"
   base_path               = "/"
-  editing                 = true
   max_connections         = 256
   idle_timeout            = "75s"
   shutdown_grace          = "10s"
@@ -23,11 +22,9 @@ telemetry {
 }
 
 storage {
-  backend = "volume"
-
-  volume {
+  volume "main" {
     path            = "/data/dashboards"
-    read_only       = false
+    primary         = true
     rescan_interval = "5s"
     history_keep    = 100
   }

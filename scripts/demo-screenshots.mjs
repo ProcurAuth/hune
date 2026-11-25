@@ -391,7 +391,7 @@ async function main() {
   // 2. The Hune servers. Each one has its own copy of the dashboards.
   const baseConfig = readFileSync(join(DEMO, "hune.hcl"), "utf8");
   const servers = {};
-  async function boot(name, { editing = true, accessBlock = null } = {}) {
+  async function boot(name, { accessBlock = null } = {}) {
     const dir = join(work, name);
     const volume = join(dir, "dashboards");
     mkdirSync(dir, { recursive: true });
@@ -407,7 +407,6 @@ async function main() {
     swap('ops_listen              = "127.0.0.1:9090"', `ops_listen              = "127.0.0.1:${opsPort}"`);
     swap('path            = "/tmp/hune-demo/dashboards"', `path            = "${volume}"`);
     swap('url                        = "http://127.0.0.1:8123"', `url                        = "${chUrl}"`);
-    swap("editing                 = true", `editing                 = ${editing}`);
     if (accessBlock) {
       swap('access {\n  mode = "open"\n}\n', accessBlock);
       // The mode authzen needs a limit for each subject on each source.
@@ -622,7 +621,7 @@ async function bootAuthzen(work, boot) {
   }
 }
 `;
-  const server = await boot("authzen", { editing: true, accessBlock });
+  const server = await boot("authzen", { accessBlock });
   // The action document of Hune is the document of the service in the policy.
   const res = await fetch(server.origin + "/.well-known/procurauth/actions");
   if (res.status !== 200) throw new Error(`action document: ${res.status}`);

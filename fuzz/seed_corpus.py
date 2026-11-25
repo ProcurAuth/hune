@@ -467,7 +467,7 @@ def seed_config():
     hand = [
         'server {\n  listen = "0.0.0.0:8080"\n  listen = "0.0.0.0:8081"\n}\n',
         'unknown_block {\n}\n',
-        'storage {\n  backend = "volume"\n}\nstorage.volume {\n  path = "/data"\n}\n',
+        'storage {\n  volume "main" {\n    primary = true\n  }\n}\nstorage.volume {\n  path = "/data"\n}\n',
         'clickhouse "prod" {\n  url = "http://ch:8123"\n  password = "plain"\n}\n',
         'clickhouse "prod" {\n  url = "http://ch:8123"\n  password_env = "HUNE_TOKEN"\n}\n',
         'clickhouse "prod" {\n  url = "https://ch:8443"\n  password_file = "relative"\n}\n',

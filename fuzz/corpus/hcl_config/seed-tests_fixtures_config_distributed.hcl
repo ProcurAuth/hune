@@ -1,11 +1,10 @@
 # Hune configuration, profile distributed: PostgreSQL storage, access mode authzen, no telemetry.
-# Each key that applies is in the file, except the four keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section` and `server.repeat_max_per_dashboard`.
+# Each key that applies is in the file, except the seven keys that have a default: `server.query_inspect`, `server.repeat_max_per_panel`, `server.repeat_max_per_section`, `server.repeat_max_per_dashboard`, `server.compress_static`, `server.transform_max_cells` and `server.list_filters_min_dashboards`.
 
 server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
-  editing                 = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "30s"
@@ -22,8 +21,6 @@ telemetry {
 }
 
 storage {
-  backend = "postgres"
-
   postgres {
     host              = "hune-pg-rw"
     port              = 5432
@@ -35,6 +32,7 @@ storage {
     connect_timeout   = "5s"
     statement_timeout = "10s"
     poll_interval     = "5s"
+    primary           = true
     history_keep      = 100
 
     tls {
