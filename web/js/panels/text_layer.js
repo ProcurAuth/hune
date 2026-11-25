@@ -77,6 +77,32 @@ export function layerHost(canvas) {
   return parent;
 }
 
+// A text of the layer takes the pointer, so that a person can select it. The canvas under it must still see the pointer move: the tooltip, the
+// crosshair and the hover of a chart follow it, also over a label that the chart draws inside its plot (the state of a segment, the value of a bar).
+// The layer sends the hover to the canvas as copies of the events: the move, and the leave when the pointer goes out of the layer and not onto
+// the canvas. It sends no press and no click, so a drag that starts on a text selects it and starts nothing in the chart.
+export function forwardHover(layer, canvas) {
+  const view = canvas.ownerDocument.defaultView;
+  const copy = (type, e, bubbles) => {
+    const Event = type.startsWith("pointer") ? view.PointerEvent : view.MouseEvent;
+    canvas.dispatchEvent(new Event(type, {
+      bubbles, cancelable: true, view,
+      clientX: e.clientX, clientY: e.clientY, screenX: e.screenX, screenY: e.screenY, buttons: e.buttons,
+      pointerId: e.pointerId, pointerType: e.pointerType, isPrimary: e.isPrimary,
+    }));
+  };
+  layer.addEventListener("pointermove", (e) => {
+    copy("pointermove", e, true);
+    copy("mousemove", e, true);
+  });
+  layer.addEventListener("pointerout", (e) => {
+    const to = e.relatedTarget;
+    if (to && (to === canvas || layer.contains(to))) return;
+    copy("pointerleave", e, false);
+    copy("mouseleave", e, false);
+  });
+}
+
 // Writes the items as the spans of the layer of a canvas. The layer is made once and kept: it is replaced child by child only when the texts change.
 export function syncLayer(canvas, host, items) {
   const doc = canvas.ownerDocument;
@@ -86,6 +112,7 @@ export function syncLayer(canvas, host, items) {
     layer.className = "textLayer";
     layer.setAttribute("aria-hidden", "true");
     layer.dataset.testid = "text-layer";
+    forwardHover(layer, canvas);
     canvas.__huneTextLayer = layer;
   }
   // The layer is the last child of the host, so it is over the overlay that takes the pointer of a chart.
