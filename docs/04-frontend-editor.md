@@ -107,6 +107,7 @@ web/
     grid.js                  sections and grid (9.8)
     panel_frame.js           panel header, menu, states, View data (9.11)
     panel_wait.js            the wait of a panel: first load and reload, the preview of each type, the test of the same data: pure functions (9.11)
+    panel_preview.js         the elements of the preview of a panel, made from the tree of panel_wait.js (9.11)
     frame.js                 frame to fields (9.12)
     names.js                 display names (9.13)
     fields.js                field configuration and matchers (9.14)
@@ -1320,24 +1321,45 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - The loader is an element `panel__loader` in the title bar, with `aria-hidden="true"`. It is out of the flow (`position: absolute`), has `pointer-events: none`, and takes no room. Its right edge is 4 px left of the menu button.
 - The three dots are circles of 5 px, with 3 px between them. Their colour is the token `--accent-fill`. Each dot pulses for 1 s (the token `--dur-pulse`, the curve `ease-in-out`). Its opacity goes from 0.2 to 1, and its scale from 0.8 to 1. The second dot starts 0.15 s after the first, and the third dot 0.15 s after the second.
 - The preview is an element `panel__skeleton` in the body, with `aria-hidden="true"`. It is out of the flow, has `pointer-events: none`, and sits under the overlay. The overlay of an error, of a hint or of a note covers it. A text panel has no preview.
-- The preview is a set of simple shapes (bars, dots, lines, cells, rings and blobs). Each shape has a position and a size in per cent of the body, and keeps them. A shape changes its opacity only, from 0.45 to 1 in 1.8 s. The shapes start one after the other, 0.12 s apart. The colours are 11 % and 19 % of the token `--text`.
-- The preview of each panel type:
+- The preview is a picture of the panel in the places of the real panel. It shows what the page knows before the data come: the type, the options, the unit and the size. The function `previewOf` of `panel_wait.js` gives a tree of nodes. The module `panel_preview.js` makes the elements from the tree. A node has a tag, a class, custom properties, attributes and children. The page sets the custom properties with the CSSOM and writes no `style` attribute (9.29).
+- The preview keeps the plot where the real plot will be, so that the plot does not move when the data arrive. The sizes in px come from measures of the real charts:
+
+  | Part | Size |
+  |---|---|
+  | Space round the chart | 8 px. The preview starts inside the padding of the body. |
+  | Left gutter of a plot | The width of a typical y label and 9 px. The label is the text of the value 500 in the unit and the decimals of the field, at 7.6 px for each character. A hidden y axis gives 8 px. The property `axis_width` gives its value. |
+  | Right gutter | 8 px. When an override puts a field at the right, it is the width of a label and 9 px. |
+  | Top of a plot | 8 px, and 0 px when the y axis is hidden |
+  | Labels of the x axis | 21 px under the plot |
+  | Legend at the bottom, as a list | 30.8 px high |
+  | Legend at the bottom, as a table | A head of 28 px and rows of 22 px. It takes 35 % of the panel at most. |
+  | Legend at the right | 141 px for a list. For a table, 158 px and 58 px for each value column. |
+  | Legend of a pie | At the bottom, 22.8 px (a line of 18.8 px and a gap of 4 px). At the right, 84 px for a list, and 70 px with 40 px for each value column for a table. |
+  | Colour scale of a heatmap | 46 px, only when `show_legend` is `true` |
+  | Table | A head of 34 px and rows of 36 px, cut at the foot of the body |
+  | Logs | Rows of 28 px |
+
+- A legend that is off (`legend.show` is `false`) has no room. A panel with no `legend` member has a list at the bottom, as the real panel has.
+- The width of a legend at the right comes from the names of the series, which the page does not know before the data. The preview takes the width of a typical legend. The plot keeps its top, its left and its height. Its width follows the names when the data arrive. A state timeline reserves no legend, because its legend lists the states that the data hold.
+- The plot of the preview and the plot of the loaded chart differ by 4 px at most in left, top, width and height. This holds for a legend at the bottom and for a legend that is off. It holds for a hidden y axis, a bar chart and a pie. The labels have the typical size. The browser cases B280 and B281 measure it.
+- The preview of each panel type follows the options of the panel:
 
   | Panel type | Preview |
   |---|---|
-  | `timeseries`, `xychart` | Four grid lines and a wave of sixteen dots |
-  | `barchart` | A base line and seven bars |
-  | `stat` | A big value, a caption and a run of five dots |
-  | `gauge` | A ring that is open at its foot, and the value in its middle |
-  | `bargauge` | Three tracks, each one with a fill |
-  | `table` | A header row and five rows of three cells |
-  | `piechart` | A ring of four parts |
-  | `heatmap` | A grid of eight by four cells |
-  | `histogram` | A base line and ten bars side by side, as a bell |
-  | `state_timeline`, `status_history` | Three rows of segments |
-  | `logs` | Six lines, each one with a dot |
-  | `geomap` | Two map shapes and five markers |
+  | `timeseries`, `xychart` | Three smooth lines, an area under the first one, five grid lines, labels of the y axis (none when the axis is hidden) and labels of the x axis, then the legend of the options. With `draw` equal to `bars`, twelve bars in place of the lines, stacked when `stacking` is `normal` or `percent`. No dots. |
+  | `barchart` | Vertical: seven bars on the grid, with the axes. Horizontal: five rows with a name, a bar and a value (not with `show_values` equal to `never`), and the value axis. Stacked bars have two parts. The legend of the options. |
+  | `piechart` | A ring (`donut`) or a disc (`pie`) in the middle of the plot, and the legend of the options with round swatches |
+  | `stat` | A big value and a caption. A line under them, with an area for `graph_mode` equal to `area`, when `graph_mode` is `area` or `line`. |
+  | `gauge` | An arc that is open at its foot and a value. Three gauges with a name each when `reduce.values` is `true`. |
+  | `bargauge` | Tracks with a fill, in rows or in columns (`orientation`), four of them when `reduce.values` is `true`. Segments for `display_mode` equal to `lcd`. |
+  | `table` | A head, ten rows, and a foot when a field has a footer. The columns are the fields that the document names, from 3 to 8. |
+  | `heatmap` | Cells in a plot with its axes and its grid. A colour scale under it when `show_legend` is `true`. |
+  | `histogram` | Ten bars side by side, as a bell, with the axes (the y labels are counts of four digits, with no unit) and the legend of the options |
+  | `state_timeline`, `status_history` | Four rows of segments with their names and the x axis. No legend. |
+  | `logs` | Ten rows with a time (not with `show_time` equal to `false`), a level and a message |
+  | `geomap` | Two map shapes and five markers as rings |
 
+- One band of light crosses the preview from the left to the right in 2 s (the keyframes `panel-skel`). It is an element `::after` of `panel__skeleton`. It moves with `translateX` only, so no shape changes its size, its place or its opacity. Its colour is 72 % of the token `--surface-panel`, with a transparent edge. The shapes use 9 % and 17 % of the token `--text`. The marks of a series and the arcs use the token `--accent-fill`.
 - The page starts no timer for the loader in a panel that is not near the viewport, beyond the timer of the first wait. A print has no loader.
 - "View data" opens a dialog with the fields of the panel after the transformations, as a table. The header is the
   display name, and the cells are the display texts. This table is the text alternative of the chart (9.26).
@@ -3794,8 +3816,8 @@ The primary button is light in the dark theme, so its text is dark (`--on-fill`)
 - A coloured value text of a stat has 4.5:1 with the panel (9.19). A large text of 24 px or more has 3:1. A coloured text of a table cell has 4.5:1 (9.20).
 - The ink on a stat tile with a background colour has 3:1 or more (9.19). The ink on a table cell with a background colour has 4.5:1 or more (9.20). Where Grafana has less, Hune uses the ink with the better contrast.
 - Notices use `aria-live="polite"`. An error of a form field has `aria-describedby`.
-- No animation is longer than 200 ms. With `prefers-reduced-motion: reduce`, the page has no animation. The pulse of the loader of a panel and the glow of its preview (9.11) are the only exceptions. The pulse repeats each 1 s, and the glow each 1.8 s. They stop when the panel has its result.
-- With `prefers-reduced-motion: reduce`, the loader has no pulse and the preview has no glow. The dots show at 60 % and the shapes at 80 % of their opacity. They are decoration, so they have `aria-hidden="true"` and no contrast rule.
+- No animation is longer than 200 ms. With `prefers-reduced-motion: reduce`, the page has no animation. The pulse of the loader of a panel and the light of its preview (9.11) are the only exceptions. The pulse repeats each 1 s, and the light each 2 s. They stop when the panel has its result.
+- With `prefers-reduced-motion: reduce`, the loader has no pulse and the preview has no light. The dots show at 60 % of their opacity and the shapes are still. They are decoration, so they have `aria-hidden="true"` and no contrast rule.
 - A copy of a repeat, of a panel or of a section, has the accessible name `<title>` after the replacement of the variables (9.8c). When this title has no placeholder of the repeat variable, the name is the title, a comma and the option text of the copy. Thus a person with a screen reader tells the copies apart.
 - The copies are in the DOM order of the grid: the displayed `y`, then `x`, then the number n (9.8). The Tab order follows this order.
 - The messages of the states `repeat-empty` and `repeat-limit` have `role="note"`. The page does not announce them, because the person changed the selection and sees the result.
@@ -3957,7 +3979,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,065 KB at most (1,090,560 bytes), before compression. The limit is the measure (1,085,868 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,692 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,084 KB at most (1,110,016 bytes), before compression. The limit is the measure (1,105,706 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,310 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;

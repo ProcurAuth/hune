@@ -8,7 +8,8 @@ import { computeFieldConfig } from "./fields.js";
 import { buildLink } from "./links.js";
 import { baseDisplayNames, displayNames } from "./names.js";
 import { noteTooltip, panelRange, timeNote } from "./panel_time.js";
-import { rangeKey, sameFrames, SKELETONS, skeletonKind, WAITING, waitMode } from "./panel_wait.js";
+import { buildPreview } from "./panel_preview.js";
+import { rangeKey, sameFrames, WAITING, waitMode } from "./panel_wait.js";
 import { mentionsVariable } from "./repeat.js";
 import { badgeText, failedRefs, failedSlots, firstError, hasExtra, maxRows, slotsOf } from "./queries.js";
 import { preparePanelFrames } from "./transform.js";
@@ -59,18 +60,6 @@ const EXTRA_ICONS = { Edit: "edit", Duplicate: "copy", "Move up": "arrow-up", "M
 export function frameDataset(panel, instance = null) {
   const copy = instance && instance.n !== null && instance.n !== undefined ? { repeatN: String(instance.n), repeatCount: String(instance.count) } : {};
   return { testid: `panel-${instance ? instance.key : panel.id}`, state: "idle", type: panel.type, ...copy, ...(panel.transparent === true ? { transparent: "" } : {}) };
-}
-
-// The preview of a panel type (9.11): a few shapes in an element out of the flow. The shapes change their opacity only. A panel type with no
-// preview (a text) gets none.
-function buildSkeleton(type) {
-  const kind = skeletonKind(type);
-  if (!kind) return null;
-  const shapes = SKELETONS[kind].map((p) => el("i", {
-    dataset: { s: p.s, ...(p.parts ? { parts: "" } : {}) },
-    style: { "--x": `${p.x}%`, "--y": `${p.y}%`, "--w": `${p.w}%`, "--h": `${p.h}%`, "--n": String(p.d) },
-  }));
-  return el("div", { class: "panel__skeleton", "aria-hidden": "true", dataset: { kind } }, ...shapes);
 }
 
 // --- CSV of "View data" (9.11) ----------------------------------------------------------------------------------
@@ -273,7 +262,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   // overlay, so an error, a hint or a note hides it. Only a panel with nothing on the screen shows it (`data-wait="first"`).
   const loader = el("div", { class: "panel__loader", "aria-hidden": "true" }, el("i"), el("i"), el("i"));
   head.append(loader);
-  const skeleton = buildSkeleton(panel.type);
+  const skeleton = buildPreview(panel);
   const body = el("div", { class: "panel__body" }, content, skeleton, overlay);
   const root = el("section", {
     class: "panel",

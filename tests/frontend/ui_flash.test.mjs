@@ -117,16 +117,16 @@ test("the loader is three pulsing dots in the title bar, out of the flow, and th
   assert.match(js, /el\("div", \{ class: "panel__loader", "aria-hidden": "true" \}, el\("i"\), el\("i"\), el\("i"\)\)/);
   assert.match(js, /head\.append\(loader\);/, "the dots are in the title bar");
   assert.match(js, /el\("div", \{ class: "panel__body" \}, content, skeleton, overlay\)/, "the overlay of a state covers the preview");
-  assert.match(js, /el\("div", \{ class: "panel__skeleton", "aria-hidden": "true"/);
+  assert.match(code("web/js/panel_preview.js"), /el\("div", \{ class: "panel__skeleton", "aria-hidden": "true"/, "the preview is hidden from assistive technology");
   const css = read("web/css/panel-loading.css");
   assert.match(css, /\.panel__loader \{ position: absolute; top: 0; bottom: 0; right: calc\(var\(--space-8\) \+ var\(--space-20\) \+ var\(--space-4\)\); display: none;[^}]*pointer-events: none; \}/);
   assert.match(css, /\.panel__loader i \{ width: 5px; height: 5px; border-radius: 50%; background: var\(--accent-fill\);[^}]*animation: panel-pulse var\(--dur-pulse\) ease-in-out infinite; \}/);
   assert.match(css, /\.panel__loader i:nth-child\(2\) \{ animation-delay: 0\.15s; \}/);
   assert.match(css, /\.panel__loader i:nth-child\(3\) \{ animation-delay: 0\.3s; \}/);
   assert.match(css, /@keyframes panel-pulse /);
-  assert.match(css, /position: absolute; inset: var\(--panel-pad\); display: none; pointer-events: none;/);
-  // Reduced motion: three still, dimmed dots and still shapes. Print: nothing shows.
-  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.panel__loader i \{ animation: none; opacity: 0\.6; transform: none; \}\s*\.panel__skeleton i \{ animation: none; opacity: 0\.8; \}\s*\}/);
+  assert.match(css, /position: absolute; inset: var\(--panel-pad\); display: none; overflow: hidden; pointer-events: none;/);
+  // Reduced motion: three still, dimmed dots and a drawing with no light that sweeps. Print: nothing shows.
+  assert.match(css, /@media \(prefers-reduced-motion: reduce\) \{\s*\.panel__loader i \{ animation: none; opacity: 0\.6; transform: none; \}\s*\.panel__skeleton::after \{ animation: none; display: none; \}\s*\}/);
   assert.match(css, /@media print \{ \.panel__skeleton \{ display: none !important; \} \}/);
   assert.match(read("web/css/dashboard.css").slice(read("web/css/dashboard.css").indexOf("@media print")), /\.panel__loader \{ display: none !important; \}/);
   // The CSS names tokens only: no colour literal.
