@@ -22,6 +22,13 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The tag filter keeps the cards with one tag. The URL parameter `q` holds this tag name. Before, `q` was a text that matched a part of a title, a uid or a tag.
 - The buttons, the fields, the menus, the dialogs and the tag chips use the new tokens. The tag chip is a tint of its colour. The primary button has dark text in the dark theme.
 - The entry redirect of the list page does not read `access.create`. This is as before. The text of the specification now says it.
+- `tests/ci/all.sh` runs the jobs of the gate at the same time. It writes one log for each job in `target/ci-logs/` and prints the duration of each job. It runs each job to its end, also after a failure. The record `target/ci-all.ok` still needs all jobs to pass.
+- The options of `tests/ci/all.sh` are `--list`, `--only JOB[,JOB]`, `--from JOB` and `--max-jobs N`.
+- No job of the gate uses a fixed port of the host. The function `ci_free_port` takes a free port and reserves it.
+- The vendor step does nothing when `Cargo.lock` has not changed, so the release binary is not built again for it.
+- The jobs `pgsource` and `mongosource` run their two versions at the same time.
+- The seeded random tests of `hune-core` run their seeds on all cores. The seeds 1 to 64, the cases and the checks did not change.
+- Two timing tests of the front end take more runs under load. Their limits did not change.
 
 ### Removed
 

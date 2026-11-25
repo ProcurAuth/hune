@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `pgsource` (16.9a, 16.17): the container tests of the PostgreSQL source on PostgreSQL 15 and 18.
 # Use: tests/ci/pgsource.sh [--versions "15 18"] [--keep-going]
-#   For each version, the script does these steps.
+#   The versions run at the same time, each one in its own compose project with its own port and output. The
+#   build of the tests starts at once, in the background. For each version, the script does these steps.
 #   1. It makes the passwords (random, disposable) and the certificates under target/pgsource-<run>/.
 #   2. It starts one disposable container from tests/compose/pgsource.yaml, on 127.0.0.1 only. The first
 #      start runs tests/fixtures/postgres-source/init.sql.

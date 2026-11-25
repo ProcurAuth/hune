@@ -21,7 +21,9 @@ node --test tests/frontend/<name>.test.mjs
 python3 -I scripts/check-docs.py
 ```
 
-The full gate (`tests/ci/all.sh`) is heavy. It needs Docker, and it starts ClickHouse, PostgreSQL and MongoDB. Each job of the gate has its own script in `tests/ci/`, for example `tests/ci/frontend.sh` or `tests/ci/browser.sh`. Run the script of the job that covers your change. The CI on GitHub runs the same jobs.
+The full gate (`tests/ci/all.sh`) is heavy. It needs Docker, and it starts ClickHouse, PostgreSQL and MongoDB. It runs the jobs at the same time, and it needs a host with many cores and about 25 GB of free disk. 
+
+Each job has its own script in `tests/ci/`, for example `tests/ci/frontend.sh` or `tests/ci/browser.sh`. Run the script of the job that covers your change, or run `tests/ci/all.sh --only JOB`. The logs of a gate run are in `target/ci-logs/`. The CI on GitHub runs the same jobs.
 
 ## Rules of the code
 

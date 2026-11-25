@@ -82,7 +82,7 @@ Use these commands from the root of the repository. The toolchain file selects R
 6. Run `tests/ci/policy.sh --local`.
 7. Run `python3 -I tools/ste_lint.py docs/*.md README.md CHANGELOG.md`.
 
-The workflows in `.github/workflows` run the CI and the release on GitHub. They are optional. An operator can run every job and the release with `tests/ci/all.sh` and `tests/ci/release.sh`, with no GitHub Actions. The script `tests/ci/all.sh` runs every job of the merge gate in order and stops at the first failure (16.17). The option `--list` prints the jobs.
+The workflows in `.github/workflows` run the CI and the release on GitHub. They are optional. An operator can run every job and the release with `tests/ci/all.sh` and `tests/ci/release.sh`, with no GitHub Actions. The script `tests/ci/all.sh` runs every job of the merge gate at the same time and runs each job to its end (16.17a). The option `--list` prints the jobs, `--only` and `--from` choose some jobs, and `--max-jobs` limits the load.
 
 These scripts need Docker. Each one starts local containers on `127.0.0.1` and removes them at the end.
 

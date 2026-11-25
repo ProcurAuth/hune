@@ -30,7 +30,9 @@ The Rust tests that need a database or a server are ignored by default. The scri
 
 ## The merge gate
 
-The script `tests/ci/all.sh` runs the jobs of the gate in order and stops at the first failure: `policy`, `rust`, `store`, `pgsource`, `mongosource`, `api`, `source`, `frontend`, `browser`, `import`, `image`, `procurauth` and `failover`. The option `--from JOB` continues a run after a fix. The jobs are heavy: run only the one that covers your change. When all jobs pass on a clean tree, the script records the commit in `target/ci-all.ok`.
+The script `tests/ci/all.sh` runs the jobs of the gate at the same time: `policy`, `rust`, `store`, `pgsource`, `mongosource`, `api`, `source`, `frontend`, `browser`, `import`, `image`, `procurauth` and `failover`. Each job runs to its end, also after a failure, and writes its output to `target/ci-logs/<job>.log`. At the end the script prints the duration of each job and the tail of each failed log.
+
+The option `--only JOB[,JOB]` runs some jobs, `--from JOB` runs the jobs from `JOB` on, and `--max-jobs N` limits the number of tasks at the same time. The jobs are heavy: run only the one that covers your change. When all jobs pass on a clean tree, the script records the commit in `target/ci-all.ok`.
 
 The workflows in `.github/workflows/` run the same jobs on GitHub. They are an option. The scripts need no GitHub Actions.
 

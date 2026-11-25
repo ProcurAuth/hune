@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: MIT OR Apache-2.0
 # Job `mongosource` (16.9b, 16.17): the container tests of the MongoDB source on MongoDB 7.0 and 8.0.
 # Use: tests/ci/mongosource.sh [--versions "7.0 8.0"]
-#   For each version, the script does these steps.
+#   The versions run at the same time, each one in its own compose project with its own ports and output. The
+#   build of the tests starts at once, in the background. For each version, the script does these steps.
 #   1. It makes the passwords (random, disposable), the certificates and the key file under target/mongosource-<run>/.
 #   2. It starts five disposable containers from tests/compose/mongosource.yaml, on 127.0.0.1 only: the main
 #      server (authorization on, TLS only, --noscripting), a server with scripting on (MS18), a replica set of

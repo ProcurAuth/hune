@@ -1775,7 +1775,7 @@ The name of each test starts with its case id in lower case, for example `ps04_r
 
 The `mongosource` job runs these cases on MongoDB 7.0 and on the newest 8.x release. Each version has a tag and a digest in `tests/images.lock`. Each test server runs in a disposable container on `127.0.0.1`, with synthetic data only. The server runs with authorization on, TLS only and `--noscripting`.
 
-A second server runs without `--noscripting` for the case MS18. A third server is a replica set of two members in one container for the case MS12 and the case MS09. The key `hosts` needs 2 to 7 members. The ports are in the range 27101 to 27120 of `127.0.0.1`.
+A second server runs without `--noscripting` for the case MS18. A third server is a replica set of two members in one container for the case MS12 and the case MS09. The key `hosts` needs 2 to 7 members. Each port is a free port of `127.0.0.1`, taken at the start of the job (16.17a).
 
 At its first start, each server runs `tests/fixtures/mongo-source/init.js`. This file holds these items:
 
@@ -2494,13 +2494,15 @@ The workflows are `.github/workflows/ci.yaml` (each push and pull request), `nig
 The scripts `tests/ci/all.sh` and `tests/ci/release.sh` are the release path of the project. They run every job and the release
 with no GitHub Actions and no GitHub billing. The workflows in `.github/workflows` are an option. They run the same jobs on GitHub.
 
-The script `tests/ci/all.sh` runs the jobs of the merge gate in this order, and it stops at the first failure: `policy`,
-`rust`, `store`, `pgsource`, `mongosource`, `api`, `source`, `frontend`, `browser`, `import`, `image`, `procurauth` and
-`failover`. Its option `--from <job>` continues a run after a fix. It runs `procurauth` and `failover` on each full run, with no
-path filter. The job `failover` is a stub until M5. The jobs `nightly` and `load` stay by hand.
+The script `tests/ci/all.sh` runs the jobs of the merge gate at the same time: `policy`, `rust`, `store`, `pgsource`,
+`mongosource`, `api`, `source`, `frontend`, `browser`, `import`, `image`, `procurauth` and `failover`. A full run takes about as
+long as its longest chain of jobs, and not the sum of the jobs. 16.17a gives the order, the options and the isolation of the jobs.
 
-A full run of `all.sh` on a clean work tree writes the commit in `target/ci-all.ok`. The script `tests/ci/release.sh` (17.3)
-refuses a commit that this file does not name.
+The script runs `procurauth` and `failover` on each full run, with no path filter. The job `failover` is a stub until M5.
+The jobs `nightly` and `load` stay by hand.
+
+A full run of `all.sh` on a clean work tree writes the commit in `target/ci-all.ok`, after all jobs passed. The script
+`tests/ci/release.sh` (17.3) refuses a commit that this file does not name.
 
 | Job | When | Command | Main steps |
 |---|---|---|---|
@@ -2541,6 +2543,42 @@ file `tests/ci/milestone` holds the last milestone that passed, for example `M2`
 case on each push. They fail only when a case of the gate list of that milestone, or of an earlier one, fails. A job or a
 case that the gate does not run yet gives a result for information only.
 A person can run the whole gate with `tests/ci/all.sh`.
+
+### 16.17a The parallel run of the gate
+
+The script `tests/ci/all.sh` starts the jobs as background processes. It does not stop at the first failure. Each job runs to its end, so one run shows each failure. The exit code is 1 when a job fails.
+
+| Option | Effect |
+|---|---|
+| `--list` | Print the jobs and exit. |
+| `--only JOB[,JOB]` | Run only these jobs, and the build tasks that they need. A run with `--only` does not record the gate. |
+| `--from JOB` | Run `JOB` and the jobs after it in the order of `--list`. A run with `--from` does not record the gate, except `--from policy`. |
+| `--max-jobs N` | Start at most `N` tasks at the same time. The default has no limit. Use it on a host that is smaller than the host of this section. |
+
+Some jobs wait for a build task. Each task runs one time, and its result serves each job that needs it. A job that needs a failed task does not start. The other jobs still run.
+
+| Task | What it does | Jobs that wait for it |
+|---|---|---|
+| `setup` | Build the builder image of 17.2 when it does not exist. | `build-debug`, `build-binary`, `import` |
+| `build-debug` | `cargo test --workspace --locked --no-run` in the builder: the debug artifacts of the test profile. | `policy`, `rust`, `frontend` |
+| `build-binary` | Fetch the sources of `Cargo.lock` one time, then build the release musl binary one time (17.2). | `store`, `image`, `procurauth`, `frontend`; `api` and `browser` when their compose files exist |
+
+The job `frontend` waits for the two long builds, because its timing tests need a host that no long build loads. The jobs `pgsource`, `mongosource` and `source` run `cargo` on the host and wait for no task. 
+The jobs `pgsource` and `mongosource` build their tests in the background while their containers start. They also run their two versions at the same time. Each version has its own compose project, ports and output.
+
+Each job and each task writes its output to `target/ci-logs/<name>.log`. The script prints one line when a task starts and one line when it ends. It prints one line each minute that names the tasks that run. At the end it prints a table with the duration of each task and the total. It also shows the failed lines and the last 40 lines of the log of each failed task.
+
+**Isolation of the jobs.** Each job names its containers, networks, volumes, images and folders with its own process id. No job uses a fixed port of the host. A job that publishes a port takes a free port of `127.0.0.1` at its start, with `ci_free_port` of `tests/ci/ci-lib.sh`. The function takes a port from 20000 to 29999, which is below the ephemeral ports of Linux. It reserves the port in `target/ci-ports/`, so two jobs never take the same port. The default mode of `procurauth` and the restore drill publish no port of the host.
+
+**Cargo folders.** Each group of jobs has its own target folder, so the jobs do not wait for the build lock of one another. The folder `target` serves `build-debug` and `rust`. The folders `target/policy`, `target/import` and `target/host` serve `policy`, `import`, and the three jobs that run `cargo` on the host. The host builds cannot share artifacts with the builder builds, because the paths of the registry differ. The release binary is in `target/<triple>/release/`.
+
+The vendor step runs one time. It does nothing when `Cargo.lock` has not changed since its last run. A second vendor run writes each source file again, and cargo then builds the git dependencies and `hune` again, which takes more than 3 minutes. A new commit also builds the release binary again, because the binary holds the commit and its date (17.2).
+
+**Resources.** The full gate needs Docker, 22 cores and 93 GB of memory for the times of 16.17b. A host with fewer cores gives longer times, and `--max-jobs` limits the load. The `target/` folder of a gate run takes about 25 GB of disk, of which each debug folder takes about 5 to 10 GB. Make sure that 40 GB of disk are free.
+
+The jobs that are off the longest chain run with a low CPU weight (`nice` and `--cpu-shares`). The longest chain is the release build and the jobs that use its binary.
+
+The seeded random tests of `hune-core` (16.4) run their seeds on all cores of the host, with one thread for each seed at a time. Each seed has its own generator, so a seed gives the same cases as in a run on one thread. The seeds are still 1 to 64, with the same count of cases. The first failure stops the other threads after their current seed. Its report names the seed.
 
 ### 16.18 Policy checks
 

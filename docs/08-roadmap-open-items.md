@@ -1268,6 +1268,18 @@ The list page has a card view, and the whole page has a calmer look. The text of
 
 Open question: are these choices right? Default today: the text of 9.7 and 9.25.
 
+### 19.36 The parallel run of the merge gate
+
+`tests/ci/all.sh` runs the jobs of the gate at the same time on one host (16.17a). It runs each job to its end and does not stop at the first failure. The record `target/ci-all.ok` is the same as before. It names the commit after all jobs passed on a clean work tree.
+
+The speed of the run depends on the host. The times of 16.17a come from a host with 22 cores, 93 GB of memory and Docker. A smaller host gives longer times, and the option `--max-jobs` limits the load. The run needs about 25 GB of disk for its target folders. A timing test can fail on a busy host with no fault of the product. Two tests of the front end got more runs for this reason, and the limits did not change.
+
+The seeded random tests of `hune-core` run their seeds on all cores. The other choice was a higher `opt-level` for `hune-core` in the dev profile. It made the one-core test about 5 times faster (41 s against 205 s). It cost 16 s of compile time for each build, and it needs a change of the profile.
+
+The threads made the test 12 times faster (17 s). They need no change of the profile and have no compile cost. The seeds, the cases and the checks did not change.
+
+The owner MUST read again these choices. They are the parallel run on one host, the resources that it needs, and the threads for the random tests. The options of `all.sh` (`--only`, `--from`, `--max-jobs`) are the last choice. The jobs `pgsource` and `mongosource` also run their two versions at the same time now.
+
 ## 20. Glossary and references
 
 ### 20.1 Glossary
