@@ -106,10 +106,13 @@ in_builder() {
     mkdir -p "$ROOT/target/ci-cargo-home"
     # CARGO_TARGET_DIR (a path under the root, for example target/policy) goes into the container. tests/ci/all.sh
     # gives each group of jobs its own target folder, so the jobs do not wait for the build lock of one another.
+    # CI_CPU_SHARES is the CPU weight of the container (the default of Docker is 1024). tests/ci/all.sh gives a low
+    # weight to the jobs that are not on its longest chain, so the long release build gets the CPU first.
     docker run --rm --user "$(id -u):$(id -g)" \
         -v "$ROOT:/src" -w /src \
         -e HOME=/tmp -e CARGO_HOME=/src/target/ci-cargo-home \
         -e "RUSTUP_TOOLCHAIN=$(ci_toolchain)" \
+        --cpu-shares "${CI_CPU_SHARES:-1024}" \
         ${CARGO_TARGET_DIR:+-e "CARGO_TARGET_DIR=$CARGO_TARGET_DIR"} \
         "$BUILDER_TAG" "$@"
 }

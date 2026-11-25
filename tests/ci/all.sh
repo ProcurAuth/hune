@@ -139,6 +139,16 @@ target_dir_of() {
     esac
 }
 
+# is_low TASK : succeed when the task is not on the longest chain of a full run (the release build, then the jobs
+# that use the binary). It runs with a low CPU weight, so the release build, which has a long step on one core,
+# gets the CPU first on a host that is full.
+is_low() {
+    case $1 in
+    build-debug | policy | rust | pgsource | mongosource | source) return 0 ;;
+    *) return 1 ;;
+    esac
+}
+
 # The tasks of this run: the build tasks that the jobs need (in dependency order), then the jobs.
 TASKS=
 add_task() {
@@ -246,6 +256,12 @@ start_task() {
         if [ -n "$st_tdir" ]; then
             CARGO_TARGET_DIR=$st_tdir
             export CARGO_TARGET_DIR
+        fi
+        if is_low "$st_name"; then
+            # The processes that the task starts later keep this priority. A container gets a low CPU weight.
+            CI_CPU_SHARES=256
+            export CI_CPU_SHARES
+            renice -n 5 -p "$(sh -c 'echo $PPID')" >/dev/null 2>&1 || true
         fi
         st_t0=$(now)
         st_rc=0
