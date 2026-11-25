@@ -1467,6 +1467,11 @@ The JSON view of the edit mode (10.4) adds these tests to the groups of the tabl
 - Front end: `tests/frontend/json_area.test.mjs` tests the colour of each kind of token, a text that is not valid and the cap of 2,000 parts for a row. It tests the line diff for the marks of the gutter. The cases are an added, a modified and a deleted line. Other cases are the two ends of the text, a long text and the compare by place above the cap. It also reads the CSS: the colour tokens, the metrics of the two layers and the rule of the height.
 - Browser: the case B240.
 
+The stores in the page (9.6, 9.7, 9.8) add these tests to the groups of the table:
+
+- Front end: `tests/frontend/stores.test.mjs` tests the groups by store, the marks of a card and the items of the selector. It tests the texts and the message of `read_only_store` too.
+- Browser: the cases B241 to B244. The case B01 and the entry case B33 use a dashboard that becomes not valid after the start.
+
 The default range and the default refresh (10.9) add these tests to the groups of the table:
 
 - Front end: `tests/frontend/time_defaults.test.mjs` tests what differs and what the saved document gets. It tests the refusal of a range that the settings form refuses. It also tests the Save dialog, the button "Save" and the end of a view.
@@ -1861,7 +1866,7 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 
 | Case | Check |
 |---|---|
-| B01 | The list page shows one card for each dashboard, and no folder title for one folder. A card is an `article` with a title link and the tags. A dashboard of a volume has no badge of the last change. An invalid document shows as a card with its errors. The tag filter keeps the cards with a tag, and the URL holds `q`. The page has no search field (9.7). |
+| B01 | The list page shows one card for each dashboard, and no folder title for one folder. A card is an `article` with a title link and the tags. A dashboard of a volume has no badge of the last change. A file that becomes not valid after the start shows as a valid card with the warning mark, and the API gives `stale` with no path (9.7). The tag filter keeps the cards with a tag, and the URL holds `q`. The page has no search field (9.7). |
 | B02 | The grid: each panel box has the position and size of its grid numbers (rows of 30 px, gaps of 8 px). |
 | B03 | Each of the 7 panel types renders its fixture: table, timeseries (lines and bars), stat, barchart, piechart, xychart, bargauge. |
 | B04 | Table overrides by name and by regular expression, each with each property of the property set (4.18, 9.14). The regular expressions use the form of 4.17, with the fixture pattern `/^Total$/` (19.29). A stat panel whose `reduce.fields` is `/^Total$/` shows the field `Total`. |
@@ -1882,7 +1887,7 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B19 | Conflict: a second browser context saves first. The first context gets the conflict screen with a line diff and the three choices of section 10. Each choice gives its result. |
 | B20 | History: list, read-only view with the note "Data not shown" in each panel and one "Show data" button for the page, diff, restore as a new version. |
 | B21 | Export and import of one document. Delete, then restore. |
-| B22 | With no primary store, no edit control is in the DOM. |
+| B22 | With no primary store, no edit control is in the DOM. The cards of the read-only store have the lock and no three dots, and the dashboard has the lock in the header (9.7, 9.8). |
 | B23 | Mode `authzen` with `fake-pdp`: no edit control without `dashboard.write`, no "Run" of a draft without `source.query`, and the notice of 9.6 when the PDP is down. |
 | B24 | A panel whose source is down shows its error. The other panels render. |
 | B25 | Data links follow 9.18: only `http`, `https` and relative URLs; each value is URL-encoded. A link with `target_blank` = `true` opens a new tab with `rel="noopener noreferrer"`. A link with `false` opens in the same tab. |
@@ -1893,7 +1898,7 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B30 | One dashboard in a folder, and one empty folder: the entry page goes to the dashboard. |
 | B31 | Two dashboards: the list shows, and no guard key is written. |
 | B32 | Access lost: a `403` on the dashboard after the redirect shows its page; "Go to the list" shows the list with no redirect. A full reload within 10 seconds shows the list. After a delete, a reload shows the empty state. |
-| B33 | One `invalid` item: no redirect. |
+| B33 | One dashboard whose file is not valid now: the entry redirect opens it with its last valid state, and the page shows the warning (9.7, 9.8). |
 | B34 | `q=chain` and `q=zzz` show the list, and an empty `q` redirects. With the filters hidden, `q` does not change the cards and it still stops the redirect (9.7). |
 | B35 | Mode `authzen` with `fake-pdp`: a subject with one visible dashboard goes to it; a subject with none sees "No dashboard is visible to you."; a subject with more sees the list. |
 | B36 | Stat: `justify` `auto` centres an item with no name and aligns left an item with a name. `center` centres both (9.19). The fixture holds a stat with one item and a stat with three items. |
@@ -2082,6 +2087,10 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B232 | The defaults from the Save dialog (10.9). With no difference, "Save" is not active. A different range makes "Save" active and "Revert" not. The dialog shows one box for each value that differs, both off at first, with the hint of the current value and the default. The range alone, then the refresh alone, change only their own members of the saved document. The address then names only the values that still differ. |
 | B233 | The view of one panel has no page scrollbar (9.8). At 1440x900, 1280x720, 768x600 and 390x844, in the light and the dark theme, for a dashboard without variables and a dashboard with variables: the document and the body are not taller than the window, and no vertical scrollbar takes room from the page. Without variables the panel starts one page padding under the header and ends one page padding above the window edge: 16 px, and 12 px at 390 px. With variables the panel ends at least one page padding above the window edge. |
 | B240 | The JSON view of the edit mode (10.4). The text has colours: a key, a text, a number and the punctuation each have a colour, in the light and the dark theme, with 4.5:1 or more on the area. The bars of the gutter have 3:1 or more. The text area is transparent, and the first row of the layer is the first line of the text. A draft with no change has no mark. A changed line gets `modified`, two new lines get `added`, a deleted line leaves a mark at the border, and a syntax fault marks the line of the list of errors. A revert gives back the saved text and clears the marks. The area ends one page padding above the edge of the window, and the page has no scroll, at 1440x900, 1280x720, 768x900 and 390x800, with and without the list of errors. A text of 6,000 lines draws a window of rows and not all of them, a jump draws the row at the top, and a text of one line has 2,000 coloured parts at most. |
+| B241 | A read-only store (9.7). A server with a primary volume and a read-only volume `lab`. The list shows the store as a root group with a lock and its title. Its folders are under the title. Each card of the store has the lock and no three dots, and all cards have one height. The menu "New" lists New dashboard, New folder and Import. The dialog "New dashboard" lists the folders of the primary only. |
+| B242 | A file of the read-only store that is not valid after the start (9.7, 9.8). The API gives `read_only`, `store` and `stale`, with no path. The card has the warning mark and the lock. The page has the warning notice, the lock and no switch "Edit". The mark goes when the file is valid again. |
+| B243 | The header selector (9.6). The read-only store is a row with a lock. A click opens its two folders, and a click on a dashboard of the store opens it. |
+| B244 | A write to the read-only store (6.8). The API gives `403 read_only_store` for a create, a save and a delete, and the primary accepts a write. The page of the dashboard with `edit=1` has no edit control and has the lock. |
 
 A build made with `--no-default-features` has no MongoDB driver and refuses the `mongodb` block at start (8b.2). The runner then reports B47 and B48 as `skip`, with the reason "no MongoDB driver in this build". It detects this case from the exit status and the message of `hune check-config`. A build with the driver (the default build) runs both cases against a disposable MongoDB 8.0 with `openssl` and `docker`.
 

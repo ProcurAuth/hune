@@ -399,6 +399,9 @@ The selector of the dashboards follows the host selector of ClickHouse Dash and 
 - When the user sees two folders or more, each folder is a row with a chevron and the folder icon. A click on the row opens or closes the list of its dashboards under it. A folder with no dashboard has no row.
 - The folder of the current dashboard is open at the first open of the menu. The page keeps the choice of the person until the page loads again.
 - When the user sees one folder, the menu lists the dashboards with no folder row. This is the rule of the list page for the folder title (9.7).
+- A read-only store is a row with a lock icon and its title. A click opens or closes the list under it. The list holds the folders of the store as rows, or its dashboards for one folder.
+- The rows at the root are the folders of the primary and the read-only stores. With one root group that is a store, the menu lists its folders, or its dashboards for one folder.
+- The store of the current dashboard is open at the first open of the menu, as its folder is.
 - The current dashboard has the selected fill, its edge and a check mark. A choice of another dashboard opens it as a link of the page does. The leave warning of 10.2a applies.
 - The menu reads the folders and the dashboards at each open. It shows the last answer at once. At the first open it shows the disabled line `Loading…` until the answer comes. The new answer fills the menu again, and the focus stays on the same row.
 - The page never waits for this read to draw the dashboard. A read that fails shows "The list did not load." in the menu.
@@ -480,6 +483,25 @@ Folders:
 - A folder title shows above its cards only when the user sees two folders or more. It is the folder icon and the name, in small muted capitals. It spans the whole row.
 - With one folder, or with no folder, the page shows no folder title. An empty folder shows the text "This folder is empty." under its title.
 - With `editing` `true` and `access.write` on a folder, the title has a menu with "Rename" and "Delete" (10.7). A user who sees one folder only has no title, and so has no menu of the folder. "New folder" is in the header (below).
+
+Stores:
+
+- The server has one primary store and read-only stores (6.10). The member `stores` of the session lists them. The folders of the primary show at the root, as above.
+- A read-only store is one root group. Its title is the `title` of the store, with a lock icon, in small capitals. The hook is `data-testid="store-<id>"`.
+- The folders of a read-only store show under its title. They have an indent of 16 px, and their title is smaller. Their hooks are the same as for the folders of the primary.
+- The groups at the root are the folders of the primary and the read-only stores. The title of a root group shows only when there are two groups or more.
+- When the title of the only root group is a store, its folders show their titles for two folders or more.
+- The read-only stores come after the folders of the primary, in title order. The sort "Z–A" reverses the order of the stores.
+- The page has no visible title. It has one `h1` with the text "Dashboards" for assistive technology, hidden with `visually-hidden`.
+
+Marks on a card:
+
+- A card whose item has `read_only` set to `true` shows a lock after the badge. Its name and its tooltip are "Read-only store". The hook is `data-testid="card-lock-<uid>"`.
+- A card that is read-only has no three dots and no button. Its `access.write` is `false` (6.12).
+- A card whose item has a `stale` code shows a warning mark. Its name and its tooltip are "The file is not valid. The last valid version is shown.". The hook is `data-testid="card-stale-<uid>"`.
+- A stale card is a valid card: it keeps its title, its link and its tags. The mark never shows a path or a message of the parser.
+- Each mark is a picture 20 px high, so a card has the same height with and without it. The mark of a file that is not valid uses the token `--warning`.
+- "New dashboard", "Move" and "Import" list only the folders of the primary: they list the folders with `access.write` set to `true`. A server with no primary store has no button "New".
 
 The grid:
 
@@ -566,6 +588,14 @@ The page loads in this order:
 2. It computes the time range, the refresh and the variable selections from the URL and the document (9.9, 9.10).
 3. It shows the header with its controls (9.9), the row with the variables bar (9.10), and the grid, with no data.
 4. It loads the variable options (9.10), then it plans the panel queries.
+
+Stores:
+
+- The answer of step 1 has `read_only` and, for a file that is not valid now, `stale` (6.14). These members come from the store of the dashboard.
+- A dashboard with `read_only` set to `true` has a lock in the header, where the switch "Edit" would be. Its name and its tooltip are "Read-only store". The hook is `data-testid="read-only-lock"`.
+- A read-only dashboard has no switch "Edit", because its `access.write` is `false`. It is the path of a user who has no right to write. A link with `edit=1` opens no editor.
+- A dashboard with `stale` shows one warning notice after the load. Its text is "The file of this dashboard is not valid. The last valid version is shown.". The hook is `data-notice="stale"`.
+- The notice shows once for each page load, and it moves no part of the page. The views JSON and Inspect stay readable.
 
 Grid:
 
@@ -3894,7 +3924,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,034 KB at most (1,058,816 bytes), before compression. The limit is the measure (1,054,240 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,576 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,043 KB at most (1,068,032 bytes), before compression. The limit is the measure (1,063,914 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,118 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;

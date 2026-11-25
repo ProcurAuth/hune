@@ -26,6 +26,11 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The JSON area has colours. A key, a text, a number, `true` and `false`, `null` and the punctuation each have one. The colours are the tokens of the SQL colours, with 4.5:1 or more in both themes. The JSON area of the panel has them too.
 - The gutter of the dashboard JSON view marks each line that differs from the saved dashboard. A green bar is an added line, a blue bar is a modified line, and a red arrow shows where lines are gone. A red band shows the line of a syntax fault.
 - The case B240 (`tests/browser/cases/json_view.mjs`) and the tests of `tests/frontend/json_area.test.mjs`.
+- The list page shows a read-only store as one root group with a lock and its title, and its folders under it. A card of a read-only store has a lock and no three dots. A card whose file is not valid now has a warning mark, and it shows the last valid state.
+- The header selector shows a read-only store as a row with a lock. The dashboard page of a read-only store has a lock in the header, in place of the switch "Edit". A dashboard with a file that is not valid shows one warning notice.
+- The message of the code `read_only_store`: "This dashboard is in a read-only store. It cannot be changed."
+- The list page has one `h1` for assistive technology, with no visible title.
+- The module `web/js/stores.js`, and the cases B241 to B244 (`tests/browser/cases/stores.mjs`).
 - The file `web/js/switcher.js`: the selector of the dashboards in the header. The button shows the title of the dashboard. Its menu lists the dashboards that the user can see. When the user sees two folders or more, each folder is a row that opens and closes its dashboards.
 - The function `bindMenu` in `web/js/ui.js`. A button opens its menu with a click or with the keys Down and Up. A letter goes to the next line that starts with it.
 - A preview for a panel that loads for the first time. It has simple shapes for the type of the panel: dots, bars, a ring, cells or lines. The shapes change their opacity only. They stop under `prefers-reduced-motion`.
