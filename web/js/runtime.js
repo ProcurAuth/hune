@@ -10,7 +10,7 @@ import { DEFAULT_LIMITS, buildPlan, canRepeatBy, copyVariables, orderedValues, s
 import { failedSlots, isWholeError, panelState, queriesOf, requestBody } from "./queries.js";
 import { effectiveZone, resolveRange } from "./time.js";
 import { gridDoc } from "./var_layout.js";
-import { ALL, buildOptions, expandText, interpolateText, optionsOf, placeholderInfo, replacement, requestValue, resolveSelection } from "./var_options.js";
+import { ALL, buildOptions, defaultSelection, expandText, interpolateText, optionsOf, placeholderInfo, replacement, requestValue, resolveSelection } from "./var_options.js";
 
 export const MAX_IN_FLIGHT = 6;
 
@@ -141,6 +141,19 @@ export class Runtime {
       }
     }
     this.rebuild();
+  }
+
+  // The selection that a variable gets when the URL has no value for it (9.5), or null when it is not known: a constant has none in the URL, and a
+  // query variable has none until its options load. The address leaves out a variable whose selection equals this one.
+  defaultSelection(name) {
+    const variable = this.varByName.get(name);
+    if (!variable || variable.kind === "constant") return null;
+    if (variable.kind === "adhoc") return adhocSelection(variable, this.adhocKeys.get(name), undefined).selection;
+    if (variable.kind === "query") {
+      const loaded = this.options.get(name);
+      return loaded ? defaultSelection(variable, optionsOf(variable, loaded)) : null;
+    }
+    return defaultSelection(variable, optionsOf(variable, null));
   }
 
   // Tells the page that a variable dropped a requested value (9.10). The selection is set before the call.

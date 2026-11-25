@@ -139,6 +139,19 @@ export function resolveSelection(variable, options, urlValues, currentValues) {
   return { all: false, values: [] };
 }
 
+/**
+ * The selection that the page picks for a variable when the URL has no value for it (9.5): the rules of `resolveSelection` with no URL value and no
+ * current selection. `options` are the options of the variable as the page knows them now.
+ */
+export function defaultSelection(variable, options) {
+  return resolveSelection(variable, options, undefined, undefined);
+}
+
+/** True when two selections have the same All flag and the same values in the same order. */
+export function sameSelection(a, b) {
+  return a.all === b.all && a.values.length === b.values.length && a.values.every((v, i) => v === b.values[i]);
+}
+
 /** The values that the page requested and drops (9.10): not an option, and not a typed value of an open variable. `$__all` stays with `include_all`. */
 export function droppedValues(variable, options, requested) {
   const keep = stays(variable, new Set(options.map((o) => o.value)));

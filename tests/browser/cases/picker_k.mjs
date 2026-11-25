@@ -114,7 +114,8 @@ export const cases = [
       await openPopup(p);
       await p.clickText(".picker__quick-item", "Last 6 hours");
       await p.waitGone(POP);
-      t.eq((await params(p)).from, "now-6h", "a quick range gives the relative text");
+      // "Last 6 hours" is the range of the document: the address leaves out the range (9.5). B69 and B07 check a relative range that differs.
+      t.eq(JSON.stringify([(await params(p)).from, (await params(p)).to]), "[null,null]", "a quick range that is the default of the document is not in the address");
       await openPopup(p);
       t.eq(await p.eval(`[...document.querySelectorAll('.picker__quick-item[aria-current="true"]')].map((e) => e.textContent)`), ["Last 6 hours"], "the current range is marked");
       t.eq(await texts(p, ".picker__popup .picker__heading"), ["Absolute time range", "Quick ranges"], "a quick range is not in the recent list");

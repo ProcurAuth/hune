@@ -2,10 +2,11 @@
 
 import * as api from "../api.js";
 import * as editorRoutes from "./api_editor.js";
-import { badge, button, clear, el, notify, openDialog, uniqueId } from "../ui.js";
+import { badge, button, clear, el, notify, openDialog, toggle, uniqueId } from "../ui.js";
 import { renderDiff } from "./diff_view.js";
 import { errorLink } from "./form.js";
 import { classifySaveError, savedText } from "./save_logic.js";
+import { rangeProblem, refreshText, timeDifferences, withTimeDefaults } from "./time_defaults.js";
 
 // Sends the save of the draft. It returns { answer } or { error, kind }.
 // `etag` is the base etag, or the current etag after a conflict (10.10).
@@ -37,14 +38,14 @@ export function announceSaved(answer) {
 
 // The tabs of the drawer (as in Grafana): "Details" holds the message, "Changes" holds the line diff from the stored version to the
 // draft (10.15). The diff loads in the background, and its size shows on the tab. It reads the same two texts as the conflict screen.
-function changesPanel(E) {
+function changesPanel(E, docOf) {
   const panel = el("div", { class: "save-changes", role: "tabpanel", hidden: true, dataset: { testid: "save-changes" } }, el("p", { class: "muted", text: "Loading the changes." }));
   const count = badge("");
   count.hidden = true;
   const load = async () => {
     try {
       const theirs = await api.dashboardDownload(E.uid);
-      const mine = (await editorRoutes.validateDocument({ uid: E.uid }, JSON.stringify(E.doc))).canonical;
+      const mine = (await editorRoutes.validateDocument({ uid: E.uid }, JSON.stringify(docOf()))).canonical;
       const view = renderDiff({ text: theirs.text, name: `${E.uid}-stored.json` }, { text: mine, name: `${E.uid}-draft.json` });
       let changed = 0;
       for (const hunk of view.result.hunks || []) for (const l of hunk.lines) if (l.op !== " ") changed += 1;
@@ -73,6 +74,23 @@ export function openSaveDialog(E, { onSaved } = {}) {
   let saveButton;
   let dialog;
 
+  // The default time range and the default refresh (10.9, rule 6). The header controls hold a current range and a current refresh. A box shows only
+  // when its value differs from the default of the draft. Both boxes are off at first: nothing changes unless the person selects one.
+  const current = E.api.pageApi.currentTime;
+  const differs = timeDifferences(E.doc.time, current);
+  const boxes = {};
+  let applied = false;
+  let changesLoaded = false;
+  const choose = () => ({ range: Boolean(boxes.range && boxes.range.input.checked), refresh: Boolean(boxes.refresh && boxes.refresh.input.checked) });
+  const effectiveDoc = () => (applied ? E.doc : withTimeDefaults(E.doc, current, choose()));
+  const defaultsBox = el("div", { class: "save-defaults", hidden: !differs.range && !differs.refresh, dataset: { testid: "save-defaults" } });
+  const addOption = (key, label, hint, testid) => {
+    boxes[key] = toggle({ label, kind: "checkbox", testid, onChange: () => { changesLoaded = false; } });
+    defaultsBox.append(el("div", { class: "field" }, boxes[key].el, el("span", { class: "field__hint", text: hint })));
+  };
+  if (differs.range) addOption("range", "Save the current time range as the default", `Now: ${current.from} to ${current.to}. Default: ${E.doc.time.from} to ${E.doc.time.to}.`, "save-default-range");
+  if (differs.refresh) addOption("refresh", "Save the current refresh as the default", `Now: ${refreshText(current.refresh)}. Default: ${refreshText(E.doc.time.refresh)}.`, "save-default-refresh");
+
   const showErrors = (list) => {
     clear(errors);
     errors.hidden = list.length === 0;
@@ -92,6 +110,18 @@ export function openSaveDialog(E, { onSaved } = {}) {
     if ([...message.value].length > 500) {
       status.textContent = "The message has 500 characters at most.";
       return;
+    }
+    // The chosen defaults go into the draft once, before the first send. A retry then sends the same document with the same `save_id` (10.9).
+    const pick = choose();
+    if (!applied && (pick.range || pick.refresh)) {
+      const problem = pick.range ? rangeProblem(current) : "";
+      if (problem) {
+        status.textContent = `The current time range cannot be the default. ${problem}`;
+        return;
+      }
+      E.change(withTimeDefaults(E.doc, current, pick));
+      applied = true;
+      for (const box of Object.values(boxes)) box.input.disabled = true;
     }
     saveButton.disabled = true;
     status.textContent = "Saving";
@@ -122,7 +152,7 @@ export function openSaveDialog(E, { onSaved } = {}) {
     }
   }
 
-  const changes = changesPanel(E);
+  const changes = changesPanel(E, effectiveDoc);
   dialog = openDialog({
     title: "Save the dashboard",
     subtitle: (E.doc && E.doc.title) || null,
@@ -132,14 +162,13 @@ export function openSaveDialog(E, { onSaved } = {}) {
     build(body, shell) {
       saveButton = button("Save", { class: "btn btn--primary", dataset: { testid: "save-confirm" }, on: { click: submit } });
       saveButton.classList.add("btn--primary");
-      const details = el("div", { class: "save-details", role: "tabpanel" }, el("div", { class: "field" }, el("label", { class: "field__label", for: messageId, text: "Message" }), message, count), status, errors);
+      const details = el("div", { class: "save-details", role: "tabpanel" }, el("div", { class: "field" }, el("label", { class: "field__label", for: messageId, text: "Message" }), message, count), defaultsBox, status, errors);
       body.append(details, changes.panel);
       // The tabs go under the title in the head. The footer (Cancel, Save) belongs to "Details" and hides on "Changes".
       const tabs = el("div", { class: "dialog__tabs", role: "tablist", "aria-label": "Save dashboard" });
       const detailsTab = el("button", { type: "button", class: "dialog__tab", role: "tab", "aria-selected": "true", text: "Details", dataset: { testid: "save-tab-details" } });
       const changesTab = el("button", { type: "button", class: "dialog__tab", role: "tab", "aria-selected": "false", dataset: { testid: "save-tab-changes" } }, el("span", { text: "Changes" }), changes.count);
       tabs.append(detailsTab, changesTab);
-      let changesLoaded = false;
       const select = (name) => {
         const isDetails = name === "details";
         // The diff loads when the tab opens the first time. It reads the stored bytes and validates the draft (a PUT with

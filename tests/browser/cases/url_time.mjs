@@ -52,7 +52,7 @@ export const cases = [
       t.eq(JSON.stringify(a.range), JSON.stringify([FROM, TO]), "the panel request has the range of the link");
       t.eq(JSON.stringify(warnings(a)), "[]", "no warning notice");
       const written = await afterShift(a.p);
-      t.eq(written, `?from=${FROM - 10800000}&to=${TO - 10800000}&timezone=Europe%2FParis&refresh=off`, "the page writes epoch milliseconds, then timezone after to, and drops orgId");
+      t.eq(written, `?from=${FROM - 10800000}&to=${TO - 10800000}&timezone=Europe%2FParis`, "the page writes epoch milliseconds, then timezone after to, no refresh (it is the default of the document), and drops orgId");
 
       // The compact form and the form with no zone letter, read as UTC; the zone utc.
       const b = await open(t, UID, "from=20261109T080000&to=2026-11-09T14:00:00&timezone=utc");

@@ -90,6 +90,29 @@ export function buildSearch(state, varOrder = []) {
   return parts.length ? `?${parts.join("&")}` : "";
 }
 
+// The query that the page writes (9.5): the names whose value differs from the default of the dashboard. A name that equals its default is
+// left out, so the address of a state with the defaults has the view names only (`?edit=1`).
+// `query` is { from, to, timezone, vars, refresh } as the page holds them: `vars` is a Map of a variable name to its URL values, `refresh` is a
+// refresh choice or "off". `defaults` has the same members for the dashboard document: `vars` is a Map of a name to the URL values of the default
+// selection, and a name with no entry has no known default yet (the options of a query variable are not loaded): that name stays.
+// The range is one unit: when `from` or `to` differs, the query keeps both. The result has the same members, with null for a name that is left out.
+export function shortQuery(query, defaults) {
+  const sameRange = query.from === defaults.from && query.to === defaults.to;
+  const vars = new Map();
+  for (const [name, values] of query.vars instanceof Map ? query.vars : []) {
+    const known = defaults.vars instanceof Map ? defaults.vars.get(name) : undefined;
+    const same = Array.isArray(known) && known.length === values.length && known.every((v, i) => v === values[i]);
+    if (!same) vars.set(name, values);
+  }
+  return {
+    from: sameRange ? null : query.from,
+    to: sameRange ? null : query.to,
+    timezone: query.timezone && query.timezone !== defaults.timezone ? query.timezone : null,
+    vars,
+    refresh: query.refresh === defaults.refresh ? null : query.refresh,
+  };
+}
+
 export function listSearch(q) {
   return q ? `?q=${encodeURIComponent(q)}` : "";
 }
