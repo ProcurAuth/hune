@@ -175,6 +175,7 @@ export class Page {
     this.byId = new Map();
     this.waiters = [];
     this.pausedHandlers = [];
+    this.held = []; // the ids of the requests that holdWhen keeps back
     this.dialogs = [];
     this.popups = [];
     this.allow = [];
@@ -258,6 +259,10 @@ export class Page {
   #paused(p) {
     for (const h of this.pausedHandlers) {
       const r = h(p.request);
+      if (r === "hold") {
+        this.held.push(p.requestId);
+        return;
+      }
       if (r === "fail") {
         this.send("Fetch.failRequest", { requestId: p.requestId, errorReason: "ConnectionFailed" }).catch(() => {});
         return;
@@ -281,6 +286,20 @@ export class Page {
     this.pausedHandlers.push(h);
     return () => {
       this.pausedHandlers = this.pausedHandlers.filter((x) => x !== h);
+    };
+  }
+
+  /** Keep back each request for which `pred(request)` is true: the page waits for the answer. `release()` lets them go (and stops the rule). */
+  holdWhen(pred) {
+    const h = (req) => (pred(req) ? "hold" : null);
+    this.pausedHandlers.push(h);
+    return {
+      release: () => {
+        this.pausedHandlers = this.pausedHandlers.filter((x) => x !== h);
+        const ids = this.held;
+        this.held = [];
+        for (const requestId of ids) this.send("Fetch.continueRequest", { requestId }).catch(() => {});
+      },
     };
   }
 
