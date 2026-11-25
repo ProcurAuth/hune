@@ -651,3 +651,106 @@ async fn in_the_mode_authzen_the_flags_of_a_read_only_item_are_false_without_a_q
         pdp.asked()
     );
 }
+
+// A dashboard without a folder in a read-only store (5.9, 5.42): it shows with a null folder, it is read-only, and each
+// write to it gives `read_only_store`. A create at the root goes to the primary store.
+#[tokio::test]
+async fn a_dashboard_without_a_folder_in_a_read_only_store_is_read_only_and_a_root_create_goes_to_the_primary() {
+    let (dir, root) = lab_volume();
+    std::fs::write(root.join("lab-root.json"), doc_text("lab-root", "Lab root")).unwrap();
+    let r = root.clone();
+    let h = Harness::start_with(test_timing(), fill, move |c| add_read_only_volume(c, &r)).await;
+    let _keep = dir;
+    let list = get_json(&h, "/api/dashboards").await;
+    let lab = item(&list, "lab-root");
+    assert!(lab["folder"].is_null(), "{lab}");
+    assert_eq!(
+        (lab["store"].as_str(), lab["read_only"].as_bool(), lab["access"]["write"].as_bool()),
+        (Some("lab"), Some(true), Some(false))
+    );
+    let one = get_json(&h, "/api/dashboards/lab-root").await;
+    assert!(one["folder"].is_null());
+    assert_eq!(one["read_only"], true);
+    // The root dashboards come first in the list.
+    let order: Vec<String> = list["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect();
+    assert_eq!(order[0], "lab-root", "{order:?}");
+    // A save, a move to the root of the primary and a delete give `read_only_store` and change nothing.
+    let etag = one["etag"].as_str().unwrap().to_owned();
+    let ifm = format!("\"{etag}\"");
+    let doc = doc_text("lab-root", "Changed");
+    let r = call(
+        h.addr,
+        "PUT",
+        "/api/dashboards/lab-root",
+        &[JSON, ("If-Match", &ifm), ("Idempotency-Key", &super::api::key())],
+        &put_body(&doc, ""),
+    )
+    .await;
+    assert_eq!((r.status, r.code().as_str()), (403, "read_only_store"), "{}", r.text());
+    let r = call(
+        h.addr,
+        "POST",
+        "/api/dashboards/lab-root/move",
+        &[JSON, ("If-Match", &ifm), ("Idempotency-Key", &super::api::key())],
+        b"{\"folder\":\"transit\"}",
+    )
+    .await;
+    assert_eq!((r.status, r.code().as_str()), (403, "read_only_store"), "{}", r.text());
+    let r = call(
+        h.addr,
+        "DELETE",
+        "/api/dashboards/lab-root",
+        &[("If-Match", &ifm), ("Idempotency-Key", &super::api::key())],
+        b"",
+    )
+    .await;
+    assert_eq!((r.status, r.code().as_str()), (403, "read_only_store"), "{}", r.text());
+    assert!(root.join("lab-root.json").is_file());
+    // A create without a folder goes to the primary store, never to the read-only one. A uid of the read-only store is taken.
+    let body = format!("{{\"folder\":null,\"document\":{}}}", doc_text("main-root", "Main root")).into_bytes();
+    let r = call(h.addr, "POST", "/api/dashboards", &[JSON, ("Idempotency-Key", &super::api::key())], &body).await;
+    assert_eq!(r.status, 201, "{}", r.text());
+    assert!(r.json()["folder"].is_null());
+    let one = get_json(&h, "/api/dashboards/main-root").await;
+    assert_eq!((one["store"].as_str(), one["read_only"].as_bool()), (Some("main"), Some(false)));
+    assert!(!root.join("main-root.json").exists(), "the root of the read-only store is not written");
+    let twin = format!("{{\"folder\":null,\"document\":{}}}", doc_text("lab-root", "Twin")).into_bytes();
+    let r = call(h.addr, "POST", "/api/dashboards", &[JSON, ("Idempotency-Key", &super::api::key())], &twin).await;
+    assert_eq!((r.status, r.code().as_str()), (409, "already_exists"), "{}", r.text());
+}
+
+// A file at the root of a volume that is no valid dashboard stops the start and names the file (5.10, rule 5); a name that
+// is no uid is ignored.
+#[tokio::test]
+async fn a_file_at_the_root_of_a_volume_that_is_no_dashboard_stops_the_start_and_another_name_is_ignored() {
+    let dir = tempfile::tempdir().unwrap();
+    let root = std::fs::canonicalize(dir.path()).unwrap();
+    fill(&root);
+    std::fs::write(root.join("package.json"), b"{\"name\": \"x\"}").unwrap();
+    let logger = crate::log::Logger::memory(crate::config::LogLevel::Debug);
+    let e =
+        lifecycle::start(Arc::new(test_config(&root)), logger, test_timing(), startup::open_store).await.err().unwrap();
+    assert_eq!(e.step, "store.open");
+    assert!(
+        e.error.starts_with(&format!("storage.volume \"main\": the file {}/package.json is not valid: ", root.display())),
+        "{}",
+        e.error
+    );
+    // The same volume with names that are no uid: the start works.
+    std::fs::remove_file(root.join("package.json")).unwrap();
+    std::fs::write(root.join("Notes.json"), b"{}").unwrap();
+    std::fs::write(root.join("README.md"), b"text").unwrap();
+    let r = root.clone();
+    let h = Harness::start_with(test_timing(), move |dst| {
+        for e in std::fs::read_dir(&r).unwrap() {
+            let e = e.unwrap();
+            if e.path().is_file() {
+                std::fs::copy(e.path(), dst.join(e.file_name())).unwrap();
+            }
+        }
+        fill(dst);
+    }, |_| {}).await;
+    let list = get_json(&h, "/api/dashboards").await;
+    let uids: Vec<String> = list["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect();
+    assert_eq!(uids, vec!["nodes".to_owned()]);
+}
