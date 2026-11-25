@@ -6,6 +6,10 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+### Fixed
+
+- The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
+
 ## 0.2.0 - 2026-11-25
 
 ### Removed (breaking)
