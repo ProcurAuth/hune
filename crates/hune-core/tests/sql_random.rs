@@ -16,6 +16,8 @@
 //! statement check of the output agrees with the template. R7 the lexer never panics and the token
 //! texts joined give the input. Also: a document fault of the expansion is a fault of the checks at save.
 
+mod seed_threads;
+
 use hune_core::sql::{
     ExpandError, ExpandRequest, RequestValues, SaveCheckResult, SqlInvalidKind, SqlUse, TextValueType, Token,
     TokenKind, ValuesError, VariableDef, check_time_range, compute_interval, expand, lex, lex_all, resolve_values,
@@ -881,6 +883,18 @@ struct Stats {
     open_runs: usize,
 }
 
+impl seed_threads::Merge for Stats {
+    fn merge(&mut self, other: Self) {
+        self.cases += other.cases;
+        self.ok += other.ok;
+        self.refused += other.refused;
+        self.invalid += other.invalid;
+        self.structure += other.structure;
+        self.open_ok += other.open_ok;
+        self.open_runs += other.open_runs;
+    }
+}
+
 /// Runs one request on one template with the given variables and checks the properties R1 to R6. It gives the
 /// outcome of the expansion, or `None` when the check of the values refuses the request.
 fn check_run(
@@ -1023,10 +1037,8 @@ fn random_substitution_seeds() {
         Some(s) => vec![s],
         None => (1..=env_number("HUNE_TEST_SEEDS").unwrap_or(64)).collect(),
     };
-    let mut stats = Stats::default();
-    for seed in seeds {
-        run_seed(seed, cases, &mut stats);
-    }
+    // The seeds run on all cores. Each seed has its own generator, so the cases are the same as on one thread.
+    let stats: Stats = seed_threads::run_seeds(&seeds, |seed, stats| run_seed(seed, cases, stats));
     eprintln!(
         "random: {} cases, {} expanded, {} refused ({} by the property P), {} invalid; open custom: {} runs, {} expanded",
         stats.cases, stats.ok, stats.refused, stats.structure, stats.invalid, stats.open_runs, stats.open_ok
@@ -1375,6 +1387,16 @@ mod pg {
         bad_refused: usize,
     }
 
+    impl crate::seed_threads::Merge for Stats {
+        fn merge(&mut self, other: Self) {
+            self.cases += other.cases;
+            self.skipped += other.skipped;
+            self.ok += other.ok;
+            self.refused += other.refused;
+            self.bad_refused += other.bad_refused;
+        }
+    }
+
     fn run_case(rng: &mut Rng, seed: u64, case: usize, stats: &mut Stats) {
         stats.cases += 1;
         let count = 1 + rng.below(4);
@@ -1501,13 +1523,13 @@ mod pg {
             Some(s) => vec![s],
             None => (1..=super::env_number("HUNE_TEST_SEEDS").unwrap_or(32)).collect(),
         };
-        let mut stats = Stats::default();
-        for seed in seeds {
+        // The seeds run on all cores. Each seed has its own generator, so the cases are the same as on one thread.
+        let stats: Stats = crate::seed_threads::run_seeds(&seeds, |seed, stats| {
             let mut rng = Rng(seed ^ 0x5047);
             for case in 0..cases {
-                run_case(&mut rng, seed, case, &mut stats);
+                run_case(&mut rng, seed, case, stats);
             }
-        }
+        });
         eprintln!(
             "random pg: {} cases, {} expanded, {} refused, {} bad context, {} skipped",
             stats.cases, stats.ok, stats.refused, stats.bad_refused, stats.skipped

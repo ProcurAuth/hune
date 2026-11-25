@@ -16,6 +16,7 @@
 //! the same bytes, and the parser never panics.
 
 mod mongo_common;
+mod seed_threads;
 
 use hune_core::error::ErrorCode;
 use hune_core::mongo::grammar::Class;
@@ -374,6 +375,19 @@ struct Stats {
     open_ok: usize,
 }
 
+impl seed_threads::Merge for Stats {
+    fn merge(&mut self, other: Self) {
+        self.cases += other.cases;
+        self.ok += other.ok;
+        self.refused += other.refused;
+        self.structure += other.structure;
+        self.invalid += other.invalid;
+        self.bad_request += other.bad_request;
+        self.skipped += other.skipped;
+        self.open_ok += other.open_ok;
+    }
+}
+
 /// R10 (a): T1 has the keys and the structure of T0. A leaf of T0 that is a string can become any
 /// typed leaf. Also R10 (b): a leaf that holds a free value does not start with `$`.
 fn compare(t0: &MongoValue, t1: &MongoValue, path: &str, defs: &DefNames<'_>, free: &[&str], seed: u64, case: usize) {
@@ -587,15 +601,15 @@ fn random_r10_seeds() {
         Some(s) => vec![s],
         None => (1..=env_number("HUNE_TEST_SEEDS").unwrap_or(64)).collect(),
     };
-    let mut stats = Stats::default();
-    for seed in seeds {
+    // The seeds run on all cores. Each seed has its own generator, so the cases are the same as on one thread.
+    let stats: Stats = seed_threads::run_seeds(&seeds, |seed, stats| {
         let mut rng = Rng(seed, false);
         for case in 0..cases {
             // Half of the cases use only the forms that fit their place: the others find the faults.
             rng.1 = case.is_multiple_of(2);
-            run_case(&mut rng, seed, case, &mut stats);
+            run_case(&mut rng, seed, case, stats);
         }
-    }
+    });
     eprintln!(
         "random R10: {} cases, {} expanded, {} refused ({} by PM), {} invalid, {} bad_request, {} too large, {} with open custom variables",
         stats.cases,
