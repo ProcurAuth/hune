@@ -319,6 +319,7 @@ of 5.7 bounds the list.
 
 ```json
 { "access": { "create": true },
+  "root": { "access": { "write": true }, "read_only": false, "store": "main" },
   "items": [ { "id": "general", "title": "General", "access": { "write": true }, "read_only": false, "store": "main" },
              { "id": "transit", "title": "Transit desk", "access": { "write": false }, "read_only": true, "store": "lab" } ] }
 ```
@@ -329,6 +330,7 @@ of 5.7 bounds the list.
 | `items[].access.write` | On each folder. `true` when the subject can write in this folder: the display answer for `dashboard.write` on the folder (11.25). It is `false` for a folder of a read-only store, with no question to the PDP. |
 | `items[].read_only` | `true` when the store of the folder is read-only (5.42). The page shows a lock and no edit control. |
 | `items[].store` | The id of the store of the folder: the label of a volume, or `postgres`. |
+| `root` | The place for the dashboards without a folder. It is not a folder: it is not in `items`, and it has no id and no title. `root.access.write` is `true` when the subject can create a dashboard without a folder in the primary store: the display answer for `dashboard.write` on the node `_root` (11.25). It is `false`, with no question to the PDP, when no primary store exists. `root.read_only` is `true` when no primary store exists. `root.store` is the id of the primary store, or `null` when no primary store exists. |
 
 In mode `authzen`, the list holds only the folders that the display filter keeps (11.25). In mode `open`, the list
 holds every folder. `access.create` is `true` when a primary store exists. In mode `open`, `access.write` is `true` for
@@ -350,11 +352,11 @@ Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forb
 
 ### 6.12 List of dashboards
 
-`GET /api/dashboards` lists the dashboards. The query parameters are:
+`GET /api/dashboards` lists the dashboards. The member `folder` of an item is the folder id, or `null` for a dashboard without a folder. This holds for each route that gives the folder of a dashboard: 6.13 to 6.15, 6.17 and 6.19, and the member `current_folder` of 6.8. The query parameters are:
 
 | Parameter | Rule |
 |---|---|
-| `folder` | Optional. A folder id. The list holds only the dashboards of this folder. An unknown folder gives an empty list. |
+| `folder` | Optional. A folder id. The list holds only the dashboards of this folder. An unknown folder gives an empty list. The value empty (`?folder=`) selects the dashboards without a folder. |
 | `q` | Optional, 1 to 100 bytes. The list holds the dashboards whose title or uid holds this text. The comparison folds ASCII letters to lower case. |
 | `tag` | Optional, 1 to 64 bytes. The list holds only the dashboards that have this tag. The comparison is exact, byte for byte. An invalid entry never matches. |
 | `limit`, `after` | The pagination of 6.24. |
@@ -402,7 +404,7 @@ The example cuts the document. The body members are:
 
 | Member | Rule |
 |---|---|
-| `folder` | Necessary. A folder of the primary store that exists. A folder of a read-only store gives `403 read_only_store` (11.35). |
+| `folder` | Necessary. A folder of the primary store that exists, or `null` for a dashboard without a folder. A body with no member `folder` gives `400 bad_request`: there is no default. A folder of a read-only store gives `403 read_only_store` (11.35). |
 | `message` | Optional. 0 to 500 Unicode characters (`MAX_MESSAGE_CHARS`, 5.7), no control character. |
 | `document` | Necessary. A document of section 4, checked by 4.36 from its own bytes (6.2). Its member `uid` is the uid of the new dashboard. |
 
@@ -609,11 +611,11 @@ The answer has the shape of the answer of 6.15. Errors: the errors of 6.15, and 
 
 ### 6.19 Move a dashboard
 
-`POST /api/dashboards/{uid}/move` moves a dashboard to another folder. The headers `If-Match` and `Idempotency-Key`
-are necessary. The body is `{"folder": "ops", "message": ""}`, and `message` is optional.
+`POST /api/dashboards/{uid}/move` moves a dashboard to another folder, or out of its folder. The headers `If-Match` and `Idempotency-Key`
+are necessary. The body is `{"folder": "ops", "message": ""}`, and `message` is optional. The member `folder` is necessary. Its value `null` moves the dashboard to the root of the primary store: it has then no folder.
 
 - The store writes a version of the kind `move` (5.2). The document bytes and the etag do not change.
-- A move to the current folder writes nothing and answers `noop: true`.
+- A move to the current folder writes nothing and answers `noop: true`. This holds for a move to `null` of a dashboard that has no folder.
 - After a move, `N(uid)` names the new folder, so the grants of the new folder apply (11).
 
 The answer is `200` with `{"uid", "folder", "etag", "version", "saved_at", "saved_by", "noop"}`. Errors: the errors of
@@ -822,7 +824,7 @@ options route. Section 11 gives their content, their questions and their errors.
   can occur on a later page or not at all. A row that becomes visible between two pages can be skipped.
 - The history cursor is the text `v<version>`, with the number of the last version of the page in decimal, in base64url
   with no padding. Example: `v12` gives `djEy`. The next page holds the versions below this number.
-- Order of the dashboards: first the folder id, then the title, then the uid. Each comparison is in byte order, and
+- Order of the dashboards: first the folder id, then the title, then the uid. A dashboard without a folder (folder `null`) comes before each dashboard of a folder. Each comparison is in byte order, and
   the title comparison folds ASCII letters to lower case. Order of the history: version, the newest first.
 
 ### 6.25 Page routes and static files

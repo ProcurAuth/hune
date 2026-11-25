@@ -97,9 +97,6 @@ pub fn parse_folder_map(value: &Value) -> Result<Vec<FolderMapEntry>, ImportErro
         if !is_valid_id(&id) {
             return Err(bad(format!("folders/{i}/id must match ^[a-z0-9][a-z0-9-]{{0,39}}$; value {id:?}")));
         }
-        if id == "general" {
-            return Err(bad(format!("folders/{i}/id: the value general is reserved for the root; value {id:?}")));
-        }
         if let Some(t) = &title
             && !(1..=256).contains(&t.chars().count())
         {
@@ -164,10 +161,10 @@ pub struct FolderTable {
     map: BTreeMap<String, FolderMapEntry>,
 }
 
-/// The root folder of Grafana in Hune (D9).
-pub const ROOT_FOLDER_ID: &str = "general";
-/// The title of the root folder (15.6).
-pub const ROOT_FOLDER_TITLE: &str = "General";
+/// The place of the dashboards of the root of Grafana in Hune: no folder (15.6). It is the text of the root in the code of Hune.
+pub const ROOT_FOLDER_ID: &str = hune_core::ids::ROOT_FOLDER_TEXT;
+/// The uid that Grafana gives to its root folder, when `folders.json` does not list it as a folder.
+const GRAFANA_ROOT_UID: &str = "general";
 
 impl FolderTable {
     /// Reads `folders.json` and the folder map. Two folders that map to one id give an error (15.7).
@@ -205,7 +202,7 @@ impl FolderTable {
         if let Some(e) = self.map.get(uid) {
             return Some(e.id.clone());
         }
-        (is_valid_id(uid) && uid != ROOT_FOLDER_ID).then(|| uid.to_owned())
+        is_valid_id(uid).then(|| uid.to_owned())
     }
 
     /// Finds the folder of a dashboard from its Grafana folder uid. An empty or absent uid is the root.
@@ -215,7 +212,7 @@ impl FolderTable {
             Some(u) => u,
         };
         let listed = self.folders.iter().find(|f| f.uid == uid);
-        if listed.is_none() && uid == ROOT_FOLDER_ID {
+        if listed.is_none() && uid == GRAFANA_ROOT_UID {
             return FolderResolution::Found(root_folder());
         }
         if listed.is_some_and(|f| f.parent_uid.is_some()) {
@@ -235,7 +232,7 @@ impl FolderTable {
 }
 
 fn root_folder() -> FolderInfo {
-    FolderInfo { grafana_uid: None, id: ROOT_FOLDER_ID.to_owned(), title: ROOT_FOLDER_TITLE.to_owned() }
+    FolderInfo { grafana_uid: None, id: ROOT_FOLDER_ID.to_owned(), title: String::new() }
 }
 
 /// The accepted losses (15.10): the item ids of the acceptance file.
@@ -469,7 +466,9 @@ mod tests {
             .unwrap();
         let folders = json!([{"uid": "fe1", "title": "T"}, {"uid": "Bad_Uid", "title": "B"}, {"uid": "kid", "title": "K", "parentUid": "fe1"}]);
         let t = FolderTable::new(&folders, map).unwrap();
-        assert!(matches!(t.resolve(None), FolderResolution::Found(f) if f.id == "general" && f.title == "General"));
+        // The root of Grafana is no folder in Hune: its place is the root, with no title.
+        assert!(matches!(t.resolve(None), FolderResolution::Found(f) if f.id == ROOT_FOLDER_ID && f.title.is_empty()));
+        assert!(matches!(t.resolve(Some("general")), FolderResolution::Found(f) if f.id == ROOT_FOLDER_ID));
         assert!(
             matches!(t.resolve(Some("fe1")), FolderResolution::Found(f) if f.id == "transit" && f.title == "Transit")
         );
@@ -480,7 +479,9 @@ mod tests {
             vec![FolderMapEntry { grafana_uid: "b".into(), id: "a".into(), title: None }],
         );
         assert!(clash.is_err());
-        assert!(parse_folder_map(&json!({"folders": [{"grafana_uid": "x", "id": "general"}]})).is_err());
+        // The id `general` is a folder id like another one. The id of the root is refused by the id rule.
+        assert!(parse_folder_map(&json!({"folders": [{"grafana_uid": "x", "id": "general"}]})).is_ok());
+        assert!(parse_folder_map(&json!({"folders": [{"grafana_uid": "x", "id": "_root"}]})).is_err());
         assert!(parse_folder_map(&json!({"folders": [], "zzz": 1})).is_err());
     }
 }

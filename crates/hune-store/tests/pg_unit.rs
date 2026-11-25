@@ -78,7 +78,12 @@ fn migration_texts() {
         MigrateError::Newer { database: 3, binary: 1 }.to_string(),
         "database schema 3 is newer than this binary (1)"
     );
-    assert_eq!(postgres::SCHEMA_VERSION, 1);
-    assert_eq!(postgres::MIGRATIONS.len(), 1);
+    assert_eq!(postgres::SCHEMA_VERSION, 2);
+    assert_eq!(postgres::MIGRATIONS.len(), 2);
     assert!(postgres::MIGRATIONS[0].sql.contains("CREATE TABLE hune_versions"));
+    // Migration 2: a dashboard can have no folder (5.24, rule 9).
+    let m2 = postgres::MIGRATIONS[1].sql;
+    assert!(m2.contains("ALTER TABLE hune_dashboards ALTER COLUMN folder_id DROP NOT NULL"));
+    assert!(m2.contains("ALTER TABLE hune_versions ALTER COLUMN folder_id DROP NOT NULL"));
+    assert!(m2.contains("UPDATE hune_schema SET version = 2"));
 }

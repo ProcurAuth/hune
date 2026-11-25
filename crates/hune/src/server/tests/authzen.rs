@@ -965,8 +965,13 @@ async fn the_options_route_lists_the_children_that_the_subject_can_see() {
     pdp.set_rules(allow_all());
     let r = rget(&h, &format!("{path}?type=folder&limit=1"), "user:alice").await;
     let j = r.json();
-    assert_eq!(j["items"][0]["id"], "ops");
+    // The node of the dashboards without a folder is the first item (ACCESS.md).
+    assert_eq!(j["items"][0]["id"], "_root");
+    assert_eq!(j["items"][0]["label"], "Root (no folder)");
     let next = j["next"].as_str().unwrap().to_owned();
+    let r = rget(&h, &format!("{path}?type=folder&limit=1&after={next}"), "user:alice").await;
+    assert_eq!(r.json()["items"][0]["id"], "ops");
+    let next = r.json()["next"].as_str().unwrap().to_owned();
     let r = rget(&h, &format!("{path}?type=folder&limit=1&after={next}"), "user:alice").await;
     assert_eq!(r.json()["items"][0]["id"], "transit");
     assert!(r.json()["next"].is_null());
@@ -1244,4 +1249,78 @@ async fn the_options_cursor_holds_no_id_of_a_hidden_child() {
         let r = rget(&h, &format!("{path}&after={}", encode_cursor(bad.as_bytes())), "user:bob").await;
         assert_eq!((r.status, r.code().as_str()), (400, "invalid_options_request"), "{bad:?}");
     }
+}
+
+fn fill_root(root: &Path) {
+    fill_two(root);
+    std::fs::write(root.join("root-one.json"), doc_text("root-one", "Root one")).unwrap();
+}
+
+async fn start_root(pdp: &Pdp) -> Harness {
+    Harness::start_with(test_timing(), fill_root, |c| authzen(c, &pdp.url(), Duration::ZERO)).await
+}
+
+fn uids_in(r: &Resp) -> Vec<String> {
+    r.json()["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect()
+}
+
+// The dashboards without a folder (ACCESS.md, 5.9): the node `folder:_root`. A grant on a real folder does not cover them.
+#[tokio::test]
+async fn a_dashboard_without_a_folder_is_under_the_node_root_and_a_folder_grant_does_not_cover_it() {
+    let rights =
+        vec![("dashboard.read", "folder:transit"), ("dashboard.write", "folder:transit"), ("source.query", "")];
+    let pdp = Pdp::start(grants(rights)).await;
+    let h = start_root(&pdp).await;
+    // The subject has rights on a real folder only: the list does not show the root dashboard.
+    let r = rget(&h, "/api/dashboards", "user:alice").await;
+    assert_eq!(r.status, 200, "{}", r.text());
+    assert_eq!(uids_in(&r), vec!["nodes".to_owned()]);
+    // The read of the root dashboard gives the answer of a uid that does not exist: the answer tells nothing (K321).
+    let missing = rget(&h, "/api/dashboards/no-such-uid", "user:alice").await;
+    let hidden = rget(&h, "/api/dashboards/root-one", "user:alice").await;
+    assert_eq!((hidden.status, hidden.code()), (missing.status, missing.code()));
+    assert_eq!(hidden.json(), missing.json());
+    // The question names the node `_root` under the service.
+    assert!(
+        shorts(&pdp).contains(&pair("dashboard.read", "folder:_root/dashboard:root-one"))
+            || shorts(&pdp).contains(&pair("dashboard.read", "folder:_root")),
+        "{:?}",
+        shorts(&pdp)
+    );
+    // A create without a folder asks `dashboard.write` on the node `_root`: the grant on a real folder does not cover it.
+    let doc = doc_text("new-root", "New root");
+    let body = format!("{{\"folder\":null,\"document\":{doc}}}").into_bytes();
+    let r = req(&h, "POST", "/api/dashboards", "user:alice", &[JSON, ("Idempotency-Key", &key())], &body).await;
+    assert_eq!((r.status, r.code().as_str()), (403, "forbidden"), "{}", r.text());
+    assert_eq!(r.json()["error"]["action"], "dashboard.write");
+    assert!(shorts(&pdp).contains(&pair("dashboard.write", "folder:_root")), "{:?}", shorts(&pdp));
+    // The folders answer: the member root says that the subject cannot write at the root.
+    let r = rget(&h, "/api/folders", "user:alice").await;
+    assert_eq!(r.json()["root"]["access"]["write"], false, "{}", r.text());
+    // The options route does not list the node `_root` for this subject: no grant is on it or below it.
+    let r = rget(&h, "/.well-known/procurauth/resources?type=folder", "user:alice").await;
+    let ids: Vec<String> =
+        r.json()["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
+    assert_eq!(ids, vec!["transit".to_owned()]);
+    // A grant on the node `_root` shows the root dashboard, lets the subject create there, and lists the node.
+    let rights = vec![("dashboard.read", "folder:_root"), ("dashboard.write", "folder:_root"), ("source.query", "")];
+    pdp.set_rules(grants(rights));
+    let r = rget(&h, "/api/dashboards", "user:alice").await;
+    assert_eq!(uids_in(&r), vec!["root-one".to_owned()], "{}", r.text());
+    assert!(r.json()["items"][0]["folder"].is_null());
+    assert_eq!(r.json()["items"][0]["access"]["write"], true, "{}", r.text());
+    let r = rget(&h, "/api/dashboards/root-one", "user:alice").await;
+    assert_eq!(r.status, 200, "{}", r.text());
+    assert!(r.json()["folder"].is_null());
+    let r = req(&h, "POST", "/api/dashboards", "user:alice", &[JSON, ("Idempotency-Key", &key())], &body).await;
+    assert_eq!(r.status, 201, "{}", r.text());
+    assert!(r.json()["folder"].is_null());
+    let r = rget(&h, "/api/folders", "user:alice").await;
+    assert_eq!(r.json()["root"]["access"]["write"], true, "{}", r.text());
+    let r = rget(&h, "/.well-known/procurauth/resources?type=folder", "user:alice").await;
+    assert_eq!(r.json()["items"][0]["id"], "_root", "{}", r.text());
+    let r = rget(&h, "/.well-known/procurauth/resources?type=dashboard&parent=folder%3A_root", "user:alice").await;
+    let ids: Vec<String> =
+        r.json()["items"].as_array().unwrap().iter().map(|i| i["id"].as_str().unwrap().to_owned()).collect();
+    assert!(ids.contains(&"root-one".to_owned()), "{}", r.text());
 }

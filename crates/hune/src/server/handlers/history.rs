@@ -5,8 +5,8 @@ use super::dashboards::{path_uid, refresh, write_answer};
 use super::gate;
 use super::paging::{history_cursor, parse_history_cursor, parse_limit};
 use super::support::{
-    SaveWarning, StoreOp, check_permit, declared_sources, format_faults, log_dashboard_changed, map_store_error,
-    read_folder_id, read_message, run_check, services, sql_save_checks, write_meta,
+    SaveWarning, StoreOp, check_permit, declared_sources, folder_json, format_faults, log_dashboard_changed,
+    map_store_error, read_folder_member, read_message, run_check, services, sql_save_checks, write_meta,
 };
 use crate::server::ctx::{Ctx, Request};
 use crate::server::error::{ApiError, Code};
@@ -28,7 +28,7 @@ struct HistoryItem {
     saved_at: String,
     saved_by: String,
     message: String,
-    folder: String,
+    folder: Option<String>,
     size: Option<u64>,
 }
 
@@ -40,7 +40,7 @@ fn item(m: &VersionMeta) -> HistoryItem {
         saved_at: m.saved_at.to_rfc3339(),
         saved_by: m.saved_by.as_str().to_owned(),
         message: m.message.as_str().to_owned(),
-        folder: m.folder.as_str().to_owned(),
+        folder: m.folder.wire().map(str::to_owned),
         size: m.size,
     }
 }
@@ -160,7 +160,7 @@ pub async fn version(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         q(&m.saved_at.to_rfc3339()),
         q(m.saved_by.as_str()),
         q(m.message.as_str()),
-        q(m.folder.as_str()),
+        folder_json(&m.folder),
     );
     let mut body = head.into_bytes();
     body.extend_from_slice(&document);
@@ -276,8 +276,9 @@ pub async fn restore(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     write_answer(services, &saved, &meta, Some(&warnings), false, valid.document().etag()).await
 }
 
+static MOVE_FOLDER_SHAPE: Shape = Shape::Str { min_chars: 1, max_chars: 40 };
 static MOVE_MEMBERS: [Member; 2] = [
-    Member { name: "folder", shape: Shape::Str { min_chars: 1, max_chars: 40 }, required: true },
+    Member { name: "folder", shape: Shape::Nullable(&MOVE_FOLDER_SHAPE), required: true },
     Member { name: "message", shape: Shape::Str { min_chars: 0, max_chars: 500 }, required: false },
 ];
 static MOVE_SHAPE: Shape = Shape::Object(&MOVE_MEMBERS);
@@ -286,13 +287,13 @@ static MOVE_SHAPE: Shape = Shape::Object(&MOVE_MEMBERS);
 pub async fn move_to(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     let uid = path_uid(&ctx)?;
     let body = parse_and_check_with(&req.body, &MOVE_SHAPE, &[], |v| format_faults(v, &["folder"], false, true))?;
-    let target = read_folder_id(body.value["folder"].as_str().unwrap_or(""), "/folder")?;
+    let target = read_folder_member(&body.value["folder"], "/folder")?;
     let message = read_message(&body.value)?;
     let services = services(&ctx)?;
     let Some(entry) = services.catalog.get(&uid) else {
         return Err(gate::unknown(&ctx, "No such dashboard.").await);
     };
-    if ctx.state.access.is_some() && !services.catalog.folders().iter().any(|f| f.id == target) {
+    if ctx.state.access.is_some() && !target.is_root() && !services.catalog.folders().iter().any(|f| f.id == target) {
         // The other permission names the dashboard, which exists: it comes first, as for a folder that exists (11.23).
         let others = gate::Others::Dashboard { folder: entry.folder().as_str(), uid: uid.as_str() };
         return Err(gate::unknown_with(&ctx, "No such folder.", others).await);

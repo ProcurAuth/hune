@@ -132,7 +132,7 @@ pub fn map_store_error(e: &StoreError) -> ApiError {
         StoreError::Conflict(c) => ApiError::conflict(
             &c.etag.to_hex(),
             c.version,
-            c.folder.as_str(),
+            c.folder.wire(),
             &c.saved_at.to_rfc3339(),
             c.saved_by.as_str(),
         ),
@@ -250,6 +250,31 @@ pub fn format_faults(
 }
 
 /// Reads a folder id from a text of the body. A fault is a `bad_request` with the pointer.
+pub fn read_folder_member(value: &Value, pointer: &str) -> Result<FolderId, ApiError> {
+    // The member `folder` of a create or a move body is a folder id, or `null` for no folder (6.13, 6.19).
+    match value {
+        Value::Null => Ok(FolderId::root()),
+        Value::String(text) => read_folder_id(text, pointer),
+        _ => Err(ApiError::bad_request_errors(
+            "The body does not follow the schema.",
+            &[ValidationError::new(pointer, ErrorCode::BadFormat, "the value is a folder id or null")],
+        )),
+    }
+}
+
+/// The folder of a dashboard as a JSON text: the quoted id, or `null` for a dashboard without a folder (6.11).
+pub fn folder_json(folder: &FolderId) -> String {
+    match folder.wire() {
+        Some(id) => Value::String(id.to_owned()).to_string(),
+        None => "null".to_owned(),
+    }
+}
+
+/// The folder in the sort key of a list: the empty text for no folder, so that it comes first (6.24).
+pub fn folder_sort_key(folder: &FolderId) -> &str {
+    folder.wire().unwrap_or("")
+}
+
 pub fn read_folder_id(text: &str, pointer: &str) -> Result<FolderId, ApiError> {
     FolderId::parse(text).map_err(|e| {
         ApiError::bad_request_errors(

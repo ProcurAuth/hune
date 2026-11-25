@@ -102,7 +102,8 @@ fn render_json(result: &ImportResult, meta: &ReportMeta) -> String {
             Out::obj([
                 ("grafana_uid", Out::s(&d.grafana_uid)),
                 ("uid", Out::s(&d.uid)),
-                ("folder", Out::s(&d.folder)),
+                // A dashboard of the root of Grafana has no folder in Hune: `null` (15.6).
+                ("folder", Out::opt_s((d.folder != crate::options::ROOT_FOLDER_ID).then_some(d.folder.as_str()))),
                 ("title", Out::s(&d.title)),
                 ("panels", count(d.panels)),
                 ("metadata", count(d.metadata)),
@@ -236,10 +237,11 @@ fn render_markdown(result: &ImportResult, meta: &ReportMeta) -> String {
         md.push_str(&format!("### `{}`: {}\n\n", d.grafana_uid, cell(&d.title)));
         md.push_str("| Result | Hune uid | Folder | Panels | Metadata members |\n|---|---|---|---|---|\n");
         md.push_str(&format!(
-            "| `{}` | `{}` | `{}` | {} | {} |\n\n",
+            "| `{}` | `{}` | {} | {} | {} |\n\n",
             d.result.as_str(),
             d.uid,
-            d.folder,
+            // A dashboard of the root of Grafana has no folder in Hune (15.6).
+            if d.folder == crate::options::ROOT_FOLDER_ID { "no folder".to_owned() } else { format!("`{}`", d.folder) },
             d.panels,
             d.metadata
         ));

@@ -395,7 +395,7 @@ impl ApiError {
     pub fn conflict(
         current_etag: &str,
         current_version: u64,
-        current_folder: &str,
+        current_folder: Option<&str>,
         saved_at: &str,
         saved_by: &str,
     ) -> Self {
@@ -547,7 +547,7 @@ mod tests {
 
     #[test]
     fn typed_constructors() {
-        let e = ApiError::conflict("e", 8, "transit", "2026-11-09T10:15:03.120Z", "-");
+        let e = ApiError::conflict("e", 8, Some("transit"), "2026-11-09T10:15:03.120Z", "-");
         assert_eq!(e.status().as_u16(), 409);
         assert_eq!(e.body()["error"]["current_version"], 8);
         let e = ApiError::payload_too_large(16384);

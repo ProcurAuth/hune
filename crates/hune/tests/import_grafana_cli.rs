@@ -196,7 +196,11 @@ impl Fx {
         serde_json::from_str(&text(&self.root.join(format!("{name}.json")))).unwrap()
     }
 
+    /// The file of a dashboard. The folder `""` is no folder: the file is at the root of the volume (5.9).
     fn doc_path(&self, folder: &str, uid: &str) -> PathBuf {
+        if folder.is_empty() {
+            return self.volume.join(format!("{uid}.json"));
+        }
         self.volume.join(folder).join(format!("{uid}.json"))
     }
 }
@@ -623,7 +627,7 @@ fn exit_code_2_for_a_bad_option_file_or_configuration() {
     );
     assert_eq!(out.code, 2);
     assert!(out.stderr.contains("map to the same id"), "{}", out.stderr);
-    assert_eq!(with_folders("{\"folders\": [{\"grafana_uid\": \"x\", \"id\": \"general\"}]}").code, 2);
+    assert_eq!(with_folders("{\"folders\": [{\"grafana_uid\": \"x\", \"id\": \"_root\"}]}").code, 2);
     assert_eq!(with_folders("{ not json").code, 2);
     // A duplicate acceptance line.
     fs::write(&fx.accept, format!("{}{}", text(&fx.accept), text(&fx.accept).lines().nth(1).unwrap())).unwrap();
@@ -693,7 +697,8 @@ fn dry_run_with_a_configuration_writes_nothing_and_compares_with_the_store() {
     assert_same(&before, &tree(&fx.volume), "a dry run writes nothing");
     let report = fx.report("rep");
     assert_eq!(count(&results(&report), "would_write"), 8);
-    assert_eq!(count(&folder_results(&report), "would_create"), 3);
+    // The root of Grafana is no folder: two folders are new (15.6).
+    assert_eq!(count(&folder_results(&report), "would_create"), 2);
     // A store that holds only `prod-main`: unchanged, would_write, would_create and exists.
     let mini = fx.mini("Prod main");
     assert_eq!(
@@ -723,22 +728,23 @@ fn dry_run_with_a_configuration_writes_nothing_and_compares_with_the_store() {
     assert_eq!(r["prod-main"], "unchanged");
     assert_eq!(r["monitor"], "would_write");
     let f = folder_results(&report);
-    assert_eq!(f["general"], "exists");
+    assert!(!f.contains_key("general"), "the root is no folder");
     assert_eq!(f["transit"], "would_create");
     // The same dashboard with other bytes and a folder with another title.
     fs::write(
-        fx.doc_path("general", "prod-main"),
-        text(&fx.doc_path("general", "prod-main")).replacen("\"Prod main\"", "\"Prod main 2\"", 1),
+        fx.doc_path("", "prod-main"),
+        text(&fx.doc_path("", "prod-main")).replacen("\"Prod main\"", "\"Prod main 2\"", 1),
     )
     .unwrap();
-    fs::write(fx.volume.join("general/_folder.json"), folder_file("Renamed")).unwrap();
+    fs::create_dir_all(fx.volume.join("transit")).unwrap();
+    fs::write(fx.volume.join("transit/_folder.json"), folder_file("Renamed")).unwrap();
     let before = tree(&fx.volume);
     let out = fx.run_c(&["--report", rep.to_str().unwrap()]);
     assert_eq!(out.code, 0, "{}\n{}", out.stdout, out.stderr);
     assert_same(&before, &tree(&fx.volume), "the tree");
     let report = fx.report("rep");
     assert_eq!(results(&report)["prod-main"], "would_refuse");
-    assert_eq!(folder_results(&report)["general"], "would_rename");
+    assert_eq!(folder_results(&report)["transit"], "would_rename");
     // A deleted uid is refused (15.13).
     let fx2 = Fx::new();
     let mini = fx2.mini("Prod main");
@@ -774,13 +780,13 @@ fn write_is_idempotent_and_the_documents_equal_the_golden_files() {
     let r = results(&report);
     assert_eq!(count(&r, "written"), 8, "{r:?}");
     assert_eq!(count(&r, "not_imported"), 2);
-    assert_eq!(count(&folder_results(&report), "created"), 3);
-    // Folders and uids (I08, I09): the root is `general`, the map applies, a changed uid is a new file.
+    assert_eq!(count(&folder_results(&report), "created"), 2);
+    // Folders and uids (I08, I09): the root is no folder, the map applies, a changed uid is a new file.
     let place = [
-        ("general", "g-301f976e365b83e3"),
-        ("general", "plain-raw"),
-        ("general", "prod-main"),
-        ("general", "monitor-v2b"),
+        ("", "g-301f976e365b83e3"),
+        ("", "plain-raw"),
+        ("", "prod-main"),
+        ("", "monitor-v2b"),
         ("transit", "monitor"),
         ("transit", "monitor-v2a"),
         ("transit", "monitor-wrapped"),
@@ -800,10 +806,11 @@ fn write_is_idempotent_and_the_documents_equal_the_golden_files() {
         assert_eq!(versions[0].message.as_str().split(' ').count(), 3);
         assert!(versions[0].save_id.is_some());
     }
-    assert!(!fx.doc_path("general", "nested-case").exists() && !fx.doc_path("general", "bad-folder").exists());
+    assert!(!fx.doc_path("", "nested-case").exists() && !fx.doc_path("", "bad-folder").exists());
     assert!(text(&fx.volume.join("transit/_folder.json")).contains("\"Transit desk\""));
     assert!(text(&fx.volume.join("nodes/_folder.json")).contains("\"Nodes\""));
-    assert!(text(&fx.volume.join("general/_folder.json")).contains("\"General\""));
+    // The root of Grafana makes no folder in the store.
+    assert!(!fx.volume.join("general").exists());
     // I06: the second run writes nothing.
     let before = tree(&fx.volume);
     let out = fx.write(&["--report", rep.to_str().unwrap()]);
@@ -812,7 +819,7 @@ fn write_is_idempotent_and_the_documents_equal_the_golden_files() {
     let report = fx.report("rep");
     let r = results(&report);
     assert_eq!(count(&r, "unchanged"), 8, "{r:?}");
-    assert_eq!(count(&folder_results(&report), "exists"), 3);
+    assert_eq!(count(&folder_results(&report), "exists"), 2);
     for (_, uid) in place {
         assert_eq!(history(&fx.volume, uid).len(), 1, "no history version for {uid}");
     }
@@ -857,15 +864,15 @@ fn a_b_a_gives_a_new_version_and_a_new_save_id() {
     };
     let out = run(&a, &[]);
     assert_eq!(out.code, 0, "{}", out.stderr);
-    let doc_a = fs::read(fx.doc_path("general", "prod-main")).unwrap();
+    let doc_a = fs::read(fx.doc_path("", "prod-main")).unwrap();
     let out = run(&b, &["--replace"]);
     assert_eq!(out.code, 0, "{}", out.stderr);
     assert!(out.stdout.contains("replaced=1"), "{}", out.stdout);
-    assert_ne!(fs::read(fx.doc_path("general", "prod-main")).unwrap(), doc_a);
+    assert_ne!(fs::read(fx.doc_path("", "prod-main")).unwrap(), doc_a);
     let out = run(&a, &["--replace"]);
     assert_eq!(out.code, 0, "{}", out.stderr);
     assert!(out.stdout.contains("replaced=1"), "{}", out.stdout);
-    assert_eq!(fs::read(fx.doc_path("general", "prod-main")).unwrap(), doc_a, "the bytes of A are in the store");
+    assert_eq!(fs::read(fx.doc_path("", "prod-main")).unwrap(), doc_a, "the bytes of A are in the store");
     let versions = history(&fx.volume, "prod-main");
     assert_eq!(versions.len(), 3);
     assert!(versions.iter().all(|v| v.kind == VersionKind::Import && v.saved_by.as_str() == "import-grafana"));
@@ -898,7 +905,7 @@ fn another_folder_or_title_needs_replace() {
     let out = fx.write(&["--replace", "--report", rep_arg]);
     assert_eq!(out.code, 0, "{}\n{}", out.stdout, out.stderr);
     assert_eq!(results(&fx.report("rep"))["plain-raw"], "moved");
-    assert!(fx.doc_path("general", "plain-raw").exists() && !fx.doc_path("nodes", "plain-raw").exists());
+    assert!(fx.doc_path("", "plain-raw").exists() && !fx.doc_path("nodes", "plain-raw").exists());
     let versions = history(&fx.volume, "plain-raw");
     assert_eq!(versions[0].kind, VersionKind::Move);
     assert_eq!(versions[0].saved_by.as_str(), "import-grafana");
@@ -909,7 +916,7 @@ fn another_folder_or_title_needs_replace() {
     let out = fx.write(&["--replace", "--report", rep_arg]);
     assert_eq!(out.code, 0, "{}\n{}", out.stdout, out.stderr);
     assert_eq!(results(&fx.report("rep"))["plain-raw"], "moved_replaced");
-    assert_eq!(text(&fx.doc_path("general", "plain-raw")), golden("documents/plain-raw.json"));
+    assert_eq!(text(&fx.doc_path("", "plain-raw")), golden("documents/plain-raw.json"));
     let versions = history(&fx.volume, "plain-raw");
     assert_eq!(versions[0].kind, VersionKind::Import);
     assert_eq!(versions[1].kind, VersionKind::Move);
@@ -941,7 +948,7 @@ fn a_current_file_that_is_not_valid_is_saved_over_with_the_raw_etag() {
         list
     };
     assert_eq!(hune(&args(&[])).code, 0);
-    let path = fx.doc_path("general", "prod-main");
+    let path = fx.doc_path("", "prod-main");
     let good = fs::read(&path).unwrap();
     fs::write(&path, "{ not json").unwrap();
     // Without `--replace`: other bytes, exit code 3, nothing written.
@@ -974,7 +981,7 @@ fn a_volume_of_format_2_gets_the_documents_of_format_3_with_replace() {
         list
     };
     assert_eq!(hune(&args(&[])).code, 0);
-    let path = fx.doc_path("general", "prod-main");
+    let path = fx.doc_path("", "prod-main");
     let format3 = fs::read(&path).unwrap();
     let text3 = String::from_utf8(format3.clone()).unwrap();
     assert!(text3.starts_with("{\n  \"format_version\": 3,\n"), "{text3}");

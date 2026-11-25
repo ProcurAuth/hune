@@ -8,7 +8,7 @@ use serde_json::Value;
 
 use crate::dashboard::{DashboardImport, DashboardResult, Form, detect, import_dashboard};
 use crate::item::{Class, Ctx, Fallback, ReportItem, SourceUse};
-use crate::options::{FolderResolution, ImportError, ImportOptions, ROOT_FOLDER_ID, ROOT_FOLDER_TITLE, assign_uids};
+use crate::options::{FolderResolution, ImportError, ImportOptions, ROOT_FOLDER_ID, assign_uids};
 
 /// One dashboard file of the input directory.
 #[derive(Debug, Clone)]
@@ -361,7 +361,8 @@ pub fn import_all(input: &ImportInput, opts: &ImportOptions) -> Result<ImportRes
     for (f, d) in order.iter().zip(&dashboards) {
         let det = detect(&f.value, &run.search_folders)?;
         match run.folders.resolve(det.folder_uid.as_deref()) {
-            FolderResolution::Found(info) => {
+            // The root is no folder: there is nothing to create for it.
+            FolderResolution::Found(info) if info.id != ROOT_FOLDER_ID => {
                 folders.entry(info.id.clone()).or_insert(FolderReport {
                     grafana_uid: info.grafana_uid.clone(),
                     id: info.id.clone(),
@@ -385,7 +386,7 @@ pub fn import_all(input: &ImportInput, opts: &ImportOptions) -> Result<ImportRes
                     folder_items.extend(ctx.finish(&accepted).items);
                 }
             }
-            FolderResolution::NoId { .. } => {}
+            FolderResolution::Found(_) | FolderResolution::NoId { .. } => {}
         }
         let _ = d;
     }
@@ -457,7 +458,6 @@ pub fn import_all(input: &ImportInput, opts: &ImportOptions) -> Result<ImportRes
             .map_or_else(|| v.get("totalCount").and_then(Value::as_u64).unwrap_or(0) as usize, Vec::len),
         None => 0,
     };
-    let _ = (ROOT_FOLDER_ID, ROOT_FOLDER_TITLE);
     Ok(ImportResult {
         dashboards,
         folders: folders.into_values().collect(),

@@ -205,7 +205,7 @@ fn the_four_forms_give_the_same_document() {
     assert_eq!(by("monitor").folder, "transit");
     assert_eq!(by("monitor-wrapped").folder, "transit");
     assert_eq!(by("monitor-v2a").folder, "transit");
-    assert_eq!(by("monitor-v2b").folder, "general");
+    assert_eq!(by("monitor-v2b").folder, "_root");
 }
 
 #[test]
@@ -252,7 +252,7 @@ fn uids_and_folders() {
     assert_eq!(by("Prod_Main").uid.len(), 18);
     assert!(by("Mixed_Case_Uid").items.iter().any(|i| i.class == Class::Changed && i.pointer == "/dashboard/uid"));
     // I09: root, folder map, nested folder, folder without id.
-    assert_eq!(by("plain-raw").folder, "general");
+    assert_eq!(by("plain-raw").folder, "_root");
     assert_eq!(by("Mixed_Case_Uid").folder, "nodes");
     assert_eq!(by("Mixed_Case_Uid").folder_title, "Nodes");
     assert_eq!(by("monitor").folder_title, "Transit desk");
@@ -267,7 +267,7 @@ fn uids_and_folders() {
     assert_eq!(bad.items.len(), 1);
     assert_eq!(bad.items[0].fallback, Some(Fallback::DashboardNotImported));
     let ids: Vec<&str> = r.folders.iter().map(|f| f.id.as_str()).collect();
-    assert_eq!(ids, vec!["general", "nodes", "transit"]);
+    assert_eq!(ids, vec!["nodes", "transit"]);
 }
 
 #[test]

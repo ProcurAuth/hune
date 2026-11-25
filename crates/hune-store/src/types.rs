@@ -366,6 +366,12 @@ pub struct ConflictInfo {
     pub saved_by: Subject,
 }
 
+/// The path of a dashboard file below the root of a volume, for a message: `<folder>/<uid>.json`, or `<uid>.json` for a dashboard
+/// without a folder (5.9).
+pub fn dashboard_file(folder: &FolderId, uid: &Uid) -> String {
+    if folder.is_root() { format!("{uid}.json") } else { format!("{folder}/{uid}.json") }
+}
+
 /// One folder of a store.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FolderRecord {

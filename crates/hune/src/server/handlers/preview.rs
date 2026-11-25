@@ -22,10 +22,11 @@ use serde_json::{Map, Value, json};
 
 const NUMBER: Shape = Shape::Int { min: i64::MIN, max: i64::MAX };
 static ANY: Shape = Shape::Any;
+static FOLDER_ID: Shape = Shape::Str { min_chars: 1, max_chars: 40 };
 
 static MEMBERS: [Member; 9] = [
     Member { name: "uid", shape: Shape::Str { min_chars: 1, max_chars: 40 }, required: false },
-    Member { name: "folder", shape: Shape::Str { min_chars: 1, max_chars: 40 }, required: false },
+    Member { name: "folder", shape: Shape::Nullable(&FOLDER_ID), required: false },
     Member { name: "from_ms", shape: NUMBER, required: true },
     Member { name: "to_ms", shape: NUMBER, required: true },
     Member { name: "max_data_points", shape: NUMBER, required: false },
@@ -134,7 +135,12 @@ pub async fn preview(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     // The saved dashboard or the folder of a new one.
     let services = services(&ctx)?;
     let uid = v.get("uid").and_then(Value::as_str).map(str::to_owned);
-    let folder = v.get("folder").and_then(Value::as_str).map(str::to_owned);
+    // The member `folder` is a folder id, or `null` for a new dashboard without a folder (6.22).
+    let folder = match v.get("folder") {
+        None => None,
+        Some(Value::Null) => Some(hune_core::ids::ROOT_FOLDER_TEXT.to_owned()),
+        Some(other) => other.as_str().map(str::to_owned),
+    };
     // The folder of the saved dashboard: the chain of the other permission (11.21).
     let mut saved_folder: Option<String> = None;
     if let Some(u) = &uid {
@@ -145,6 +151,7 @@ pub async fn preview(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         }
     }
     if let Some(f) = &folder
+        && f != hune_core::ids::ROOT_FOLDER_TEXT
         && !services.catalog.folders().iter().any(|r| r.id.as_str() == f)
     {
         return Err(gate::unknown(&ctx, "No such folder.").await);

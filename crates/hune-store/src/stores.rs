@@ -237,8 +237,10 @@ impl Stores {
         let st = self.state();
         let mut counts = vec![0usize; self.inner.members.len()];
         let owner_of = |folder: &FolderId| st.folder_owner.get(folder).copied();
-        for (_, folder) in st.stale.keys().chain(st.rejected.keys()) {
-            if let Some(i) = owner_of(folder) {
+        // A file at the root of a volume has no folder: its store is the owner of its uid.
+        for (uid, folder) in st.stale.keys().chain(st.rejected.keys()) {
+            let owner = if folder.is_root() { st.uid_owner.get(uid).copied() } else { owner_of(folder) };
+            if let Some(i) = owner {
                 counts[i] += 1;
             }
         }
@@ -334,7 +336,8 @@ impl Stores {
                         invalid += 1;
                         if m.info.kind == StoreKind::Volume {
                             return Err(StartIssue(format!(
-                                "{shown}: the file {root}/{folder}/{uid}.json is not valid: {}",
+                                "{shown}: the file {root}/{} is not valid: {}",
+                                crate::types::dashboard_file(folder, uid),
                                 reasons(errors)
                             )));
                         }
@@ -421,7 +424,9 @@ impl Stores {
             }
         }
         for (key, mark) in &marks.entries {
-            if st.folder_owner.get(&key.1) == Some(&i) {
+            // A dashboard without a folder belongs to the store that holds its uid.
+            let owner = if key.1.is_root() { st.uid_owner.get(&key.0) } else { st.folder_owner.get(&key.1) };
+            if owner == Some(&i) {
                 sub.entries.insert(key.clone(), mark.clone());
             }
         }
@@ -460,6 +465,10 @@ impl Stores {
     }
 
     fn note_folder(&self, folder: &FolderId) {
+        // The root is not a folder: no store owns it.
+        if folder.is_root() {
+            return;
+        }
         if let Some(p) = self.inner.primary {
             self.state().folder_owner.entry(folder.clone()).or_insert(p);
         }
@@ -489,7 +498,7 @@ impl Stores {
                     entries.push(e);
                 }
                 CatalogEntry::Invalid { uid, folder, etag, errors } => {
-                    let path = format!("{root}/{folder}/{uid}.json");
+                    let path = format!("{root}/{}", crate::types::dashboard_file(folder, uid));
                     let reason = reasons(errors);
                     if let Some(good) = st.known_entries.get(&key).cloned() {
                         if st.stale.get(&key) != Some(etag) {
@@ -573,7 +582,7 @@ impl Stores {
                 Some(&o) if o != i => {
                     st.events.push(StoreEvent::RescanRejected {
                         store: m.info.id.clone(),
-                        path: format!("{}/{}", e.folder(), e.uid()),
+                        path: crate::types::dashboard_file(e.folder(), e.uid()),
                         reason: format!("the uid is in the store \"{}\"", self.member(o).info.id),
                     });
                     false

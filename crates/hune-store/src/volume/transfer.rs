@@ -16,7 +16,7 @@ use super::dir::{Dir, FILE_MODE, FType};
 use super::meta::{VersionFile, decode_meta, encode_meta, json_name, meta_name, parse_version_name};
 use super::{FOLDER_FILE, HISTORY_DIR, Inner, MAX_SMALL_FILE, VolumeStore, io_err};
 use crate::store::{CurrentRecord, DashboardRecord, FolderState, ImportReport, Marks, Problem};
-use crate::types::{CatalogEntry, Etag, FolderRecord, StoreError, Uid, Version, VersionKind};
+use crate::types::{CatalogEntry, Etag, FolderId, FolderRecord, StoreError, Uid, Version, VersionKind};
 
 fn invalid_one(message: impl Into<String>) -> StoreError {
     StoreError::Invalid(vec![ValidationError::new("", ErrorCode::NotPermitted, message)])
@@ -129,7 +129,7 @@ impl LayoutWriter {
             }
         }
         if let Some(cur) = &rec.current {
-            let dir = match self.root.open_dir(cur.folder.as_str()) {
+            let dir = match self.root.open_dir(if cur.folder.is_root() { "." } else { cur.folder.as_str() }) {
                 Ok(d) => d,
                 Err(Errno::NOENT | Errno::LOOP | Errno::NOTDIR) => return Err(StoreError::FolderNotFound),
                 Err(e) => return Err(io_err(e, format!("open the folder {}", cur.folder))),
@@ -337,7 +337,9 @@ impl Inner {
     /// Each uid that has a current document or a version, in byte order (5.4, item 6).
     pub(crate) fn export_uids(&self) -> Result<Vec<Uid>, StoreError> {
         let mut set: BTreeSet<Uid> = self.history_uids()?.into_keys().collect();
-        for f in self.folder_ids()? {
+        let mut places = vec![FolderId::root()];
+        places.extend(self.folder_ids()?);
+        for f in places {
             let Some(dir) = self.open_folder(&f)? else { continue };
             for item in dir.list().map_err(|e| io_err(e, format!("list the folder {f}")))? {
                 if item.ftype != FType::File || !item.name_ok || item.name.starts_with('.') {
@@ -379,7 +381,7 @@ impl Inner {
                         Err(e) => return Err(StoreError::Invalid(e)),
                     },
                 },
-                _ => return Err(invalid_one(format!("the uid {uid} is in more than one folder"))),
+                _ => return Err(invalid_one(format!("the uid {uid} is in more than one place"))),
             };
             if stable && before == self.version_numbers(uid)? {
                 return Ok(DashboardRecord { uid: uid.clone(), versions, current });
@@ -414,7 +416,7 @@ impl Inner {
                 out.push(Problem {
                     folder: Some(folder.clone()),
                     uid: Some(uid.clone()),
-                    place: format!("{folder}/{uid}.json"),
+                    place: crate::types::dashboard_file(folder, uid),
                     errors: errors.clone(),
                 });
             }

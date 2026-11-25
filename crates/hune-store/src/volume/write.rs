@@ -275,7 +275,9 @@ impl Inner {
 
     fn count_dashboards(&self) -> Result<usize, StoreError> {
         let mut n = 0;
-        for f in self.folder_ids()? {
+        let mut places = vec![FolderId::root()];
+        places.extend(self.folder_ids()?);
+        for f in places {
             let Some(dir) = self.open_folder(&f)? else { continue };
             for item in dir.list().map_err(|e| io_err(e, format!("list the folder {f}")))? {
                 let is_dash = item.ftype == FType::File
@@ -290,6 +292,10 @@ impl Inner {
     }
 
     fn require_valid_folder(&self, folder: &FolderId) -> Result<(), StoreError> {
+        // The root always exists and has no folder file to check.
+        if folder.is_root() {
+            return Ok(());
+        }
         match self.read_folder_state(folder)? {
             Some((FolderState::Valid(_), _)) => Ok(()),
             _ => Err(StoreError::FolderNotFound),

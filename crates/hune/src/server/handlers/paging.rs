@@ -135,7 +135,8 @@ impl PageCursor {
         if folder.is_empty() && uid.is_empty() && title.is_empty() {
             return Ok(PageCursor { key: None, skip });
         }
-        if !is_valid_id(folder) || !is_valid_id(uid) || title.len() > CURSOR_TITLE_BYTES {
+        // An empty folder is the key of a dashboard without a folder (6.24).
+        if !(folder.is_empty() || is_valid_id(folder)) || !is_valid_id(uid) || title.len() > CURSOR_TITLE_BYTES {
             return Err(bad());
         }
         let key = DashboardKey { folder: folder.to_owned(), title: title.to_vec(), uid: uid.to_owned() };

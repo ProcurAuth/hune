@@ -1304,6 +1304,24 @@ The owner set the shape of the blocks and the key `primary` on a block. The owne
 
 Open question: are these choices right? Default today: the text of the sections above.
 
+### 19.38 Dashboards without a folder
+
+A dashboard can have no folder. The API writes `null` for its folder. The text of 4.3, 5.9, 5.10, 5.24, 6.11 to 6.13, 6.19, 6.24 and of the file ACCESS.md gives the rules.
+
+The owner set the form `null` in the API and the file at the root of a volume. The owner set the access node `folder:_root` and the root of Grafana without a folder. The owner set the stop of the start for a file at the root of a volume that is not a valid dashboard. The owner MUST read again each default below.
+
+- The inside of the code. The store, the catalog and the handlers use one reserved value of the type `FolderId` for "no folder". Its text is `_root`. The check of 4.3 refuses it, so no client can send it as a folder id. The API never shows this text: it shows `null`. The access tree shows it as the node `folder:_root`.
+- A body that has no member `folder` stays refused (6.13). The value `null` is a choice, not a default.
+- The filter `GET /api/dashboards?folder=` with an empty value selects the dashboards without a folder. No other form exists.
+- `GET /api/folders` has the member `root`, and it does not list the root as a folder. `root.access.write` follows `dashboard.write` on the node `_root`.
+- The order. A dashboard without a folder comes before each dashboard of a folder, in all lists. In the display, the cards of the root come first, without a title.
+- The rights. A person who has rights on real folders only does not see a dashboard without a folder (fail closed). The author of a policy adds a grant on `folder:_root`. The portal list of folders gets the item `_root`, "Root (no folder)", as the first item.
+- The root of each store is the same node `_root`, because a uid is unique in all stores. A dashboard without a folder in a read-only store is read-only, and each write to it gives `read_only_store`.
+- The break for a volume. A file `<name>.json` at the root of a volume, with a name that fits the uid rule, was ignored before. It is now a dashboard. A file that is not a valid dashboard, for example `package.json`, stops the start. The message names the volume, the file and the reason. A file with another kind of name is still ignored.
+- The break for PostgreSQL. The schema version goes from 1 to 2. Run `hune migrate-store` before `serve`. The step is one way. A binary of schema version 1 refuses a database of schema version 2.
+- The importer of Grafana puts the dashboards of the root of Grafana in no folder. The id `general` is no more reserved: a folder map can name a folder `general`.
+- The version. This change moves the schema, so the release is a minor version.
+
 ## 20. Glossary and references
 
 ### 20.1 Glossary

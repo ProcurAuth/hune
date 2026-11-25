@@ -11,7 +11,7 @@ use hune_core::limits::MAX_DOCUMENT_BYTES;
 use hune_core::time::UtcMillis;
 use rustix::io::Errno;
 
-use super::dir::{Dir, FType, FileStat};
+use super::dir::{Dir, DirItem, FType, FileStat};
 use super::meta::{VersionFile, decode_meta, json_name, meta_name, parse_version_name};
 use super::{FOLDER_FILE, HISTORY_DIR, Inner, MAX_SMALL_FILE, io_err};
 use crate::store::{Delta, EntryMark, EntryProbe, FileSig, FolderMark, FolderState, Marks, StoreEvent};
@@ -58,6 +58,14 @@ fn one_error(code: ErrorCode, message: impl Into<String>) -> Vec<ValidationError
     vec![ValidationError::new("", code, message)]
 }
 
+/// The uid of a file at the root of the volume that is a dashboard without a folder: a regular file `<uid>.json` (5.10, rule 5).
+fn root_dashboard_uid(item: &DirItem) -> Option<Uid> {
+    if item.ftype != FType::File || !item.name_ok {
+        return None;
+    }
+    item.name.strip_suffix(".json").and_then(|stem| Uid::parse(stem).ok())
+}
+
 fn read_error_entry(folder: &FolderId, uid: &Uid, e: Errno) -> Arc<CatalogEntry> {
     Arc::new(CatalogEntry::Invalid {
         uid: uid.clone(),
@@ -82,7 +90,9 @@ impl Inner {
 
     /// Opens the directory of a folder. `None` when it is absent or a link.
     pub(crate) fn open_folder(&self, folder: &FolderId) -> Result<Option<Dir>, StoreError> {
-        match self.root.open_dir(folder.as_str()) {
+        // The place of the dashboards without a folder is the root of the volume itself (5.9).
+        let name = if folder.is_root() { "." } else { folder.as_str() };
+        match self.root.open_dir(name) {
             Ok(d) => Ok(Some(d)),
             Err(Errno::NOENT | Errno::LOOP | Errno::NOTDIR) => Ok(None),
             Err(e) => Err(io_err(e, format!("open the folder {folder}"))),
@@ -94,6 +104,10 @@ impl Inner {
         &self,
         folder: &FolderId,
     ) -> Result<Option<(FolderState, Option<FileSig>)>, StoreError> {
+        // The root is not a folder: it has no folder file and no state.
+        if folder.is_root() {
+            return Ok(None);
+        }
         let Some(dir) = self.open_folder(folder)? else { return Ok(None) };
         Ok(Some(self.folder_state_in(&dir, folder)?))
     }
@@ -129,7 +143,10 @@ impl Inner {
     pub(crate) fn locate(&self, uid: &Uid) -> Result<Vec<FolderId>, StoreError> {
         let name = format!("{uid}.json");
         let mut out = Vec::new();
-        for f in self.folder_ids()? {
+        // The root comes first, as in the order of folders (6.24).
+        let mut places = vec![FolderId::root()];
+        places.extend(self.folder_ids()?);
+        for f in places {
             let Some(dir) = self.open_folder(&f)? else { continue };
             match dir.stat(&name) {
                 Ok(st) if st.ftype == FType::File => out.push(f),
@@ -284,7 +301,7 @@ impl Inner {
         &self,
         folder: &FolderId,
         uid: &Uid,
-        folder_state: &FolderState,
+        folder_state: Option<&FolderState>,
         raw: &[u8],
         stat: &FileStat,
         ctx: u8,
@@ -294,8 +311,10 @@ impl Inner {
         };
         if ctx & CTX_FOLDER_INVALID != 0 {
             let reason = match folder_state {
-                FolderState::Invalid { errors, .. } => errors.first().map(|e| e.message.clone()).unwrap_or_default(),
-                FolderState::Valid(_) => String::new(),
+                Some(FolderState::Invalid { errors, .. }) => {
+                    errors.first().map(|e| e.message.clone()).unwrap_or_default()
+                }
+                _ => String::new(),
             };
             return invalid(one_error(
                 ErrorCode::NotPermitted,
@@ -303,7 +322,7 @@ impl Inner {
             ));
         }
         if ctx & CTX_DUPLICATE != 0 {
-            return invalid(one_error(ErrorCode::NotUnique, format!("the uid {uid} is in more than one folder")));
+            return invalid(one_error(ErrorCode::NotUnique, format!("the uid {uid} is in more than one place")));
         }
         match classify(raw, uid) {
             (_, Ok(doc)) => self.valid_entry(folder, uid, stat, doc),
@@ -330,6 +349,7 @@ impl Inner {
         self.faults.check(super::faults::FaultPoint::Scan).map_err(|e| io_err(e, "scan the root"))?;
         // 1. The root.
         let mut folder_names = Vec::new();
+        let mut root_files: Vec<(FolderId, Uid, FileStat)> = Vec::new();
         for item in self.root.list().map_err(|e| io_err(e, "list the root"))? {
             if item.name.starts_with('.') {
                 continue;
@@ -337,6 +357,13 @@ impl Inner {
             if item.ftype == FType::Dir && item.name_ok && is_valid_id(&item.name) {
                 if let Ok(id) = FolderId::parse(&item.name) {
                     folder_names.push(id);
+                }
+            } else if let Some(uid) = root_dashboard_uid(&item) {
+                // A file `<uid>.json` at the root is a dashboard without a folder (5.10).
+                match self.root.stat(&item.name) {
+                    Ok(st) => root_files.push((FolderId::root(), uid, st)),
+                    Err(Errno::NOENT) => {}
+                    Err(e) => return Err(io_err(e, format!("stat {}", item.name))),
                 }
             } else {
                 self.ignore_entry(
@@ -351,7 +378,7 @@ impl Inner {
         // 2. The folders and their files.
         let mut new_marks = Marks::default();
         let mut changed_folders = Vec::new();
-        let mut files: Vec<(FolderId, Uid, FileStat)> = Vec::new();
+        let mut files: Vec<(FolderId, Uid, FileStat)> = root_files;
         for f in &folder_names {
             let Some(dir) = self.open_folder(f)? else { continue };
             let listing = match dir.list() {
@@ -414,9 +441,10 @@ impl Inner {
         let mut entries = Vec::new();
         files.sort_by(|a, b| (&a.1, &a.0).cmp(&(&b.1, &b.0)));
         for (folder, uid, st) in files {
-            let state = &new_marks.folders[&folder].state;
+            // The root has no folder file, so it has no state: its files have no folder context.
+            let state = new_marks.folders.get(&folder).map(|m| m.state.clone());
             let mut ctx = 0;
-            if matches!(state, FolderState::Invalid { .. }) {
+            if matches!(state, Some(FolderState::Invalid { .. })) {
                 ctx |= CTX_FOLDER_INVALID;
             }
             if duplicates.contains(&uid) {
@@ -431,9 +459,8 @@ impl Inner {
                 new_marks.entries.insert(key, m.clone());
                 continue;
             }
-            let state = state.clone();
             let entry = match self.read_dashboard_raw(&folder, &uid) {
-                Ok(Some((raw, stat))) => self.build_entry(&folder, &uid, &state, &raw, &stat, ctx),
+                Ok(Some((raw, stat))) => self.build_entry(&folder, &uid, state.as_ref(), &raw, &stat, ctx),
                 Ok(None) => continue,
                 Err(e) => read_error_entry(&folder, &uid, e),
             };
@@ -460,7 +487,7 @@ impl Inner {
 
     /// Reads the raw bytes of a dashboard file, without the validation.
     fn read_dashboard_raw(&self, folder: &FolderId, uid: &Uid) -> Result<Option<(Vec<u8>, FileStat)>, Errno> {
-        let dir = match self.root.open_dir(folder.as_str()) {
+        let dir = match self.root.open_dir(if folder.is_root() { "." } else { folder.as_str() }) {
             Ok(d) => d,
             Err(Errno::NOENT | Errno::LOOP | Errno::NOTDIR) => return Ok(None),
             Err(e) => return Err(e),
@@ -478,7 +505,15 @@ impl Inner {
         let dup = folders.len() > 1;
         let mut out = Vec::new();
         for f in folders {
-            let Some((state, _)) = self.read_folder_state(&f)? else { continue };
+            // The root has no folder state: its files have no folder context.
+            let state = if f.is_root() {
+                None
+            } else {
+                match self.read_folder_state(&f)? {
+                    Some((state, _)) => Some(state),
+                    None => continue,
+                }
+            };
             let Some(dir) = self.open_folder(&f)? else { continue };
             let (raw, stat) = match dir.read_file(&format!("{uid}.json"), MAX_DOCUMENT_BYTES) {
                 Ok(r) => r,
@@ -486,13 +521,13 @@ impl Inner {
                 Err(e) => return Err(io_err(e, format!("read {f}/{uid}.json"))),
             };
             let mut ctx = 0;
-            if matches!(state, FolderState::Invalid { .. }) {
+            if matches!(state, Some(FolderState::Invalid { .. })) {
                 ctx |= CTX_FOLDER_INVALID;
             }
             if dup {
                 ctx |= CTX_DUPLICATE;
             }
-            let entry = self.build_entry(&f, uid, &state, &raw, &stat, ctx);
+            let entry = self.build_entry(&f, uid, state.as_ref(), &raw, &stat, ctx);
             let mark = EntryMark { etag: *entry.etag(), sig: Some(stat.sig), ctx };
             out.push((entry, mark));
         }

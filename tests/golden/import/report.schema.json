@@ -107,7 +107,7 @@
         "properties": {
           "grafana_uid": { "type": "string" },
           "uid": { "type": "string" },
-          "folder": { "type": "string" },
+          "folder": { "type": ["string", "null"] },
           "title": { "type": "string" },
           "panels": { "type": "integer", "minimum": 0 },
           "metadata": { "type": "integer", "minimum": 0 },
