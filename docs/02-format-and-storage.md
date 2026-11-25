@@ -3472,3 +3472,4 @@ At start, each file of a volume is valid (5.43). After the start, a person or a 
 6. A file that becomes valid again clears the member `stale` and the count at the next poll.
 7. A file that is deleted leaves the catalog. The rule keeps no state for it.
 8. A dashboard of the PostgreSQL store stays an invalid entry (5.8, rule 5). The rule of this section is for volumes.
+9. A save of a stale dashboard of the primary volume, with the etag of the last valid state, gives `409 conflict`. The answer holds the etag of the file on disk (5.14, step 4). A save with this etag replaces the file.

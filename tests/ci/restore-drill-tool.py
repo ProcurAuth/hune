@@ -257,7 +257,8 @@ def command_seed(args):
         etag_of[RESTORED_UID] = answer["etag"]
         # One delete. The uid stays deleted: step 7 of 16.14 restores it with `hune restore`.
         server.write("DELETE", "/api/dashboards/" + DELETED_UID, None, etag_of[DELETED_UID], expect=(200,))
-        # The hook of 5.14: a writer outside Hune puts an invalid file. Hune sees it at its next scan.
+        # The hook of 5.14: a writer outside Hune puts an invalid file. Hune sees it at its next scan and keeps the last
+        # valid state of the dashboard, with the warning `stale` (5.44).
         path = os.path.join(root, folder_of[HOOK_UID], HOOK_UID + ".json")
         if not os.path.isfile(path):
             die("the hook target %s does not exist" % path)
@@ -267,19 +268,31 @@ def command_seed(args):
         while True:
             _, _, raw = server.call("GET", "/api/dashboards?limit=100", expect=(200,))
             item = next(i for i in json.loads(raw)["items"] if i["uid"] == HOOK_UID)
-            if item["state"] == "invalid":
+            if item.get("stale") == "file_invalid":
                 break
             if time.time() > deadline:
                 die("Hune did not see the invalid file of %s" % HOOK_UID)
             time.sleep(0.2)
-        if item["etag"] != summary["hook_etag"]:
-            die("the etag of the invalid file is %s, not the SHA-256 of its bytes" % item["etag"])
+        if item["state"] != "valid":
+            die("the dashboard %s must keep its last valid state, found %s" % (HOOK_UID, item["state"]))
+        # A save with the etag of the last valid state gets 409: the etag of the file on disk is the SHA-256 of its raw
+        # bytes (5.14, step 4). The answer holds this etag.
+        status, _, raw = server.call(
+            "PUT",
+            "/api/dashboards/" + HOOK_UID,
+            {"message": "Repair after the hook", "document": make_document(2, 9)},
+            {"Idempotency-Key": str(uuid.uuid4()), "If-Match": '"%s"' % item["etag"]},
+            expect=(409,),
+        )
+        current_etag = json.loads(raw)["error"]["current_etag"]
+        if current_etag != summary["hook_etag"]:
+            die("the etag of the invalid file is %s, not the SHA-256 of its bytes" % current_etag)
         # A save with the etag of the raw bytes replaces the invalid file (5.14, step 8).
         answer = server.write(
             "PUT",
             "/api/dashboards/" + HOOK_UID,
             {"message": "Repair after the hook", "document": make_document(2, 9)},
-            item["etag"],
+            current_etag,
             expect=(200,),
         )
         etag_of[HOOK_UID] = answer["etag"]
