@@ -31,7 +31,8 @@ export function createGrid({ doc, rt, makeFrame, sectionExtras = null }) {
     (entries) => {
       for (const entry of entries) rt.setVisible(keyFromText(entry.target.dataset.panelKey), entry.isIntersecting);
     },
-    { rootMargin: "100% 0px" },
+    // The root is the scroll container under the header (9.6), so the margin of one window height counts from its edges.
+    { root: document.getElementById("app-main"), rootMargin: "100% 0px" },
   );
   // A runtime with no plan (the history, 10.11) shows the panels as stored.
   const planNow = () => rt.plan || buildPlan(doc, () => undefined, () => "", { repeat: false });

@@ -8,9 +8,17 @@ import { dragPanel, normalizeSection, resizePanel, GRID_COLUMNS, MAX_HEIGHT } fr
 
 // A pointer that moves less than this many pixels is a click on the title, not a drag.
 const START_DISTANCE = 4;
-// Near the top or the bottom of the window, a drag scrolls the page.
+// Near the top or the bottom edge of the scroll container (the area under the header), a drag scrolls the content.
 const EDGE = 56;
 const MAX_SCROLL = 24;
+
+// The scroll step for a pointer at `y`, with a container that goes from `top` to `bottom`: negative near the top edge, positive near the bottom edge,
+// 0 elsewhere. It grows from 1 at the start of the edge zone to MAX_SCROLL at the edge, and it never exceeds MAX_SCROLL.
+export function scrollSpeed(y, top, bottom) {
+  if (y < top + EDGE) return -Math.min(MAX_SCROLL, Math.ceil(((top + EDGE - y) / EDGE) * MAX_SCROLL));
+  if (y > bottom - EDGE) return Math.min(MAX_SCROLL, Math.ceil(((y - (bottom - EDGE)) / EDGE) * MAX_SCROLL));
+  return 0;
+}
 const FLIP_MS = 200;
 
 // At this width the grid is a flow (9.8), so the panels have no cell to drag to. The form "Position" stays.
@@ -59,6 +67,8 @@ export function sizeAt(width, height, m) {
  * It returns { destroy }.
  */
 export function attachDrag({ view, panelsOf, commit, announce = () => {} }) {
+  // The content scrolls in #app-main, not the document (9.6).
+  const scroller = document.getElementById("app-main") || document.scrollingElement || document.documentElement;
   const root = view.el;
   const narrow = window.matchMedia(NARROW_QUERY);
   const calm = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -142,16 +152,16 @@ export function attachDrag({ view, panelsOf, commit, announce = () => {} }) {
     d.frameId = requestAnimationFrame(scrollLoop);
   }
 
-  // The page scrolls while the pointer is near the top or the bottom edge of the window.
+  // The content scrolls while the pointer is near the top or the bottom edge of the scroll container (the area under the header).
   function scrollLoop() {
     const d = drag;
     if (!d || !d.started) return;
-    const h = window.innerHeight;
-    const speed = d.clientY < EDGE ? -Math.ceil(((EDGE - d.clientY) / EDGE) * MAX_SCROLL) : d.clientY > h - EDGE ? Math.ceil(((d.clientY - (h - EDGE)) / EDGE) * MAX_SCROLL) : 0;
+    const box = scroller.id === "app-main" ? scroller.getBoundingClientRect() : { top: 0, bottom: window.innerHeight };
+    const speed = scrollSpeed(d.clientY, box.top, box.bottom);
     if (speed) {
-      const before = window.scrollY;
-      window.scrollBy(0, speed);
-      if (window.scrollY !== before) update();
+      const before = scroller.scrollTop;
+      scroller.scrollTop = before + speed;
+      if (scroller.scrollTop !== before) update();
     }
     d.frameId = requestAnimationFrame(scrollLoop);
   }

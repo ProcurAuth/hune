@@ -47,18 +47,29 @@ function buildHeader() {
   headerMeasure = trackHeaderHeight();
 }
 
-// The editor bar sticks under the header: --header-h is the real height of the header (0 when the header scrolls).
+// The header is always on top and the content scrolls under it (9.6): --header-h is the real height of the header. --scrollbar-w is the width of the
+// scrollbar of the content, for the parts that are fixed to the window edge (the options pane of the panel editor): 0 when the content does not scroll.
 function trackHeaderHeight() {
   const root = document.documentElement;
   const measure = () => {
-    const sticky = window.getComputedStyle(headerEl).position === "sticky";
-    root.style.setProperty("--header-h", sticky ? `${headerEl.offsetHeight}px` : "0px");
+    root.style.setProperty("--header-h", `${headerEl.offsetHeight}px`);
+    root.style.setProperty("--scrollbar-w", `${Math.max(0, main.offsetWidth - main.clientWidth)}px`);
   };
   measure();
-  if (typeof ResizeObserver === "function") new ResizeObserver(measure).observe(headerEl);
+  if (typeof ResizeObserver === "function") {
+    const watch = new ResizeObserver(measure);
+    watch.observe(headerEl);
+    watch.observe(main);
+  }
   window.addEventListener("resize", measure);
   return measure;
 }
+
+// The scroll position of the content, for each path. A page starts at the top. A Back or a Forward puts the content where it was, as the
+// browser does for a document that scrolls (the content scrolls, not the document, so the browser does not restore it).
+const scrollMemory = new Map();
+let shownPath = null;
+let restoreScroll = false;
 
 // The API that pages use to fill the header.
 const header = {
@@ -246,6 +257,8 @@ function entryHook(isEntry) {
 // `entry` is set by a retry of a failed entry route: it stays the entry route. Else the first call is the entry route.
 async function show({ entry = null } = {}) {
   const token = ++routeToken;
+  const wantsRestore = restoreScroll;
+  restoreScroll = false;
   const isEntry = entry === null ? !shownOnce : entry;
   shownOnce = true;
   const route = parseRoute();
@@ -253,6 +266,8 @@ async function show({ entry = null } = {}) {
     current.locationChanged();
     return;
   }
+  if (shownPath !== null) scrollMemory.set(shownPath, main.scrollTop);
+  shownPath = window.location.pathname;
   stopCurrent();
   // The hook of the state of the page (9.29) is absent while a view loads and on the pages of an error.
   document.documentElement.removeAttribute("data-hune-view");
@@ -287,6 +302,7 @@ async function show({ entry = null } = {}) {
     }
   } finally {
     busy.end();
+    if (token === routeToken) main.scrollTop = wantsRestore ? scrollMemory.get(window.location.pathname) || 0 : 0;
     // A route that another route replaced (the entry redirect of 9.7) does not release the paint: the last route does.
     if (token === routeToken) reveal();
   }
@@ -362,7 +378,10 @@ async function start() {
     const skip = document.getElementById("skip-link");
     if (skip) skip.addEventListener("click", skipToMain);
     document.addEventListener("click", onClick);
-    window.addEventListener("popstate", () => show());
+    window.addEventListener("popstate", () => {
+      restoreScroll = true;
+      show();
+    });
   }
   try {
     app.session = await api.session();
