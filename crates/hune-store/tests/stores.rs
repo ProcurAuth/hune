@@ -371,3 +371,25 @@ async fn the_catalog_sees_a_write_in_the_primary_store_at_once() {
     let events = Source::drain_events(&stores);
     assert!(events.iter().all(|e| !matches!(e, StoreEvent::RescanRejected { .. })));
 }
+
+#[tokio::test]
+async fn a_file_that_becomes_not_valid_after_an_own_write_keeps_the_state_of_the_write() {
+    let (stores, _dirs, main_root, _lab) = two(Duration::ZERO).await;
+    stores.open_checked().await.unwrap();
+    let catalog = Catalog::load(&stores).await.unwrap();
+    stores.create(&fid("home"), &doc("main-two", "Two"), VersionKind::Create, &meta(5)).await.unwrap();
+    assert!(catalog.refresh_uid(&stores, &uid("main-two")).await);
+    let etag = *catalog.get(&uid("main-two")).unwrap().etag();
+    // A writer outside Hune breaks the file of the dashboard that Hune wrote.
+    fs::write(main_root.join("home/main-two.json"), b"{ not json").unwrap();
+    let result = catalog.poll(&stores).await;
+    assert!(result.outcome.is_ok());
+    let entry = catalog.get(&uid("main-two")).unwrap();
+    assert!(matches!(*entry, CatalogEntry::Valid { .. }));
+    assert_eq!(*entry.etag(), etag, "the state is the last valid state");
+    assert!(stores.is_stale(&uid("main-two")));
+    assert_eq!(stores.invalid_files(), vec![("main".to_owned(), 1), ("lab".to_owned(), 0)]);
+    // A save with the etag of the last valid state gives a conflict: the file on disk differs.
+    let r = stores.save(&doc("main-two", "Two b"), &etag, &fid("home"), VersionKind::Save, &meta(6)).await;
+    assert!(matches!(r, Err(StoreError::Conflict(_))), "{r:?}");
+}

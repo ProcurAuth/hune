@@ -588,6 +588,12 @@ impl Stores {
     }
 }
 
+/// True when the folder is held by a store other than `primary`: its last valid state is not the business of a probe of
+/// the primary store.
+fn st_owner_is_other(owners: &BTreeMap<FolderId, usize>, id: &FolderId, primary: usize) -> bool {
+    owners.get(id).is_some_and(|o| *o != primary)
+}
+
 impl Store for Stores {
     async fn load(&self) -> Result<Snapshot, StoreError> {
         let first = self.state().first.take();
@@ -826,18 +832,42 @@ impl Store for Stores {
     }
 
     async fn entry_probe(&self, uid: &Uid) -> Result<EntryProbe, StoreError> {
-        match self.route_uid(uid) {
-            Some(i) => self.member(i).store.entry_probe(uid).await,
-            None => Ok(EntryProbe { entries: Vec::new() }),
+        let Some(i) = self.route_uid(uid) else { return Ok(EntryProbe { entries: Vec::new() }) };
+        let probe = self.member(i).store.entry_probe(uid).await?;
+        // An own write changes the last valid state of a volume: the next poll compares a file that is not valid with it.
+        if self.member(i).info.kind == StoreKind::Volume {
+            let mut st = self.state();
+            let keys: Vec<EntryKey> = st.known_entries.keys().filter(|k| k.0 == *uid).cloned().collect();
+            for k in keys {
+                st.known_entries.remove(&k);
+                st.stale.remove(&k);
+                st.rejected.remove(&k);
+            }
+            for (entry, _) in &probe.entries {
+                if matches!(**entry, CatalogEntry::Valid { .. }) {
+                    st.known_entries.insert((entry.uid().clone(), entry.folder().clone()), entry.clone());
+                }
+            }
         }
+        Ok(probe)
     }
 
     async fn folder_probe(&self) -> Result<Vec<(FolderState, FolderMark)>, StoreError> {
         // Only the primary store changes with an own write.
-        match self.primary() {
-            Some(s) => s.folder_probe().await,
-            None => Ok(Vec::new()),
+        let Some(p) = self.inner.primary else { return Ok(Vec::new()) };
+        let probe = self.member(p).store.folder_probe().await?;
+        if self.member(p).info.kind == StoreKind::Volume {
+            let mut st = self.state();
+            let owners = st.folder_owner.clone();
+            st.known_folders.retain(|id, _| st_owner_is_other(&owners, id, p));
+            for (state, _) in &probe {
+                if matches!(state, FolderState::Valid(_)) {
+                    st.known_folders.insert(state.id().clone(), state.clone());
+                    st.bad_folders.remove(state.id());
+                }
+            }
         }
+        Ok(probe)
     }
 
     async fn check_consistency(&self) -> Result<Vec<Problem>, StoreError> {
