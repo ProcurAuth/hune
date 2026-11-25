@@ -382,6 +382,16 @@ export function makeLabVolume(dir) {
   }
 }
 
+/** Add a dashboard with no folder to a volume: the file `<uid>.json` at the root of the volume path (5.9). The seed volumes have none, so the cases that
+ *  count cards keep their numbers; a case that needs root dashboards asks for them with the options `prepare` (the primary) and `labPrepare` (the store lab). */
+export function addRootDashboard(dir, uid, title, tags = []) {
+  const doc = JSON.parse(seedDashboardText());
+  doc.uid = uid;
+  doc.title = title;
+  doc.tags = tags;
+  writeFileSync(join(dir, `${uid}.json`), JSON.stringify(doc, null, 2) + "\n");
+}
+
 /** Build the configuration text from `print-reference` with the values of this run. */
 export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passwordFile, editing = true, basePath = "/", accessBlock = null, pgBlock = null, mongoBlock = null, queryInspect = null, serverLines = [], geomapBlock = null, chLines = [] }) {
   const ref = sh(BINARY, ["print-reference", "--format", "hcl", "--profile", "local"]);
@@ -467,7 +477,10 @@ export async function startServer(name, ch, opts = {}) {
   makeVolume(volume);
   if (opts.prepare) opts.prepare(volume);
   const labVolume = opts.lab ? join(dir, "lab") : null;
-  if (labVolume) makeLabVolume(labVolume);
+  if (labVolume) {
+    makeLabVolume(labVolume);
+    if (opts.labPrepare) opts.labPrepare(labVolume);
+  }
   const passwordFile = join(dir, "ch-password");
   writeFileSync(passwordFile, CH_PASSWORD + "\n");
   const port = await freePort();

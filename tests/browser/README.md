@@ -1,6 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B282 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 237 cases.
+This suite runs the browser cases B01 to B305 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 237 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -154,6 +154,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the three dots and the menu of a card, and the read-only card (9.7). |
 | `cases/stores.mjs` | The cases B241 to B244: a read-only store (`makeLabVolume`), the lock, the warning of a file that is not valid after the start (`breakFile`), the header selector and the refusal of a write. |
 | `cases/panel_preview.mjs` | The cases B280 to B282: the preview of a panel that loads for the first time (9.11). The queries are held, so the preview stays. The cases compare its plot and its legend with those of the loaded chart. They need the hold of a request, so they are `skip` with Firefox. |
+| `cases/root_dashboards.mjs` | The cases B300 to B305: the dashboards with no folder. The list with a root group, the dialogs New dashboard, Import and Move with the entry "Root (no folder)", the header selector, and a server with no primary store. `addRootDashboard` of `lib/env.mjs` makes a file at the root of a volume; the options `prepare` and `labPrepare` of `startServer` call it. |
 | `cases/json_view.mjs` | The cases B240, B270 and B271: the JSON view of the edit mode, its colours and their contrast, the marks of the gutter, the revert, the full height at four sizes and the caps of the colour layer; the look of VS Code (the palettes, the selection, the scroll bar); the band of the caret line, the boxes of the brackets, the guides and the wavy line of an error |
 | `cases/editor_a.mjs`, `cases/editor_b.mjs` | The cases B16 to B22 and B230: the editor, conflict, history, import and export, delete, no editing, the id of a new folder. |
 | `cases/misc.mjs` | The cases B14 and B15: the scripted accessibility audit. |

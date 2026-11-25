@@ -1473,6 +1473,11 @@ The stores in the page (9.6, 9.7, 9.8) add these tests to the groups of the tabl
 - Front end: `tests/frontend/stores.test.mjs` tests the groups by store, the marks of a card and the items of the selector. It tests the texts and the message of `read_only_store` too.
 - Browser: the cases B241 to B244. The case B01 and the entry case B33 use a dashboard that becomes not valid after the start.
 
+The dashboards with no folder (9.6, 9.7, 10.7, 10.12, 10.13) add these tests to the groups of the table:
+
+- Front end: `tests/frontend/root_dashboards.test.mjs` tests the value of the root entry, the right of the root and the entries of the folder select. It tests the root groups with their order and their title rule. It tests the items of the selector, the conflict of a move to the root, and the bodies with the folder `null`.
+- Browser: the cases B300 to B305. The harness adds a file at the root of a volume with `addRootDashboard` (options `prepare` and `labPrepare`).
+
 The select and copy rules (9.8e) add these tests to the groups of the table:
 
 - Front end: `tests/frontend/copy_text.test.mjs` tests the drag threshold and the place of a text: alignment, baseline, pixel ratio and turn. It tests the order of the texts, the signature and the cap of 400 texts. It tests the wrapper of `fillText` and `clearRect` on a fake context. It tests the text of a copy.
@@ -2111,6 +2116,12 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B280 | The preview of a time series (9.11). The queries are held. The preview has three lines, an area, five labels of the y axis and six of the x axis, and no dots. The legend follows the options: a list at the bottom, a list at the right, a table at the bottom, a table at the right, and off. A hidden y axis has no labels. After the load, the plot of the preview and the plot of the chart differ by 4 px at most in left, top, width and height. For a legend at the right, the width differs by 30 px at most. |
 | B281 | The preview of a bar chart and of a pie chart (9.11). A vertical bar chart with a legend at the bottom, a horizontal bar chart with its values, and a pie with the legend at the bottom, at the right, as a table at the right and off. After the load, the plot of the preview and the plot of the chart differ by 4 px at most (30 px in width for a legend at the right). |
 | B282 | The preview of each panel type (9.11). A stat with a line, three gauges, four bar gauges in columns, a table, a heatmap with its colour scale, a histogram, a state timeline with no legend, and a stacked bar series with no line. The light has the animation `panel-skel`, and the reduced motion stops it. A shape has a visible colour in both themes. A reload of a loaded panel shows no preview. |
+| B300 | The list page with dashboards with no folder (9.7). The root group of the primary is first and has no title. The folder below it keeps its title. The root group of the read-only store is the first group under its title, with a lock and no menu. GET `api/folders` has the member `root` and no root item. |
+| B301 | The dialog New dashboard (10.7). Its select has "Root (no folder)" first, and the folders after it. A dashboard that the dialog makes has the folder `null` in the API, and it shows in the root group. |
+| B302 | The dialog Import (10.12). Its select has "Root (no folder)" first. A file that the dialog imports there has the folder `null`. |
+| B303 | The dialog Move (10.7). A dashboard in a folder can move to the root. A dashboard at the root has no root entry and moves to a folder. The API shows both moves. |
+| B304 | The header selector (9.6). The dashboards with no folder are lines on their own, first, then the folder row and the store row. The root dashboard of the read-only store comes before its folders. |
+| B305 | A server with no primary store (11.25). The member `root` is read-only and belongs to no store. The root dashboards show in the block of the store with a lock and no menu, and no New button shows. |
 
 A build made with `--no-default-features` has no MongoDB driver and refuses the `mongodb` block at start (8b.2). The runner then reports B47 and B48 as `skip`, with the reason "no MongoDB driver in this build". It detects this case from the exit status and the message of `hune check-config`. A build with the driver (the default build) runs both cases against a disposable MongoDB 8.0 with `openssl` and `docker`.
 

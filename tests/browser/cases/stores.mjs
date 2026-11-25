@@ -45,7 +45,8 @@ export const cases = [
       t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="list-new-menu-popup"] [role="menuitem"]')].map((e) => e.textContent.trim())`), ["New dashboard", "New folder", "Import"], "the New menu");
       await p.click(p.tid("new-dashboard"));
       await p.waitSel(p.tid("new-dashboard-dialog"));
-      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="folder-select"] option')].map((o) => o.value)`), ["transit"], "New dashboard offers the folders of the primary only");
+      // The root of the primary is the first entry; no folder and no root of the read-only store is offered.
+      t.eq(await p.eval(`[...document.querySelectorAll('[data-testid="folder-select"] option')].map((o) => o.value)`), ["::root::", "transit"], "New dashboard offers the root and the folders of the primary only");
       await p.press("Escape");
     },
   },

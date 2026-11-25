@@ -4,7 +4,7 @@ import * as api from "./api.js";
 import { loadEditorModule } from "./editor_loader.js";
 import { dashboardPath, listSearch, parseSearch } from "./url_state.js";
 import { absoluteTime, bindMenu, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
-import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, groupByStore, rootGroupCount } from "./stores.js";
+import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, groupByStore, rootGroupCount, rootWritable } from "./stores.js";
 
 const SORT_KEY = "hune.list.sort";
 
@@ -17,21 +17,32 @@ const compareText = (a, b) => {
   return x < y ? -1 : x > y ? 1 : 0;
 };
 
-// Groups the dashboards by folder: folders in title order, dashboards in title order (9.7).
-// { descending: true } is the viewer preference "Z-A": the folders and the dashboards in the reverse order.
+// Groups the dashboards by folder: the root groups first, then the folders in title order, dashboards in title order (9.7).
+// A dashboard with no folder (`folder` null) is in a ROOT group. There is one root group for each store (the store of the dashboard), so the root of
+// the primary store and the root of a read-only store stay apart. A root group is { folder: { id: null, root: true, title: "Root", access: { write: false },
+// read_only, store }, items }; its title never shows. { descending: true } is the viewer preference "Z-A": the folders and the dashboards in the reverse
+// order; the root groups stay first.
 export function groupDashboards(folders, items, { descending = false } = {}) {
   const byFolder = new Map(folders.map((f) => [f.id, { folder: f, items: [] }]));
+  const roots = new Map();
   for (const item of items) {
+    if (item.folder === null) {
+      const store = typeof item.store === "string" ? item.store : "";
+      if (!roots.has(store)) roots.set(store, { folder: { id: null, root: true, title: "Root", access: { write: false }, read_only: item.read_only, store: item.store }, items: [] });
+      roots.get(store).items.push(item);
+      continue;
+    }
     if (!byFolder.has(item.folder)) byFolder.set(item.folder, { folder: { id: item.folder, title: item.folder, access: { write: false }, read_only: item.read_only, store: item.store }, items: [] });
     byFolder.get(item.folder).items.push(item);
   }
+  const rootGroups = [...roots.values()].sort((a, b) => compareText(a.folder.store ?? "", b.folder.store ?? ""));
   const groups = [...byFolder.values()].sort((a, b) => compareText(a.folder.title, b.folder.title) || compareText(a.folder.id, b.folder.id));
-  for (const group of groups) group.items.sort((a, b) => compareText(a.title, b.title) || compareText(a.uid, b.uid));
+  for (const group of [...rootGroups, ...groups]) group.items.sort((a, b) => compareText(a.title, b.title) || compareText(a.uid, b.uid));
   if (descending) {
     groups.reverse();
-    for (const group of groups) group.items.reverse();
+    for (const group of [...rootGroups, ...groups]) group.items.reverse();
   }
-  return groups;
+  return [...rootGroups, ...groups];
 }
 
 // The tag filter (9.7): the text q is one tag name. A dashboard matches when one of its tags is this name, with ASCII letters folded.
@@ -199,6 +210,8 @@ export async function mount(ctx) {
   const editing = session.editing === true;
   let folders = [];
   let folderAccess = { create: false };
+  // The member `root` of the answer of GET /api/folders: the right to write at the root, and the store of the root (an older server has none).
+  let folderRoot;
   let items = [];
   let query = parseSearch(window.location.search).q || "";
   let sort = readPref(SORT_KEY, ["az", "za"], null);
@@ -244,7 +257,7 @@ export async function mount(ctx) {
   header.setActions(newMenu);
   filters.hidden = true;
 
-  const editorCtx = () => ({ session, folders, dashboards: items, canCreateFolder: editing && folderAccess.create === true, navigate: ctx.navigate, reload: load });
+  const editorCtx = () => ({ session, folders, root: folderRoot, dashboards: items, canCreateFolder: editing && folderAccess.create === true, navigate: ctx.navigate, reload: load });
 
   async function callEditor(name, fn, ...args) {
     const mod = await loadEditorModule(name);
@@ -252,7 +265,7 @@ export async function mount(ctx) {
     else if (mod) notify({ level: "warning", text: "The editor is not available in this build." });
   }
 
-  const canWrite = () => editing && folders.some((f) => f.access && f.access.write);
+  const canWrite = () => editing && (folders.some((f) => f.access && f.access.write) || rootWritable(folderRoot));
 
   // New folder, Import and New dashboard (the one primary action of the page).
   function buildToolbar() {
@@ -453,8 +466,10 @@ export async function mount(ctx) {
     const stack = el("div", { class: "list-stack" });
     const addGroup = (group, showTitle, nested = false) => {
       if (!group.items.length && active) return;
-      const section = el("section", { class: `group${nested ? " group--nested" : ""}`, dataset: { testid: `folder-${group.folder.id}` } });
-      if (showTitle) section.append(folderHead(group, nested));
+      // A root group (dashboards with no folder) never has a title: it is the top of the page, or the top of the block of a read-only store.
+      const isRoot = group.folder.root === true;
+      const section = el("section", { class: `group${nested ? " group--nested" : ""}${isRoot ? " group--root" : ""}`, dataset: { testid: isRoot ? `root-${group.folder.store || "primary"}` : `folder-${group.folder.id}` } });
+      if (showTitle && !isRoot) section.append(folderHead(group, nested));
       const cards = el("div", { class: "cards" });
       if (group.items.length) for (const item of group.items) cards.append(dashboardCard(item, shown));
       else cards.append(el("p", { class: "group__empty muted", text: "This folder is empty." }));
@@ -479,6 +494,7 @@ export async function mount(ctx) {
       const [folderAnswer, list] = await Promise.all([api.folders(controller.signal), api.dashboards(controller.signal)]);
       folders = folderAnswer.items || [];
       folderAccess = folderAnswer.access || { create: false };
+      folderRoot = folderAnswer.root;
       items = list;
       if (!loadedOnce) {
         loadedOnce = true;

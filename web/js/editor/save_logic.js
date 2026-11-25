@@ -49,10 +49,11 @@ export function savedText(answer) {
   return answer && answer.noop ? "Nothing changed." : `Saved as version ${answer.version}.`;
 }
 
-// The kind of a conflict (10.10): "move" when the etag did not change and the folder did, else "changed".
+// The kind of a conflict (10.10): "move" when the etag did not change and the folder did, else "changed". A folder is an id, or `null` for the root:
+// a dashboard moved to the root has `current_folder` null; an answer with no member `current_folder` is never a move.
 export function conflictKind(error, baseEtag, pageFolder) {
   const extra = (error && error.extra) || {};
-  if (extra.current_etag === baseEtag && extra.current_folder && extra.current_folder !== pageFolder) return "move";
+  if (extra.current_etag === baseEtag && extra.current_folder !== undefined && extra.current_folder !== (pageFolder ?? null)) return "move";
   return "changed";
 }
 
