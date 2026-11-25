@@ -1472,6 +1472,11 @@ The stores in the page (9.6, 9.7, 9.8) add these tests to the groups of the tabl
 - Front end: `tests/frontend/stores.test.mjs` tests the groups by store, the marks of a card and the items of the selector. It tests the texts and the message of `read_only_store` too.
 - Browser: the cases B241 to B244. The case B01 and the entry case B33 use a dashboard that becomes not valid after the start.
 
+The select and copy rules (9.8e) add these tests to the groups of the table:
+
+- Front end: `tests/frontend/copy_text.test.mjs` tests the drag threshold and the place of a text: alignment, baseline, pixel ratio and turn. It tests the order of the texts, the signature and the cap of 400 texts. It tests the wrapper of `fillText` and `clearRect` on a fake context. It tests the text of a copy.
+- Browser: the cases B260 to B263. They use real mouse drags.
+
 The default range and the default refresh (10.9) add these tests to the groups of the table:
 
 - Front end: `tests/frontend/time_defaults.test.mjs` tests what differs and what the saved document gets. It tests the refusal of a range that the settings form refuses. It also tests the Save dialog, the button "Save" and the end of a view.
@@ -2091,6 +2096,10 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B242 | A file of the read-only store that is not valid after the start (9.7, 9.8). The API gives `read_only`, `store` and `stale`, with no path. The card has the warning mark and the lock. The page has the warning notice, the lock and no switch "Edit". The mark goes when the file is valid again. |
 | B243 | The header selector (9.6). The read-only store is a row with a lock. A click opens its two folders, and a click on a dashboard of the store opens it. |
 | B244 | A write to the read-only store (6.8). The API gives `403 read_only_store` for a create, a save and a delete, and the primary accepts a write. The page of the dashboard with `edit=1` has no edit control and has the lock. |
+| B260 | Select and copy a legend (9.8e). A drag over the text of a legend item selects the text and toggles no series. A plain click toggles the series, and a second click gives the first state again. A triple click selects the text. Ctrl+C on a focused item with no selection copies its text. |
+| B261 | Select and copy a link (9.8e). A drag over the text of a link in a table cell selects the text and does not follow the link. A plain click follows the link. |
+| B262 | Select and copy the text of a chart (9.8e). The line chart, the bar chart and the pie chart each have a layer of 1 to 400 texts that is hidden from assistive technology. A drag over the labels of the vertical axis selects them, and a copy gives one label on each line. A triple click selects a text of the pie chart. The tooltip shows over the plot, and the point of the plot is not under the layer. |
+| B263 | Select and copy a header (9.8e). A drag over a sortable header selects its text and does not sort. A plain click sorts. A drag over two cells selects text. |
 
 A build made with `--no-default-features` has no MongoDB driver and refuses the `mongodb` block at start (8b.2). The runner then reports B47 and B48 as `skip`, with the reason "no MongoDB driver in this build". It detects this case from the exit status and the message of `hune check-config`. A build with the driver (the default build) runs both cases against a disposable MongoDB 8.0 with `openssl` and `docker`.
 

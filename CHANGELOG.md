@@ -41,6 +41,9 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The members `read_only` and `store` on the items of the list, on a dashboard and on the folders. The member `stores` in the session. The contradictions C30 to C34.
 - The member `stale` with the code `file_invalid`. After the start, a file of a volume that becomes not valid keeps its last valid state, and the dashboard has this member. The log line `store.rescan_rejected` and the gauge `hune_store_invalid_files` tell it.
 - Each store has its own period of poll.
+- A person can select and copy the text of a panel. A drag over a legend item, a sortable header or the link of a cell selects its text and does nothing else. A double click selects a word and a triple click selects the text. The key Ctrl+C on a focused legend item copies its text. The module is `web/js/panels/copy_text.js`.
+- A layer of transparent text over each chart canvas holds the axes, the titles and the labels that the chart draws. A person selects them and copies them, with one text on each line. A layer holds 400 texts at most. The module is `web/js/panels/text_layer.js`, and the chart engine of ClickHouse Dash is not changed.
+- The browser cases B260 to B263 for the select and copy rules, with real mouse drags.
 
 ### Changed
 
@@ -69,6 +72,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The range, the refresh and the variables that a person sets in a view stay when the view ends. Before, the Back that ends it gave the old values.
 - The resize handles of the panels no longer stay after the edit mode ends. The drag mark and the key shortcuts of a panel are also removed.
 - The view of one panel has no page scrollbar any more: the panel fills the window with the page padding above and under it.
+- A drag over a sortable header of a table, a legend item or a link of a cell did not select its text. A drag over a header sorted the column, and a drag over a link followed the link. The value at the end of a bar of the horizontal bar chart could not be selected.
 
 ## 0.1.3 - 2026-11-25
 

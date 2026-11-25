@@ -902,6 +902,26 @@ The view and the reuse:
 - A `reuse` panel (9.23) shows the result of the slots of its source. The source runs its slots also out of view. A change of one slot of the source draws the reuse panel again when all the slots ended.
 - "View data" shows the fields of the panel as drawn (9.22a). "Inspect" shows one block for each answered query (9.11).
 
+### 9.8e Select and copy the text of a panel
+
+A person can select the text of a panel with the pointer and copy it. This holds for the cells of a table, the headers, the legends, the links of the cells and the text that a chart draws.
+
+1. The legend items, the sortable headers of a table and the links of the cells are controls. A browser does not select the text of a control by a drag. The module `copy_text.js` makes the selection from the pointer.
+2. A drag over the text of such a control selects the text. The click that ends the drag does nothing: no series toggles, no column sorts and no link opens.
+3. A double click selects a word. A triple click selects the text of the control. The second and the third click do not reach the control. The first click acts as a plain click, because the page cannot know that more clicks come.
+4. A plain click keeps its action: it toggles a series, sorts a column or follows a link. The keyboard keeps its action too: Tab, Enter and Space.
+5. The key Ctrl+C or Cmd+C on a control that has the focus, with no selection, copies the text of the control.
+6. A link in a panel does not start the drag of the link when the pointer goes down on its text.
+7. A chart draws its axes, its titles and its labels on a canvas, and a browser cannot select the text of a canvas. Each chart canvas that takes the pointer has a layer of text over it. The module `text_layer.js` makes the layer.
+8. The layer holds the texts of the last draw of the canvas. They are transparent and have the same places, font, alignment and turn. The layer is hidden from assistive technology, because the panel gives its data in text already.
+9. The layer takes the pointer over the box of each text only. The pointer over the rest of the plot goes to the chart. The tooltip, the cursor and the zoom by a drag work as before.
+10. The layer changes only when the texts change. A draw that gives the same texts at the same places keeps the layer. A draw that changes a text, a place or a font replaces it, and a selection in the layer ends at this draw.
+11. The texts are in order of use: the top row first, and from left to right in a row. A layer holds 400 texts at most. The texts after the 400th are not in the layer, and the chart still draws them. A draw stops to record after 800 texts.
+12. A copy of a selection that is in the layers only gives the selected part of each text, with one text on each line. A copy of any other selection uses the copy of the browser.
+13. The value at the end of a bar of the horizontal bar chart takes the pointer, so a person can select it. The text of a gauge cell of a table is selectable already.
+14. The page does not change the chart engine of the copy of ClickHouse Dash. The two modules wrap `fillText` and `clearRect` of the 2D context one time.
+15. The control of a variable is a select, and it does not offer its text for selection. The tooltip of a chart is a box that shows for a short time. The list page has its own rules (9.7).
+
 ### 9.9 Time picker and refresh
 
 The controls of the dashboard page are in the header (9.6), in one row. The variables bar (9.10) has its own row under the header.
@@ -3924,7 +3944,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,043 KB at most (1,068,032 bytes), before compression. The limit is the measure (1,063,914 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,118 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,060 KB at most (1,085,440 bytes), before compression. The limit is the measure (1,080,699 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,741 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;
