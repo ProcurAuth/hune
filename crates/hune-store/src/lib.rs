@@ -10,13 +10,14 @@ pub mod catalog;
 pub mod copy;
 pub mod postgres;
 pub mod store;
+pub mod stores;
 pub mod types;
 pub mod volume;
 
 #[cfg(feature = "conformance")]
 pub mod conformance;
 
-pub use catalog::{Catalog, CatalogStats, PollResult, PollSummary, SyncTransition};
+pub use catalog::{Catalog, CatalogStats, PollResult, PollSummary, Source, SyncTransition};
 pub use copy::{TransferError, copy_store, export_to_dir, import_from_dir, verify_equal};
 pub use postgres::{
     MigrateError, MigrateReport, PgOpenError, PgOpenErrorKind, PgOptions, PgSslMode, PgStore, SCHEMA_VERSION,
@@ -26,5 +27,6 @@ pub use store::{
     AnyStore, CurrentRecord, DashboardRecord, Delta, EntryKey, EntryMark, EntryProbe, Exporter, FileSig, FolderMark,
     FolderState, ImportReport, Importer, Marks, Problem, Snapshot, Store, StoreEvent,
 };
+pub use stores::{MemberReport, StartIssue, StoreInfo, StoreKind, StoreSpec, Stores};
 pub use types::*;
 pub use volume::{OpenError, OpenErrorKind, VolumeOptions, VolumeStore};

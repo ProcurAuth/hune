@@ -8,6 +8,7 @@ use std::time::{Duration, Instant};
 
 use crate::store::AnyStore;
 use crate::store::{Delta, EntryKey, FolderState, Marks, Snapshot, Store, StoreEvent};
+use crate::stores::Stores;
 use crate::types::{CatalogEntry, FolderId, FolderRecord, StoreError, Uid, ValidationError};
 
 /// A change of the sync state, for the log lines `store.sync_failed` and `store.sync_recovered`
@@ -126,6 +127,24 @@ impl State {
     }
 }
 
+/// A store that the catalog reads: the calls of `Store` and the events that it holds for the log.
+pub trait Source: Store {
+    /// Takes the events that the store holds for the log.
+    fn drain_events(&self) -> Vec<StoreEvent>;
+}
+
+impl Source for AnyStore {
+    fn drain_events(&self) -> Vec<StoreEvent> {
+        AnyStore::drain_events(self)
+    }
+}
+
+impl Source for Stores {
+    fn drain_events(&self) -> Vec<StoreEvent> {
+        Stores::drain_events(self)
+    }
+}
+
 impl Catalog {
     fn read(&self) -> std::sync::RwLockReadGuard<'_, State> {
         self.state.read().unwrap_or_else(|e| e.into_inner())
@@ -135,7 +154,7 @@ impl Catalog {
         self.state.write().unwrap_or_else(|e| e.into_inner())
     }
 
-    fn keep_events(&self, store: &AnyStore) {
+    fn keep_events<S: Source>(&self, store: &S) {
         let events = store.drain_events();
         if !events.is_empty() {
             self.pending.lock().unwrap_or_else(|e| e.into_inner()).extend(events);
@@ -143,7 +162,7 @@ impl Catalog {
     }
 
     /// Reads the store one time with `Store::load` (5.8, item 1).
-    pub async fn load(store: &AnyStore) -> Result<Catalog, StoreError> {
+    pub async fn load<S: Source>(store: &S) -> Result<Catalog, StoreError> {
         let snap: Snapshot = store.load().await?;
         let mut st = State {
             folders: BTreeMap::new(),
@@ -169,7 +188,7 @@ impl Catalog {
     }
 
     /// Calls `Store::poll` with the marks and applies the changes (5.8, items 2 and 6).
-    pub async fn poll(&self, store: &AnyStore) -> PollResult {
+    pub async fn poll<S: Source>(&self, store: &S) -> PollResult {
         let marks = self.read().marks.clone();
         let result = store.poll(&marks).await;
         self.keep_events(store);
@@ -269,7 +288,7 @@ impl Catalog {
 
     /// Reads one uid again after an own write, so that the write is visible before the answer
     /// (5.8, item 3). Gives false when the read failed: the next poll then finds the change.
-    pub async fn refresh_uid(&self, store: &AnyStore, uid: &Uid) -> bool {
+    pub async fn refresh_uid<S: Source>(&self, store: &S, uid: &Uid) -> bool {
         let probe = store.entry_probe(uid).await;
         self.keep_events(store);
         let Ok(probe) = probe else { return false };
@@ -286,7 +305,7 @@ impl Catalog {
     }
 
     /// Reads all folders again after an own folder write. Gives false when the read failed.
-    pub async fn refresh_folders(&self, store: &AnyStore) -> bool {
+    pub async fn refresh_folders<S: Source>(&self, store: &S) -> bool {
         let probe = store.folder_probe().await;
         self.keep_events(store);
         let Ok(probe) = probe else { return false };
