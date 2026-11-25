@@ -312,12 +312,21 @@ export const cases = [
         await p.focus('[data-testid="geomap-1"] canvas');
         await p.press("ArrowRight");
         await p.press("ArrowRight");
+        // The pan makes a new view that asks for its tiles after a short delay. Wait until the requests stop, then read the view.
+        for (let n = -1, i = 0; i < 30 && n !== tiles.state.requests.length; i++) {
+          n = tiles.state.requests.length;
+          await sleep(700);
+        }
         const panned = await hookOf(p, 1);
+        const tileRequests = tiles.state.requests.length;
         const runsBefore = runs();
         for (let i = 0; i < 75 && runs() === runsBefore; i++) await sleep(200);
         await sleep(1500);
         const kept = await hookOf(p, 1);
-        t.eq([kept.zoom, kept.lat, kept.lon, kept.tiles.requested], [panned.zoom, panned.lat, panned.lon, 0], `the panned view ${JSON.stringify(panned)} after a refresh: ${JSON.stringify(kept)}`);
+        // The refresh keeps the panned view and asks the tile server for nothing: the failed tiles of the view stay failed. A refresh with the same
+        // data draws nothing again, so the map is the same one; a map that is drawn again at the kept size also asks for no tile. The count of the
+        // tile server tells both cases the same way.
+        t.eq([kept.zoom, kept.lat, kept.lon, tiles.state.requests.length], [panned.zoom, panned.lat, panned.lon, tileRequests], `the panned view ${JSON.stringify(panned)} after a refresh: ${JSON.stringify(kept)}`);
         t.assert(panned.lon !== 0, `the pan moved the view: ${panned.lon}`);
         // Security review 3, finding F5: the cache keeps decoded bitmaps, not the images with their downloaded bytes. Tiles of 256 px with
         // 16 MiB of padding grow the renderers by less than 64 MiB for 24 tiles: the resident memory after a garbage collection.

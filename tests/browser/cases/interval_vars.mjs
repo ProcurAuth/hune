@@ -95,7 +95,9 @@ export const cases = [
       // Auto in the URL, and a reload.
       await openPopup(p, "bucket");
       await p.click(`${sel("bucket")} .listbox li[data-value="$__auto"]`);
-      await p.waitFor(`new URLSearchParams(location.search).getAll("var-bucket").join() === "$__auto"`, { what: "the URL for Auto" });
+      // Auto is the default of this variable (the document gives no other default), and the address does not write a default: the name goes away.
+      await p.waitFor(`new URLSearchParams(location.search).getAll("var-bucket").length === 0`, { what: "no name in the URL for Auto, the default" });
+      t.eq(await btnText(p, "bucket"), "Auto", "the choice Auto");
       await p.reload();
       await p.idle();
       await waitPanelsReady(p, [1]);
