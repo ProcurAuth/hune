@@ -20,7 +20,7 @@
 #   `ps04_rows_limit` is the case PS04 (16.17). The script reports each case PS01 to PS15 as PASS,
 #   FAIL or NO TEST (no test of that name exists yet: the case is skipped).
 #   The ignored tests `pg_real` of the binary hune (A47, A50 and A51 of 16.8, through the server) run with
-#   `cargo test -p hune --locked --bin hune -- --ignored pg_real --test-threads=1`. The script reports them
+#   `cargo test -p hune --locked ${RT_NORUN:-} --bin hune -- --ignored pg_real --test-threads=1`. The script reports them
 #   in a second table, A47, A50 and A51, in the same way.
 #   Exit code: 0 only when the fixture check passes, each existing case passes, and the merge gate
 #   of tests/ci/gate-cases.txt is met. A skipped case fails the job only when the gate requires it
@@ -68,10 +68,12 @@ mkdir -p "$BASE"
 : >"$LOG"
 
 cleanup() {
-    "$DOCKER" compose -p "$PROJECT" -f "$COMPOSE_FILE" down -v --remove-orphans >/dev/null 2>&1 || true
-    # The same by name, in case compose did not know the container.
-    for c in $("$DOCKER" ps -aq --filter "label=com.docker.compose.project=$PROJECT" 2>/dev/null || true); do
-        "$DOCKER" rm -f -v "$c" >/dev/null 2>&1 || true
+    for v in $VERSIONS; do
+        "$DOCKER" compose -p "$PROJECT-$v" -f "$COMPOSE_FILE" down -v --remove-orphans >/dev/null 2>&1 || true
+        # The same by label, in case compose did not know the container.
+        for c in $("$DOCKER" ps -aq --filter "label=com.docker.compose.project=$PROJECT-$v" 2>/dev/null || true); do
+            "$DOCKER" rm -f -v "$c" >/dev/null 2>&1 || true
+        done
     done
     rm -rf "$BASE"
 }
@@ -140,16 +142,16 @@ run_tests() {
         rt_crate=${rt_pair%%:*}
         rt_target=${rt_pair#*:}
         echo "-- cargo test -p $rt_crate --test $rt_target" >>"$rt_log"
-        cargo test -p "$rt_crate" --locked --test "$rt_target" -- --include-ignored --test-threads=4 \
+        cargo test -p "$rt_crate" --locked ${RT_NORUN:-} --test "$rt_target" -- --include-ignored --test-threads=4 \
             >>"$rt_log" 2>&1 || rt_rc=1
     done
     # The filter `::ps` selects the tests whose own name starts with `ps`. The other ignored tests of the module
     # (for example the tests of the probe, which have their own script) need another environment.
     echo "-- cargo test -p hune-source --lib (ignored tests named ps*)" >>"$rt_log"
-    cargo test -p hune-source --locked --lib -- --ignored ::ps --test-threads=4 >>"$rt_log" 2>&1 || rt_rc=1
+    cargo test -p hune-source --locked ${RT_NORUN:-} --lib -- --ignored ::ps --test-threads=4 >>"$rt_log" 2>&1 || rt_rc=1
     # The cases A47, A50 and A51 through the server. The tests share one harness: one thread.
     echo "-- cargo test -p hune --bin hune (ignored tests pg_real: A47, A50, A51)" >>"$rt_log"
-    cargo test -p hune --locked --bin hune -- --ignored pg_real --test-threads=1 >>"$rt_log" 2>&1 || rt_rc=1
+    cargo test -p hune --locked ${RT_NORUN:-} --bin hune -- --ignored pg_real --test-threads=1 >>"$rt_log" 2>&1 || rt_rc=1
     return "$rt_rc"
 }
 
@@ -217,25 +219,27 @@ export PGS_ADMIN_PASSWORD PGS_RO_PASSWORD PGS_RW_PASSWORD PGS_BAD_PASSWORD PGS_L
 export PGS_PORT_15 PGS_PORT_18 PGS_TLS_DIR IMAGE_POSTGRES_15 IMAGE_POSTGRES_18
 [ -x "$ROOT/tests/fixtures/postgres-source/apply.sh" ] || ci_die "tests/fixtures/postgres-source/apply.sh is not executable"
 
-for v in $VERSIONS; do
+one_version() {
+    v=$1
+    vstatus=0
     echo "== PostgreSQL $v"
     service="pg$v"
     eval "port=\$PGS_PORT_$v"
-    if ! "$DOCKER" compose -p "$PROJECT" -f "$COMPOSE_FILE" up -d --wait --wait-timeout 240 "$service" \
+    if ! "$DOCKER" compose -p "$PROJECT-$v" -f "$COMPOSE_FILE" up -d --wait --wait-timeout 240 "$service" \
         >"$BASE/up-$v.log" 2>&1; then
         echo "error: the service $service did not become healthy" >&2
         tail -n 40 "$BASE/up-$v.log" >&2
-        "$DOCKER" compose -p "$PROJECT" -f "$COMPOSE_FILE" logs --tail 60 "$service" >&2 || true
-        status=1
-        "$DOCKER" compose -p "$PROJECT" -f "$COMPOSE_FILE" down -v --remove-orphans >/dev/null 2>&1 || true
-        continue
+        "$DOCKER" compose -p "$PROJECT-$v" -f "$COMPOSE_FILE" logs --tail 60 "$service" >&2 || true
+        vstatus=1
+        "$DOCKER" compose -p "$PROJECT-$v" -f "$COMPOSE_FILE" down -v --remove-orphans >/dev/null 2>&1 || true
+        return 1
     fi
-    container=$("$DOCKER" compose -p "$PROJECT" -f "$COMPOSE_FILE" ps -q "$service")
+    container=$("$DOCKER" compose -p "$PROJECT-$v" -f "$COMPOSE_FILE" ps -q "$service")
     cname=$("$DOCKER" inspect --format '{{.Name}}' "$container" | sed 's|^/||')
 
     # The self check of the fixture.
     PGS_ADMIN_PASSWORD=$PGS_ADMIN_PASSWORD DOCKER=$DOCKER \
-        "$ROOT/tests/fixtures/postgres-source/selfcheck.sh" "$cname" || status=1
+        "$ROOT/tests/fixtures/postgres-source/selfcheck.sh" "$cname" || vstatus=1
 
     # The container tests.
     export HUNE_TEST_PGS_VERSION="$v"
@@ -259,25 +263,44 @@ for v in $VERSIONS; do
     export HUNE_TEST_PGS_SERVER_NAME=localhost
     export HUNE_TEST_PGS_DOCKER="$DOCKER"
     export HUNE_TEST_PGS_CONTAINER="$cname"
-    export HUNE_TEST_PGS_COMPOSE_PROJECT="$PROJECT"
+    export HUNE_TEST_PGS_COMPOSE_PROJECT="$PROJECT-$v"
     export HUNE_TEST_PGS_SERVICE="$service"
 
     run_rc=0
     run_tests "$BASE/run-$v.log" || run_rc=1
-    cat "$BASE/run-$v.log" >>"$LOG"
     echo "-- cases of PostgreSQL $v"
     CASE_FAILED=0
     case_report "$BASE/run-$v.log"
-    [ "$CASE_FAILED" -eq 0 ] || status=1
+    [ "$CASE_FAILED" -eq 0 ] || vstatus=1
     # The merge gate: a required case that failed or did not run fails the job.
-    ci_gate_evaluate pgsource "$BASE/run-$v.log" "$run_rc" || status=1
+    ci_gate_evaluate pgsource "$BASE/run-$v.log" "$run_rc" || vstatus=1
     if [ "$run_rc" -ne 0 ] && [ "$CASE_FAILED" -eq 0 ]; then
         echo "error: a test run failed with no failed case (build error or a test that is not a case)" >&2
         tail -n 30 "$BASE/run-$v.log" >&2
-        status=1
+        vstatus=1
     fi
 
-    "$DOCKER" compose -p "$PROJECT" -f "$COMPOSE_FILE" rm -s -f -v "$service" >/dev/null 2>&1 || true
+    "$DOCKER" compose -p "$PROJECT-$v" -f "$COMPOSE_FILE" rm -s -f -v "$service" >/dev/null 2>&1 || true
+    return "$vstatus"
+}
+
+
+# The versions run at the same time. Each one has its own compose project, its own port and its own output file. The
+# build of the tests starts first, in the background, so the compile runs while the containers start.
+RT_NORUN=--no-run run_tests "$BASE/prebuild.log" >/dev/null 2>&1 &
+prebuild_pid=$!
+pids=
+for v in $VERSIONS; do
+    (one_version "$v") >"$BASE/out-$v.txt" 2>&1 &
+    pids="$pids $!"
+done
+for p in $pids; do
+    wait "$p" || status=1
+done
+wait "$prebuild_pid" || true
+for v in $VERSIONS; do
+    cat "$BASE/out-$v.txt"
+    [ ! -f "$BASE/run-$v.log" ] || cat "$BASE/run-$v.log" >>"$LOG"
 done
 
 if [ "$status" -eq 0 ]; then

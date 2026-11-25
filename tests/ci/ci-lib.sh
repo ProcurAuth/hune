@@ -373,8 +373,9 @@ ci_gate_evaluate() {
     ci_job=$1
     ci_logf=$2
     ci_status=$3
-    ci_tokens=$ROOT/target/ci-gate-$ci_job.tokens
     mkdir -p "$ROOT/target"
+    # A file for each call: a job can call this function for two versions at the same time.
+    ci_tokens=$(mktemp "$ROOT/target/ci-gate-$ci_job.XXXXXX")
     ci_gate_cases "$ci_job" >"$ci_tokens"
     ci_failed=$(ci_cases_in_log "$ci_logf" FAILED)
     ci_passed=$(ci_cases_in_log "$ci_logf" ok)
@@ -426,5 +427,6 @@ ci_gate_evaluate() {
     if [ "$ci_bad" -eq 0 ] && [ "$ci_status" -ne 0 ]; then
         echo "info: the run has failed cases, none of them required by the gate"
     fi
+    rm -f "$ci_tokens"
     return "$ci_bad"
 }

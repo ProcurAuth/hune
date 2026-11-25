@@ -17,9 +17,10 @@
 # Order of the run: the jobs start at the same time, except for these needs.
 #   The task `setup` builds the builder image. It runs first.
 #   The task `build-debug` builds the debug test artifacts of the workspace one time (`cargo test --workspace
-#   --no-run`). The jobs policy and rust wait for it.
-#   The task `build-host` builds the debug test artifacts that the jobs pgsource, mongosource and source use on the host
-#   (these jobs run cargo on the host, and the host builds do not share artifacts with the builder builds).
+#   --no-run`). The jobs policy and rust wait for it. The job frontend waits for build-debug and build-binary: its
+#   timing tests need a host that no long build loads.
+#   The jobs pgsource, mongosource and source run cargo on the host. The host builds do not share artifacts with
+#   the builder builds, because the paths of the registry differ. These three jobs build in the folder target/host.
 #   The task `build-binary` fetches the sources one time and builds the release musl binary one time. The jobs
 #   that use the binary (store, image, procurauth) wait for it. The jobs api and browser wait for it when their
 #   compose files exist.
@@ -113,7 +114,8 @@ needs_of() {
     case $1 in
     build-debug | build-binary | import) echo setup ;;
     policy | rust) echo build-debug ;;
-    pgsource | mongosource | source) echo build-host ;;
+    # The timing tests of the front end need a quiet host: they start when the long builds end.
+    frontend) echo build-debug build-binary ;;
     store | image | procurauth) echo build-binary ;;
     api)
         # api.sh builds the binary only when its compose file exists.
@@ -132,7 +134,7 @@ needs_of() {
 target_dir_of() {
     case $1 in
     policy) echo target/policy ;;
-    build-host | pgsource | mongosource | source) echo target/host ;;
+    pgsource | mongosource | source) echo target/host ;;
     import) echo target/import ;;
     esac
 }
@@ -193,11 +195,6 @@ run_task() {
     case $1 in
     setup) ci_build_builder ;;
     build-debug) in_builder cargo test --workspace --locked --no-run ;;
-    build-host)
-        # The three sets of features that the jobs pgsource, mongosource and source build on the host.
-        cargo test -p hune-source --locked --no-run && cargo test -p hune --locked --no-run &&
-            cargo test -p hune-source --locked --features mongo-driver --no-run
-        ;;
     build-binary)
         # The sources of Cargo.lock come one time here. The jobs find them in target/cargo-vendor/.
         HUNE_CI_VENDORED=0 ci_vendor && HUNE_CI_VENDORED=1 ci_build_binary "$(ci_host_triple)"
@@ -403,6 +400,8 @@ printf 'all: %-14s %-8s %s\n' total "" "$(fmt_dur "$((run_end - run_start))")"
 if [ -n "$failed_tasks" ]; then
     for t in $failed_tasks; do
         echo >&2
+        echo "all: ---- failed lines of target/ci-logs/$t.log ----" >&2
+        grep -E '^not ok|FAILED|FAIL |GATE FAIL|panicked|^error' "$LOGS/$t.log" | head -n 20 >&2 || true
         echo "all: ---- tail of target/ci-logs/$t.log ----" >&2
         tail -n 40 "$LOGS/$t.log" >&2
     done

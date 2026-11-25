@@ -113,8 +113,20 @@ umask 077
 mkdir -p "$BASE"
 : >"$LOG"
 
+# project_of VERSION : the compose project of a version. A run with --dev has one project, the one that --down removes.
+project_of() {
+    if [ -n "$DEV_DIR" ]; then
+        printf '%s\n' "$PROJECT"
+    else
+        printf '%s-%s\n' "$PROJECT" "$(printf '%s' "$1" | tr -d .)"
+    fi
+}
+
 cleanup() {
     remove_project "$PROJECT"
+    for v in $VERSIONS; do
+        remove_project "$(project_of "$v")"
+    done
     if [ -z "$DEV_DIR" ]; then
         rm -rf "$BASE"
     fi
@@ -204,19 +216,19 @@ run_tests() {
         feat=""
         [ "$rt_crate" != hune-source ] || feat=$FEATURES
         # shellcheck disable=SC2086
-        cargo test -p "$rt_crate" --locked $feat --test "$rt_target" -- --include-ignored --test-threads=4 \
+        cargo test -p "$rt_crate" --locked ${RT_NORUN:-} $feat --test "$rt_target" -- --include-ignored --test-threads=4 \
             >>"$rt_log" 2>&1 || rt_rc=1
     done
     # The filter `::ms` selects the tests whose own name starts with `ms`. The ignored ones need a server.
     echo "-- cargo test -p hune-source --lib (ignored tests named ms*)" >>"$rt_log"
     # shellcheck disable=SC2086
-    cargo test -p hune-source --locked $FEATURES --lib -- --ignored ::ms --test-threads=4 >>"$rt_log" 2>&1 || rt_rc=1
+    cargo test -p hune-source --locked ${RT_NORUN:-} $FEATURES --lib -- --ignored ::ms --test-threads=4 >>"$rt_log" 2>&1 || rt_rc=1
     # The tests of the server with the real driver (MS13, MS16, MS17) are in the binary crate `hune`.
     echo "-- cargo test -p hune --bin hune (ignored tests named ms*)" >>"$rt_log"
-    cargo test -p hune --locked --bin hune -- --ignored ::ms --test-threads=4 >>"$rt_log" 2>&1 || rt_rc=1
+    cargo test -p hune --locked ${RT_NORUN:-} --bin hune -- --ignored ::ms --test-threads=4 >>"$rt_log" 2>&1 || rt_rc=1
     echo "-- cargo test -p hune-source --lib (tests named ms* with no server)" >>"$rt_nolog"
     # shellcheck disable=SC2086
-    cargo test -p hune-source --locked $FEATURES --lib -- ::ms --test-threads=4 >>"$rt_nolog" 2>&1 || rt_rc=1
+    cargo test -p hune-source --locked ${RT_NORUN:-} $FEATURES --lib -- ::ms --test-threads=4 >>"$rt_nolog" 2>&1 || rt_rc=1
     return "$rt_rc"
 }
 
@@ -302,13 +314,19 @@ export MGS_TLS_DIR IMAGE_MONGO_7_0 IMAGE_MONGO_8_0
 [ -x "$FIXTURE/start.sh" ] || ci_die "tests/fixtures/mongo-source/start.sh is not executable"
 [ -x "$FIXTURE/selfcheck.sh" ] || ci_die "tests/fixtures/mongo-source/selfcheck.sh is not executable"
 
+# compose ARGS... : docker compose on the project of the version that runs (VPROJECT).
 compose() {
-    "$DOCKER" compose -p "$PROJECT" -f "$COMPOSE_FILE" "$@"
+    "$DOCKER" compose -p "$VPROJECT" -f "$COMPOSE_FILE" "$@"
 }
 
-for v in $VERSIONS; do
+# one_version VERSION : the steps 2 to 4 for one version. The output goes to the standard output. The result is the
+# exit code: 0 when the version passes.
+one_version() {
+    v=$1
+    vstatus=0
     echo "== MongoDB $v"
     n=$(printf '%s' "$v" | tr -d .)
+    VPROJECT=$(project_of "$v")
     services="mg$n mg$n-js mg$n-rs mg$n-sha1 mg$n-plain"
     # shellcheck disable=SC2086
     if ! compose up -d --wait --wait-timeout 420 $services >"$BASE/up-$v.log" 2>&1; then
@@ -316,9 +334,9 @@ for v in $VERSIONS; do
         tail -n 40 "$BASE/up-$v.log" >&2
         # shellcheck disable=SC2086
         compose logs --tail 60 $services >&2 || true
-        status=1
+        vstatus=1
         compose down -v --remove-orphans >/dev/null 2>&1 || true
-        continue
+        return 1
     fi
     eval "port=\$MGS_PORT_$n; js_port=\$MGS_PORT_${n}_JS; rs_port=\$MGS_PORT_${n}_RS; rs_port2=\$MGS_PORT_${n}_RS2; sha1_port=\$MGS_PORT_${n}_SHA1; plain_port=\$MGS_PORT_${n}_PLAIN"
     cname_of() {
@@ -331,7 +349,7 @@ for v in $VERSIONS; do
     export MGS_ADMIN_PASSWORD MGS_RO_PASSWORD MGS_RW_PASSWORD MGS_BAD_PASSWORD MGS_LEGACY_PASSWORD DOCKER
     export MGS_EXPECT_VERSION="$v"
     echo "-- fixture check of MongoDB $v"
-    "$FIXTURE/selfcheck.sh" "$cname" "$port" 1000000 10485760 >"$BASE/self-$v-main.log" 2>&1 || status=1
+    "$FIXTURE/selfcheck.sh" "$cname" "$port" 1000000 10485760 >"$BASE/self-$v-main.log" 2>&1 || vstatus=1
     echo "   server main: $(grep -c '^ok' "$BASE/self-$v-main.log") ok, $(tail -n 1 "$BASE/self-$v-main.log")"
     grep -E '^FAIL' "$BASE/self-$v-main.log" || true
     for pair in "js:$js_port" "rs:$rs_port" "sha1:$sha1_port" "plain:$plain_port"; do
@@ -345,7 +363,7 @@ for v in $VERSIONS; do
         replset=""
         [ "$kind" != rs ] || replset=rs0
         MGS_EXPECT_NOSCRIPTING=$noscripting MGS_EXPECT_REPLSET=$replset "$FIXTURE/selfcheck.sh" "$(cname_of "mg$n-$kind")" "$p" 2000 1048576 $extra >"$BASE/self-$v-$kind.log" 2>&1 ||
-            status=1
+            vstatus=1
         echo "   server $kind: $(grep -c '^ok' "$BASE/self-$v-$kind.log") ok, $(tail -n 1 "$BASE/self-$v-$kind.log")"
         grep -E '^FAIL' "$BASE/self-$v-$kind.log" || true
     done
@@ -382,7 +400,7 @@ for v in $VERSIONS; do
     export HUNE_TEST_MGS_BIG_BYTES=10485760
     export HUNE_TEST_MGS_DOCKER="$DOCKER"
     export HUNE_TEST_MGS_CONTAINER="$cname"
-    export HUNE_TEST_MGS_COMPOSE_PROJECT="$PROJECT"
+    export HUNE_TEST_MGS_COMPOSE_PROJECT="$VPROJECT"
     export HUNE_TEST_MGS_SERVICE="mg$n"
 
     if [ -n "$DEV_DIR" ]; then
@@ -396,27 +414,51 @@ for v in $VERSIONS; do
         } >"$BASE/env.sh"
         echo "mongosource: servers of MongoDB $v are up; the variables are in $BASE/env.sh; remove them with --down $BASE"
         trap - EXIT INT TERM
-        exit "$status"
+        exit "$vstatus"
     fi
 
     run_rc=0
     run_tests "$BASE/run-$v.log" "$BASE/run-$v-noserver.log" || run_rc=1
-    cat "$BASE/run-$v.log" "$BASE/run-$v-noserver.log" >>"$LOG"
     echo "-- cases of MongoDB $v"
     CASE_FAILED=0
     case_report "$BASE/run-$v.log" "$BASE/run-$v-noserver.log"
-    [ "$CASE_FAILED" -eq 0 ] || status=1
+    [ "$CASE_FAILED" -eq 0 ] || vstatus=1
     # The merge gate: a required case that failed or did not run fails the job.
     cat "$BASE/run-$v.log" "$BASE/run-$v-noserver.log" >"$BASE/run-$v-all.log"
-    ci_gate_evaluate mongosource "$BASE/run-$v-all.log" "$run_rc" || status=1
+    ci_gate_evaluate mongosource "$BASE/run-$v-all.log" "$run_rc" || vstatus=1
     if [ "$run_rc" -ne 0 ] && [ "$CASE_FAILED" -eq 0 ]; then
         echo "error: a test run failed with no failed case (build error or a test that is not a case)" >&2
         tail -n 30 "$BASE/run-$v.log" >&2
-        status=1
+        vstatus=1
     fi
 
     # shellcheck disable=SC2086
     compose rm -s -f -v $services >/dev/null 2>&1 || true
+    return "$vstatus"
+}
+
+# The versions run at the same time, each one in its own compose project, with its own ports and its own output file.
+# The build of the tests starts first, in the background, so the compile runs while the servers start.
+if [ -n "$DEV_DIR" ]; then
+    # --dev: the servers of the first version stay up. one_version exits after it wrote the file env.sh.
+    set -- $VERSIONS
+    one_version "$1"
+    exit "$?"
+fi
+RT_NORUN=--no-run run_tests "$BASE/prebuild.log" "$BASE/prebuild-noserver.log" >/dev/null 2>&1 &
+prebuild_pid=$!
+pids=
+for v in $VERSIONS; do
+    (one_version "$v") >"$BASE/out-$v.txt" 2>&1 &
+    pids="$pids $!"
+done
+for p in $pids; do
+    wait "$p" || status=1
+done
+wait "$prebuild_pid" || true
+for v in $VERSIONS; do
+    cat "$BASE/out-$v.txt"
+    [ ! -f "$BASE/run-$v.log" ] || cat "$BASE/run-$v.log" "$BASE/run-$v-noserver.log" >>"$LOG"
 done
 
 if [ "$status" -eq 0 ]; then
