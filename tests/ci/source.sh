@@ -6,14 +6,18 @@
 # Use: tests/ci/source.sh [TAG ...]
 # Each TAG is a tag of the image `clickhouse/clickhouse-server`. The default is `26.8.34.13`.
 # Environment: DOCKER (path of the docker command, default `docker`),
-#              CH_PORT (host port of the HTTP interface, default 18123),
-#              CH_TLS_PORT (host port of the HTTPS interface, default 18443).
+#              CH_PORT (host port of the HTTP interface, default: a free port),
+#              CH_TLS_PORT (host port of the HTTPS interface, default: a free port).
+# The script takes a free port on 127.0.0.1 at start, so it never meets a container of another project
+# that holds a fixed port. The tests get the ports in the variables HUNE_TEST_CLICKHOUSE and HUNE_TEST_CLICKHOUSE_TLS.
 set -eu
+. "$(dirname "$0")/ci-lib.sh"
 
 root=$(cd "$(dirname "$0")/../.." && pwd)
+ROOT=$root
 docker=${DOCKER:-docker}
-http_port=${CH_PORT:-18123}
-tls_port=${CH_TLS_PORT:-18443}
+http_port=${CH_PORT:-$(ci_free_port)}
+tls_port=${CH_TLS_PORT:-$(ci_free_port)}
 name=hune-test-ch-$$
 tags=${*:-26.8.34.13}
 admin_user=hune_admin

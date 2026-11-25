@@ -77,11 +77,6 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-# A free port on 127.0.0.1. The container keeps it across a stop and a start (PS13).
-free_port() {
-    python3 -I -c 'import socket; s = socket.socket(); s.bind(("127.0.0.1", 0)); print(s.getsockname()[1])'
-}
-
 secret() {
     openssl rand -hex 16
 }
@@ -212,9 +207,9 @@ PGS_RO_PASSWORD=$(secret)
 PGS_RW_PASSWORD=$(secret)
 PGS_BAD_PASSWORD=$(secret)
 PGS_LEGACY_PASSWORD=$(secret)
-PGS_PORT_15=$(free_port)
-PGS_PORT_18=$(free_port)
-[ "$PGS_PORT_15" != "$PGS_PORT_18" ] || PGS_PORT_18=$(free_port)
+# A free port on 127.0.0.1 for each version (ci_free_port reserves it). The container keeps it across a stop and a start (PS13).
+PGS_PORT_15=$(ci_free_port)
+PGS_PORT_18=$(ci_free_port)
 PGS_TLS_DIR=$tls
 IMAGE_POSTGRES_15=$(image_for 15)
 IMAGE_POSTGRES_18=$(image_for 18)

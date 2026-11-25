@@ -8,7 +8,7 @@
 #      server (authorization on, TLS only, --noscripting), a server with scripting on (MS18), a replica set of
 #      two members in one container (MS10, MS12; the set has two members, as the
 #      key `hosts` needs), a server that offers SCRAM-SHA-1 only and one that offers PLAIN only (MS10). The first start
-#      runs tests/fixtures/mongo-source/init.js. The ports come from the range 27101 to 27120 of 127.0.0.1.
+#      runs tests/fixtures/mongo-source/init.js. Each port is a free port of 127.0.0.1, taken at start (ci_free_port).
 #   3. It runs the self check of the fixture (tests/fixtures/mongo-source/selfcheck.sh) on each server: the data,
 #      the role contract of 8b.13 (MS08, role side: an insert as hune_ro fails, connectionStatus shows read
 #      actions only) and the users that break M1 to M3. This check needs no code of Hune.
@@ -121,21 +121,10 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-# A free port of the range 27101 to 27120 on 127.0.0.1. Each call sets FP to a port that no earlier call gave.
-# The function does not run in a subshell: the list of the used ports must stay.
-USED_PORTS=" "
+# free_port : set FP to a free port of 127.0.0.1 (ci_free_port reserves it, so no other job takes it).
+# The function does not run in a subshell: the callers read FP.
 free_port() {
-    fp=27101
-    while [ "$fp" -le 27120 ]; do
-        case $USED_PORTS in *" $fp "*) fp=$((fp + 1)); continue ;; esac
-        if python3 -I -c 'import socket, sys; s = socket.socket(); s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1); s.bind(("127.0.0.1", int(sys.argv[1])))' "$fp" 2>/dev/null; then
-            USED_PORTS="$USED_PORTS$fp "
-            FP=$fp
-            return 0
-        fi
-        fp=$((fp + 1))
-    done
-    ci_die "no free port in the range 27101 to 27120"
+    FP=$(ci_free_port)
 }
 
 secret() {

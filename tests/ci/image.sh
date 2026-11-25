@@ -79,9 +79,15 @@ rm -rf "$work"
 mkdir -p "$work"
 cleanup_list=
 cleanup() {
+    # The containers first, then the image of this run (a container holds its image).
     for c in $cleanup_list; do
         case $c in
         container:*) docker rm -f -v "${c#container:}" >/dev/null 2>&1 || true ;;
+        esac
+    done
+    for c in $cleanup_list; do
+        case $c in
+        image:*) docker rmi "${c#image:}" >/dev/null 2>&1 || true ;;
         esac
     done
 }
@@ -155,6 +161,7 @@ fi
 # ---- G03 ----
 image_ok=0
 if have_docker; then
+    cleanup_list="$cleanup_list image:$tag"
     if ci_build_image "$tag" >"$work/build-image.log" 2>&1; then
         image_ok=1
         result G03 PASS "$tag (local, no push)"
@@ -241,6 +248,10 @@ compose_example() {
     cp -R "$srcdir" "$dir"
     # The example names the tag of the release (hune:0.1.2). The test uses its own tag and never touches a real one.
     sed -i -E "s#hune:[0-9]+\.[0-9]+\.[0-9]+#$tag#g" "$dir/compose.yaml"
+    # The example publishes the port 8080 of the host. The test publishes a free port, so it can run with other jobs.
+    hport=$(ci_free_port)
+    sed -i "s#127\.0\.0\.1:8080:8080#127.0.0.1:$hport:8080#g" "$dir/compose.yaml"
+    grep -q "127.0.0.1:$hport:8080" "$dir/compose.yaml" || ci_die "the compose example $cname has no published port 8080"
     mkdir -p "$dir/dashboards" "$dir/secrets"
     chmod 0777 "$dir/dashboards"
     chmod 0755 "$dir/secrets"
@@ -252,7 +263,7 @@ compose_example() {
     if docker compose -p "$proj" -f "$dir/compose.yaml" up --wait -d; then
         j=0
         while [ "$j" -lt 30 ]; do
-            if curl -fsS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/api/dashboards | grep -qx 200; then
+            if curl -fsS -o /dev/null -w '%{http_code}\n' "http://127.0.0.1:$hport/api/dashboards" | grep -qx 200; then
                 ok=1
                 break
             fi

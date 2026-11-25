@@ -6,8 +6,10 @@
 #             container with no network and a read-only root file system, a ClickHouse container in the
 #             same network namespace, and the runner in the same namespace too.
 #   --local   runs the same checks on the host: the binary target/debug/hune (or target/release/hune), a
-#             ClickHouse container with port 8123 published on 127.0.0.1, and the runner of the
-#             ProcurAuth checkout. Use it for a first run. The result is the same.
+#             ClickHouse container with a free port of 127.0.0.1 published, and the runner of the
+#             ProcurAuth checkout. Use it for a first run. The result is the same. The ports of Hune, of the
+#             ClickHouse container and of the PDP of the runner are free ports taken at start (ci_free_port).
+#             The default mode publishes no port of the host: the containers share one network namespace.
 # Input: PROCURAUTH_DIR, the checkout of https://github.com/ProcurAuth/procurauth at the commit of the
 #        dependency `procurauth-pep` (11.10). Without it, the script clones that commit into
 #        target/procurauth. The script never changes this checkout, except for its `target/`.
@@ -35,6 +37,19 @@ fi
 if [ -d "$PA/.git" ]; then
     HEAD_REV=$(git -C "$PA" rev-parse HEAD)
     [ "$HEAD_REV" = "$REV" ] || ci_die "the ProcurAuth checkout is at $HEAD_REV, but the dependency is at $REV"
+fi
+
+# The ports. The default mode has a network namespace of its own: the fixed ports are not ports of the host.
+# The mode --local runs on the host and takes free ports.
+HTTP_PORT=8080
+OPS_PORT=9090
+CH_PORT=8123
+PDP_PORT=8181
+if [ "$LOCAL" -eq 1 ]; then
+    HTTP_PORT=$(ci_free_port)
+    OPS_PORT=$(ci_free_port)
+    CH_PORT=$(ci_free_port)
+    PDP_PORT=$(ci_free_port)
 fi
 
 CH_IMAGE=$(ci_lock_ref clickhouse-lts)
@@ -83,7 +98,10 @@ done
 cp "$PA/crates/access-conformance/examples/test-edge-ed25519.pem" "$PA/crates/access-conformance/examples/test-edge-es256.pem" "$WORK/"
 if [ "$LOCAL" -eq 1 ]; then
     sed -e "s#/conformance/#$WORK/#g" -e "s#/data/dashboards#$WORK/data/dashboards#" \
+        -e "s#127\.0\.0\.1:8080#127.0.0.1:$HTTP_PORT#" -e "s#127\.0\.0\.1:9090#127.0.0.1:$OPS_PORT#" \
+        -e "s#127\.0\.0\.1:8123#127.0.0.1:$CH_PORT#" -e "s#127\.0\.0\.1:8181#127.0.0.1:$PDP_PORT#" \
         "$ROOT/tests/conformance/config.hcl" >"$WORK/config.hcl"
+    sed -i "s#127\.0\.0\.1:8181#127.0.0.1:$PDP_PORT#" "$WORK/profile.json"
 else
     cp "$ROOT/tests/conformance/config.hcl" "$WORK/config.hcl"
     # The container runs with the uid of the caller. Hune refuses a volume that others can write.
@@ -106,7 +124,7 @@ INIT="-v $ROOT/tests/fixtures/clickhouse/init.sql:/docker-entrypoint-initdb.d/01
 
 if [ "$LOCAL" -eq 1 ]; then
     # shellcheck disable=SC2086
-    docker run -d --name "$CH_NAME" -p 127.0.0.1:8123:8123 $INIT "$CH_IMAGE" >/dev/null
+    docker run -d --name "$CH_NAME" -p "127.0.0.1:$CH_PORT:8123" $INIT "$CH_IMAGE" >/dev/null
     wait_clickhouse
     "$BIN" serve --config "$WORK/config.hcl" >"$OUT/hune.log" 2>&1 &
     HUNE_PID=$!
@@ -125,7 +143,7 @@ fi
 ci_i=0
 while [ "$ci_i" -lt 60 ]; do
     if [ "$LOCAL" -eq 1 ]; then
-        curl -fsS http://127.0.0.1:9090/readyz >/dev/null 2>&1 && break
+        curl -fsS "http://127.0.0.1:$OPS_PORT/readyz" >/dev/null 2>&1 && break
     else
         docker run --rm --network "container:$HUNE_NAME" --entrypoint curl "$BUILDER_TAG" -fsS http://127.0.0.1:9090/readyz >/dev/null 2>&1 && break
     fi
@@ -137,7 +155,7 @@ done
 # ---- The run ----
 status=0
 if [ "$LOCAL" -eq 1 ]; then
-    (cd "$WORK" && "$RUNNER" --role pep --profile profile.json --url http://127.0.0.1:8080 --series U) \
+    (cd "$WORK" && "$RUNNER" --role pep --profile profile.json --url "http://127.0.0.1:$HTTP_PORT" --series U) \
         >"$OUT/report.txt" 2>"$OUT/runner.err" || status=$?
 else
     docker run --rm --network "container:$HUNE_NAME" --user "$(id -u):$(id -g)" -v "$WORK:/work" -w /work \

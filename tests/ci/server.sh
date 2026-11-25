@@ -7,7 +7,7 @@
 #   cargo test -p hune --locked -- --ignored real_ch --test-threads=1
 # and removes the container. Docker runs the ClickHouse container in both modes.
 # Default mode runs cargo in the builder image with the host network; --local runs cargo on the host.
-# Variables: DOCKER (docker command), CH_PORT (default 18123), CH_TLS_PORT (default 18443).
+# Variables: DOCKER (docker command), CH_PORT and CH_TLS_PORT (default: a free port of 127.0.0.1, taken at start).
 set -eu
 . "$(dirname "$0")/ci-lib.sh"
 ci_init_args=
@@ -22,8 +22,8 @@ done
 ci_init $ci_init_args
 
 docker=${DOCKER:-docker}
-http_port=${CH_PORT:-18123}
-tls_port=${CH_TLS_PORT:-18443}
+http_port=${CH_PORT:-$(ci_free_port)}
+tls_port=${CH_TLS_PORT:-$(ci_free_port)}
 name=hune-test-ch-server-$$
 tags=${tags:-26.8.34.13}
 admin_user=hune_admin
