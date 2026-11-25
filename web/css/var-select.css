@@ -39,6 +39,8 @@
 .chip { position: relative; z-index: 1; display: inline-flex; flex: none; align-items: center; gap: 2px; height: 20px; padding: 0 3px 0 8px; box-sizing: border-box;
   border: 1px solid color-mix(in srgb, var(--selected-edge) 55%, transparent); border-radius: var(--r-pill); background: var(--selected-bg); color: var(--text); font-size: var(--fs-sm); line-height: 18px; white-space: nowrap; }
 .chip[hidden] { display: none; }
+.chip--fit { flex: 0 1 auto; min-width: 0; }
+.chip--fit .chip__text { min-width: 0; }
 .chip--all, .chip--more { padding: 0 8px; cursor: pointer; }
 .chip__text { max-width: 160px; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
 .chip__x { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 16px; height: 16px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }

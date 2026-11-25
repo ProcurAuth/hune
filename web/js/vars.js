@@ -177,9 +177,12 @@ function listControl(variable, rt, apply) {
 
   function layoutChips() {
     if (!chipsEl || !chipsEl.isConnected || chipsEl.hidden) return;
-    const nodes = [...chipsEl.querySelectorAll(".chip")];
+    const nodes = [...chipsEl.querySelectorAll(".chip:not(.chip--more)")];
     chipsEl.querySelectorAll(".chip--more").forEach((n) => n.remove());
-    for (const n of nodes) n.hidden = false;
+    for (const n of nodes) {
+      n.hidden = false;
+      n.classList.remove("chip--fit");
+    }
     if (nodes.length < 2) return;
     const room = chipsEl.clientWidth;
     if (chipsEl.scrollWidth <= room + 1) return;
@@ -196,6 +199,8 @@ function listControl(variable, rt, apply) {
     nodes.forEach((n, i) => { n.hidden = i >= count; });
     const hidden = nodes.length - count;
     more.textContent = `+${hidden}`;
+    // One chip that is wider than the row with the chip "+n" gives room to it: its text is cut by the style, and "+n" stays in the row.
+    if (count === 1 && widths[0] + SPACE_CHIP_GAP + more.getBoundingClientRect().width > available) nodes[0].classList.add("chip--fit");
     more.title = `${hidden} more selected`;
   }
 
