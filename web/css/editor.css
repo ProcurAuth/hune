@@ -120,7 +120,7 @@
 .jeditor { display: flex; flex-direction: column; height: max(320px, calc(100dvh - var(--header-h) - 2 * var(--page-pad))); min-height: 0; }
 .jeditor > .jframe--tall { flex: 1 1 auto; height: auto; min-height: 160px; }
 .jeditor > .ebar, .jeditor > .errors { flex: none; }
-.jframe:focus-within { border-color: var(--accent-fill); outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+/* The JSON area has no ring and no change of border when it has the focus, as the editor of VS Code: the caret, the number of the active line and its band show the focus, and the marks of the gutter stay clear. */
 /* The gutter has no border, as in VS Code: the numbers are in the muted blue-grey of the editor, and the number of the line of the caret has the strong colour. */
 .jarea__gutter { position: relative; box-sizing: border-box; min-width: 56px; overflow: hidden; color: var(--json-lineno); text-align: right; letter-spacing: 0; user-select: none; }
 .jarea__active-num { position: absolute; top: calc(var(--space-8) + var(--r, 0) * var(--json-row)); right: 0; left: 0; box-sizing: border-box; height: var(--json-row); padding: 0 var(--space-8) 0 var(--space-10); background: var(--editor-solid-bg); color: var(--json-lineno-active); pointer-events: none; will-change: transform; }
