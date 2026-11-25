@@ -455,7 +455,7 @@ export const cases = [
       const probe = `(() => {
         const root = document.querySelector('[data-testid="text-1"]');
         const rb = root.getBoundingClientRect();
-        const out = { page: document.documentElement.scrollWidth - document.documentElement.clientWidth, outside: [] };
+        const out = { page: Math.max(document.documentElement.scrollWidth - document.documentElement.clientWidth, document.getElementById("app-main").scrollWidth - document.getElementById("app-main").clientWidth), outside: [] };
         for (const e of root.querySelectorAll("p, h1, li, a")) { const r = e.getBoundingClientRect(); if (r.right > rb.right + 1.5) out.outside.push(e.tagName + " " + Math.round(r.right - rb.right)); }
         out.scrolls = root.scrollWidth > root.clientWidth;
         out.pre = (() => { const p = root.querySelector("pre"); return p.scrollWidth > p.clientWidth || p.getBoundingClientRect().right <= rb.right + 1.5; })();

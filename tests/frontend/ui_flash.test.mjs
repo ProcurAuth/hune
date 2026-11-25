@@ -57,14 +57,6 @@ test("the font does not swap after the first paint", () => {
   assert.match(read("web/shell.html"), /rel="preload" href="static\/\{\{build\}\}\/fonts\/inter\/InterVariable\.woff2"/);
 });
 
-test("the header sticks at every width, and only a phone on its side lets it scroll", () => {
-  const css = read("web/css/base.css");
-  assert.match(css, /#app-header \{\s*position: sticky; top: 0;/);
-  const media = [...css.matchAll(/@media \(max-width: 760px\)([^{]*)\{\s*#app-header \{ position: static; \}/g)];
-  assert.equal(media.length, 1);
-  assert.match(media[0][1], /max-height: 600px/);
-});
-
 test("the controls of the header have fixed widths in every state (9.9)", () => {
   const css = read("web/css/components.css");
   const picker = read("web/css/picker.css");

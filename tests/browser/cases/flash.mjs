@@ -46,7 +46,7 @@ function flashDoc(uid) {
 // (one frame is one possible paint) it logs what the viewer would see. `hold` is true while the shell holds its first paint.
 const PROBE = `(() => {
   const log = (window.__flash = { id: Math.random(), t0: performance.now(), frames: [] });
-  const box = (e) => { const b = e.getBoundingClientRect(); return [b.left, b.top + scrollY, b.width, b.height].map((v) => Math.round(v * 2) / 2); };
+  const box = (e) => { const b = e.getBoundingClientRect(); return [b.left, b.top + document.getElementById("app-main").scrollTop, b.width, b.height].map((v) => Math.round(v * 2) / 2); };
   const frame = () => {
     const root = document.documentElement;
     const header = document.getElementById("app-header");
@@ -292,14 +292,14 @@ export const cases = [
         const p = await openAt(t, t.dash(UID59), width);
         const before = await p.eval(RECTS);
         found.push(...judgeNoBlank(before, "edit-toggle", `${label} view`));
-        await p.eval("window.scrollTo(0, 400)");
+        await p.eval(`document.getElementById("app-main").scrollTo(0, 400)`);
         await sleep(150);
-        const stuck = await p.eval(`(() => { const h = document.getElementById("app-header"); const b = h.getBoundingClientRect(); const x = Math.min(b.width - 4, 40); const at = document.elementFromPoint(x, Math.min(b.height - 4, 20)); return { scrollY: Math.round(window.scrollY), top: b.top, sticky: getComputedStyle(h).position, covers: !!at && h.contains(at) }; })()`);
-        if (stuck.scrollY < 100) found.push(`${label}: the page did not scroll (${stuck.scrollY})`);
-        if (stuck.sticky !== "sticky" || Math.abs(stuck.top) > 0.5 || !stuck.covers) found.push(`${label}: the header does not stick (${JSON.stringify(stuck)})`);
+        const stuck = await p.eval(`(() => { const h = document.getElementById("app-header"); const b = h.getBoundingClientRect(); const x = Math.min(b.width - 4, 40); const at = document.elementFromPoint(x, Math.min(b.height - 4, 20)); return { scrollY: Math.round(document.getElementById("app-main").scrollTop), top: b.top, fixed: !document.getElementById("app-main").contains(h), covers: !!at && h.contains(at) }; })()`);
+        if (stuck.scrollY < 100) found.push(`${label}: the content did not scroll (${stuck.scrollY})`);
+        if (!stuck.fixed || Math.abs(stuck.top) > 0.5 || !stuck.covers) found.push(`${label}: the header does not stay on top (${JSON.stringify(stuck)})`);
         const scrolled = await p.eval(RECTS);
         found.push(...moved(before, scrolled, keys).map((m) => `${label} after a scroll: ${m}`));
-        await p.eval("window.scrollTo(0, 0)");
+        await p.eval(`document.getElementById("app-main").scrollTo(0, 0)`);
 
         // 2. The buttons keep their place and size in the view: a long range text, another interval, no interval, a long quick range.
         for (const [name, query] of [["absolute range", "from=1700000000000&to=1700003600000&refresh=off"], ["interval 30m", "from=now-90d&to=now&refresh=30m"], ["interval off", "refresh=off"]]) {

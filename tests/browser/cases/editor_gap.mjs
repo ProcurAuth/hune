@@ -78,7 +78,7 @@ const MEASURE = (rows) => `(() => {
   const r = (s) => { const e = q(s); if (!e) return null; const b = e.getBoundingClientRect(); return { top: b.top, bottom: b.bottom, left: b.left, right: b.right, h: b.height, w: b.width }; };
   return {
     bottom: header.bottom, token, tops, win: [innerWidth, innerHeight],
-    scrollY: de.scrollHeight - de.clientHeight, scrollX: de.scrollWidth - de.clientWidth,
+    scrollY: document.getElementById("app-main").scrollHeight - document.getElementById("app-main").clientHeight, scrollX: Math.max(de.scrollWidth - de.clientWidth, document.getElementById("app-main").scrollWidth - document.getElementById("app-main").clientWidth),
     top: r(".peditor__top"), lower: r(".peditor__lower"), opts: r(".peditor__options"), main: r(".peditor__main"),
     pos: (() => { const e = q(".peditor__options"); return e ? getComputedStyle(e).position : null; })(),
   };

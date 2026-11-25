@@ -59,7 +59,7 @@ async function ready(p, ids = IDS) {
 
 const rect = (p, id) => p.eval(`(() => { const e = document.querySelector('[data-testid="${id}"]'); if (!e || e.offsetParent === null) return null; const b = e.getBoundingClientRect(); return { left: b.left, right: b.right, top: b.top, bottom: b.bottom, width: b.width, height: b.height }; })()`);
 const active = (p) => p.eval(`(document.activeElement && (document.activeElement.dataset.testid || document.activeElement.tagName)) || null`);
-const noOverflow = (p) => p.eval(`document.documentElement.scrollWidth <= document.documentElement.clientWidth`);
+const noOverflow = (p) => p.eval(`(document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth)`);
 
 // The measure of the header: its height, the vertical centres of its controls (one value means one row), the width that its content
 // needs against the width that it has, and the height of each line of text of the selector (a wrap would give two lines).
@@ -332,7 +332,7 @@ export const cases = [
       const r = await t.api.create("transit", headerDoc(UID71, "A dashboard with a rather long title for the selector of a narrow window"));
       t.assert(r.status === 201, `create ${UID71}: ${r.status} ${r.text.slice(0, 300)}`);
       const found = [];
-      const check = (label, m, { sticky = true } = {}) => {
+      const check = (label, m, { fixed = true } = {}) => {
         if (m.height > 48) found.push(`${label}: the header is ${m.height} px high (at most 48)`);
         if (m.height !== 44) found.push(`${label}: the header is ${m.height} px, expected 44`);
         if (m.centres.length !== 1) found.push(`${label}: the controls are on ${m.centres.length} lines (${m.centres.join(", ")})`);
@@ -340,7 +340,8 @@ export const cases = [
         if (m.scroll > m.width) found.push(`${label}: the content is ${m.scroll} px wide in a header of ${m.width} px`);
         // One line of the selector is 22 px high (the line height of a .selector); a wrap would give 44 px.
         if (m.lines.some((h) => h > 26)) found.push(`${label}: the selector wraps (${m.lines.join(", ")})`);
-        if (sticky && m.position !== "sticky") found.push(`${label}: position ${m.position}`);
+        // The header is a box above the scroll container (9.6): it is positioned and never sticky or static.
+        if (fixed && m.position !== "relative") found.push(`${label}: position ${m.position}`);
       };
 
       for (const scheme of ["dark", "light"]) {

@@ -496,13 +496,15 @@ export const cases = [
             const m = await p.eval(`(() => {
               const html = document.documentElement, panel = document.querySelector(".panel--view").getBoundingClientRect();
               const header = document.querySelector("#app-header").getBoundingClientRect();
-              return { doc: html.scrollHeight, body: document.body.scrollHeight, win: html.clientHeight, bar: window.innerWidth - html.clientWidth,
+              const main = document.getElementById("app-main");
+              return { doc: html.scrollHeight, body: document.body.scrollHeight, win: html.clientHeight, content: main.scrollHeight, contentWin: main.clientHeight, bar: main.offsetWidth - main.clientWidth,
                        gapBelow: Math.round((window.innerHeight - panel.bottom) * 10) / 10, gapAbove: Math.round((panel.top - header.bottom) * 10) / 10, row: document.querySelector(".dash-toolbar").offsetHeight,
                        pad: parseFloat(getComputedStyle(document.querySelector("#app-main")).paddingBottom) };
             })()`);
             t.assert(m.doc <= m.win, `${where}: the document is not taller than the window: ${m.doc} and ${m.win}`);
             t.assert(m.body <= m.win, `${where}: the body is not taller than the window: ${m.body} and ${m.win}`);
-            t.eq(m.bar, 0, `${where}: no vertical scrollbar takes room from the page`);
+            t.assert(m.content <= m.contentWin, `${where}: the content does not scroll: ${m.content} and ${m.contentWin}`);
+            t.eq(m.bar, 0, `${where}: the container of the content has no vertical scrollbar`);
             t.eq(withVariables ? m.row > 0 : m.row === 0, true, `${where}: the row of the variables ${withVariables ? "shows" : "is empty"}: ${m.row}`);
             if (!withVariables) {
               // The page padding is above the panel (under the header) and under it (above the window edge): 16 px, and 12 px on a phone.

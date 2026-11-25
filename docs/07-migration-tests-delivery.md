@@ -1464,8 +1464,9 @@ The card view of the list page (9.7) adds these tests to the groups of the table
 
 The JSON view of the edit mode (10.4) adds these tests to the groups of the table:
 
+- Front end: `tests/frontend/app_shell.test.mjs` tests the layout of 9.6. It checks the body, the container, the header and the sticky row. It also checks the measures of `main.js` and the scroll step of a drag.
 - Front end: `tests/frontend/json_area.test.mjs` tests the colour of each kind of token, a text that is not valid and the cap of 2,000 parts for a row. It tests the line diff for the marks of the gutter. The cases are an added, a modified and a deleted line. Other cases are the two ends of the text, a long text and the compare by place above the cap. It also reads the CSS: the colour tokens, the metrics of the two layers and the rule of the height.
-- Browser: the cases B240, B270 and B271.
+- Browser: the cases B240, B270, B271 and B272.
 
 The stores in the page (9.6, 9.7, 9.8) add these tests to the groups of the table:
 
@@ -2106,6 +2107,7 @@ The case B153 has its own limit of 900 s. Its states and its hover probe add abo
 | B266 | The cursor over text and the right button (9.8e). The cursor is the text cursor over a log line, a legend label, a table cell, a panel title and an axis label, and the pointer over a sortable header and a legend item. The right button on selected log lines, a legend label, axis labels and table cells keeps the selection and toggles no line, no series and no sort. No code of the page stops the menu of the browser. |
 | B270 | The look of the JSON view (10.4). In the light and the dark theme, each kind of text and each depth of bracket has the colour of its token. The editor, the line numbers, the selection with and without focus, and the scroll bar of 10 px have the values of the palettes. The layers take no pointer. |
 | B271 | The caret in the JSON view (10.4). A click puts the band and the strong number on its line. A caret that touches a bracket puts a box on it and on its pair, and the guide runs along the lines between them. A selection has no band and no box. A line with six spaces has a guide box of six columns and one row high. A syntax error has a wavy underline under its token, and it goes when the text is valid. |
+| B272 | The layout of the page (9.6). At 1440x900, 1280x720, 768x900 and 390x800, in the light and the dark theme, on the list, on a dashboard, in the view of a panel, in the edit mode, in the panel editor and in the JSON view: the header has the width of the window and is at the top, `#app-main` starts under it and is the one scroll container (positioned, `overflow: auto`), the document has no vertical scrollbar and is not taller than the window, and nothing scrolls on the x axis. A low list scrolls in the container and the header keeps its place. The row of the variables stays under the header after a scroll. A drag of a panel near the bottom edge scrolls the container and not the document. |
 
 A build made with `--no-default-features` has no MongoDB driver and refuses the `mongodb` block at start (8b.2). The runner then reports B47 and B48 as `skip`, with the reason "no MongoDB driver in this build". It detects this case from the exit status and the message of `hune check-config`. A build with the driver (the default build) runs both cases against a disposable MongoDB 8.0 with `openssl` and `docker`.
 

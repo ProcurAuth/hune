@@ -428,10 +428,10 @@ html:not([data-theme-choice="dark"], [data-theme-choice="light"]) .theme-select_
 html[data-theme-choice="dark"] .theme-select__current > .theme-icon--dark,
 html[data-theme-choice="light"] .theme-select__current > .theme-icon--light { display: block; }
 
-/* The row of the variables, under the header: the controls of the page are in the header (9.6, 9.9). It sticks under the header with the
-   page colour (it scrolls away on a phone, and in the editor views). It reaches the edges of the page. A dashboard with no variable has no row. */
+/* The row of the variables, under the header: the controls of the page are in the header (9.6, 9.9). It sticks at the top edge of the scroll container (its top is
+   minus the padding of the page, because a sticky box keeps inside the padding of its container), which is under the header, with the page colour (it scrolls away on a phone, and in the editor views). It reaches the edges of the page. A dashboard with no variable has no row. */
 .dash-toolbar {
-  position: sticky; top: var(--header-h); z-index: var(--z-sticky-top);
+  position: sticky; top: calc(-1 * var(--page-pad)); z-index: var(--z-sticky-top);
   display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-8);
   margin: calc(-1 * var(--page-pad)) calc(-1 * var(--page-pad)) 0; padding: var(--space-12) var(--page-pad) var(--space-8);
   background: var(--surface-page);

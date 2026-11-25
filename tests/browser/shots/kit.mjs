@@ -64,7 +64,8 @@ async function setMetrics(page, width, height) {
   await page.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
 }
 
-const DOC_HEIGHT = `Math.max(document.documentElement.scrollHeight, document.body ? document.body.scrollHeight : 0)`;
+// The content scrolls in #app-main under the header: the page is as high as the header and the content together.
+const DOC_HEIGHT = `Math.max(document.documentElement.scrollHeight, document.getElementById("app-header").offsetHeight + document.getElementById("app-main").scrollHeight)`;
 
 function save(path, data) {
   mkdirSync(dirname(path), { recursive: true });
@@ -133,7 +134,7 @@ async function clipOf(page, selectors, pad) {
       if (!e) continue;
       const b = e.getBoundingClientRect();
       if (!b.width || !b.height) continue;
-      const r = { l: b.left + scrollX, t: b.top + scrollY, r: b.right + scrollX, b: b.bottom + scrollY };
+      const r = { l: b.left + scrollX, t: b.top + document.getElementById("app-main").scrollTop, r: b.right + scrollX, b: b.bottom + document.getElementById("app-main").scrollTop };
       box = box ? { l: Math.min(box.l, r.l), t: Math.min(box.t, r.t), r: Math.max(box.r, r.r), b: Math.max(box.b, r.b) } : r;
     }
     if (!box) return null;

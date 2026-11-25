@@ -309,12 +309,12 @@ export const cases = [
       // 14. Narrow layouts: one column up to 768 px; on a phone the focus is on the popup and nothing overflows.
       const n = await t.open(t.dash(UID, "refresh=off"), { width: 768, height: 900 });
       await openPopup(n);
-      const stack = await n.eval(`(() => { const a = document.querySelector(".picker__abs").getBoundingClientRect(); const c = document.querySelector(".picker__col").getBoundingClientRect(); return [c.top >= a.bottom - 1, document.documentElement.scrollWidth <= document.documentElement.clientWidth]; })()`);
+      const stack = await n.eval(`(() => { const a = document.querySelector(".picker__abs").getBoundingClientRect(); const c = document.querySelector(".picker__col").getBoundingClientRect(); return [c.top >= a.bottom - 1, (document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth)]; })()`);
       t.eq(stack, [true, true], "768: the lists are under the absolute range, and the page does not overflow");
       t.eq(await n.eval(`document.querySelectorAll(".picker__day").length`), 42, "the calendar shows at 768");
       const s = await t.open(t.dash(UID, "refresh=off"), { width: 390, height: 844 });
       await openPopup(s);
-      const phone = await s.eval(`(() => { const b = document.querySelector(".picker__popup").getBoundingClientRect(); return [Math.round(b.width), b.left >= 0 && b.right <= innerWidth, document.activeElement.classList.contains("picker__popup"), document.documentElement.scrollWidth <= document.documentElement.clientWidth]; })()`);
+      const phone = await s.eval(`(() => { const b = document.querySelector(".picker__popup").getBoundingClientRect(); return [Math.round(b.width), b.left >= 0 && b.right <= innerWidth, document.activeElement.classList.contains("picker__popup"), (document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth)]; })()`);
       t.eq(phone, [374, true, true, true], "390: the popup fits, the focus is on the popup, the page does not overflow");
       await s.press("Escape");
       await s.waitGone(POP);

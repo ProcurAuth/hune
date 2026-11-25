@@ -128,7 +128,7 @@ for (const [uid, title, range] of DEMOS) {
   });
   state(`dash-${uid}-scrolled`, `Dashboard ${title}: scrolled by one screen`, { view: "viewport", themes: "core", widths: "wide" }, async (c) => {
     await c.open(c.url(`d/${uid}?${range}`));
-    await c.page.eval(`window.scrollTo(0, innerHeight * 0.9)`);
+    await c.page.eval(`document.getElementById("app-main").scrollTo(0, innerHeight * 0.9)`);
     await c.settle();
   });
 }
@@ -291,7 +291,7 @@ state("panel-gaps", "Time series with gaps: broken and joined", {}, async (c) =>
 
 state("panel-description", "Panel header with a description and links", { view: "viewport" }, async (c) => {
   await c.open(c.url(`d/edge-states?${RANGE}`));
-  await c.page.eval(`window.scrollTo(0, document.querySelector(${JSON.stringify(P(30))}).getBoundingClientRect().top + scrollY - 120)`);
+  await c.page.eval(`document.getElementById("app-main").scrollTo(0, document.querySelector(${JSON.stringify(P(30))}).getBoundingClientRect().top + document.getElementById("app-main").scrollTop - 120)`);
   await c.settle();
   await c.page.click(T("panel-30-links"));
   await sleep(250);
@@ -299,17 +299,17 @@ state("panel-description", "Panel header with a description and links", { view: 
 
 state("section-collapsed", "Section collapsed (last section of the tour)", { view: "viewport" }, async (c) => {
   await c.open(c.url(`d/types-tour?${RANGE}`));
-  await c.page.eval(`window.scrollTo(0, document.documentElement.scrollHeight)`);
+  await c.page.eval(`document.getElementById("app-main").scrollTo(0, document.getElementById("app-main").scrollHeight)`);
   await c.settle();
 });
 
 state("section-expanded", "Section expanded after a click on its header", { view: "viewport" }, async (c) => {
   await c.open(c.url(`d/types-tour?${RANGE}`));
-  await c.page.eval(`window.scrollTo(0, document.documentElement.scrollHeight)`);
+  await c.page.eval(`document.getElementById("app-main").scrollTo(0, document.getElementById("app-main").scrollHeight)`);
   await c.settle();
   await c.page.click(`${T("section-3")} .section__toggle`);
   await c.settle();
-  await c.page.eval(`window.scrollTo(0, document.documentElement.scrollHeight)`);
+  await c.page.eval(`document.getElementById("app-main").scrollTo(0, document.getElementById("app-main").scrollHeight)`);
   await c.settle();
 });
 

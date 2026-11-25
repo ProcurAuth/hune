@@ -596,7 +596,7 @@ export const cases = [
         tp(4, "state_timeline", "Narrow", q(`concat('a long service state name ', toString(${A})) AS a`), { grid: { x: 12, y: 16, w: 6, h: 8 }, options: right, fields: { defaults: { color: { mode: "fixed", fixed: "blue" } }, overrides: [] } }),
       ]));
       const fit = (p) => p.eval(`(() => {
-        const out = { scroll: document.documentElement.scrollWidth - window.innerWidth, panels: [] };
+        const out = { scroll: Math.max(document.documentElement.scrollWidth - window.innerWidth, document.getElementById("app-main").scrollWidth - document.getElementById("app-main").clientWidth), panels: [] };
         for (const id of [1, 2, 3, 4]) {
           const e = document.querySelector('[data-testid="timeline-' + id + '"]');
           if (!e) { out.panels.push([id, "missing"]); continue; }

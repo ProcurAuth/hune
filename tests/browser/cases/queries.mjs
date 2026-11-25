@@ -274,7 +274,7 @@ export const cases = [
       t.assert((await p.eval(`window.__fl.max`)) <= 6, "6 requests at the same time at most: " + (await p.eval(`window.__fl.max`)));
       // A scroll requests the others, and at the end the count equals the count of visible queries.
       for (let y = 0; y <= 9500; y += 400) {
-        await p.eval(`scrollTo(0, ${y})`);
+        await p.eval(`document.getElementById("app-main").scrollTo(0, ${y})`);
         await sleep(120);
       }
       await sleep(1000);
@@ -285,7 +285,7 @@ export const cases = [
       const per = (id) => bodiesOf(p, id).length;
       t.eq([per(1), per(25), per(50), per(51)], [3, 3, 3, 0], "each query once, none in the collapsed section");
       // A change of the variable that one SQL names sends one request.
-      await p.eval(`scrollTo(0, 0)`);
+      await p.eval(`document.getElementById("app-main").scrollTo(0, 0)`);
       const before = panelQueries(p).length;
       await p.click(p.tid("variable-env-button"));
       await p.click('.listbox__item[data-value="b"]');
@@ -539,7 +539,7 @@ export const cases = [
               badge: !!badge && inside(badge, badge.closest("section.panel")),
               select: !!select && inside(select, select.closest("section.panel")),
               unique: new Set(ids).size === ids.length,
-              scroll: document.documentElement.scrollWidth <= document.documentElement.clientWidth,
+              scroll: (document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth),
             };
           })()`);
           t.eq(fit, { badge: true, select: true, unique: true, scroll: true }, `${width} px, ${theme}`);

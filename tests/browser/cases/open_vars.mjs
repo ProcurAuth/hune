@@ -643,7 +643,7 @@ export const cases = [
               const bg = backdrop(e); const fg = over(parse(getComputedStyle(e).color), bg); const c = ratio(fg, bg);
               if (c < 4.5) low.push((e.dataset.testid || e.dataset.value || e.className) + " " + c.toFixed(2));
             }
-            return { inWindow: [r.left >= 0, r.right <= innerWidth, r.top >= 0, r.bottom <= innerHeight], low, noScroll: document.documentElement.scrollWidth <= document.documentElement.clientWidth, use: !!document.querySelector('[data-testid="variable-o1-use"]:not([hidden])') };
+            return { inWindow: [r.left >= 0, r.right <= innerWidth, r.top >= 0, r.bottom <= innerHeight], low, noScroll: (document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth), use: !!document.querySelector('[data-testid="variable-o1-use"]:not([hidden])') };
           })()`);
           t.eq(m.inWindow, [true, true, true, true], `${label}: the popup is in the window`);
           t.assert(rowH.length > 0 && rowH.every((h) => h === 38), `${label}: the rows have 38 px: ${rowH}`);

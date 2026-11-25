@@ -30,7 +30,7 @@ const where = (p, ids) =>
   })()`);
 
 /** True when the page has no horizontal scroll. */
-const noOverflow = (p) => p.eval(`document.documentElement.scrollWidth <= document.documentElement.clientWidth`);
+const noOverflow = (p) => p.eval(`(document.documentElement.scrollWidth <= document.documentElement.clientWidth && document.getElementById("app-main").scrollWidth <= document.getElementById("app-main").clientWidth)`);
 
 /** The height of the header and the number of rows of its controls (the tops of the buttons, for a message). */
 const rowInfo = (p) =>

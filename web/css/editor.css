@@ -187,7 +187,7 @@
 /* From 901 px up the pane is fixed: it runs from the top of the toolbar row to the window edge (right and bottom), as in Grafana. The
    grid column of the pane stays empty and keeps the room. */
 @media (min-width: 901px) {
-  .peditor__options { position: fixed; top: calc(var(--header-h) + var(--page-pad)); right: 0; bottom: 0; z-index: 1; width: var(--peditor-options-w); }
+  .peditor__options { position: fixed; top: calc(var(--header-h) + var(--page-pad)); right: var(--scrollbar-w, 0px); bottom: 0; z-index: 1; width: var(--peditor-options-w); }
 }
 /* The header: the picture and the name of the visualisation, and the link "Change" (it opens the group "Visualisation"). */
 .peditor__ohead { display: flex; align-items: center; gap: var(--space-8); flex: 0 0 auto; height: 48px; padding: var(--space-8) var(--space-16); font-size: var(--fs-md); font-weight: var(--fw-medium); }

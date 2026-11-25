@@ -40,7 +40,7 @@ const CONTRAST = `(theme) => {
 const FIT = `(() => {
   const f = document.querySelector(".jframe").getBoundingClientRect();
   const pad = parseFloat(getComputedStyle(document.getElementById("app-main")).paddingBottom);
-  return { gap: Math.round(window.innerHeight - f.bottom), pad: Math.round(pad), scroll: document.documentElement.scrollHeight - window.innerHeight, height: Math.round(f.height) };
+  return { gap: Math.round(window.innerHeight - f.bottom), pad: Math.round(pad), scroll: document.getElementById("app-main").scrollHeight - document.getElementById("app-main").clientHeight, height: Math.round(f.height) };
 })()`;
 
 async function setSize(p, width, height) {
