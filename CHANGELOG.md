@@ -49,6 +49,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Changed
 
+- The page scrolls in one container under the header. The document does not scroll, so the scrollbar of the page starts under the header and the header keeps the full width of the window. The header is at the top at every width. A Back or a Forward puts the content at its old position. The browser case B272 measures this.
 - The JSON view of the edit mode fills the page, down to one page padding above the bottom edge of the window. Before, it stopped about 84 px above the edge at 1440 by 900 px. The tab "JSON" of the settings view has the same rule.
 - The page writes a name of the address (`from`, `to`, `timezone`, `var-<name>`, `refresh`) only when its value differs from the default of the dashboard. The address of the edit mode is `?edit=1` with the defaults. A copied address does not fix a value at the default.
 - The theme control is one icon button. Each click gives the next choice in the order System, Dark, Light and System again. It has no menu and no popup. This differs from ClickHouse Dash on purpose: Hune has one button and no menu.

@@ -409,7 +409,13 @@ The selector of the dashboards follows the host selector of ClickHouse Dash and 
 - Right opens a folder row, and a second Right goes to its first dashboard. Left closes an open folder row. On a dashboard, Left goes to the folder row.
 - Enter and Space choose the row. Escape closes the menu and gives the focus back to the button. Tab closes the menu.
 
-The header sticks to the top of the window at every width. The header scrolls with the page in one case. This case is a window that is 760 px wide or less and 600 px high or less. A name or a line that hides for the eye stays for assistive technology.
+The header is at the top of the window at every width, and it never scrolls away. A name or a line that hides for the eye stays for assistive technology.
+
+The document does not scroll. The body fills the window and has no scrollbar. The element `main` (`#app-main`) is the one scroll container. It fills the window under the header. The scrollbar of the page starts under the header, and the header has the full width of the window. `main` is a positioned box, so a child with `position: absolute` scrolls with the content and never makes the document taller.
+
+`main.js` sets `--header-h`, the height of the header, and `--scrollbar-w`, the width of the scrollbar of the container (0 when the content does not scroll). A part that is fixed to the right edge of the window leaves `--scrollbar-w` free. A new page starts at the top of the container. A Back or a Forward puts the container at the position that it had on that path.
+
+The row of the variables sticks at the top of the container. The panels load when they come within one window height of the container. A drag of a panel in the edit mode scrolls the container near its top and its bottom edge.
 
 This bar replaces the controls row below the header of Grafana. ClickHouse Dash also has its actions in the header. The deviation from the Grafana parity of 9.8 and 9.9 is on purpose.
 
@@ -506,7 +512,7 @@ Marks on a card:
 The grid:
 
 - The cards are in a grid of columns of 400 px. The folders share the columns, so the cards of two folders do not align by folder. At 440 px or less, there is one column of the full width.
-- The whole block of cards is centred, across and down, in the window below the header. When the block is taller than the window, it starts at the top and the page scrolls.
+- The whole block of cards is centred, across and down, in the window below the header. When the block is taller than the window, it starts at the top and the content scrolls.
 
 The three dots of a card:
 
@@ -666,7 +672,7 @@ The scheduler of `runtime.js`:
 `viewPanel=<id>` shows one panel in all the main area, below the row of the variables bar. `Escape` closes it. The other panels do not query.
 
 - The view has no row of its own for the way back. The way back is the arrow after the selector in the header, a link without `viewPanel` (`data-testid="view-back"`).
-- The page has no scrollbar in this view. The panel fills the window under the header and the row of the variables. The page padding is above it and under it.
+- The content has no scrollbar in this view. The panel fills the window under the header and the row of the variables. The page padding is above it and under it.
 - The padding is 16 px, and 12 px at 480 px or less. The browser case B233 checks this at four sizes, in both themes, with and without variables.
   The key Escape and the arrow are the event `close-view` of 10.2a. The panel menu of the view has the item "View", which does nothing for the panel that the view shows.
 - When the view opens, the focus moves to the view (`role="region"`, `aria-label` "View panel"). A pointer user sees no focus ring there.
@@ -4256,7 +4262,7 @@ An invariant covers all the rules. For each state, `parse(render(state))` is tha
 
 ### 10.3 Panel editor
 
-`editPanel=<id>` opens the panel editor. The editor fills the window under the header and has no page scroll. At 900 px or less it becomes one column, and the page scrolls. It has these parts:
+`editPanel=<id>` opens the panel editor. The editor fills the window under the header and has no scrollbar. At 900 px or less it becomes one column, and the content scrolls. It has these parts:
 
 - The panel editor has no top bar and no row of its own. The editor starts at the foot of the header, so it has 48 px more height than before.
 - The box of the editor starts at the foot of the header and has a top padding of `--page-pad` (9.6). The preview, the row of the variables and the top of the options pane start at this gap. The preview never touches the header. Without a row of the variables, the top of the options pane and the top of the preview are at the same height. The pane keeps its place at the right edge of the window.
