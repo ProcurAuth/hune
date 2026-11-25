@@ -700,6 +700,20 @@ mod tests {
         .into()
     }
 
+    /// Waits until nobody holds the lock of the volume at `root`, for 5 s at most. A task of a store that blocks a thread can keep the
+    /// volume for a short time after the store is dropped, so a command that runs at once after the drop could find the lock still taken.
+    fn wait_until_unlocked(root: &Path) {
+        let file = std::fs::OpenOptions::new().read(true).write(true).open(root.join(".hune/lock")).unwrap();
+        for _ in 0..100 {
+            if file.try_lock().is_ok() {
+                file.unlock().unwrap();
+                return;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
+        panic!("the volume stays locked for 5 s after the store was dropped");
+    }
+
     fn history_of(root: &Path, uid: &str) -> Vec<hune_store::VersionMeta> {
         let store = open_volume(root);
         let rt = tokio::runtime::Builder::new_current_thread().enable_all().build().unwrap();
@@ -800,6 +814,7 @@ mod tests {
         let r = rt.block_on(store.restore(&uid, 1, Some(&current.etag), Some(&current.folder), &meta));
         assert_eq!(r, Err(StoreError::NotRestorable));
         drop(store);
+        wait_until_unlocked(&a);
         // The document that was format 3 got no write.
         assert_eq!(history_of(&a, "nodes").len(), 0);
         // A second run has nothing to migrate and writes nothing.
