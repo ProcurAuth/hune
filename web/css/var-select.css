@@ -1,0 +1,57 @@
+/* The controls of the variables (9.10): the states loading, waiting and failed, the chips of a variable that takes several values, and the panel of a
+   failed options request. Colours are tokens only. The error never takes room in the bar or in the grid: the panel lives in the popup. */
+
+/* --- The states ---------------------------------------------------------------------------------------------------------------------------- */
+.select__button.is-loading, .select__button.is-waiting { cursor: default; color: var(--muted); }
+/* A control that loads or waits cannot open: its chevron goes, and its room is for the text ("Loading…" fits in the width of a control). */
+.select__button.is-loading > .icon, .select__button.is-waiting > .icon { display: none; }
+.select__button.is-waiting .select__value { max-width: none; }
+.select__lead { flex: none; margin-right: var(--space-4); }
+/* A failed variable keeps its value on screen: a red edge says that the options did not load, and the name for assistive technology says why. The edge
+   has no mark in front of the text, so the control keeps its width. */
+.var .select__button.is-failed, .select__button.is-failed { border-color: var(--danger); }
+.var .select__button.is-failed:hover, .select__button.is-failed:hover { border-color: var(--danger); }
+/* While a control loads or waits, the text of its selection keeps the width of the control: a ghost with no height, from the attribute of the element.
+   The bar then keeps the rows that it will have when the options come. */
+.select__value[data-ghost]:not([data-ghost=""])::after { content: attr(data-ghost); display: block; height: 0; overflow: hidden; visibility: hidden; }
+.select__state { display: flex; flex: 1 1 auto; align-items: center; min-width: 0; overflow: hidden; white-space: nowrap; }
+/* While the control loads, its text lies over the ghost chips, which keep the width of the face. In the other states the text takes its own room. */
+.select__state.is-overlay { position: absolute; top: 0; bottom: 0; left: var(--space-8); right: var(--space-8); z-index: 1; pointer-events: none; }
+
+/* --- The chips ----------------------------------------------------------------------------------------------------------------------------- */
+/* The face is the visible control (it has the classes of the button of the bar). The button lies over it: it takes the focus, the clicks on the
+   empty room and the keys. A chip is above the button, so that its cross is a button of its own. The height of the face stays the one of a control. */
+.select--chips { position: relative; display: inline-flex; max-width: 100%; }
+.select__face { position: relative; flex: 1 1 auto; gap: var(--space-4); max-width: 100%; padding: 0 var(--space-8) 0 var(--space-6); cursor: pointer; }
+.select__chips { display: flex; flex: 1 1 auto; align-items: center; gap: 4px; min-width: 0; max-width: 280px; overflow: hidden; }
+.select__chips[hidden], .select__state[hidden] { display: none; }
+.select__chips.is-ghost { visibility: hidden; }
+.select__opener { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; border-radius: inherit; background: transparent; cursor: pointer; }
+.select__opener:disabled { cursor: default; }
+.select__opener:focus-visible { outline: none; }
+.select--chips:has(.select__opener:focus-visible) .select__face { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+.select__face.is-open { border-color: var(--control-border-hover); }
+.var .select__face { border-color: var(--control-border); border-radius: 0 var(--r-md) var(--r-md) 0; background: var(--surface-inset); }
+.var .select__face:hover, .var .select__face.is-open { border-color: var(--control-border-hover); background: var(--surface-inset); }
+.var > :only-child .select__face { border-radius: var(--r-md); }
+.select__face.is-failed, .var .select__face.is-failed { border-color: var(--danger); }
+
+.chip { position: relative; z-index: 1; display: inline-flex; flex: none; align-items: center; gap: 2px; height: 20px; padding: 0 3px 0 8px; box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--selected-edge) 55%, transparent); border-radius: var(--r-pill); background: var(--selected-bg); color: var(--text); font-size: var(--fs-sm); line-height: 18px; white-space: nowrap; }
+.chip[hidden] { display: none; }
+.chip--all, .chip--more { padding: 0 8px; cursor: pointer; }
+.chip__text { max-width: 160px; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.chip__x { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 16px; height: 16px; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer; }
+.chip__x:hover { background: var(--hover-tint); color: var(--text); }
+.chip__x:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 0; color: var(--text); }
+.panel-var .select--chips, .panel-var .select__face { width: 100%; }
+.panel-var .select__chips { max-width: none; }
+
+/* --- The failed options request ---------------------------------------------------------------------------------------------------------- */
+.select__fail { display: grid; gap: var(--space-6); padding: var(--space-4) var(--space-4) var(--space-8); }
+.select__fail-text { margin: 0; color: var(--danger); font-size: var(--fs-md); overflow-wrap: anywhere; }
+.select__fail-actions { display: flex; gap: var(--space-6); }
+.select__detail > summary { cursor: pointer; color: var(--muted); font-size: var(--fs-sm); }
+.select__detail > summary:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 2px; }
+.select__detail-text { max-height: 160px; margin: var(--space-4) 0 0; padding: var(--space-6); overflow: auto; border: 1px solid var(--border); border-radius: var(--r-sm); background: var(--surface-inset);
+  color: var(--text); font-family: var(--font-mono); font-size: var(--fs-xs); white-space: pre-wrap; overflow-wrap: anywhere; user-select: text; }

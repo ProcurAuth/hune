@@ -3979,7 +3979,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,084 KB at most (1,110,016 bytes), before compression. The limit is the measure (1,105,706 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,310 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,109 KB at most (1,135,616 bytes), before compression. The limit is the measure (1,130,676 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,940 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;
