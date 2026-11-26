@@ -263,7 +263,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   const loader = el("div", { class: "panel__loader", "aria-hidden": "true" }, el("i"), el("i"), el("i"));
   head.append(loader);
   const skeleton = buildPreview(panel);
-  const stopPreview = skeleton ? observePreview(skeleton, panel, rt.doc, { rt, page }) : () => {};
+  const stopPreview = skeleton ? observePreview(skeleton, panel, rt.doc, { rt, page, key }) : () => {};
   const body = el("div", { class: "panel__body" }, content, skeleton, overlay);
   const root = el("section", {
     class: "panel",

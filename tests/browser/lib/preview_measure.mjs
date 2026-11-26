@@ -152,13 +152,16 @@ function loadedProbe(id, family, extractors) {
       for (const r of window.__previewTexts(canvas)) {
         const px = r.align === "right" || r.align === "end" ? r.x - r.width : r.align === "center" ? r.x - r.width / 2 : r.x;
         const top = r.baseline === "middle" ? r.y - (r.ascent + r.descent) / 2 : r.baseline === "top" || r.baseline === "hanging" ? r.y : r.y - r.ascent;
-        const rect = [k.x - ox + px, k.y - oy + top, r.width, r.ascent + r.descent];
+        // A text is a bar of 8 px at the middle of its line (the rule of the council files for a text that the document fixes): the rectangle has the
+        // x and the width of the text, and 8 px of height around the middle of the line box.
+        const rect = [k.x - ox + px, k.y - oy + top + (r.ascent + r.descent) / 2 - 4, r.width, 8];
         const inside = r.x >= l - 1 && r.x <= l + w + 1;
         if (r.x < l - 1 || (r.align === "right" && r.x <= l + 1)) ys.push({ text: r.text, rect });
         else if (r.y > t + h && inside) xs.push({ text: r.text, rect });
       }
-      for (const y of ys) add("label", y.rect, y.text);
-      for (const x of xs) add("label", x.rect, x.text);
+      // The y labels and the x labels have their own part names: a preview that claims the x labels only still matches by order.
+      for (const y of ys) add("label-y", y.rect, y.text);
+      for (const x of xs) add("label-x", x.rect, x.text);
       add("axis-y", union(ys.map((y) => y.rect)));
       add("axis-x", union(xs.map((x) => x.rect)));
     }
@@ -198,7 +201,8 @@ export const EXTRACTORS = {
     h.chart();
     h.legendHead();
   },
-  // `barchart`: the engine of the charts for the vertical form, and the elements `hbar__*` for the horizontal form.
+  // `barchart`: the engine of the charts for the vertical form, and the elements `hbar__*` for the horizontal form (the head row of a table legend, and
+  // the label "100%" of a percent stack as the part `tick`).
   barchart: (panel, h) => {
     if (h.chart()) {
       h.legendHead();
@@ -208,7 +212,13 @@ export const EXTRACTORS = {
     if (grid) h.add("plot", h.rel(grid));
     const legend = h.holder.querySelector(".hbar__legend");
     if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
+    h.legendHead();
     for (const e of h.all(".hbar__row", h.holder)) h.add("row", h.rel(e));
+    // The label "100%" of a percent stack: the last tick of the value axis, as a bar of 8 px at the middle of its line.
+    const ticks = h.all(".hbar__tick", h.holder);
+    const last = ticks[ticks.length - 1];
+    const t = last ? h.textRects(last)[0] : null;
+    if (t && t.text === "100%") h.add("tick", [t.rect[0], t.rect[1] + t.rect[3] / 2 - 4, t.rect[2], 8], t.text);
   },
   piechart: (panel, h) => {
     const plot = h.holder.querySelector(".pie__plot");
@@ -329,7 +339,7 @@ const fmt = (r) => (r ? `[${r.map((n) => Number(n.toFixed(1))).join(", ")}]` : "
 
 /** The rows as a text table, one line for each row. `all` keeps the lines of the unclaimed parts and of the labels. */
 export function formatTable(rows, { all = false } = {}) {
-  const shown = rows.filter((r) => all || (r.verdict !== "unclaimed" && r.verdict !== "data") || r.part !== "label");
+  const shown = rows.filter((r) => all || (r.verdict !== "unclaimed" && r.verdict !== "data") || !/^label(-[xy])?$/.test(r.part));
   const head = ["panel", "type", "part", "#", "class", "verdict", "preview", "loaded", "delta"];
   const lines = shown.map((r) => [String(r.id), r.type, r.part, String(r.index), r.cls || "-", r.verdict, fmt(r.preview), fmt(r.loaded), r.delta ? fmt(r.delta) : "-"]);
   const width = head.map((h, i) => Math.max(h.length, ...lines.map((l) => l[i].length)));

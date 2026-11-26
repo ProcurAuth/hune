@@ -18,7 +18,7 @@ import * as logs from "./logs.js";
 import * as geomap from "./geomap.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
-const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g"]);
+const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g", "defs", "linearGradient", "stop"]);
 
 // The family of each panel type. A panel type that draws no queried data (a text) has no family and no preview.
 const FAMILY_OF_TYPE = {
@@ -80,8 +80,8 @@ export function buildPreview(panel) {
 }
 
 // Fills the preview when its box has a size, and again when the size changes. The preview is hidden (display none) when the panel does not
-// wait for a first load, so a panel that never waits builds nothing. The callback `done(result)` is for the tests. Returns a function that stops the
-// observation.
+// wait for a first load, so a panel that never waits builds nothing. The callback `done(result)` is for the tests. `ctx` is { rt, page, key }: `key` is
+// the key of the panel instance, for the range of the request (`rt.rangeOf(key)`). Returns a function that stops the observation.
 export function observePreview(skeleton, panel, doc, ctx, done = null) {
   if (!skeleton || typeof ResizeObserver !== "function") return () => {};
   let last = "";
@@ -101,5 +101,16 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
   };
   const observer = new ResizeObserver(paint);
   observer.observe(skeleton);
-  return () => observer.disconnect();
+  // A font that arrives late changes the width of every text: the measures are read again, and the preview is built again (9.11, R13).
+  const onFonts = () => {
+    timeseries.resetMeasures();
+    last = "";
+    paint();
+  };
+  const fonts = typeof document !== "undefined" ? document.fonts : null;
+  if (fonts && fonts.addEventListener) fonts.addEventListener("loadingdone", onFonts);
+  return () => {
+    observer.disconnect();
+    if (fonts && fonts.removeEventListener) fonts.removeEventListener("loadingdone", onFonts);
+  };
 }

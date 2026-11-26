@@ -199,7 +199,17 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 }
 
 /* Under the plot the legend keeps the cap of 35 % of the height and scrolls beyond it, as with "bottom" (9.19). */
-:is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendList {
+.panel__plot[data-legend-fallback] .chartCore__legendList {
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-height: var(--legend-max, none);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* The preview of the chart (web/js/preview/) has the same rule on its own host. */
+.skel__host[data-legend-fallback] .chartCore__legendList {
   flex: 1 1 auto;
   flex-direction: row;
   flex-wrap: wrap;
@@ -211,7 +221,9 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 /* The table fills the row, and the cells are tighter so that no column is cut at 390 px. */
 :is(.panel__plot, .skel__host)[data-legend-fallback] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
 
-:is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: var(--legend-max, 8rem); overflow-y: auto; overflow-x: hidden; }
+.panel__plot[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: var(--legend-max, 8rem); overflow-y: auto; overflow-x: hidden; }
+
+.skel__host[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: var(--legend-max, 8rem); overflow-y: auto; overflow-x: hidden; }
 
 :is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTable th,
 :is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTable td { padding-inline: var(--space-4); }
