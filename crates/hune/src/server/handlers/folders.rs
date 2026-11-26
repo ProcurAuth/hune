@@ -97,8 +97,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         Some(info) => (info.id.clone(), !info.primary),
         None => (services.store.primary_id().unwrap_or_default().to_owned(), false),
     };
-    let in_read_only_store =
-        |folder: &str| FolderId::parse(folder).is_ok_and(|f| services.store.folder_is_read_only(&f));
+    let in_read_only_store = |folder: &str| services.store.folder_text_is_read_only(folder);
     let body = match gate::filter_folders(&ctx, &ids, &in_read_only_store).await? {
         // Mode `authzen`: the display filter keeps some folders and gives the flags (11.25).
         Some(filter) => FolderList {

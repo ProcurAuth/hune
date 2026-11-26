@@ -817,3 +817,69 @@ async fn a_file_with_no_primary_store_has_no_editing_and_every_write_is_refused(
     assert_eq!((r.status, r.code().as_str()), (403, "history_disabled"));
     assert_eq!(get(h.addr, &format!("/api/dashboards/{LAB_UID}")).await.status, 200);
 }
+
+/// A server in the mode `authzen` with `storage.read_only = true`: one read-only store `lab`, no primary store.
+async fn start_authzen_read_only(pdp: &Pdp) -> (Harness, tempfile::TempDir) {
+    let (dir, root) = lab_volume();
+    let url = pdp.url();
+    let h = Harness::start_with(
+        test_timing(),
+        |_| {},
+        move |c| {
+            authzen(c, &url, Duration::ZERO);
+            c.storage.read_only = true;
+            c.storage.volumes.clear();
+            add_read_only_volume(c, &root);
+            c.server.history = false;
+        },
+    )
+    .await;
+    (h, dir)
+}
+
+#[tokio::test]
+async fn in_the_mode_authzen_with_no_primary_store_the_read_routes_work_and_hune_never_asks_to_write() {
+    let _pairs = PAIRS.lock().await;
+    let pdp = Pdp::start(rules).await;
+    let (h, _d) = start_authzen_read_only(&pdp).await;
+    for sub in ["user:alice", "user:bob"] {
+        pdp.clear();
+        let t = token(sub);
+        let get = |path: String| {
+            let t = t.clone();
+            let addr = h.addr;
+            async move { call(addr, "GET", &path, &[(HEADER, t.as_str())], b"").await }
+        };
+        let r = get("/api/session".to_owned()).await;
+        assert_eq!((r.status, r.json()["editing"].clone()), (200, json!(false)), "{sub}: {}", r.text());
+        let r = get("/api/folders".to_owned()).await;
+        assert_eq!(r.status, 200, "{sub}: {}", r.text());
+        let folders = r.json();
+        assert_eq!(folders["access"]["create"], false, "{sub}");
+        assert_eq!(folders["root"]["access"]["write"], false, "{sub}");
+        let lab = folders["items"].as_array().unwrap().iter().find(|i| i["id"] == LAB_FOLDER).unwrap();
+        assert_eq!(lab["access"]["write"], false, "{sub}");
+        let r = get("/api/dashboards".to_owned()).await;
+        assert_eq!(r.status, 200, "{sub}: {}", r.text());
+        let list = r.json();
+        assert_eq!(item(&list, LAB_UID)["access"]["write"], false, "{sub}");
+        let r = get(format!("/api/dashboards/{LAB_UID}")).await;
+        assert_eq!(r.status, 200, "{sub}: {}", r.text());
+        assert_eq!(r.json()["access"]["write"], false, "{sub}");
+        // The list of the sources is for the editor: with no primary store it is empty and asks no question.
+        let r = get("/api/sources".to_owned()).await;
+        assert_eq!(r.status, 200, "{sub}: {}", r.text());
+        assert_eq!(r.json()["items"].as_array().map(Vec::len), Some(0), "{sub}: {}", r.text());
+        // The pages that the browser opens first.
+        for page in ["/".to_owned(), format!("/d/{LAB_UID}")] {
+            let r = get(page.clone()).await;
+            assert_eq!(r.status, 200, "{sub} {page}");
+        }
+        // Hune never asks for the actions that it does not publish.
+        let asked = pdp.asked();
+        assert!(asked.iter().all(|q| q.action != "dashboard.write" && q.action != "source.query"), "{sub}: {asked:?}");
+        // A write route answers at once.
+        let r = call(h.addr, "POST", "/api/folders", &[JSON, (HEADER, t.as_str())], br#"{"id":"x","title":"X"}"#).await;
+        assert_eq!((r.status, r.code().as_str()), (403, "read_only_store"), "{sub}: {}", r.text());
+    }
+}

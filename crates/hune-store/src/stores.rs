@@ -213,14 +213,30 @@ impl Stores {
     }
 
     /// True when a write to this folder is refused because its store is read-only. A folder that is not in the
-    /// catalog is not refused here: the write finds that it does not exist.
+    /// catalog, and the root, belong to no store. With a primary store they are not refused here: the write finds
+    /// that the folder does not exist, or goes to the primary store. With no primary store, nothing accepts a write.
     pub fn folder_is_read_only(&self, folder: &FolderId) -> bool {
-        self.store_of_folder(folder).is_some_and(|s| !s.primary)
+        match self.store_of_folder(folder) {
+            Some(s) => !s.primary,
+            None => self.inner.primary.is_none(),
+        }
     }
 
-    /// True when a write to this dashboard is refused because its store is read-only.
+    /// The same as [`Stores::folder_is_read_only`] for the text of the API: the id of a folder, or `_root` for the
+    /// dashboards with no folder. A text that is not a folder id is not refused here.
+    pub fn folder_text_is_read_only(&self, text: &str) -> bool {
+        let folder =
+            if text == hune_core::ids::ROOT_FOLDER_TEXT { Ok(FolderId::root()) } else { FolderId::parse(text) };
+        folder.is_ok_and(|f| self.folder_is_read_only(&f))
+    }
+
+    /// True when a write to this dashboard is refused because its store is read-only. A dashboard that is not in
+    /// the catalog is refused only when no store is the primary store.
     pub fn uid_is_read_only(&self, uid: &Uid) -> bool {
-        self.store_of_uid(uid).is_some_and(|s| !s.primary)
+        match self.store_of_uid(uid) {
+            Some(s) => !s.primary,
+            None => self.inner.primary.is_none(),
+        }
     }
 
     /// True when the dashboard shows its last valid state because its file is not valid now (5.44).

@@ -177,8 +177,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     // The display filter of 11.25 (mode `authzen`). In mode `open`, each row shows.
     let keys: Vec<(String, String)> =
         rows.iter().map(|r| (r.entry.folder().as_str().to_owned(), r.entry.uid().as_str().to_owned())).collect();
-    let in_read_only_store =
-        |folder: &str| FolderId::parse(folder).is_ok_and(|f| services.store.folder_is_read_only(&f));
+    let in_read_only_store = |folder: &str| services.store.folder_text_is_read_only(folder);
     let (rows, next, writes) = match gate::filter_dashboards(&ctx, &keys, limit, &in_read_only_store).await? {
         None => {
             let more = rows.len() > limit;

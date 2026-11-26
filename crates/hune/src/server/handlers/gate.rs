@@ -379,6 +379,10 @@ pub async fn flags(ctx: &Ctx, folder: &str, uid: &str, read_only: bool) -> Resul
 /// The sources of the list: `source.query` on `S(s)` in one display call (11.25).
 pub async fn visible_sources(ctx: &Ctx, ids: &[String]) -> Result<Option<Vec<bool>>, ApiError> {
     let Some((access, who)) = parts(ctx)? else { return Ok(None) };
+    // With no primary store, the action document has no `source.query`: no source is for the editor, so none shows.
+    if ctx.state.services().is_some_and(|s| s.store.primary_id().is_none()) {
+        return Ok(Some(vec![false; ids.len()]));
+    }
     let perms = ids.iter().map(|s| Permission::new(QUERY, access.tree().source(s))).collect();
     access.display(&who, perms).await.map(Some)
 }

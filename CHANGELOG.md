@@ -8,6 +8,10 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## 0.3.2 - 2026-11-26
 
+### Fixed
+
+- A file with `storage.read_only = true` in the mode `authzen` answered `500 internal_error` on `GET /api/folders`. The list asked the action `dashboard.write` for the root, which the action document does not hold in this case. When no store is the primary store, the root is read-only. So is a folder or a uid that is not in the catalog. Hune asks no question for them. `GET /api/sources` gives an empty list in this case and asks no question.
+
 ### Changed
 
 - The title bar of a panel is 32 px high, not 40 px. The panel gives these 8 px to its body, so a chart and a table are 8 px taller. The title keeps its size.
