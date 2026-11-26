@@ -39,6 +39,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
 - The preview is now in the folder `web/js/preview/`: a registry (`index.js`), shared helpers (`common.js`) and one module for each of the 12 families. Each family module gives the neutral form for now: an empty body with the light and the dots. The module `panel_preview.js`, the function `previewOf` of `panel_wait.js` and the heuristic sizes are gone. The browser cases B280 to B282 are replaced by B320 and B321.
 - The measurement harness `tests/browser/lib/preview_measure.mjs` and the command `tests/browser/preview_measure.mjs` measure each preview and each loaded panel. They give the differences by tolerance class (9.11).
+- The preview of a pie chart and of a map now draws its own rules. The pie keeps the loaded plot, the ring and the hole of a donut, with the least legend. The map keeps the map box and the two zoom squares of `show_zoom`. Both keep the room of the warning line of an invalid regex override. The browser cases B370 to B377 and the unit tests in `preview_rings.test.mjs` check them.
 
 ### Fixed
 

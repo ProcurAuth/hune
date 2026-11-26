@@ -1,6 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B321 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 236 cases.
+This suite runs the browser cases B01 to B377 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 244 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
