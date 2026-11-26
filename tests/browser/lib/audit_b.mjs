@@ -16,6 +16,7 @@ export const EXEMPT = [
   { pointer: "fields.defaults.max", types: ["piechart", "stat"], cls: "data", cause: "no scale, gauge or percent threshold of these types uses the limit with this data" },
   { pointer: "fields.defaults.no_value", types: ["bargauge", "piechart", "gauge"], cls: "data", cause: "no value of the data of these types is null in the preview" },
   { pointer: "fields.defaults.thresholds=percentage", types: ["stat"], cls: "data", cause: "the percentage needs a minimum and a maximum; the audit sets none" },
+  { pointer: "options.legend.values=value", types: ["piechart"], cls: "data", cause: "the preview of a pie draws the legend box empty: the value columns are data, so the box Value changes nothing in the preview" },
   { pointer: "options.orientation=vertical", types: ["stat"], cls: "data", cause: "the mode Auto already puts the items side by side at the size of the audit panel" },
   // The gauge: the manual size with the default least sizes of 75 px gives the cells of the automatic size (9.19g).
   { pointer: "options.sizing", types: ["gauge"], cls: "design", cause: "the manual size with its default least sizes of 75 px gives the cells of the automatic size" },

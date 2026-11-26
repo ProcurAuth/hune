@@ -1433,7 +1433,7 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - The code is in the folder `web/js/preview/`. The file `index.js` is the registry. It gives the family of each panel type and calls `build(panel, box, doc, ctx)` of the module of the family. The file `common.js` has the shared pure helpers: the nodes, the rectangles, the bounds and the width of a text.
 - The argument `box` is `{ w, h }`: the content box of the body, which is the size of the loaded plot holder. The argument `ctx` is `{ rt, page, key }`: the runtime, the page, and the key of the panel instance. A module gives `{ elements, bounds, notes }`. The elements are a tree of nodes. A node has a tag, a class, custom properties, attributes and children.
 - The page sets the custom properties with the CSSOM and writes no `style` attribute (9.29). The SVG nodes use the SVG namespace.
-- The preview builds when its box has a size, and builds again when the size changes or when a font loads. The page observes the box with a `ResizeObserver`, and the font set with the event `loadingdone`. A panel that never waits for a first load builds nothing.
+- The preview builds when its box has a size. It builds again when the window changes size, when the state of the wait changes, or when a font loads. The page reads the size of the box at these times, and the font set with the event `loadingdone`. The preview has no `ResizeObserver`. An observer forces a layout of the page at each key, in the page of a big text that a person types (B176). A panel that never waits for a first load builds nothing.
 - A module that throws gives the neutral form. A preview never breaks a panel.
 - The families and their modules:
 

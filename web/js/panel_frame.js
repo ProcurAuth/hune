@@ -334,6 +334,8 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     const mode = waitMode(state, shown);
     if (mode) root.dataset.wait = mode;
     else delete root.dataset.wait;
+    // A preview that shows reads the size again when the state of the wait changes.
+    if (mode === "first" && root.classList.contains("panel--wait") && stopPreview.measure) stopPreview.measure();
   }
 
   function setRootState(state) {
@@ -344,7 +346,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     if (state === "loading") progressTimer = setTimeout(() => root.classList.add("panel--progress"), PROGRESS_MS);
     // The wait class starts with the first waiting state and stays through idle, queued and loading (the timer does not restart).
     if (WAITING.has(state)) {
-      if (!waitTimer && !root.classList.contains("panel--wait")) waitTimer = setTimeout(() => root.classList.add("panel--wait"), WAIT_MS);
+      if (!waitTimer && !root.classList.contains("panel--wait")) waitTimer = setTimeout(() => { root.classList.add("panel--wait"); if (stopPreview.measure) stopPreview.measure(); }, WAIT_MS);
     } else {
       clearTimeout(waitTimer);
       waitTimer = 0;

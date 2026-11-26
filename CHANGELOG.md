@@ -6,6 +6,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+## 0.3.0 - 2026-11-26
+
 ### Changed (breaking)
 
 - A file needs exactly one store with `primary = true`. A file with no primary store, and a file with two, stop the start. The mode with no primary store is removed. Add `primary = true` to one store of each file. This breaks the file of an installation that ran with a read-only volume only: it needs a second, empty primary volume.
@@ -67,6 +69,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Fixed
 
+- The preview of a panel reads its size when it shows, when the state of the wait changes and when the window changes size. It has no `ResizeObserver`. The observer forced a layout of the page at each key, in the page of a big text that a person types (browser case B176).
 - A poll of the catalog does not apply its changes when an own write came in while it read the store. The old picture could bring back a deleted dashboard until the next poll. The next poll reads the store again.
 
 - A logs panel with `wrap` made the time two rows high, and the gaps between the time, the level and the body were 0 px. The time now has one row of 23 characters, and each gap is 12 px, as without `wrap` (9.19h).

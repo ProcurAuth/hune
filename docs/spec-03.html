@@ -43,7 +43,7 @@
   </div>
 </header>
 <main id="main">
-<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.2.0</span> Part 3 of the specification</p><h1>Specification, part 3: API, query engine and data sources</h1><p class="lede">The HTTP API, the query engine and the three kinds of data source.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#6-http-api-and-error-model">6. HTTP API and error model</a></li><li><a href="#7-query-engine">7. Query engine</a></li><li><a href="#8-data-sources">8. Data sources</a></li><li><a href="#8a-postgresql-data-source">8a. PostgreSQL data source</a></li><li><a href="#8b-mongodb-data-source">8b. MongoDB data source</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/03-api-query-sources.md"><code>docs/03-api-query-sources.md</code></a> in the repository.</p><p>Part 3 of the Hune specification (see <code>01-overview.md</code>).</p>
+<div class="page-head"><div class="wrap"><p class="eyebrow"><span class="badge">Version 0.3.0</span> Part 3 of the specification</p><h1>Specification, part 3: API, query engine and data sources</h1><p class="lede">The HTTP API, the query engine and the three kinds of data source.</p></div></div><div class="wrap doc-layout"><nav class="toc" aria-label="On this page"><details class="toc-details" open><summary>On this page</summary><ol><li><a href="#6-http-api-and-error-model">6. HTTP API and error model</a></li><li><a href="#7-query-engine">7. Query engine</a></li><li><a href="#8-data-sources">8. Data sources</a></li><li><a href="#8a-postgresql-data-source">8a. PostgreSQL data source</a></li><li><a href="#8b-mongodb-data-source">8b. MongoDB data source</a></li></ol></details></nav><article class="doc"><p class="src">This page comes from <a href="https://github.com/ProcurAuth/hune/blob/main/docs/03-api-query-sources.md"><code>docs/03-api-query-sources.md</code></a> in the repository.</p><p>Part 3 of the Hune specification (see <code>01-overview.md</code>).</p>
 <p>This part holds section 6 (HTTP API and error model), section 7 (query engine), section 8 (data sources) and section 8a (the PostgreSQL data source). Section 11 gives the access question of each route. Section 13 gives the configuration keys. Section 4 gives the document format and its constants. Section 5 gives the store.</p>
 <h2 id="6-http-api-and-error-model"><a class="self" href="#6-http-api-and-error-model">6. HTTP API and error model</a></h2>
 <h3 id="61-listeners-and-base-path">6.1 Listeners and base path</h3>
@@ -117,7 +117,7 @@
   "transform_max_cells": 10000000,
   "list_filters_min_dashboards": 6,
   "geomap": null,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "build": "3f2a9c1e5b7d4a60",
   "refresh_choices": ["10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"],
   "limits": {
@@ -810,7 +810,7 @@ X-ClickHouse-User: hune
 X-ClickHouse-Key: &lt;the password&gt;
 Content-Type: text/plain; charset=utf-8
 Content-Length: 412
-User-Agent: hune/0.2.0
+User-Agent: hune/0.3.0
 
 SELECT toStartOfInterval(toDateTime(event_time), INTERVAL 20 second) AS t, ...</code></pre></div>
 <p>Each parameter value is percent-encoded: each byte outside <code>A-Z</code>, <code>a-z</code>, <code>0-9</code>, <code>-</code>, <code>.</code>, <code>_</code> and <code>~</code> becomes <code>%XX</code>.</p>
@@ -1232,7 +1232,7 @@ pub trait MongoClient: Send + Sync {
       </div>
     </div>
     <div class="foot-legal">
-      <p>Hune, version 0.2.0. Part of <a href="https://procurauth.github.io/">ProcurAuth</a>.</p>
+      <p>Hune, version 0.3.0. Part of <a href="https://procurauth.github.io/">ProcurAuth</a>.</p>
       <p>Licence: <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-MIT">MIT</a> or <a href="https://github.com/ProcurAuth/hune/blob/main/LICENSE-APACHE">Apache-2.0</a>.</p>
       <p><a href="https://github.com/ProcurAuth/hune/blob/main/SECURITY.md">Security policy</a></p>
     </div>

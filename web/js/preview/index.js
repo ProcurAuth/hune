@@ -82,11 +82,11 @@ export function buildPreview(panel) {
   return el("div", { class: "panel__skeleton", "aria-hidden": "true", dataset: { kind: family } }, root);
 }
 
-// Fills the preview when its box has a size, and again when the size changes. The preview is hidden (display none) when the panel does not
+// Fills the preview when its box has a size, and again when the window changes size. The panel calls `measure` when the preview shows. The preview is hidden (display none) when the panel does not
 // wait for a first load, so a panel that never waits builds nothing. The callback `done(result)` is for the tests. `ctx` is { rt, page, key }: `key` is
 // the key of the panel instance, for the range of the request (`rt.rangeOf(key)`). Returns a function that stops the observation.
 export function observePreview(skeleton, panel, doc, ctx, done = null) {
-  if (!skeleton || typeof ResizeObserver !== "function") return () => {};
+  if (!skeleton) return () => {};
   let last = "";
   const paint = () => {
     const root = skeleton.firstElementChild;
@@ -104,8 +104,11 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
     skeleton._preview = result;
     if (done) done(result);
   };
-  const observer = new ResizeObserver(paint);
-  observer.observe(skeleton);
+  // The page reads the size when the preview shows and when the window changes size. It has no ResizeObserver here: an observer on the page of a big
+  // text that a person types forces a layout of the page at each key (B176).
+  const measure = () => paint();
+  const host = typeof window !== "undefined" && typeof window.addEventListener === "function" ? window : null;
+  if (host) host.addEventListener("resize", measure);
   // A text that the document fixes is measured with the font of the page. A font that loads after the first paint changes the width, so the measures are read
   // again and the preview builds again when a font has loaded (9.11).
   const fonts = typeof document !== "undefined" ? document.fonts : null;
@@ -115,8 +118,10 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
     paint();
   };
   if (fonts && typeof fonts.addEventListener === "function") fonts.addEventListener("loadingdone", again);
-  return () => {
-    observer.disconnect();
+  const stop = () => {
+    if (host) host.removeEventListener("resize", measure);
     if (fonts && typeof fonts.removeEventListener === "function") fonts.removeEventListener("loadingdone", again);
   };
+  stop.measure = measure;
+  return stop;
 }
