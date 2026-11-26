@@ -1,6 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B377 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 244 cases.
+This suite runs the browser cases B01 to B404 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 273 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -156,8 +156,11 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13, B24 to B27 and B233: the viewer, the page of one panel without a scrollbar, the list (cards, tags, no search field) and the base path. |
 | `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the three dots and the menu of a card, and the read-only card (9.7). |
 | `cases/stores.mjs` | The cases B241 to B244: a read-only store (`makeLabVolume`), the lock, the warning of a file that is not valid after the start (`breakFile`), the header selector and the refusal of a write. |
+| `cases/loaded_pie.mjs` | The case B400: the circle of the loaded pie chart equals the real box with its fraction of a pixel, at five widths and zoom levels (9.19a, 9.29). |
 | `cases/panel_preview.mjs` | The cases B320 and B321: the loading preview of a panel (9.11). The queries are held, so the preview stays. B320 measures the preview of each of the 14 queried types with the harness, then measures the loaded panels. B321 tests the light, the reduced motion and the reload. They need the hold of a request, so they are `skip` with Firefox. |
 | `cases/preview_rings.mjs` | The cases B370 to B377: the loading preview of the pie chart and of the map (9.11). The fixtures are in `lib/preview_rings_fixtures.mjs`. The cases measure 14 pies and 6 maps against the loaded panels, check that the preview draws no data, follow a resize, test the warning line of a draft, and save captures in the light and the dark theme (`HUNE_PREVIEW_SHOTS` sets the folder). They need the hold of a request, so they are `skip` with Firefox. |
+| `cases/charts_spec.mjs` | The cases B380 to B384: the chart panels against 4.26 and 9.19. The table legend with no value column, the hidden axes, a right legend that every entry leaves, the cap of the narrow fallback, the x axis of bars, and the legend of horizontal bars. |
+| `cases/loaded_panels.mjs` | The cases B390 to B392: the facts of the loaded `logs` and `table` panels that the loading preview copies. B390 and B391 measure the lines of the logs panel with `wrap` and with empty cells. B392 measures the header of a table on a fine and on a coarse pointer. |
 | `cases/var_states.mjs` | The cases B290 to B296: the states of the control of a query variable (loading, error, wait), a failure that blocks nothing, the cache of the options, the cancel of a request, and the chips of the selected values (9.10). They need the hold of a request, so they are `skip` with Firefox. |
 | `cases/root_dashboards.mjs` | The cases B300 to B305: the dashboards with no folder. The list with a root group, the dialogs New dashboard, Import and Move with the entry "Root (no folder)", the header selector, and a server with no primary store. `addRootDashboard` of `lib/env.mjs` makes a file at the root of a volume; the options `prepare` and `labPrepare` of `startServer` call it. |
 | `cases/json_view.mjs` | The cases B240, B270 and B271: the JSON view of the edit mode, its colours and their contrast, the marks of the gutter, the revert, the full height at four sizes and the caps of the colour layer; the look of VS Code (the palettes, the selection, the scroll bar); the band of the caret line, the boxes of the brackets, the guides and the wavy line of an error |
@@ -172,7 +175,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/editor_forms.mjs` | The cases B66 to B68: the forms of the panel editor and of the settings view. |
 | `cases/repeat.mjs` | The cases B93 to B101 and B101p: the repeat of panels and sections by a variable (F23). B101p is the parity capture of the copies. |
 | `cases/text.mjs` | The cases B102 to B109: the text panel in Markdown (F29). B108 uses `fake-pdp`. |
-| `cases/timeline.mjs` | The cases B110 to B118: the state timeline and the status history (F30). |
+| `cases/timeline.mjs` | The cases B110 to B118 and B395: the state timeline and the status history (F30). |
 | `cases/annotations.mjs` | The cases B120 to B127: the annotations from a ClickHouse query (F25). B124 uses `fake-pdp`. |
 | `cases/queries.mjs` | The cases B130 to B137: several queries in one panel (F24). B135 uses PostgreSQL. |
 | `cases/editor_audit.mjs` | The cases B152 and B153: the switch "Transparent background" and the audit of the options of the panel editor. |

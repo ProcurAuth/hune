@@ -98,8 +98,17 @@ export function render(host, ctx) {
     const text = colorOf("var(--text)");
     const bg = colorOf("var(--panel)");
     const rgba = (p, a) => `rgba(${p.r}, ${p.g}, ${p.b}, ${a})`;
-    c.font = `400 12px ${family}`;
-    const measure = (s) => c.measureText(s).width;
+    // The canvas has device pixels and no transform, so the drawn text has the size 12 * dpr (9.19c, section 6: 12 CSS px).
+    // The widths and the places are in CSS pixels: `measure` takes a width at 12 units on the same context, as the engine does.
+    const fontOf = (weight) => `${weight} ${12 * dpr}px ${family}`;
+    c.font = fontOf(400);
+    const measure = (s) => {
+      const drawing = c.font;
+      c.font = `400 12px ${family}`;
+      const w = c.measureText(s).width;
+      c.font = drawing;
+      return w;
+    };
     const nameW = Math.max(0, ...model.rows.map((r) => measure(r.name)));
     const L = gutterOf(nameW, o.show_labels !== false);
     const plotW = Math.max(1, W - PAD - L);
@@ -132,9 +141,11 @@ export function render(host, ctx) {
     c.strokeStyle = rgba(text, 0.09);
     c.lineWidth = 1;
     c.beginPath();
+    const lines = [];
     for (const t of ticks) {
       const x = xOf(t.v);
       if (x < L - 0.5 || x > L + plotW + 0.5) continue;
+      lines.push([t.v, round2(x)]);
       c.moveTo(Math.round(x * dpr) + 0.5, D(PAD));
       c.lineTo(Math.round(x * dpr) + 0.5, D(PAD + plotH));
     }
@@ -147,12 +158,12 @@ export function render(host, ctx) {
     c.textAlign = "right";
     if (o.show_labels !== false && (n > 1 ? (boxes[n - 1].y - boxes[0].y) / (n - 1) : plotH) >= MIN_LABEL_PITCH) model.rows.forEach((r, k) => c.fillText(r.name, D(L - 16), D(PAD + boxes[k].y + boxes[k].h / 2)));
     // The boxes, clipped to the plot.
-    const report = { kind: panel.type, box: [L, PAD, plotW, plotH], rows: [], segments: [], states: model.states.map((st, sid) => [st.text, dark ? st.dark : st.light]), texts: [], cut: false };
+    const report = { kind: panel.type, box: [L, PAD, plotW, plotH], rows: [], segments: [], states: model.states.map((st, sid) => [st.text, dark ? st.dark : st.light]), texts: [], ticks: lines, labels: labels.map((t) => [t.label, round2(t.x), round2(t.left), round2(t.right), PAD + plotH + 9]), cut: false };
     c.save();
     c.beginPath();
     c.rect(D(L), D(PAD), D(plotW), D(plotH));
     c.clip();
-    c.font = `500 12px ${family}`;
+    c.font = fontOf(500);
     const lwD = lw * dpr;
     model.rows.forEach((r, k) => {
       const y = D(PAD + boxes[k].y);

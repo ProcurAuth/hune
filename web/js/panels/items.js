@@ -36,9 +36,12 @@ export function reduceItems({ fields, names, baseNames, zone }, reduce, max = In
   const forced = reduce.values ? null : calcUnit(reduce.calc);
   // A continuous colour mode uses the range of all number fields together (9.16).
   const range = sharedRange(fields);
-  indices.forEach((fi, k) => {
+  // The slot of the series palette is the place of the field among the number fields of the frame (9.16), not among the kept fields.
+  // Thus the colour of a field does not change when `reduce.fields` hides another field.
+  const slotOf = (fi) => fields.slice(0, fi).filter((f) => f.kind === "number" || f.kind === "number_text").length;
+  indices.forEach((fi) => {
     const field = fields[fi];
-    const display = makeDisplay(forced ? { ...field, config: { ...field.config, unit: forced } } : field, { zone, seriesIndex: k, range });
+    const display = makeDisplay(forced ? { ...field, config: { ...field.config, unit: forced } } : field, { zone, seriesIndex: slotOf(fi), range });
     if (!reduce.values) {
       const r = reduceField(field, reduce.calc);
       const exact = field.kind === "number_text" && typeof r.value === "string" ? r.value : null;

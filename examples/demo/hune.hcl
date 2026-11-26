@@ -8,6 +8,8 @@ server {
   listen                  = "127.0.0.1:8080"
   ops_listen              = "127.0.0.1:9090"
   base_path               = "/"
+  history                 = true
+  export                  = true
   query_inspect           = true
   max_connections         = 1024
   idle_timeout            = "75s"

@@ -3,6 +3,7 @@
 
 import { fieldColorValue, fillOf, readableTextOn, resolveColor, resolveFill } from "../colors.js";
 import { el } from "../ui.js";
+import { innerSize } from "./box.js";
 import { legibleOn, reduceItems } from "./items.js";
 import { canvasColor } from "./common.js";
 
@@ -115,12 +116,13 @@ function labelParts(labels, slice, total, decimals) {
 
 function drawSlices(canvas, host, slices, o, hover, decimals) {
   const dpr = window.devicePixelRatio || 1;
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
+  // The real box with the fraction of a pixel (9.19a): clientWidth rounds, and the bitmap would be stretched to the box.
+  const { w, h } = innerSize(canvas);
   canvas.width = Math.max(1, Math.round(w * dpr));
   canvas.height = Math.max(1, Math.round(h * dpr));
   const ctx = canvas.getContext("2d");
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  // One unit of the drawing is one CSS px of the box: the scale is the bitmap size over the box size, not the pixel ratio.
+  ctx.setTransform(w > 0 ? canvas.width / w : dpr, 0, 0, h > 0 ? canvas.height / h : dpr, 0, 0);
   ctx.clearRect(0, 0, w, h);
   const radius = Math.max(10, Math.min(w, h) / 2 - 8);
   const cx = w / 2;
@@ -131,6 +133,11 @@ function drawSlices(canvas, host, slices, o, hover, decimals) {
   const font = getComputedStyle(host).getPropertyValue("--font-sans").trim() || "sans-serif";
   const inner = o.pie_type === "donut" ? radius * 0.55 : 0;
   const hits = [];
+  // The hook of 9.29: the circle of the last draw in CSS px of the box, without the growth of a hovered slice.
+  const publish = (geometry) => {
+    canvas.dataset.geometry = [cx, cy, radius, inner].map((n) => Math.round(n * 1000) / 1000).join(" ");
+    return geometry;
+  };
   if (total <= 0) {
     ctx.beginPath();
     ctx.arc(cx, cy, radius, 0, TAU);
@@ -138,7 +145,7 @@ function drawSlices(canvas, host, slices, o, hover, decimals) {
     ctx.strokeStyle = canvasColor(host, "var(--border-strong)");
     ctx.lineWidth = 1;
     ctx.stroke();
-    return { hits, cx, cy, radius, inner, total };
+    return publish({ hits, cx, cy, radius, inner, total });
   }
   ctx.font = `600 ${SIZES[0]}px ${font}`;
   const measure = (t) => ctx.measureText(t).width;
@@ -184,7 +191,7 @@ function drawSlices(canvas, host, slices, o, hover, decimals) {
     const top = place.y - ((place.lines.length - 1) * place.lineH) / 2;
     place.lines.forEach((line, i) => ctx.fillText(line, cx + place.x, cy + top + i * place.lineH));
   }
-  return { hits, cx, cy, radius, inner, total };
+  return publish({ hits, cx, cy, radius, inner, total });
 }
 
 export function render(host, ctx) {
@@ -214,7 +221,8 @@ export function render(host, ctx) {
       if (sl.swatch) sl.swatch.style.background = sl.color;
     });
   }
-  const legend = o.legend || { show: true, placement: "right", mode: "list", values: [] };
+  // `options.legend` is necessary (4.26, 4.31): the page has no default for it.
+  const legend = o.legend;
   const total = slices.reduce((s, x) => s + x.amount, 0);
   // The decimals of the percent: the decimals of the field (the first field of the items).
   const decimals = items.length && items[0].field.config ? items[0].field.config.decimals : null;

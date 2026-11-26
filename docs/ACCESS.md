@@ -108,11 +108,19 @@ Hune builds each chain from its own catalog. It never uses a value of the reques
 
 | Action | Resource types | Ceilings | What it permits |
 |---|---|---|---|
-| `dashboard.read` | service, folder, dashboard | `max_rows`, `max_duration` | List and open dashboards. Run their saved queries. Read their history. |
+| `dashboard.read` | service, folder, dashboard | `max_rows`, `max_duration` | List and open dashboards. Run their saved queries. |
+| `dashboard.history` | service, folder, dashboard | none | List the versions of a dashboard of the primary store. Read a version. Compare two versions. With `dashboard.write`, restore a version. Published only when `server.history` is `true`. |
+| `dashboard.export` | service, folder, dashboard | none | Download the file of the current document of a dashboard. Published only when `server.export` is `true`. |
 | `dashboard.write` | service, folder, dashboard | none | Create, change, move, restore and delete dashboards. Change folders. |
 | `source.query` | service, source | `max_rows`, `max_duration` | Run a query that is not saved. Save a dashboard whose query uses the source. |
 
-When no store is the primary store, Hune publishes `dashboard.read` only. It asks no question for the other actions.
+A primary store always exists, so Hune always publishes `dashboard.read`, `dashboard.write` and `source.query`.
+
+The two keys `server.history` and `server.export` are the ceiling of the two new actions, also in the mode `open`. When a key is `false`, Hune refuses the route (`403 history_disabled` or `403 export_disabled`). It asks no question.
+
+The PDP can only restrict what the key gives. A policy author adds `dashboard.history` and `dashboard.export` on each resource that must keep the history and the export. For example, add them on the service for an administrator. An older policy grants neither action. Its subjects lose the history and the export until the policy adds them. This is the fail-closed choice.
+
+Only the primary store has history. A dashboard of a read-only store answers `404 history_unavailable` to a subject that can read it, whatever the policy says. A subject that cannot read the dashboard gets the same refusal as for any other route.
 
 A store that is not the primary store is read-only. Hune refuses each write into it with `403 read_only_store`, before it asks `dashboard.write`. It asks `dashboard.read` of the target first, so a subject that cannot read the target gets the refusal of any other write. A grant of `dashboard.write` on a resource of a read-only store changes nothing. For such a resource, the actions that matter are `dashboard.read` and `source.query`.
 
@@ -131,6 +139,8 @@ Give each author the same ceilings on `dashboard.read` as on `source.query`. The
 Section 11.21 of the specification has the complete table. The questions are the same for both kinds of source. These are the main rules.
 
 - A read route asks `dashboard.read` on the dashboard.
+- A history route asks `dashboard.read`, then `dashboard.history` on the dashboard. A restore asks `dashboard.write` with `dashboard.history` as another permission.
+- A read with `download=true` asks `dashboard.read`, then `dashboard.export`. The download of one version is part of the history: it asks `dashboard.read`, then `dashboard.history`.
 - A save, a restore or a create asks `source.query` on each source of the document, then `dashboard.write`. The check applies also when the SQL did not change.
 - A move asks `dashboard.write` on the dashboard, then `dashboard.write` on the target folder. The target of a move to the root is the node `_root`. A create without a folder asks `dashboard.write` on the node `_root`.
 - A query route asks `dashboard.read` and applies the ceilings of the answer.
