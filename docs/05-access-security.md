@@ -481,7 +481,7 @@ PDP nothing, also when the request has a bad token. Hune builds the document one
 `ActionDocumentBuilder` of the library. It serves the same bytes at each read, with `Content-Type: application/json`. In
 the mode `open`, the route answers 404.
 
-The document for `audience = "dashboards"`, a primary store and two sources, `prod` (label `Production`,
+The document for `audience = "dashboards"`, `server.history` and `server.export` equal to `true`, and two sources, `prod` (label `Production`,
 `max_result_rows = 100000`, `max_execution_time = "60s"`) and `preprod` (label `Pre-production`,
 `max_result_rows = 50000`, `max_execution_time = "30s"`):
 
@@ -498,8 +498,12 @@ The document for `audience = "dashboards"`, a primary store and two sources, `pr
   ],
   "actions": [
     { "name": "dashboard.read", "resource_types": ["service", "folder", "dashboard"],
-      "description": "List and open dashboards, run their saved queries and the queries of their variables, and read their history.",
+      "description": "List and open dashboards, and run their saved queries and the queries of their variables.",
       "limits": ["max_rows", "max_duration"] },
+    { "name": "dashboard.history", "resource_types": ["service", "folder", "dashboard"],
+      "description": "List the versions of a dashboard of the primary store, read one version and compare two versions. With dashboard.write, restore a version." },
+    { "name": "dashboard.export", "resource_types": ["service", "folder", "dashboard"],
+      "description": "Download the file of a dashboard and the file of one of its versions." },
     { "name": "dashboard.write", "resource_types": ["service", "folder", "dashboard"],
       "description": "Create, change, move, restore and delete dashboards. Create, rename and delete folders." },
     { "name": "source.query", "resource_types": ["service", "source"],
@@ -525,11 +529,16 @@ These rules make the document:
 
 - `server` is `access.identity.audience`.
 - The three types and the two limit declarations never change.
-- `dashboard.read` is always in `actions`. `dashboard.write` and `source.query` are in `actions` only when
-  a store is the primary store (P 5.2a). Hune sends no question for an action that it does not publish.
+- `dashboard.read`, `dashboard.write` and `source.query` are always in `actions`, because a primary store always exists
+  (13.10). `dashboard.history` is in `actions` only when `server.history` is `true`. `dashboard.export` is in `actions`
+  only when `server.export` is `true`. The order is `dashboard.read`, `dashboard.history`, `dashboard.export`,
+  `dashboard.write` and `source.query`. Hune sends no question for an action that it does not publish.
+- The two keys are the ceiling of the two actions, also in the mode `open`. The PDP can only restrict: when the key is
+  `false`, Hune refuses the route and asks nothing (6.17). A policy that grants `dashboard.history` or
+  `dashboard.export` on a resource gives nothing more than the key allows. The older policies grant neither action, so
+  their subjects lose the history and the export until the policy adds them: the answer fails closed.
 - `resources` has one item for each source block of both kinds, sorted by the id in byte order. Its `path` is `source:<id>` and
-  its `label` is the key `label` of the block. When `source.query` is not published, `resources` is absent, because no
-  published action takes the type `source`.
+  its `label` is the key `label` of the block. 
 - The folders and the dashboards are not in `resources`, because they change while Hune runs. The options route gives
   them (11.26).
 - `max` of `max_rows` is the highest `max_result_rows` of all source blocks. `max` of `max_duration` is the highest
@@ -565,8 +574,9 @@ Each request on `server.listen` passes these steps in this order. A step that re
    the limit of the route (12.16). Refusal: 400, 404, 405, 413, 414 or 431.
 2. Write guard, on each `POST`, `PUT` and `DELETE` (12.7). Refusal: 403 `cross_site_request` or 415.
 3. Token check, in the mode `authzen`, on each route except the action document (11.8). Refusal: 401.
-4. Process ceiling: a write route, when no store is the primary store, gets `403 editing_disabled` and no question. This
-   includes `POST /api/sources/{id}/preview`.
+4. Process ceilings: a history route and the restore, when `server.history` is `false`, get `403 history_disabled`. A
+   request with `download=true`, when `server.export` is `false`, gets `403 export_disabled`. Neither answer asks a
+   question, and neither depends on the uid (6.17, 6.14).
 5. Body read, within the limit of the route (12.16). A chunked body above the limit gets 413. A body that does not
    arrive within 30 s gets 408.
 6. Shape of the request and of its body (section 6). Refusal: 400. The document of a create, a save or a
@@ -604,13 +614,15 @@ This table gives the permissions of each route of section 6 in the mode `authzen
 | `GET /api/dashboards`, with the parameters `folder`, `q`, `limit` and `after` | none | none; display questions of 11.25 | none |
 | `POST /api/dashboards` (create in the folder f) | `source.query` on S(s) for each source that the document names | `dashboard.write` on F(f) | none |
 | `POST /api/dashboards?validate_only=true` | none | `dashboard.write` on F(f) | none |
-| `GET /api/dashboards/{uid}`, also with `download=true` | none | `dashboard.read` on N(uid) | none (no query runs) |
+| `GET /api/dashboards/{uid}` | none | `dashboard.read` on N(uid) | none (no query runs) |
+| `GET /api/dashboards/{uid}?download=true` | `dashboard.read` on N(uid) | `dashboard.export` on N(uid) | none |
 | `PUT /api/dashboards/{uid}` | `source.query` on S(s) for each source that the new document names | `dashboard.write` on N(uid) | none |
 | `PUT /api/dashboards/{uid}?validate_only=true` | none | `dashboard.write` on N(uid) | none |
 | `DELETE /api/dashboards/{uid}` | none | `dashboard.write` on N(uid) | none |
-| `GET /api/dashboards/{uid}/history`, with the parameters `limit` and `after` | none | `dashboard.read` on N(uid) | none |
-| `GET /api/dashboards/{uid}/history/{n}`, also with `download=true` | none | `dashboard.read` on N(uid) | none |
-| `POST /api/dashboards/{uid}/restore` | `source.query` on S(s) for each source that the restored version names | `dashboard.write` on N(uid) | none |
+| `GET /api/dashboards/{uid}/history`, with the parameters `limit` and `after` | `dashboard.read` on N(uid) | `dashboard.history` on N(uid) | none |
+| `GET /api/dashboards/{uid}/history/{n}` | `dashboard.read` on N(uid) | `dashboard.history` on N(uid) | none |
+| `GET /api/dashboards/{uid}/history/{n}?download=true` | `dashboard.read` and `dashboard.export` on N(uid) | `dashboard.history` on N(uid) | none |
+| `POST /api/dashboards/{uid}/restore` | `dashboard.history` on N(uid), and `source.query` on S(s) for each source that the restored version names | `dashboard.write` on N(uid) | none |
 | `POST /api/dashboards/{uid}/move` (to the folder f2) | `dashboard.write` on N(uid) | `dashboard.write` on F(f2) | none |
 | `POST /api/dashboards/{uid}/panels/{id}/query` | none | `dashboard.read` on N(uid) | `max_rows`, `max_duration` of the use |
 | `POST /api/dashboards/{uid}/variables/{name}/options` | none | `dashboard.read` on N(uid) | `max_rows`, `max_duration` of the use |
@@ -677,8 +689,8 @@ Rules for the table:
 
 ### 11.22 Questions in the mode open
 
-The mode `open` sends no question. The process ceiling of step 4 of 11.20 still applies: each write route needs
-a primary store. Each other operation runs within the limits of the process (12.16).
+The mode `open` sends no question. The process ceilings of step 4 of 11.20 still apply: `server.history` and
+`server.export`. Each other operation runs within the limits of the process (12.16).
 
 ### 11.23 The unknown-uid rule
 
@@ -807,15 +819,16 @@ The list of dashboards (`GET /api/dashboards`) uses this procedure:
 
 1. Hune asks `dashboard.read` on F(F) for each folder F of the catalog, in one call of `Pep::display`.
 2. A folder with `false` is hidden, with each of its dashboards.
-3. For each visible folder, Hune asks `dashboard.read` and `dashboard.write` on F(F), each with one call of
-   `Pep::check`. These calls run at the same time, within the pool of 11.13.
+3. For each visible folder, Hune asks `dashboard.read`, `dashboard.write`, `dashboard.history` and `dashboard.export` on
+   F(F), each with one call of `Pep::check`. It skips `dashboard.write` and `dashboard.history` for a folder of a read-only
+   store, and each action whose key is `false` (`server.history`, `server.export`). These calls run at the same time, within the pool of 11.13.
 4. A folder with `true` for `dashboard.read` shows with each of its dashboards. A grant on the folder covers each
    dashboard below it (P 4.3), so Hune asks no more question.
 5. For the dashboards of the other visible folders, Hune asks `dashboard.read` on N(u) of each dashboard u, in one call
    of `Pep::display`. A dashboard has no node below it, so the match `subtree` gives the display of the match `node`. A
    dashboard with `true` shows.
 6. Each visible folder carries the flag `access.write`: the `dashboard.write` answer of step 3. Each visible dashboard
-   carries the `access.write` of its folder (6.12).
+   carries the flags `access.write`, `access.history` and `access.export` of its folder: the answers of step 3 (6.12).
 
 The list of folders (`GET /api/folders`) uses steps 1 and 2. Then it asks `dashboard.write` on F(F) of each visible folder
 with `Pep::check`, for its flag `access.write`. It also asks `dashboard.write` on the service with `Pep::check`, for the
@@ -826,20 +839,25 @@ The other answers of the display filter:
 | Answer | Member | Question |
 |---|---|---|
 | `GET /api/dashboards/{uid}` | `access.write` | `dashboard.write` on N(uid), one call of `Pep::check` after the `true` answer for the use |
+| `GET /api/dashboards/{uid}` | `access.history` | `dashboard.history` on N(uid), one call of `Pep::check`; no question for a dashboard of a read-only store or with `server.history` equal to `false` |
+| `GET /api/dashboards/{uid}` | `access.export` | `dashboard.export` on N(uid), one call of `Pep::check`; no question with `server.export` equal to `false` |
 | `GET /api/sources` | the list itself | `source.query` on S(s) for each source s, in one call of `Pep::display`; a source has no node below it; a source with `true` is in the list |
 
 The page uses these flags. It hides the edit, save, delete, move and restore controls of a dashboard without
-`access.write`. It hides "New dashboard" in a folder without `access.write`, and "New folder" without `access.create`.
+`access.write`. It hides the History entry of a dashboard without `access.history`, and the Export and Download entries
+of a dashboard without `access.export`. It hides "New dashboard" in a folder without `access.write`, and "New folder" without `access.create`.
 The source picker and "Run draft" of the editor show only the sources of `GET /api/sources`. The move dialog offers
 only the folders with `access.write`.
 
-When no store is the primary store, `dashboard.write` and `source.query` are not published. Hune then asks no question for
-them: each flag is `false`, and `GET /api/sources` gives no source. A folder or a dashboard of a read-only store has the flag
-`access.write` equal to `false` with no question for `dashboard.write` (11.35).
+A folder or a dashboard of a read-only store has the flag `access.write` equal to `false` with no question for
+`dashboard.write` (11.35), and the flag `access.history` equal to `false` with no question for `dashboard.history`, because
+only the primary store has history (5.18). With `server.history` or `server.export` equal to `false`, the flag is `false`
+and Hune asks no question.
 
-In the mode `open`, each item shows. The flag `access.create` is `true` when a primary store exists. The flag `access.write` is `true`
-for an item of the primary store, and `false` for an item of a read-only store. `GET
-/api/sources` gives each source when a primary store exists, and no source when none exists.
+In the mode `open`, each item shows. The flag `access.create` is `true`. The flag `access.write` is `true` for an item of the
+primary store, and `false` for an item of a read-only store. The flag `access.history` is the value of `server.history` for an
+item of the primary store, and `false` for an item of a read-only store. The flag `access.export` is the value of
+`server.export`. `GET /api/sources` gives each source.
 
 A PDP failure during a list gives `503 pdp_unavailable`. A list never shows a result that a failure made empty (fail
 closed). Section 6 gives the place of each flag in each answer.
@@ -999,7 +1017,7 @@ These routes need the token but ask no question:
 |---|---|
 | The pages `/` and `/d/{uid}[/{slug}]` | The shell is the same for each uid. It holds no data of a dashboard. |
 | The files under `/static/{build-hash}/` | They hold the code of the page, not data. |
-| `GET /api/session` | It gives the subject of the token, the mode, `editing` (a primary store exists) and the stores. |
+| `GET /api/session` | It gives the subject of the token, the mode, `editing` (always `true`) and the stores. |
 
 The routes of `server.ops_listen` (`/livez`, `/readyz`, `/metrics`) need no token. They are on a second listener that
 the edge does not reach (14.2). Thus no route through the edge is exempt from the token, except the action document,
@@ -1026,7 +1044,9 @@ layer uses these codes:
 | 403 | `forbidden` | A `false` answer (also with `budget_exceeded`), an answer that Hune treats as `false`, or a route with no rule. | `false` |
 | 403 | `approval_cannot_wait` | A `false` answer to a question with a reason of 17.1 (`approval_required`, `approval_pending`, `approval_denied` or `approval_expired`). Hune has no approval flow. The body is `{"error": "approval_cannot_wait"}` and has no other member (P 17.7a). | `false` |
 | 403 | `ceiling_exceeded` | A query above an effective limit that a ceiling gave (11.24). The body also has `action`, `ceiling` and `limit`. | `false` |
-| 403 | `editing_disabled` | A write route when no store is the primary store. No question. | `false` |
+| 403 | `history_disabled` | A history route or the restore, with `server.history` equal to `false`. No question. | `false` |
+| 403 | `export_disabled` | A request with `download=true`, with `server.export` equal to `false`. No question. | `false` |
+| 404 | `history_unavailable` | A history route for a dashboard of a read-only store, after `dashboard.read` (6.17). | `false` |
 | 403 | `read_only_store` | A write whose target is in a read-only store, after a `true` answer for `dashboard.read` (11.35). | `false` |
 | 404 | `not_found` | An unknown item after the rule of 11.23, or a ProcurAuth route in the mode `open`. | `false` |
 | 400 | `invalid_options_request` | A query string of the options route that is not valid. | `false` |
