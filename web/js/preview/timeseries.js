@@ -216,21 +216,25 @@ function pillNode(pill) {
 function itemNode(pill) {
   return node("chartCore__legendItem", {}, [pillNode(pill), node("", {}, [], "span")]);
 }
-function headCell(leg, i, exactPlace, wide) {
+function headCell(leg, i, place) {
   const w = domWidth(leg.heads[i], 500);
-  const bar = node("skel__hb", { "--w": px(w) }, [], "span", i === 0 || i === leg.heads.length - 1 ? partAttrs("head-label", exactPlace) : {});
+  // Only the first and the last text have a place that the document fixes: the name column starts at 30 px, and the last column ends at the right edge.
+  const attrs = place && (i === 0 || i === leg.heads.length - 1) ? partAttrs("head-label", place) : {};
+  const bar = node("skel__hb", { "--w": px(w) }, [], "span", attrs);
   const state = leg.sorted === i ? (leg.desc ? "descending" : "ascending") : "none";
   return node("", {}, [node("chartCore__legendSort", {}, [bar], "span")], "th", { scope: "col", "aria-sort": state });
 }
-function legendNode(leg, { cap, lhExact, fallback, pill, yExact }) {
+// `claim`: the legend has a size that the document bounds (none beside the plot where a fallback can come: the legend is then at the right or under).
+function legendNode(leg, { cap, lhExact, beside, claim, pill }) {
   const v = { "--legend-max": px(cap) };
-  const place = lhExact && yExact ? EXACT : LEAST;
-  if (leg.mode === "list") return node("chartCore__legend", v, [node("chartCore__legendList", {}, [itemNode(pill)])], "div", { "data-mode": "list", ...partAttrs(PARTS.LEGEND, place) });
-  const exactPlace = yExact ? EXACT : LEAST;
-  const head = node("", {}, [node("", {}, leg.heads.map((_, i) => headCell(leg, i, exactPlace)), "tr")], "thead", partAttrs(PARTS.HEAD, exactPlace));
+  // Beside the plot, the width of the legend is data: only its size is bounded. Under the plot, its place and size are exact when its height is.
+  const place = !claim ? null : lhExact && !beside ? EXACT : LEAST;
+  const attrs = place ? partAttrs(PARTS.LEGEND, place) : {};
+  if (leg.mode === "list") return node("chartCore__legend", v, [node("chartCore__legendList", {}, [itemNode(pill)])], "div", { "data-mode": "list", ...attrs });
+  const head = node("", {}, [node("", {}, leg.heads.map((_, i) => headCell(leg, i, place)), "tr")], "thead", place ? partAttrs(PARTS.HEAD, place) : {});
   const row = node("", {}, [node("", {}, [itemNode(pill)], "th", { scope: "row" }), ...leg.columns.map(() => node("", {}, [], "td"))], "tr");
   const table = node("chartCore__legendTable", {}, [head, node("", {}, [row], "tbody")], "table", { "aria-label": "Values of the series" });
-  return node("chartCore__legend", v, [node("chartCore__legendTableWrap", {}, [table])], "div", { "data-mode": "table", ...partAttrs(PARTS.LEGEND, place) });
+  return node("chartCore__legend", v, [node("chartCore__legendTableWrap", {}, [table])], "div", { "data-mode": "table", ...attrs });
 }
 
 // The width of the least legend beside the plot: the room that the CSS gives it (a list: 4 + 32 + 4 px; a table: the sum of the heads) and the gutter.
@@ -287,9 +291,8 @@ export function chartFrame(box, rules, leg, { top, topExact = true, band, bandEx
   const cls = allExact ? EXACT : `${CONTAIN}:${edges}`;
   const region = node("skel__r skel__plot", { "--x": px(left.value), "--y": px(top), "--r": px(right.value), "--h": px(plotH) }, [], "div", partAttrs(PARTS.PLOT, cls));
   const plotCell = node("chartCore__plot", { "--c": px(canvasH) }, [region]);
-  const yExact = c.lhExact;
   const kids = [plotCell];
-  if (c.draw) kids.push(legendNode(leg, { cap: c.cap, lhExact: c.lhExact, fallback: c.fallback, pill, yExact }));
+  if (c.draw) kids.push(legendNode(leg, { cap: c.cap, lhExact: c.lhExact, beside: c.beside > 0, claim: !c.beside || c.claimRight, pill }));
   const hostA = { "data-legend-placement": c.placement };
   if (c.fallback) hostA["data-legend-fallback"] = "";
   const host = node("skel__host", {}, [node("chartCore", {}, kids)], "div", hostA);

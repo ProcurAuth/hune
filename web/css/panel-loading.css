@@ -62,6 +62,13 @@
 .skel__hb { display: inline-block; width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); vertical-align: top; margin-top: calc((1.5714em - 8px) / 2); }
 
 /* ==== family: barchart ======================================================================================================== */
+/* The horizontal form (web/js/preview/barchart.js) uses the markup and the classes of the loaded `.hbar`, so its CSS gives the sizes. These rules add
+   the neutral tint of the plot, the band of the value axis (--band), the mark of the legend entry in a neutral tone, and an entry with no name.
+   The vertical form uses the rules of the time series family above. */
+.skel .hbar__grid { background: var(--skel-fill); }
+.skel .hbar__axis { flex: 0 0 var(--band, 21px); }
+.skel .hbar__legendItem > i { background: var(--skel-edge); }
+.skel .hbar__legendItem > span:empty { height: 1.5714em; }
 
 /* ==== family: piechart ======================================================================================================== */
 
