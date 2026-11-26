@@ -251,6 +251,20 @@ test("P03: the horizontal bars read fill_opacity, line_width and axis_grid", () 
   assert.equal(all(off, "hbar__tick").length, all(on, "hbar__tick").length);
 });
 
+test("9.19: the value label of a horizontal bar is 10 px at least, as in the vertical bars", () => {
+  // 60 rows in a host of 228 px: a bar is 3.7 px thick, so two thirds of it is far below the least size.
+  const n = 60;
+  const keys = Array.from({ length: n }, (_, i) => `k${i}`);
+  const values = Float64Array.from(keys.map((_, i) => i + 1));
+  const host = Object.assign(fakeElement(), { clientWidth: WIDTH, clientHeight: HEIGHT + 28 });
+  const fields = [field("k", "text", keys), field("v", "number", values)];
+  const handle = render(host, { panel: { id: 1, title: "t", type: "barchart", options: { ...OPTIONS, orientation: "horizontal", show_values: "always" } }, fields, names: ["k", "v"], zone: undefined });
+  const labels = all(hbarOf(host), "hbar__value").filter((e) => !e.hidden);
+  assert.equal(labels.length, n, "a value for each row");
+  for (const e of labels) assert.equal(e.style.fontSize, "10px");
+  handle.destroy();
+});
+
 test("E34: barInset true (E26) and no option keep their boxes: only the value \"box\" moves the sides", () => {
   const rectsOf = (extra) => {
     ops = [];

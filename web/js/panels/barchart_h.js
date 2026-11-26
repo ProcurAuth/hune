@@ -17,7 +17,7 @@ const TICK_ROOM = 11.5; // px of room around a label of the value axis (as the x
 const LABEL_MAX_PX = 180;
 const LABEL_PAD_PX = 22; // 6 px at the left of a category name, 16 px between the name and the bars
 const VALUE_MAX_PX = 28; // the largest value label (Grafana scales it with the bar)
-const VALUE_MIN_PX = 8;
+const VALUE_MIN_PX = 10; // as the value labels of the vertical bars (9.19)
 const VALUE_GAP_PX = 8; // between the end of a bar and its value
 const PERCENT_AXIS = Object.freeze({ min: 0, max: 100, step: 20, values: [0, 20, 40, 60, 80, 100] });
 
