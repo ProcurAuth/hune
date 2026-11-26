@@ -272,7 +272,7 @@ export const cases = [
       const mark = "^valid-pattern$";
       for (const d of [pie, map]) {
         for (const pn of d.sections[0].panels) {
-          // Two overrides: the second is a long pattern, so that the line wraps in a narrow panel.
+          // One valid override: the case changes its pattern in the answer of the server.
           pn.fields = { defaults: {}, overrides: [{ match: { by: "regex", value: mark }, set: { unit: "none" } }] };
         }
       }
