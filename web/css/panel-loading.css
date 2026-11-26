@@ -105,6 +105,22 @@
 /* ==== family: bargauge ======================================================================================================== */
 
 /* ==== family: table =========================================================================================================== */
+/* The root is the same flex column as the content of the loaded table: the warning line, the view, the select bar. The view takes the rest. The
+   warning line and the select bar are the real elements of the loaded panel, with a transparent text, so that the browser gives them their size. */
+.skel--table { display: flex; flex-direction: column; }
+.skel--table .skel__tview { position: relative; flex: 1 1 auto; min-height: 0; min-width: 0; overflow: hidden; }
+.skel--table .skel__twarn, .skel--table .skel__tframes { color: transparent; }
+.skel--table .skel__tq { display: block; height: 8px; overflow: hidden; border-radius: 4px; background: var(--skel-edge); line-height: 8px; }
+.skel--table .skel__tselect { border-color: var(--skel-edge); background-color: var(--skel-fill); background-image: none; color: transparent; }
+/* A band has the extent of the table: at least the width of the view less the scroll bar, and at least the least width of column 0. */
+.skel--table .skel__tband { position: absolute; left: 0; top: var(--y); width: min(var(--m, 100%), calc(100% - var(--sb, 0px))); height: var(--h); }
+.skel--table .skel__tfoot--b { top: auto; bottom: var(--b, 0px); }
+.skel--table .skel__tslot { background: var(--skel-fill); }
+.skel--table .skel__tline { position: absolute; left: 0; top: var(--y); width: 100%; height: 1px; background: var(--skel-grid); }
+.skel--table .skel__rr { border-radius: 4px; }
+.skel--table .skel__rc { border-radius: 2px; background: var(--skel-edge); }
+.skel--table .skel__ttrack { width: min(var(--w), calc(100% - var(--x))); }
+
 
 /* ==== family: heatmap ========================================================================================================= */
 
@@ -113,6 +129,19 @@
 /* ==== family: timeline (state_timeline, status_history) ======================================================================= */
 
 /* ==== family: logs ============================================================================================================ */
+/* The root is the same flex column as the content of the loaded list: the warning line, then the list. The list has the font context of `.logs`,
+   so a length in `ch` is the same as in the loaded list. The first line is one slot of 28 px: a text band of 22 px and 6 px under it. A bar
+   is 8 px high and sits in the middle of the text band. */
+.skel--logs { display: flex; flex-direction: column; }
+.skel--logs .skel__twarn { color: transparent; }
+.skel--logs .skel__logs { flex: 1 1 auto; min-height: 0; min-width: 0; padding: 0; overflow: hidden; font-family: var(--font-mono); font-size: var(--fs-md); line-height: 22px; letter-spacing: 0; }
+.skel--logs .skel__log { display: flex; column-gap: 12px; width: calc(100% - var(--sb, 0px)); height: 28px; align-items: flex-start; }
+/* With `wrap` the loaded list puts the gap of 12 px as a padding on the right of the time box (outside the 23ch). The bar keeps the 23ch only. */
+.skel--logs .skel__log--wrap { column-gap: 0; }
+.skel--logs .skel__log--wrap .skel__ltime { box-sizing: content-box; padding-right: 12px; background-clip: content-box; }
+.skel--logs .skel__ltime { flex: none; width: 23ch; height: 8px; margin-top: 7px; border-radius: 4px; background: var(--skel-edge); }
+.skel--logs .skel__ltrack { flex: 1 1 auto; min-width: 0; height: 8px; margin-top: 7px; border-radius: 4px; background: var(--skel-fill); }
+
 
 /* ==== family: geomap ========================================================================================================== */
 

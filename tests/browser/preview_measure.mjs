@@ -16,6 +16,8 @@
 //   --json <file>     write the full result as JSON
 //   --width <px>, --height <px>   the viewport (default 1440 by 4000: a tall viewport loads every panel)
 //   --profile <dir>   the profile directory of Chrome (default: a folder in the system temporary directory)
+//   --overlay         hide the scroll bars of Chrome (the thickness of a bar is 0, as with overlay bars)
+//   --coarse          emulate a touch screen: `(pointer: coarse)` is true
 //   --strict          exit with code 1 when a row has the verdict fail or no-loaded
 // The server must reach its data sources. A panel that fails to load has no loaded measure: its rows show the verdict no-loaded or unclaimed.
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -32,7 +34,7 @@ const value = (name, fallback = null) => {
   if (i + 1 >= args.length || args[i + 1].startsWith("--")) throw new Error(`${name} needs a value`);
   return args[i + 1];
 };
-const KNOWN = new Set(["--url", "--uid", "--query", "--ids", "--all", "--json", "--width", "--height", "--profile", "--strict"]);
+const KNOWN = new Set(["--url", "--uid", "--query", "--ids", "--all", "--json", "--width", "--height", "--profile", "--strict", "--coarse", "--overlay"]);
 for (const a of args) if (a.startsWith("--") && !KNOWN.has(a)) throw new Error(`unknown option ${a}`);
 
 const url = value("--url");
@@ -48,12 +50,12 @@ const width = Number(value("--width", 1440));
 const height = Number(value("--height", 4000));
 const profile = value("--profile") || mkdtempSync(join(tmpdir(), "hune-preview-measure-"));
 
-const browser = await Browser.launch({ profileDir: profile, width, height: 1000 });
+const browser = await Browser.launch({ profileDir: profile, width, height: 1000, args: flag("--overlay") ? ["--hide-scrollbars"] : [] });
 let result;
 try {
   const context = await browser.newContext();
   const page = await context.newPage({ width, height });
-  result = await measureDashboard(page, page_url, { ids, width, height });
+  result = await measureDashboard(page, page_url, { ids, width, height, coarse: flag("--coarse") });
 } finally {
   await browser.close();
   if (!value("--profile")) rmSync(profile, { recursive: true, force: true });

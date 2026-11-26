@@ -1502,6 +1502,22 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - The preview of a gauge never draws the filled arc, the value text, the threshold labels or a colour of the document. It builds again when the box changes, as the loaded gauge does.
 - The tests of the three families are `tests/frontend/preview_values.test.mjs` and the browser cases B340 to B349.
 - Each element that a test measures has two attributes. The attribute `data-skel-part` names the part: `box`, `plot`, `legend`, `warning`, `axis-y`, `axis-x`, `label`, `head`, `row`, `column`, `tile`, `arc`, `track`, `scale` or `mark`. The attribute `data-skel-class` gives the tolerance class. The root element has `data-skel`, the key of the family.
+- A family module that has no rules yet gives the neutral form: an empty body with the light and the dots. The neutral form claims no part. The families `table` and `logs` have their rules, which follow.
+- The family `table` draws the first state `ready` with at least one row. The page reads the JSON document, the box of the body, the type of the pointer and the thickness of a thin scroll bar. The last two are facts of the platform, not data. The page probes them with the classes of the loaded table.
+  - The page reads the chain of the transforms. The transforms of the source panel come first, only when `data.reuse.with_transforms` is `true`. Then come the transforms of the panel. A `limit` of 0 in the chain gives no row. Then the preview is the neutral form, as when no query is visible.
+  - The view (`plot`) is the box less the select bar. It is `exact` when the number of frames is known, and `most` when a transform makes it unknown. A warning line for an invalid override pattern is the same element as in the loaded panel, with a transparent text (`warning`).
+  - Several visible queries give the select bar (`frames` and `select`): the real elements of the loaded panel with a transparent text. The browser gives their size.
+  - The header (`head`) is 34 px when `options.show_header` is not `false`. On a touch screen with a filter on every column it is 47 px. When only an override sets the filter, the height is data, and the preview draws the view only. A hidden column in the defaults gives the view only.
+  - The first row (`row`) is one slot of 36 px under the header, with its rule. The count of rows is data, so the preview draws one slot. With `options.wrap` the height of a row is data, so it draws no slot.
+  - The right edge of the header, of the slot and of the footer is a lower bound (the class `extent`). It is the width of the view less the scroll bar, or the least width of column 0 when a width member exists.
+  - A footer with the same count of reducers in all columns gives `foot`. It is 13 px high, plus 22 px for each line. It also gives the names of column 0 (`foot-name`, bars of the measured width). It is under the first row when the content fits, and at the bottom of the view when it overflows. A footer with a different count in some columns draws nothing: its height is data.
+  - Column 0 gives its label (`head-label`), its sort mark (`mark`, 18 px) and its filter button (`filter`) when the document fixes them. A gauge cell gives its track (`track`) or its LCD cells (`cell`).
+- The family `logs` draws one line slot at the top of the list (`plot` and `row`). The slot is 28 px high: a text band of 22 px and 6 px under it. The count of lines is data, so there is no second slot.
+  - With `options.show_time` equal to `true`, a bar of 23 characters of the font of the list (`time`) comes first. The level cell starts 12 px after it, with and without `options.wrap`. The `track` is one region from this edge to the right edge of the line. It is 8 px high, and its centre is 11 px under the top of the slot. It claims no length of text.
+  - The slot has no row claim with `options.wrap`: the height of a wrapped line is data.
+  - A chain of transforms that proves that no list comes gives the neutral form. The first case is a `limit` of 0 at the end of the chain, behind the kinds that only keep, sort or rename. The second case is a `reduce` before that end. The third case is a `calculate_field` before that end, with `replace_fields` equal to `true` and the mode `index` or `reduce_row`.
+  - The page reads no option of the lines other than `show_time` and `wrap`. The order, the details, the field settings and the links change nothing.
+- Each element that a test measures has two attributes. The attribute `data-skel-part` names the part: `box`, `plot`, `legend`, `warning`, `axis-y`, `axis-x`, `label`, `head`, `row`, `column`, `tile`, `arc`, `track`, `scale`, `mark`, `frames`, `select`, `foot`, `foot-name`, `head-label`, `filter`, `cell` or `time`. The attribute `data-skel-class` gives the tolerance class. The root element has `data-skel`, the key of the family.
 - The tolerance classes tell how exact a part is, against the loaded panel:
 
   | Class | Meaning | Test |
@@ -1509,6 +1525,7 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
   | `exact` | The document fixes the place and the size. | x, y, width and height differ by 0.5 px at most. |
   | `least` | The document gives a lower bound. The preview takes the least room. | The width and the height of the preview are not more than those of the loaded part, plus 0.5 px. |
   | `most` | The document gives an upper bound. | The width and the height of the preview are not less than those of the loaded part, minus 0.5 px. |
+  | `extent` | The document fixes the left edge, the top and the height. The right edge is a lower bound. | x, y and height differ by 0.5 px at most. The width is not more than that of the loaded part, plus 0.5 px. |
   | `data` | The document gives nothing. No shape stands for the part. | No test. |
 
 - The engine of the charts reads integers, so a size in px is a whole number where the engine rounds it. The preview rounds in the same way and never rounds a value to a tenth.

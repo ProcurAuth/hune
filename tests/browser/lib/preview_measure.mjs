@@ -15,7 +15,7 @@
 import { skeletonKind } from "../../../web/js/preview/index.js";
 
 export const TOLERANCE_PX = 0.5;
-export const CLASSES = Object.freeze({ EXACT: "exact", LEAST: "least", MOST: "most", DATA: "data" });
+export const CLASSES = Object.freeze({ EXACT: "exact", LEAST: "least", MOST: "most", EXTENT: "extent", DATA: "data" });
 export const HOLD_QUERIES = (req) => /\/panels\/[^/]+\/query/.test(req.url);
 
 // ---- The recorder of the texts of the canvases ---------------------------------------------------------------------------------------
@@ -265,11 +265,46 @@ export const EXTRACTORS = {
     const warn = h.holder.parentElement.querySelector(".panel__warning");
     if (warn && h.visible(warn)) for (const t of h.textLines(warn)) h.add("label", t.rect, t.text);
   },
+  // `table`: the view, the select bar, the header, the rows, the footer, and the shapes of column 0. A text that the preview draws as a bar has the rectangle of
+  // a bar here too: the width of the text, 8 px high, centred on the text. The footer cells are sticky, so the footer is the union of its cells.
   table: (panel, h) => {
+    const view = h.holder.querySelector(".vtable__scroll");
+    if (view) h.add("plot", h.rel(view));
+    // The bar of a text: the place and the width of the text, 8 px high, centred on the box of its element (not on the glyphs, whose centre depends on the font).
+    const bar = (root) => {
+      const t = root ? h.textRects(root)[0] : null;
+      const r = root ? h.rel(root) : null;
+      return t ? [t.rect[0], r[1] + r[3] / 2 - 4, t.rect[2], 8] : null;
+    };
+    const frames = panel.querySelector(".panel__frames");
+    if (frames && h.visible(frames)) {
+      h.add("frames", h.rel(frames));
+      const select = frames.querySelector("select");
+      if (select) h.add("select", h.rel(select));
+    }
     const head = h.holder.querySelector(".dataTable thead");
     if (head) h.add("head", h.rel(head));
     for (const e of h.all(".dataTable thead th", h.holder)) h.add("column", h.rel(e));
-    for (const e of h.all(".dataTable tbody tr", h.holder)) h.add("row", h.rel(e));
+    const th = h.holder.querySelector(".dataTable thead th");
+    if (th) {
+      h.add("head-label", bar(th.querySelector(".vtable__label")));
+      const group = th.querySelector(".dataTable__sort");
+      if (group && th.hasAttribute("aria-sort") && th.getAttribute("aria-sort") !== "none") {
+        const g = h.rel(group);
+        h.add("mark", [g[0] + g[2] - 18, g[1] + (g[3] - 18) / 2, 18, 18]);
+      }
+      const filter = th.querySelector(".vtable__filter");
+      if (filter) h.add("filter", h.rel(filter));
+    }
+    for (const e of h.all(".dataTable tbody tr[data-row]", h.holder)) h.add("row", h.rel(e));
+    const foots = h.all(".dataTable tfoot td", h.holder).map((e) => h.rel(e));
+    h.add("foot", h.union(foots));
+    for (const e of h.all(".dataTable tfoot td:first-child .vtable__foot-name", h.holder)) h.add("foot-name", bar(e));
+    const first = h.holder.querySelector(".dataTable tbody tr[data-row] td");
+    if (first) {
+      for (const e of h.all(".cell-gauge__bar:not(.cell-gauge__bar--lcd)", first)) h.add("track", h.rel(e));
+      for (const e of h.all(".cell-gauge__cell", first)) h.add("cell", h.rel(e));
+    }
   },
   heatmap: (panel, h) => {
     h.chart();
@@ -287,10 +322,25 @@ export const EXTRACTORS = {
     const legend = h.holder.querySelector(".timeline__legend");
     if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
   },
+  // `logs`: the list, the lines, and the bars of the first line. The time bar is the time box of the first line and the track is the region from the level
+  // cell to the end of the line. Each one is 8 px high, centred in the text band of 22 px at the top of the line (the line may be higher with `wrap`).
   logs: (panel, h) => {
     const list = h.holder.querySelector(".logs");
     if (list) h.add("plot", h.rel(list));
     for (const e of h.all(".logs__line", h.holder)) h.add("row", h.rel(e));
+    const line = h.all(".logs__line", h.holder)[0];
+    if (!line) return;
+    const ln = h.rel(line);
+    const time = line.querySelector(".logs__time");
+    if (time) {
+      const t = h.rel(time);
+      h.add("time", [t[0], ln[1] + 7, t[2], 8]);
+    }
+    const level = line.querySelector(".logs__level");
+    if (level) {
+      const lv = h.rel(level);
+      h.add("track", [lv[0], ln[1] + 7, ln[0] + ln[2] - lv[0], 8]);
+    }
   },
   // `geomap`: the map box and the two zoom squares (the `hidden` column of `show_zoom` = false has no box).
   geomap: (panel, h) => {
@@ -310,6 +360,8 @@ export function compareRect(cls, preview, loaded, tol = TOLERANCE_PX) {
   if (cls === CLASSES.EXACT) return { verdict: delta.every((d) => Math.abs(d) <= tol) ? "ok" : "fail", delta };
   // A one-sided bound is a bound on the size. The preview takes at most (least) or at least (most) the room of the loaded panel.
   if (cls === CLASSES.LEAST) return { verdict: preview[2] <= loaded[2] + tol && preview[3] <= loaded[3] + tol ? "ok" : "fail", delta };
+  // An extent is a shape whose right edge is a lower bound (a table is at least as wide as the document proves): left, top and height are exact, the width is a least bound.
+  if (cls === CLASSES.EXTENT) return { verdict: delta[0] <= tol && delta[0] >= -tol && Math.abs(delta[1]) <= tol && Math.abs(delta[3]) <= tol && preview[2] <= loaded[2] + tol ? "ok" : "fail", delta };
   if (cls === CLASSES.MOST) return { verdict: preview[2] >= loaded[2] - tol && preview[3] >= loaded[3] - tol ? "ok" : "fail", delta };
   return { verdict: "data", delta };
 }
@@ -381,11 +433,14 @@ export function readLoaded(page, id, type) {
 /**
  * Measures the previews and the loaded panels of a dashboard page. `page` is a fresh page of the test client (tests/browser/lib/cdp.mjs). `url` is the
  * address of the dashboard. Options: `ids` (the panels to measure, default all), `width`, `height` (the viewport: a tall one shows every panel, because
- * the page loads the panels near the viewport only), `settle` (ms after the previews show), `drawSettle` (ms after the loaded panels are ready), `tol`.
+ * the page loads the panels near the viewport only), `settle` (ms after the previews show), `drawSettle` (ms after the loaded panels are ready), `tol`,
+ * `coarse` (a touch screen).
  * Gives { previews, loaded, rows, summary }.
  */
-export async function measureDashboard(page, url, { ids = null, width = 1440, height = 4000, settle = 600, drawSettle = 900, tol = TOLERANCE_PX, timeout = 60000 } = {}) {
-  await page.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
+export async function measureDashboard(page, url, { ids = null, width = 1440, height = 4000, settle = 600, drawSettle = 900, tol = TOLERANCE_PX, timeout = 60000, coarse = false } = {}) {
+  await page.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: coarse });
+  // `coarse` emulates a touch screen: the media query `(pointer: coarse)` is true.
+  if (coarse) await page.send("Emulation.setTouchEmulationEnabled", { enabled: true, maxTouchPoints: 1 });
   await installRecorder(page);
   const hold = page.holdWhen(HOLD_QUERIES);
   await page.goto(url);
