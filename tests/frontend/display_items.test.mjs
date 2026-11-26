@@ -107,6 +107,21 @@ test("display and fillOf: the stored token stays, the light theme draws its own 
   assert.deepEqual(items.map((i) => fillOf(i.display, false)), ["#56A64B", "#E0B400", "#AD0317"]);
 });
 
+test("items: the palette slot is the place among the number fields, also when reduce.fields hides a field (9.16)", () => {
+  const fields = configured(
+    [{ name: "a", kind: "number", values: [1] }, { name: "k", kind: "text", values: ["x"] }, { name: "b", kind: "number", values: [2] }, { name: "c", kind: "number_text", values: ["3"] }],
+    { defaults: { color: { mode: "palette", fixed: null } }, overrides: [] },
+    "stat",
+  );
+  const base = { fields, names: displayNames(fields), baseNames: baseDisplayNames(fields), zone: "utc" };
+  const colors = (reduce) => reduceItems(base, reduce).map((i) => [i.name, i.color]);
+  const all = colors({ calc: "last_not_null", fields: null, values: false });
+  assert.deepEqual(all, [["a", QCHART.dark[0]], ["b", QCHART.dark[1]], ["c", QCHART.dark[2]]]);
+  // A pattern that keeps `b` and `c` only: their colours stay the slots 1 and 2 (not 0 and 1).
+  assert.deepEqual(colors({ calc: "last_not_null", fields: "/^(b|c)$/", values: false }), [["b", QCHART.dark[1]], ["c", QCHART.dark[2]]]);
+  assert.deepEqual(colors({ calc: "last_not_null", fields: "/^c$/", values: true }), [["x c", QCHART.dark[2]]]);
+});
+
 test("the panels that draw series default to the palette of ClickHouse Dash, the panels of one value keep thresholds", () => {
   const cols = [{ name: "a", kind: "number", values: [1, 2] }];
   const modeOf = (type) => configured(cols, { defaults: {}, overrides: [] }, type)[0].config.color.mode;

@@ -44,6 +44,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - A request of options that ended after a newer request of the same variable removed the cancel of the newer request. A cancel at the exit of the page then missed it.
 - The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
+- A stat, a bar gauge and a gauge in the colour mode `palette` took the slot of the place among the kept fields. They now take the slot of the place among the number fields (9.16). A pattern in `reduce.fields` no longer changes the colour of a field that stays.
 
 ## 0.2.0 - 2026-11-25
 
