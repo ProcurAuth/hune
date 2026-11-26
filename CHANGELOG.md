@@ -6,6 +6,12 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+## 0.3.2 - 2026-11-26
+
+### Changed
+
+- The title bar of a panel is 32 px high, not 40 px. The panel gives these 8 px to its body, so a chart and a table are 8 px taller. The title keeps its size.
+
 ## 0.3.1 - 2026-11-26
 
 ### Added

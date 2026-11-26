@@ -37,7 +37,7 @@
   --page-max: 1280px;          /* the width of the list page and of the full pages */
   --grid-gap: var(--space-8);  /* the gap between the panels of the dashboard grid */
   --grid-row: 30px;            /* the height of one row unit of the grid */
-  --panel-head-h: 40px;        /* the title bar of a panel */
+  --panel-head-h: 32px;        /* the title bar of a panel: the 22 px title has 5 px above and below */
   --panel-pad: var(--space-8);
   --panel-radius: var(--r-md);
   --toolbar-gap: var(--space-6);

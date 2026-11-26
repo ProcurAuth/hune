@@ -43,7 +43,7 @@ spec:
               app.kubernetes.io/name: hune
       containers:
         - name: hune
-          image: hune:0.3.1
+          image: hune:0.3.2
           imagePullPolicy: Never
           args: ["serve", "-c", "/etc/hune/config.hcl"]
           ports:

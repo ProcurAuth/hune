@@ -550,7 +550,7 @@ async fn ops_listener_routes() {
     assert_eq!(r.status, 200);
     assert_eq!(r.header("content-type"), Some("text/plain; version=0.0.4; charset=utf-8"));
     let text = r.text();
-    assert!(text.contains("hune_build_info{version=\"0.3.1\""));
+    assert!(text.contains("hune_build_info{version=\"0.3.2\""));
     assert!(text.contains("hune_ready 1\n"));
     assert!(text.contains("hune_store_up 1\n"));
     // HEAD works; another method is 405; another path is 404; a body is 400.

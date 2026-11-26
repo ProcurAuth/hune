@@ -246,7 +246,7 @@ compose_example() {
     dir=$work/compose-$cname
     rm -rf "$dir"
     cp -R "$srcdir" "$dir"
-    # The example names the tag of the release (hune:0.3.1). The test uses its own tag and never touches a real one.
+    # The example names the tag of the release (hune:0.3.2). The test uses its own tag and never touches a real one.
     sed -i -E "s#hune:[0-9]+\.[0-9]+\.[0-9]+#$tag#g" "$dir/compose.yaml"
     # The example publishes the port 8080 of the host. The test publishes a free port, so it can run with other jobs.
     hport=$(ci_free_port)
