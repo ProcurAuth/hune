@@ -47,6 +47,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
 - The preview is now in the folder `web/js/preview/`: a registry (`index.js`), shared helpers (`common.js`) and one module for each of the 12 families. Each family module gives the neutral form for now: an empty body with the light and the dots. The module `panel_preview.js`, the function `previewOf` of `panel_wait.js` and the heuristic sizes are gone. The browser cases B280 to B282 are replaced by B320 and B321.
 - The measurement harness `tests/browser/lib/preview_measure.mjs` and the command `tests/browser/preview_measure.mjs` measure each preview and each loaded panel. They give the differences by tolerance class (9.11).
+- The preview of a table draws the view, the header, the slot of the first row, the select bar of several queries and the footer. It also draws the label, the sort mark and the filter of column 0. It draws a gauge track or LCD cells where the document fixes them. It reads the JSON document, the pointer type and the scroll bar width only. The browser cases B350 to B355 and B357 to B358 measure it against the loaded table.
+- The preview of a logs panel draws one line slot of 28 px. It has a time bar of 23 characters with `show_time` equal to `true`, then one region from the level cell. A chain of transforms that proves no list (a `limit` of 0, a `reduce`, or a `calculate_field` that replaces the fields) gives no shape. The browser cases B355 to B358 measure it.
 
 ### Fixed
 
