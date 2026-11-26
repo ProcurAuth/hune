@@ -59,6 +59,9 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The legend of a horizontal bar chart ignored `legend.mode`, `legend.values`, `legend.sort_by`, `hide_from.legend` and the cap. It showed an empty legend with no series. It now follows the shared object `legend` as the vertical form does. It draws a list or a table with its sort, and a hidden series has no entry. It keeps a cap of 35 % of the height. It moves under the plot when the plot would be less than 220 px wide.
 - The value label of a horizontal bar was 8 px at least. It is now 10 px at least, as in 9.19 and in the vertical bars.
 - The value axis of a horizontal bar chart put two ticks 18 px apart for small values, so the labels ran together. Two ticks are now 60 px apart or more, as 9.19 says.
+- A stat, a bar gauge and a gauge in the colour mode `palette` took the slot of the place among the kept fields. They now take the slot of the place among the number fields (9.16). A pattern in `reduce.fields` no longer changes the colour of a field that stays.
+- A bar gauge in the mode `lcd` ignored `show_unfilled`. With `true`, it now draws the track of the other modes behind the cells, as the options form says. The browser case B385 tests it.
+- The grid of a stat covered the last 8 px of the warning line of a bad override pattern. It now starts under the line. The browser case B386 tests it.
 
 ## 0.2.0 - 2026-11-25
 

@@ -1204,7 +1204,7 @@ Object `reduce`:
 | Member | Type | Rule | Grafana source |
 |---|---|---|---|
 | `calc` | enum | `last`, `last_not_null`, `first`, `first_not_null`, `min`, `max`, `mean`, `total`, `count`, `median`, `std_dev`, `variance`, `range`, `diff`, `diff_percent`, `delta`, `distinct_count`, `change_count` (9.19 gives each one) | `options.reduceOptions.calcs`, an array of one item (section 15 gives the class of another length) |
-| `fields` | text or null | `null`: each field of type number. Else a pattern of the Grafana form (4.24) on the display names. | `options.reduceOptions.fields`; the empty text gives `null` |
+| `fields` | text or null | `null`: each field of the kind `number` or `number_text`. Else a pattern of the Grafana form (4.24) on the base display names (9.13). A pattern keeps a field of any kind. | `options.reduceOptions.fields`; the empty text gives `null` |
 | `values` | boolean | `true`: one item for each row, with no reduction. `false`: one item for each field, reduced with `calc`. | `options.reduceOptions.values` |
 
 ### 4.27 Options of `table`
