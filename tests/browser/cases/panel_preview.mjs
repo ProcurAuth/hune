@@ -20,7 +20,7 @@ const FAMILY = {
   heatmap: "heatmap", histogram: "histogram", state_timeline: "timeline", status_history: "timeline", logs: "logs", geomap: "geomap",
 };
 // The families that draw shapes. A family module that draws its first shape adds its name here, and the neutral test no longer applies to it.
-const DRAWN = new Set([]);
+const DRAWN = new Set(["stat", "gauge", "bargauge"]);
 
 const create = async (t, uid) => {
   const r = await t.api.create("transit", allTypesPreviewDoc(uid, { from: "now-6h", to: "now", timezone: "utc", refresh: null }));
