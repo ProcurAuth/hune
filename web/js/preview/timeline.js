@@ -7,14 +7,16 @@
 //     bounded: it can only get smaller);
 //   - the rows envelope: one flat tint on the clip box of the plot, [L, 8, W - 8 - L, H - 29], with L = 8 without row names, the exact gutter for one fixed
 //     display name, else the least gutter 21 (it can only move to the right);
-//   - nothing for the rows, the segments, the names, the texts and the time axis (they are data, or they need the range of the request).
+//   - the time axis of a state timeline, when the plot box is exact (no legend room or a legend at the bottom, and an exact left gutter) and the range of
+//     the request is finite: the x labels as bars of their measured width and the vertical grid lines at the ticks that the engine picks (case E15);
+//   - nothing for the rows, the segments, the names and the texts (they are data). The time axis of a status history is data too.
 // A panel that can never draw a picture has an empty preview.
-// Measured parts: plot (the canvas), legend, legend-label (the text of an item), rows (the clip box of the plot).
+// Measured parts: plot (the canvas), legend, legend-label (the text of an item), rows (the clip box of the plot), label-x (an x label), grid-x (a vertical line).
 
 import { gutterOf, stepText } from "../timeline_model.js";
 import { interpolateDisplayName } from "../names.js";
 import { EXACT, MOST, PARTS, exact, least, most, neutral, node, partAttrs, px, resultOf, unknown } from "./common.js";
-import { FROM_DATA, domWidth, hidesLegend, measureText, neverDrawn, possible, warningValues } from "./grids.js";
+import { FROM_DATA, domWidth, hidesLegend, measureText, neverDrawn, pixelRatio, possible, rangeOf, textBoxHeight, timeAxis, warningValues } from "./grids.js";
 
 const PAD = 8;
 const AXIS = 21;
@@ -89,6 +91,19 @@ export function build(panel, box, doc, ctx) {
   const plot = node("timeline__main", {}, [], "div", partAttrs(PARTS.PLOT, sizeExact ? EXACT : MOST));
   plot.k.push(node("skel__rows", { "--x": px(g.left) }, [], "div", partAttrs("rows", g.exact && sizeExact ? EXACT : MOST)));
   kids.push(plot);
+  // The time axis of a state timeline (case E15). The canvas width is the box width when the legend is off, empty or at the bottom, and the left gutter
+  // must be exact. The height is not computed: the label bars sit on the bottom edge of the canvas box, which the browser lays out.
+  const range = panel.type === "state_timeline" && g.exact && (lc.kind === "A" || lc.kind === "B" || (lc.kind === "C" && placement !== "right")) ? rangeOf(ctx) : null;
+  if (range) {
+    const plotW = Math.max(1, W - PAD - g.left);
+    const axis = timeAxis({ from: range.from, to: range.to, left: g.left, plotW, width: W, zone: ctx && ctx.page ? ctx.page.zone : undefined });
+    const dpr = pixelRatio();
+    // The label has its top 9 px under the plot, that is 12 px above the canvas bottom. The bar is centred on the text box of the engine.
+    const below = 12 - textBoxHeight(12) / 2 - 4;
+    for (const l of axis.labels) plot.k.push(node("skel__xl", { "--x": px(l.x - l.w / 2), "--w": px(l.w), "--b": px(below) }, [], "div", partAttrs("label-x", EXACT)));
+    for (const l of axis.lines) plot.k.push(node("skel__vl", { "--x": px(Math.round(l.x * dpr) / dpr), "--w": px(1 / dpr) }, [], "div", partAttrs("grid-x", EXACT)));
+    notes.push("axis-x");
+  }
   if (lc.kind === "C") {
     const widths = lc.items.map((t) => domWidth(t));
     if (placement === "right") {

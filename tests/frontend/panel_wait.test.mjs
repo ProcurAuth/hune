@@ -89,7 +89,7 @@ test("the frame uses the model: the mode is set with the state, the same data do
   assert.match(js, /import \{ buildPreview, observePreview \} from "\.\/preview\/index\.js";/);
   assert.match(js, /import \{ rangeKey, sameFrames, WAITING, waitMode \} from "\.\/panel_wait\.js";/);
   assert.match(js, /const skeleton = buildPreview\(panel\);/, "the preview follows the whole panel, not its type only");
-  assert.match(js, /observePreview\(skeleton, panel, rt\.doc, \{ rt, page \}\)/, "the preview builds when its box has a size");
+  assert.match(js, /observePreview\(skeleton, panel, rt\.doc, \{ rt, page, key \}\)/, "the preview builds when its box has a size");
   assert.match(js, /stopPreview\(\);/, "the observer stops with the panel");
   assert.match(js, /root\.dataset\.wait = mode;/);
   assert.match(js, /!sameFrames\(rendered, info\.items\)/);

@@ -3,7 +3,9 @@
 
 import { parseGrafanaPattern } from "../fields.js";
 import { visibleQueries } from "../queries.js";
-import { fontOf, node, partAttrs, px, textWidth } from "./common.js";
+import { chartCore } from "../vendor/chdash/app_chart_core.js";
+import { zoneClock } from "../zone.js";
+import { EXACT, fontOf, node, partAttrs, px, textWidth } from "./common.js";
 
 // The marker of a key that no member of the document sets: the value comes from the data (the base name of a field, for `display_name`).
 export const FROM_DATA = Object.freeze({ data: true });
@@ -137,3 +139,46 @@ export function pixelRatio() {
 
 /** A guide: a rectangle that carries a measured part and paints nothing. `r` is { x, y, w, h } in px from the corner of the preview. */
 export const guideNode = (r, part, cls, c = "skel__g") => node(c, { "--x": px(r.x), "--y": px(r.y), "--w": px(r.w), "--h": px(r.h) }, [], "div", partAttrs(part, cls));
+
+// ---- The time axis ---------------------------------------------------------------------------------------------------------------
+// The range of the request of a panel, as the loaded panel reads it: the range of the runtime for the key of the panel (a panel with a time override and
+// a reuse panel have their own), else the range of the page (the draft grid of the editor has no `rangeOf`). Null when it is not a finite range.
+// This is the same rule as `chartContext` of panel_frame.js. The preview never makes a new "now".
+export function rangeOf(ctx) {
+  const page = ctx && ctx.page;
+  let r = page && typeof page.linkContext === "function" ? page.linkContext() : null;
+  const rt = ctx && ctx.rt;
+  if (rt && typeof rt.rangeOf === "function" && ctx.key !== undefined && ctx.key !== null) {
+    const own = rt.rangeOf(ctx.key);
+    if (own && !own.error) r = { from: own.from_ms, to: own.to_ms };
+  }
+  return r && Number.isFinite(r.from) && Number.isFinite(r.to) && r.to > r.from ? { from: r.from, to: r.to } : null;
+}
+
+// The height of the text box of a canvas text of `size` px: the font ascent and descent of the engine canvas. A test without a page uses 14.
+export function textBoxHeight(size = 12) {
+  if (typeof document === "undefined" || !document.body) return 14;
+  measureText("0", { size });
+  const m = probe.measureText("0");
+  return Number.isFinite(m.fontBoundingBoxAscent) ? m.fontBoundingBoxAscent + m.fontBoundingBoxDescent : 14;
+}
+
+/**
+ * The ticks and the labels of a time axis that the engine draws (app_chart_core.js, `timeTicks` and `layoutXLabels`), for the range `from` to `to`,
+ * a plot from `left` of the width `plotW` and a canvas of the width `width`. Each label is `{ label, x, left, right, w }` (`x` is the centre).
+ * Each tick inside the plot is `{ v, x }` with the place of its grid line. The texts are measured on the probe canvas, as the engine measures.
+ */
+export function timeAxis({ from, to, left, plotW, width, zone }) {
+  const measure = (t) => measureText(t);
+  const xOf = (t) => left + ((t - from) * plotW) / (to - from);
+  const ticks = chartCore.timeTicks(from, to, plotW, measure, zoneClock(zone));
+  const labels = chartCore.layoutXLabels(ticks, xOf, left, left + plotW, width, measure, measure).map((t) => ({ label: t.label, x: t.x, left: t.left, right: t.right, w: t.right - t.left }));
+  const lines = ticks.map((t) => ({ v: t.v, x: xOf(t.v) })).filter((t) => t.x >= left - 0.5 && t.x <= left + plotW + 0.5);
+  return { labels, lines };
+}
+
+/** A vertical grid line: 1 / dpr px wide at the left edge round(x dpr) / dpr of the line that the engine draws. `y` and `h` are in px. */
+export const vlineNode = (x, y, h, cls = EXACT, c = "skel__vl") => {
+  const dpr = pixelRatio();
+  return node(c, { "--x": px(Math.round(x * dpr) / dpr), "--y": px(y), "--w": px(1 / dpr), "--h": px(h) }, [], "div", partAttrs("grid-x", cls));
+};

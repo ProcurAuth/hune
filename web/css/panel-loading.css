@@ -65,6 +65,7 @@
    ramp between two skeleton tones: it says only that the lowest count is at the left (9.19e). */
 .skel--heatmap .skel__g { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); }
 .skel--heatmap .skel__hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); background: var(--skel-grid); }
+.skel--heatmap .skel__vl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); background: var(--skel-grid); }
 .skel--heatmap .skel__scale { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); background: linear-gradient(to right, var(--skel-fill), var(--skel-edge)); }
 
 /* ==== family: histogram ======================================================================================================= */
@@ -81,6 +82,10 @@
 .skel--timeline .timeline__legend-item { min-height: 1.5714em; }
 .skel--timeline .timeline__legend-item i { background: var(--skel-edge); }
 .skel--timeline .skel__t { position: relative; top: -0.93px; display: block; flex: none; width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); }
+/* The time axis of a state timeline: a label bar on the bottom edge of the canvas box (--b is its distance from the bottom), and a vertical line
+   over the height of the plot (8 px from the top, the band of 21 px at the bottom). */
+.skel--timeline .skel__xl { position: absolute; left: var(--x); bottom: var(--b); width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); }
+.skel--timeline .skel__vl { position: absolute; left: var(--x); top: 8px; bottom: 21px; width: var(--w); background: var(--skel-grid); }
 .skel--timeline .skel__rows { position: absolute; left: var(--x); top: 8px; right: 8px; bottom: 21px; background: var(--skel-fill); }
 
 /* ==== family: logs ============================================================================================================ */
