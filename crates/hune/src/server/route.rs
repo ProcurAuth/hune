@@ -117,7 +117,7 @@ pub struct RouteSpec {
     /// The label for the log and the metrics (14.7, 14.8): the method and the template.
     pub label: &'static str,
     pattern: &'static [Seg],
-    /// Tells if the route changes the store (6.9): `server.editing` applies to it.
+    /// Tells if the route changes the store (6.9).
     pub write: bool,
     /// The body class.
     pub body: BodyClass,
