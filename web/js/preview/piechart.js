@@ -44,7 +44,10 @@ function nameWidth(text) {
   return ruler.getBoundingClientRect().width;
 }
 
-const legendOf = (options) => options.legend || { show: true, placement: "right", mode: "list", values: [] };
+// `options.legend` is necessary (4.26, 4.31): the loaded pie has no default for it and gives an error without it. A document with no legend member
+// proves no legend, so the preview has none (the least form).
+const NO_LEGEND = Object.freeze({ show: false, placement: "right", mode: "list", values: [] });
+const legendOf = (options) => (options.legend && typeof options.legend === "object" ? options.legend : NO_LEGEND);
 
 // The count of value columns of the legend (E8): the value column (a table, or `values` with `value`), then the percent column.
 export function extraColumns(legend) {
@@ -106,7 +109,7 @@ export function build(panel, box, doc, ctx) {
   // The cap of 42 % and the cap of 52 % do not depend on the height above the plot, so the class holds with a warning line too.
   const cls = g.cls;
   const donut = o.pie_type === "donut";
-  const notes = ["piechart", legend.show ? `legend ${legend.placement === "bottom" ? "bottom" : "right"}` : "legend off", donut ? "donut" : "pie"];
+  const notes = ["piechart", ...(o.legend ? [] : ["no legend member"]), legend.show ? `legend ${legend.placement === "bottom" ? "bottom" : "right"}` : "legend off", donut ? "donut" : "pie"];
   if (warning) notes.push("warning");
   if (name !== null) notes.push("literal name");
 

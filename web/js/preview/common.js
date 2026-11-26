@@ -174,13 +174,14 @@ export function overrideWarnings(panel) {
 }
 
 // The warning line as a node, or null when the panel has none. It has the element, the class, the icon and the text of the loaded line, so the
-// browser gives the same wrapped height. The family CSS hides the line (`visibility: hidden`): it reserves the room and draws no text, because a
-// text that the document fixes is never drawn as text (the owner decision). The child text is a plain string: index.js draws it as a text node.
+// browser gives the same wrapped height. The text is the document text, so the family CSS draws each line of it as a bar of the measured width
+// (the owner decision: a text that the document fixes shows as a bar) and draws no glyph. The icon is a place only. A plain string child is drawn
+// as a text node by index.js. The sentences lie in a span, so that the bar covers the text and not the space before it.
 export function warningNode(panel) {
   const sentences = overrideWarnings(panel);
   if (!sentences.length) return null;
   const icon = node("icon", {}, [node("", {}, [], "use", { href: `#${SPRITE_PREFIX}warning` })], "svg", { width: "14", height: "14", viewBox: "0 0 24 24", "aria-hidden": "true", focusable: "false" });
-  return node("panel__warning skel__warning", {}, [icon, ` ${sentences.join(" ")}`], "p", partAttrs(PARTS.WARNING, EXACT));
+  return node("panel__warning skel__warning", {}, [icon, " ", node("skel__text", {}, [sentences.join(" ")], "span")], "p", partAttrs(PARTS.WARNING, EXACT));
 }
 
 // ---- The result of a family --------------------------------------------------------------------------------------------------------

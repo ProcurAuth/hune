@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser cases B370 to B377 (9.11): the loading preview of the pie chart and of the map (the family "rings").
+// Browser cases B370 to B378 (9.11): the loading preview of the pie chart and of the map (the family "rings").
 // Each case holds the queries of the panels, reads the preview, releases the queries and reads the loaded panel with the harness of
 // lib/preview_measure.mjs. A claimed part must agree with the loaded part by its class: exact within 0.5 px, or bounded on one side.
-// B370 to B373: the pie chart. B374 to B376: the map. B377: captures of the loading state in the light and the dark theme.
+// B370 to B373: the pie chart. B374 and B375: the map. B376 and B378: the warning line of both. B377: captures in the light and the dark theme.
 // The queries are held, so the cases need the interception of Chrome (they are skipped in Firefox).
 import { mkdirSync } from "node:fs";
 import { join } from "node:path";
@@ -102,8 +102,8 @@ export const cases = [
             ringImage: ring ? getComputedStyle(ring).backgroundImage : null,
             ringRadius: ring ? getComputedStyle(ring).borderRadius : null,
             ringFill: ring ? getComputedStyle(ring).backgroundColor : null,
-            legendVisibility: legend ? getComputedStyle(legend).visibility : null,
-            legendMarks: legend ? [...legend.querySelectorAll("*")].filter((n) => getComputedStyle(n).visibility !== "hidden").length : 0,
+            legendBox: legend ? 1 : null,
+            legendMarks: legend ? [legend, ...legend.querySelectorAll("*")].filter((n) => { const s = getComputedStyle(n); return s.backgroundColor !== "rgba(0, 0, 0, 0)" || s.backgroundImage !== "none" || s.borderTopWidth !== "0px" || n.textContent.trim() !== ""; }).length : 0,
             plotChildren: el.querySelector(".skel__plot").childElementCount,
             legendMinWidth: legend ? getComputedStyle(legend).minWidth : null,
             legendMaxWidth: legend ? getComputedStyle(legend).maxWidth : null,
@@ -132,7 +132,7 @@ export const cases = [
       t.eq(facts[id("right list")].gap, "12px", "right: the gap");
       t.eq(facts[id("bottom list")].legendMaxHeight, "42%", "bottom legend: max-height");
       t.eq(facts[id("bottom list")].gap, "4px", "bottom: the gap");
-      t.eq(facts[id("legend hidden")].legendVisibility, null, "no legend box when the legend is off");
+      t.eq(facts[id("legend hidden")].legendBox, null, "no legend box when the legend is off");
     },
   },
   {
@@ -296,6 +296,73 @@ export const cases = [
           t.eq(rows["warning#0"].verdict, "ok", `${uid} panel ${id}: the warning line agrees ${JSON.stringify(rows["warning#0"].delta)}`);
           t.assert(rows["plot#0"].delta.every((x) => x >= -0.5 || rows["plot#0"].cls !== "exact"), `${uid} panel ${id}: the plot follows the line ${JSON.stringify(rows["plot#0"].delta)}`);
         }
+      }
+    },
+  },
+  {
+    id: "B378",
+    skip: SKIP,
+    timeout: 240000,
+    name: "the text of the warning line is a bar of the measured width on each wrapped line: no glyph, no icon, the loaded height (9.11)",
+    async run(t) {
+      // The same draft as B376: the case stores a valid pattern and changes the answer of the server. A narrow panel makes the line wrap.
+      const mark = "^valid-pattern$";
+      const bad = "/(/";
+      const pie = pieDoc("pv378", PIE_VARIANTS.filter((v) => ["right list", "right narrow"].includes(v.name)));
+      const map = mapDoc("pv378m", MAP_VARIANTS.filter((v) => ["zoom fixed", "narrow map"].includes(v.name)));
+      for (const d of [pie, map]) for (const pn of d.sections[0].panels) pn.fields = { defaults: {}, overrides: [{ match: { by: "regex", value: mark }, set: { unit: "none" } }] };
+      for (const d of [pie, map]) await create(t, d);
+      for (const uid of ["pv378", "pv378m"]) {
+        const real = await t.api.dashboard(uid);
+        t.eq(real.status, 200, `read ${uid}`);
+        const p = await t.page({ width: 1440, height: 1500 });
+        const h = p.holdWhen(HOLD);
+        p.fulfillWhen((r) => r.method === "GET" && new RegExp(`/api/dashboards/${uid}(\\?|$)`).test(r.url), {
+          status: 200,
+          headers: { "Content-Type": "application/json", ETag: real.headers.get("etag") || "" },
+          body: real.text.replaceAll(mark, bad),
+        });
+        await p.goto(t.dash(uid));
+        await p.waitFor(`document.querySelectorAll('.panel__skeleton .skel__warning').length === 2`, { what: "two previews with a warning line", timeout: 30000 });
+        await sleep(300);
+        const facts = await p.eval(`[...document.querySelectorAll('.panel__skeleton .skel__warning')].map((line) => {
+          const span = line.querySelector(".skel__text");
+          const s = getComputedStyle(span);
+          return {
+            colour: s.color,
+            layers: s.backgroundImage.split("gradient(").length - 1,
+            heights: s.backgroundSize.replace("calc(100% - 8px)", "W").split(", ").map((x) => x.split(" ")[1]),
+            clone: s.boxDecorationBreak,
+            icon: getComputedStyle(line.querySelector(".icon")).opacity,
+            lines: span.getClientRects().length,
+            // The bar of a line covers the text of the line: the rectangle of a line has the measured width of its text.
+            widths: [...span.getClientRects()].map((r) => Math.round(r.width * 100) / 100),
+            lineHeight: line.getBoundingClientRect().height,
+          };
+        })`);
+        t.eq(facts.length, 2, `${uid}: two warning lines`);
+        for (const f of facts) {
+          t.eq(f.colour, "rgba(0, 0, 0, 0)", `${uid}: no glyph`);
+          t.eq(f.layers, 3, `${uid}: the middle and the two round ends`);
+          t.eq(f.heights, ["8px", "8px", "8px"], `${uid}: the bar is 8 px high`);
+          t.eq(f.clone, "clone", `${uid}: the layers repeat on each wrapped line`);
+          t.eq(f.icon, "0", `${uid}: the icon holds its place and is not drawn`);
+          t.assert(f.widths.every((w) => w > 0), `${uid}: each line has a width ${f.widths}`);
+        }
+        // The narrow panel wraps the sentence: it has more lines than the wide one, and the line is higher.
+        t.assert(facts[1].lines > facts[0].lines, `${uid}: the narrow panel wraps (${facts[0].lines} and ${facts[1].lines} lines)`);
+        t.assert(facts[1].lineHeight > facts[0].lineHeight, `${uid}: the wrapped line is higher`);
+        // After the load, the loaded line has the same height as the preview line (the part "warning" of B376) and the text of the preview.
+        // A capture of the held draft: the bars of the warning line in both themes (the folder of B377).
+        const dir = SHOTS || join(process.cwd(), "target", "browser", "preview-rings");
+        mkdirSync(dir, { recursive: true });
+        await p.screenshot(join(dir, `warning-${uid}.png`));
+        const previewText = await p.eval(`[...document.querySelectorAll('.panel__skeleton .skel__text')].map((e) => e.textContent)`);
+        h.release();
+        await p.waitFor(`document.querySelectorAll('.panel__warning:not(.skel__warning)').length === 2`, { what: "the loaded warning lines", timeout: 30000 });
+        const loaded = await p.eval(`[...document.querySelectorAll('.panel__warning:not(.skel__warning)')].map((e) => [e.textContent.trim(), e.getBoundingClientRect().height])`);
+        t.eq(loaded.map((x) => x[0]), previewText.map((x) => x.trim()), `${uid}: the preview line has the text of the loaded line`);
+        t.assert(Math.abs(loaded[0][1] - facts[0].lineHeight) <= 0.5 && Math.abs(loaded[1][1] - facts[1].lineHeight) <= 0.5, `${uid}: the heights agree ${JSON.stringify(loaded)} against ${facts.map((f) => f.lineHeight)}`);
       }
     },
   },

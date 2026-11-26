@@ -183,9 +183,11 @@ test("pie R10: members with no effect change no node: sort, labels, tooltip, cal
   assert.deepEqual(other.bounds, base.bounds);
 });
 
-test("pie: a missing legend member gives the default of the loaded code (right, list), and a box with no size gives no negative size", () => {
+test("pie: a missing legend member gives no legend (the loaded code has no default, 4.26), and a box with no size gives no negative size", () => {
   const out = build({ id: 1, type: "piechart", options: { reduce: { values: true } }, fields: {} });
-  assert.ok(find(out, "skel__legend--right"));
+  assert.equal(find(out, "skel__legend"), null);
+  assert.ok(out.notes.includes("no legend member"));
+  assert.equal(out.bounds.plotW.value, 600);
   const small = geometry({ legend: legend(), box: { w: 40, h: 40 } });
   assert.equal(small.plot.w, 0);
   assert.equal(small.d, 20);
@@ -225,7 +227,10 @@ test("pie and map E2: an override of the kind regex that does not compile gives 
     assert.equal(first.a["data-skel-part"], "warning");
     assert.equal(first.a["data-skel-class"], EXACT);
     assert.equal(first.a.role, undefined, "the loaded line has no role");
-    const [icon, text] = first.k;
+    const [icon, space, span] = first.k;
+    const text = space + span.k[0];
+    assert.equal(span.t, "span");
+    assert.equal(span.c, "skel__text", "the bar of the text: one bar for each wrapped line");
     assert.equal(icon.t, "svg");
     assert.equal(icon.a.width, "14");
     assert.equal(icon.k[0].t, "use");

@@ -55,7 +55,7 @@
 /* The pie takes its sizes from the same rules as the loaded pie (panel-stat.css `.pie`), so the browser gives the same boxes after a resize or a late
    font. The root is a column: the warning line (hidden, it reserves the room) and the holder, which is the place of `.panel__plot`. */
 .skel--piechart { display: flex; flex-direction: column; }
-.skel--piechart .skel__warning { margin: 0; visibility: hidden; }
+.skel--piechart .skel__warning { margin: 0; }
 .skel--piechart .skel__holder { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; }
 .skel--piechart .skel__pie { position: absolute; inset: 0; display: flex; gap: var(--space-12); }
 .skel--piechart .skel__pie--bottom { flex-direction: column; gap: var(--space-4); }
@@ -67,8 +67,17 @@
 }
 /* The hole of a donut is 0.55 of the radius. The gradient has a hard stop, so the hole is clear. */
 .skel--piechart .skel__ring--donut { background: radial-gradient(circle closest-side, transparent 55%, var(--skel-fill) 55%); }
-/* The legend box has no visible mark. It holds the room of the least legend: one line at the bottom, one row at the right. */
-.skel--piechart .skel__legend { visibility: hidden; margin: 0; padding: 0; overflow: hidden; font-size: var(--fs-sm); }
+/* The warning line of a draft (the pie and the map). The icon holds its place and is not drawn. The text is not drawn as a glyph: each line of it is a bar
+   of the measured width, 8 px high, with round ends (three layers: the middle and the two half caps, with no overlap; `clone` repeats them on each wrapped line). */
+.skel--piechart .skel__warning .icon, .skel--geomap .skel__warning .icon { opacity: 0; }
+.skel--piechart .skel__text, .skel--geomap .skel__text {
+  color: transparent; box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  background-repeat: no-repeat; background-size: 4px 8px, 4px 8px, calc(100% - 8px) 8px; background-position: left center, right center, 4px center;
+  background-image: radial-gradient(circle 4px at 100% 50%, var(--skel-edge) 94%, transparent 100%), radial-gradient(circle 4px at 0 50%, var(--skel-edge) 94%, transparent 100%), linear-gradient(var(--skel-edge), var(--skel-edge));
+}
+/* The legend box has no visible mark: its cells are empty and have no fill. It holds the room of the least legend: one line at the bottom, one row at
+   the right. */
+.skel--piechart .skel__legend { margin: 0; padding: 0; overflow: hidden; font-size: var(--fs-sm); }
 .skel--piechart .skel__legend--bottom { flex: 0 0 auto; height: calc(var(--fs-sm) * var(--lh-base)); max-height: 42%; }
 .skel--piechart .skel__legend--right {
   align-self: center; flex: 0 1 auto; min-width: 72px; max-width: 52%; max-height: 100%;
@@ -101,7 +110,7 @@
 /* The root is a column: the warning line (hidden, it reserves the room) and the map node, which is the place of `.geo`. The map node has no fill, as the
    loaded map has none of its own. The two squares are the zoom column of panel-geomap.css (19.25 px, 8 px from the corner) in the neutral tone, with no glyph. */
 .skel--geomap { display: flex; flex-direction: column; }
-.skel--geomap .skel__warning { margin: 0; visibility: hidden; }
+.skel--geomap .skel__warning { margin: 0; }
 .skel--geomap .skel__map { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
 .skel--geomap .skel__zooms { position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; }
 .skel--geomap .skel__zoom { width: 19.25px; height: 19.25px; background: var(--skel-fill); }

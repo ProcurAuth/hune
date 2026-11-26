@@ -24,11 +24,9 @@ export const HOLD_QUERIES = (req) => /\/panels\/[^/]+\/query/.test(req.url);
 const RECORDER = `(() => {
   if (window.__previewTexts) return;
   const lists = new WeakMap();
-  const arcLists = new WeakMap();
   const proto = CanvasRenderingContext2D.prototype;
   const fill = proto.fillText;
   const clear = proto.clearRect;
-  const arc = proto.arc;
   proto.fillText = function (text, x, y, ...rest) {
     let list = lists.get(this.canvas);
     if (!list) lists.set(this.canvas, (list = []));
@@ -37,21 +35,10 @@ const RECORDER = `(() => {
     return fill.call(this, text, x, y, ...rest);
   };
   proto.clearRect = function (x, y, w, h) {
-    if (x === 0 && y === 0) {
-      lists.set(this.canvas, []);
-      arcLists.set(this.canvas, []);
-    }
+    if (x === 0 && y === 0) lists.set(this.canvas, []);
     return clear.call(this, x, y, w, h);
   };
-  // The arcs give the circle of a pie (centre and radius in CSS px), which no element of the page holds.
-  proto.arc = function (x, y, r, ...rest) {
-    let list = arcLists.get(this.canvas);
-    if (!list) arcLists.set(this.canvas, (list = []));
-    list.push({ x, y, r });
-    return arc.call(this, x, y, r, ...rest);
-  };
   window.__previewTexts = (canvas) => lists.get(canvas) || [];
-  window.__previewArcs = (canvas) => arcLists.get(canvas) || [];
 })();`;
 
 /** Install the recorder for the next documents of the page. Call it before `goto`. */
@@ -201,21 +188,18 @@ export const EXTRACTORS = {
     if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
     for (const e of h.all(".hbar__row", h.holder)) h.add("row", h.rel(e));
   },
-  // `piechart`: the chart box, the legend, and the circle of the disc or the ring. The circle is the largest arc of the last drawing (the recorder of
-  // `arc`): its centre and its radius are in CSS px of the canvas, and the hover growth is not on at rest.
+  // `piechart`: the chart box, the legend, and the circle of the disc or the ring. The circle is the hook `data-geometry` of the canvas (9.29): the
+  // centre and the radius in CSS px of the canvas, without the growth of a hovered slice.
   piechart: (panel, h) => {
     const plot = h.holder.querySelector(".pie__plot");
     if (plot) h.add("plot", h.rel(plot));
     const legend = h.holder.querySelector(".pie__legend");
     if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
     const canvas = h.holder.querySelector(".pie__canvas");
-    if (canvas && window.__previewArcs) {
-      const arcs = window.__previewArcs(canvas);
-      if (arcs.length) {
-        const big = arcs.reduce((a, b) => (b.r > a.r ? b : a));
-        const r = h.rel(canvas);
-        h.add("ring", [r[0] + big.x - big.r, r[1] + big.y - big.r, 2 * big.r, 2 * big.r]);
-      }
+    const g = canvas && canvas.dataset.geometry ? canvas.dataset.geometry.split(" ").map(Number) : null;
+    if (g && g.length === 4 && g.every(Number.isFinite)) {
+      const r = h.rel(canvas);
+      h.add("ring", [r[0] + g[0] - g[2], r[1] + g[1] - g[2], 2 * g[2], 2 * g[2]]);
     }
   },
   stat: (panel, h) => {
