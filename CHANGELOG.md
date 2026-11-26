@@ -44,6 +44,9 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - A request of options that ended after a newer request of the same variable removed the cancel of the newer request. A cancel at the exit of the page then missed it.
 - The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
+- The pie chart sizes its circle from the real box of its canvas, with the fraction of a pixel (9.19a). Before, it used the rounded client size, so the circle could be 0.5 px off its box and the bitmap was stretched.
+- The pie chart no longer draws a legend at the right for a panel with no `legend` member. The member is necessary (4.26), so the page has no default for it.
+- The canvas of a pie chart has the test hook `data-geometry` with the centre and the radii of the circle (9.29). The browser case B400 reads it.
 
 ## 0.2.0 - 2026-11-25
 
