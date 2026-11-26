@@ -65,6 +65,9 @@ struct State {
     folders: BTreeMap<FolderId, FolderState>,
     entries: BTreeMap<EntryKey, Arc<CatalogEntry>>,
     marks: Arc<Marks>,
+    /// The count of the own writes that the catalog took (`refresh_uid`, `refresh_folders`). A poll that reads the store
+    /// while an own write happens holds an old picture: the poll compares this count before it applies the changes.
+    writes: u64,
     up: bool,
     down_since: Option<Instant>,
 }
@@ -101,6 +104,16 @@ impl State {
             self.entries.remove(&k);
             marks.entries.remove(&k);
         }
+    }
+
+    /// Applies the changes of a poll that started when the count of the own writes was `started`. An own write that came in
+    /// between makes the changes old: they could bring back a deleted dashboard or hide a new save. They are not taken, and the
+    /// next poll reads the store again with the marks that the catalog has.
+    fn apply_unless_written(&mut self, started: u64, d: Delta) -> PollSummary {
+        if self.writes != started {
+            return PollSummary::default();
+        }
+        self.apply(d)
     }
 
     fn apply(&mut self, d: Delta) -> PollSummary {
@@ -168,6 +181,7 @@ impl Catalog {
             folders: BTreeMap::new(),
             entries: BTreeMap::new(),
             marks: Arc::new(snap.marks),
+            writes: 0,
             up: true,
             down_since: None,
         };
@@ -189,14 +203,17 @@ impl Catalog {
 
     /// Calls `Store::poll` with the marks and applies the changes (5.8, items 2 and 6).
     pub async fn poll<S: Source>(&self, store: &S) -> PollResult {
-        let marks = self.read().marks.clone();
+        let (marks, started) = {
+            let st = self.read();
+            (st.marks.clone(), st.writes)
+        };
         let result = store.poll(&marks).await;
         self.keep_events(store);
         let (outcome, transition) = {
             let mut st = self.write();
             match result {
                 Ok(delta) => {
-                    let summary = st.apply(delta);
+                    let summary = st.apply_unless_written(started, delta);
                     let transition = if st.up {
                         None
                     } else {
@@ -294,6 +311,7 @@ impl Catalog {
         let Ok(probe) = probe else { return false };
         let mut guard = self.write();
         let st = &mut *guard;
+        st.writes += 1;
         st.remove_uid(uid);
         let marks = Arc::make_mut(&mut st.marks);
         for (entry, mark) in probe.entries {
@@ -311,6 +329,7 @@ impl Catalog {
         let Ok(probe) = probe else { return false };
         let mut guard = self.write();
         let st = &mut *guard;
+        st.writes += 1;
         st.folders.clear();
         let marks = Arc::make_mut(&mut st.marks);
         marks.folders.clear();
@@ -319,5 +338,51 @@ impl Catalog {
             st.folders.insert(state.id().clone(), state);
         }
         true
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn empty_delta() -> Delta {
+        Delta {
+            folders: Vec::new(),
+            removed_folders: Vec::new(),
+            entries: Vec::new(),
+            removed_entries: Vec::new(),
+            marks: Marks::empty(),
+        }
+    }
+
+    fn state() -> State {
+        State {
+            folders: BTreeMap::new(),
+            entries: BTreeMap::new(),
+            marks: Arc::new(Marks::empty()),
+            writes: 0,
+            up: true,
+            down_since: None,
+        }
+    }
+
+    #[test]
+    fn a_poll_that_started_before_an_own_write_does_not_apply_its_changes() {
+        let mut st = state();
+        let started = st.writes;
+        st.writes += 1;
+        let mut delta = empty_delta();
+        delta.removed_folders.push(FolderId::root());
+        let summary = st.apply_unless_written(started, delta);
+        assert_eq!(summary, PollSummary::default(), "the old picture is dropped");
+    }
+
+    #[test]
+    fn a_poll_with_no_own_write_in_between_applies_its_changes() {
+        let mut st = state();
+        let started = st.writes;
+        let mut delta = empty_delta();
+        delta.removed_folders.push(FolderId::root());
+        assert_eq!(st.apply_unless_written(started, delta).folders_removed, 1);
     }
 }
