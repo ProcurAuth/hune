@@ -10,8 +10,12 @@
   ],
   "actions": [
     { "name": "dashboard.read", "resource_types": ["service", "folder", "dashboard"],
-      "description": "List and open dashboards, run their saved queries and the queries of their variables, and read their history.",
+      "description": "List and open dashboards, and run their saved queries and the queries of their variables.",
       "limits": ["max_rows", "max_duration"] },
+    { "name": "dashboard.history", "resource_types": ["service", "folder", "dashboard"],
+      "description": "List the versions of a dashboard of the primary store, read one version and compare two versions. With dashboard.write, restore a version." },
+    { "name": "dashboard.export", "resource_types": ["service", "folder", "dashboard"],
+      "description": "Download the file of the current document of a dashboard." },
     { "name": "dashboard.write", "resource_types": ["service", "folder", "dashboard"],
       "description": "Create, change, move, restore and delete dashboards. Create, rename and delete folders." },
     { "name": "source.query", "resource_types": ["service", "source"],

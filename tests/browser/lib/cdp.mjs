@@ -504,7 +504,7 @@ export class Page {
         proto.fillText = function (text, x, y, ...rest) {
           let list = rec.get(this.canvas);
           if (!list) rec.set(this.canvas, (list = []));
-          list.push({ text: String(text), x, y, align: this.textAlign, baseline: this.textBaseline });
+          list.push({ text: String(text), x, y, align: this.textAlign, baseline: this.textBaseline, font: this.font });
           return fill.call(this, text, x, y, ...rest);
         };
         proto.clearRect = function (x, y, w, h) {

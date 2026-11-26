@@ -12,7 +12,7 @@ import { niceStepAtLeast } from "./series.js";
 // The test hook (9.29) keeps 2,000 cells at most, then it sets `cut`. The card of `multi` keeps 100 rows at most and counts the rest.
 const REPORT_CELLS = 2000;
 const CARD_ROWS = 100;
-// The bar of the legend is 300 px wide. A body narrower than 350 px gets a bar of its width less 50 px (a rule of Hune: 9.19e, section 5).
+// The bar of the legend is 300 px wide. A content box narrower than 350 px gets a bar of its width less 50 px, 10 px at least (a rule of Hune: 9.19e, section 5).
 const BAR_WIDTH = 300;
 const KEYS = { ArrowRight: [1, 0], ArrowLeft: [-1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
 

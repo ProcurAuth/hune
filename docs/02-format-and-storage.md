@@ -1186,7 +1186,7 @@ Object `legend`:
 |---|---|---|---|
 | `show` | boolean | `true`: the panel shows a legend | `options.legend.showLegend`; `displayMode = "hidden"` gives `false` |
 | `placement` | enum | `bottom` or `right` | `options.legend.placement` |
-| `mode` | enum | `list`: one line of series names. `table`: one row for each series, with the values of `values`. | `options.legend.displayMode` (`list`, `table`) |
+| `mode` | enum | `list`: one line of series names. `table`: one row for each series, with the values of `values`. With `values` empty, the table has the column "Name" only. | `options.legend.displayMode` (`list`, `table`) |
 | `values` | array of enum | 0 to 5 items, no two equal. Each item is a value of `reduce.calc` in the table below (the 18 values of `calc`, with `total` for the Grafana `sum`, 9.19). In a `piechart`: 0 to 2 items from `value`, `percent`. | `options.legend.calcs`; in a `piechart`, `options.legend.values` |
 | `sort_by` | enum, optional | The column that sorts the legend table. Default: absent, which keeps the series order. Outside a `piechart`: `name` or one of the 18 values of `reduce.calc` in the table below (19 values in all). In a `piechart`: `name`, `value` or `percent`. The column does not need to be in `values`. | `options.legend.sortBy`, a column title (15.6) |
 | `sort_desc` | boolean, optional | `true`: the sort goes from the largest to the smallest value, or from `z` to `a` for `name`. Default `false`. | `options.legend.sortDesc` |
@@ -1204,7 +1204,7 @@ Object `reduce`:
 | Member | Type | Rule | Grafana source |
 |---|---|---|---|
 | `calc` | enum | `last`, `last_not_null`, `first`, `first_not_null`, `min`, `max`, `mean`, `total`, `count`, `median`, `std_dev`, `variance`, `range`, `diff`, `diff_percent`, `delta`, `distinct_count`, `change_count` (9.19 gives each one) | `options.reduceOptions.calcs`, an array of one item (section 15 gives the class of another length) |
-| `fields` | text or null | `null`: each field of type number. Else a pattern of the Grafana form (4.24) on the display names. | `options.reduceOptions.fields`; the empty text gives `null` |
+| `fields` | text or null | `null`: each field of the kind `number` or `number_text`. Else a pattern of the Grafana form (4.24) on the base display names (9.13). A pattern keeps a field of any kind. | `options.reduceOptions.fields`; the empty text gives `null` |
 | `values` | boolean | `true`: one item for each row, with no reduction. `false`: one item for each field, reduced with `calc`. | `options.reduceOptions.values` |
 
 ### 4.27 Options of `table`
@@ -1464,10 +1464,10 @@ The object `color` has these members. All of them are necessary, also when the m
 2. The log scale. A `y_buckets` with `scale` = `log2` or `log10` MUST have `mode` = `size`. Else the validation gives `not_permitted` at `y_buckets/mode`.
 3. The colour range. When `color.min` and `color.max` are both numbers, `min` MUST be lower than `max`. Else the validation gives `out_of_range` at `color/max`.
 4. The tooltip. The member `mode` works as in 4.26. The member `sort` MUST be absent or `none`. The member `hide_zeros` MUST be absent or `false`. Else the validation gives `not_permitted` at the member.
-5. The field settings. The members `unit`, `decimals` and `display_name` of 4.18 apply to the values of the frame. They are the y values with `calculate` = `true`, and the counts with `calculate` = `false`. The other members of 4.18 are valid and have no effect, because the colours come from `color`.
+5. The field settings. The members `unit`, `decimals` and `display_name` of 4.18 apply to the values of the frame. They are the y values with `calculate` = `true`, and the counts with `calculate` = `false`. The member `hide_from` of 4.18 has one effect: a field with `viz` equal to `true` is not a value field (9.19e, section 1). The other members of 4.18 are valid and have no effect, because the colours come from `color`.
 6. The style members of a series (`draw`, `line_width`, `fill_opacity`, `show_points`, `point_size`, `line_dash`, `transform`, `axis_placement`, `axis_label`, `soft_min` and `soft_max`) are not for this type. In a property set they give `not_permitted` (4.18, rule 5).
 7. The limits. The format limits are in the tables. The page has the caps `MAX_BUCKET_VALUES` and `MAX_HEAT_CELLS` (9.19e). A document that breaks a cap is valid, and the page shows a message.
-8. The defaults of a new panel are in 9.19e, section 13.
+8. The defaults of a new panel are in 9.19e, section 11.
 
 The fixture `tests/fixtures/dashboards/heatmap.json` holds the boundary cases of the options. The files `tests/fixtures/dashboards/invalid/f31_heatmap_*.json` hold one error each (16.3).
 
@@ -3447,16 +3447,16 @@ An error of 5.4 stops the command with exit code 1 and the error text. A dashboa
 
 A file names one store or more. Each block `storage.volume "<id>"` is one volume store. The block `storage.postgres` is the PostgreSQL store. The type `Stores` of `hune-store` holds them behind the `Store` trait (5.3).
 
-1. The primary store is the store with `primary = true`. At most one store has it. It is the only store that accepts a write.
-2. A file with no primary store has no edit. The nine write routes answer `403 editing_disabled`, and the page shows no edit control. Hune publishes no `dashboard.write` and no `source.query`, and `GET /api/sources` is empty (section 11, section 13).
+1. The primary store is the store with `primary = true`. Exactly one store has it. It is the only store that accepts a write, and the only store that has history.
+2. A file with no primary store, and a file with two or more, stop the start (5.43). Thus a write is always possible, and Hune always publishes `dashboard.write` and `source.query` (section 11).
 3. The id of a volume store is its label. The id of the PostgreSQL store is `postgres`. A volume cannot have the label `postgres`.
 4. Each other store is read-only. A read-only volume takes no lock and writes no file (5.19). A read-only PostgreSQL store sends no write to the database.
 5. A write whose target is in a read-only store returns `ReadOnly`. The target is the store of the folder or of the uid. A move needs the primary store for the dashboard and for the target folder.
 6. The content of the primary store shows at the root of the page. Each read-only store shows as one root folder. The `title` of the store is the name of this folder, and the folders of the store are below it.
 7. A folder id is unique across all stores. A dashboard uid is unique across all stores. The title of a read-only store is not the title of a folder of the primary store. A `create_folder` or a `rename_folder` with such a title returns `Exists`.
-8. Only the primary store has history. `history` of a dashboard of a read-only store gives an empty list. `version` gives `VersionNotFound`.
+8. Only the primary store has history. `history` of a dashboard of a read-only store gives an empty list. `version` gives `VersionNotFound`. The API does not offer these calls for such a dashboard (6.17).
 9. Each store has its own period of poll. The poller wakes at the shortest period, and `Stores` polls a store when its period has passed.
-10. A command of the command line works on the primary store only. A file with no primary store gives an error. `migrate-store` needs `storage.postgres` as the primary store.
+10. A command of the command line works on the primary store only. `migrate-store` needs `storage.postgres` as the primary store.
 11. A primary volume that more than one instance writes needs a volume that the instances share, with the lock of 5.16. A read-only volume can be a copy for each instance. The PostgreSQL store is shared by all instances.
 
 ### 5.43 Stores: checks at start
@@ -3470,6 +3470,7 @@ The start stops with exit code 1 in each of these cases. The message names the s
 5. A dashboard uid exists in two stores.
 6. A folder of the primary store has the title of a read-only store.
 7. A label, a path or a title that two stores share, and two paths where one holds the other (section 13).
+8. The file has no primary store, or it has two or more (13.14, C10).
 
 A foreign entry in a volume stays a data error: Hune ignores it and writes `store.entry_ignored` (5.10). The PostgreSQL store keeps a row that is not valid as an invalid entry (5.8, rule 5). Hune writes one line `store.loaded` for each store, with its label, its folders, its dashboards and its invalid entries.
 

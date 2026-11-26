@@ -69,8 +69,10 @@ pub struct PepInputs {
     pub cache_ttl: Duration,
     /// `access.pdp.max_connections`.
     pub max_connections: usize,
-    /// `server.editing`.
-    pub editing: bool,
+    /// `server.history`: the action `dashboard.history` is published when it is true.
+    pub history: bool,
+    /// `server.export`: the action `dashboard.export` is published when it is true.
+    pub export: bool,
     /// The `clickhouse` blocks, the `postgres` blocks and then the `mongodb` blocks, each in the order of the file.
     pub sources: Vec<SourceInfo>,
 }
@@ -96,7 +98,8 @@ impl PepInputs {
             timeout: a.pdp.timeout,
             cache_ttl: a.pdp.cache_ttl,
             max_connections: a.pdp.max_connections as usize,
-            editing: config.storage.editing(),
+            history: config.server.history,
+            export: config.server.export,
             sources: crate::server::source_blocks::blocks(config)
                 .into_iter()
                 .map(|b| SourceInfo {
@@ -165,32 +168,42 @@ impl PepInputs {
         let mut builder = ActionDocumentBuilder::new(self.audience.clone())
             .resource_type("folder", "service", "One folder of dashboards, by its id.")
             .resource_type("dashboard", "folder", "One dashboard, by its uid.")
-            .resource_type(
-                "source",
-                "service",
-                "One data source of the configuration, by the id of its block.",
-            )
+            .resource_type("source", "service", "One data source of the configuration, by the id of its block.")
             .action(
                 "dashboard.read",
                 &["service", "folder", "dashboard"],
-                "List and open dashboards, run their saved queries and the queries of their variables, and read their history.",
+                "List and open dashboards, and run their saved queries and the queries of their variables.",
                 &["max_rows", "max_duration"],
             );
-        if self.editing {
-            builder = builder
-                .action(
-                    "dashboard.write",
-                    &["service", "folder", "dashboard"],
-                    "Create, change, move, restore and delete dashboards. Create, rename and delete folders.",
-                    &[],
-                )
-                .action(
-                    "source.query",
-                    &["service", "source"],
-                    "Run SQL that is not saved on this source, and save dashboards whose SQL uses this source.",
-                    &["max_rows", "max_duration"],
-                );
+        if self.history {
+            builder = builder.action(
+                "dashboard.history",
+                &["service", "folder", "dashboard"],
+                "List the versions of a dashboard of the primary store, read one version and compare two versions. With dashboard.write, restore a version.",
+                &[],
+            );
         }
+        if self.export {
+            builder = builder.action(
+                "dashboard.export",
+                &["service", "folder", "dashboard"],
+                "Download the file of the current document of a dashboard.",
+                &[],
+            );
+        }
+        builder = builder
+            .action(
+                "dashboard.write",
+                &["service", "folder", "dashboard"],
+                "Create, change, move, restore and delete dashboards. Create, rename and delete folders.",
+                &[],
+            )
+            .action(
+                "source.query",
+                &["service", "source"],
+                "Run SQL that is not saved on this source, and save dashboards whose SQL uses this source.",
+                &["max_rows", "max_duration"],
+            );
         let max_rows = self.sources.iter().map(|s| s.max_rows).max().unwrap_or(1).max(1);
         let max_seconds = self.sources.iter().map(|s| s.max_seconds).max().unwrap_or(1).max(1);
         builder = builder
@@ -210,10 +223,8 @@ impl PepInputs {
                 1,
                 max_seconds,
             );
-        if self.editing {
-            for source in self.sorted_sources() {
-                builder = builder.resource(&format!("source:{}", source.id), Some(&source.label));
-            }
+        for source in self.sorted_sources() {
+            builder = builder.resource(&format!("source:{}", source.id), Some(&source.label));
         }
         builder.build()
     }

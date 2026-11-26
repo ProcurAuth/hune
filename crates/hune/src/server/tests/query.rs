@@ -852,9 +852,7 @@ async fn a24_preview_refusals() {
 #[tokio::test]
 async fn a24_preview_is_a_write_route() {
     let fake = Fake::start(queries(FRAME_BODY)).await;
-    let h = start_with_fake(&fake, fill, super::harness::no_primary).await;
-    let r = post_preview(&h, "prod", &preview_body(json!({}))).await;
-    assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"));
+    let h = start_with_fake(&fake, fill, |_| {}).await;
     let r = call(
         h.addr,
         "POST",

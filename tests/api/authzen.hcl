@@ -6,6 +6,8 @@ server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
+  history                 = true
+  export                  = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "30s"

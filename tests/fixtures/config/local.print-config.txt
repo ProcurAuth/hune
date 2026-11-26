@@ -1,6 +1,8 @@
 server.listen = "0.0.0.0:8080"  # file
 server.ops_listen = "0.0.0.0:9090"  # file
 server.base_path = "/"  # file
+server.history = true  # file
+server.export = true  # file
 server.query_inspect = false  # default
 server.repeat_max_per_panel = 24  # default
 server.repeat_max_per_section = 12  # default
