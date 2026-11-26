@@ -2359,7 +2359,7 @@ Look of the charts (`timeseries`, `barchart`, `xychart`):
 - The value has the font of the page, weight 500 and a line height of 1.2. A tile has a padding of 12 px, or 8 px when its height is 100 px or less. The unit is 0.9 of the value size below 20 px, 0.8 below 30 px and 0.6 from 30 px up.
 - A tile is wide when its width is more than 2.5 times its height. A wide tile shows the name at the left and the value at the right. Another tile shows the name above the value. In a wide tile the name is 0.7 of the value size.
 - The page measures the text with its unit at 100 px, and scales it. The text uses 0.985 of the room in the width, and all the room in the height. The size is 6 px at least. The value has no upper limit, so a stat in the view of one panel is very large, as in Grafana.
-- In a tile that is not wide, the name takes 0.15 of the room in the height at most. Its size is 30 px at most. The grid of tiles reaches the four edges of the panel content. Thus a background colour fills the whole panel.
+- In a tile that is not wide, the name takes 0.15 of the room in the height at most. Its size is 30 px at most. The grid of tiles reaches the four edges of the panel content. Thus a background colour fills the whole panel. When a warning line shows above the panel (9.14), the grid starts under the line. It still reaches the three other edges.
 - A stat with no value, and a stat with zero rows, show `no_value`, else "No data". The text has the size and the weight of a value (9.14).
 - With `color_mode = "value"`, a colour with a contrast below 4.5:1 with the panel moves toward the text colour, up to 4.5:1. A value text of 24 px or more is a large text: its least contrast is 3:1.
 - A named colour uses the table "Light fills" in the light theme (9.16).
@@ -2486,6 +2486,10 @@ The options `title_size` and `value_size` (same item) set the font sizes of the 
 - The value text has the colour of the item and weight 400. Its box is at most 0.2 of the item width wide, and 150 px at most.
 - With `reduce.values = true`, an item has the name of its row (the first `text` field). When the data has several numeric fields, the name is `<row> <field>`.
 - A vertical bar gauge shows the value on top and the name below. When `show_unfilled` is `false`, the value sits on top of the filled part.
+- With `display_mode = "lcd"`, the bar is a row of cells. A cell is 10 px long, and two cells are 2 px apart. The cells start at the foot of a vertical bar and at the left of a horizontal bar. A track holds `max(1, floor((L + 2) / 12))` cells, where `L` is its length in px. An unlit cell has the colour of the step at 18 % opacity.
+- In the mode `lcd`, `show_unfilled = true` draws the track of the other modes behind the cells: the colour `--bar-off` with a radius of 4 px. With `false`, the track has no colour. The unlit cells show in both cases.
+- Two items are 10 px apart in a horizontal bar gauge, and 2 px apart in a vertical one. An item is 10 px high at least in a horizontal gauge, and 16 px wide at least in a vertical one. The name of a vertical item is a line of 22 px.
+- The value of a vertical item has the size `max(6, min(0.1 × H, 0.975 × W × 100 / w100))`. `H` is the height of the gauge. `W` is the width of the item. `w100` is the width of the text at 100 px.
 
 #### 9.19a No scroll bar of less than one pixel
 
@@ -3124,7 +3128,7 @@ A gauge draws each value on an arc (4.33e). It is the classic gauge of Grafana 1
 
 1. The arc goes from 0.9 π to 2.1 π, clockwise: from the lower left, over the top, to the lower right. It has 216 degrees.
 2. The width of the arc is `min(T / 5.5, 40)` px. With `show_threshold_labels` it is that width divided by 1.5. The band of the threshold markers is one fifth of the arc width.
-3. The value text fits a width of `0.9 × min(box width, 1.3 × T)` less `2 × (arc width + marker room + 10 with labels) + 10`. The marker room is the band width when `show_threshold_markers` is not `false`. It is 0 when the option is `false`. It stays when the colour mode draws no band. Its size is the smallest of `T`, the width at which the text fits, and `1.7 ×` the arc width. The page measures the text at 14 px in the font Inter. `value_size` replaces the size.
+3. The value text fits a width of `0.9 × min(box width, 1.3 × T)` less `2 × (arc width + marker room + 10 with labels) + 10`. The marker room is the band width when `show_threshold_markers` is not `false`, else 0. It stays when the colour mode draws no band. Its size is the smallest of `T`, the width at which the text fits, and `1.7 ×` the arc width. The page measures the text at 14 px in the font Inter. `value_size` replaces the size.
 4. A threshold label has the size `max(value size / 2.5, 12)` px.
 5. The radius is the smaller of two values. The first is the half width of the box less 5 px, the band and the room of the labels. The second comes from the height of the box less 10 px, divided by `1 + sin(0.1 π)`, less the band and the room of the labels. The value text can need more room under the centre. Then the second value is the height less 10 px, a margin of `max(1, box width / 30)` and half the value size.
 6. The arc is in the middle of the box, vertically. When the arc width is not below the radius, the arc width is `max(3, radius / 3)`.

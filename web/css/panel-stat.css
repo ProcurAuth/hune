@@ -10,6 +10,8 @@
   display: flex; overflow: auto; scrollbar-width: thin;
   flex-direction: column;
 }
+/* A warning line (the draft of an override with a bad pattern) lies above the plot. The grid starts under it and bleeds at the three other edges. */
+.panel__warning + .panel__plot > .stat { top: 0; }
 .stat__item {
   position: relative; display: flex; box-sizing: border-box; align-items: center; overflow: hidden;
   transition: background-color var(--motion-base) var(--ease);
@@ -80,6 +82,8 @@
 .bargauge--vertical .bargauge__fill { top: auto; bottom: 0; left: 0; width: 100%; }
 /* LCD cells: 10 px with a gap of 2 px; a lit cell is a soft disc of its colour, an unlit cell the same colour at a low opacity. */
 .bargauge[data-mode="lcd"] .bargauge__track { gap: 2px; border-radius: 0; background: none; }
+/* `show_unfilled` (4.33) in `lcd`: the track of the other modes lies behind the cells, as the switch has the same meaning in each mode. */
+.bargauge[data-mode="lcd"] .bargauge__track--unfilled { border-radius: 4px; background: var(--bar-off); }
 .bargauge--horizontal[data-mode="lcd"] .bargauge__track { flex-direction: row; justify-content: flex-start; }
 .bargauge--vertical[data-mode="lcd"] .bargauge__track { flex-direction: column-reverse; justify-content: flex-start; }
 .bargauge__cell { flex: 0 0 10px; border-radius: 2px; background-color: color-mix(in srgb, var(--cell, var(--viz-green)) 18%, transparent); }
