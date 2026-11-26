@@ -53,7 +53,7 @@ export const BAR_VARIANTS = [
   ["h-off", "horizontal, legend off, with a title", { orientation: "horizontal", legend: lg({ show: false }) }, d({ axis_label: "Weight" })],
   ["h-band", "horizontal, axis width 30", { orientation: "horizontal", legend: lg() }, d({ axis_width: 30 })],
   ["h-percent", "horizontal, percent stack", { orientation: "horizontal", stacking: "percent", legend: lg({ show: false }) }, d()],
-  ["auto-tall", "auto, higher than wide", { orientation: "auto", legend: lg() }, d(), { w: 6, h: 10 }],
+  ["auto-tall", "auto, higher than wide", { orientation: "auto", legend: lg() }, d(), { w: 6, h: 14 }],
   ["auto-wide", "auto, wider than high", { orientation: "auto", legend: lg() }, d(), { w: 12, h: 6 }],
   ["short-list", "vertical, a short panel", { orientation: "vertical", legend: lg() }, d(), { w: 12, h: 3 }],
 ];
