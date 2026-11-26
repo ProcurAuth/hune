@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { applyLegend } from "../../web/js/panels/common.js";
 import { xDomainOf } from "../../web/js/panels/timeseries.js";
 import { axisPlan } from "../../web/js/panels/series.js";
+import { hbarLegendModel, sortLegend } from "../../web/js/panels/barchart_h.js";
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), "../../web");
 const css = readFileSync(join(WEB, "css/panel-chart.css"), "utf8");
@@ -94,4 +95,34 @@ test("spec 9.19: a legend under the plot in the fallback scrolls beyond 35 % of 
   const wrap = rule(".panel__plot[data-legend-fallback] .chartCore__legendTableWrap {");
   assert.match(wrap, /max-height: var\(--legend-max/);
   assert.doesNotMatch(wrap, /max-height: 8rem/);
+});
+
+// A series of the horizontal bars: the name, the values and the flags of `hide_from`.
+const bar = (label, values, flags = {}) => {
+  const v = Float64Array.from(values);
+  return { id: label, label, values: v, field: { kind: "number", values: v, nulls: new Uint8Array(v.length), config: { unit: "none", decimals: null } }, legendHidden: false, ...flags };
+};
+
+test("spec 9.19: the legend of horizontal bars follows the shared object: show, mode, values and hide_from.legend", () => {
+  const series = [bar("a", [1, 5]), bar("b", [2, 3], { legendHidden: true }), bar("c", [9])];
+  const list = hbarLegendModel(series, { show: true, placement: "bottom", mode: "list", values: ["max"] });
+  assert.deepEqual([list.show, list.mode, list.columns, list.entries.map((s) => s.label)], [true, "list", [], ["a", "c"]], "a list has no column, and a hidden entry is out");
+  const table = hbarLegendModel(series, { show: true, placement: "right", mode: "table", values: ["last", "max", "last", "bogus"] });
+  assert.deepEqual([table.mode, table.columns], ["table", ["last", "max"]], "the columns of the document, with no duplicate");
+  assert.deepEqual(hbarLegendModel(series, { show: true, placement: "bottom", mode: "table", values: [] }).columns, [], "values = [] gives the column Name only");
+  assert.equal(hbarLegendModel(series, { show: false, placement: "bottom", mode: "list", values: [] }).show, false);
+  const hidden = [bar("a", [1], { legendHidden: true })];
+  assert.equal(hbarLegendModel(hidden, { show: true, placement: "right", mode: "list", values: [] }).show, false, "every entry hidden: no legend");
+  assert.equal(hbarLegendModel([], { show: true, placement: "bottom", mode: "list", values: [] }).show, false, "no series: no legend");
+});
+
+test("spec 9.19: the legend table sorts by name or by a calculation, with the empty keys last", () => {
+  const series = [bar("b", [5]), bar("A", [9]), bar("c", [NaN]), bar("d", [1])];
+  const names = (sort) => sortLegend(series, sort).map((s) => s.label);
+  assert.deepEqual(names(null), ["b", "A", "c", "d"]);
+  assert.deepEqual(names({ by: "name", desc: false }), ["A", "b", "c", "d"]);
+  assert.deepEqual(names({ by: "name", desc: true }), ["d", "c", "b", "A"]);
+  assert.deepEqual(names({ by: "max", desc: false }), ["d", "b", "A", "c"]);
+  assert.deepEqual(names({ by: "max", desc: true }), ["A", "b", "d", "c"]);
+  assert.deepEqual(names({ by: "last_not_null", desc: false }), ["d", "b", "A", "c"]);
 });

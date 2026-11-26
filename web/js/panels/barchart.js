@@ -103,7 +103,7 @@ function draw(host, ctx, horizontal) {
   const axis = { label: firstWith("label"), softMin: firstWith("softMin"), softMax: firstWith("softMax"), grid, look };
   // The chart engine has no horizontal bars: Hune code draws them (9.24).
   if (horizontal) {
-    return renderHorizontalBars(host, { categories, series, options: o, axis, gradient: o.gradient_mode, legend: { show: !!(o.legend && o.legend.show), placement: o.legend ? o.legend.placement : "bottom" } }, panel);
+    return renderHorizontalBars(host, { categories, series, options: o, axis, gradient: o.gradient_mode, legend: o.legend || { show: false, placement: "bottom", mode: "list", values: [] } }, panel);
   }
   const thresholdStyle = o.thresholds_style || "off";
   const stacked = o.stacking && o.stacking !== "none";

@@ -4,7 +4,7 @@
 // only with textContent.
 
 import { el } from "../ui.js";
-import { canvasColor, chartLabel, explicitBounds, isDarkTheme, yTickLabeller } from "./common.js";
+import { CALC_COLUMNS, LEGEND_HEADS, canvasColor, chartLabel, explicitBounds, isDarkTheme, legendCalc, legendFormatter, reduceValues, yTickLabeller } from "./common.js";
 import { cssGradient, partGradient } from "./gradient.js";
 import { niceStepAtLeast, stepDecimals } from "./series.js";
 import { markCss, parseCss } from "../colors.js";
@@ -24,6 +24,45 @@ const PERCENT_AXIS = Object.freeze({ min: 0, max: 100, step: 20, values: [0, 20,
 /** The text of a number for the field `field`: its unit and decimals. */
 function valueText(field, v) {
   return Number.isFinite(v) ? joinParts(formatNumber(v, field.config.unit, field.config.decimals)) : "";
+}
+
+const LEGEND_MAX_SHARE = 0.35; // the legend keeps at most 35 % of the height of the panel (9.19)
+const MIN_PLOT_WIDTH = 220; // a legend at the right keeps the plot at least this wide (9.19)
+const LEGEND_GAP = 8;
+const collator = new Intl.Collator("en", { sensitivity: "base" });
+
+/**
+ * The legend of the horizontal bars (pure), from the shared object `legend` of 4.26 as the vertical form reads it (9.19): the legend shows when
+ * `show` is not false and a series has an entry (`hide_from.legend` removes an entry). `mode` `table` has one column for each value of `values`,
+ * in document order. `values` = [] gives the column "Name" only. Returns `{ show, mode, columns, entries }`.
+ */
+export function hbarLegendModel(series, legend) {
+  const l = legend || { show: false };
+  const entries = series.filter((s) => !s.legendHidden);
+  const table = l.mode === "table";
+  const columns = table ? (l.values || []).filter((v, k, all) => CALC_COLUMNS.has(v) && all.indexOf(v) === k) : [];
+  return { show: l.show !== false && entries.length > 0, mode: table ? "table" : "list", columns, entries };
+}
+
+/**
+ * The rows of the legend table in the order of `sort` (`{ by, desc }`, or null for the series order), as 9.19 says: the key is the name or the
+ * calculation `by` of the series. A row with no key goes last in both directions, and equal keys keep the series order.
+ */
+export function sortLegend(entries, sort) {
+  if (!sort || !sort.by) return entries.slice();
+  const key = (s) => {
+    if (sort.by === "name") return s.label;
+    const v = ["total", "min", "max", "mean", "last"].includes(sort.by) ? reduceValues(s.values)[sort.by] : legendCalc(s, sort.by);
+    return Number.isFinite(v) ? v : null;
+  };
+  const keyed = entries.map((s, i) => ({ s, i, k: key(s) }));
+  const sign = sort.desc ? -1 : 1;
+  keyed.sort((a, b) => {
+    if (a.k === null || b.k === null) return a.k === b.k ? a.i - b.i : a.k === null ? 1 : -1;
+    const c = sort.by === "name" ? collator.compare(a.k, b.k) : a.k - b.k;
+    return c ? sign * c : a.i - b.i;
+  });
+  return keyed.map((r) => r.s);
 }
 
 /**
@@ -55,13 +94,13 @@ export function barAxis(data, widthPx, binary = false, tickGap = TICK_GAP) {
 
 /**
  * Draw the bars. `model`: `{ categories: string[], series: [{ id, label, color, values, field }], options, legend }`
- * where `legend` is `{ show, placement }` and `options` has `stacking`, `show_values`, `bar_width`, `group_width`,
+ * where `legend` is the shared object of 4.26 (`show`, `placement`, `mode`, `values`, `sort_by`, `sort_desc`) and `options` has `stacking`, `show_values`, `bar_width`, `group_width`,
  * `tooltip.mode`. Returns `{ destroy }`.
  */
 export function renderHorizontalBars(host, model, panel) {
   const { categories, series, options: o } = model;
   const axisModel = model.axis || { label: null, softMin: null, softMax: null };
-  const legend = model.legend || { show: false, placement: "bottom" };
+  const legend = model.legend || { show: false, placement: "bottom", mode: "list", values: [] };
   const stacked = o.stacking === "normal" || o.stacking === "percent";
   const percent = o.stacking === "percent";
   const n = categories.length;
@@ -95,7 +134,7 @@ export function renderHorizontalBars(host, model, panel) {
   if (look.centred && !percent && m < Infinity) extent.push(-m, m);
   const bounds = percent ? [0, 100] : extent;
 
-  const root = el("div", { class: "hbar", role: "img", "aria-label": chartLabel(panel), dataset: { testid: `hbar-${panel.id}`, legendPlacement: legend.placement || "bottom" } });
+  const root = el("div", { class: "hbar", role: "img", "aria-label": chartLabel(panel), dataset: { testid: `hbar-${panel.id}`, legendPlacement: legend.show === false ? "bottom" : legend.placement || "bottom" } });
   // `fill_opacity` and `line_width` (4.30): the CSS of a bar reads them. The line stays inside the bar, as in Grafana.
   root.style.setProperty("--fa", `${o.fill_opacity ?? 80}%`);
   root.style.setProperty("--lw", `${o.line_width ?? 1}px`);
@@ -115,17 +154,56 @@ export function renderHorizontalBars(host, model, panel) {
   if (axisModel.label) plot.append(el("div", { class: "hbar__axisTitle", text: axisModel.label }));
   const tip = el("div", { class: "hbar__tip", role: "presentation", hidden: true });
   root.append(plot);
-  if (legend.show) {
-    root.append(
-      el(
-        "div",
-        { class: "hbar__legend", role: "group", "aria-label": "Series" },
-        ...series.map((s) => el("span", { class: "hbar__legendItem", title: s.label }, el("i", { style: { "background-color": s.color } }), el("span", { text: s.label }))),
-      ),
-    );
-  }
+  const legendModel = hbarLegendModel(series, model.legend);
+  const legendEl = legendModel.show ? buildLegend(legendModel, series, model.legend) : null;
+  if (legendEl) root.append(legendEl);
   root.append(tip);
   host.append(root);
+
+  // The legend table and the list (9.19). The head of a column sorts the rows in three steps: up, down, series order.
+  function buildLegend(m, list, shared) {
+    const box = el("div", { class: "hbar__legend", role: "group", "aria-label": "Series", dataset: { mode: m.mode } });
+    const item = (s) => el("span", { class: "hbar__legendItem", title: s.label }, el("i", { style: { "background-color": s.color } }), el("span", { text: s.label }));
+    if (m.mode === "list") {
+      box.append(...m.entries.map(item));
+      return box;
+    }
+    const fmt = legendFormatter(m.entries, m.columns);
+    const cell = (s, name) => {
+      const v = ["total", "min", "max", "mean", "last"].includes(name) ? reduceValues(s.values)[name] : legendCalc(s, name);
+      return Number.isFinite(v) ? fmt(v, name, s) : "\u2014";
+    };
+    let sort = shared && shared.sort_by ? { by: shared.sort_by, desc: shared.sort_desc === true } : null;
+    const tbody = el("tbody");
+    const headRow = el("tr");
+    const wrap = el("div", { class: "chartCore__legendTableWrap" }, el("table", { class: "chartCore__legendTable", "aria-label": "Values of the series" }, el("thead", {}, headRow), tbody));
+    const heads = [["name", "Name"], ...m.columns.map((c) => [c, LEGEND_HEADS[c]])];
+    const paint = () => {
+      headRow.replaceChildren(...heads.map(([name, text]) => {
+        const state = sort && sort.by === name ? (sort.desc ? "descending" : "ascending") : "none";
+        const button = el("button", { type: "button", class: "chartCore__legendSort", title: `Sort by ${text}`, dataset: { column: name }, text });
+        button.addEventListener("click", () => {
+          sort = !sort || sort.by !== name ? { by: name, desc: false } : !sort.desc ? { by: name, desc: true } : null;
+          paint();
+        });
+        return el("th", { scope: "col", "aria-sort": state }, button);
+      }));
+      tbody.replaceChildren(...sortLegend(m.entries, sort).map((s) => el("tr", {}, el("th", { scope: "row" }, item(s)), ...m.columns.map((c) => el("td", { text: cell(s, c) })))));
+    };
+    paint();
+    box.append(wrap);
+    return box;
+  }
+
+  // The legend keeps at most 35 % of the height of the panel and scrolls beyond it (CSS reads --legend-max). A legend at the right keeps the
+  // plot 220 px wide at least: under that, the legend goes under the plot (data-legend-fallback), as in the vertical form.
+  function fitLegend() {
+    if (!legendEl) return;
+    legendEl.style.setProperty("--legend-max", `${Math.floor(root.clientHeight * LEGEND_MAX_SHARE)}px`);
+    if (legend.placement !== "right") return;
+    if (root.hasAttribute("data-legend-fallback")) root.removeAttribute("data-legend-fallback");
+    if (root.clientWidth < legendEl.offsetWidth + MIN_PLOT_WIDTH + LEGEND_GAP) root.setAttribute("data-legend-fallback", "");
+  }
 
   // The text of the page at 12 px measures the category names (a canvas: no layout read for each name).
   const measureCtx = document.createElement("canvas").getContext("2d");
@@ -298,8 +376,11 @@ export function renderHorizontalBars(host, model, panel) {
   root.addEventListener("pointerleave", onLeave);
 
   layout();
+  fitLegend();
   const observer = new ResizeObserver(layout);
   observer.observe(plot);
+  const legendObserver = new ResizeObserver(fitLegend);
+  legendObserver.observe(root);
   // The names were measured before the page font arrived? Measure them again once.
   const onFonts = () => layout();
   if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener("loadingdone", onFonts);
@@ -307,6 +388,7 @@ export function renderHorizontalBars(host, model, panel) {
     destroy() {
       if (document.fonts && document.fonts.removeEventListener) document.fonts.removeEventListener("loadingdone", onFonts);
       observer.disconnect();
+      legendObserver.disconnect();
       root.removeEventListener("pointermove", onMove);
       root.removeEventListener("pointerleave", onLeave);
       root.remove();
