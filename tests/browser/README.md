@@ -1,6 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B305 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 237 cases.
+This suite runs the browser cases B01 to B321 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 236 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -134,6 +134,9 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `lib/env.mjs` | The ClickHouse container, `startPostgres`, `startMongo`, `probeMongoDriver`, the volumes, the configuration, the servers and the API helper. Two callers of `startPostgres` or of `startMongo` in one run give two different tags. |
 | `lib/authzen.mjs` | The mode `authzen` of B23: keys, tokens, the policy of `fake-pdp`, and its start and stop. |
 | `lib/docs.mjs` | Builders of synthetic dashboard documents. |
+| `lib/preview_fixtures.mjs` | A fixture dashboard with one panel of each of the 14 queried types, on the seed table. |
+| `lib/preview_measure.mjs` | The measurement harness of the previews: probes, comparison by tolerance class, table. See "Measure the previews". |
+| `preview_measure.mjs` | The command of the harness. It measures a dashboard of a running server. |
 | `lib/parity.mjs` | The visual parity capture of 15.14c (`tools/parity/visual.mjs`) for B101p, B137 and B148. It runs only when the Grafana of 127.0.0.1:3010 answers. It reads `tests/fixtures/parity/visual-open-faults.json`. |
 | `lib/ed.mjs`, `lib/h.mjs` | Helpers of the editor cases and of all cases. `h.mjs` also reads the canvas texts, the tooltip and the data of the threshold hook. |
 | `cases/*.mjs` | The cases. Each case has an id, a name and one function. |
@@ -153,7 +156,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13, B24 to B27 and B233: the viewer, the page of one panel without a scrollbar, the list (cards, tags, no search field) and the base path. |
 | `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the three dots and the menu of a card, and the read-only card (9.7). |
 | `cases/stores.mjs` | The cases B241 to B244: a read-only store (`makeLabVolume`), the lock, the warning of a file that is not valid after the start (`breakFile`), the header selector and the refusal of a write. |
-| `cases/panel_preview.mjs` | The cases B280 to B282: the preview of a panel that loads for the first time (9.11). The queries are held, so the preview stays. The cases compare its plot and its legend with those of the loaded chart. They need the hold of a request, so they are `skip` with Firefox. |
+| `cases/panel_preview.mjs` | The cases B320 and B321: the loading preview of a panel (9.11). The queries are held, so the preview stays. B320 measures the preview of each of the 14 queried types with the harness, then measures the loaded panels. B321 tests the light, the reduced motion and the reload. They need the hold of a request, so they are `skip` with Firefox. |
 | `cases/var_states.mjs` | The cases B290 to B296: the states of the control of a query variable (loading, error, wait), a failure that blocks nothing, the cache of the options, the cancel of a request, and the chips of the selected values (9.10). They need the hold of a request, so they are `skip` with Firefox. |
 | `cases/root_dashboards.mjs` | The cases B300 to B305: the dashboards with no folder. The list with a root group, the dialogs New dashboard, Import and Move with the entry "Root (no folder)", the header selector, and a server with no primary store. `addRootDashboard` of `lib/env.mjs` makes a file at the root of a volume; the options `prepare` and `labPrepare` of `startServer` call it. |
 | `cases/json_view.mjs` | The cases B240, B270 and B271: the JSON view of the edit mode, its colours and their contrast, the marks of the gutter, the revert, the full height at four sizes and the caps of the colour layer; the look of VS Code (the palettes, the selection, the scroll bar); the band of the caret line, the boxes of the brackets, the guides and the wavy line of an error |
@@ -193,6 +196,28 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `lib/audit_a.mjs`, `lib/audit_b.mjs`, `lib/audit_c.mjs`, `lib/audit_rules.mjs` | The closed lists and the verdict rule of the audit B153. |
 
 Chrome profiles, server logs, downloads and failure screenshots are in `target/browser/`. A failed case keeps `artifacts/<id>-<n>.png` and its console log.
+
+## Measure the previews
+
+The harness measures the preview of each panel against the loaded panel (9.11). It does not start a server. It needs a Hune server that is on, a Chrome and a dashboard.
+
+1. Run `node tests/browser/preview_measure.mjs --url http://127.0.0.1:8080 --uid <uid>`.
+2. The command holds the queries of the panels. Each panel keeps its preview.
+3. The command reads the parts of each preview. They are the elements with `data-skel-part`. Each part has a class in `data-skel-class`: `exact`, `least`, `most` or `data`.
+4. The command releases the queries. It waits for the panels, and then it reads each loaded panel with the extractor of its type.
+5. The command prints one row for each part. A row has the preview rectangle, the loaded rectangle, the delta and the verdict.
+
+The verdicts:
+
+- `ok`: the part agrees with the loaded panel in its class. An `exact` part differs by 0.5 px at most in x, y, width and height. A `least` part is not larger than the loaded part. A `most` part is not smaller.
+- `fail`: the part differs more than the tolerance of its class.
+- `no-loaded`: the preview claims a part that the loaded panel does not have.
+- `unclaimed`: the loaded panel has a part that the preview does not claim. These rows are the targets of a family.
+- `data`: the class `data` gives no shape, and the harness does not compare it.
+
+All rectangles are `[x, y, w, h]` in px from the top left corner of the content box of the panel body. The options are `--ids 1,2`, `--all` (print the labels), `--json <file>`, `--width`, `--height`, `--query` and `--strict` (exit code 1 for a `fail` or a `no-loaded`). The default viewport is 1440 by 4000 px, because the page loads only the panels near the viewport.
+
+The harness reads the text of the axis labels with a recorder of `fillText`. The recorder is a script that runs at the start of each document.
 
 ## Limits of this suite
 
