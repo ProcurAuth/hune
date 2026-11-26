@@ -1455,24 +1455,26 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - A panel type that draws no queried data, a text, has no family and no preview.
 - Each family module gives the neutral form until the family has its own rules: an empty body with the light and the dots. The neutral form claims no part.
 - The pie chart (`piechart.js`) and the map (`geomap.js`) draw their own rules. The pie names the extra part `ring`. The map names the extra part `zoom`.
-- The pie preview reads `options.legend`, `options.pie_type`, `fields.defaults.display_name` and `fields.overrides`. No other member changes it.
+- The pie preview reads `options.legend`, `options.pie_type`, `fields.defaults.display_name` and `fields.overrides`. No other member changes it. A document with no `legend` member gets no legend, because the loaded pie has no default for it (4.26).
   - The CSS of the preview copies the rules of the loaded pie, so the browser gives the same boxes. The page sets no size in px from JavaScript. A resize or a late font changes both pictures in the same way.
   - With `legend.show` = `false`, the preview has no legend and no gap. The part `plot` is the whole box, and its class is `exact`.
   - With `legend.placement` = `bottom`, the preview keeps one line under a gap of 4 px. The line is 18.857 px high, and 42 % of the box height is its cap. The loaded legend can have more lines, so the class of `plot` is `most`. The class is `exact` when the box is lower than 44.9 px, because the cap then fixes the legend.
   - With `legend.placement` = `right`, the preview keeps the floor of 72 px under a gap of 12 px. The loaded legend can be wider, up to 52 % of the box width. The class of `plot` is `most`. The class is `exact` when the box is 138.46 px wide or less.
   - The part `legend` has the class `least`. The legend box has no mark: no swatch, no name, no value and no rule.
   - The members `legend.mode` and `legend.values` give the count of value columns. They add empty cells to the hidden row of a right legend. They change no size of the preview.
-  - When `reduce.values` is `false`, `fields.defaults.display_name` is a text with no `$` and no `[[`, and no override sets `display_name`, every item has this name. A right legend with no value column then has a fixed width. The preview gives its name cell the measured width of the text. The class of `plot` is `exact`. The name is not drawn.
-  - The part `ring` is the circle of the disc. Its diameter is the least side of the plot less 16 px, and not less than 20 px. The plot clips it. The class of `ring` is the class of `plot`.
+  - When `reduce.values` is `false`, `fields.defaults.display_name` is a text with no `$` and no `[[`, and no override sets `display_name`, every item has this name. A right legend with no value column then has a fixed width. The preview gives its name cell the measured width of the text. The class of `plot` is `exact`. The name is not drawn as a bar: the item count is data, so the row has no fixed place.
+  - The part `ring` is the circle of the disc. Its diameter is the least side of the plot less 16 px, and not less than 20 px. The plot clips it. The class of `ring` is the class of `plot`. The test reads the loaded circle from the hook `data-geometry` of the canvas (9.29).
   - With `options.pie_type` = `donut`, the ring has a hole of 0.55 of the radius. Any other value gives no hole. The ring has one tone: `--skel-fill`.
   - The preview has no slice, no slice edge, no label and no zero-total outline. The data fix the count of items, their names, values and colours, so no shape stands for them.
   - The ring can move when the data come, because the loaded legend can be wider or higher than the preview legend.
-- The map preview reads `options.show_zoom` and `fields.overrides`. No other member changes it.
+- The map preview reads `options.show_zoom` and `fields.overrides`. No other member changes it. It reads no server configuration and no kept view.
   - The map node takes the whole box. It has no fill, no legend, no gutter, no line, no tile and no marker. The data and the server configuration fix them. The part `plot` has the class `exact`.
   - With `options.show_zoom` = `true`, the map node holds two squares of 19.25 px. They are at 8 px from the top left corner, one under the other, with no gap. The map node clips them. The part `zoom` has the class `exact`.
   - The squares have the tone `--skel-fill` and no glyph. The state of a glyph depends on the kept view, so it is not in the document.
   - With any other value of `options.show_zoom`, the preview has no square.
-- A warning line of an invalid `regex` override has its own place in the pie and in the map. The preview has the same element as the loaded line, with the same icon and text, in `visibility: hidden`. It keeps the room, and the browser gives its wrapped height. The part `warning` has the class `exact`. A stored document cannot hold such a pattern, so only a draft shows the line.
+- A warning line of an invalid `regex` override has its own place in the pie and in the map. The preview has the same element as the loaded line, with the same icon and text. The part `warning` has the class `exact`. A stored document cannot hold such a pattern, so only a draft shows the line.
+  - The text of the line is a text that the document fixes. The preview draws each wrapped line of it as a bar: 8 px high, with round ends, and as wide as the text of that line. It draws no glyph. The icon keeps its place and is not drawn.
+  - The browser wraps the text, so the preview line has the height of the loaded line. The preview does not compute a height.
 - Each element that a test measures has two attributes. The attribute `data-skel-part` names the part: `box`, `plot`, `legend`, `warning`, `axis-y`, `axis-x`, `label`, `head`, `row`, `column`, `tile`, `arc`, `track`, `scale` or `mark`. The attribute `data-skel-class` gives the tolerance class. The root element has `data-skel`, the key of the family.
 - The tolerance classes tell how exact a part is, against the loaded panel:
 
