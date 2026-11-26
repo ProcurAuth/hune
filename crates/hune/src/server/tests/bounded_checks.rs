@@ -302,7 +302,13 @@ fn grants(list: Vec<(&'static str, &'static str)>) -> impl Fn(&Q) -> Ans + Send 
 }
 
 fn allow_all() -> impl Fn(&Q) -> Ans + Send + Sync + 'static {
-    grants(vec![("dashboard.read", ""), ("dashboard.write", ""), ("source.query", "")])
+    grants(vec![
+        ("dashboard.read", ""),
+        ("dashboard.history", ""),
+        ("dashboard.export", ""),
+        ("dashboard.write", ""),
+        ("source.query", ""),
+    ])
 }
 
 async fn start_authzen(pdp: &Pdp) -> Harness {
@@ -392,10 +398,10 @@ async fn k312_a_subject_with_no_grant_gets_403_and_the_validator_never_runs() {
 }
 
 /// A subject with the grants sends an invalid document: the decision comes first, then the validation gives `422`.
-/// A document that the pre-pass cannot read asks the use alone. A restore asks the use alone, reads the version,
-/// validates it, then asks the others and the use: three PDP requests at `cache_ttl = 0` (11.13).
+/// A document that the pre-pass cannot read asks the use alone. A restore asks the use with the history right, reads
+/// the version, validates it, then asks the others and the use: four PDP requests at `cache_ttl = 0` (11.13).
 #[tokio::test]
-async fn k312_a_granted_subject_gets_the_decision_then_422_and_a_restore_asks_three_times() {
+async fn k312_a_granted_subject_gets_the_decision_then_422_and_a_restore_asks_four_times() {
     let pdp = Pdp::start(allow_all()).await;
     let h = start_authzen(&pdp).await;
     let state = h.state();
@@ -454,10 +460,16 @@ async fn k312_a_granted_subject_gets_the_decision_then_422_and_a_restore_asks_th
     let n = "folder:transit/dashboard:nodes";
     assert_eq!(
         shorts(&pdp),
-        vec![pair("dashboard.write", n), pair("source.query", "source:prod"), pair("dashboard.write", n)],
-        "the use alone, then the others, then the use"
+        vec![
+            pair("dashboard.history", n),
+            pair("dashboard.write", n),
+            pair("dashboard.history", n),
+            pair("source.query", "source:prod"),
+            pair("dashboard.write", n)
+        ],
+        "the history right and the use, then the others and the use"
     );
-    assert_eq!(pdp.requests(), 3);
+    assert_eq!(pdp.requests(), 4);
 }
 
 /// The check after the validation (11.21): a pre-pass that misses a source gives `500`, the log line

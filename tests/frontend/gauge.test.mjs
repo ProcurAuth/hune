@@ -244,3 +244,31 @@ test("FE-84: a gauge with reduce.values reads 25 rows of a frame of 100,000 rows
   assert.ok(read.size <= 25 && Math.max(...read) === 24, `rows read: ${read.size}, the last ${Math.max(...read)}`);
   handle.destroy();
 });
+
+// These tests pin the rules of 9.19g that the code and the text now share (the council of the gauge, D4).
+test("9.19g rule 2.5: an empty scale draws the labels of the minimum and of the maximum and the value text", () => {
+  const calls = [];
+  const geo = gaugeGeometry({ cw: 300, ch: 200, sizeW: 200, sizeH: 200, w14: 20, labels: true, markers: true, bands: true });
+  const two = { mode: "absolute", steps: [{ value: null, color: "green" }, { value: 80, color: "red" }] };
+  const entries = bandEntries(two, 42, 42, 2).map((e) => ({ ...e, paint: "#0f0" }));
+  drawGauge(fakeContext(calls), geo, { min: 42, max: 42, entries, value: 42, neutral: null, labels: true, bands: true, colors: { track: "#000", arc: "#111", value: "#222", label: "#333" }, label: "V", family: "Inter" });
+  assert.deepEqual(calls.map((c) => c.text), ["42", "42", "V"], "the label of the minimum, the label of the maximum, then the value text");
+});
+
+test("9.19g rule 4.3: title_size sets the line of the title and not the height of the gauge", () => {
+  const plain = cellParts({ w: 161, h: 238, title: true, orientation: "auto" });
+  const fixed = cellParts({ w: 161, h: 238, title: true, orientation: "auto", titleSize: 40 });
+  assert.equal(autoSize(161, 238, true).gaugeH, 161);
+  assert.equal(fixed.canvasH, plain.canvasH, "the gauge has the height of the automatic size");
+  assert.equal(fixed.titleSize, 40);
+  assert.ok(fixed.titleH > plain.titleH, "the title line follows the fixed size");
+});
+
+test("9.19g rules 5.3 and 6.4: the marker room reads the option, the band needs two entries", () => {
+  const base = { cw: 300, ch: 200, sizeW: 300, sizeH: 200, w14: 60, labels: false, bands: false };
+  const on = gaugeGeometry({ ...base, markers: true });
+  const off = gaugeGeometry({ ...base, markers: false });
+  assert.ok(on.valueSize < off.valueSize, "the width of the value text loses the marker room when the option is on, also with no band");
+  assert.equal(on.markW, 0, "no band: no band width in the record");
+  assert.ok(gaugeGeometry({ ...base, markers: true, bands: true }).markW > 0);
+});

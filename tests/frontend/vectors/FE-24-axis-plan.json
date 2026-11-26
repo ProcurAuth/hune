@@ -317,7 +317,7 @@
    ]
   },
   {
-   "name": "every series hidden: no axis shows and the chart has no grid",
+   "name": "every series hidden: no axis shows, the chart has no grid and no series is on the right",
    "series": [
     [
      "ms",
@@ -331,13 +331,13 @@
     ]
    ],
    "sides": [
-    "right",
-    "right"
+    "left",
+    "left"
    ],
    "grid": null,
    "scales": [
     {
-     "side": "right",
+     "side": "left",
      "series": [
       0,
       1
@@ -548,6 +548,36 @@
      "max": 0,
      "softMin": -10,
      "softMax": null
+    }
+   ]
+  },
+  {
+   "name": "every series hidden with two units: one left scale, no right scale",
+   "series": [
+    [
+     "ms",
+     "hidden",
+     {}
+    ],
+    [
+     "reqps",
+     "hidden",
+     {}
+    ]
+   ],
+   "sides": [
+    "left",
+    "left"
+   ],
+   "grid": null,
+   "scales": [
+    {
+     "side": "left",
+     "series": [
+      0,
+      1
+     ],
+     "shown": false
     }
    ]
   }

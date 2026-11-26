@@ -9,7 +9,7 @@
 .timeline__canvas { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
 .timeline__canvas:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
 
-/* The legend: a list of states. At the bottom it keeps 35 % of the height at most (common.js sets --legend-max); at the right it keeps a column. */
+/* The legend: a list of states. At the bottom it keeps 35 % of the height at most (timeline.js sets --legend-max); at the right it keeps a column. */
 .timeline__legend { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) 0; max-height: var(--legend-max, none); margin: 0; padding: var(--space-8) var(--space-4) var(--space-4); overflow-y: auto; list-style: none; }
 .timeline--right:not([data-fallback]) .timeline__legend { flex-direction: column; flex-wrap: nowrap; max-width: 34%; max-height: none; margin-left: var(--space-8); padding-top: var(--space-4); }
 .timeline__legend-item { display: flex; align-items: center; gap: var(--space-8); min-width: 0; padding-right: var(--space-10); line-height: 1.5714; }

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser cases B110 to B118 (4.33b, 9.19c, 10.3, 15.6): the state timeline and the status history.
+// Browser cases B110 to B118 and B395 (4.33b, 9.19c, 10.3, 15.6): the state timeline and the status history.
 // B110: the look of a state timeline. B111: the look of a status history. B112: the states, the colours, the legend, hostile texts.
 // B113: the data cases. B114: the caps and the time. B115: the card, the hover and the keyboard. B116: the editor and the format.
-// B117: the import. B118: layouts, zoom, viewPanel, the menu and print.
+// B117: the import. B118: layouts, zoom, viewPanel, the menu and print. B395: the text size at each pixel ratio and the ticks of the hook.
 import { readFileSync } from "node:fs";
 import { doc, panel, section } from "../lib/docs.mjs";
 import { enterEdit, openPanelEditor, saveDialog, waitDraft } from "../lib/ed.mjs";
@@ -636,6 +636,44 @@ export const cases = [
       await q2.send("Emulation.setEmulatedMedia", { media: "print" });
       await sleep(300);
       t.eq(await q2.eval(`(() => { const c = document.querySelector('[data-testid="timeline-1"] canvas'); const b = c.getBoundingClientRect(); return [c.offsetParent !== null, b.width > 100, b.height > 50]; })()`), [true, true, true], "print shows the picture");
+    },
+  },
+  {
+    id: "B395",
+    name: "the texts of a state timeline and of a status history are 12 CSS px high at the pixel ratios 1, 1.25 and 2, and the hook lists the ticks and the label boxes (9.19c section 6, 9.29)",
+    async run(t) {
+      await ensure(t, one("tl395", [
+        tp(1, "state_timeline", "States", q(`${A} AS alpha, ${B} AS beta`), { grid: { x: 0, y: 0, w: 24, h: 8 }, options: { show_values: "always" } }),
+        tp(2, "status_history", "History", q(`${A} AS alpha, ${B} AS beta`), { grid: { x: 0, y: 8, w: 24, h: 8 }, options: { show_values: "always" } }),
+      ]));
+      const boxes = {};
+      for (const dsf of [1, 1.25, 2]) {
+        const p = await t.page({ width: 1280, height: 900 });
+        await p.emulateColorScheme("dark");
+        await p.recordCanvasText();
+        await p.send("Emulation.setDeviceMetricsOverride", { width: 1280, height: 900, deviceScaleFactor: dsf, mobile: false });
+        await p.goto(t.url(`d/tl395?from=${T0}&to=${T0 + 5 * HOUR}&timezone=utc`));
+        await p.idle();
+        await drawn(p, [1, 2]);
+        for (const id of [1, 2]) {
+          const texts = await p.eval(`window.__canvasTexts(${canvasOf(id)})`);
+          t.assert(texts.length > 6, `${dsf} panel ${id}: the canvas has texts (${texts.length})`);
+          const sizes = [...new Set(texts.map((x) => parseFloat(/([0-9.]+)px/.exec(x.font)[1])))];
+          t.eq(sizes, [12 * dsf], `${dsf} panel ${id}: every text is 12 CSS px high (font sizes ${sizes})`);
+          const h = await hook(p, id);
+          boxes[`${dsf}/${id}`] = h.box;
+          t.assert(h.labels.length >= 3, `${dsf} panel ${id}: the hook lists the axis labels (${h.labels.length})`);
+          // Each label of the hook is a text of the canvas, centred on the same place (the canvas has device pixels).
+          const centred = texts.filter((x) => x.align === "center" && x.baseline === "top");
+          for (const [text, x, left, right, y] of h.labels) {
+            const drawnLabel = centred.find((c) => c.text === text && Math.abs(c.x - x * dsf) <= 0.02 * dsf + 0.01);
+            t.assert(drawnLabel !== undefined, `${dsf} panel ${id}: the label ${text} is drawn at x ${x}`);
+            t.assert(left < x && x < right && y === h.box[1] + h.box[3] + 9, `${dsf} panel ${id}: the box of the label ${text} (${left}, ${right}, ${y})`);
+          }
+          t.assert(h.ticks.every(([v, x]) => Number.isFinite(v) && x >= h.box[0] - 0.5 && x <= h.box[0] + h.box[2] + 0.5), `${dsf} panel ${id}: the ticks are in the plot`);
+        }
+      }
+      for (const key of ["1.25/1", "2/1", "1.25/2", "2/2"]) t.eq(boxes[key], boxes[`1/${key.slice(-1)}`], `the plot box at the ratio ${key.split("/")[0]} is the box at the ratio 1 (panel ${key.slice(-1)})`);
     },
   },
 ];

@@ -25,6 +25,8 @@ pub fn test_config(volume: &Path) -> Config {
             listen: "127.0.0.1:0".parse().unwrap(),
             ops_listen: "127.0.0.1:0".parse().unwrap(),
             base_path: "/".to_owned(),
+            history: true,
+            export: true,
             query_inspect: false,
             repeat_max_per_panel: 24,
             repeat_max_per_section: 12,
@@ -78,16 +80,6 @@ pub fn test_config(volume: &Path) -> Config {
         postgres_sources: Vec::new(),
         mongo_sources: Vec::new(),
         geomap: None,
-    }
-}
-
-/// Makes the volume of the test a read-only store: no store is the primary store, so no edit is possible (13.10).
-/// The volume needs a dashboard before the start, because a read-only store with no dashboard stops the start.
-pub fn no_primary(c: &mut Config) {
-    for v in &mut c.storage.volumes {
-        v.primary = false;
-        v.title = Some("Main".to_owned());
-        v.history_keep = None;
     }
 }
 

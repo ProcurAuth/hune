@@ -417,15 +417,6 @@ pub fn run(checked: &Checked, mode: ReadMode) -> Result<Stage2, Vec<ConfigError>
     }
 }
 
-/// True when a store has `primary = true`: edits are possible (13.10).
-pub fn has_primary(checked: &Checked) -> bool {
-    let volume = checked
-        .labels("storage.volume")
-        .into_iter()
-        .any(|l| matches!(checked.get_in(l, "storage.volume.primary").map(|k| &k.value), Some(Value::Bool(true))));
-    volume || matches!(checked.get("storage.postgres.primary").map(|k| &k.value), Some(Value::Bool(true)))
-}
-
 fn text_key(checked: &Checked, path: &str) -> Option<String> {
     match &checked.get(path)?.value {
         Value::Str(s) => Some(s.clone()),
@@ -529,7 +520,8 @@ fn pep_inputs(checked: &Checked, stage: &Stage2) -> Option<PepInputs> {
         timeout: duration_key(checked, "access.pdp.timeout")?,
         cache_ttl: duration_key(checked, "access.pdp.cache_ttl")?,
         max_connections: usize::try_from(int_key(checked, "access.pdp.max_connections")?).ok()?,
-        editing: has_primary(checked),
+        history: matches!(checked.get("server.history").map(|k| &k.value), Some(Value::Bool(true))),
+        export: matches!(checked.get("server.export").map(|k| &k.value), Some(Value::Bool(true))),
         sources,
     })
 }

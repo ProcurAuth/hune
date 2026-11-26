@@ -49,9 +49,10 @@ async fn cost(h: &Harness, pdp: &Pdp, sub: &str, method: &str, (path, body): &(S
     }
 }
 
-/// The write routes of the pairs of `same_refusal`: each route whose use is not `dashboard.read` (11.21).
+/// The write routes of the pairs of `same_refusal`: each route whose use is `dashboard.write` or `source.query`
+/// (11.21). The reads of the history and of the export may use a kept answer.
 fn write_pairs() -> Vec<Pair> {
-    pairs().into_iter().filter(|p| use_of(p) != "dashboard.read").collect()
+    pairs().into_iter().filter(|p| matches!(use_of(p), "dashboard.write" | "source.query")).collect()
 }
 
 #[tokio::test]

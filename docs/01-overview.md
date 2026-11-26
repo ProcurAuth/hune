@@ -127,7 +127,7 @@ The rule is: "minimise the work to the measured use of 1.3". A feature that the 
 | Operator | The person who runs Hune | Writes the configuration, runs the server, the migrations, the backups and the restores |
 | Migration operator | The person who runs the migration from Grafana | Runs `hune import-grafana`, checks the report and the side-by-side comparison, does the cutover |
 
-In mode `open`, every request has the same subject `-`, and the primary store decides if writes are possible. In mode `authzen`, the ProcurAuth subject decides each operation (section 11).
+In mode `open`, every request has the same subject `-`. The keys `server.history` and `server.export` set the ceiling of the history and of the export. In mode `authzen`, the ProcurAuth subject decides each operation (section 11).
 
 ### 1.6 Goal: use Hune in place of Grafana
 
@@ -181,7 +181,7 @@ Each line gives one design rule. The column "Section" names the section or the p
 | D24 | Reference HA: CloudNativePG. Failover test: a three-node Patroni cluster in Docker. | 5.32, 16 |
 | D25 | One `Store` trait, one conformance suite, `copy-store` in both directions. | 5.3, 5.33, 5.37 |
 | D26 | The block `access { mode = "open" \| "authzen" }` MUST be in the file. Run-time choice only, no Cargo feature. | 11 |
-| D27 | Mode `open`: no authentication, no token, no PDP, subject `-`, ProcurAuth routes answer 404, `config.warning` at start, writes follow the primary store. | 11 |
+| D27 | Mode `open`: no authentication, no token, no PDP, subject `-`, ProcurAuth routes answer 404, `config.warning` at start, the two keys `server.history` and `server.export` give the ceiling of the history and of the export. | 11 |
 | D28 | Mode `authzen`: PEP on `procurauth-pep` and `procurauth-core` (git, full commit, `default-features = false`, vendored) with an own rustls `PdpTransport` on a bounded blocking pool. | 3.7, 11 |
 | D29 | Tree `service/folder/dashboard` and `service/source` (depth 2). Service id = `access.identity.audience`. | 11 |
 | D30 | Actions `dashboard.read`, `dashboard.write`, `source.query`. Ceilings `max_rows` and `max_duration`. No budget in v1. | 11 |

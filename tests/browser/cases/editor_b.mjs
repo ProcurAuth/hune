@@ -338,20 +338,21 @@ export const cases = [
 
   {
     id: "B22",
-    name: "with server.editing = false no edit control is in the DOM",
+    name: "a dashboard of a read-only store has no edit control and no History entry; the primary store is empty (13.10, 11.25)",
     server: "noedit",
     async run(t) {
       const sess = await t.api.session();
-      t.eq(sess.json.editing, false, "session.editing");
+      t.eq(sess.json.editing, true, "session.editing is always true: a primary store always exists");
+      t.eq(Object.fromEntries(sess.json.stores.map((x) => [x.id, x.read_only])), { main: true, scratch: false }, "the seed volume is read-only and the scratch volume is the primary store");
       const p = await t.open(t.url(""));
-      for (const id of ["new-dashboard", "import", "new-folder"]) t.eq(await p.exists(p.tid(id)), false, `no ${id}`);
-      t.eq(await p.count('.group__head button[aria-haspopup="menu"]'), 0, "no folder menu");
       t.eq(await p.exists(p.tid("row-menu-nodes")), false, "a card that cannot be edited has no three dots");
-      // With no primary store the volume is a read-only store: each card has the lock and no three dots, and the page has no title for its one group.
+      // The volume is a read-only store: each card has the lock and no three dots.
       t.eq(await p.exists(p.tid("row-menu-stale-one")), false, "a card of a read-only store has no three dots");
       t.eq(await p.count('[data-testid^="card-lock-"]'), 2, "each card of the read-only store has the lock");
       t.eq(await p.attr(p.tid("card-lock-nodes"), "aria-label"), "Read-only store", "the name of the lock");
-      t.eq(await p.count(".group__head"), 0, "one root group: no title");
+      // The flags of the answer: no write and no history in a read-only store, the export follows the key.
+      const one = await t.api.dashboard("nodes");
+      t.eq(one.json.access, { write: false, history: false, export: true }, "the flags of a dashboard of a read-only store");
       // the dashboard page: no edit toggle, and edit=1 opens no editor
       const d = await t.open(t.dash("nodes"));
       await waitPanelsReady(d, [1, 2, 3]);
@@ -366,16 +367,20 @@ export const cases = [
       await e.click(e.tid("panel-2-menu"));
       t.eq(await e.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((x) => x.textContent)`), ["View", "View data", "Download CSV"], "panel menu");
       await e.press("Escape");
-      // the history list and the diffs stay; Restore is absent
-      await moreItem(d, "history-button");
-      await d.waitSel(d.tid("history-list"));
-      await d.idle();
-      t.eq(await d.eval(`[...document.querySelectorAll("button")].some((b) => /Restore/.test(b.textContent))`), false, "no Restore");
-      // the server refuses a write
+      // The menu More actions has Export and no History.
+      await d.click(d.tid("dashboard-menu"));
+      t.eq(await d.exists(d.tid("history-button")), false, "no History entry");
+      t.eq(await d.exists(d.tid("export-button")), true, "the Export entry stays");
+      await d.press("Escape");
+      // A history URL opened by hand shows the standard refusal page, and the server answers history_unavailable.
+      const h = await t.open(t.dash("nodes", "editview=history"));
+      await h.waitSel(h.tid("dashboard-forbidden"));
+      t.eq(await h.exists(h.tid("history")), false, "no history page");
+      const hist = await t.api.history("nodes");
+      t.eq([hist.status, hist.json.error.code], [404, "history_unavailable"], "the history route of a read-only store");
+      // the server refuses a write into the read-only store
       const w = await t.api.create("transit", seedDocument("nope", "Nope"));
-      t.eq([w.status, w.json.error.code], [403, "editing_disabled"], "write refused by the server");
-      const folderW = await t.api.createFolder("nope", "Nope");
-      t.eq([folderW.status, folderW.json.error.code], [403, "editing_disabled"], "folder write refused");
+      t.eq([w.status, w.json.error.code], [403, "read_only_store"], "write refused by the server");
       void backToDashboard;
       void sleep;
     },
@@ -432,6 +437,67 @@ export const cases = [
       t.assert((await folders()).includes("imported-team|Imported team"), "the folder was made: " + JSON.stringify(await folders()));
       const item = await p.eval(`fetch("/api/dashboards").then((r) => r.json()).then((j) => j.items.find((i) => i.uid === "imp230").folder)`);
       t.eq(item, "imported-team", "the dashboard is in the new folder");
+    },
+  },
+  {
+    id: "B306",
+    name: "the keys server.history and server.export hide the entries: the card menu, the menu More actions, the version view, and the history URL by hand (6.12, 9.9, 10.11, 10.14)",
+    async run(t) {
+      const menu = (page) => page.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent.trim()).filter((x) => !/time range|Zoom/.test(x))`);
+      // Both keys true: History, Export and Delete, and the card menu has Export.
+      const p = await t.open(t.url(""));
+      await p.waitSel(p.tid("row-menu-nodes"));
+      await p.click(p.tid("row-menu-nodes"));
+      t.eq(await menu(p), ["Edit", "Export", "Move", "Delete"], "the card menu with both keys");
+      await p.press("Escape");
+      const d = await t.open(t.dash("nodes"));
+      await waitPanelsReady(d, [1]);
+      await d.click(d.tid("dashboard-menu"));
+      t.eq(await menu(d), ["History", "Export", "Delete"], "the menu with both keys");
+      await d.press("Escape");
+
+      // Both keys false: no History, no Export, no Download; the history URL shows the page of 403; the routes refuse.
+      const off = await t.ownServer("off", { history: false, export: false });
+      const po = await t.open(`${off.url}`);
+      await po.waitSel(po.tid("row-menu-nodes"));
+      await po.click(po.tid("row-menu-nodes"));
+      t.eq(await menu(po), ["Edit", "Move", "Delete"], "the card menu without export");
+      await po.press("Escape");
+      const doff = await t.open(`${off.url}d/nodes?${t.range}`);
+      await waitPanelsReady(doff, [1]);
+      await doff.click(doff.tid("dashboard-menu"));
+      t.eq(await menu(doff), ["Delete"], "the menu without history and export");
+      await doff.press("Escape");
+      const hoff = await t.open(`${off.url}d/nodes?${t.range}&editview=history`);
+      await hoff.waitSel(hoff.tid("dashboard-forbidden"));
+      t.eq(await hoff.exists(hoff.tid("history")), false, "no history page");
+      const offApi = (await import("../lib/env.mjs")).api(off);
+      const flags = await offApi.dashboard("nodes");
+      t.eq(flags.json.access, { write: true, history: false, export: false }, "the flags with both keys false");
+      const hist = await offApi.history("nodes");
+      t.eq([hist.status, hist.json.error.code], [403, "history_disabled"], "the history route");
+      const dl = await offApi.call("GET", "api/dashboards/nodes?download=true");
+      t.eq([dl.status, dl.json.error.code], [403, "export_disabled"], "the download");
+
+      // History true, export false: History stays; a version view has no export button; Compare with current works.
+      const noExport = await t.ownServer("noexport", { export: false });
+      const noApi = (await import("../lib/env.mjs")).api(noExport);
+      const first = await noApi.dashboard("nodes");
+      const doc = JSON.parse(JSON.stringify(first.json.document));
+      doc.title = "Nodes changed";
+      const saved = await noApi.save("nodes", first.json.etag, doc, "second");
+      t.eq(saved.status, 200, "a save makes a version");
+      const pn = await t.open(`${noExport.url}d/nodes?${t.range}`);
+      await waitPanelsReady(pn, [1]);
+      await pn.click(pn.tid("dashboard-menu"));
+      t.eq(await menu(pn), ["History", "Delete"], "the menu without export");
+      await pn.press("Escape");
+      const hn = await t.open(`${noExport.url}d/nodes?${t.range}&editview=history&version=1`);
+      await hn.waitSel(hn.tid("version-banner"));
+      t.eq(await hn.exists(hn.tid("version-export")), false, "no Export this version");
+      const diff = await t.open(`${noExport.url}d/nodes?${t.range}&editview=history&base=1&version=current`);
+      await diff.waitSel(".history__diff .diff, .history__diff table, .history__diff pre");
+      t.eq(await diff.exists(".history__diff .field-error"), false, "the comparison with the current text works without the export right");
     },
   },
 ];

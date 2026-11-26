@@ -45,7 +45,7 @@ fn the_key_is_in_the_table_the_reference_and_the_effective_order() {
     let fx = Fx::new();
     let order: Vec<String> = fx.load(&fx.local()).unwrap().effective.iter().map(|e| e.key.clone()).collect();
     let position = |keys: &[String], name: &str| keys.iter().position(|k| k == name).unwrap();
-    assert_eq!(position(&order, "server.query_inspect"), position(&order, "server.base_path") + 1);
+    assert_eq!(position(&order, "server.query_inspect"), position(&order, "server.export") + 1);
 }
 
 #[test]

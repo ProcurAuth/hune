@@ -7,6 +7,7 @@ import { makeDisplay } from "../../web/js/display.js";
 import { computeFieldConfig } from "../../web/js/fields.js";
 import { baseDisplayNames, displayNames } from "../../web/js/names.js";
 import { reduceItems } from "../../web/js/panels/items.js";
+import { selectReduceFields } from "../../web/js/reduce.js";
 import { toFields } from "./helpers.mjs";
 
 function configured(cols, spec, type = "table") {
@@ -107,6 +108,21 @@ test("display and fillOf: the stored token stays, the light theme draws its own 
   assert.deepEqual(items.map((i) => fillOf(i.display, false)), ["#56A64B", "#E0B400", "#AD0317"]);
 });
 
+test("items: the palette slot is the place among the number fields, also when reduce.fields hides a field (9.16)", () => {
+  const fields = configured(
+    [{ name: "a", kind: "number", values: [1] }, { name: "k", kind: "text", values: ["x"] }, { name: "b", kind: "number", values: [2] }, { name: "c", kind: "number_text", values: ["3"] }],
+    { defaults: { color: { mode: "palette", fixed: null } }, overrides: [] },
+    "stat",
+  );
+  const base = { fields, names: displayNames(fields), baseNames: baseDisplayNames(fields), zone: "utc" };
+  const colors = (reduce) => reduceItems(base, reduce).map((i) => [i.name, i.color]);
+  const all = colors({ calc: "last_not_null", fields: null, values: false });
+  assert.deepEqual(all, [["a", QCHART.dark[0]], ["b", QCHART.dark[1]], ["c", QCHART.dark[2]]]);
+  // A pattern that keeps `b` and `c` only: their colours stay the slots 1 and 2 (not 0 and 1).
+  assert.deepEqual(colors({ calc: "last_not_null", fields: "/^(b|c)$/", values: false }), [["b", QCHART.dark[1]], ["c", QCHART.dark[2]]]);
+  assert.deepEqual(colors({ calc: "last_not_null", fields: "/^c$/", values: true }), [["x c", QCHART.dark[2]]]);
+});
+
 test("the panels that draw series default to the palette of ClickHouse Dash, the panels of one value keep thresholds", () => {
   const cols = [{ name: "a", kind: "number", values: [1, 2] }];
   const modeOf = (type) => configured(cols, { defaults: {}, overrides: [] }, type)[0].config.color.mode;
@@ -123,4 +139,14 @@ test("the panels that draw series default to the palette of ClickHouse Dash, the
   // A mapping colour and an override keep their own colour.
   const [mapped] = configured(cols, { defaults: { mappings: [{ kind: "value", value: "1", text: "One", color: "red" }] }, overrides: [] }, "timeseries");
   assert.equal(makeDisplay(mapped, { seriesIndex: 3 })(0).color, "#F2495C");
+});
+
+test("reduce.fields: null keeps the number and number_text fields; a pattern tests the base display name and keeps any kind (4.26)", () => {
+  const fields = configured([{ name: "a", kind: "number", values: [1] }, { name: "k", kind: "text", values: ["x"] }, { name: "c", kind: "number_text", values: ["3"] }], { defaults: {}, overrides: [] }, "stat");
+  const baseNames = baseDisplayNames(fields);
+  assert.deepEqual(selectReduceFields(fields, baseNames, null), [0, 2]);
+  assert.deepEqual(selectReduceFields(fields, baseNames, ""), [0, 2]);
+  assert.deepEqual(selectReduceFields(fields, baseNames, "/^k$/"), [1], "a text field is kept by a pattern");
+  assert.deepEqual(selectReduceFields(fields, ["x", "y", "z"], "/^y$/"), [1], "the pattern reads the names that the caller gives (the base names)");
+  assert.deepEqual(selectReduceFields(fields, baseNames, "/(/"), [], "a pattern that does not compile keeps no field");
 });

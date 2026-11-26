@@ -393,7 +393,7 @@ export const cases = [
       await e.waitGone(e.tid("delete-dashboard-dialog"));
       t.eq((await t.api.dashboard(UID71)).status, 200, "Cancel keeps the dashboard");
 
-      // A viewer (editing off): History and Export only, no switch, and the same one row.
+      // A viewer of a read-only store: Export only (no history), no switch, and the same one row.
       const viewer = await t.ownServer("viewer", { editing: false, prepare: (volume) => writeFileSync(join(volume, "transit", `${UID71}.json`), JSON.stringify(headerDoc(UID71, "A dashboard with a rather long title for the selector of a narrow window"))) });
       for (const width of [1920, 1280, 768, 390]) {
         const v = await openAt(t, `${viewer.url}d/${UID71}?${t.range}`, width);
@@ -401,7 +401,7 @@ export const cases = [
         check(`viewer ${width}`, await v.eval(HEADER));
         await v.click(v.tid("dashboard-menu"));
         await v.waitSel(".menu");
-        t.eq((await menuItems(v)).filter((x) => !/time range|Zoom/.test(x)), ["History", "Export"], `${width}: the menu of a viewer`);
+        t.eq((await menuItems(v)).filter((x) => !/time range|Zoom/.test(x)), ["Export"], `${width}: the menu of a viewer`);
         await v.press("Escape");
         const vl = await openAt(t, viewer.url, width);
         await vl.waitFor(`!!document.querySelector('[data-testid="list"] article[data-testid^="row-"]')`, { what: "the list of the viewer" });
