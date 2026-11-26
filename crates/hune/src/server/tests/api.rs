@@ -942,7 +942,12 @@ async fn a26_each_write_into_a_read_only_store_is_refused_and_each_read_route_of
             vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())],
             put_body(&doc_text(uid, "Changed"), ""),
         ),
-        ("DELETE", format!("/api/dashboards/{uid}"), vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())], vec![]),
+        (
+            "DELETE",
+            format!("/api/dashboards/{uid}"),
+            vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())],
+            vec![],
+        ),
         (
             "POST",
             format!("/api/dashboards/{uid}/restore"),

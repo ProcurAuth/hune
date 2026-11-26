@@ -356,7 +356,8 @@ async fn the_keys_history_and_export_refuse_their_routes_before_any_lookup() {
     let r = call(h.addr, "GET", "/api/dashboards/nodes?download=maybe", &[], b"").await;
     assert_eq!((r.status, r.code().as_str()), (400, "bad_request"));
     // The cross-site guard comes before the ceilings (6.28, steps 4 and 6).
-    let r = call(h.addr, "POST", "/api/dashboards/nodes/restore", &[("Sec-Fetch-Site", "cross-site"), json], b"{}").await;
+    let r =
+        call(h.addr, "POST", "/api/dashboards/nodes/restore", &[("Sec-Fetch-Site", "cross-site"), json], b"{}").await;
     assert_eq!(r.code(), "cross_site_request");
     // With the keys true, the routes work.
     let h = Harness::start_with(test_timing(), super::api::fill, |_| {}).await;

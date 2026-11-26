@@ -465,10 +465,8 @@ fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
             [] => String::new(),
         };
         let list = if stores.len() == 1 { list } else { format!("exactly {list}") };
-        errors.push(contradiction(
-            "storage",
-            format!("the file has no primary store; give `primary = true` to {list}"),
-        ));
+        errors
+            .push(contradiction("storage", format!("the file has no primary store; give `primary = true` to {list}")));
     }
     for later in primaries.iter().skip(1) {
         let first = &primaries[0];

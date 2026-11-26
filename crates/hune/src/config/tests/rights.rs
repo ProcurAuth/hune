@@ -39,7 +39,11 @@ fn a_missing_key_stops_the_start_and_names_the_key_and_the_type() {
     for key in ["history", "export"] {
         let errors = fx.errors(&with_line(&fx.local(), key, ""));
         assert_eq!(errors.len(), 1, "{key}: {errors:?}");
-        assert!(errors[0].starts_with(&format!("server.{key}: missing attribute; expected a boolean")), "{}", errors[0]);
+        assert!(
+            errors[0].starts_with(&format!("server.{key}: missing attribute; expected a boolean")),
+            "{}",
+            errors[0]
+        );
     }
     // Both missing: two errors, in the order of the table.
     let errors = fx.errors(&with_lines(&fx.local(), "", ""));
@@ -100,7 +104,10 @@ fn the_keys_are_in_the_table_the_reference_and_the_effective_order() {
         let desc = SCHEMA.key(key).unwrap();
         assert!(matches!(desc.kind, Kind::Bool), "{key}");
         assert!(!desc.secret, "{key}");
-        assert!(REFERENCE_DOC.contains(&format!("| `{key}` | a boolean | no | V | always | never | `true` |")), "{key}");
+        assert!(
+            REFERENCE_DOC.contains(&format!("| `{key}` | a boolean | no | V | always | never | `true` |")),
+            "{key}"
+        );
     }
     let fx = Fx::new();
     let order: Vec<String> = fx.load(&fx.local()).unwrap().effective.iter().map(|e| e.key.clone()).collect();

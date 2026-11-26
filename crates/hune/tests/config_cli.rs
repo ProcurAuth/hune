@@ -294,7 +294,8 @@ fn print_config_shows_the_key_query_inspect_with_its_default_and_its_source() {
     let out = hune(&["check-config", "-c", config.to_str().unwrap()], &[]);
     assert_eq!(out.status.code(), Some(1));
     assert!(
-        text(&out.stderr).contains("storage: the file has no primary store; give `primary = true` to `storage.postgres`"),
+        text(&out.stderr)
+            .contains("storage: the file has no primary store; give `primary = true` to `storage.postgres`"),
         "{}",
         text(&out.stderr)
     );

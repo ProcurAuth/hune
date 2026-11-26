@@ -168,11 +168,7 @@ impl PepInputs {
         let mut builder = ActionDocumentBuilder::new(self.audience.clone())
             .resource_type("folder", "service", "One folder of dashboards, by its id.")
             .resource_type("dashboard", "folder", "One dashboard, by its uid.")
-            .resource_type(
-                "source",
-                "service",
-                "One data source of the configuration, by the id of its block.",
-            )
+            .resource_type("source", "service", "One data source of the configuration, by the id of its block.")
             .action(
                 "dashboard.read",
                 &["service", "folder", "dashboard"],

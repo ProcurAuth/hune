@@ -56,8 +56,16 @@ fn c10_a_file_with_no_primary_store_stops_the_start_and_lists_the_store_blocks()
     // Three stores: a comma list.
     let dist = replace_once(&fx.distributed(), PG_PRIMARY, "    title             = \"Archive\"\n");
     let dist = replace_once(&dist, PG_HISTORY, "");
-    let text = replace_once(&dist, "storage {\n", &format!("storage {{\n{}", volume("lab", Some("Lab"), "/var/lib/hune/lab", "")));
-    let text = replace_once(&text, "storage {\n", &format!("storage {{\n{}", volume("alt", Some("Alt"), "/var/lib/hune/alt", "")));
+    let text = replace_once(
+        &dist,
+        "storage {\n",
+        &format!("storage {{\n{}", volume("lab", Some("Lab"), "/var/lib/hune/lab", "")),
+    );
+    let text = replace_once(
+        &text,
+        "storage {\n",
+        &format!("storage {{\n{}", volume("alt", Some("Alt"), "/var/lib/hune/alt", "")),
+    );
     assert_eq!(
         fx.one(&text),
         "storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume \"alt\"`, `storage.volume \"lab\"` and `storage.postgres`"

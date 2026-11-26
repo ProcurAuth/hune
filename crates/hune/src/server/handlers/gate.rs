@@ -50,10 +50,7 @@ fn route_use(id: RouteId, download: bool) -> Option<&'static str> {
     match id {
         RouteId::DashboardGet if download => Some(EXPORT),
         RouteId::History | RouteId::HistoryVersion => Some(HISTORY),
-        RouteId::DashboardGet
-        | RouteId::PanelQuery
-        | RouteId::VariableOptions
-        | RouteId::AnnotationQuery => Some(READ),
+        RouteId::DashboardGet | RouteId::PanelQuery | RouteId::VariableOptions | RouteId::AnnotationQuery => Some(READ),
         RouteId::FolderCreate
         | RouteId::FolderRename
         | RouteId::FolderDelete
