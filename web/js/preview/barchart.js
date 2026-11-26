@@ -106,7 +106,9 @@ function horizontal(panel, box, rules, leg) {
   // A legend beside the plot that can fall back under it moves the right edge out and the bottom edge up: the right edge is not claimed then.
   const claimRight = !(hl.draw && hl.w > 0 && !hl.never);
   const edges = `lt${claimRight ? "r" : ""}b`;
-  const grid = node("hbar__grid", {}, barsHidden(rules) ? [] : [hMarks(gridBottom - PAD_TOP)], "div", partAttrs(PARTS.PLOT, `${CONTAIN}:${edges}`));
+  // A panel so short that the plot has no height has no plot to measure: the loaded panel draws no box for it either.
+  const gridH = gridBottom - PAD_TOP;
+  const grid = node("hbar__grid", {}, barsHidden(rules) || gridH <= 0 ? [] : [hMarks(gridH)], "div", gridH > 0 ? partAttrs(PARTS.PLOT, `${CONTAIN}:${edges}`) : {});
   const body = node("hbar__body", {}, [grid]);
   const axisKids = [];
   // The label "100%" of a percent stack is at the right end of the axis: exact when the legend takes no room beside the plot and the band has a place.

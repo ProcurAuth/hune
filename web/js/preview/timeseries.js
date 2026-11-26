@@ -423,7 +423,8 @@ export function marksOf(style, plotW, id) {
     if (fade) {
       kids.push(node("", {}, [node("", {}, [node("skel__stop", {}, [], "stop", { offset: "0", "stop-opacity": String(num(style.fill / 100)) }), node("skel__stop", {}, [], "stop", { offset: "1", "stop-opacity": "0" })], "linearGradient", { id: gid, x1: "0", y1: "0", x2: "0", y2: "1" })], "defs"));
     }
-    kids.push(node("skel__area", {}, [], "path", { d: area, ...(fade ? { fill: `url(#${gid})` } : { "fill-opacity": String(num(style.fill / 100)) }) }));
+    // The fill that fades has its paint in the attribute (a CSS fill would win over it), the flat fill has its tone in the CSS.
+    kids.push(node(fade ? "skel__fade" : "skel__area", {}, [], "path", { d: area, ...(fade ? { fill: `url(#${gid})` } : { "fill-opacity": String(num(style.fill / 100)) }) }));
   }
   if (style.line && style.lineWidth > 0) {
     const a = style.dash ? { "stroke-dasharray": style.dash.join(" ") } : {};

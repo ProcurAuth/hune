@@ -207,3 +207,10 @@ test("the bar chart gives the neutral form with no legend member or a warning li
   assert.deepEqual(buildBars(p, box).notes, ["no legend member"]);
   assert.deepEqual(buildBars(bars({}, { overrides: [{ match: { by: "regex", value: "/(/" }, set: {} }] }), box).notes, ["warning line"]);
 });
+
+test("a horizontal panel so short that the plot has no height claims no plot", () => {
+  const out = buildBars(bars({ orientation: "horizontal" }), { w: 670, h: 48 });
+  assert.equal(part(out, "plot"), undefined);
+  assert.equal(part(out, "legend").a["data-skel-class"], "exact");
+  assert.equal(byClass(out, "hbar__grid")[0].k.length, 0, "and no bar");
+});

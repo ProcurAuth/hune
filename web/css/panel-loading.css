@@ -63,6 +63,7 @@
 .skel__marks, .skel__bars { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
 .skel__series { stroke-width: var(--lw, 2px); }
 .skel__area { fill: var(--skel-edge); stroke: none; }
+.skel__fade { stroke: none; }
 .skel__stop { stop-color: var(--skel-edge); }
 .skel__bar { fill: var(--skel-edge); }
 .skel__dot { position: absolute; left: var(--x); top: var(--y); width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2); border-radius: 50%; background: var(--skel-edge); }

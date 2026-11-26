@@ -466,7 +466,7 @@ test("the line width, the dash and the fill come from the document; a width of 0
   assert.ok(area({ fill_opacity: 30 })[0].a.d.endsWith("L100 100 L0 100 Z"), "the fill closes under the line");
   const fade = all(build(ts({ legend: legend({ show: false }), draw: "line", interpolation: "linear", line_width: 1, fill_opacity: 40, gradient_mode: "opacity" }), box));
   assert.ok(fade.some((n) => n.t === "linearGradient") && fade.some((n) => n.t === "stop" && n.a["stop-opacity"] === "0.4"), "the fill fades to 0");
-  assert.match(fade.find((n) => n.c === "skel__area").a.fill, /^url\(#skel-fade-1\)$/);
+  assert.match(fade.find((n) => n.c === "skel__fade").a.fill, /^url\(#skel-fade-1\)$/);
 });
 
 test("dots: draw points gives dots and no line; show_points always gives both; the size is point_size", () => {

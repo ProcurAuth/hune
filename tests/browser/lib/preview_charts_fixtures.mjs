@@ -34,6 +34,13 @@ export const TS_VARIANTS = [
   ["narrow-right-table", "a narrow panel, table at the right", { legend: lg({ placement: "right", mode: "table", values: ["mean", "max", "last"] }) }, d(), { w: 6, h: 8 }],
   ["narrow-right-list", "a narrow panel, list at the right", { legend: lg({ placement: "right" }) }, d(), { w: 6, h: 8 }],
   ["bars", "draw bars, stacked", { legend: lg(), draw: "bars", stacking: "normal", fill_opacity: 80 }, d()],
+  ["fixed-off", "fixed range 0 to 100, legend off", { legend: lg({ show: false }) }, d({ min: 0, max: 100, unit: "percent" })],
+  ["fixed-title", "fixed range with a title, legend off", { legend: lg({ show: false }) }, d({ min: 0, max: 100, axis_label: "Weight" })],
+  ["fixed-bytes", "fixed range in bytes, legend off", { legend: lg({ show: false }) }, d({ min: 0, max: 4096, unit: "bytes", axis_border: true })],
+  ["styles", "smooth line, fill that fades, dashes and points", { legend: lg({ show: false }), interpolation: "smooth", fill_opacity: 40, gradient_mode: "opacity", line_width: 3, show_points: "always", point_size: 7 }, d({ line_dash: "dash" })],
+  ["points", "draw points", { legend: lg({ show: false }), draw: "points", point_size: 9 }, d()],
+  ["bars-off", "draw bars, all axes hidden, legend off", { legend: lg({ show: false }), draw: "bars" }, d({ axis_placement: "hidden" })],
+  ["x-hidden-viz", "every series hidden from the plot", { legend: lg({ show: false }) }, d({ hide_from: hide({ legend: false, viz: true }) })],
 ];
 
 // The bar chart variants: [key, title, options, fields, size].
@@ -56,6 +63,13 @@ export const BAR_VARIANTS = [
   ["auto-tall", "auto, higher than wide", { orientation: "auto", legend: lg() }, d(), { w: 6, h: 14 }],
   ["auto-wide", "auto, wider than high", { orientation: "auto", legend: lg() }, d(), { w: 12, h: 6 }],
   ["short-list", "vertical, a short panel", { orientation: "vertical", legend: lg() }, d(), { w: 12, h: 3 }],
+  ["h-table", "horizontal, table at the bottom", { orientation: "horizontal", legend: lg({ mode: "table", values: ["max", "last"] }) }, d()],
+  ["h-hidden", "horizontal, every entry hidden, right", { orientation: "horizontal", legend: lg({ placement: "right" }) }, d({ hide_from: hide() })],
+  ["h-fallback-list", "horizontal, list at the right in a narrow panel", { orientation: "horizontal", legend: lg({ placement: "right" }) }, d(), { w: 4, h: 8 }],
+  ["h-fallback-table", "horizontal, table at the right in a narrow panel", { orientation: "horizontal", legend: lg({ placement: "right", mode: "table", values: ["max"] }) }, d(), { w: 6, h: 8 }],
+  ["h-between", "horizontal, table at the right, the fallback is not certain", { orientation: "horizontal", legend: lg({ placement: "right", mode: "table", values: ["max"] }) }, d(), { w: 8, h: 8 }],
+  ["h-short", "horizontal, a short panel", { orientation: "horizontal", legend: lg() }, d(), { w: 12, h: 3 }],
+  ["h-table-empty", "horizontal, table with no value", { orientation: "horizontal", legend: lg({ mode: "table", values: [] }) }, d()],
 ];
 
 const XY_VARIANTS = [
