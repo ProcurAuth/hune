@@ -3447,16 +3447,16 @@ An error of 5.4 stops the command with exit code 1 and the error text. A dashboa
 
 A file names one store or more. Each block `storage.volume "<id>"` is one volume store. The block `storage.postgres` is the PostgreSQL store. The type `Stores` of `hune-store` holds them behind the `Store` trait (5.3).
 
-1. The primary store is the store with `primary = true`. At most one store has it. It is the only store that accepts a write.
-2. A file with no primary store has no edit. The nine write routes answer `403 editing_disabled`, and the page shows no edit control. Hune publishes no `dashboard.write` and no `source.query`, and `GET /api/sources` is empty (section 11, section 13).
+1. The primary store is the store with `primary = true`. Exactly one store has it. It is the only store that accepts a write, and the only store that has history.
+2. A file with no primary store, and a file with two or more, stop the start (5.43). Thus a write is always possible, and Hune always publishes `dashboard.write` and `source.query` (section 11).
 3. The id of a volume store is its label. The id of the PostgreSQL store is `postgres`. A volume cannot have the label `postgres`.
 4. Each other store is read-only. A read-only volume takes no lock and writes no file (5.19). A read-only PostgreSQL store sends no write to the database.
 5. A write whose target is in a read-only store returns `ReadOnly`. The target is the store of the folder or of the uid. A move needs the primary store for the dashboard and for the target folder.
 6. The content of the primary store shows at the root of the page. Each read-only store shows as one root folder. The `title` of the store is the name of this folder, and the folders of the store are below it.
 7. A folder id is unique across all stores. A dashboard uid is unique across all stores. The title of a read-only store is not the title of a folder of the primary store. A `create_folder` or a `rename_folder` with such a title returns `Exists`.
-8. Only the primary store has history. `history` of a dashboard of a read-only store gives an empty list. `version` gives `VersionNotFound`.
+8. Only the primary store has history. `history` of a dashboard of a read-only store gives an empty list. `version` gives `VersionNotFound`. The API does not offer these calls for such a dashboard (6.17).
 9. Each store has its own period of poll. The poller wakes at the shortest period, and `Stores` polls a store when its period has passed.
-10. A command of the command line works on the primary store only. A file with no primary store gives an error. `migrate-store` needs `storage.postgres` as the primary store.
+10. A command of the command line works on the primary store only. `migrate-store` needs `storage.postgres` as the primary store.
 11. A primary volume that more than one instance writes needs a volume that the instances share, with the lock of 5.16. A read-only volume can be a copy for each instance. The PostgreSQL store is shared by all instances.
 
 ### 5.43 Stores: checks at start
@@ -3470,6 +3470,7 @@ The start stops with exit code 1 in each of these cases. The message names the s
 5. A dashboard uid exists in two stores.
 6. A folder of the primary store has the title of a read-only store.
 7. A label, a path or a title that two stores share, and two paths where one holds the other (section 13).
+8. The file has no primary store, or it has two or more (13.14, C10).
 
 A foreign entry in a volume stays a data error: Hune ignores it and writes `store.entry_ignored` (5.10). The PostgreSQL store keeps a row that is not valid as an invalid entry (5.8, rule 5). Hune writes one line `store.loaded` for each store, with its label, its folders, its dashboards and its invalid entries.
 
