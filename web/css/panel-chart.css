@@ -6,11 +6,11 @@
 
 /* ---- Frame ------------------------------------------------------------------------------------------------------ */
 
-.panel__plot > .chartCore { height: 100%; }
+:is(.panel__plot, .skel__host) > .chartCore { height: 100%; }
 
 /* ---- Legend: shared look ---------------------------------------------------------------------------------------- */
 
-.panel__plot .chartCore__legend {
+:is(.panel__plot, .skel__host) .chartCore__legend {
   align-items: flex-start;
   gap: 0;
   padding: var(--space-8) var(--space-4) var(--space-4);
@@ -19,17 +19,17 @@
 }
 
 /* No scroll area: the list wraps and the panel keeps its height. */
-.panel__plot .chartCore__legendList {
+:is(.panel__plot, .skel__host) .chartCore__legendList {
   gap: var(--space-4) 0;
   max-height: none;
   overflow: visible;
 }
 
 /* A table legend sits flush under the plot, as in Grafana. */
-.panel__plot .chartCore__legend[data-mode="table"] { padding: 0; }
+:is(.panel__plot, .skel__host) .chartCore__legend[data-mode="table"] { padding: 0; }
 
 /* One item: the pill, 8 px of space, the name at 12 px / 400 in the text colour, 10 px before the next item. */
-.panel__plot .chartCore__legendItem {
+:is(.panel__plot, .skel__host) .chartCore__legendItem {
   gap: var(--space-8);
   padding: 0 var(--space-10) 0 0;
   border: 0;
@@ -38,19 +38,19 @@
   line-height: 1.5714;
 }
 
-.panel__plot .chartCore__legendTable .chartCore__legendItem { padding-right: 0; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable .chartCore__legendItem { padding-right: 0; }
 
 /* The mark of a series: a 14x4 pill. */
-.panel__plot .chartCore__legendItem i { width: 14px; height: 4px; border-radius: var(--r-pill); }
+:is(.panel__plot, .skel__host) .chartCore__legendItem i { width: 14px; height: 4px; border-radius: var(--r-pill); }
 
 /* A hidden series: the name is muted and struck through, the mark is grey (a swatch of the colour would still say "drawn"). */
-.panel__plot .chartCore__legendItem:not(.chartCore__legendItem--total, .chartCore__legendItem--filter)[aria-pressed="false"] i { opacity: 0.3; }
+:is(.panel__plot, .skel__host) .chartCore__legendItem:not(.chartCore__legendItem--total, .chartCore__legendItem--filter)[aria-pressed="false"] i { opacity: 0.3; }
 
-.panel__plot .chartCore__legendItem:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; box-shadow: none; }
+:is(.panel__plot, .skel__host) .chartCore__legendItem:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; box-shadow: none; }
 
 /* The engine has no button "Values" or "List" since the edit E41 (9.24). This rule hides it if an engine update brings it back.
    The mode is the document option. */
-.panel__plot .chartCore__legendMode { display: none; }
+:is(.panel__plot, .skel__host) .chartCore__legendMode { display: none; }
 
 /* ---- Legend: table mode (Grafana 12: a sortable head in the link colour, rows with a rule, a scroll area of 35 % of the panel) ----------- */
 
@@ -65,29 +65,29 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 }
 
 /* The legend keeps at most 35 % of the height of the panel (common.js, fitHeight, sets --legend-max in px). It scrolls beyond it. */
-.panel__plot .chartCore__legendTableWrap { max-height: var(--legend-max, 8rem); scrollbar-gutter: stable; }
+:is(.panel__plot, .skel__host) .chartCore__legendTableWrap { max-height: var(--legend-max, 8rem); scrollbar-gutter: stable; }
 
-.panel__plot .chartCore__legendList { max-height: var(--legend-max, none); overflow-y: auto; }
+:is(.panel__plot, .skel__host) .chartCore__legendList { max-height: var(--legend-max, none); overflow-y: auto; }
 
 /* `legend.values` = [] (4.26): the table has the column "Name" only. The engine builds its five base columns for an empty list (common.js,
    applyLegend sets data-legend-columns). The cells stay in the markup, so the engine can write them. */
-.panel__plot[data-legend-columns="none"] .chartCore__legendTable :is(th, td):not(:first-child) { display: none; }
+:is(.panel__plot, .skel__host)[data-legend-columns="none"] .chartCore__legendTable :is(th, td):not(:first-child) { display: none; }
 
-.panel__plot .chartCore__legendTable { font-size: var(--fs-sm); }
+:is(.panel__plot, .skel__host) .chartCore__legendTable { font-size: var(--fs-sm); }
 
-.panel__plot .chartCore__legendTable th,
-.panel__plot .chartCore__legendTable td { padding: var(--space-2) var(--space-8); line-height: 1.5714; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable th,
+:is(.panel__plot, .skel__host) .chartCore__legendTable td { padding: var(--space-2) var(--space-8); line-height: 1.5714; }
 
-.panel__plot .chartCore__legendTable td { color: var(--text); font-weight: var(--fw-regular); }
+:is(.panel__plot, .skel__host) .chartCore__legendTable td { color: var(--text); font-weight: var(--fw-regular); }
 
-.panel__plot .chartCore__legendTable tbody tr { border-bottom: 1px solid var(--border); }
+:is(.panel__plot, .skel__host) .chartCore__legendTable tbody tr { border-bottom: 1px solid var(--border); }
 
-.panel__plot .chartCore__legendTable tbody th { padding: var(--space-2) var(--space-8); font-weight: var(--fw-regular); }
+:is(.panel__plot, .skel__host) .chartCore__legendTable tbody th { padding: var(--space-2) var(--space-8); font-weight: var(--fw-regular); }
 
 /* The name button fills its line box, so a row is 23.8 px high as in Grafana (a baseline gap would add 1 px). */
-.panel__plot .chartCore__legendTable tbody th .chartCore__legendItem { display: flex; vertical-align: top; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable tbody th .chartCore__legendItem { display: flex; vertical-align: top; }
 
-.panel__plot .chartCore__legendTable thead th {
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th {
   position: sticky;
   top: 0;
   z-index: var(--z-raised);
@@ -99,9 +99,9 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 }
 
 /* Each head has a gutter of 30 px at the left: the sort arrow sits in it, and the name column lines up with the names of the series. */
-.panel__plot .chartCore__legendTable thead th { padding: var(--space-2) var(--space-8) 2.5px 30px; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th { padding: var(--space-2) var(--space-8) 2.5px 30px; }
 
-.panel__plot .chartCore__legendSort {
+:is(.panel__plot, .skel__host) .chartCore__legendSort {
   position: static;
   padding: 0;
   border: 0;
@@ -112,14 +112,14 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
   cursor: pointer;
 }
 
-.panel__plot .chartCore__legendSort:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
+:is(.panel__plot, .skel__host) .chartCore__legendSort:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: 1px; }
 
 /* The arrow of the sorted head: up for ascending, down for descending. */
-.panel__plot .chartCore__legendTable thead th[aria-sort="ascending"],
-.panel__plot .chartCore__legendTable thead th[aria-sort="descending"] { background-repeat: no-repeat; background-position: 12px center; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th[aria-sort="ascending"],
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th[aria-sort="descending"] { background-repeat: no-repeat; background-position: 12px center; }
 
-.panel__plot .chartCore__legendTable thead th[aria-sort="ascending"] .chartCore__legendSort::before,
-.panel__plot .chartCore__legendTable thead th[aria-sort="descending"] .chartCore__legendSort::before {
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th[aria-sort="ascending"] .chartCore__legendSort::before,
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th[aria-sort="descending"] .chartCore__legendSort::before {
   content: "";
   position: absolute;
   left: 12px;
@@ -128,20 +128,20 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
   border: 4px solid transparent;
 }
 
-.panel__plot .chartCore__legendTable thead th[aria-sort="ascending"] .chartCore__legendSort::before { border-bottom: 5px solid currentColor; border-top-width: 0; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th[aria-sort="ascending"] .chartCore__legendSort::before { border-bottom: 5px solid currentColor; border-top-width: 0; }
 
-.panel__plot .chartCore__legendTable thead th[aria-sort="descending"] .chartCore__legendSort::before { border-top: 5px solid currentColor; border-bottom-width: 0; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th[aria-sort="descending"] .chartCore__legendSort::before { border-top: 5px solid currentColor; border-bottom-width: 0; }
 
-.panel__plot .chartCore__legendTable thead th { position: sticky; }
+:is(.panel__plot, .skel__host) .chartCore__legendTable thead th { position: sticky; }
 
-.panel__plot .chartCore__legendTable tbody tr:hover { background: var(--row-hover); }
+:is(.panel__plot, .skel__host) .chartCore__legendTable tbody tr:hover { background: var(--row-hover); }
 
-.panel__plot .chartCore__legendTable tr.is-off td { color: var(--muted); }
+:is(.panel__plot, .skel__host) .chartCore__legendTable tr.is-off td { color: var(--muted); }
 
 /* ---- Legend: placement right ------------------------------------------------------------------------------------ */
 
 /* The legend takes a column at the right. The plot keeps the rest and the whole height. The legend scrolls. */
-.panel__plot[data-legend-placement="right"] > .chartCore {
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] > .chartCore {
   display: grid;
   grid-template-columns: minmax(0, 1fr) fit-content(34%);
   grid-template-rows: minmax(0, 1fr);
@@ -151,13 +151,13 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 
 /* The table keeps all its columns: its column is as wide as the table. When the host is too narrow for it, common.js sets
    data-legend-fallback and the legend moves under the plot. */
-.panel__plot[data-legend-placement="right"] > .chartCore:has(> .chartCore__legend[data-mode="table"]) {
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] > .chartCore:has(> .chartCore__legend[data-mode="table"]) {
   grid-template-columns: minmax(0, 1fr) max-content;
 }
 
-.panel__plot[data-legend-placement="right"] > .chartCore > .chartCore__plot { grid-column: 1; grid-row: 1; }
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] > .chartCore > .chartCore__plot { grid-column: 1; grid-row: 1; }
 
-.panel__plot[data-legend-placement="right"] > .chartCore > .chartCore__legend {
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] > .chartCore > .chartCore__legend {
   grid-column: 2;
   grid-row: 1;
   flex-direction: column;
@@ -171,9 +171,9 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
   padding-top: var(--space-4);
 }
 
-.panel__plot[data-legend-placement="right"] > .chartCore > .chartCore__legend[hidden] { display: none; }
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] > .chartCore > .chartCore__legend[hidden] { display: none; }
 
-.panel__plot[data-legend-placement="right"] .chartCore__legendList {
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] .chartCore__legendList {
   flex: 0 0 auto;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -182,17 +182,17 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
   overflow: visible;
 }
 
-.panel__plot[data-legend-placement="right"] .chartCore__legendItem { max-width: 100%; }
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] .chartCore__legendItem { max-width: 100%; }
 
-.panel__plot[data-legend-placement="right"] .chartCore__legendTableWrap { flex: 0 0 auto; max-height: none; overflow: visible; }
+:is(.panel__plot, .skel__host)[data-legend-placement="right"] .chartCore__legendTableWrap { flex: 0 0 auto; max-height: none; overflow: visible; }
 
 /* Too narrow for the legend and a plot (common.js sets data-legend-fallback): the legend goes under the plot, as with "bottom". */
-.panel__plot[data-legend-fallback] > .chartCore,
-.panel__plot[data-legend-fallback] > .chartCore:has(> .chartCore__legend[data-mode="table"]) {
+:is(.panel__plot, .skel__host)[data-legend-fallback] > .chartCore,
+:is(.panel__plot, .skel__host)[data-legend-fallback] > .chartCore:has(> .chartCore__legend[data-mode="table"]) {
   display: block;
 }
 
-.panel__plot[data-legend-fallback] > .chartCore > .chartCore__legend {
+:is(.panel__plot, .skel__host)[data-legend-fallback] > .chartCore > .chartCore__legend {
   flex-direction: row;
   overflow: visible;
   scrollbar-gutter: auto;
@@ -208,32 +208,44 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
   overflow-y: auto;
 }
 
+/* The preview of the chart (web/js/preview/) has the same rule on its own host. */
+.skel__host[data-legend-fallback] .chartCore__legendList {
+  flex: 1 1 auto;
+  flex-direction: row;
+  flex-wrap: wrap;
+  max-height: var(--legend-max, none);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 /* The table fills the row, and the cells are tighter so that no column is cut at 390 px. */
-.panel__plot[data-legend-fallback] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
+:is(.panel__plot, .skel__host)[data-legend-fallback] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
 
 .panel__plot[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: var(--legend-max, 8rem); overflow-y: auto; overflow-x: hidden; }
 
-.panel__plot[data-legend-fallback] .chartCore__legendTable th,
-.panel__plot[data-legend-fallback] .chartCore__legendTable td { padding-inline: var(--space-4); }
+.skel__host[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: var(--legend-max, 8rem); overflow-y: auto; overflow-x: hidden; }
 
-.panel__plot[data-legend-fallback] .chartCore__legendTable th:first-child { padding-left: 0; }
+:is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTable th,
+:is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTable td { padding-inline: var(--space-4); }
 
-.panel__plot[data-legend-fallback] .chartCore__legendTable th:last-child,
-.panel__plot[data-legend-fallback] .chartCore__legendTable td:last-child { padding-right: 0; }
+:is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTable th:first-child { padding-left: 0; }
+
+:is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTable th:last-child,
+:is(.panel__plot, .skel__host)[data-legend-fallback] .chartCore__legendTable td:last-child { padding-right: 0; }
 
 /* A phone: the legend at the bottom gets the same tight table. */
 @media (max-width: 600px) {
-  .panel__plot[data-legend-placement="bottom"] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
+  :is(.panel__plot, .skel__host)[data-legend-placement="bottom"] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
 
-  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTableWrap { flex: 1 1 100%; overflow-x: hidden; }
+  :is(.panel__plot, .skel__host)[data-legend-placement="bottom"] .chartCore__legendTableWrap { flex: 1 1 100%; overflow-x: hidden; }
 
-  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable th,
-  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable td { padding-inline: var(--space-4); }
+  :is(.panel__plot, .skel__host)[data-legend-placement="bottom"] .chartCore__legendTable th,
+  :is(.panel__plot, .skel__host)[data-legend-placement="bottom"] .chartCore__legendTable td { padding-inline: var(--space-4); }
 
-  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable th:first-child { padding-left: 0; }
+  :is(.panel__plot, .skel__host)[data-legend-placement="bottom"] .chartCore__legendTable th:first-child { padding-left: 0; }
 
-  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable th:last-child,
-  .panel__plot[data-legend-placement="bottom"] .chartCore__legendTable td:last-child { padding-right: 0; }
+  :is(.panel__plot, .skel__host)[data-legend-placement="bottom"] .chartCore__legendTable th:last-child,
+  :is(.panel__plot, .skel__host)[data-legend-placement="bottom"] .chartCore__legendTable td:last-child { padding-right: 0; }
 
 }
 

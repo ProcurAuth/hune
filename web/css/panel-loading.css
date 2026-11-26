@@ -47,8 +47,39 @@
 .skel__line { stroke: var(--skel-grid); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
 /* ==== family: timeseries (timeseries, xychart) ================================================================================ */
+/* The chart frame (web/js/preview/timeseries.js) uses the markup and the classes of the chart engine. The rules of panel-chart.css name the host
+   `skel__host` too, so the paddings, the line heights and the gutters of the legend are the ones of the loaded panel. These rules add what the
+   preview needs: the box of the host, the plot cell, the plot tint, the mark of an entry in a neutral tone, and an entry with no name. */
+.skel__host { position: absolute; inset: 0; }
+.skel__host .chartCore__plot { height: var(--c); }
+/* The plot is at (x, y) with the height h. Its right edge is `r` px before the right edge of the plot cell. It is never narrower than 40 px. */
+.skel__plot { width: max(40px, calc(100% - var(--x) - var(--r))); }
+.skel .chartCore__legendItem i { background: var(--skel-edge); }
+.skel .chartCore__legendItem i.skel__nopill { opacity: 0; }
+/* An entry has no name, but it keeps the height of a line of text. */
+.skel .chartCore__legendItem > span:empty { height: 1.5714em; }
+/* The decorative form of a series (9.11): one fixed line, or bars with heights that vary, in neutral tones. It claims no value and no count. The
+   width of the line is the option `line_width` (--lw). The dots are in percent of the plot, with the diameter --d. */
+.skel__marks, .skel__bars { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.skel__series { stroke-width: var(--lw, 2px); }
+.skel__area { fill: var(--skel-edge); stroke: none; }
+.skel__fade { stroke: none; }
+.skel__stop { stop-color: var(--skel-edge); }
+.skel__bar { fill: var(--skel-edge); }
+.skel__dot { position: absolute; left: var(--x); top: var(--y); width: var(--d); height: var(--d); margin: calc(var(--d) / -2) 0 0 calc(var(--d) / -2); border-radius: 50%; background: var(--skel-edge); }
+/* A head text of the legend table, as a bar of the measured width. It is centred on the line, as the text is. */
+.skel__hb { display: inline-block; width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); vertical-align: top; margin-top: calc((1.5714em - 8px) / 2); }
 
 /* ==== family: barchart ======================================================================================================== */
+/* The horizontal form (web/js/preview/barchart.js) uses the markup and the classes of the loaded `.hbar`, so its CSS gives the sizes. These rules add
+   the neutral tint of the plot, the band of the value axis (--band), the mark of the legend entry in a neutral tone, and an entry with no name.
+   The vertical form uses the rules of the time series family above. */
+.skel .hbar__grid { background: var(--skel-fill); overflow: hidden; }
+/* The label "100%" of a percent stack, as a bar of the measured width, centred on the right end of the axis. */
+.skel .hbar__axis .skel__tick { position: absolute; left: 100%; top: var(--t); width: var(--w); height: 8px; margin-left: calc(var(--w) / -2); border-radius: 4px; background: var(--skel-edge); }
+.skel .hbar__axis { flex: 0 0 var(--band, 21px); }
+.skel .hbar__legendItem > i { background: var(--skel-edge); }
+.skel .hbar__legendItem > span:empty { height: 1.5714em; }
 
 /* ==== family: piechart ======================================================================================================== */
 

@@ -18,7 +18,7 @@ import * as logs from "./logs.js";
 import * as geomap from "./geomap.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
-const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g", "use"]);
+const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g", "use", "defs", "linearGradient", "stop"]);
 
 // The family of each panel type. A panel type that draws no queried data (a text) has no family and no preview.
 const FAMILY_OF_TYPE = {
@@ -83,8 +83,8 @@ export function buildPreview(panel) {
 }
 
 // Fills the preview when its box has a size, and again when the size changes. The preview is hidden (display none) when the panel does not
-// wait for a first load, so a panel that never waits builds nothing. The callback `done(result)` is for the tests. Returns a function that stops the
-// observation.
+// wait for a first load, so a panel that never waits builds nothing. The callback `done(result)` is for the tests. `ctx` is { rt, page, key }: `key` is
+// the key of the panel instance, for the range of the request (`rt.rangeOf(key)`). Returns a function that stops the observation.
 export function observePreview(skeleton, panel, doc, ctx, done = null) {
   if (!skeleton || typeof ResizeObserver !== "function") return () => {};
   let last = "";
@@ -106,10 +106,11 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
   };
   const observer = new ResizeObserver(paint);
   observer.observe(skeleton);
-  // A text that the document fixes is measured with the font of the page. A font that loads after the first paint changes the width, so the preview
-  // builds again when a font has loaded.
+  // A text that the document fixes is measured with the font of the page. A font that loads after the first paint changes the width, so the measures are read
+  // again and the preview builds again when a font has loaded (9.11).
   const fonts = typeof document !== "undefined" ? document.fonts : null;
   const again = () => {
+    timeseries.resetMeasures();
     last = "";
     paint();
   };
