@@ -2,6 +2,7 @@
 
 This suite runs the browser cases B01 to B384 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 241 cases.
 This suite runs the browser cases B01 to B392 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 239 cases.
+This suite runs the browser cases B01 to B321 and B395 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 237 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -174,7 +175,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/editor_forms.mjs` | The cases B66 to B68: the forms of the panel editor and of the settings view. |
 | `cases/repeat.mjs` | The cases B93 to B101 and B101p: the repeat of panels and sections by a variable (F23). B101p is the parity capture of the copies. |
 | `cases/text.mjs` | The cases B102 to B109: the text panel in Markdown (F29). B108 uses `fake-pdp`. |
-| `cases/timeline.mjs` | The cases B110 to B118: the state timeline and the status history (F30). |
+| `cases/timeline.mjs` | The cases B110 to B118 and B395: the state timeline and the status history (F30). |
 | `cases/annotations.mjs` | The cases B120 to B127: the annotations from a ClickHouse query (F25). B124 uses `fake-pdp`. |
 | `cases/queries.mjs` | The cases B130 to B137: several queries in one panel (F24). B135 uses PostgreSQL. |
 | `cases/editor_audit.mjs` | The cases B152 and B153: the switch "Transparent background" and the audit of the options of the panel editor. |

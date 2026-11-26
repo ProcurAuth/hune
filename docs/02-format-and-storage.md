@@ -1464,10 +1464,10 @@ The object `color` has these members. All of them are necessary, also when the m
 2. The log scale. A `y_buckets` with `scale` = `log2` or `log10` MUST have `mode` = `size`. Else the validation gives `not_permitted` at `y_buckets/mode`.
 3. The colour range. When `color.min` and `color.max` are both numbers, `min` MUST be lower than `max`. Else the validation gives `out_of_range` at `color/max`.
 4. The tooltip. The member `mode` works as in 4.26. The member `sort` MUST be absent or `none`. The member `hide_zeros` MUST be absent or `false`. Else the validation gives `not_permitted` at the member.
-5. The field settings. The members `unit`, `decimals` and `display_name` of 4.18 apply to the values of the frame. They are the y values with `calculate` = `true`, and the counts with `calculate` = `false`. The other members of 4.18 are valid and have no effect, because the colours come from `color`.
+5. The field settings. The members `unit`, `decimals` and `display_name` of 4.18 apply to the values of the frame. They are the y values with `calculate` = `true`, and the counts with `calculate` = `false`. The member `hide_from` of 4.18 has one effect: a field with `viz` equal to `true` is not a value field (9.19e, section 1). The other members of 4.18 are valid and have no effect, because the colours come from `color`.
 6. The style members of a series (`draw`, `line_width`, `fill_opacity`, `show_points`, `point_size`, `line_dash`, `transform`, `axis_placement`, `axis_label`, `soft_min` and `soft_max`) are not for this type. In a property set they give `not_permitted` (4.18, rule 5).
 7. The limits. The format limits are in the tables. The page has the caps `MAX_BUCKET_VALUES` and `MAX_HEAT_CELLS` (9.19e). A document that breaks a cap is valid, and the page shows a message.
-8. The defaults of a new panel are in 9.19e, section 13.
+8. The defaults of a new panel are in 9.19e, section 11.
 
 The fixture `tests/fixtures/dashboards/heatmap.json` holds the boundary cases of the options. The files `tests/fixtures/dashboards/invalid/f31_heatmap_*.json` hold one error each (16.3).
 

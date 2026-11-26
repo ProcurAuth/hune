@@ -20,6 +20,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - Each dashboard has `access: { write, history, export }`. The page hides "History", "Export" and "Download" when the flag is `false`. A dashboard of a read-only store has no history: the history routes give `404 history_unavailable`.
 - The errors `403 history_disabled`, `403 export_disabled` and `404 history_unavailable`.
+- The hook `data-timeline` of a `state_timeline` and of a `status_history` lists the ticks and the boxes of the labels of the time axis.
 - A dashboard can have no folder. The API writes `null` for its folder. The create body and the move body take `"folder": null`. `GET /api/dashboards?folder=` with an empty value selects these dashboards, and `GET /api/folders` has the new member `root`.
 - A volume reads a file `<uid>.json` at the root of its path as a dashboard without a folder. In PostgreSQL, the column `folder_id` can be null after migration 2.
 - The access tree names the place of these dashboards the node `folder:_root`. A grant on a real folder does not cover them. The options route lists `_root`, "Root (no folder)", as the first folder.
@@ -65,6 +66,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - A stat, a bar gauge and a gauge in the colour mode `palette` took the slot of the place among the kept fields. They now take the slot of the place among the number fields (9.16). A pattern in `reduce.fields` no longer changes the colour of a field that stays.
 - A bar gauge in the mode `lcd` ignored `show_unfilled`. With `true`, it now draws the track of the other modes behind the cells, as the options form says. The browser case B385 tests it.
 - The grid of a stat covered the last 8 px of the warning line of a bad override pattern. It now starts under the line. The browser case B386 tests it.
+- The texts of the canvas of a `state_timeline` and of a `status_history` were 6 CSS px high at the pixel ratio 2. They are now 12 CSS px high at each pixel ratio, as 9.19c says.
 
 ## 0.2.0 - 2026-11-25
 

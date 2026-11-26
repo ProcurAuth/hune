@@ -2720,6 +2720,8 @@ The figures are the figures that Grafana 12.4.2 draws, measured on the local ins
 
 **6. The geometry.** The canvas fills the body of the panel, under the legend when the legend is at the bottom. The values are measured on Grafana 12.4.2 at a pixel ratio of 1.
 
+A text on the canvas is 12 CSS px high at each pixel ratio. The canvas has device pixels, so the page draws the text with the font size 12 times the pixel ratio. The page measures a width at 12 px, so the places do not depend on the pixel ratio.
+
 | Part | Rule |
 |---|---|
 | Plot top, right | 8 px. |
@@ -2939,9 +2941,9 @@ The figures are the figures that Grafana 12.4.2 draws, measured on the local ins
 5. The mode `opacity`. The colour is `color.fill`, as the theme draws a colour of that kind (9.16). Colour `j` has the opacity `j / (steps - 1)` for the scale `linear`, and `(j / (steps - 1)) ^ exponent` for the scale `exponential`. The opacity is rounded to 8 bits, as in a colour `#rrggbbaa`. The cells with the lowest count are then fully transparent. The mode `opacity` has no inversion and no `reverse`.
 6. The page makes the palette again when the theme changes.
 7. The legend shows when `show_legend` is `true` and the panel has a drawn cell. It is a canvas of 300 by 9 px. It draws the `steps` colours from the left to the right, so the lowest count is at the left.
-   - The bar is 25 px from the left edge of the body and 10 px under the top of the legend. Two labels in 11 px text are under the bar: the first count at the left end and the last count at the right end.
+   - The bar is 25 px from the left edge of the content box and 10 px under the top of the legend. The content box is the box of the picture, 8 px inside the body of the panel. Two labels in 11 px text are under the bar: the first count at the left end and the last count at the right end.
    - The legend takes 46 px under the plot. The plot is 46 px lower. The label colour is the text colour at 61 % of its alpha.
-   - The counts are the `min` and the `max` of section 4, written in the short number form of 9.19 (`4.91 K`). A body narrower than 350 px gets a bar of the width of the body less 50 px (a rule of Hune, not measured).
+   - The counts are the `min` and the `max` of section 4, written in the short number form of 9.19 (`4.91 K`). A content box under 350 px gets a bar of its width less 50 px, 10 px at least. This is a rule of Hune, not measured.
    - A click on the legend does nothing.
 
 **6. The axes.**
@@ -4058,7 +4060,7 @@ JavaScript.
 | `data-testid="annot-<id>-card"`, `"annot-<id>-keys"`, `"annot-<id>-status"` | The card, the element of the keys and the hidden status text of the time series `<id>` (9.19d). `<id>` is the key of the panel instance (9.8c). |
 | `data-testid="panel-<id>-annot-note"` | The note of the title bar (9.19d, rule 16). |
 | `data-testid="view-data-annotations"` | The second table of "View data" (9.11). |
-| `data-timeline` on `.panel__plot` | JSON that the page writes after each draw of a `state_timeline` or a `status_history`. It holds `kind`, `box` (`[left, top, width, height]`), `rows` (`name`, `y`, `h`, `n`), `segments` (`[row, x, w, state]` for each box), `states` (`[text, color]`), `texts` (`[text, x, y, color]`) and `cut`. The arrays hold 2,000 items at most, and `cut` is `true` when the page cut them. The lengths are in CSS pixels. |
+| `data-timeline` on `.panel__plot` | JSON that the page writes after each draw of a `state_timeline` or a `status_history`. It holds `kind`, `box` (`[left, top, width, height]`), `rows` (`name`, `y`, `h`, `n`), `segments` (`[row, x, w, state]` for each box), `states` (`[text, color]`), `texts` (`[text, x, y, color]`), `ticks` (`[time, x]` for each grid line), `labels` (`[text, x, left, right, top]` for each label of the time axis) and `cut`. The arrays `segments` and `texts` hold 2,000 items at most, and `cut` is `true` when the page cut them. The lengths are in CSS pixels. |
 | `data-testid="timeline-<id>"`, `"timeline-<id>-note"`, `"timeline-<id>-legend"`, `"timeline-<id>-tip"`, `"timeline-<id>-desc"` | The root of the picture, the message of the state `timeline-limit`, the legend, the card and the hidden description (9.19c). |
 | `data-heatmap` on `.panel__plot` | JSON that the page writes after each draw of a `heatmap`. It holds `shape` (`bucketed` or `raw`), `cols`, `rows`, `drawn` (the cells that the engine drew in the range of the time), `sx`, `sy` (the sizes, or `null`), `scale` (`linear`, `log2`, `log10` or `ordinal`), `min`, `max`, `steps`, `palette` (the first and the last colour), `legend` (`[first count, last count]` or `null`) and `cells` (`[column, row, count, level]` for the first 2,000 cells that have a count to draw). `level` is the index in the palette. `cut` is `true` when the page cut the list. |
 | `data-testid="heatmap-<id>"`, `"heatmap-<id>-note"`, `"heatmap-<id>-legend"`, `"heatmap-<id>-tip"`, `"heatmap-<id>-desc"`, `"heatmap-<id>-skip"` | The root of the picture, the message of the state `bucket-limit`, the colour bar, the card, the hidden description and the note of the values that a log scale skipped (9.19e). The dialog "View data" has the same note as `view-data-<id>-skip`. |
