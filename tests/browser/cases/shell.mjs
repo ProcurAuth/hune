@@ -254,7 +254,7 @@ export const cases = [
 
   {
     id: "B52",
-    name: "header bar: a viewer (editing off) has the filters of the list and the buttons of a dashboard, and no edit control, in the header; the menu has History and Export",
+    name: "header bar: a viewer of a read-only store has the filters of the list and the buttons of a dashboard, and no edit control, in the header; the menu has Export and no History",
     server: "noedit",
     async run(t) {
       const p = await t.page();
@@ -277,7 +277,7 @@ export const cases = [
         t.eq([d.header, d.main, d.missing], [ids, [], ["edit-toggle"]], `${width}: the buttons of a dashboard, with no Edit`);
         t.eq(await insideHeader(p, ids), true, `${width}: each control is in the box of the header`);
         await p.click(p.tid("dashboard-menu"));
-        t.eq(await p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent.trim()).filter((x) => !/time range|Zoom/.test(x))`), ["History", "Export"], `${width}: the menu More actions has History and Export only`);
+        t.eq(await p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent.trim()).filter((x) => !/time range|Zoom/.test(x))`), ["Export"], `${width}: the menu More actions has Export only: a read-only store has no history`);
         await p.press("Escape");
         t.eq(await noOverflow(p), true, `${width}: no horizontal scroll on a dashboard`);
       }

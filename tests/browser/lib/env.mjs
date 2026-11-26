@@ -393,7 +393,7 @@ export function addRootDashboard(dir, uid, title, tags = []) {
 }
 
 /** Build the configuration text from `print-reference` with the values of this run. */
-export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passwordFile, editing = true, basePath = "/", accessBlock = null, pgBlock = null, mongoBlock = null, queryInspect = null, serverLines = [], geomapBlock = null, chLines = [] }) {
+export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passwordFile, editing = true, scratchVolume = null, history = true, export: exportKey = true, basePath = "/", accessBlock = null, pgBlock = null, mongoBlock = null, queryInspect = null, serverLines = [], geomapBlock = null, chLines = [] }) {
   const ref = sh(BINARY, ["print-reference", "--format", "hcl", "--profile", "local"]);
   if (ref.status !== 0) throw new Error("print-reference failed: " + ref.stderr);
   let t = ref.stdout;
@@ -406,11 +406,18 @@ export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passw
   set("listen", JSON.stringify(listen));
   set("ops_listen", JSON.stringify(ops));
   set("base_path", JSON.stringify(basePath));
-  // No edit is possible without a primary store (13.10): `editing = false` makes the volume a read-only store, with a title.
+  // The keys `server.history` and `server.export` are mandatory (13.8): the reference has them with `true`.
+  set("history", String(history));
+  set("export", String(exportKey));
+  // A file needs exactly one primary store (13.10). `editing = false` makes the seed volume a read-only store, with a title, and adds a second,
+  // empty volume `scratch` as the primary store. The cases of this mode look at the dashboards of the seed volume, which have no edit and no history.
   if (!editing) {
+    if (!scratchVolume) throw new Error("editing = false needs the path of the scratch volume");
     if (!/^\s*primary\s*=\s*true\n/m.test(t)) throw new Error("no primary store in the reference");
     t = t.replace(/^(\s*)primary\s*=\s*true\n/m, (m, a) => `${a}title           = "Transit"\n`);
     t = t.replace(/^\s*history_keep\s*=\s*\d+\n/m, "");
+    const re = /^(storage \{[\s\S]*?)^\}/m;
+    t = t.replace(re, (m, body) => `${body}\n  volume "scratch" {\n    path            = ${JSON.stringify(scratchVolume)}\n    primary         = true\n    rescan_interval = "1s"\n    history_keep    = 100\n  }\n}`);
   }
   // `server.query_inspect` has no line in the reference (its default is `false`): the line is added after `base_path` (B46).
   if (queryInspect !== null) {
@@ -476,6 +483,8 @@ export async function startServer(name, ch, opts = {}) {
   const volume = join(dir, "volume");
   makeVolume(volume);
   if (opts.prepare) opts.prepare(volume);
+  const scratchVolume = (opts.editing ?? true) ? null : join(dir, "scratch");
+  if (scratchVolume) mkdirSync(scratchVolume, { recursive: true });
   const labVolume = opts.lab ? join(dir, "lab") : null;
   if (labVolume) {
     makeLabVolume(labVolume);
@@ -493,6 +502,9 @@ export async function startServer(name, ch, opts = {}) {
     chUrl: ch.url,
     passwordFile,
     editing: opts.editing ?? true,
+    scratchVolume,
+    history: opts.history ?? true,
+    export: opts.export ?? true,
     basePath: opts.basePath ?? "/",
     accessBlock: opts.accessBlock ?? null,
     pgBlock: opts.postgres ? opts.postgres.block : null,

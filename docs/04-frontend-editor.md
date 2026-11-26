@@ -528,7 +528,7 @@ The three dots of a card:
 - A card that the user can edit has one button, the three dots. It is at the right end of the first row, after the badge. It is 24 px high, and it keeps the height of the row, so a card with and without it has the same rows.
 - The button has no visible label. Its accessible name and its tooltip give the name.
 - The user can edit a card when `editing` is `true` (6.10) and the item has `access.write` (6.12). The three dots have this one condition. "Delete" needs `dashboard.write`, as the route `DELETE api/dashboards/<uid>` does.
-- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Delete" has the danger colour.
+- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Export" shows only when `access.export` is `true`. "Delete" has the danger colour.
 - "Edit" is a link to `d/<uid>/<slug>?edit=1`. It opens the dashboard in edit mode.
 - The menu "More actions" of the dashboard page has "Export" but not "Move" (9.9). Thus the menu of the card is the way to "Move" (10.7).
 - "Delete" runs the delete flow of 10.13 and names the dashboard in its dialog. The server decides. A `403` shows the usual refusal.
@@ -538,7 +538,7 @@ An item that is not valid (6.12):
 
 - Its card shows the uid in place of the title, and the badge "Not valid". It has no link to the dashboard and no "Edit" or "Delete".
 - The button "Show errors" opens the errors in the card, each with its pointer and its message.
-- The three dots of the card open a menu. It has "Download" only when `access.export` is `true`. "Download" reads `GET api/dashboards/<uid>?download=true` (6.14). With `access.write`, the menu also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
+- The three dots of the card show only when the menu has an entry. The menu has "Download" only when `access.export` is `true`. "Download" reads `GET api/dashboards/<uid>?download=true` (6.14). With `access.write`, the menu also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
 
 The header (9.6):
 
@@ -5805,14 +5805,14 @@ Two other cases of the same `409`:
 ### 10.11 History: list, view, diff and restore
 
 "History" in the menu "More actions" (9.9) opens `editview=history`. The page exists only when `access.history` is `true` (6.17, 11).
-A URL that a user opens by hand, without this right, shows the standard refusal page of 9.6 (`history_disabled`, `forbidden` or `history_unavailable`).
+A URL that a user opens by hand, without this right, shows the page of `403` of 9.8 ("You have no access to this dashboard."). The page makes no request to the history routes. The routes refuse too: `history_disabled`, `forbidden` or `history_unavailable`.
 
 List (`data-testid="history-list"`):
 
 - The columns are "Version", "Kind", "Saved at" (in the zone of the dashboard), "Saved by", "Message" and "Size". The
   newest version is first, with the mark "current". Under 900 px the columns "Kind", "Saved by" and "Size" hide.
 - "Load more" reads the next page while `next` is not `null` (6.24).
-- Each row has "View" and "Compare with current".
+- Each row has "View" and "Compare with current". With `access.export` equal to `true`, the current text is `download=true` of 6.14. Without it, the text of the newest version of the list stands for the current text.
 - A row that is not current, not a deletion version and not an `external` version without bytes also has "Restore". This needs `editing = true` and
   `access.write` on the dashboard.
 - The user can select two rows with their check boxes. "Compare" then shows the diff from the older to the newer one.
