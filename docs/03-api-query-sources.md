@@ -452,7 +452,8 @@ Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 read_onl
   `access.history` and `access.export` are the members of 6.12, with the same rules.
 - `download=true` needs the export right. With `server.export` equal to `false`, the route gives `403 export_disabled`.
   It does this before it reads anything and before any PDP question. Thus the answer is the same for a uid that exists
-  and for one that does not. In mode `authzen`, Hune asks `dashboard.read` first. Then it asks `dashboard.export` on `N(uid)`. A `false`
+  and for one that does not.
+- In mode `authzen`, a download asks `dashboard.read` first. Then it asks `dashboard.export` on `N(uid)`. A `false`
   answer gives `403 forbidden` with the member `action` equal to `dashboard.export`.
 - The export rule holds for an `invalid` entry too. A request with no `download` is not concerned.
 - `read_only` and `store` are the members of 6.12. The page opens the editor read-only when `read_only` is `true`.
