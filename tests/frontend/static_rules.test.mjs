@@ -80,7 +80,7 @@ test("only the editor loader imports with a template string (the 9.30 measure fo
   assert.deepEqual(offenders.map((f) => relative(WEB, f)), []);
 });
 
-test("relative imports resolve to files, and the dashboard page stays under 1109 KB (9.30)", () => {
+test("relative imports resolve to files, and the dashboard page stays under 1116 KB (9.30)", () => {
   const seen = new Map();
   const visit = (file) => {
     if (seen.has(file)) return;
@@ -95,8 +95,8 @@ test("relative imports resolve to files, and the dashboard page stays under 1109
   for (const entry of ["main.js", "dashboard.js", "list.js", ...readdirSync(join(WEB, "js/panels")).map((n) => `panels/${n}`)]) visit(join(WEB, "js", entry));
   const total = [...seen.values()].reduce((a, b) => a + b, 0);
   // The page budget is a measured limit: the measure plus 4 KiB of room, rounded up to a whole KiB (9.30). A new feature raises
-  // the limit in a reviewed change, and the limit then goes back to the measure plus 4 KiB. The limit is now 1,084 KB (1,110,016 bytes).
-  assert.ok(total < 1109 * 1024, `${total} bytes`);
+  // the limit in a reviewed change, and the limit then goes back to the measure plus 4 KiB. The limit is now 1,116 KB (1,142,784 bytes).
+  assert.ok(total < 1116 * 1024, `${total} bytes`);
   assert.ok(![...seen.keys()].some((f) => f.includes("/editor/")), "the editor must load on demand only");
 });
 

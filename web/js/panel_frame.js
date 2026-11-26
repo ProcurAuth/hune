@@ -8,7 +8,7 @@ import { computeFieldConfig } from "./fields.js";
 import { buildLink } from "./links.js";
 import { baseDisplayNames, displayNames } from "./names.js";
 import { noteTooltip, panelRange, timeNote } from "./panel_time.js";
-import { buildPreview } from "./panel_preview.js";
+import { buildPreview, observePreview } from "./preview/index.js";
 import { rangeKey, sameFrames, WAITING, waitMode } from "./panel_wait.js";
 import { mentionsVariable } from "./repeat.js";
 import { badgeText, failedRefs, failedSlots, firstError, hasExtra, maxRows, slotsOf } from "./queries.js";
@@ -263,6 +263,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   const loader = el("div", { class: "panel__loader", "aria-hidden": "true" }, el("i"), el("i"), el("i"));
   head.append(loader);
   const skeleton = buildPreview(panel);
+  const stopPreview = skeleton ? observePreview(skeleton, panel, rt.doc, { rt, page }) : () => {};
   const body = el("div", { class: "panel__body" }, content, skeleton, overlay);
   const root = el("section", {
     class: "panel",
@@ -764,6 +765,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
       destroyed = true;
       clearTimeout(progressTimer);
       clearTimeout(waitTimer);
+      stopPreview();
       destroyInstance();
       root.remove();
     },
