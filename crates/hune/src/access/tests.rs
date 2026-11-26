@@ -29,7 +29,7 @@ fn source(id: &str, label: &str, rows: u64, seconds: u64) -> SourceInfo {
     }
 }
 
-fn inputs(audience: &str, editing: bool, sources: Vec<SourceInfo>) -> PepInputs {
+fn inputs(audience: &str, sources: Vec<SourceInfo>) -> PepInputs {
     let keys = crate::config::parse_public_key_set(JWKS).unwrap();
     PepInputs {
         audience: audience.to_owned(),
@@ -44,7 +44,8 @@ fn inputs(audience: &str, editing: bool, sources: Vec<SourceInfo>) -> PepInputs 
         timeout: Duration::from_millis(500),
         cache_ttl: Duration::from_secs(30),
         max_connections: 4,
-        editing,
+        history: true,
+        export: true,
         sources,
     }
 }
@@ -61,7 +62,7 @@ fn the_document_has_one_resource_for_each_source_of_the_three_kinds_and_names_no
     pg.kind = SourceKind::Postgres;
     let mut mg = source("events", "Events", 30_000, 120);
     mg.kind = SourceKind::MongoDb;
-    let i = inputs("dashboards", true, vec![source("prod", "Production", 100_000, 60), pg, mg]);
+    let i = inputs("dashboards", vec![source("prod", "Production", 100_000, 60), pg, mg]);
     let doc = i.build_document().unwrap().to_value();
     assert_eq!(
         doc["resources"],
@@ -86,13 +87,13 @@ fn the_key_of_a_fault_of_a_source_names_its_kind() {
     // An id that the grammar of a path refuses gives a finding at the resource of the source.
     let mut pg = source("metrics:x/y", "Metrics", 20_000, 90);
     pg.kind = SourceKind::Postgres;
-    let i = inputs("dashboards", true, vec![source("prod", "Production", 100_000, 60), pg]);
+    let i = inputs("dashboards", vec![source("prod", "Production", 100_000, 60), pg]);
     let errors = i.check();
     let keys: Vec<&str> = errors.iter().map(|(k, _)| k.as_str()).collect();
     assert!(keys.contains(&"postgres \"metrics:x/y\".label"), "{errors:?}");
     let mut mg = source("events:x/y", "Events", 20_000, 90);
     mg.kind = SourceKind::MongoDb;
-    let errors = inputs("dashboards", true, vec![source("prod", "Production", 100_000, 60), mg]).check();
+    let errors = inputs("dashboards", vec![source("prod", "Production", 100_000, 60), mg]).check();
     let keys: Vec<&str> = errors.iter().map(|(k, _)| k.as_str()).collect();
     assert!(keys.contains(&"mongodb \"events:x/y\".label"), "{errors:?}");
 }
@@ -101,7 +102,6 @@ fn the_key_of_a_fault_of_a_source_names_its_kind() {
 fn the_document_of_11_18_for_two_sources() {
     let i = inputs(
         "dashboards",
-        true,
         vec![source("preprod", "Pre-production", 50_000, 30), source("prod", "Production", 100_000, 60)],
     );
     let doc = i.build_document().unwrap().to_value();
@@ -115,8 +115,12 @@ fn the_document_of_11_18_for_two_sources() {
         ],
         "actions": [
             {"name": "dashboard.read", "resource_types": ["service", "folder", "dashboard"],
-             "description": "List and open dashboards, run their saved queries and the queries of their variables, and read their history.",
+             "description": "List and open dashboards, and run their saved queries and the queries of their variables.",
              "limits": ["max_rows", "max_duration"]},
+            {"name": "dashboard.history", "resource_types": ["service", "folder", "dashboard"],
+             "description": "List the versions of a dashboard of the primary store, read one version and compare two versions. With dashboard.write, restore a version."},
+            {"name": "dashboard.export", "resource_types": ["service", "folder", "dashboard"],
+             "description": "Download the file of the current document of a dashboard."},
             {"name": "dashboard.write", "resource_types": ["service", "folder", "dashboard"],
              "description": "Create, change, move, restore and delete dashboards. Create, rename and delete folders."},
             {"name": "source.query", "resource_types": ["service", "source"],
@@ -139,13 +143,33 @@ fn the_document_of_11_18_for_two_sources() {
     assert_eq!(doc, want);
 }
 
-#[test]
-fn without_editing_only_dashboard_read_is_published_and_there_is_no_resources_member() {
-    let i = inputs("dashboards", false, vec![source("prod", "Production", 1000, 10)]);
+/// The names of the actions of the document, in order.
+fn action_names(i: &PepInputs) -> Vec<String> {
     let doc = i.build_document().unwrap().to_value();
-    let names: Vec<&str> = doc["actions"].as_array().unwrap().iter().map(|a| a["name"].as_str().unwrap()).collect();
-    assert_eq!(names, ["dashboard.read"]);
-    assert!(doc.get("resources").is_none());
+    doc["actions"].as_array().unwrap().iter().map(|a| a["name"].as_str().unwrap().to_owned()).collect()
+}
+
+#[test]
+fn dashboard_history_and_dashboard_export_are_published_only_when_their_key_is_true() {
+    let sources = || vec![source("prod", "Production", 1000, 10)];
+    let both = inputs("dashboards", sources());
+    assert_eq!(
+        action_names(&both),
+        ["dashboard.read", "dashboard.history", "dashboard.export", "dashboard.write", "source.query"]
+    );
+    let mut no_history = inputs("dashboards", sources());
+    no_history.history = false;
+    assert_eq!(action_names(&no_history), ["dashboard.read", "dashboard.export", "dashboard.write", "source.query"]);
+    let mut no_export = inputs("dashboards", sources());
+    no_export.export = false;
+    assert_eq!(action_names(&no_export), ["dashboard.read", "dashboard.history", "dashboard.write", "source.query"]);
+    let mut neither = inputs("dashboards", sources());
+    neither.history = false;
+    neither.export = false;
+    assert_eq!(action_names(&neither), ["dashboard.read", "dashboard.write", "source.query"]);
+    // The write actions and the resources never depend on the keys: a primary store always exists.
+    let doc = neither.build_document().unwrap().to_value();
+    assert_eq!(doc["resources"][0]["path"], "source:prod");
     assert_eq!(doc["limits"][0]["max"], 1000);
     assert_eq!(doc["limits"][1]["max"], 10);
 }
@@ -156,7 +180,7 @@ fn the_largest_document_follows_the_bounds_of_11_19() {
     let label: String = "\u{1D11E}".repeat(60);
     assert_eq!(label.len(), 240);
     let sources: Vec<SourceInfo> = (0..64).map(|n| source(&format!("s{n:02}"), &label, 1_000_000_000, 3600)).collect();
-    let i = inputs("a".repeat(256).as_str(), true, sources);
+    let i = inputs("a".repeat(256).as_str(), sources);
     let doc = i.build_document().expect("the document passes the checks of 5.2, 5.3 and 6.1");
     let bytes = doc.to_value().to_string();
     assert!(bytes.len() < 64 * 1024, "{} bytes", bytes.len());
@@ -189,7 +213,7 @@ fn the_largest_document_follows_the_bounds_of_11_19() {
 #[test]
 fn a_bad_audience_is_an_error_with_a_key_of_the_configuration() {
     // The length of a label is a rule of the key table, so the document accepts a longer label.
-    let mut i = inputs("dashboards", true, vec![source("prod", "Production", 10, 10)]);
+    let mut i = inputs("dashboards", vec![source("prod", "Production", 10, 10)]);
     i.audience = String::new();
     let errors = i.check();
     assert!(errors.iter().any(|(k, m)| k == "access.identity.audience" && m.starts_with("expected ")), "{errors:?}");
@@ -197,7 +221,7 @@ fn a_bad_audience_is_an_error_with_a_key_of_the_configuration() {
 
 #[test]
 fn the_pep_checks_map_to_the_keys_of_13_11() {
-    let mut i = inputs("dashboards", true, vec![source("prod", "Production", 10, 10)]);
+    let mut i = inputs("dashboards", vec![source("prod", "Production", 10, 10)]);
     assert!(i.check().is_empty());
     i.pdp_token = procurauth_pep::config::Secret::new("bad token with space");
     i.header = "Authorization".to_owned();
@@ -212,7 +236,7 @@ fn the_pep_checks_map_to_the_keys_of_13_11() {
         assert!(!message.contains("bad token"), "the value of a secret never shows: {message}");
     }
     // The scheme error is the contradiction C5 of 13.14, so stage 2 does not report it.
-    let mut j = inputs("dashboards", true, vec![source("prod", "Production", 10, 10)]);
+    let mut j = inputs("dashboards", vec![source("prod", "Production", 10, 10)]);
     j.pdp_url = "http://pdp.example:4182".to_owned();
     assert!(j.check().is_empty());
     assert!(j.build_pep_config(false).unwrap().check().is_err());
@@ -233,7 +257,7 @@ fn the_pep_config_fields_map_to_their_own_key_or_to_an_internal_error() {
 
 #[test]
 fn the_values_of_11_10_reach_the_pep_config() {
-    let i = inputs("dashboards", true, vec![source("prod", "Production", 10, 10)]);
+    let i = inputs("dashboards", vec![source("prod", "Production", 10, 10)]);
     let c = i.build_pep_config(false).unwrap();
     assert_eq!(c.service_id, "dashboards");
     assert_eq!(c.token_header, "X-Identity-Token");

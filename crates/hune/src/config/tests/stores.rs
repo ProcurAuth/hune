@@ -10,7 +10,8 @@ const MAIN_BLOCK: &str = "  volume \"main\" {\n";
 const PG_PRIMARY: &str = "    primary           = true\n";
 const PG_HISTORY: &str = "    history_keep      = 100\n";
 
-/// The local file with its volume as a read-only store: no primary store, a title, no history.
+/// The local file with its volume as a read-only store: no primary store, a title, no history. The file does not
+/// load: C10 needs exactly one primary store.
 fn read_only_main(text: &str) -> String {
     let t = replace_once(text, MAIN_PRIMARY, "    title           = \"Main\"\n");
     replace_once(&t, MAIN_HISTORY, "")
@@ -33,21 +34,38 @@ fn the_local_file_has_one_primary_volume_and_the_distributed_file_a_primary_post
     let fx = Fx::new();
     let local = fx.load(&fx.local()).unwrap().config.storage;
     assert_eq!(local.primary_id(), Some("main"));
-    assert!(local.editing());
     let dist = fx.load(&fx.distributed()).unwrap().config.storage;
     assert_eq!(dist.primary_id(), Some("postgres"));
-    assert!(dist.editing());
 }
 
 #[test]
-fn a_file_with_no_primary_store_loads_and_has_no_editing() {
+fn c10_a_file_with_no_primary_store_stops_the_start_and_lists_the_store_blocks() {
     let fx = Fx::new();
+    // One store: the message names it.
     let text = read_only_main(&fx.local());
-    let storage = fx.load(&text).unwrap().config.storage;
-    assert!(storage.primary().is_none());
-    assert!(!storage.editing());
-    assert_eq!(storage.volumes[0].title.as_deref(), Some("Main"));
-    assert_eq!(storage.volumes[0].history_keep, None);
+    assert_eq!(
+        fx.one(&text),
+        "storage: the file has no primary store; give `primary = true` to `storage.volume \"main\"`"
+    );
+    // Two stores: the message lists both, in the order of the file.
+    let lab = volume("lab", Some("Lab"), "/var/lib/hune/lab", "");
+    assert_eq!(
+        fx.one(&with_volume(&text, &lab)),
+        "storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume \"lab\"` and `storage.volume \"main\"`"
+    );
+    // Three stores: a comma list.
+    let dist = replace_once(&fx.distributed(), PG_PRIMARY, "    title             = \"Archive\"\n");
+    let dist = replace_once(&dist, PG_HISTORY, "");
+    let text = replace_once(&dist, "storage {\n", &format!("storage {{\n{}", volume("lab", Some("Lab"), "/var/lib/hune/lab", "")));
+    let text = replace_once(&text, "storage {\n", &format!("storage {{\n{}", volume("alt", Some("Alt"), "/var/lib/hune/alt", "")));
+    assert_eq!(
+        fx.one(&text),
+        "storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume \"alt\"`, `storage.volume \"lab\"` and `storage.postgres`"
+    );
+    // `primary = false` on the only store means the same as no key.
+    let off = replace_once(&fx.local(), MAIN_PRIMARY, "    primary         = false\n    title           = \"Main\"\n");
+    let off = replace_once(&off, MAIN_HISTORY, "");
+    assert!(fx.one(&off).starts_with("storage: the file has no primary store"));
 }
 
 #[test]
@@ -101,13 +119,13 @@ fn c2_the_file_needs_a_store() {
 }
 
 #[test]
-fn c10_at_most_one_store_has_primary_true() {
+fn c10_two_stores_with_primary_true_stop_the_start() {
     let fx = Fx::new();
     let second = volume("lab", None, "/var/lib/hune/lab", "    primary         = true\n    history_keep    = 100\n");
     let text = with_volume(&fx.local(), &second);
     assert_eq!(
         fx.one(&text),
-        "storage.volume \"lab\".primary, storage.volume \"main\".primary: `storage.volume \"lab\".primary` (true) and `storage.volume \"main\".primary` (true): at most one store has `primary = true`"
+        "storage.volume \"lab\".primary, storage.volume \"main\".primary: `storage.volume \"lab\".primary` (true) and `storage.volume \"main\".primary` (true): exactly one store has `primary = true`"
     );
     // A volume and the PostgreSQL store.
     let dist = fx.distributed();
@@ -118,12 +136,8 @@ fn c10_at_most_one_store_has_primary_true() {
     );
     assert_eq!(
         fx.one(&text),
-        "storage.volume \"main\".primary, storage.postgres.primary: `storage.volume \"main\".primary` (true) and `storage.postgres.primary` (true): at most one store has `primary = true`"
+        "storage.volume \"main\".primary, storage.postgres.primary: `storage.volume \"main\".primary` (true) and `storage.postgres.primary` (true): exactly one store has `primary = true`"
     );
-    // `primary = false` is allowed and means the same as no key.
-    let off = replace_once(&fx.local(), MAIN_PRIMARY, "    primary         = false\n    title           = \"Main\"\n");
-    let off = replace_once(&off, MAIN_HISTORY, "");
-    assert!(fx.load(&off).unwrap().config.storage.primary().is_none());
 }
 
 #[test]
@@ -135,10 +149,10 @@ fn c30_a_read_only_store_needs_a_title_and_the_primary_store_has_none() {
         fx.one(&with_title),
         "storage.volume \"main\".title, storage.volume \"main\".primary: `storage.volume \"main\".title` (\"Main\") is not permitted on the primary store; the primary store shows at the root of the page"
     );
-    let no_title = replace_once(&read_only_main(&local), "    title           = \"Main\"\n", "");
+    let no_title = with_volume(&local, &volume("lab", None, "/var/lib/hune/lab", ""));
     assert_eq!(
         fx.one(&no_title),
-        "storage.volume \"main\".title, storage.volume \"main\".primary: `storage.volume \"main\".title` is necessary: the store is read-only and the title is the name of its root folder"
+        "storage.volume \"lab\".title, storage.volume \"lab\".primary: `storage.volume \"lab\".title` is necessary: the store is read-only and the title is the name of its root folder"
     );
     // The PostgreSQL store follows the same rule.
     let dist = fx.distributed();
@@ -147,10 +161,9 @@ fn c30_a_read_only_store_needs_a_title_and_the_primary_store_has_none() {
         "storage.postgres.title, storage.postgres.primary: `storage.postgres.title` (\"Archive\") is not permitted"
     ));
     let text = replace_once(&replace_once(&dist, PG_PRIMARY, ""), PG_HISTORY, "");
-    assert_eq!(
-        fx.one(&text),
-        "storage.postgres.title, storage.postgres.primary: `storage.postgres.title` is necessary: the store is read-only and the title is the name of its root folder"
-    );
+    // With no primary store, C10 comes too: the title error is in the list.
+    let e = fx.errors(&text);
+    assert!(e.contains(&"storage.postgres.title, storage.postgres.primary: `storage.postgres.title` is necessary: the store is read-only and the title is the name of its root folder".to_owned()), "{e:?}");
 }
 
 #[test]
@@ -251,25 +264,4 @@ fn a_file_with_more_than_sixteen_volumes_stops_the_start() {
         "{}",
         e[0]
     );
-}
-
-#[test]
-fn c21_the_key_in_the_mode_authzen_needs_a_primary_store() {
-    let fx = Fx::new();
-    let dist = fx.distributed();
-    let anchor = "  base_path               = \"/\"\n";
-    let with_inspect = replace_once(&dist, anchor, &format!("{anchor}  query_inspect           = true\n"));
-    // A primary store: no contradiction.
-    assert!(fx.errors(&with_inspect).is_empty());
-    // No primary store: the right to see the SQL needs `source.query` with `dashboard.write`.
-    let no_primary =
-        replace_once(&replace_once(&with_inspect, PG_PRIMARY, "    title             = \"Archive\"\n"), PG_HISTORY, "");
-    let e = fx.one(&no_primary);
-    assert!(e.starts_with("server.query_inspect, access.mode, storage: `server.query_inspect` (true) in the mode `authzen` needs a primary store"), "{e}");
-    // The key false, or the mode open: no contradiction.
-    let off = replace_once(&replace_once(&dist, PG_PRIMARY, "    title             = \"Archive\"\n"), PG_HISTORY, "");
-    assert!(fx.errors(&off).is_empty());
-    let local = fx.local();
-    let open = replace_once(&local, anchor, &format!("{anchor}  query_inspect           = true\n"));
-    assert!(fx.errors(&read_only_main(&open)).is_empty());
 }

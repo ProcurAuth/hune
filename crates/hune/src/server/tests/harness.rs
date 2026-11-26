@@ -25,6 +25,8 @@ pub fn test_config(volume: &Path) -> Config {
             listen: "127.0.0.1:0".parse().unwrap(),
             ops_listen: "127.0.0.1:0".parse().unwrap(),
             base_path: "/".to_owned(),
+            history: true,
+            export: true,
             query_inspect: false,
             repeat_max_per_panel: 24,
             repeat_max_per_section: 12,

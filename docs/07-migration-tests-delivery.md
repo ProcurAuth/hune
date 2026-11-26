@@ -1130,7 +1130,7 @@ Preconditions:
 
 | When | Step |
 |---|---|
-| T − 14 d | Add the service `hune` to the compose file of the host, with the volume as a read-only store: no `primary = true`, no `history_keep`, and a `title`. Give the file a second volume `scratch`, empty, with `primary = true`, because a file needs one primary store (C10). Add the nginx location `/dashboards/` (below). Run the first import with `--write`. The importer uses a second file, `import.hcl`, equal to the file of `serve` except that the volume has `primary = true` and `history_keep`, and has no `title`. A read-only `serve` takes no lock (5.19), so the importer takes it (5.16). |
+| T − 14 d | Add the service `hune` to the compose file of the host, with the volume as a read-only store: no `primary = true`, no `history_keep`, and a `title`. Give the file a second volume `scratch`, empty, with `primary = true` and `history_keep`, because a file needs one primary store (C10). Add the nginx location `/dashboards/` (below). Run the first import with `--write`. The importer uses a second file, `import.hcl`, equal to the file of `serve` except that the volume has `primary = true` and `history_keep`, and has no `title`. A read-only `serve` takes no lock (5.19), so the importer takes it (5.16). |
 | T − 14 d to T − 2 d | Parallel run. Grafana stays the editor and the source of truth. After each Grafana change, and at least one time each day, export and import again with `--write --replace`. Users compare the two tools. Hune fixes come as new releases. The operator reads the nginx log for `/grafana/public-dashboards/` and `/grafana/goto/` (19.2). |
 | T − 2 d | Edit freeze. Give the role Viewer to each Grafana user. When an environment variable of the Grafana service sets the role, create the container again without a build (`docker compose up -d --no-deps grafana`). Grafana then refuses saves. Tell the users about the freeze. |
 | T | Final export and final import with `--write --replace`. Run V3 again for each dashboard that changed after the last V3. Give the volume of Hune `primary = true` and `history_keep`, remove its `title`, remove the volume `scratch`, and start it again. Set `GF_SERVER_ROOT_URL=/grafana-old/` on Grafana, create it again without a build, and route `/grafana-old/` to it. Replace the nginx location `/grafana/` with the redirects of 15.17. |
@@ -1179,7 +1179,7 @@ Rollback is possible from T to T + 30 d. These are its triggers:
 
 Rollback procedure:
 
-1. Remove `primary = true` and `history_keep` from the store of Hune, give it a `title`, add an empty volume `scratch` with `primary = true`, and start it again. This stops new edits in the store of Hune.
+1. Remove `primary = true` and `history_keep` from the store of Hune, give it a `title`, add an empty volume `scratch` with `primary = true` and `history_keep`, and start it again. This stops new edits in the store of Hune.
 2. Run `hune export -c <file> --to <dir>` (5.38) to a private directory. It keeps the edits that people made in Hune
    after T.
 3. Give the Grafana users their roles of before the freeze again. Remove `GF_SERVER_ROOT_URL` from the Grafana service. Start
@@ -1586,7 +1586,7 @@ sample, unchanged.
 | K21 | The key `server.transform_max_cells` (13.8, 4.35): 8 tests in `crates/hune/src/config/tests/transform_cells.rs`. An absent key is 10,000,000 with the source `default`. The values 1, 2,500,000 and 100,000,000 have the source `file`. The values 0 and 100,000,001, a wrong type, `_env` or `_file`, a duplicate and a near name stop the start, and the error names the key, the range and the value. No environment variable gives the value. The member `transform_max_cells` of `GET /api/session` (6.10) has 2 tests in `crates/hune/src/server/tests/core.rs`. |
 | K22 | The key `server.list_filters_min_dashboards` (13.8, 9.7): 6 tests in `crates/hune/src/config/tests/list_filters.rs`. An absent key is 6 with the source `default`. The values 0, 1, 25 and 1000 have the source `file`. The values 1001 and 4294967296, a wrong type, `_env` or `_file`, a duplicate and a near name stop the start, and the error names the key, the range and the value. No environment variable gives the value. The member `list_filters_min_dashboards` of `GET /api/session` (6.10) has 2 tests in `crates/hune/src/server/tests/core.rs`. |
 | K23 | The stores of 13.10: 14 tests in `crates/hune/src/config/tests/stores.rs`. One test for each of C2, C10 and C30 to C34, the labels, the limit of 16 volumes, the removed keys (`unknown attribute`), a file with no primary store (the exact message of C10), a file with two primary stores, and a read-only PostgreSQL store next to a primary volume. |
-| K24 | The keys `server.history` and `server.export` (13.8): 8 tests in `crates/hune/src/config/tests/rights.rs`. An absent key stops the start, with the key, the type and the value. A value that is not a Boolean stops the start. `true` and `false` give their value with the source `file`. The effective configuration shows both keys. The keys also apply in the mode `open`. |
+| K24 | The keys `server.history` and `server.export` (13.8): 7 tests in `crates/hune/src/config/tests/rights.rs`. An absent key stops the start, with the key, the type and the value. A value that is not a Boolean stops the start. `true` and `false` give their value with the source `file`. The effective configuration shows both keys. The keys also apply in the mode `open`. |
 
 ### 16.6 Store conformance suite
 
@@ -3007,6 +3007,8 @@ server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
+  history                 = true
+  export                  = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "20s"
@@ -3374,6 +3376,8 @@ data:
       listen                  = "0.0.0.0:8080"
       ops_listen              = "0.0.0.0:9090"
       base_path               = "/"
+      history                 = true
+      export                  = true
       max_connections         = 1024
       idle_timeout            = "75s"
       shutdown_grace          = "20s"
