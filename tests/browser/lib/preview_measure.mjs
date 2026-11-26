@@ -192,7 +192,8 @@ function loadedProbe(id, family, extractors) {
         else if (r.y > t + h && inside) xs.push({ text: r.text, rect });
       }
       for (const y of ys) add("label", y.rect, y.text);
-      for (const x of xs) add("label", x.rect, x.text);
+      // `options.xParts`: the x labels are the part `label-x` and the vertical lines are the part `grid-x` (the heatmap, 9.11).
+      for (const x of xs) add(options.xParts ? "label-x" : "label", x.rect, x.text);
       add("axis-y", union(ys.map((y) => y.rect)));
       add("axis-x", union(xs.map((x) => x.rect)));
       // The horizontal grid: the lines that span the plot from its left edge to its right edge (an option of the families that draw one).
@@ -202,6 +203,15 @@ function loadedProbe(id, family, extractors) {
           if (s.y1 !== s.y2 || Math.abs(s.x1 - l) > 0.01 || Math.abs(s.x2 - (l + w)) > 0.01 || s.y1 < t - 1 || s.y1 > t + h + 1 || seen.has(s.y1)) continue;
           seen.add(s.y1);
           add("grid", [k.x - ox + s.x1, k.y - oy + s.y1 - s.lw / 2, s.x2 - s.x1, s.lw]);
+        }
+      }
+      // The vertical grid: the lines that span the plot from its top edge to its bottom edge, one for each tick of the time axis.
+      if (options.xParts && window.__previewLines) {
+        const seen = new Set();
+        for (const s of window.__previewLines(canvas)) {
+          if (s.x1 !== s.x2 || Math.abs(s.y1 - t) > 0.01 || Math.abs(s.y2 - (t + h)) > 0.01 || seen.has(s.x1)) continue;
+          seen.add(s.x1);
+          add("grid-x", [k.x - ox + s.x1 - s.lw / 2, k.y - oy + s.y1, s.lw, s.y2 - s.y1]);
         }
       }
     }
@@ -256,7 +266,7 @@ export const EXTRACTORS = {
     for (const e of h.all(".dataTable tbody tr", h.holder)) h.add("row", h.rel(e));
   },
   heatmap: (panel, h) => {
-    h.chart({ grid: true });
+    h.chart({ grid: true, xParts: true });
     const legend = h.holder.querySelector(".heat__legend");
     if (legend && h.visible(legend)) {
       h.add("legend", h.rel(legend));
@@ -291,15 +301,23 @@ export const EXTRACTORS = {
       h.add("legend", h.rel(legend));
       for (const t of h.textRects(legend)) h.add("legend-label", t.rect, t.text);
     }
-    let box = null;
+    let hook = null;
     try {
-      box = JSON.parse(h.holder.dataset.timeline).box;
+      hook = JSON.parse(h.holder.dataset.timeline);
     } catch (error) {
-      box = null;
+      hook = null;
     }
-    if (canvas && box) {
+    if (canvas && hook && hook.box) {
       const c = h.rel(canvas);
+      const box = hook.box;
       h.add("rows", [c[0] + box[0], c[1] + box[1], box[2], box[3]]);
+      // The time axis: the hook lists the ticks `[t, x]` and the labels `[text, x, left, right, y]` in CSS px from the canvas. A grid line is one device pixel
+      // wide at the column round(x dpr) / dpr. The height of a label is the text box of the recorder (the canvas draws at the size 12 dpr).
+      const dpr = window.devicePixelRatio || 1;
+      const texts = window.__previewTexts ? window.__previewTexts(canvas).filter((r) => r.baseline === "top") : [];
+      const th = texts.length ? (texts[0].ascent + texts[0].descent) / dpr : 0;
+      for (const l of hook.labels || []) h.add("label-x", [c[0] + l[2], c[1] + l[4], l[3] - l[2], th], l[0]);
+      for (const l of hook.ticks || []) h.add("grid-x", [c[0] + Math.round(l[1] * dpr) / dpr, c[1] + box[1], 1 / dpr, box[3]]);
     }
   },
   logs: (panel, h) => {
@@ -329,7 +347,7 @@ export function compareRect(cls, preview, loaded, tol = TOLERANCE_PX) {
 
 // A bar stands for a text: the preview bar is 8 px high and the loaded text box is higher. The two agree on the width and on the vertical centre.
 // The left edge is exact, or one-sided when the class says so (a label whose gutter can only grow moves to the right: the preview is at the left).
-export const LABEL_PARTS = new Set(["label", "legend-label", "legend-head"]);
+export const LABEL_PARTS = new Set(["label", "label-x", "legend-label", "legend-head"]);
 export function compareLabel(cls, preview, loaded, tol = TOLERANCE_PX) {
   const dx = preview[0] - loaded[0];
   const dw = preview[2] - loaded[2];

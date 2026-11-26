@@ -139,15 +139,15 @@ export const cases = [
     id: "B362",
     skip: SKIP,
     timeout: 240000,
-    name: "heatmap preview: the neutral form where the document proves that no picture comes, and nothing for the cells and the x labels (9.11)",
+    name: "heatmap preview: the neutral form where the document proves that no picture comes, and nothing for the cells and the undecided x labels (9.11)",
     async run(t) {
       const r = await measure(t, "pv-heat", heatmapDoc);
-      // E2, E3 and E4 (panels 6, 7, 8): the loaded body is never a picture, and the preview has no shape.
-      for (const id of [6, 7, 8]) {
+      // E2, E3, E4 and E1 (panels 6, 7, 8 and 13): the loaded body is never a picture, and the preview has no shape.
+      for (const id of [6, 7, 8, 13]) {
         t.assert(["empty", "error", "bucket-limit"].includes(state(r, id)), `panel ${id}: the loaded body is a message (${state(r, id)})`);
         t.eq(r.previews[id].children, 0, `panel ${id}: the preview has no shape`);
         t.eq(r.previews[id].parts.length, 0, `panel ${id}: no claimed part`);
-        t.assert(/^no-picture:E[234]$/.test(r.previews[id].notes), `panel ${id}: the note names the rule (${r.previews[id].notes})`);
+        t.assert(/^no-picture:E[1234]$/.test(r.previews[id].notes), `panel ${id}: the note names the rule (${r.previews[id].notes})`);
       }
       // The other panels: no cell, no row and no x label is claimed. The x band stays empty.
       for (const id of [1, 2, 3, 4, 5, 9, 10, 11, 12]) {
@@ -157,11 +157,27 @@ export const cases = [
         // Nothing of the preview lies in the band of the x labels, under the plot.
         const band = plot.rect[1] + plot.rect[3];
         for (const p of r.previews[id].parts) {
-          if (p.part === "legend" || p.part === "scale" || p.part === "legend-label") continue;
+          if (p.part === "legend" || p.part === "scale" || p.part === "legend-label" || p.part === "label-x") continue;
           // A y label is centred on its tick, so its centre is above the base of the plot, and its bar can pass it by half its height.
           const edge = p.part === "label" ? p.rect[1] + p.rect[3] / 2 : p.part === "grid" ? p.rect[1] : p.rect[1] + p.rect[3];
           t.assert(edge <= band + TOL, `panel ${id}: the part ${p.part} is not in the x band`);
         }
+      }
+      // The x axis (the range of the request): a hidden axis and a fixed axis have an exact left edge, so the engine ticks are known. The labels are bars of
+      // their measured width and the lines are at the ticks. A bounded left edge (panels 1 and 10) has no x mark: the step of the ticks needs the plot width.
+      for (const id of [2, 3, 4, 5, 9, 11, 12]) {
+        const labels = rowsOf(r, id, "label-x").filter((x) => x.preview);
+        const lines = rowsOf(r, id, "grid-x").filter((x) => x.preview);
+        t.assert(labels.length >= 3, `panel ${id}: the x labels are drawn (${labels.length})`);
+        t.assert(lines.length >= labels.length, `panel ${id}: a line for each tick (${lines.length})`);
+        for (const l of labels) t.eq(l.verdict, "ok", `panel ${id} x label ${l.index} ${l.text}: ${JSON.stringify(l.delta)}`);
+        for (const l of lines) t.eq(l.verdict, "ok", `panel ${id} x line ${l.index}: ${JSON.stringify(l.delta)}`);
+        t.eq(rowsOf(r, id, "label-x").length, labels.length, `panel ${id}: the loaded panel has no other x label`);
+        t.eq(rowsOf(r, id, "grid-x").length, lines.length, `panel ${id}: the loaded panel has no other vertical line`);
+      }
+      for (const id of [1, 10]) {
+        t.eq(rowsOf(r, id, "label-x").filter((x) => x.preview).length, 0, `panel ${id}: no x label bar`);
+        t.eq(rowsOf(r, id, "grid-x").filter((x) => x.preview).length, 0, `panel ${id}: no vertical line`);
       }
     },
   },
@@ -173,7 +189,7 @@ export const cases = [
     async run(t) {
       const r = await measure(t, "pv-hist", histogramDoc);
       noFailure(t, r, "histogram");
-      const drawn = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13];
+      const drawn = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15];
       for (const id of drawn) edges(t, rowsOf(r, id, "plot")[0], `panel ${id} plot`);
       // The top is 8 and the right margin is 8 for every histogram, whatever the legend. The legend off and an empty legend take no room under the plot.
       for (const id of [2, 7]) {
@@ -183,10 +199,10 @@ export const cases = [
       const off = rowsOf(r, 2, "plot")[0];
       t.assert(Math.abs(off.preview[0] + off.preview[2] - (r.previews[2].box[0] - 8)) <= TOL, "legend off: the right edge is the box less 8");
       t.assert(Math.abs(off.loaded[0] + off.loaded[2] - (r.previews[2].box[0] - 8)) <= TOL, "legend off: the loaded right edge is the box less 8");
-      // An empty legend at the right keeps the gap of the grid: the right edge is the box less 16.
+      // An empty legend at the right takes no room: the host keeps the placement bottom, so the right edge is the box less 8 (9.19).
       const empty = rowsOf(r, 7, "plot")[0];
-      t.assert(Math.abs(empty.loaded[0] + empty.loaded[2] - (r.previews[7].box[0] - 16)) <= TOL, `empty legend: the loaded right edge is the box less 16 (${empty.loaded[0] + empty.loaded[2]})`);
-      t.assert(Math.abs(empty.preview[0] + empty.preview[2] - (r.previews[7].box[0] - 16)) <= TOL, "empty legend: the preview right edge is the box less 16");
+      t.assert(Math.abs(empty.loaded[0] + empty.loaded[2] - (r.previews[7].box[0] - 8)) <= TOL, `empty legend: the loaded right edge is the box less 8 (${empty.loaded[0] + empty.loaded[2]})`);
+      t.assert(Math.abs(empty.preview[0] + empty.preview[2] - (r.previews[7].box[0] - 8)) <= TOL, "empty legend: the preview right edge is the box less 8");
       // The label 0 and its grid line are the marks that every histogram has: the 0 ends 5 px before the plot, the line is at the base of the plot.
       for (const id of drawn) {
         const label = rowsOf(r, id, "label")[0];
@@ -204,7 +220,7 @@ export const cases = [
     async run(t) {
       const r = await measure(t, "pv-hist", histogramDoc);
       // The legend of each ON panel: the preview legend takes at most the loaded room, and the pill is the same size.
-      for (const id of [1, 3, 4, 5, 6, 8, 9, 12, 13]) {
+      for (const id of [1, 3, 4, 5, 6, 8, 9, 12, 13, 14, 15]) {
         const legend = rowsOf(r, id, "legend")[0];
         t.assert(legend && legend.verdict === "ok", `panel ${id}: the legend agrees ${legend ? JSON.stringify(legend.delta) : "-"}`);
       }
@@ -221,7 +237,7 @@ export const cases = [
       // A list that the document does not name: no bar for the name.
       for (const id of [1, 3, 12]) t.eq(rowsOf(r, id, "legend-label").filter((x) => x.preview).length, 0, `panel ${id}: no name bar`);
       // The table legend: the head Name.
-      for (const id of [4, 5, 13]) {
+      for (const id of [4, 5, 13, 14, 15]) {
         const head = rowsOf(r, id, "legend-head")[0];
         t.assert(head && head.verdict === "ok", `panel ${id}: the head Name agrees ${head ? JSON.stringify(head.delta) : "-"}`);
       }
@@ -230,7 +246,7 @@ export const cases = [
       const fallback = rowsOf(r, 6, "legend")[0];
       t.assert(fallback.loaded[2] >= r.previews[6].box[0] - TOL, "panel 6: the loaded legend is under the plot, full width");
       // The right legends that stay beside the plot.
-      for (const id of [3, 5, 9]) t.assert(/legend:right/.test(r.previews[id].notes), `panel ${id}: the legend is beside the plot (${r.previews[id].notes})`);
+      for (const id of [3, 5, 9, 14]) t.assert(/legend:right/.test(r.previews[id].notes), `panel ${id}: the legend is beside the plot (${r.previews[id].notes})`);
     },
   },
   {
@@ -247,7 +263,7 @@ export const cases = [
       // Every entry hidden at the right (panel 7): no legend, whatever the show option says. The legend is not drawn.
       t.eq(rowsOf(r, 7, "legend").filter((x) => x.preview).length, 0, "panel 7: no legend shape");
       // The bars, the x labels and the other y labels are data: no bar of the plot, no x label, no more than the label 0 unless the labels are exact.
-      for (const id of [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13]) {
+      for (const id of [1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 14, 15]) {
         const parts = r.previews[id].parts.map((p) => p.part);
         t.eq(parts.filter((p) => p === "label").length, 1, `panel ${id}: the label 0 only`);
         t.eq(parts.filter((p) => p === "grid").length, 1, `panel ${id}: the line of the tick 0 only`);
@@ -338,11 +354,23 @@ export const cases = [
         t.assert(plot.preview[3] >= plot.loaded[3] - TOL && plot.preview[2] >= plot.loaded[2] - TOL, `panel ${id}: the loaded canvas is inside the preview canvas`);
       }
       for (const id of [1, 2, 7]) t.eq(rowsOf(r, id, "legend").length, 0, `panel ${id}: the loaded legend is hidden`);
-      // The time axis and the row names are not drawn: the preview parts are the canvas, the rows box and the legend of the case C only.
+      // The row names are not drawn: the preview parts are the canvas, the rows box, the legend of the case C and the time axis of the exact cases.
       for (const id of [1, 2, 3, 4, 5, 6, 7, 8, 10, 11]) {
         const parts = new Set(r.previews[id].parts.map((p) => p.part));
         for (const forbidden of ["axis-x", "axis-y", "label", "row", "column", "grid"]) t.assert(!parts.has(forbidden), `panel ${id}: no ${forbidden}`);
       }
+      // The time axis of a state timeline (case E15): exact when the canvas and the gutter are exact (panels 2, 5 and 11: no names or one fixed name, no
+      // legend room or a legend at the bottom). The labels and the lines agree with the hook of the loaded canvas. Elsewhere the band is empty.
+      for (const id of [2, 5, 11]) {
+        const labels = rowsOf(r, id, "label-x").filter((x) => x.preview);
+        const lines = rowsOf(r, id, "grid-x").filter((x) => x.preview);
+        t.assert(labels.length >= 3, `panel ${id}: the x labels are drawn (${labels.length})`);
+        t.assert(lines.length >= labels.length, `panel ${id}: a line for each tick (${lines.length})`);
+        for (const l of labels) t.eq(l.verdict, "ok", `panel ${id} x label ${l.index} ${l.text}: ${JSON.stringify(l.delta)}`);
+        for (const l of lines) t.eq(l.verdict, "ok", `panel ${id} x line ${l.index}: ${JSON.stringify(l.delta)}`);
+        t.eq(rowsOf(r, id, "label-x").length, labels.length, `panel ${id}: the loaded panel has no other x label`);
+      }
+      for (const id of [1, 3, 4, 6, 7, 8, 10]) t.eq(rowsOf(r, id, "label-x").filter((x) => x.preview).length, 0, `panel ${id}: no x label bar`);
       // The panel that never draws (9): the loaded body is a message, the preview has no child.
       t.assert(["empty", "error"].includes(state(r, 9)), `panel 9: the loaded body is a message (${state(r, 9)})`);
       t.eq(r.previews[9].children, 0, "panel 9: the preview has no shape");

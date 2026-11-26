@@ -127,6 +127,15 @@ test("heatmap: the cases where no picture can come give an empty preview", () =>
   assert.equal(noPicture(hp({ hide_le: null, hide_ge: 0 }), null), "E2", "a count of 0 is not below 0");
   assert.equal(noPicture(hp({ hide_le: 500000, hide_ge: null }), null), "E2", "no count is above the highest count of 500,000");
   assert.equal(noPicture(hp({ hide_le: 5, hide_ge: 7 }), null), "", "6 passes");
+  // E1: more than 250,000 columns over the range of the request (5 hours = 18,000,000 ms).
+  const range = { from: Date.UTC(2026, 10, 13), to: Date.UTC(2026, 10, 13) + 5 * 3600000 };
+  assert.equal(noPicture(hp({ x_buckets: { mode: "size", value: 1 } }), null, range), "E1", "a column of 1 ms");
+  assert.equal(noPicture(hp({ x_buckets: { mode: "size", value: 73 } }), null, range), "", "246,576 columns of 73 ms: under the limit");
+  assert.equal(noPicture(hp({ x_buckets: { mode: "size", value: 72 } }), null, range), "E1", "250,001 columns of 72 ms: one more than the limit");
+  assert.equal(noPicture(hp({ x_buckets: { mode: "size", value: 1 } }), null, null), "", "no range: no proof");
+  assert.equal(noPicture(hp({ calculate: false, x_buckets: { mode: "size", value: 1 } }), null, range), "", "the shape bucketed has no step");
+  assert.equal(noPicture(hp({ x_buckets: { mode: "count", value: 60 } }), null, range), "", "a count of columns");
+  assert.equal(heat(hp({ x_buckets: { mode: "size", value: 1 } }), BOX, null, frame()).notes[0], "no-picture:E1");
   assert.equal(noPicture(hp({ calculate: false, hide_le: 5, hide_ge: 5 }), null), "E3");
   assert.equal(noPicture(hp({ calculate: false, hide_le: 5, hide_ge: 5.5 }), null), "", "a bucketed value can be 5.2");
   const hiddenViz = { defaults: { hide_from: { legend: false, tooltip: false, viz: true } }, overrides: [] };
@@ -213,11 +222,24 @@ test("histogram: the least legend at the bottom is one list item of 31 px, or th
   assert.equal(num(parts(short, "legend")[0], "--h"), 12 + 16);
 });
 
+test("histogram: a table with no value column has the head Name only, and the fallback keeps the cap of 35 %", () => {
+  assert.deepEqual(legendFacts(hs({ legend: lg({ mode: "table", values: [] }) }), null).heads, []);
+  assert.deepEqual(legendFacts(hs({ legend: lg({ mode: "table", values: ["nope", "min"] }) }), null).heads, ["min"]);
+  const right = hist(hs({ legend: lg({ placement: "right", mode: "table", values: [] }) }), BOX, null, {});
+  assert.equal(rectOf(parts(right, "legend")[0])[2], 38 + 28 + 15, "the column Name and the scroll bar");
+  // A short body under the fallback: the table wrap and the list keep floor(0.35 H) at most.
+  const narrow = { w: 100, h: 100 };
+  const table = hist(hs({ legend: lg({ placement: "right", mode: "table", values: ["min"] }) }), narrow, null, {});
+  assert.equal(num(parts(table, "legend")[0], "--h"), 4 + 35, "the cap is 35 px, not 8rem");
+  const list = hist(hs({ legend: lg({ placement: "right" }) }), { w: 100, h: 50 }, null, {});
+  assert.equal(num(parts(list, "legend")[0], "--h"), 8 + 17, "the list keeps floor(0.35 * 50) = 17 px at most");
+});
+
 test("histogram: the legend is empty or unknown when a member can hide every entry", () => {
   const hide = { defaults: { hide_from: { legend: true, tooltip: false, viz: false } }, overrides: [] };
   const empty = hist(hs({ legend: lg({ placement: "right" }) }, hide), BOX, null, {});
-  assert.deepEqual(empty.notes, ["legend:empty-right"]);
-  assert.equal(rectOf(parts(empty, "plot")[0])[0] + rectOf(parts(empty, "plot")[0])[2], 682 - 16, "the empty column keeps the gap of 8 px");
+  assert.deepEqual(empty.notes, ["legend:empty"]);
+  assert.equal(rectOf(parts(empty, "plot")[0])[0] + rectOf(parts(empty, "plot")[0])[2], 682 - 8, "a hidden legend takes no room: the placement is bottom");
   assert.equal(parts(empty, "legend").length, 0);
   const bottom = hist(hs({}, hide), BOX, null, {});
   assert.equal(rectOf(parts(bottom, "plot")[0])[3], 209, "no legend room at the bottom");
@@ -398,7 +420,8 @@ test("the grid previews use no colour of the document, no style attribute and no
     const js = readFileSync(new URL(`../../web/js/preview/${name}.js`, import.meta.url), "utf8");
     assert.ok(!/\.sql\b|\.queries\b|\.expr\b/.test(js.replace(/\/\/.*$/gm, "")), `${name}: no query text`);
     assert.ok(!/setAttribute\("style"|innerHTML|resolveFill|fieldColorValue|\.color\.fixed/.test(js), `${name}: no colour and no style attribute`);
-    assert.ok(!/rangeOf/.test(js.replace(/\/\/.*$/gm, "")), `${name}: no resolved range`);
+    // The range of the request is allowed (9.11): the preview reads it with `rangeOf` of grids.js and never makes a new "now".
+    assert.ok(!/Date\.now|new Date\(\)/.test(js.replace(/\/\/.*$/gm, "")), `${name}: no new now`);
   }
   const css = readFileSync(new URL("../../web/css/panel-loading.css", import.meta.url), "utf8");
   const section = css.slice(css.indexOf("family: heatmap"), css.indexOf("family: logs"));
@@ -408,4 +431,80 @@ test("the grid previews use no colour of the document, no style attribute and no
     const walk = (n) => [n, ...(n.k || []).flatMap(walk)];
     for (const n of out.elements.flatMap(walk)) for (const v of Object.values(n.v || {})) assert.match(v, /^-?[0-9.]+(px|%)?$/);
   }
+});
+
+// ---- the time axis (the range of the request) --------------------------------------------------------------------------------------
+import { rangeOf, textBoxHeight, timeAxis } from "../../web/js/preview/grids.js";
+
+const T0 = Date.UTC(2026, 10, 13);
+const HOUR = 3600000;
+// The context of the frame: the runtime gives the range of the key, the page gives the zone and the range of the dashboard.
+const frame = (from = T0, to = T0 + 6 * HOUR, extra = {}) => ({ rt: { rangeOf: () => ({ from_ms: from, to_ms: to, error: null }) }, page: { zone: "utc", linkContext: () => ({ from: 0, to: 1 }) }, key: 1, ...extra });
+
+test("the range of the request is the range of the runtime for the key, else the range of the page, else none", () => {
+  assert.deepEqual(rangeOf(frame()), { from: T0, to: T0 + 6 * HOUR });
+  assert.deepEqual(rangeOf({ page: { linkContext: () => ({ from: 5, to: 9 }) } }), { from: 5, to: 9 }, "the editor draft has no rangeOf");
+  assert.equal(rangeOf(frame(T0, T0)), null, "a range that is not finite and ascending");
+  assert.deepEqual(rangeOf({ rt: { rangeOf: () => ({ error: "bad" }) }, key: 1, page: { linkContext: () => ({ from: 5, to: 9 }) } }), { from: 5, to: 9 }, "a range with an error falls back to the page");
+  assert.equal(rangeOf(null), null);
+  assert.equal(rangeOf({}), null);
+});
+
+test("timeAxis: the labels and the lines are the ticks of the engine over the range, in the zone", () => {
+  const axis = timeAxis({ from: T0, to: T0 + 6 * HOUR, left: 50, plotW: 600, width: 682, zone: "utc" });
+  // 600 px for 6 hours: the engine picks the step of 30 minutes (a label is 35 px wide with the measurer of the test).
+  assert.deepEqual(axis.labels.map((l) => l.label), ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00"]);
+  for (const l of axis.labels) assert.ok(l.x - l.w / 2 >= 1 && l.x + l.w / 2 <= 681, "a label stays inside the canvas");
+  assert.equal(axis.lines.length >= axis.labels.length, true);
+  assert.ok(Math.abs(axis.lines[0].x - 50) < 1e-9, "the tick at the start of the range is at the left edge");
+  assert.equal(textBoxHeight(12), 14, "no page: the fixed height of the test");
+});
+
+test("heatmap: a hidden axis and a fixed axis draw the x labels and the vertical lines when the range is known, else nothing", () => {
+  const hidden = hp({ y_axis: "hidden", show_legend: false });
+  const none = heat(hidden, BOX, null, {});
+  assert.equal(parts(none, "label-x").length + parts(none, "grid-x").length, 0, "no range: the band stays empty");
+  const out = heat(hidden, BOX, null, frame());
+  const labels = parts(out, "label-x");
+  const lines = parts(out, "grid-x");
+  assert.ok(labels.length >= 6 && lines.length >= labels.length, `${labels.length} labels, ${lines.length} lines`);
+  const [plot] = parts(out, "plot");
+  const [px0, py0, pw, ph] = rectOf(plot);
+  for (const l of lines) assert.deepEqual([num(l, "--y"), num(l, "--h"), num(l, "--w")], [py0, ph, 1], "a line spans the plot height, one device pixel wide");
+  // The label bars: 8 px high, centred on the text box that starts 9 px under the plot (a box of 14 px in the test).
+  for (const l of labels) assert.deepEqual([num(l, "--h"), num(l, "--y") + 4], [8, py0 + ph + 9 + 7]);
+  assert.equal(labels[0].a["data-skel-class"], EXACT);
+  assert.ok(Math.abs(num(lines[0], "--x") - px0) <= 0.5, "the first tick is at the left edge of the plot");
+  assert.ok(boundHolds(out.bounds.xLabels, labels.length));
+  // A fixed axis too: the left edge is exact. A bounded left edge draws nothing: the tick step depends on the plot width.
+  const fixed = hp({ y_buckets: { mode: "size", value: 10, scale: "linear" }, y_min: 0, y_max: 100 }, { defaults: { unit: "ms", decimals: 0 }, overrides: [] });
+  assert.ok(parts(heat(fixed, BOX, null, frame()), "label-x").length >= 6);
+  assert.equal(parts(heat(hp(), BOX, null, frame()), "label-x").length, 0, "bounded left edge: no x label");
+  // A longer range changes the ticks (the day ticks write the date).
+  const days = heat(hidden, BOX, null, frame(T0, T0 + 3 * 24 * HOUR));
+  assert.ok(parts(days, "label-x").length >= 3);
+  assert.ok(parts(days, "label-x").length !== labels.length || num(parts(days, "label-x")[0], "--w") !== num(labels[0], "--w"), "the range decides the ticks");
+});
+
+test("timeline: the time axis of a state timeline is drawn with an exact plot box, and never for a status history or an undecided box", () => {
+  const off = { show_labels: false, legend: { show: false } };
+  const out = line(ts("state_timeline", off), BOX, null, frame());
+  const labels = parts(out, "label-x");
+  const lines = parts(out, "grid-x");
+  assert.ok(labels.length >= 6 && lines.length >= labels.length);
+  // The bars sit on the bottom edge of the canvas box: 12 px less half of the text box (7 px) less half the bar (4 px) from the bottom.
+  for (const l of labels) assert.equal(num(l, "--b"), 12 - 7 - 4);
+  assert.equal(num(lines[0], "--x"), 8, "show_labels false: the gutter is 8, and the first tick is on it");
+  assert.equal(parts(line(ts("status_history", off), BOX, null, frame()), "label-x").length, 0, "the axis of a status history is data");
+  assert.equal(parts(line(ts("state_timeline", off), BOX, null, {}), "label-x").length, 0, "no range: no label");
+  assert.equal(parts(line(ts("state_timeline", { show_labels: true, legend: { show: false } }), BOX, null, frame()), "label-x").length, 0, "the names are data: the gutter is bounded");
+  const named = { defaults: { display_name: "Status" }, overrides: [] };
+  assert.ok(parts(line(ts("state_timeline", { legend: { show: false } }, named), BOX, null, frame()), "label-x").length >= 6, "one fixed name: the gutter is exact");
+  // The legend of the case D is data: its height and its width decide the canvas.
+  const palette = { defaults: { color: { mode: "palette", fixed: null }, display_name: "Status" }, overrides: [] };
+  assert.equal(parts(line(ts("state_timeline", {}, palette), BOX, null, frame()), "label-x").length, 0, "the legend of the states is data");
+  // A legend of the case C at the right changes the canvas width: no label. At the bottom the width is the box width.
+  const thresholds = { defaults: { display_name: "Status", color: { mode: "thresholds", fixed: null }, thresholds: { mode: "absolute", steps: [{ value: null, color: "green" }, { value: 80, color: "red" }] } }, overrides: [] };
+  assert.ok(parts(line(ts("state_timeline", {}, thresholds), BOX, null, frame()), "label-x").length >= 6);
+  assert.equal(parts(line(ts("state_timeline", { legend: { placement: "right" } }, thresholds), BOX, null, frame()), "label-x").length, 0);
 });

@@ -65,6 +65,7 @@ export function heatmapDoc(uid = "pv-heat") {
     heat(10, "bucketed, left axis", { calculate: false }, undefined, WIDE),
     heat(11, "fixed axis, no unit", { y_buckets: linear, y_min: 0, y_max: 100 }, undefined, SERIES, SIZE),
     heat(12, "fixed axis, unit set by a query override", { y_buckets: linear, y_min: 0, y_max: 1000 }, { defaults: { unit: "ms" }, overrides: [{ match: { by: "query", value: "A" }, set: { unit: "s", decimals: 1 } }] }, SERIES, SIZE),
+    heat(13, "E1: columns of 1 ms", { x_buckets: { mode: "size", value: 1 } }),
   ]))], { time: RANGE });
 }
 
@@ -91,6 +92,8 @@ export function histogramDoc(uid = "pv-hist") {
     hist(11, "two series, percent", { stacking: "percent" }, undefined, TWO),
     hist(12, "short body, bottom list", {}, undefined, VALUES, { w: 12, h: 3 }),
     hist(13, "COUNT, bottom table", { combine: true, legend: legendOf({ mode: "table", values: ["max"] }) }, count),
+    hist(14, "right table, no value column", { legend: legendOf({ placement: "right", mode: "table", values: [] }) }),
+    hist(15, "bottom table, no value column", { legend: legendOf({ mode: "table", values: [] }) }),
   ]))], { time: RANGE });
 }
 
