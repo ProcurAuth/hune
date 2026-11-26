@@ -90,8 +90,17 @@
 .skel--piechart .skel__val { width: 0; height: calc(var(--fs-sm) * var(--lh-base)); }
 
 /* ==== family: stat ============================================================================================================ */
+/* The grid of a stat reaches the four edges of the body, over the padding (9.19): the preview of a stat has the box of the body. */
+.panel__skeleton[data-kind="stat"] { inset: 0; }
+/* The three families of values (stat, gauge, bargauge) draw boxes with no paint. A void box holds a place and a size. A fill box reaches the
+   edges of the preview, under a top margin (the warning line): its edges are those of the CSS box, so a fraction of a pixel stays exact. */
+.skel--stat .skel__v, .skel--gauge .skel__v, .skel--bargauge .skel__v { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); }
+.skel--stat .skel__fill, .skel--gauge .skel__fill, .skel--bargauge .skel__fill { position: absolute; left: 0; right: 0; bottom: 0; top: var(--y, 0px); }
 
 /* ==== family: gauge =========================================================================================================== */
+/* The canvas of a cell, and the rings of the empty arc, of the band of the marks and of the neutral mark. They use neutral tones. */
+.skel--gauge .skel__canvas { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); }
+.skel--gauge .skel__ring { fill: var(--skel-fill); stroke: none; }
 
 /* ==== family: bargauge ======================================================================================================== */
 

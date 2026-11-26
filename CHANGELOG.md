@@ -48,6 +48,8 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The preview is now in the folder `web/js/preview/`: a registry (`index.js`), shared helpers (`common.js`) and one module for each of the 12 families. Each family module gives the neutral form for now: an empty body with the light and the dots. The module `panel_preview.js`, the function `previewOf` of `panel_wait.js` and the heuristic sizes are gone. The browser cases B280 to B282 are replaced by B320 and B321.
 - The measurement harness `tests/browser/lib/preview_measure.mjs` and the command `tests/browser/preview_measure.mjs` measure each preview and each loaded panel. They give the differences by tolerance class (9.11).
 - The preview of a pie chart and of a map now draws its own rules. The pie keeps the loaded plot, the ring and the hole of a donut, with the least legend. The map keeps the map box and the two zoom squares of `show_zoom`. Both keep the room of the warning line of an invalid regex override, and its text shows as a bar on each wrapped line. The browser cases B370 to B378 and the unit tests in `preview_rings.test.mjs` check them.
+- The previews of a stat, a gauge and a bar gauge draw the facts of the document. They draw the box of the loaded panel and the warning line of a draft. A stat or a gauge with one new number field also has its tile or its cell. A gauge also has its title, canvas and empty arc. The number of tiles, gauges and items is data, so no other shape shows. The browser cases B340 to B349 test them.
+- The grid of a stat with a warning line starts under the paragraph, so its preview does too.
 
 ### Fixed
 

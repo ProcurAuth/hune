@@ -1475,6 +1475,32 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - A warning line of an invalid `regex` override has its own place in the pie and in the map. The preview has the same element as the loaded line, with the same icon and text. The part `warning` has the class `exact`. A stored document cannot hold such a pattern, so only a draft shows the line.
   - The text of the line is a text that the document fixes. The preview draws each wrapped line of it as a bar: 8 px high, with round ends, and as wide as the text of that line. It draws no glyph. The icon keeps its place and is not drawn.
   - The browser wraps the text, so the preview line has the height of the loaded line. The preview does not compute a height.
+- The argument `box` has two more members, `fw` and `fh`: the size with its fraction, rounded down to 1/64 px. A family that needs the real size, as the loaded gauge does, reads them.
+- The families `stat`, `gauge` and `bargauge` have their own rules. The document does not fix the number of tiles, gauges or items of a real panel. A shape for one of them would claim a count. These families draw the facts that the document gives, and nothing else.
+- The preview of a `stat` is the box of the body. The loaded grid reaches the four edges of the body, over the padding (9.19), so the preview of this type has no padding. No option of the panel changes the box. The part `holder` has the class `exact`.
+- The fill of a `stat` with `color_mode` = `background` is a colour of the document, so the preview never draws it. A gap, a name, a value, a graph and a mark of change are data, so the preview draws none of them.
+- The tiles of a `stat`. The number of tiles is data, except when the document fixes one item (the rule of the number of items, below). The grid then has one tile that has the size of the grid. The preview draws this tile at the same place as the box (part `tile`, class `exact`). In all other cases the preview draws no tile.
+- The preview of a `bargauge` is the box of the loaded root, with nothing inside. No member of the document fixes the number of items, and one item is not certain. The preview is the same for each orientation, display mode and reduce option. The part `holder` has the class `exact`.
+- The warning line. An override with `match.by` = `regex` and a pattern that does not compile gives the loaded frame a paragraph above the plot (9.14). The server refuses such a pattern, so only a draft shows it.
+  - The preview of the three families reserves a paragraph with the same rectangle (part `warning`, class `exact`).
+  - Each line of its text is a bar of the measured width (part `label`).
+  - The box under the paragraph starts at its bottom.
+  - The grid of a `stat` starts at the top of the plot, 8 px under the paragraph. It keeps the other three edges of the body.
+- The number of items. This rule is for the `stat` and the `gauge`. The document fixes the number in two cases only.
+  - Case A: the text `reduce.fields` does not compile, so no item shows.
+  - Case B: `reduce.values` is `false`, `reduce.fields` is empty, and one visible query gives the data. The last transform of the chain is a `calculate_field` with `replace_fields` = `true` and the mode `index` or `reduce_row`. The chain starts with the transforms of the source of a `reuse` that has `with_transforms`. One new number field stays, so one item shows, also with no row.
+  - A partition in the chain, a literal field name and `reduce.values` = `true` fix nothing.
+  - Every other `gauge` has the box only (part `holder`).
+  - A `stat` in case B has one tile. Every other `stat` has the box only.
+- A gauge in case B. The preview calls the pure functions of `panels/gauge.js`: `gridCells`, `stackCells`, `cellParts`, `gaugeGeometry`, `angleOf`, `bandEntries` and `scaleOf`. It draws the cell (part `tile`, class `exact`) of `orientation`, `sizing`, `min_width` and `min_height`. It draws the canvas (part `plot`, class `exact`) and, with `fields.defaults.display_name`, the title box (part `title`, class `exact`). When the name has no `__field` token and no override sets a name, it draws the title text as a bar.
+- The empty arc of a gauge (part `arc`). The size of the value text can move the arc, and the text is data. The preview draws the arc of a text of no width. The loaded arc has at least this radius, so the class is `least`.
+  - The class is `exact` when the text cannot move the arc. This holds when `value_size` is set.
+  - It can hold in other boxes. The preview computes the arc of a text of no width and of a very wide text. The class is `exact` when the two agree.
+- The room of the threshold band. The preview reserves it when `show_threshold_markers` is not `false` and the document does not prove that the band is absent. A band is absent when the colour mode is not `thresholds`, or when the scale and the thresholds give one entry. With a scale from the data, the band can be absent, so the arc is a lower bound.
+- The scale is fixed in three cases: the thresholds have the mode `percentage`, `min` and `max` are set, or `unit` is `percent` or `percentunit`. The markers then round the ends to `decimals`. With a fixed scale and a band, the preview draws the band ring (part `scale`). With a finite `neutral`, it also draws the neutral mark. A scale from the data gives neither.
+- An override whose matcher can match the field is undecided for each member that it sets. The preview then takes the member of `fields.defaults` for the room of the band, and draws no part that needs the member. A matcher that matches no field does not count: a pattern that does not compile, or a query ref that no visible query has.
+- The preview of a gauge never draws the filled arc, the value text, the threshold labels or a colour of the document. It builds again when the box changes, as the loaded gauge does.
+- The tests of the three families are `tests/frontend/preview_values.test.mjs` and the browser cases B340 to B349.
 - Each element that a test measures has two attributes. The attribute `data-skel-part` names the part: `box`, `plot`, `legend`, `warning`, `axis-y`, `axis-x`, `label`, `head`, `row`, `column`, `tile`, `arc`, `track`, `scale` or `mark`. The attribute `data-skel-class` gives the tolerance class. The root element has `data-skel`, the key of the family.
 - The tolerance classes tell how exact a part is, against the loaded panel:
 

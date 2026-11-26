@@ -93,7 +93,9 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
     const h = skeleton.clientHeight;
     if (!w || !h || `${w}x${h}` === last) return;
     last = `${w}x${h}`;
-    const result = previewOf(panel, { w, h }, doc, ctx);
+    // `fw` and `fh` are the size with its fraction, rounded down to the layout unit (1/64 px): a gauge reads the real size of the box.
+    const r = skeleton.getBoundingClientRect();
+    const result = previewOf(panel, { w, h, fw: Math.floor(r.width * 64 + 1e-6) / 64, fh: Math.floor(r.height * 64 + 1e-6) / 64 }, doc, ctx);
     if (!result) return;
     root.replaceChildren(...result.elements.map(drawNode));
     root.dataset.skelNotes = result.notes.join(" ");
