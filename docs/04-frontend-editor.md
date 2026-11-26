@@ -1454,7 +1454,60 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 
 - A panel type that draws no queried data, a text, has no family and no preview.
 - Each family module gives the neutral form until the family has its own rules: an empty body with the light and the dots. The neutral form claims no part.
-- Each element that a test measures has two attributes. The attribute `data-skel-part` names the part: `box`, `plot`, `legend`, `warning`, `axis-y`, `axis-x`, `label`, `head`, `row`, `column`, `tile`, `arc`, `track`, `scale` or `mark`. The attribute `data-skel-class` gives the tolerance class. The root element has `data-skel`, the key of the family.
+- The page gives the argument `ctx` the key of the panel. A module can read the range of the request with `rangeOf` of `grids.js`.
+  - The range is the range of the runtime for the key. A time override and a reuse panel have their own range.
+  - Without a runtime range, the range of the page applies.
+  - The preview never makes a new "now". It never reads a query.
+- The grid family is the types `heatmap`, `histogram`, `state_timeline` and `status_history`. The three modules share the file `grids.js`.
+  - The helpers of `grids.js` read the members of the panel, its fields and its overrides.
+  - One helper lists the possible values of a key of the field config. The list starts with the default of the field. Each override that can match adds its value.
+  - An override that matches every field replaces the list. An override that cannot match is skipped. A `regex` that does not compile is such an override. A `query` that names no visible query is another one.
+- A panel that can never draw has an empty preview. A heatmap has no picture in five cases.
+  - With `calculate` true, the range of the request gives more than 250,000 columns. The columns are the steps of `x_buckets` over the range.
+  - With `calculate` true, no whole count passes `hide_le` and `hide_ge`.
+  - With `calculate` false, `hide_le` is not below `hide_ge`.
+  - Every possible `hide_from` has `viz` true. This case also gives an empty preview for the other three types.
+  - A panel with an override pattern that does not compile has the neutral form. The warning line changes the height, and the preview does not guess it.
+- The heatmap preview draws the plot as a guide that paints nothing.
+  - The top is 8 px, or 0 px with a hidden axis. The right edge is 8 px from the canvas.
+  - The canvas has a floor of 60 px and the plot has a floor of 40 px.
+  - With a hidden axis, the left edge is 8 px.
+  - A fixed linear axis has `calculate` true and a linear scale. It has two numbers for `y_min` and `y_max`, and one possible unit and one possible number of decimals. Its left edge is the widest label plus 9 px.
+  - The labels are bars of their measured width. They end 5 px before the plot. The grid lines are at the ticks.
+  - With any other axis, the left edge is bounded at 9 px. The preview draws no mark that depends on it.
+- The legend of a heatmap is 46 px high at the bottom, when `show_legend` is true.
+  - The colour bar is 9 px high. It is 25 px from the left and 10 px under the top of the band.
+  - The bar is 300 px wide for a content box of 350 px or more. A narrower box gives the width less 50 px, with a floor of 10 px.
+  - The bar has a ramp between two neutral tones.
+  - The two ends are bars of their measured width. They show only when `color.min` and `color.max` are numbers. An end that the data decide has no bar.
+- The x axis of a heatmap and of a state timeline uses the range of the request.
+  - The engine functions `timeTicks` and `layoutXLabels` pick the ticks and the labels, with the zone of the page.
+  - A label is a bar of its measured width. It is centred on the text box of the engine, 9 px under the plot. A tick has a vertical line of one device pixel.
+  - The heatmap draws them when its left edge is exact.
+  - A state timeline draws them when the canvas width and the gutter are exact. This is the case with no legend room, or with a legend of thresholds at the bottom. It also needs no row name, or one fixed display name.
+  - A status history never draws them, because its axis comes from the samples.
+  - With no finite range, the band stays empty.
+- The heatmap preview never draws the cells, the columns, the rows or the log skip note. The rows, the counts and the levels come from the data.
+- The histogram preview draws the plot, the label 0 and the line of the tick 0. Every histogram has these marks.
+  - The top is 8 px. The right edge is 8 px from the canvas.
+  - The canvas is the box less the legend. The bottom of the plot is 21 px above the canvas bottom.
+  - The left edge is the label 0 plus 9 px. It can only move to the right.
+  - A combined histogram with `stacking` percent and one known name has exact y labels.
+  - The preview draws nothing for the bars, the other y labels and the x labels.
+- The histogram preview draws the legend when the document proves that it has an entry. This is true for a combined histogram with known names. It is also true when no `hide_from` hides the legend.
+  - The preview draws the least legend, built with the sizes of the engine. A list has one pill of 14 x 4 px. A table has the head "Name" and one empty row.
+  - A table with no value column has the head "Name" only.
+  - The name is a bar. It shows only for `Count` or for one display name of every series.
+  - A legend at the right that every entry leaves takes no room.
+  - A legend at the right moves under the plot when the host is narrower than the legend and 228 px. Under the plot it keeps 35 % of the height at most, as at the bottom.
+- The legend of a state timeline or a status history is exact when the first row has one thresholds legend. It has one item for each step.
+  - The text of an item is a bar of its measured width.
+  - The preview uses the markup and the classes of the loaded legend. The browser gives the same boxes.
+  - A legend that the data decide takes no room in the preview. The plot is then bounded: it can only get smaller.
+  - The rows envelope is one flat tone on the clip box of the plot. It is 8 px from the top and from the right, with the band of 21 px under it.
+  - Its left edge is 8 px without row names, the gutter of one fixed display name, or else 21 px. It can only move to the right.
+  - The preview draws no row, no segment, no name and no text.
+- Each element that a test measures has two attributes. The attribute `data-skel-part` names the part: `box`, `plot`, `legend`, `warning`, `axis-y`, `axis-x`, `label`, `label-x`, `grid`, `grid-x`, `legend-label`, `legend-head`, `rows`, `head`, `row`, `column`, `tile`, `arc`, `track`, `scale` or `mark`. The attribute `data-skel-class` gives the tolerance class. The root element has `data-skel`, the key of the family.
 - The tolerance classes tell how exact a part is, against the loaded panel:
 
   | Class | Meaning | Test |
