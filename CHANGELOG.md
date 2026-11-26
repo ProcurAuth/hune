@@ -32,6 +32,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The page keeps the answers of the options requests for 60 s (relative range) or 5 minutes (absolute range). A refresh sends no request of options when the answer is valid. A "Retry" ignores the cache.
 - The control of a `multi` variable shows chips. A click on a chip opens the selector, and the cross removes the value. "All" is one chip. The chip "+<n>" shows the chips that do not fit. `Backspace` in the field of an open variable removes the last value.
 - The browser cases B290 to B296.
+- The browser cases B380 to B384 and the unit tests `charts_spec.test.mjs`. They test the chart panels against 4.26 and 9.19.
 - The modules `var_errors.js`, `options_cache.js` and `var_chips.js`, and the style `var-select.css`.
 
 
@@ -50,6 +51,14 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - A request of options that ended after a newer request of the same variable removed the cancel of the newer request. A cancel at the exit of the page then missed it.
 - The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
+- A table legend with `values` empty showed five columns. It now has the column "Name" only, as 4.26 says. This holds for the time series, the xy chart, the histogram and the bar chart.
+- A legend at the right that every entry leaves (`hide_from.legend`) kept the gap of 8 px, so the plot was 8 px too narrow. The plot now has the whole width.
+- A legend at the right can move under the plot in a narrow panel. It had no cap for a list and a cap of 112 px for a table. It now scrolls beyond 35 % of the height, as the legend at the bottom does.
+- The x axis of a time series with `draw` = `bars` covered the requested range. It now keeps the span of the data, as 9.19 says. A line, an area and points keep the requested range.
+- A time series with every y axis hidden put all its series on the right scale, and the table legend marked each one "(right y-axis)". All series now go on the left scale, and no mark shows.
+- The legend of a horizontal bar chart ignored `legend.mode`, `legend.values`, `legend.sort_by`, `hide_from.legend` and the cap. It showed an empty legend with no series. It now follows the shared object `legend` as the vertical form does. It draws a list or a table with its sort, and a hidden series has no entry. It keeps a cap of 35 % of the height. It moves under the plot when the plot would be less than 220 px wide.
+- The value label of a horizontal bar was 8 px at least. It is now 10 px at least, as in 9.19 and in the vertical bars.
+- The value axis of a horizontal bar chart put two ticks 18 px apart for small values, so the labels ran together. Two ticks are now 60 px apart or more, as 9.19 says.
 
 ## 0.2.0 - 2026-11-25
 

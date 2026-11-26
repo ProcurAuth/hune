@@ -1186,7 +1186,7 @@ Object `legend`:
 |---|---|---|---|
 | `show` | boolean | `true`: the panel shows a legend | `options.legend.showLegend`; `displayMode = "hidden"` gives `false` |
 | `placement` | enum | `bottom` or `right` | `options.legend.placement` |
-| `mode` | enum | `list`: one line of series names. `table`: one row for each series, with the values of `values`. | `options.legend.displayMode` (`list`, `table`) |
+| `mode` | enum | `list`: one line of series names. `table`: one row for each series, with the values of `values`. With `values` empty, the table has the column "Name" only. | `options.legend.displayMode` (`list`, `table`) |
 | `values` | array of enum | 0 to 5 items, no two equal. Each item is a value of `reduce.calc` in the table below (the 18 values of `calc`, with `total` for the Grafana `sum`, 9.19). In a `piechart`: 0 to 2 items from `value`, `percent`. | `options.legend.calcs`; in a `piechart`, `options.legend.values` |
 | `sort_by` | enum, optional | The column that sorts the legend table. Default: absent, which keeps the series order. Outside a `piechart`: `name` or one of the 18 values of `reduce.calc` in the table below (19 values in all). In a `piechart`: `name`, `value` or `percent`. The column does not need to be in `values`. | `options.legend.sortBy`, a column title (15.6) |
 | `sort_desc` | boolean, optional | `true`: the sort goes from the largest to the smallest value, or from `z` to `a` for `name`. Default `false`. | `options.legend.sortDesc` |
