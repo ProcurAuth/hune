@@ -11,6 +11,9 @@
 // All rectangles are [x, y, w, h] in px, from the top left corner of the content box of the panel body: the corner of the preview. The probes run
 // in the page: each one is a pure function with no outside name, because `page.eval` sends its source text.
 
+// The families come from the registry of the previews, so the extractors follow the same names.
+import { skeletonKind } from "../../../web/js/preview/index.js";
+
 export const TOLERANCE_PX = 0.5;
 export const CLASSES = Object.freeze({ EXACT: "exact", LEAST: "least", MOST: "most", DATA: "data" });
 export const HOLD_QUERIES = (req) => /\/panels\/[^/]+\/query/.test(req.url);
@@ -73,8 +76,12 @@ function previewProbe(id) {
   };
 }
 
-/** Reads one loaded panel with the extractor of its type. The rectangles use the same corner as the preview. */
-function loadedProbe(id) {
+/**
+ * Reads one loaded panel. The rectangles use the same corner as the preview. The function does the work that every type needs (the box, the warning,
+ * the helpers) and calls the extractor of the family of the panel: `extractors[family](panel, h)`. `h` gives the helpers: `rel`, `add`, `all`,
+ * `union`, `textRects`, `visible`, `holder` and `chart` (the part of the engine of the charts, see below).
+ */
+function loadedProbe(id, family, extractors) {
   const panel = document.querySelector(`[data-testid="panel-${id}"]`);
   if (!panel) return null;
   const type = panel.dataset.type || "";
@@ -102,6 +109,7 @@ function loadedProbe(id) {
     const y = Math.min(...rects.map((r) => r[1]));
     return [x, y, Math.max(...rects.map((r) => r[0] + r[2])) - x, Math.max(...rects.map((r) => r[1] + r[3])) - y];
   };
+  // The text nodes of an element, each with its rectangle. They give the labels of the types that draw their text in the DOM.
   const textRects = (root) => {
     const out = [];
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
@@ -122,9 +130,12 @@ function loadedProbe(id) {
   const holder = panel.querySelector(".panel__plot");
   if (!holder) return { id, type, state, parts };
 
-  // The charts of the engine: the plot is in `data-plot` (left, top, width, height in px from the top left corner of the chart).
-  const core = holder.querySelector(".chartCore");
-  if (core) {
+  // The engine of the charts (`.chartCore`): the plot is in `data-plot` (left, top, width and height in px from the top left corner of the chart).
+  // The labels of the axes are drawn on a canvas, so they come from the recorder of `fillText`. A label at the left of the plot is a y label, and a
+  // label under the plot is an x label. Gives true when the panel has this engine.
+  const chart = () => {
+    const core = holder.querySelector(".chartCore");
+    if (!core) return false;
     const c = core.getBoundingClientRect();
     if (core.dataset.plot) {
       const [l, t, w, h] = core.dataset.plot.split(" ").map(Number);
@@ -151,37 +162,80 @@ function loadedProbe(id) {
       add("axis-y", union(ys.map((y) => y.rect)));
       add("axis-x", union(xs.map((x) => x.rect)));
     }
-    return { id, type, state, parts };
-  }
-
-  // The engines of the other types, each with its own elements.
-  const first = (sel) => holder.querySelector(sel);
-  const grid = first(".hbar__grid");
-  if (grid) add("plot", rel(grid));
-  const pie = first(".pie__plot");
-  if (pie) add("plot", rel(pie));
-  const geo = first(".geo__canvas");
-  if (geo) add("plot", rel(geo));
-  for (const sel of [".hbar__legend", ".pie__legend", ".timeline__legend", ".heat__legend"]) {
-    const e = first(sel);
-    if (e && visible(e)) add("legend", rel(e));
-  }
-  for (const sel of [".stat__item", ".gauge__item", ".bargauge__item"]) for (const e of all(sel, holder)) add("tile", rel(e));
-  for (const e of all(".bargauge__track", holder)) add("track", rel(e));
-  for (const e of all(".dataTable thead th", holder)) add("column", rel(e));
-  const thead = first(".dataTable thead");
-  if (thead) add("head", rel(thead));
-  for (const e of all(".dataTable tbody tr", holder)) add("row", rel(e));
-  for (const e of all(".logs__row, .logs__line", holder)) add("row", rel(e));
-  for (const e of all(".hbar__row", holder)) add("row", rel(e));
-  for (const e of all(".heat__bar", holder)) add("scale", rel(e));
-  for (const t of textRects(holder)) add("label", t.rect, t.text);
-  if (!parts.some((p) => p.part === "plot")) {
-    const canvas = first("canvas");
-    if (canvas) add("plot", rel(canvas));
-  }
+    return true;
+  };
+  const h = { rel, add, all, union, textRects, visible, holder, chart };
+  if (extractors[family]) extractors[family](panel, h);
+  // A type that draws its text in the DOM gives its labels from the text nodes. A type with an axis on a canvas has them already.
+  if (!parts.some((p) => p.part === "label") && !holder.querySelector(".chartCore")) for (const t of textRects(holder)) add("label", t.rect, t.text);
   return { id, type, state, parts };
 }
+
+// The extractors of the families: one for each family, in the same names as the registry of web/js/preview/index.js. Each one adds the parts that its
+// panels have. An extractor is an arrow function with no outside name, because the harness sends its source text to the page. The family forks
+// add the parts of their own family here, and nothing else.
+export const EXTRACTORS = {
+  // `timeseries` and `xychart`: the engine of the charts.
+  timeseries: (panel, h) => {
+    h.chart();
+  },
+  // `barchart`: the engine of the charts for the vertical form, and the elements `hbar__*` for the horizontal form.
+  barchart: (panel, h) => {
+    if (h.chart()) return;
+    const grid = h.holder.querySelector(".hbar__grid");
+    if (grid) h.add("plot", h.rel(grid));
+    const legend = h.holder.querySelector(".hbar__legend");
+    if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
+    for (const e of h.all(".hbar__row", h.holder)) h.add("row", h.rel(e));
+  },
+  piechart: (panel, h) => {
+    const plot = h.holder.querySelector(".pie__plot");
+    if (plot) h.add("plot", h.rel(plot));
+    const legend = h.holder.querySelector(".pie__legend");
+    if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
+  },
+  stat: (panel, h) => {
+    for (const e of h.all(".stat__item", h.holder)) h.add("tile", h.rel(e));
+  },
+  gauge: (panel, h) => {
+    for (const e of h.all(".gauge__item", h.holder)) h.add("tile", h.rel(e));
+    const canvas = h.holder.querySelector(".gauge canvas");
+    if (canvas) h.add("plot", h.rel(canvas));
+  },
+  bargauge: (panel, h) => {
+    for (const e of h.all(".bargauge__item", h.holder)) h.add("tile", h.rel(e));
+    for (const e of h.all(".bargauge__track", h.holder)) h.add("track", h.rel(e));
+  },
+  table: (panel, h) => {
+    const head = h.holder.querySelector(".dataTable thead");
+    if (head) h.add("head", h.rel(head));
+    for (const e of h.all(".dataTable thead th", h.holder)) h.add("column", h.rel(e));
+    for (const e of h.all(".dataTable tbody tr", h.holder)) h.add("row", h.rel(e));
+  },
+  heatmap: (panel, h) => {
+    h.chart();
+    const legend = h.holder.querySelector(".heat__legend");
+    if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
+    for (const e of h.all(".heat__bar", h.holder)) h.add("scale", h.rel(e));
+  },
+  histogram: (panel, h) => {
+    h.chart();
+  },
+  // `state_timeline` and `status_history`: a canvas and a legend of their own.
+  timeline: (panel, h) => {
+    const canvas = h.holder.querySelector(".timeline__canvas");
+    if (canvas) h.add("plot", h.rel(canvas));
+    const legend = h.holder.querySelector(".timeline__legend");
+    if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
+  },
+  logs: (panel, h) => {
+    for (const e of h.all(".logs__row, .logs__line", h.holder)) h.add("row", h.rel(e));
+  },
+  geomap: (panel, h) => {
+    const canvas = h.holder.querySelector(".geo__canvas");
+    if (canvas) h.add("plot", h.rel(canvas));
+  },
+};
 
 // ---- The comparison --------------------------------------------------------------------------------------------------------------------
 
@@ -255,8 +309,11 @@ const call = (fn, arg) => `(${fn.toString()})(${JSON.stringify(arg)})`;
 
 /** Reads the preview of one panel in the page. */
 export const readPreview = (page, id) => page.eval(call(previewProbe, id));
-/** Reads one loaded panel in the page. */
-export const readLoaded = (page, id) => page.eval(call(loadedProbe, id));
+/** Reads one loaded panel in the page, with the extractor of its family. */
+export function readLoaded(page, id, type) {
+  const extractors = `{ ${Object.entries(EXTRACTORS).map(([family, fn]) => `${JSON.stringify(family)}: ${fn.toString()}`).join(", ")} }`;
+  return page.eval(`(${loadedProbe.toString()})(${JSON.stringify(id)}, ${JSON.stringify(skeletonKind(type))}, ${extractors})`);
+}
 
 /**
  * Measures the previews and the loaded panels of a dashboard page. `page` is a fresh page of the test client (tests/browser/lib/cdp.mjs). `url` is the
@@ -282,7 +339,7 @@ export async function measureDashboard(page, url, { ids = null, width = 1440, he
   const loaded = {};
   const rows = [];
   for (const id of all) {
-    loaded[id] = await readLoaded(page, id);
+    loaded[id] = await readLoaded(page, id, previews[id] ? previews[id].type : "");
     rows.push(...compare(previews[id], loaded[id], tol));
   }
   return { previews, loaded, rows, summary: summarize(rows) };

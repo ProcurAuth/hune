@@ -5,7 +5,9 @@
 //       with shapes is in DRAWN, and the harness must find no difference of its claimed parts.
 // B321: the light moves with a transform and stops with the reduced motion; a reload of a loaded panel shows no preview.
 // The queries of the panels are held, so that the preview stays on the screen. A held request needs the interception of Chrome.
-import { measureDashboard } from "../lib/preview_measure.mjs";
+// HUNE_PREVIEW_DUMP=<file> makes B320 write the full table of the harness on the fixture to <file>, and the result to <file>.json.
+import { writeFileSync } from "node:fs";
+import { formatTable, measureDashboard } from "../lib/preview_measure.mjs";
 import { FIXTURE_TYPES, allTypesPreviewDoc } from "../lib/preview_fixtures.mjs";
 import { sleep } from "../lib/h.mjs";
 
@@ -36,6 +38,11 @@ export const cases = [
       await create(t, uid);
       const p = await t.page({ width: 1440, height: 4000 });
       const result = await measureDashboard(p, t.dash(uid), { width: 1440, height: 4000 });
+      // HUNE_PREVIEW_DUMP=<file> writes the table and the full result of the harness on the fixture, for the work on a family.
+      if (process.env.HUNE_PREVIEW_DUMP) {
+        writeFileSync(process.env.HUNE_PREVIEW_DUMP, `${formatTable(result.rows, { all: true })}\n`);
+        writeFileSync(`${process.env.HUNE_PREVIEW_DUMP}.json`, `${JSON.stringify(result, null, 2)}\n`);
+      }
       const ids = FIXTURE_TYPES.map((_, i) => String(i + 1));
       t.eq(Object.keys(result.previews).sort((a, b) => a - b), ids, "one panel for each type");
       FIXTURE_TYPES.forEach((type, i) => {

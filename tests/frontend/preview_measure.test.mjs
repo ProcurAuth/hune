@@ -3,7 +3,8 @@
 // and the table. The probes need a browser: the browser case B320 and the command preview_measure.mjs run them.
 import assert from "node:assert/strict";
 import test from "node:test";
-import { CLASSES, TOLERANCE_PX, compare, compareRect, formatTable, summarize } from "../browser/lib/preview_measure.mjs";
+import { skeletonKind } from "../../web/js/preview/index.js";
+import { CLASSES, EXTRACTORS, TOLERANCE_PX, compare, compareRect, formatTable, summarize } from "../browser/lib/preview_measure.mjs";
 
 test("an exact part agrees within half a pixel on each of x, y, width and height", () => {
   assert.equal(TOLERANCE_PX, 0.5);
@@ -78,4 +79,10 @@ test("the table has one line for each row, and hides the unclaimed labels unless
   assert.match(short[0], /^panel\s+type\s+part\s+#\s+class\s+verdict\s+preview\s+loaded\s+delta$/);
   assert.equal(formatTable(rows, { all: true }).split("\n").length, 4);
   assert.match(short[2], /plot\s+0\s+-\s+unclaimed\s+-\s+\[1, 2, 3, 4\]/);
+});
+
+test("the harness has one extractor for each family of the registry, and no other", () => {
+  const types = ["timeseries", "xychart", "barchart", "piechart", "stat", "gauge", "bargauge", "table", "heatmap", "histogram", "state_timeline", "status_history", "logs", "geomap"];
+  assert.deepEqual(Object.keys(EXTRACTORS).sort(), [...new Set(types.map(skeletonKind))].sort());
+  for (const [family, fn] of Object.entries(EXTRACTORS)) assert.equal(typeof fn, "function", family);
 });
