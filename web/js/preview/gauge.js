@@ -20,7 +20,7 @@
 //   scale   the box of the band of the threshold marks (exact), when the scale is fixed
 
 import { EXACT, LEAST, PARTS, barNode, exact, least, node, partAttrs, px, rect, resultOf, svgNode } from "./common.js";
-import { barTop, domTextWidth, holderNode, lineRatio, voidNode, warningLayout } from "./stat.js";
+import { barTop, chainOf, domTextWidth, holderNode, itemCount, lineRatio, voidNode, warningLayout } from "./stat.js";
 import { parseGrafanaPattern, computeFieldConfig } from "../fields.js";
 import { interpolateDisplayName } from "../names.js";
 import { angleOf, bandEntries, cellParts, gaugeGeometry, gridCells, scaleOf, stackCells } from "../panels/gauge.js";
@@ -33,55 +33,6 @@ const END = angleOf(Infinity, 0, 1);
 const WIDE_TEXT = 1e9;
 // The members of the field configuration that an override can set and that a part of the preview reads.
 const MEMBERS = ["min", "max", "unit", "decimals", "thresholds", "color", "display_name"];
-
-// ---- The chain of the data ------------------------------------------------------------------------------------------------------------
-
-// The panel in the document with this id, or null. The document has sections with panels.
-function panelOf(doc, id) {
-  for (const s of (doc && doc.sections) || []) for (const p of s.panels || []) if (p.id === id) return p;
-  return null;
-}
-
-/**
- * What the document says about the data of a panel (pure): the panel that owns the queries (the source of a `reuse`), the refs of its visible queries
- * and the chain of the transforms (the transforms of the source first, when `with_transforms` is true). `owner` is null when the source is not in
- * the document.
- */
-export function chainOf(panel, doc) {
-  const data = (panel && panel.data) || {};
-  let owner = panel;
-  let chain = [];
-  if (data.reuse) {
-    owner = panelOf(doc, data.reuse.panel);
-    if (owner && data.reuse.with_transforms) chain = [...(owner.transforms || [])];
-  }
-  chain = [...chain, ...((panel && panel.transforms) || [])];
-  const od = (owner && owner.data) || {};
-  const refs = [];
-  if (od.query && od.query.hide !== true) refs.push(od.query.ref || "A");
-  for (const q of od.extra_queries || []) if (q.hide !== true) refs.push(q.ref);
-  return { owner, refs, chain };
-}
-
-/**
- * The number of gauges that the document fixes (pure): 0, 1 or null (data). Case A: the field pattern of `reduce.fields` does not compile, so no field
- * is kept. Case B: one visible query, no `partition_by_values`, and the last transform is a `calculate_field` in the mode `index` or `reduce_row`
- * with `replace_fields` true. The result then holds the new number field, with or without rows. A literal field name never fixes the number: the
- * field can be missing, or two fields can have one name.
- */
-export function gaugeCount(panel, doc) {
-  const o = (panel && panel.options) || {};
-  const reduce = o.reduce || {};
-  const pattern = reduce.fields;
-  if (typeof pattern === "string" && pattern !== "" && parseGrafanaPattern(pattern) === null) return 0;
-  if (reduce.values !== false) return null;
-  if (pattern !== null && pattern !== undefined && pattern !== "") return null;
-  const { owner, refs, chain } = chainOf(panel, doc);
-  if (!owner || refs.length !== 1 || !chain.length) return null;
-  if (chain.some((t) => t.kind === "partition_by_values")) return null;
-  const last = chain[chain.length - 1];
-  return last.kind === "calculate_field" && last.replace_fields === true && (last.mode === "index" || last.mode === "reduce_row") ? 1 : null;
-}
 
 // ---- The configuration that the document decides --------------------------------------------------------------------------------------
 
@@ -255,7 +206,7 @@ export function build(panel, box, doc, ctx) {
   const holder = { w: box.w, h: Math.max(0, box.h - warn.height), fw: box.fw, fh: box.fh === undefined ? undefined : Math.max(0, box.fh - warn.height) };
   const elements = [...warn.nodes, holderNode(warn.height)];
   const bounds = { holder: exact(holder.h), warning: exact(warn.height) };
-  const n = gaugeCount(panel, doc);
+  const n = itemCount(panel, doc);
   if (n !== 1) return resultOf(elements, bounds, [n === 0 ? "no gauge" : "box"]);
   const { refs } = chainOf(panel, doc);
   const { config, decided } = configOf(panel, refs);

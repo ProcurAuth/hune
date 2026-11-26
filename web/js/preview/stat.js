@@ -1,15 +1,19 @@
 // The loading preview of the panel type `stat` (9.11), and the helpers that the three families of values share (`stat`, `gauge`, `bargauge`).
 // The rules are in the council file `stat.md` (scratchpad/council). The loaded panel is drawn by web/js/panels/stat.js, items.js.
 //
-// The document fixes the box of a stat and the warning line above it. It fixes nothing else that is visible: the number of tiles is data (no
-// member of the document gives it for a real stat), so no tile, no gap, no text slot and no tint is drawn. The preview of a stat is its box and
-// the light. The parts that this module claims:
-//   holder   the box of the loaded `.stat` (exact). It reaches the four edges of the body, over the padding (9.19), except for a warning line.
+// The document fixes the box of a stat and the warning line above it. It fixes nothing else that is visible: the number of tiles is data for a real
+// stat, so no gap, no text slot and no tint is drawn. One case fixes the number (proof A, see `itemCount`): one tile. The tile then has the
+// box of the grid, and the preview claims it. The fill of the tile is a colour of the document, so it is never drawn. The preview of a stat is
+// its box and the light. The parts that this module claims:
+//   holder   the box of the loaded `.stat` (exact). It reaches the four edges of the body, over the padding (9.19). With a warning line, it starts
+//            at the top of the plot, under the paragraph.
 //   warning  the warning line above the box, when an override has a pattern that does not compile (exact). It shows in an unsaved draft only.
+//   tile     the one tile, only with proof A (exact). It has the box of the grid.
 //   label    one bar for each line of the warning text (exact).
 
 import { EXACT, PARTS, barNode, exact, node, partAttrs, px, rect, resultOf, textWidth } from "./common.js";
 import { parseGrafanaPattern } from "../fields.js";
+
 
 // The warning line of the frame (`.panel__warning`): 12 px text, padding 2 px above and under, a 14 px icon and a space before the text.
 const WARNING_SIZE = 12;
@@ -34,6 +38,55 @@ export function warningSentences(panel) {
     }
   }
   return out;
+}
+
+// ---- The chain of the data ------------------------------------------------------------------------------------------------------------
+
+// The panel in the document with this id, or null. The document has sections with panels.
+function panelOf(doc, id) {
+  for (const s of (doc && doc.sections) || []) for (const p of s.panels || []) if (p.id === id) return p;
+  return null;
+}
+
+/**
+ * What the document says about the data of a panel (pure): the panel that owns the queries (the source of a `reuse`), the refs of its visible queries
+ * and the chain of the transforms (the transforms of the source first, when `with_transforms` is true). `owner` is null when the source is not in
+ * the document.
+ */
+export function chainOf(panel, doc) {
+  const data = (panel && panel.data) || {};
+  let owner = panel;
+  let chain = [];
+  if (data.reuse) {
+    owner = panelOf(doc, data.reuse.panel);
+    if (owner && data.reuse.with_transforms) chain = [...(owner.transforms || [])];
+  }
+  chain = [...chain, ...((panel && panel.transforms) || [])];
+  const od = (owner && owner.data) || {};
+  const refs = [];
+  if (od.query && od.query.hide !== true) refs.push(od.query.ref || "A");
+  for (const q of od.extra_queries || []) if (q.hide !== true) refs.push(q.ref);
+  return { owner, refs, chain };
+}
+
+/**
+ * The number of items (tiles, gauges) that the document fixes (pure): 0, 1 or null (data). Case A: the field pattern of `reduce.fields` does not compile, so no field
+ * is kept. Case B: one visible query, no `partition_by_values`, and the last transform is a `calculate_field` in the mode `index` or `reduce_row`
+ * with `replace_fields` true. The result then holds the new number field, with or without rows. A literal field name never fixes the number: the
+ * field can be missing, or two fields can have one name.
+ */
+export function itemCount(panel, doc) {
+  const o = (panel && panel.options) || {};
+  const reduce = o.reduce || {};
+  const pattern = reduce.fields;
+  if (typeof pattern === "string" && pattern !== "" && parseGrafanaPattern(pattern) === null) return 0;
+  if (reduce.values !== false) return null;
+  if (pattern !== null && pattern !== undefined && pattern !== "") return null;
+  const { owner, refs, chain } = chainOf(panel, doc);
+  if (!owner || refs.length !== 1 || !chain.length) return null;
+  if (chain.some((t) => t.kind === "partition_by_values")) return null;
+  const last = chain[chain.length - 1];
+  return last.kind === "calculate_field" && last.replace_fields === true && (last.mode === "index" || last.mode === "reduce_row") ? 1 : null;
 }
 
 let probe = null;
@@ -147,6 +200,18 @@ export const holderNode = (top = 0, part = "holder", cls = EXACT) => node("skel_
 // `box` is the body of the panel (the CSS makes the preview of a stat reach the edge of the body: panel-loading.css, family stat).
 export function build(panel, box, doc, ctx) {
   const warn = warningLayout(panel, BODY_PAD, BODY_PAD, (box.fw ?? box.w) - 2 * BODY_PAD);
-  // The loaded grid starts under the paragraph and covers the last 8 px of it: its top is the height of the paragraph.
-  return resultOf([...warn.nodes, holderNode(warn.height)], { holder: exact(box.h - warn.height), warning: exact(warn.height) }, [warn.height ? "box warning" : "box"]);
+  // The loaded grid starts at the top of the plot, under the paragraph (the rule `.panel__warning + .panel__plot > .stat`): the paragraph and the
+  // padding above it are over the grid. With no warning the grid starts at the top of the body.
+  const top = warn.height ? BODY_PAD + warn.height : 0;
+  const height = Math.max(0, box.h - top);
+  const elements = [...warn.nodes, holderNode(top)];
+  const bounds = { holder: exact(height), warning: exact(warn.height) };
+  const notes = [warn.height ? "box warning" : "box"];
+  // Proof A: one tile. With one item the tile has the size of the grid in each direction (`tileGrid`), so its box is the box of the grid.
+  if (itemCount(panel, doc) === 1) {
+    elements.push(holderNode(top, "tile"));
+    bounds.tile = exact(height);
+    notes.push("one tile");
+  }
+  return resultOf(elements, bounds, notes);
 }

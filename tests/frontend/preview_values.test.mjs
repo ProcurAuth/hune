@@ -7,10 +7,10 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { DATA, EXACT, LEAST, boundHolds, setMeasurer } from "../../web/js/preview/common.js";
 import { previewOf } from "../../web/js/preview/index.js";
-import { gaugeLayout, configOf, chainOf, gaugeCount, ringPath, titleText } from "../../web/js/preview/gauge.js";
+import { gaugeLayout, configOf, ringPath, titleText } from "../../web/js/preview/gauge.js";
 import { computeFieldConfig } from "../../web/js/fields.js";
 import { angleOf, bandEntries, cellParts, gaugeGeometry, gridCells, stackCells } from "../../web/js/panels/gauge.js";
-import { warningLines, warningSentences } from "../../web/js/preview/stat.js";
+import { chainOf, itemCount, warningLines, warningSentences } from "../../web/js/preview/stat.js";
 
 const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), "utf8");
 // A measurer: 6 px for each character, whatever the font.
@@ -53,18 +53,55 @@ test("stat E1: the preview is the box of the body, and the document adds nothing
   assert.deepEqual(r.notes, ["box"]);
 });
 
-test("stat E3 to E29: no option, no transform and no proof of one tile changes the tree (R3, R4, R5, R6)", () => {
+test("stat E3 to E29: no option and no transform that does not prove one tile changes the tree (R3, R4)", () => {
   const base = JSON.stringify(out(stat(), 322, 86).elements);
   const options = [
     { orientation: "vertical" }, { orientation: "horizontal" }, { text_mode: "value_and_name", justify: "center" }, { text_mode: "none" }, { text_mode: "name" },
     { graph_mode: "area", reduce: reduce({ values: true }) }, { graph_mode: "area" }, { color_mode: "background" }, { color_mode: "none" }, { value_size: 40, title_size: 14 },
     { percent_change: true, percent_change_color: "inverted" }, { reduce: reduce({ values: true, fields: "/^a$/" }) },
+    // A pattern that compiles never fixes the number of tiles, also in a chain that ends with one new field.
+    { reduce: reduce({ fields: "/^Sum$/" }) },
   ];
   for (const o of options) assert.equal(JSON.stringify(out(stat(o), 322, 86).elements), base, JSON.stringify(o));
-  // Proof A (one tile): the last transform is a calculate_field that replaces the fields. The fill is a colour of the document, so it is never drawn.
-  const fixed = stat({ color_mode: "background" }, { transforms: ONE, fields: { defaults: { color: { mode: "fixed", fixed: "red" } }, overrides: [] } });
-  assert.equal(JSON.stringify(out(fixed, 322, 86).elements), base, "no fill with proof A and a certain colour");
+  assert.equal(JSON.stringify(out(stat({}, { transforms: [calc("reduce_row", { replace_fields: false })] }), 322, 86).elements), base, "the fields stay: no proof");
+  assert.deepEqual(out(stat(), 322, 86).notes, ["box"]);
+});
+
+test("stat proof A (E3, R5, R6): a last transform that replaces the fields with one new field gives one tile that has the box of the grid", () => {
+  const withProof = (options = {}, over = {}) => stat(options, { transforms: ONE, ...over });
+  for (const [w, h] of [[322, 86], [338, 102], [120, 40]]) {
+    const r = out(withProof(), w, h);
+    assert.deepEqual(parts(r), ["holder", "tile"]);
+    assert.equal(r.elements.length, 2, "the holder and the tile, no gap, no text slot");
+    const tile = part(r, "tile");
+    assert.equal(tile.a["data-skel-class"], EXACT);
+    assert.equal(tile.v["--y"], part(r, "holder").v["--y"], "the tile and the grid start at one place");
+    assert.equal(r.bounds.tile.value, h);
+    assert.deepEqual(r.notes, ["box", "one tile"]);
+  }
+  // The options that change the layout do not change the claim: with one tile its box is the box of the grid in each direction.
+  for (const o of [{ orientation: "vertical" }, { orientation: "horizontal" }, { text_mode: "none" }, { graph_mode: "area" }, { value_size: 60 }, { percent_change: true }]) {
+    assert.deepEqual(parts(out(withProof(o), 322, 86)), ["holder", "tile"], JSON.stringify(o));
+  }
+  // The fill is a colour of the document: it is never drawn, also for a certain colour.
+  const fixed = withProof({ color_mode: "background" }, { fields: { defaults: { color: { mode: "fixed", fixed: "red" } }, overrides: [] } });
+  assert.equal(JSON.stringify(out(fixed, 322, 86).elements), JSON.stringify(out(withProof(), 322, 86).elements), "no fill with proof A and a certain colour");
   assert.ok(!JSON.stringify(out(fixed, 322, 86)).includes("gradient"));
+  // Two visible queries, a partition, a pattern or values = true give no proof.
+  const two = withProof({}, { data: { ...query(), extra_queries: [{ ref: "B", source: "s", format: "table", sql: ["SELECT 2"] }] } });
+  assert.deepEqual(parts(out(two, 322, 86)), ["holder"]);
+  assert.deepEqual(parts(out(withProof({ reduce: reduce({ values: true }) }), 322, 86)), ["holder"]);
+  assert.deepEqual(parts(out(withProof({}, { transforms: [{ kind: "partition_by_values", fields: ["a"], keep_fields: false }, ...ONE] }), 322, 86)), ["holder"]);
+  // A reuse reads the chain of its source.
+  const source = { id: 7, type: "table", data: query(), transforms: ONE };
+  const reuse = stat({}, { data: { reuse: { panel: 7, with_transforms: true } } });
+  assert.deepEqual(parts(out(reuse, 322, 86, { sections: [{ panels: [source] }] })), ["holder", "tile"]);
+  assert.deepEqual(parts(out(reuse, 322, 86)), ["holder"], "a source that the document does not hold proves nothing");
+  // With a warning line the tile starts under it, as the grid.
+  const warned = withProof({}, { fields: { defaults: {}, overrides: [{ match: { by: "regex", value: "/(/" }, set: { unit: "percent" } }] } });
+  const w = out(warned, 338, 102);
+  assert.equal(part(w, "tile").v["--y"], part(w, "holder").v["--y"]);
+  assert.equal(w.bounds.tile.value, w.bounds.holder.value);
 });
 
 test("stat E1: the box follows the size of the body, and a fraction does not change the claim", () => {
@@ -90,7 +127,7 @@ test("warning E2: the sentences are the ones of computeFieldConfig, one for each
   assert.deepEqual(warningSentences(byName), [], "only the matcher regex is a pattern");
 });
 
-test("warning R2: the stat holds the paragraph in the padding and the grid starts at its height", () => {
+test("warning R2: the stat holds the paragraph in the padding and the grid starts under it, at the top of the plot", () => {
   const p = withOverrides(stat(), ["/(/"]);
   const r = out(p, 338, 102);
   const w = part(r, "warning");
@@ -100,8 +137,9 @@ test("warning R2: the stat holds the paragraph in the padding and the grid start
   const lines = warningLines(warningSentences(p), 322).length;
   assert.equal(lines, 2);
   near(height, 4 + lines * (Math.floor(12 * 1.5714 * 64) / 64));
-  near(num(part(r, "holder"), "--y"), height, 0.001);
-  near(r.bounds.holder.value, 102 - height, 0.001);
+  // The grid starts at the top of the plot (`.panel__warning + .panel__plot > .stat { top: 0 }`): 8 px of padding and the paragraph over it.
+  near(num(part(r, "holder"), "--y"), 8 + height, 0.001);
+  near(r.bounds.holder.value, 102 - 8 - height, 0.001);
   assert.equal(w.a["data-skel-class"], EXACT);
   assert.deepEqual(r.notes, ["box warning"]);
 });
@@ -162,7 +200,7 @@ test("bargauge E1, R1, R3: the preview is the box, whatever the option, the redu
 
 // ---- gauge: the number of gauges --------------------------------------------------------------------------------------------------------
 
-const countOf = (panel, doc = { sections: [] }) => gaugeCount(panel, doc);
+const countOf = (panel, doc = { sections: [] }) => itemCount(panel, doc);
 
 test("gauge E4: case A, a field pattern that does not compile, gives no gauge", () => {
   assert.equal(countOf(gauge({ reduce: reduce({ fields: "/(/" }) })), 0);
