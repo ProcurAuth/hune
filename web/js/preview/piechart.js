@@ -119,7 +119,7 @@ export function build(panel, box, doc, ctx) {
   if (legend.show) {
     if (legend.placement === "bottom") kids.push(node("skel__legend skel__legend--bottom", {}, [], "div", partAttrs(PARTS.LEGEND, LEAST)));
     else {
-      // The least row of the loaded grid, hidden: a swatch cell, a name cell (the width of the literal name, else empty) and the empty value cells.
+      // The least row of the loaded grid, with no mark: a swatch cell, a name cell (the width of the literal name, else empty) and the empty value cells.
       const cells = [node("skel__sw"), node("skel__name", name === null ? {} : { "--w": px(nameWidth(name)) })];
       for (let i = 0; i < extraColumns(legend); i++) cells.push(node("skel__val"));
       kids.push(node(`skel__legend skel__legend--right skel__legend--c${extraColumns(legend)}`, {}, cells, "div", partAttrs(PARTS.LEGEND, LEAST)));

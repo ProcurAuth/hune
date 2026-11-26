@@ -53,7 +53,7 @@
 /* ==== family: piechart ======================================================================================================== */
 
 /* The pie takes its sizes from the same rules as the loaded pie (panel-stat.css `.pie`), so the browser gives the same boxes after a resize or a late
-   font. The root is a column: the warning line (hidden, it reserves the room) and the holder, which is the place of `.panel__plot`. */
+   font. The root is a column: the warning line (its text is a bar, and it has the loaded height) and the holder, which is the place of `.panel__plot`. */
 .skel--piechart { display: flex; flex-direction: column; }
 .skel--piechart .skel__warning { margin: 0; }
 .skel--piechart .skel__holder { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; }
@@ -107,7 +107,7 @@
 
 /* ==== family: geomap ========================================================================================================== */
 
-/* The root is a column: the warning line (hidden, it reserves the room) and the map node, which is the place of `.geo`. The map node has no fill, as the
+/* The root is a column: the warning line (its text is a bar, and it has the loaded height) and the map node, which is the place of `.geo`. The map node has no fill, as the
    loaded map has none of its own. The two squares are the zoom column of panel-geomap.css (19.25 px, 8 px from the corner) in the neutral tone, with no glyph. */
 .skel--geomap { display: flex; flex-direction: column; }
 .skel--geomap .skel__warning { margin: 0; }
