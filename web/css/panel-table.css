@@ -6,11 +6,11 @@
    the panel padding (8 px), a header row of 34 px and body rows of 36 px (the 1 px rule is inside these heights), a cell
    padding of 6 px, a 1 px rule on the right and at the bottom of every cell (not at the right of the last column), a header
    in 14 px/500 at the muted colour, and a grey row hover. The columns are laid out by table.js (equal shares, 150 px at least). */
+/* The sizes of the table are tokens of the body of the panel, so that the loading preview (panel-loading.css) reads the same values. */
+.panel__body { --vt-head: 34px; --vt-row: 36px; --vt-pad: var(--space-6); }
+
 .vtable__scroll,
 .panel .vtable__scroll {
-  --vt-head: 34px;
-  --vt-row: 36px;
-  --vt-pad: var(--space-6);
   --vt-sb: 255 255 255;
   --vt-link: #6e9fff; /* the link colour of Grafana 12.4.2, dark theme (measured) */
   position: absolute;

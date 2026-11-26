@@ -66,6 +66,8 @@ export function drawNode(n) {
   if (n.c) e.setAttribute("class", n.c);
   for (const [name, value] of Object.entries(n.v || {})) e.style.setProperty(name, value);
   for (const [name, value] of Object.entries(n.a || {})) e.setAttribute(name, value);
+  // A node may carry a text `x`. A preview draws a text only to let the browser measure it: the CSS makes it transparent.
+  if (typeof n.x === "string") e.append(document.createTextNode(n.x));
   for (const child of n.k || []) e.append(drawNode(child));
   return e;
 }
