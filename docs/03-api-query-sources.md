@@ -143,7 +143,7 @@ change of this table. The code `editing_disabled` is removed: a primary store al
 | `forbidden` | 403 | false | The PDP answered `false`, the rule of 11.23 for an unknown uid, or a route with no rule (11.21). | `action` |
 | `ceiling_exceeded` | 403 | false | A query stopped at a limit that a ProcurAuth ceiling lowered (8.5, 11.24). | `action`, `ceiling`, `limit` |
 | `history_disabled` | 403 | false | A history route (6.17, 6.18) when `server.history` is `false` (13.8). No PDP question, and the answer does not depend on the uid. | none |
-| `export_disabled` | 403 | false | A request with `download=true` (6.14, 6.17) when `server.export` is `false` (13.8). No PDP question, and the answer does not depend on the uid. | none |
+| `export_disabled` | 403 | false | A read with `download=true` (6.14) when `server.export` is `false` (13.8). No PDP question, and the answer does not depend on the uid. | none |
 | `read_only_store` | 403 | false | A write whose target is in a read-only store (5.42, 11.35). Hune asks `dashboard.read` of the target first, and it never asks `dashboard.write`. | none |
 | `cross_site_request` | 403 | false | The cross-site guard refused a `POST`, `PUT`, `PATCH` or `DELETE` (12.7, 6.28). | none |
 | `not_found` | 404 | false | An unknown path, uid, folder, version, panel, variable or source. | none |
@@ -579,7 +579,9 @@ Order of the checks of both history routes and of the restore (6.18):
 3. A dashboard of a read-only store gives `404 history_unavailable`: only the primary store has history (5.18).
 4. In mode `authzen`, Hune asks `dashboard.history` on `N(uid)`. A `false` answer gives `403 forbidden` with the member
    `action` equal to `dashboard.history`.
-5. With `download=true`, the export checks of 6.14 apply too: `server.export` and, in mode `authzen`, `dashboard.export`.
+5. `download=true` on a version needs the history right only. The export right does not apply to a version, because the
+   history page reads the stored text of a version with it, to show and to compare versions. The page shows the button
+   "Export this version" only when `access.history` and `access.export` are both `true`.
 
 - `kind` is one of the eight kinds of 5.2: `create`, `save`, `restore`, `move`, `delete`, `import`, `external` and
   `migrate`.
@@ -607,7 +609,7 @@ Order of the checks of both history routes and of the restore (6.18):
   format 2 is an example (4.42). `download=true` still gives its stored bytes, so that the history shows it
   as text (4.42, item 10).
 
-Errors of both routes: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 history_disabled`, `403 export_disabled`, `404 not_found`, `404 history_unavailable`,
+Errors of both routes: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 history_disabled`, `404 not_found`, `404 history_unavailable`,
 `422 stored_document_invalid`, `503 pdp_unavailable`, `503 storage_unavailable`. These routes read the store, not the
 catalog (5.5, rule 10).
 
