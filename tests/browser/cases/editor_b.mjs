@@ -343,7 +343,7 @@ export const cases = [
     async run(t) {
       const sess = await t.api.session();
       t.eq(sess.json.editing, true, "session.editing is always true: a primary store always exists");
-      t.eq(Object.fromEntries(sess.json.stores.map((x) => [x.id, x.read_only])), { scratch: false, transit: true }, "the seed volume is read-only and the scratch volume is the primary store");
+      t.eq(Object.fromEntries(sess.json.stores.map((x) => [x.id, x.read_only])), { main: true, scratch: false }, "the seed volume is read-only and the scratch volume is the primary store");
       const p = await t.open(t.url(""));
       t.eq(await p.exists(p.tid("row-menu-nodes")), false, "a card that cannot be edited has no three dots");
       // The volume is a read-only store: each card has the lock and no three dots.

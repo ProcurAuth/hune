@@ -868,7 +868,7 @@ Hune found and a `next` value (6.24). `GET /api/folders` has no pages. One reque
 This bound does not grow with the requests.
 
 The questions of one list are in Access Evaluations requests within the maxima of the PDP (P 10.7a). The kept answers
-of 11.27 apply. For example, a deployment has 3 folders and a grant on each. There, one list of dashboards costs 9 questions,
+of 11.27 apply. For example, a deployment has 3 folders and a grant on each. There, one list of dashboards costs 15 questions (3 for the display, then 4 for each folder),
 and the list of folders costs 7. A list in the next
 `cache_ttl` costs none.
 

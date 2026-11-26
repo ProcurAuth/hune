@@ -528,7 +528,8 @@ The three dots of a card:
 - A card that the user can edit has one button, the three dots. It is at the right end of the first row, after the badge. It is 24 px high, and it keeps the height of the row, so a card with and without it has the same rows.
 - The button has no visible label. Its accessible name and its tooltip give the name.
 - The user can edit a card when `editing` is `true` (6.10) and the item has `access.write` (6.12). The three dots have this one condition. "Delete" needs `dashboard.write`, as the route `DELETE api/dashboards/<uid>` does.
-- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Export" shows only when `access.export` is `true`. "Delete" has the danger colour.
+- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Export" shows only when `access.export` is `true`.
+- "Delete" has the danger colour.
 - "Edit" is a link to `d/<uid>/<slug>?edit=1`. It opens the dashboard in edit mode.
 - The menu "More actions" of the dashboard page has "Export" but not "Move" (9.9). Thus the menu of the card is the way to "Move" (10.7).
 - "Delete" runs the delete flow of 10.13 and names the dashboard in its dialog. The server decides. A `403` shows the usual refusal.

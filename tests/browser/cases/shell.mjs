@@ -267,7 +267,7 @@ export const cases = [
         const w = await where(p, kept);
         t.eq([w.header, w.main, w.missing], [kept, [], []], `${width}: the filters of the list are in the header`);
         t.eq((await where(p, ["new-folder", "import", "new-dashboard"])).missing, ["new-folder", "import", "new-dashboard"], `${width}: no action of an editor`);
-        t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').hidden`), true, `${width}: the button New stays hidden: it has no item`);
+        t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').hidden`), false, `${width}: the button New shows: the primary store takes new dashboards`);
         t.eq(await noOverflow(p), true, `${width}: no horizontal scroll`);
         await p.goto(t.dash("nodes"));
         await p.idle();
