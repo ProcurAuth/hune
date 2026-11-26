@@ -110,8 +110,11 @@ web/
     sql_lex_pg.js            lexer of the dialect `postgres` (7.20), only for sqlscan.js
     grid.js                  sections and grid (9.8)
     panel_frame.js           panel header, menu, states, View data (9.11)
-    panel_wait.js            the wait of a panel: first load and reload, the preview of each type, the test of the same data: pure functions (9.11)
-    panel_preview.js         the elements of the preview of a panel, made from the tree of panel_wait.js (9.11)
+    panel_wait.js            the wait of a panel: first load and reload, the test of the same data: pure functions (9.11)
+    preview/                 the loading previews (9.11)
+      index.js               the registry: the family of each panel type, the build and the draw of a preview
+      common.js              the shared pure helpers: nodes, rectangles, bounds, width of a text
+      <family>.js            one module for each of the 12 families (timeseries, barchart, piechart, stat, gauge, bargauge, table, heatmap, histogram, timeline, logs, geomap)
     frame.js                 frame to fields (9.12)
     names.js                 display names (9.13)
     fields.js                field configuration and matchers (9.14)
@@ -1422,45 +1425,47 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - The loader is an element `panel__loader` in the title bar, with `aria-hidden="true"`. It is out of the flow (`position: absolute`), has `pointer-events: none`, and takes no room. Its right edge is 4 px left of the menu button.
 - The three dots are circles of 5 px, with 3 px between them. Their colour is the token `--accent-fill`. Each dot pulses for 1 s (the token `--dur-pulse`, the curve `ease-in-out`). Its opacity goes from 0.2 to 1, and its scale from 0.8 to 1. The second dot starts 0.15 s after the first, and the third dot 0.15 s after the second.
 - The preview is an element `panel__skeleton` in the body, with `aria-hidden="true"`. It is out of the flow, has `pointer-events: none`, and sits under the overlay. The overlay of an error, of a hint or of a note covers it. A text panel has no preview.
-- The preview is a picture of the panel in the places of the real panel. It shows what the page knows before the data come: the type, the options, the unit and the size. The function `previewOf` of `panel_wait.js` gives a tree of nodes. The module `panel_preview.js` makes the elements from the tree. A node has a tag, a class, custom properties, attributes and children. The page sets the custom properties with the CSSOM and writes no `style` attribute (9.29).
-- The preview keeps the plot where the real plot will be, so that the plot does not move when the data arrive. The sizes in px come from measures of the real charts:
+- The preview is a picture that the page draws from the JSON document of the dashboard only. It never reads the text of a query, in any language. It has no heuristic: no typical value, no guessed count and no guessed width.
+- Where the document does not give a fact, the preview draws the least form that the document proves. This form is an empty region, or nothing. A drawn shape claims a fact, so the page draws only the facts that the document gives.
+- The preview uses neutral tones: the tokens `--skel-fill` (9 % of `--text`), `--skel-edge` (17 %) and `--skel-grid` (10 %). It never uses a colour of the document, because a colour would claim that a series exists.
+- A text that the document fixes shows as a bar. The bar has the measured width of the text. The font is the font of the loaded panel: `400 12px` and the font family of the page. The bar is 8 px high and has round ends.
+- The code is in the folder `web/js/preview/`. The file `index.js` is the registry. It gives the family of each panel type and calls `build(panel, box, doc, ctx)` of the module of the family. The file `common.js` has the shared pure helpers: the nodes, the rectangles, the bounds and the width of a text.
+- The argument `box` is `{ w, h }`: the content box of the body, which is the size of the loaded plot holder. The argument `ctx` is `{ rt, page }`. A module gives `{ elements, bounds, notes }`. The elements are a tree of nodes. A node has a tag, a class, custom properties, attributes and children.
+- The page sets the custom properties with the CSSOM and writes no `style` attribute (9.29). The SVG nodes use the SVG namespace.
+- The preview builds when its box has a size, and builds again when the size changes. The page observes the box with a `ResizeObserver`. A panel that never waits for a first load builds nothing.
+- A module that throws gives the neutral form. A preview never breaks a panel.
+- The families and their modules:
 
-  | Part | Size |
-  |---|---|
-  | Space round the chart | 8 px. The preview starts inside the padding of the body. |
-  | Left gutter of a plot | The width of a typical y label and 9 px. The label is the text of the value 500 in the unit and the decimals of the field, at 7.6 px for each character. A hidden y axis gives 8 px. The property `axis_width` gives its value. |
-  | Right gutter | 8 px. When an override puts a field at the right, it is the width of a label and 9 px. |
-  | Top of a plot | 8 px, and 0 px when the y axis is hidden |
-  | Labels of the x axis | 21 px under the plot |
-  | Legend at the bottom, as a list | 30.8 px high |
-  | Legend at the bottom, as a table | A head of 28 px and rows of 22 px. It takes 35 % of the panel at most. |
-  | Legend at the right | 141 px for a list. For a table, 158 px and 58 px for each value column. |
-  | Legend of a pie | At the bottom, 22.8 px (a line of 18.8 px and a gap of 4 px). At the right, 84 px for a list, and 70 px with 40 px for each value column for a table. |
-  | Colour scale of a heatmap | 46 px, only when `show_legend` is `true` |
-  | Table | A head of 34 px and rows of 36 px, cut at the foot of the body |
-  | Logs | Rows of 28 px |
+  | Family | Panel types | Module |
+  |---|---|---|
+  | `timeseries` | `timeseries`, `xychart` | `timeseries.js` |
+  | `barchart` | `barchart` | `barchart.js` |
+  | `piechart` | `piechart` | `piechart.js` |
+  | `stat` | `stat` | `stat.js` |
+  | `gauge` | `gauge` | `gauge.js` |
+  | `bargauge` | `bargauge` | `bargauge.js` |
+  | `table` | `table` | `table.js` |
+  | `heatmap` | `heatmap` | `heatmap.js` |
+  | `histogram` | `histogram` | `histogram.js` |
+  | `timeline` | `state_timeline`, `status_history` | `timeline.js` |
+  | `logs` | `logs` | `logs.js` |
+  | `geomap` | `geomap` | `geomap.js` |
 
-- A legend that is off (`legend.show` is `false`) has no room. A panel with no `legend` member has a list at the bottom, as the real panel has.
-- The width of a legend at the right comes from the names of the series, which the page does not know before the data. The preview takes the width of a typical legend. The plot keeps its top, its left and its height. Its width follows the names when the data arrive. A state timeline reserves no legend, because its legend lists the states that the data hold.
-- The plot of the preview and the plot of the loaded chart differ by 4 px at most in left, top, width and height. This holds for a legend at the bottom and for a legend that is off. It holds for a hidden y axis, a bar chart and a pie. The labels have the typical size. The browser cases B280 and B281 measure it.
-- The preview of each panel type follows the options of the panel:
+- A panel type that draws no queried data, a text, has no family and no preview.
+- Each family module gives the neutral form until the family has its own rules: an empty body with the light and the dots. The neutral form claims no part.
+- Each element that a test measures has two attributes. The attribute `data-skel-part` names the part: `box`, `plot`, `legend`, `warning`, `axis-y`, `axis-x`, `label`, `head`, `row`, `column`, `tile`, `arc`, `track`, `scale` or `mark`. The attribute `data-skel-class` gives the tolerance class. The root element has `data-skel`, the key of the family.
+- The tolerance classes tell how exact a part is, against the loaded panel:
 
-  | Panel type | Preview |
-  |---|---|
-  | `timeseries`, `xychart` | Three smooth lines, an area under the first one, five grid lines, labels of the y axis (none when the axis is hidden) and labels of the x axis, then the legend of the options. With `draw` equal to `bars`, twelve bars in place of the lines, stacked when `stacking` is `normal` or `percent`. No dots. |
-  | `barchart` | Vertical: seven bars on the grid, with the axes. Horizontal: five rows with a name, a bar and a value (not with `show_values` equal to `never`), and the value axis. Stacked bars have two parts. The legend of the options. |
-  | `piechart` | A ring (`donut`) or a disc (`pie`) in the middle of the plot, and the legend of the options with round swatches |
-  | `stat` | A big value and a caption. A line under them, with an area for `graph_mode` equal to `area`, when `graph_mode` is `area` or `line`. |
-  | `gauge` | An arc that is open at its foot and a value. Three gauges with a name each when `reduce.values` is `true`. |
-  | `bargauge` | Tracks with a fill, in rows or in columns (`orientation`), four of them when `reduce.values` is `true`. Segments for `display_mode` equal to `lcd`. |
-  | `table` | A head, ten rows, and a foot when a field has a footer. The columns are the fields that the document names, from 3 to 8. |
-  | `heatmap` | Cells in a plot with its axes and its grid. A colour scale under it when `show_legend` is `true`. |
-  | `histogram` | Ten bars side by side, as a bell, with the axes (the y labels are counts of four digits, with no unit) and the legend of the options |
-  | `state_timeline`, `status_history` | Four rows of segments with their names and the x axis. No legend. |
-  | `logs` | Ten rows with a time (not with `show_time` equal to `false`), a level and a message |
-  | `geomap` | Two map shapes and five markers as rings |
+  | Class | Meaning | Test |
+  |---|---|---|
+  | `exact` | The document fixes the place and the size. | x, y, width and height differ by 0.5 px at most. |
+  | `least` | The document gives a lower bound. The preview takes the least room. | The width and the height of the preview are not more than those of the loaded part, plus 0.5 px. |
+  | `most` | The document gives an upper bound. | The width and the height of the preview are not less than those of the loaded part, minus 0.5 px. |
+  | `data` | The document gives nothing. No shape stands for the part. | No test. |
 
-- One band of light crosses the preview from the left to the right in 2 s (the keyframes `panel-skel`). It is an element `::after` of `panel__skeleton`. It moves with `translateX` only, so no shape changes its size, its place or its opacity. Its colour is 72 % of the token `--surface-panel`, with a transparent edge. The shapes use 9 % and 17 % of the token `--text`. The marks of a series and the arcs use the token `--accent-fill`.
+- The engine of the charts reads integers, so a size in px is a whole number where the engine rounds it. The preview rounds in the same way and never rounds a value to a tenth.
+- One band of light crosses the preview from the left to the right in 2 s (the keyframes `panel-skel`). It is an element `::after` of `panel__skeleton`. It moves with `translateX` only, so no shape changes its size, its place or its opacity. Its colour is 72 % of the token `--surface-panel`, with a transparent edge.
+- The measurement harness `tests/browser/lib/preview_measure.mjs` measures a dashboard in a real browser (16.10a). It holds the queries, reads the parts of each preview, releases the queries and reads the loaded panel with the extractor of its type. It gives one row for each part and the verdict of the tolerance class. The command `tests/browser/preview_measure.mjs` uses it on a dashboard of a server that is on.
 - The page starts no timer for the loader in a panel that is not near the viewport, beyond the timer of the first wait. A print has no loader.
 - "View data" opens a dialog with the fields of the panel after the transformations, as a table. The header is the
   display name, and the cells are the display texts. This table is the text alternative of the chart (9.26).
@@ -4080,7 +4085,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,109 KB at most (1,135,616 bytes), before compression. The limit is the measure (1,130,676 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,940 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,116 KB at most (1,142,784 bytes), before compression. The limit is the measure (1,138,613 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,171 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;

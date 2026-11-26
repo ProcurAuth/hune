@@ -33,11 +33,12 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - A refresh or a change of the range asks again only for the variables whose key changed. A `query` variable below a `time_change` variable asks again when the values of its parents changed, and not at each change of the range.
 - The page cancels the options requests that are in flight when the person leaves the dashboard. It also cancels them when a newer request of the same variable starts.
-- The page budget of the front is 1109 KB (9.30). The new modules and styles use the room.
+- The page budget of the front is 1116 KB (9.30). The new modules and styles use the room.
 
-- The preview of a panel that loads for the first time follows the panel. A time series shows three smooth lines, an area, the labels of the axes and the legend of its options, in place of dots. The preview keeps the place of the axes and of the legend, so the plot does not move when the data arrive. The other panel types follow their options too: bar chart, pie chart, stat, gauge, bar gauge, table, heatmap, histogram, state timeline and logs.
+- The preview of a panel that loads for the first time uses the JSON document of the dashboard only. It never reads the text of a query, and it has no heuristic. Where the document gives no fact, the preview draws the least form that the document proves, drawn empty. A text that the document fixes shows as a bar of its measured width. The preview uses neutral tones and never a colour of the document.
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
-- The module `panel_preview.js` makes the elements of the preview. The function `previewOf` of `panel_wait.js` gives the tree of shapes. The list `SKELETONS` is gone.
+- The preview is now in the folder `web/js/preview/`: a registry (`index.js`), shared helpers (`common.js`) and one module for each of the 12 families. Each family module gives the neutral form for now: an empty body with the light and the dots. The module `panel_preview.js`, the function `previewOf` of `panel_wait.js` and the heuristic sizes are gone. The browser cases B280 to B282 are replaced by B320 and B321.
+- The measurement harness `tests/browser/lib/preview_measure.mjs` and the command `tests/browser/preview_measure.mjs` measure each preview and each loaded panel. They give the differences by tolerance class (9.11).
 
 ### Fixed
 
