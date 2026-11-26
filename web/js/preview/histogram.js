@@ -31,13 +31,11 @@ const ITEM_MAX = 308; // 22rem
 const HEAD_ROW = 2 + LINE + 2.5; // a head of the legend table (the Hune rule)
 const BODY_ROW = 2 + LINE + 2 + 1; // a row of the legend table and its rule
 const TEXT_CENTRE = 8.5; // the centre of the text box of a 12 px text, from the top of its line of 18.857 px (the font of the page)
-const TABLE_CAP = 112; // 8rem with the root font of 14 px
 const HEADS = {
   total: "Total", min: "Min", max: "Max", mean: "Mean", last: "Last", last_not_null: "Last *", first: "First", first_not_null: "First *", count: "Count",
   median: "Median", std_dev: "Std Dev", variance: "Variance", range: "Range", diff: "Difference", diff_percent: "Difference %", delta: "Delta",
   distinct_count: "Distinct count", change_count: "Change count",
 };
-const DEFAULT_HEADS = ["total", "min", "max", "mean", "last"];
 
 // A display name that the document writes in full: no template, no variable.
 const lit = (v) => typeof v === "string" && v !== "" && !v.includes("$") && !v.includes("[[");
@@ -57,7 +55,7 @@ export function legendFacts(panel, doc) {
   const ON = show && !EMPTY && (COUNT || !hides.some(hidesLegend));
   const name = COUNT ? "Count" : ONE ? names[0] : null;
   const heads = Array.isArray(legend.values) && legend.values.length ? [...new Set(legend.values.filter((v) => Object.prototype.hasOwnProperty.call(HEADS, v)))] : [];
-  return { legend, show, placement: show ? legend.placement || "bottom" : "bottom", mode: legend.mode === "table" ? "table" : "list", NAMES, ONE, COUNT, EMPTY, ON, name, heads: heads.length ? heads : DEFAULT_HEADS };
+  return { legend, show, placement: show ? legend.placement || "bottom" : "bottom", mode: legend.mode === "table" ? "table" : "list", NAMES, ONE, COUNT, EMPTY, ON, name, heads };
 }
 
 const itemWidth = (name) => (name === null ? 0 : Math.min(domWidth(clip(name), { size: 12 }), ITEM_MAX - ITEM_PAD));
@@ -96,7 +94,8 @@ export function build(panel, box, doc, ctx) {
       const need = table ? f.heads.reduce((a, h) => a + 38 + domWidth(HEADS[h], { size: 12, weight: 500 }), 38 + domWidth("Name", { size: 12, weight: 500 })) + gutter : Math.min(40 + gutter + itemWidth(name), BESIDE * W);
       if (W < Math.round(need) + MIN_PLOT_WIDTH) {
         // Certain fallback: the legend goes under the plot, the host keeps `data-legend-placement="right"`.
-        lhRaw = table ? 4 + Math.min(HEAD_ROW + BODY_ROW, TABLE_CAP) : 4 + LINE + 4;
+        // Under the plot the legend keeps the cap of 35 % of the height, as at the bottom (the list and the table wrap scroll).
+        lhRaw = table ? 4 + Math.min(HEAD_ROW + BODY_ROW, cap) : 8 + Math.min(LINE, cap);
         lh = Math.round(lhRaw);
         notes.push("legend:fallback");
       } else {
@@ -111,11 +110,6 @@ export function build(panel, box, doc, ctx) {
       legendExact = !table && f.COUNT;
       notes.push("legend:bottom");
     }
-  } else if (f.show && f.EMPTY && f.placement === "right") {
-    // An empty legend keeps the column gap of the grid: the plot ends 8 px before the gap (a defect of the loaded panel, 9.11).
-    lw = 0;
-    beside = true;
-    notes.push("legend:empty-right");
   } else {
     notes.push(f.show ? (f.EMPTY ? "legend:empty" : "legend:unknown") : "legend:off");
   }
