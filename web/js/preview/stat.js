@@ -145,7 +145,7 @@ export const holderNode = (top = 0, part = "holder", cls = EXACT) => node("skel_
 
 // `box` is the body of the panel (the CSS makes the preview of a stat reach the edge of the body: panel-loading.css, family stat).
 export function build(panel, box, doc, ctx) {
-  const warn = warningLayout(panel, BODY_PAD, BODY_PAD, box.w - 2 * BODY_PAD);
+  const warn = warningLayout(panel, BODY_PAD, BODY_PAD, (box.fw ?? box.w) - 2 * BODY_PAD);
   // The loaded grid starts under the paragraph and covers the last 8 px of it: its top is the height of the paragraph.
   return resultOf([...warn.nodes, holderNode(warn.height)], { holder: exact(box.h - warn.height), warning: exact(warn.height) }, [warn.height ? "box warning" : "box"]);
 }

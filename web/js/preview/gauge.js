@@ -168,8 +168,8 @@ export function gaugeLayout(panel, box, refs, cfg, decided) {
   const orientation = o.orientation || "auto";
   const vertical = orientation === "vertical";
   const manual = o.sizing === "manual";
-  const w = floorUnit(box.w);
-  const h = floorUnit(box.h);
+  const w = floorUnit(box.fw ?? box.w);
+  const h = floorUnit(box.fh ?? box.h);
   const minW = manual && vertical && Number.isFinite(o.min_width) ? o.min_width : undefined;
   const minH = manual && orientation === "horizontal" && Number.isFinite(o.min_height) ? o.min_height : undefined;
   const cell = orientation === "auto" ? gridCells(1, w, h)[0] : stackCells(1, w, h, vertical, vertical ? minW : minH)[0];
@@ -250,8 +250,8 @@ function gaugeNodes(panel, lay, cfg, decided, at) {
 
 // `box` is the content box of the body: the gauge holder is under the warning line, if any.
 export function build(panel, box, doc, ctx) {
-  const warn = warningLayout(panel, 0, 0, box.w);
-  const holder = { w: box.w, h: Math.max(0, box.h - warn.height) };
+  const warn = warningLayout(panel, 0, 0, box.fw ?? box.w);
+  const holder = { w: box.w, h: Math.max(0, box.h - warn.height), fw: box.fw, fh: box.fh === undefined ? undefined : Math.max(0, box.fh - warn.height) };
   const elements = [...warn.nodes, holderNode(warn.height)];
   const bounds = { holder: exact(holder.h), warning: exact(warn.height) };
   const n = gaugeCount(panel, doc);

@@ -13,6 +13,6 @@ import { holderNode, warningLayout } from "./stat.js";
 
 // `box` is the content box of the body: the holder of the bar gauge is under the warning line, if any.
 export function build(panel, box, doc, ctx) {
-  const warn = warningLayout(panel, 0, 0, box.w);
+  const warn = warningLayout(panel, 0, 0, box.fw ?? box.w);
   return resultOf([...warn.nodes, holderNode(warn.height)], { holder: exact(Math.max(0, box.h - warn.height)), warning: exact(warn.height) }, [warn.height ? "box warning" : "box"]);
 }
