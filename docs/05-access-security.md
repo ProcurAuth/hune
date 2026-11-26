@@ -535,7 +535,7 @@ These rules make the document:
   `dashboard.write` and `source.query`. Hune sends no question for an action that it does not publish.
 - The two keys are the ceiling of the two actions, also in the mode `open`. The PDP can only restrict: when the key is
   `false`, Hune refuses the route and asks nothing (6.17). A policy that grants `dashboard.history` or
-  `dashboard.export` on a resource gives nothing more than the key allows. The older policies grant neither action, so
+  `dashboard.export` on a resource gives nothing more than the key gives. The older policies grant neither action, so
   their subjects lose the history and the export until the policy adds them: the answer fails closed.
 - `resources` has one item for each source block of both kinds, sorted by the id in byte order. Its `path` is `source:<id>` and
   its `label` is the key `label` of the block. 
@@ -848,8 +848,8 @@ of a dashboard without `access.export`. It hides "New dashboard" in a folder wit
 The source picker and "Run draft" of the editor show only the sources of `GET /api/sources`. The move dialog offers
 only the folders with `access.write`.
 
-A folder or a dashboard of a read-only store has the flag `access.write` equal to `false` with no question for
-`dashboard.write` (11.35), and the flag `access.history` equal to `false` with no question for `dashboard.history`, because
+A folder or a dashboard of a read-only store has the flag `access.write` equal to `false`. Hune asks no question for
+`dashboard.write` (11.35). The flag `access.history` is `false` too, with no question for `dashboard.history`, because
 only the primary store has history (5.18). With `server.history` or `server.export` equal to `false`, the flag is `false`
 and Hune asks no question.
 
@@ -905,8 +905,7 @@ The children:
 | `source` | The `clickhouse` blocks | The key `label` of the block | `false` | `source.query` |
 
 For each child, Hune asks the published actions of the table with the match `subtree` and no usage. It stops at the
-first `true` answer. A child with one `true` answer is in the list (P 5.6). When no store is the primary store, a folder or
-a dashboard needs `dashboard.read`, and no source is in the list.
+first `true` answer. A child with one `true` answer is in the list (P 5.6).
 
 The items are sorted by the id in byte order. One answer has 50 items at most. One request asks at most 200 questions.
 When this bound stops the walk, the answer holds the items found and a `next` value. The answer can have no item and a

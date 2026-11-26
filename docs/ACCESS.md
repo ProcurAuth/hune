@@ -116,7 +116,9 @@ Hune builds each chain from its own catalog. It never uses a value of the reques
 
 A primary store always exists, so Hune always publishes `dashboard.read`, `dashboard.write` and `source.query`.
 
-The two keys `server.history` and `server.export` are the ceiling of the two new actions, also in the mode `open`. When a key is `false`, Hune refuses the route (`403 history_disabled` or `403 export_disabled`) and asks no question. The PDP can only restrict what the key allows. A policy author adds `dashboard.history` and `dashboard.export` on each resource where the history and the export must stay available, for example on the service for an administrator. An older policy grants neither action. Its subjects lose the history and the export until the policy adds them. This is the fail-closed choice.
+The two keys `server.history` and `server.export` are the ceiling of the two new actions, also in the mode `open`. When a key is `false`, Hune refuses the route (`403 history_disabled` or `403 export_disabled`). It asks no question.
+
+The PDP can only restrict what the key gives. A policy author adds `dashboard.history` and `dashboard.export` on each resource that must keep the history and the export. For example, add them on the service for an administrator. An older policy grants neither action. Its subjects lose the history and the export until the policy adds them. This is the fail-closed choice.
 
 Only the primary store has history. A dashboard of a read-only store answers `404 history_unavailable` to a subject that can read it, whatever the policy says. A subject that cannot read the dashboard gets the same refusal as for any other route.
 

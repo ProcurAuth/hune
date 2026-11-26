@@ -391,11 +391,13 @@ Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forb
 - `updated_by` is the subject of the last version, `-` in mode `open`, or `external` for a change from outside (5.2).
 - `access` is on each dashboard, with three members: `write`, `history` and `export`.
   `access.write` is the `access.write` of its folder (11.25). In mode `open`, it is `true` for each dashboard of the
-  primary store. `access.history` is `true` when `server.history` is `true`, the dashboard is in the primary store, and,
-  in mode `authzen`, the display answer for `dashboard.history` allows it (11.25). It is `false` for a dashboard of a
-  read-only store, with no question to the PDP. `access.export` is `true` when `server.export` is `true` and, in mode
-  `authzen`, the display answer for `dashboard.export` allows it. The page shows the History entry only when
-  `access.history` is `true`, and the Export entry only when `access.export` is `true` (9.8, 9.11).
+  primary store.
+- `access.history` is `true` when `server.history` is `true` and the dashboard is in the primary store. In mode
+  `authzen`, the display answer for `dashboard.history` MUST be `true` too (11.25). It is `false` for a dashboard of a
+  read-only store, with no question to the PDP.
+- `access.export` is `true` when `server.export` is `true`. In mode `authzen`, the display answer for
+  `dashboard.export` MUST be `true` too. The page shows the History entry only when `access.history` is `true`. It shows
+  the Export entry only when `access.export` is `true` (9.8, 9.11).
 - `tag` is for the dashboard links of the kind `dashboards` (4.5a, 9.8a). It works with `folder` and `q`: a dashboard MUST pass all the parameters of the request. The route applies `tag` before the pagination of 6.24 and before the display filter of 11.25. The parameter occurs one time. A dashboard link with more than one tag sends the first tag. The page tests the other tags in the member `tags` of each item.
 
 ### 6.13 Create a dashboard
@@ -448,11 +450,11 @@ Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 read_onl
 - `access.write` is the display answer for `dashboard.write` on `N(uid)` (11.25). In mode `open`, it is `true` when the
   dashboard is in the primary store. It is `false` for a dashboard of a read-only store, with no question to the PDP.
   `access.history` and `access.export` are the members of 6.12, with the same rules.
-- `download=true` needs the export right. With `server.export` equal to `false`, the route gives `403 export_disabled`
-  before it reads anything and before any PDP question, so the answer is the same for a uid that exists and for one that
-  does not. In mode `authzen`, Hune asks `dashboard.read` first. Then it asks `dashboard.export` on `N(uid)`. A `false`
-  answer gives `403 forbidden` with the member `action` equal to `dashboard.export`. The rule holds for an `invalid`
-  entry too. A request with no `download` is not concerned.
+- `download=true` needs the export right. With `server.export` equal to `false`, the route gives `403 export_disabled`.
+  It does this before it reads anything and before any PDP question. Thus the answer is the same for a uid that exists
+  and for one that does not. In mode `authzen`, Hune asks `dashboard.read` first. Then it asks `dashboard.export` on `N(uid)`. A `false`
+  answer gives `403 forbidden` with the member `action` equal to `dashboard.export`.
+- The export rule holds for an `invalid` entry too. A request with no `download` is not concerned.
 - `read_only` and `store` are the members of 6.12. The page opens the editor read-only when `read_only` is `true`.
 - `stale` is the member of 6.12. It is present only when the dashboard shows its last valid state (5.44).
 - The member `document` is the document as a JSON value. Its member order is the canonical order, but the bytes of
@@ -579,8 +581,8 @@ Order of the checks of both history routes and of the restore (6.18):
 3. A dashboard of a read-only store gives `404 history_unavailable`: only the primary store has history (5.18).
 4. In mode `authzen`, Hune asks `dashboard.history` on `N(uid)`. A `false` answer gives `403 forbidden` with the member
    `action` equal to `dashboard.history`.
-5. `download=true` on a version needs the history right only. The export right does not apply to a version, because the
-   history page reads the stored text of a version with it, to show and to compare versions. The page shows the button
+5. `download=true` on a version needs the history right only. The export right is not for a version, because the
+   history page reads the stored text of a version with it. The page shows the button
    "Export this version" only when `access.history` and `access.export` are both `true`.
 
 - `kind` is one of the eight kinds of 5.2: `create`, `save`, `restore`, `move`, `delete`, `import`, `external` and
