@@ -32,7 +32,7 @@ test("a type without a family has no preview", () => {
 });
 
 test("each family module exports build, and the stub gives the neutral form", () => {
-  const files = readdirSync(new URL("../../web/js/preview/", import.meta.url)).filter((n) => n.endsWith(".js") && n !== "index.js" && n !== "common.js");
+  const files = readdirSync(new URL("../../web/js/preview/", import.meta.url)).filter((n) => n.endsWith(".js") && n !== "index.js" && n !== "common.js" && n !== "grids.js");
   assert.deepEqual(files.map((n) => n.slice(0, -3)).sort(), [...FAMILIES].sort());
   for (const type of TYPES) {
     const out = previewOf(panel(type), { w: 300, h: 200 }, {}, {});

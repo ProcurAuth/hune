@@ -49,11 +49,11 @@ test("the parts match by name and by order, and each part gives a row", () => {
   assert.deepEqual(rows.map((r) => [r.part, r.index, r.verdict]), [
     ["plot", 0, "ok"],
     ["legend", 0, "ok"],
-    ["label", 0, "fail"],
+    ["label", 0, "ok"], // a bar and a text agree on the width and on the vertical centre, not on the height
     ["label", 1, "fail"],
     ["axis-x", 0, "unclaimed"],
   ]);
-  assert.deepEqual(summarize(rows), { ok: 2, fail: 2, data: 0, "no-loaded": 0, unclaimed: 1 });
+  assert.deepEqual(summarize(rows), { ok: 3, fail: 1, data: 0, "no-loaded": 0, unclaimed: 1 });
 });
 
 test("a claimed part with no loaded part is no-loaded, and a data part stays data", () => {

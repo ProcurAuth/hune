@@ -39,6 +39,40 @@ const RECORDER = `(() => {
     return clear.call(this, x, y, w, h);
   };
   window.__previewTexts = (canvas) => lists.get(canvas) || [];
+  // The straight lines of a path (the grid of the charts): the end points and the line width of each stroke, for each canvas.
+  const strokes = new WeakMap();
+  const begin = proto.beginPath;
+  const move = proto.moveTo;
+  const line = proto.lineTo;
+  const stroke = proto.stroke;
+  let path = [];
+  let from = null;
+  proto.beginPath = function () {
+    path = [];
+    from = null;
+    return begin.call(this);
+  };
+  proto.moveTo = function (x, y) {
+    from = [x, y];
+    return move.call(this, x, y);
+  };
+  proto.lineTo = function (x, y) {
+    if (from) path.push([from[0], from[1], x, y]);
+    from = [x, y];
+    return line.call(this, x, y);
+  };
+  proto.stroke = function (...rest) {
+    let list = strokes.get(this.canvas);
+    if (!list) strokes.set(this.canvas, (list = []));
+    for (const seg of path) list.push({ x1: seg[0], y1: seg[1], x2: seg[2], y2: seg[3], lw: this.lineWidth });
+    return stroke.apply(this, rest);
+  };
+  const clearAll = proto.clearRect;
+  proto.clearRect = function (x, y, w, h) {
+    if (x === 0 && y === 0) strokes.set(this.canvas, []);
+    return clearAll.call(this, x, y, w, h);
+  };
+  window.__previewLines = (canvas) => strokes.get(canvas) || [];
 })();`;
 
 /** Install the recorder for the next documents of the page. Call it before `goto`. */
@@ -146,7 +180,7 @@ function loadedProbe(id, family, extractors) {
   // The engine of the charts (`.chartCore`): the plot is in `data-plot` (left, top, width and height in px from the top left corner of the chart).
   // The labels of the axes are drawn on a canvas, so they come from the recorder of `fillText`. A label at the left of the plot is a y label, and a
   // label under the plot is an x label. Gives true when the panel has this engine.
-  const chart = () => {
+  const chart = (options = {}) => {
     const core = holder.querySelector(".chartCore");
     if (!core) return false;
     const c = core.getBoundingClientRect();
@@ -171,9 +205,28 @@ function loadedProbe(id, family, extractors) {
         else if (r.y > t + h && inside) xs.push({ text: r.text, rect });
       }
       for (const y of ys) add("label", y.rect, y.text);
-      for (const x of xs) add("label", x.rect, x.text);
+      // `options.xParts`: the x labels are the part `label-x` and the vertical lines are the part `grid-x` (the heatmap, 9.11).
+      for (const x of xs) add(options.xParts ? "label-x" : "label", x.rect, x.text);
       add("axis-y", union(ys.map((y) => y.rect)));
       add("axis-x", union(xs.map((x) => x.rect)));
+      // The horizontal grid: the lines that span the plot from its left edge to its right edge (an option of the families that draw one).
+      if (options.grid && window.__previewLines) {
+        const seen = new Set();
+        for (const s of window.__previewLines(canvas)) {
+          if (s.y1 !== s.y2 || Math.abs(s.x1 - l) > 0.01 || Math.abs(s.x2 - (l + w)) > 0.01 || s.y1 < t - 1 || s.y1 > t + h + 1 || seen.has(s.y1)) continue;
+          seen.add(s.y1);
+          add("grid", [k.x - ox + s.x1, k.y - oy + s.y1 - s.lw / 2, s.x2 - s.x1, s.lw]);
+        }
+      }
+      // The vertical grid: the lines that span the plot from its top edge to its bottom edge, one for each tick of the time axis.
+      if (options.xParts && window.__previewLines) {
+        const seen = new Set();
+        for (const s of window.__previewLines(canvas)) {
+          if (s.x1 !== s.x2 || Math.abs(s.y1 - t) > 0.01 || Math.abs(s.y2 - (t + h)) > 0.01 || seen.has(s.x1)) continue;
+          seen.add(s.x1);
+          add("grid-x", [k.x - ox + s.x1 - s.lw / 2, k.y - oy + s.y1, s.lw, s.y2 - s.y1]);
+        }
+      }
     }
     return true;
   };
@@ -307,20 +360,59 @@ export const EXTRACTORS = {
     }
   },
   heatmap: (panel, h) => {
-    h.chart();
+    h.chart({ grid: true, xParts: true });
     const legend = h.holder.querySelector(".heat__legend");
-    if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
+    if (legend && h.visible(legend)) {
+      h.add("legend", h.rel(legend));
+      // The two ends of the legend are DOM text: each one gives a part of its own (the labels of the canvas keep the part `label`).
+      for (const t of h.textRects(legend)) h.add("legend-label", t.rect, t.text);
+    }
     for (const e of h.all(".heat__bar", h.holder)) h.add("scale", h.rel(e));
   },
+  // `histogram`: the engine of the charts and its legend. The first entry gives the pill (`mark`) and its name (`legend-label`). A legend table gives
+  // the first head (`legend-head`). The grid is the line of each tick.
   histogram: (panel, h) => {
-    h.chart();
+    h.chart({ grid: true });
+    const legend = h.holder.querySelector(".chartCore__legend");
+    if (!legend || !h.visible(legend)) return;
+    h.add("legend", h.rel(legend));
+    const pill = h.all(".chartCore__legendItem i", legend)[0];
+    if (pill) h.add("mark", h.rel(pill));
+    const item = h.all(".chartCore__legendItem", legend)[0];
+    const text = item ? h.textRects(item)[0] : null;
+    if (text) h.add("legend-label", text.rect, text.text);
+    const head = h.all("thead th", legend)[0];
+    const name = head ? h.textRects(head)[0] : null;
+    if (name) h.add("legend-head", name.rect, name.text);
   },
   // `state_timeline` and `status_history`: a canvas and a legend of their own.
+  // The hook `data-timeline` of the host gives the clip box of the plot (`rows`), in px from the canvas.
   timeline: (panel, h) => {
     const canvas = h.holder.querySelector(".timeline__canvas");
     if (canvas) h.add("plot", h.rel(canvas));
     const legend = h.holder.querySelector(".timeline__legend");
-    if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
+    if (legend && h.visible(legend)) {
+      h.add("legend", h.rel(legend));
+      for (const t of h.textRects(legend)) h.add("legend-label", t.rect, t.text);
+    }
+    let hook = null;
+    try {
+      hook = JSON.parse(h.holder.dataset.timeline);
+    } catch (error) {
+      hook = null;
+    }
+    if (canvas && hook && hook.box) {
+      const c = h.rel(canvas);
+      const box = hook.box;
+      h.add("rows", [c[0] + box[0], c[1] + box[1], box[2], box[3]]);
+      // The time axis: the hook lists the ticks `[t, x]` and the labels `[text, x, left, right, y]` in CSS px from the canvas. A grid line is one device pixel
+      // wide at the column round(x dpr) / dpr. The height of a label is the text box of the recorder (the canvas draws at the size 12 dpr).
+      const dpr = window.devicePixelRatio || 1;
+      const texts = window.__previewTexts ? window.__previewTexts(canvas).filter((r) => r.baseline === "top") : [];
+      const th = texts.length ? (texts[0].ascent + texts[0].descent) / dpr : 0;
+      for (const l of hook.labels || []) h.add("label-x", [c[0] + l[2], c[1] + l[4], l[3] - l[2], th], l[0]);
+      for (const l of hook.ticks || []) h.add("grid-x", [c[0] + Math.round(l[1] * dpr) / dpr, c[1] + box[1], 1 / dpr, box[3]]);
+    }
   },
   // `logs`: the list, the lines, and the bars of the first line. The time bar is the time box of the first line and the track is the region from the level
   // cell to the end of the line. Each one is 8 px high, centred in the text band of 22 px at the top of the line (the line may be higher with `wrap`).
@@ -366,6 +458,19 @@ export function compareRect(cls, preview, loaded, tol = TOLERANCE_PX) {
   return { verdict: "data", delta };
 }
 
+// A bar stands for a text: the preview bar is 8 px high and the loaded text box is higher. The two agree on the width and on the vertical centre.
+// The left edge is exact, or one-sided when the class says so (a label whose gutter can only grow moves to the right: the preview is at the left).
+export const LABEL_PARTS = new Set(["label", "label-x", "legend-label", "legend-head"]);
+export function compareLabel(cls, preview, loaded, tol = TOLERANCE_PX) {
+  const dx = preview[0] - loaded[0];
+  const dw = preview[2] - loaded[2];
+  const dy = preview[1] + preview[3] / 2 - (loaded[1] + loaded[3] / 2);
+  const delta = [dx, dy, dw, preview[3] - loaded[3]].map((v) => Number(v.toFixed(2)));
+  if (cls === CLASSES.DATA) return { verdict: "data", delta };
+  const side = cls === CLASSES.LEAST ? dx <= tol : cls === CLASSES.MOST ? dx >= -tol : Math.abs(dx) <= tol;
+  return { verdict: side && Math.abs(dw) <= tol && Math.abs(dy) <= tol ? "ok" : "fail", delta };
+}
+
 const key = (p, i) => `${p}#${i}`;
 const indexed = (parts) => {
   const seen = new Map();
@@ -392,7 +497,7 @@ export function compare(preview, loaded, tol = TOLERANCE_PX) {
     const y = loadedBy.get(k);
     if (y) used.add(k);
     if (!y) rows.push({ ...base, part: x.part, index: x.index, cls: x.cls, preview: x.rect, loaded: null, delta: null, verdict: x.cls === CLASSES.DATA ? "data" : "no-loaded" });
-    else rows.push({ ...base, part: x.part, index: x.index, cls: x.cls, preview: x.rect, loaded: y.rect, text: y.text, ...compareRect(x.cls, x.rect, y.rect, tol) });
+    else rows.push({ ...base, part: x.part, index: x.index, cls: x.cls, preview: x.rect, loaded: y.rect, text: y.text, ...(LABEL_PARTS.has(x.part) ? compareLabel(x.cls, x.rect, y.rect, tol) : compareRect(x.cls, x.rect, y.rect, tol)) });
   }
   for (const y of l) if (!used.has(key(y.part, y.index))) rows.push({ ...base, part: y.part, index: y.index, cls: null, preview: null, loaded: y.rect, text: y.text, delta: null, verdict: "unclaimed" });
   return rows;

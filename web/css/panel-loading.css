@@ -123,10 +123,32 @@
 
 
 /* ==== family: heatmap ========================================================================================================= */
+/* A guide carries a measured part and paints nothing. The grid line is one device pixel high (the engine draws 1 / dpr px). The colour bar is a
+   ramp between two skeleton tones: it says only that the lowest count is at the left (9.19e). */
+.skel--heatmap .skel__g { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); }
+.skel--heatmap .skel__hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); background: var(--skel-grid); }
+.skel--heatmap .skel__vl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); background: var(--skel-grid); }
+.skel--heatmap .skel__scale { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); background: linear-gradient(to right, var(--skel-fill), var(--skel-edge)); }
 
 /* ==== family: histogram ======================================================================================================= */
+/* The guides paint nothing. The pill of the first legend entry is the 14 x 4 mark of the engine, in a skeleton tone. */
+.skel--histogram .skel__g { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); }
+.skel--histogram .skel__hl { position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); background: var(--skel-grid); }
+.skel--histogram .skel__pill { position: absolute; left: var(--x); top: var(--y); width: 14px; height: 4px; border-radius: 2px; background: var(--skel-edge); }
 
 /* ==== family: timeline (state_timeline, status_history) ======================================================================= */
+/* The legend of a thresholds panel uses the classes of panel-timeline.css, so the browser gives the boxes of the loaded legend. The pill and the text
+   bar take skeleton tones. A text bar stands for the text of an item: 8 px high, in a line of the height of the text, 0.93 px above the middle of
+   the line (the text box of a 12 px text is centred 8.5 px under the top of its line of 18.857 px). The rows envelope is one flat tint
+   on the clip box of the plot: 8 px from the top and from the right, the band of 21 px under it, and the gutter at the left. */
+.skel--timeline .timeline__legend-item { min-height: 1.5714em; }
+.skel--timeline .timeline__legend-item i { background: var(--skel-edge); }
+.skel--timeline .skel__t { position: relative; top: -0.93px; display: block; flex: none; width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); }
+/* The time axis of a state timeline: a label bar on the bottom edge of the canvas box (--b is its distance from the bottom), and a vertical line
+   over the height of the plot (8 px from the top, the band of 21 px at the bottom). */
+.skel--timeline .skel__xl { position: absolute; left: var(--x); bottom: var(--b); width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); }
+.skel--timeline .skel__vl { position: absolute; left: var(--x); top: 8px; bottom: 21px; width: var(--w); background: var(--skel-grid); }
+.skel--timeline .skel__rows { position: absolute; left: var(--x); top: 8px; right: 8px; bottom: 21px; background: var(--skel-fill); }
 
 /* ==== family: logs ============================================================================================================ */
 /* The root is the same flex column as the content of the loaded list: the warning line, then the list. The list has the font context of `.logs`,
