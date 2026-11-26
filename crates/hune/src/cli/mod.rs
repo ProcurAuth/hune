@@ -465,7 +465,7 @@ mod tests {
     fn version_prints_one_line() {
         let (code, out, err) = run_text(&["version"]);
         assert_eq!((code, err.as_str()), (0, ""));
-        assert!(out.starts_with("hune 0.3.0 "), "{out}");
+        assert!(out.starts_with("hune 0.3.1 "), "{out}");
         assert_eq!(out.lines().count(), 1);
     }
 

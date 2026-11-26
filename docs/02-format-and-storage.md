@@ -3448,7 +3448,7 @@ An error of 5.4 stops the command with exit code 1 and the error text. A dashboa
 A file names one store or more. Each block `storage.volume "<id>"` is one volume store. The block `storage.postgres` is the PostgreSQL store. The type `Stores` of `hune-store` holds them behind the `Store` trait (5.3).
 
 1. The primary store is the store with `primary = true`. Exactly one store has it. It is the only store that accepts a write, and the only store that has history.
-2. A file with no primary store, and a file with two or more, stop the start (5.43). Thus a write is always possible, and Hune always publishes `dashboard.write` and `source.query` (section 11).
+2. A file with no primary store and no `storage.read_only = true`, and a file with two or more primary stores, stop the start (5.43). With a primary store, a write is possible and Hune publishes `dashboard.write` and `source.query` (section 11). With `storage.read_only = true`, no store accepts a write and Hune publishes neither action.
 3. The id of a volume store is its label. The id of the PostgreSQL store is `postgres`. A volume cannot have the label `postgres`.
 4. Each other store is read-only. A read-only volume takes no lock and writes no file (5.19). A read-only PostgreSQL store sends no write to the database.
 5. A write whose target is in a read-only store returns `ReadOnly`. The target is the store of the folder or of the uid. A move needs the primary store for the dashboard and for the target folder.
@@ -3470,7 +3470,7 @@ The start stops with exit code 1 in each of these cases. The message names the s
 5. A dashboard uid exists in two stores.
 6. A folder of the primary store has the title of a read-only store.
 7. A label, a path or a title that two stores share, and two paths where one holds the other (section 13).
-8. The file has no primary store, or it has two or more (13.14, C10).
+8. The file has no primary store and no `storage.read_only = true`, or it has two or more primary stores, or it has both (13.14, C10).
 
 A foreign entry in a volume stays a data error: Hune ignores it and writes `store.entry_ignored` (5.10). The PostgreSQL store keeps a row that is not valid as an invalid entry (5.8, rule 5). Hune writes one line `store.loaded` for each store, with its label, its folders, its dashboards and its invalid entries.
 

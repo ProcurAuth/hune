@@ -21,6 +21,8 @@ fn each_key_in_the_file_gives_its_value_and_the_source_file() {
     let fx = Fx::new();
     for (history, export) in [(true, true), (true, false), (false, true), (false, false)] {
         let text = with_lines(&fx.local(), &format!("  history = {history}\n"), &format!("  export = {export}\n"));
+        // With `server.history = false` the primary store has no `history_keep` (C31).
+        let text = if history { text } else { text.replace("    history_keep    = 100\n", "") };
         let loaded = fx.load(&text).unwrap();
         assert_eq!((loaded.config.server.history, loaded.config.server.export), (history, export));
         let printed = render_print_config(&loaded);
@@ -93,7 +95,8 @@ fn the_keys_are_mandatory_in_the_mode_open_and_in_the_mode_authzen() {
         assert!(errors[0].contains("missing attribute"), "{}", errors[0]);
     }
     // With a `false` value, the file loads in both modes.
-    let off = with_lines(&dist, "  history = false\n", "  export = false\n");
+    let off =
+        with_lines(&dist, "  history = false\n", "  export = false\n").replace("    history_keep      = 100\n", "");
     let loaded = fx.load(&off).unwrap();
     assert!(!loaded.config.server.history && !loaded.config.server.export);
 }

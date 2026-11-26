@@ -160,10 +160,12 @@ pub struct TelemetryEnabled {
 
 /// The block `storage` (13.10): the stores of the dashboards.
 ///
-/// Exactly one store has `primary = true`. It is the only store that accepts writes and has a history. Each other
-/// store is read-only.
+/// Exactly one store has `primary = true`, or the key `read_only` is `true` and no store is the primary store. The
+/// primary store is the only store that accepts writes and has a history. Each other store is read-only.
 #[derive(Debug, Clone)]
 pub struct StorageConfig {
+    /// `storage.read_only`: true when the file says that no store is the primary store.
+    pub read_only: bool,
     /// The blocks `storage.volume "<id>"`, in file order.
     pub volumes: Vec<VolumeConfig>,
     /// The block `storage.postgres`, or `None`.

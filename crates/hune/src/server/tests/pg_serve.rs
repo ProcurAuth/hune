@@ -58,7 +58,7 @@ async fn migrate(env: &PgEnv, database: &str) {
 fn config_for(pg: PostgresConfig) -> Config {
     let dir = tempfile::tempdir().unwrap();
     let mut config = test_config(dir.path());
-    config.storage = StorageConfig { volumes: Vec::new(), postgres: Some(pg) };
+    config.storage = StorageConfig { read_only: false, volumes: Vec::new(), postgres: Some(pg) };
     config
 }
 
@@ -73,7 +73,7 @@ async fn start_pg(pg: PostgresConfig) -> Harness {
     Harness::start_with(
         test_timing(),
         |_| {},
-        |c| c.storage = StorageConfig { volumes: Vec::new(), postgres: Some(pg) },
+        |c| c.storage = StorageConfig { read_only: false, volumes: Vec::new(), postgres: Some(pg) },
     )
     .await
 }

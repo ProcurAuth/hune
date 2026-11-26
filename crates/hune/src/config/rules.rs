@@ -441,7 +441,7 @@ fn path_holds(outer: &str, inner: &str) -> bool {
     inner == outer || inner.strip_prefix(outer).is_some_and(|rest| rest.starts_with('/'))
 }
 
-/// C2, C10 and C30 to C34: at least one store, exactly one primary store, the keys that follow the primary,
+/// C2, C10, C30 to C36: at least one store, exactly one primary store or `storage.read_only`, the keys that follow the primary,
 /// the paths and the titles of the stores (13.10).
 fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
     let stores = store_views(c);
@@ -454,10 +454,49 @@ fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
         ));
         return;
     }
-    // C10: exactly one primary store. With none, the error lists the store blocks. With several, each later
-    // primary store is an error that names the first one.
+    // C10: exactly one primary store, or `storage.read_only = true` and no primary store. With none, the error
+    // lists the store blocks. With several, each later primary store is an error that names the first one.
     let primaries: Vec<&StoreView<'_>> = stores.iter().filter(|s| s.primary).collect();
-    if primaries.is_empty() {
+    let read_only = match c.get("storage.read_only").map(|k| &k.value) {
+        Some(Value::Bool(true)) => true,
+        Some(other) => {
+            errors.push(contradiction(
+                "storage.read_only",
+                format!(
+                    "`storage.read_only` ({}) is not valid: give `true`, or remove the key and give `primary = true` to one store",
+                    other.print()
+                ),
+            ));
+            false
+        }
+        None => false,
+    };
+    if read_only && let Some(first) = primaries.first() {
+        errors.push(contradiction(
+            &format!("storage.read_only, {}.primary", first.shown),
+            format!(
+                "`storage.read_only` (true) and `{}.primary` (true): a file with `storage.read_only = true` has no primary store",
+                first.shown
+            ),
+        ));
+    }
+    let server_true = |key: &str| matches!(c.get(key).map(|k| &k.value), Some(Value::Bool(true)));
+    if read_only && server_true("server.history") {
+        errors.push(contradiction(
+            "storage.read_only, server.history",
+            "`server.history` (true) and `storage.read_only` (true): only the primary store has history; give `server.history = false`"
+                .to_string(),
+        ));
+    }
+    if read_only && server_true("server.query_inspect") {
+        errors.push(contradiction(
+            "storage.read_only, server.query_inspect",
+            "`server.query_inspect` (true) and `storage.read_only` (true): the SQL needs the right to write, and no store accepts a write; remove the key or give `false`"
+                .to_string(),
+        ));
+    }
+    let history_on = server_true("server.history");
+    if primaries.is_empty() && c.get("storage.read_only").is_none() {
         let shown: Vec<String> = stores.iter().map(|s| format!("`{}`", s.shown)).collect();
         let list = match shown.as_slice() {
             [one] => one.clone(),
@@ -465,8 +504,12 @@ fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
             [] => String::new(),
         };
         let list = if stores.len() == 1 { list } else { format!("exactly {list}") };
-        errors
-            .push(contradiction("storage", format!("the file has no primary store; give `primary = true` to {list}")));
+        errors.push(contradiction(
+            "storage",
+            format!(
+                "the file has no primary store; give `primary = true` to {list}, or give `storage.read_only = true`"
+            ),
+        ));
     }
     for later in primaries.iter().skip(1) {
         let first = &primaries[0];
@@ -498,11 +541,22 @@ fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
             )),
             _ => {}
         }
-        // C31: only the primary store has history.
+        // C31: only the primary store has history, and only when `server.history` is true.
         match (s.primary, s.history_keep) {
-            (true, None) => errors.push(contradiction(
+            (true, None) if history_on => errors.push(contradiction(
                 &format!("{}.history_keep, {}.primary", s.shown, s.shown),
-                format!("`{}.history_keep` is necessary: the store is the primary store", s.shown),
+                format!(
+                    "`{}.history_keep` is necessary: the store is the primary store and `server.history` is true",
+                    s.shown
+                ),
+            )),
+            (true, Some(value)) if !history_on => errors.push(contradiction(
+                &format!("{}.history_keep, server.history", s.shown),
+                format!(
+                    "`{}.history_keep` ({}) is not permitted: `server.history` is false, so the store keeps no earlier version",
+                    s.shown,
+                    value.print()
+                ),
             )),
             (false, Some(value)) => errors.push(contradiction(
                 &format!("{}.history_keep, {}.primary", s.shown, s.shown),

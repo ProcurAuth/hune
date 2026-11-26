@@ -46,6 +46,7 @@ fn inputs(audience: &str, sources: Vec<SourceInfo>) -> PepInputs {
         max_connections: 4,
         history: true,
         export: true,
+        writable: true,
         sources,
     }
 }
@@ -573,4 +574,15 @@ fn an_https_link_checks_the_certificate_against_the_ca_of_the_file_only() {
 fn the_text_form_of_a_chain_is_the_form_of_11_16() {
     let t = Tree::new("dashboards");
     assert_eq!(node_text(&t.dashboard("transit", "score")), "service:dashboards/folder:transit/dashboard:score");
+}
+
+#[test]
+fn a_file_with_no_primary_store_publishes_neither_write_nor_source_query() {
+    let mut i = inputs("hune", Vec::new());
+    i.history = false;
+    i.writable = false;
+    let doc = i.build_document().expect("the document builds").to_value();
+    let json = doc.to_string();
+    assert!(json.contains("dashboard.read") && json.contains("dashboard.export"), "{json}");
+    assert!(!json.contains("dashboard.write") && !json.contains("source.query"), "{json}");
 }

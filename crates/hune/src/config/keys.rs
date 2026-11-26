@@ -104,7 +104,7 @@ const MONGO_DIRECT: &str = "`topology = \"direct\"`";
 const MONGO_REPLICA_SET: &str = "`topology = \"replica_set\"`";
 
 /// The keys, in table order.
-static KEYS: [KeyDesc; 116] = [
+static KEYS: [KeyDesc; 117] = [
     // 13.8: server
     KeyDesc::new(
         "server.listen",
@@ -247,6 +247,13 @@ static KEYS: [KeyDesc; 116] = [
         .doc_ref(Ref::Str("15s")),
     // 13.10: storage
     KeyDesc::new(
+        "storage.read_only",
+        Kind::Bool,
+        "The value `true` says that no store is the primary store: each store is read-only and Hune accepts no write, no history and no editor. The key is necessary when no store has `primary = true`. The value `false` is not valid (section 5).",
+    )
+    .manual("no store has `primary = true`", "a store has `primary = true`")
+    .refs(Ref::Absent, Ref::Absent),
+    KeyDesc::new(
         "storage.volume.path",
         Kind::Path,
         "The directory of the dashboards. The path is canonical: it has no `.` or `..` segment and no repeated or last `/` (section 5).",
@@ -275,9 +282,9 @@ static KEYS: [KeyDesc; 116] = [
     KeyDesc::new(
         "storage.volume.history_keep",
         Kind::Integer { min: 1, max: 10_000 },
-        "The versions kept for each dashboard. Only the primary store has history.",
+        "The versions kept for each dashboard. Only the primary store has history, and only when `server.history` is `true`.",
     )
-    .manual("the store is the primary", "the store is not the primary")
+    .manual("the store is the primary and `server.history` is `true`", "the store is not the primary, or `server.history` is `false`")
     .refs(Ref::Int(100), Ref::Absent),
     KeyDesc::new("storage.postgres.host", text(1, 253, TextRule::HostOrIp), "The host of the PostgreSQL server.")
         .refs(Ref::Absent, Ref::Str("hune-pg-rw")),
@@ -342,9 +349,9 @@ static KEYS: [KeyDesc; 116] = [
     KeyDesc::new(
         "storage.postgres.history_keep",
         Kind::Integer { min: 1, max: 10_000 },
-        "The versions kept for each dashboard. Only the primary store has history.",
+        "The versions kept for each dashboard. Only the primary store has history, and only when `server.history` is `true`.",
     )
-    .manual("the store is the primary", "the store is not the primary")
+    .manual("the store is the primary and `server.history` is `true`", "the store is not the primary, or `server.history` is `false`")
     .refs(Ref::Absent, Ref::Int(100)),
     // 13.11: access
     KeyDesc::new("access.mode", Kind::Enum(&["open", "authzen"]), "The access mode (11.2).")

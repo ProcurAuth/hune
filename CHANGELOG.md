@@ -6,6 +6,19 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+## 0.3.1 - 2026-11-26
+
+### Added
+
+- The key `storage.read_only`. With `read_only = true`, no store is the primary store: each store is read-only, and the file needs no `primary = true`. Use it for an installation whose stores are read-only volumes. The value `false` stops the start.
+- With `storage.read_only = true`, Hune does not publish the PDP actions `dashboard.write` and `source.query`. The session has `editing = false` and the flag `access.create` is `false`. Each write route answers `403 read_only_store` with no question to the PDP.
+- The contradictions C35 and C36: with `storage.read_only = true`, `server.history` is `false` and `server.query_inspect` is not `true`.
+
+### Changed (breaking)
+
+- `storage.*.history_keep` is necessary only for the primary store when `server.history` is `true`. With `server.history = false`, the key is not permitted, and the store keeps the newest version only. Remove the key from a file that has `server.history = false`.
+- The error text of C10 adds the choice `storage.read_only = true`.
+
 ## 0.3.0 - 2026-11-26
 
 ### Changed (breaking)

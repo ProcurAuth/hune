@@ -533,7 +533,7 @@ checksum = "df3b46402a9d5adb4c86a0cf463f42e19994e3ee891101b1841f30a545cb49a9"
 
 [[package]]
 name = "hune-core"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "regex",
  "regex-syntax",
@@ -558,7 +558,7 @@ dependencies = [
 
 [[package]]
 name = "hune-grafana"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "hune-core",
  "serde",
@@ -567,7 +567,7 @@ dependencies = [
 
 [[package]]
 name = "hune-source"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "bson",
  "bytes",

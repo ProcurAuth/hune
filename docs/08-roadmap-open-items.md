@@ -1339,6 +1339,21 @@ The owner set three rules. A file has exactly one primary store. A store with no
 
 Open question: are these choices right? Default today: the text of the sections above.
 
+### 19.40 A file with no primary store: `storage.read_only`
+
+An installation can have only read-only stores, for example volumes inside an image. The key `storage.read_only = true` says this. The text of 5.42, 6.10, 11.18, 13.10 and 13.14 and of the file ACCESS.md gives the rules. This change reverses one choice of 19.39: a file can have no primary store, but it must say so.
+
+The owner asked for the case with no primary store and for an explicit statement, not an omission. The syntax is a choice of the agent. The owner set neither a form nor a name for the key. The owner MUST read again the points below, which the owner did not set.
+
+- The key. `storage.read_only` is a Boolean with no default. It is necessary when no store has `primary = true`. It is not permitted when a store has it. The value `false` stops the start. The value `null` is not a Boolean in the file format: it reads as an absent key.
+- The contradictions. `server.history` is `false` (C35), because only the primary store has history. `server.query_inspect` is not `true` (C36), because the SQL needs the right to write.
+- The actions of the PDP. Hune does not publish `dashboard.write` and `source.query`. It publishes `dashboard.read` and, when `server.export` is `true`, `dashboard.export`. A policy that names these two actions has no effect.
+- The routes. Each write route and the preview of a draft answer `403 read_only_store` at once. Hune asks no question to the PDP. The session member `editing` is `false`, and the flag `access.create` is `false`.
+- The history. `history_keep` is necessary only for a primary store when `server.history` is `true`. With `server.history = false`, the key is not permitted and the store keeps the newest version only. The save protocol needs this version. A file of 0.3.0 with `history = false` and `history_keep` must remove the key.
+- The version. A file of 0.3.0 that sets `server.history = false` and `history_keep` stops the start. The release is 0.3.1, because the file of the installation that asked for this change is the only known one. The owner can ask for 0.4.0.
+
+Open question: are these choices right? Default today: the text of the sections above.
+
 ## 20. Glossary and references
 
 ### 20.1 Glossary

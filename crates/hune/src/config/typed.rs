@@ -256,7 +256,7 @@ fn build_inner(checked: &Checked, stage: &Stage2, partial: bool) -> Result<Confi
     } else {
         None
     };
-    let storage = StorageConfig { volumes, postgres };
+    let storage = StorageConfig { read_only: r.opt_boolean("storage.read_only")?.unwrap_or(false), volumes, postgres };
 
     let authzen = r.text("access.mode")? == "authzen";
     let access = if authzen {

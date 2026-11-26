@@ -764,3 +764,56 @@ async fn a_file_at_the_root_of_a_volume_that_is_no_dashboard_stops_the_start_and
         list["items"].as_array().unwrap().iter().map(|i| i["uid"].as_str().unwrap().to_owned()).collect();
     assert_eq!(uids, vec!["nodes".to_owned()]);
 }
+
+/// A server with `storage.read_only = true`: one read-only store `lab`, no primary store, no history.
+async fn start_read_only() -> (Harness, tempfile::TempDir) {
+    let (dir, root) = lab_volume();
+    let h = Harness::start_with(
+        test_timing(),
+        |_| {},
+        move |c| {
+            c.storage.read_only = true;
+            c.storage.volumes.clear();
+            add_read_only_volume(c, &root);
+            c.server.history = false;
+        },
+    )
+    .await;
+    (h, dir)
+}
+
+#[tokio::test]
+async fn a_file_with_no_primary_store_has_no_editing_and_every_write_is_refused() {
+    let (h, _d) = start_read_only().await;
+    let session = get_json(&h, "/api/session").await;
+    assert_eq!(session["editing"], false);
+    assert_eq!(
+        session["stores"],
+        json!([{"id": "lab", "kind": "volume", "title": "Lab", "primary": false, "read_only": true}])
+    );
+    let list = get_json(&h, "/api/dashboards").await;
+    assert_eq!(item(&list, LAB_UID)["access"]["write"], false);
+    let folders = get_json(&h, "/api/folders").await;
+    assert_eq!(folders["access"]["create"], false);
+    assert_eq!(folders["root"]["access"]["write"], false);
+    let refused = |r: super::harness::Resp, what: &str| {
+        assert_eq!((r.status, r.code().as_str()), (403, "read_only_store"), "{what}: {}", r.text());
+    };
+    let key = "0194b3c6-6f1e-7d2a-9b4c-00000000c001";
+    refused(
+        call(
+            h.addr,
+            "POST",
+            "/api/dashboards",
+            &[JSON, ("Idempotency-Key", key)],
+            &post_body("", &doc_text("new-one", "New")),
+        )
+        .await,
+        "create",
+    );
+    refused(call(h.addr, "POST", "/api/folders", &[JSON], br#"{"id":"research","title":"Research"}"#).await, "folder");
+    // The history is off by the file, and the read still works.
+    let r = get(h.addr, &format!("/api/dashboards/{LAB_UID}/history")).await;
+    assert_eq!((r.status, r.code().as_str()), (403, "history_disabled"));
+    assert_eq!(get(h.addr, &format!("/api/dashboards/{LAB_UID}")).await.status, 200);
+}

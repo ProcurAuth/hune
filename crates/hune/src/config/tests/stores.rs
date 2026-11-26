@@ -45,13 +45,13 @@ fn c10_a_file_with_no_primary_store_stops_the_start_and_lists_the_store_blocks()
     let text = read_only_main(&fx.local());
     assert_eq!(
         fx.one(&text),
-        "storage: the file has no primary store; give `primary = true` to `storage.volume \"main\"`"
+        "storage: the file has no primary store; give `primary = true` to `storage.volume \"main\"`, or give `storage.read_only = true`"
     );
     // Two stores: the message lists both, in the order of the file.
     let lab = volume("lab", Some("Lab"), "/var/lib/hune/lab", "");
     assert_eq!(
         fx.one(&with_volume(&text, &lab)),
-        "storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume \"lab\"` and `storage.volume \"main\"`"
+        "storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume \"lab\"` and `storage.volume \"main\"`, or give `storage.read_only = true`"
     );
     // Three stores: a comma list.
     let dist = replace_once(&fx.distributed(), PG_PRIMARY, "    title             = \"Archive\"\n");
@@ -68,7 +68,7 @@ fn c10_a_file_with_no_primary_store_stops_the_start_and_lists_the_store_blocks()
     );
     assert_eq!(
         fx.one(&text),
-        "storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume \"alt\"`, `storage.volume \"lab\"` and `storage.postgres`"
+        "storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume \"alt\"`, `storage.volume \"lab\"` and `storage.postgres`, or give `storage.read_only = true`"
     );
     // `primary = false` on the only store means the same as no key.
     let off = replace_once(&fx.local(), MAIN_PRIMARY, "    primary         = false\n    title           = \"Main\"\n");
@@ -181,7 +181,7 @@ fn c31_only_the_primary_store_has_history() {
     let no_history = replace_once(&local, MAIN_HISTORY, "");
     assert_eq!(
         fx.one(&no_history),
-        "storage.volume \"main\".history_keep, storage.volume \"main\".primary: `storage.volume \"main\".history_keep` is necessary: the store is the primary store"
+        "storage.volume \"main\".history_keep, storage.volume \"main\".primary: `storage.volume \"main\".history_keep` is necessary: the store is the primary store and `server.history` is true"
     );
     let lab = volume("lab", Some("Lab"), "/var/lib/hune/lab", "    history_keep    = 7\n");
     assert_eq!(
@@ -192,7 +192,7 @@ fn c31_only_the_primary_store_has_history() {
     let text = replace_once(&dist, PG_HISTORY, "");
     assert_eq!(
         fx.one(&text),
-        "storage.postgres.history_keep, storage.postgres.primary: `storage.postgres.history_keep` is necessary: the store is the primary store"
+        "storage.postgres.history_keep, storage.postgres.primary: `storage.postgres.history_keep` is necessary: the store is the primary store and `server.history` is true"
     );
 }
 
@@ -272,4 +272,71 @@ fn a_file_with_more_than_sixteen_volumes_stops_the_start() {
         "{}",
         e[0]
     );
+}
+
+/// A file whose `storage` block says `read_only = true`, with the store `main` read-only and no history.
+fn read_only_file(fx: &Fx) -> String {
+    let text = replace_once(&read_only_main(&fx.local()), "storage {\n", "storage {\n  read_only = true\n");
+    text.replace("  history                 = true\n", "  history                 = false\n")
+}
+
+#[test]
+fn c10_the_key_read_only_replaces_the_primary_store() {
+    let fx = Fx::new();
+    let loaded = fx.load(&read_only_file(&fx)).unwrap();
+    assert!(loaded.config.storage.read_only);
+    assert!(loaded.config.storage.primary().is_none());
+    // The value `false` is not valid: no hidden default, no second form.
+    let text = read_only_file(&fx).replace("read_only = true", "read_only = false");
+    let e = fx.errors(&text);
+    assert!(e.iter().any(|m| m.starts_with("storage.read_only: `storage.read_only` (false) is not valid")), "{e:?}");
+    assert!(!e.iter().any(|m| m.contains("has no primary store")), "{e:?}");
+    // A primary store and the key together stop the start.
+    let both = replace_once(&fx.local(), "storage {\n", "storage {\n  read_only = true\n");
+    let e = fx.errors(&both);
+    assert!(
+        e.iter().any(
+            |m| m.starts_with("storage.read_only, storage.volume \"main\".primary: `storage.read_only` (true) and")
+        ),
+        "{e:?}"
+    );
+}
+
+#[test]
+fn c35_a_file_with_no_primary_store_has_no_history() {
+    let fx = Fx::new();
+    let text = read_only_file(&fx).replace("  history                 = false\n", "  history                 = true\n");
+    let e = fx.errors(&text);
+    assert!(
+        e.contains(&"storage.read_only, server.history: `server.history` (true) and `storage.read_only` (true): only the primary store has history; give `server.history = false`".to_owned()),
+        "{e:?}"
+    );
+}
+
+#[test]
+fn c36_a_file_with_no_primary_store_has_no_query_inspect() {
+    let fx = Fx::new();
+    let text = replace_once(
+        &read_only_file(&fx),
+        "  base_path               = \"/\"\n",
+        "  base_path               = \"/\"\n  query_inspect           = true\n",
+    );
+    let e = fx.errors(&text);
+    assert!(
+        e.iter().any(|m| m.starts_with("storage.read_only, server.query_inspect: `server.query_inspect` (true)")),
+        "{e:?}"
+    );
+}
+
+#[test]
+fn c31_the_primary_store_has_history_keep_only_when_the_history_is_on() {
+    let fx = Fx::new();
+    let off = fx.local().replace("  history                 = true\n", "  history                 = false\n");
+    let e = fx.errors(&off);
+    assert_eq!(
+        e,
+        vec!["storage.volume \"main\".history_keep, server.history: `storage.volume \"main\".history_keep` (100) is not permitted: `server.history` is false, so the store keeps no earlier version".to_owned()]
+    );
+    let loaded = fx.load(&replace_once(&off, MAIN_HISTORY, "")).unwrap();
+    assert!(!loaded.config.server.history);
 }

@@ -114,7 +114,7 @@ Hune builds each chain from its own catalog. It never uses a value of the reques
 | `dashboard.write` | service, folder, dashboard | none | Create, change, move, restore and delete dashboards. Change folders. |
 | `source.query` | service, source | `max_rows`, `max_duration` | Run a query that is not saved. Save a dashboard whose query uses the source. |
 
-A primary store always exists, so Hune always publishes `dashboard.read`, `dashboard.write` and `source.query`.
+When a store is the primary store, Hune publishes `dashboard.read`, `dashboard.write` and `source.query`. With `storage.read_only = true`, no store is the primary store and no write is possible. Hune then publishes `dashboard.read`, and `dashboard.export` when `server.export` is `true`. It does not publish `dashboard.write` and `source.query`.
 
 The two keys `server.history` and `server.export` are the ceiling of the two new actions, also in the mode `open`. When a key is `false`, Hune refuses the route (`403 history_disabled` or `403 export_disabled`). It asks no question.
 

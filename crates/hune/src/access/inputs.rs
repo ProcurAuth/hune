@@ -73,6 +73,9 @@ pub struct PepInputs {
     pub history: bool,
     /// `server.export`: the action `dashboard.export` is published when it is true.
     pub export: bool,
+    /// True when a store is the primary store. The actions `dashboard.write` and `source.query` are published
+    /// only then: with `storage.read_only = true` no store accepts a write and the editor is off.
+    pub writable: bool,
     /// The `clickhouse` blocks, the `postgres` blocks and then the `mongodb` blocks, each in the order of the file.
     pub sources: Vec<SourceInfo>,
 }
@@ -100,6 +103,7 @@ impl PepInputs {
             max_connections: a.pdp.max_connections as usize,
             history: config.server.history,
             export: config.server.export,
+            writable: config.storage.primary().is_some(),
             sources: crate::server::source_blocks::blocks(config)
                 .into_iter()
                 .map(|b| SourceInfo {
@@ -191,19 +195,21 @@ impl PepInputs {
                 &[],
             );
         }
-        builder = builder
-            .action(
-                "dashboard.write",
-                &["service", "folder", "dashboard"],
-                "Create, change, move, restore and delete dashboards. Create, rename and delete folders.",
-                &[],
-            )
-            .action(
-                "source.query",
-                &["service", "source"],
-                "Run SQL that is not saved on this source, and save dashboards whose SQL uses this source.",
-                &["max_rows", "max_duration"],
-            );
+        if self.writable {
+            builder = builder
+                .action(
+                    "dashboard.write",
+                    &["service", "folder", "dashboard"],
+                    "Create, change, move, restore and delete dashboards. Create, rename and delete folders.",
+                    &[],
+                )
+                .action(
+                    "source.query",
+                    &["service", "source"],
+                    "Run SQL that is not saved on this source, and save dashboards whose SQL uses this source.",
+                    &["max_rows", "max_duration"],
+                );
+        }
         let max_rows = self.sources.iter().map(|s| s.max_rows).max().unwrap_or(1).max(1);
         let max_seconds = self.sources.iter().map(|s| s.max_seconds).max().unwrap_or(1).max(1);
         builder = builder

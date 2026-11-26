@@ -405,9 +405,14 @@ pub async fn filter_folders(
     let visible: Vec<usize> = (0..ids.len()).filter(|&i| seen[i] && !read_only(&ids[i])).collect();
     let mut ops: Vec<Operation> =
         visible.iter().map(|&i| Operation::new(WRITE, access.tree().folder(&ids[i]))).collect();
-    ops.push(Operation::new(WRITE, access.tree().service()));
-    let mut answers = access.check_many(&who, ops).await?;
-    let create = answers.pop().unwrap_or(false);
+    // With no primary store (`storage.read_only = true`) nothing is written: the flag is `false` and Hune asks no
+    // question for `dashboard.write`, which the action document does not hold.
+    let writable = ctx.state.services().is_some_and(|s| s.store.primary_id().is_some());
+    if writable {
+        ops.push(Operation::new(WRITE, access.tree().service()));
+    }
+    let mut answers = if ops.is_empty() { Vec::new() } else { access.check_many(&who, ops).await? };
+    let create = writable && answers.pop().unwrap_or(false);
     for (i, a) in visible.into_iter().zip(answers) {
         folders[i] = Some(a);
     }

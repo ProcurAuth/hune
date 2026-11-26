@@ -133,7 +133,7 @@ An error that `HEAD` gets has the same status and no body. A `304` has no body.
 ### 6.8 Error codes
 
 This table is the closed list of the error codes of Hune. The other parts use only these codes. A new code needs a
-change of this table. The code `editing_disabled` is removed: a primary store always exists (13.10).
+change of this table. The code `editing_disabled` is removed. A file with `storage.read_only = true` refuses each write with `403 read_only_store` (13.10).
 
 | Code | Status | Retryable | Cause | Extra members |
 |---|---|---|---|---|
@@ -282,7 +282,7 @@ valid identity token (11). The page calls it one time at load (9.6).
   "transform_max_cells": 10000000,
   "list_filters_min_dashboards": 6,
   "geomap": null,
-  "version": "0.3.0",
+  "version": "0.3.1",
   "build": "3f2a9c1e5b7d4a60",
   "refresh_choices": ["10s", "30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"],
   "limits": {
@@ -2808,7 +2808,7 @@ X-ClickHouse-User: hune
 X-ClickHouse-Key: <the password>
 Content-Type: text/plain; charset=utf-8
 Content-Length: 412
-User-Agent: hune/0.3.0
+User-Agent: hune/0.3.1
 
 SELECT toStartOfInterval(toDateTime(event_time), INTERVAL 20 second) AS t, ...
 ```

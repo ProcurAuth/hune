@@ -529,8 +529,8 @@ These rules make the document:
 
 - `server` is `access.identity.audience`.
 - The three types and the two limit declarations never change.
-- `dashboard.read`, `dashboard.write` and `source.query` are always in `actions`, because a primary store always exists
-  (13.10). `dashboard.history` is in `actions` only when `server.history` is `true`. `dashboard.export` is in `actions`
+- `dashboard.read` is always in `actions`. `dashboard.write` and `source.query` are in `actions` only when a store is the
+  primary store (13.10). `dashboard.history` is in `actions` only when `server.history` is `true`. `dashboard.export` is in `actions`
   only when `server.export` is `true`. The order is `dashboard.read`, `dashboard.history`, `dashboard.export`,
   `dashboard.write` and `source.query`. Hune sends no question for an action that it does not publish.
 - The two keys are the ceiling of the two actions, also in the mode `open`. The PDP can only restrict: when the key is
@@ -1015,7 +1015,7 @@ These routes need the token but ask no question:
 |---|---|
 | The pages `/` and `/d/{uid}[/{slug}]` | The shell is the same for each uid. It holds no data of a dashboard. |
 | The files under `/static/{build-hash}/` | They hold the code of the page, not data. |
-| `GET /api/session` | It gives the subject of the token, the mode, `editing` (always `true`) and the stores. |
+| `GET /api/session` | It gives the subject of the token, the mode, `editing` (`false` with `storage.read_only = true`, else `true`) and the stores. |
 
 The routes of `server.ops_listen` (`/livez`, `/readyz`, `/metrics`) need no token. They are on a second listener that
 the edge does not reach (14.2). Thus no route through the edge is exempt from the token, except the action document,

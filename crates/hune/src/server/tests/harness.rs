@@ -43,6 +43,7 @@ pub fn test_config(volume: &Path) -> Config {
         log: LogConfig { level: LogLevel::Debug },
         telemetry: TelemetryConfig::Disabled,
         storage: StorageConfig {
+            read_only: false,
             volumes: vec![VolumeConfig {
                 id: "main".to_owned(),
                 title: None,

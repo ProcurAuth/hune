@@ -54,7 +54,8 @@ struct SessionStore<'a> {
 struct Session<'a> {
     mode: &'a str,
     subject: &'a str,
-    /// Always true: a primary store always exists (6.10, 13.10). The member stays until the page stops reading it.
+    /// True when a store is the primary store (6.10, 13.10). It is false with `storage.read_only = true`: the page
+    /// has no edit control.
     editing: bool,
     /// The stores, the volumes in file order and then the PostgreSQL store.
     stores: Vec<SessionStore<'a>>,
@@ -100,7 +101,7 @@ pub async fn session(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     let body = Session {
         mode: ctx.state.access_mode(),
         subject: &ctx.subject,
-        editing: true,
+        editing: ctx.state.config.storage.primary().is_some(),
         stores,
         query_inspect: ctx.state.config.server.query_inspect,
         repeat_limits: RepeatLimits {

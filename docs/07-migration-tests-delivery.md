@@ -764,7 +764,7 @@ Dashboards are in the order of their Grafana uid, and items in the order of thei
 ```json
 {
   "report_version": 1,
-  "hune_version": "0.3.0",
+  "hune_version": "0.3.1",
   "created_at": "2026-11-20T09:12:44Z",
   "mode": "dry_run",
   "input": {
@@ -1585,7 +1585,7 @@ sample, unchanged.
 | K20 | The key `server.compress_static` (13.8, 9.3): 4 tests in `crates/hune/src/config/tests/static_gzip.rs`. An absent key is `true` with the source `default`, and a key in the file has the source `file`. A text, an integer, a form `_env` or `_file`, a duplicate key and an unknown near name stop the start, and the error names the key, the type and the value. The answers of the static files: 7 tests in `crates/hune/src/server/tests/static_gzip.rs`. The encoder: 17 tests in `crates/hune/src/gzip/`, with round trips through `gzip -d` and Node.js. The parse of `Accept-Encoding`: 3 tests in `crates/hune/src/server/encoding.rs`. |
 | K21 | The key `server.transform_max_cells` (13.8, 4.35): 8 tests in `crates/hune/src/config/tests/transform_cells.rs`. An absent key is 10,000,000 with the source `default`. The values 1, 2,500,000 and 100,000,000 have the source `file`. The values 0 and 100,000,001, a wrong type, `_env` or `_file`, a duplicate and a near name stop the start, and the error names the key, the range and the value. No environment variable gives the value. The member `transform_max_cells` of `GET /api/session` (6.10) has 2 tests in `crates/hune/src/server/tests/core.rs`. |
 | K22 | The key `server.list_filters_min_dashboards` (13.8, 9.7): 6 tests in `crates/hune/src/config/tests/list_filters.rs`. An absent key is 6 with the source `default`. The values 0, 1, 25 and 1000 have the source `file`. The values 1001 and 4294967296, a wrong type, `_env` or `_file`, a duplicate and a near name stop the start, and the error names the key, the range and the value. No environment variable gives the value. The member `list_filters_min_dashboards` of `GET /api/session` (6.10) has 2 tests in `crates/hune/src/server/tests/core.rs`. |
-| K23 | The stores of 13.10: 13 tests in `crates/hune/src/config/tests/stores.rs`. One test for each of C2, C10 and C30 to C34, the labels, the limit of 16 volumes, the removed keys (`unknown attribute`), a file with no primary store (the exact message of C10), a file with two primary stores, and a read-only PostgreSQL store next to a primary volume. |
+| K23 | The stores of 13.10: 17 tests in `crates/hune/src/config/tests/stores.rs`. One test for each of C2, C10 and C30 to C36, the labels, the limit of 16 volumes, the removed keys (`unknown attribute`), a file with no primary store (the exact message of C10), a file with two primary stores, and a read-only PostgreSQL store next to a primary volume. |
 | K24 | The keys `server.history` and `server.export` (13.8): 7 tests in `crates/hune/src/config/tests/rights.rs`. An absent key stops the start, with the key, the type and the value. A value that is not a Boolean stops the start. `true` and `false` give their value with the source `file`. The effective configuration shows both keys. The keys also apply in the mode `open`. |
 
 ### 16.6 Store conformance suite
@@ -3022,7 +3022,7 @@ install -d -m 0750 -o 65532 -g 65532 dashboards
 install -d -m 0700 secrets
 install -m 0400 -o 65532 -g 65532 /path/to/clickhouse_password secrets/clickhouse_password
 install -m 0444 /path/to/clickhouse_ca.pem secrets/clickhouse_ca.pem
-docker build -t hune:0.3.0 /path/to/hune_0.3.0_linux_amd64
+docker build -t hune:0.3.1 /path/to/hune_0.3.1_linux_amd64
 ```
 
 `deploy/compose/volume/compose.yaml`:
@@ -3033,7 +3033,7 @@ docker build -t hune:0.3.0 /path/to/hune_0.3.0_linux_amd64
 name: hune-volume
 services:
   hune:
-    image: hune:0.3.0
+    image: hune:0.3.1
     pull_policy: never
     user: "65532:65532"
     read_only: true
@@ -3184,7 +3184,7 @@ services:
     restart: unless-stopped
 
   migrate:
-    image: hune:0.3.0
+    image: hune:0.3.1
     pull_policy: never
     user: "65532:65532"
     read_only: true
@@ -3216,7 +3216,7 @@ services:
     restart: "no"
 
   hune-a: &hune
-    image: hune:0.3.0
+    image: hune:0.3.1
     pull_policy: never
     user: "65532:65532"
     read_only: true
@@ -3359,8 +3359,8 @@ The image never comes from a registry. The operator builds it from the release a
 Deployment uses `imagePullPolicy: Never`:
 
 ```sh
-docker build -t hune:0.3.0 /path/to/hune_0.3.0_linux_amd64
-docker save hune:0.3.0 | sudo k3s ctr images import -
+docker build -t hune:0.3.1 /path/to/hune_0.3.1_linux_amd64
+docker save hune:0.3.1 | sudo k3s ctr images import -
 ```
 
 The secrets never enter a file of the repository. The operator makes them once:
@@ -3556,7 +3556,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: migrate
-          image: hune:0.3.0
+          image: hune:0.3.1
           imagePullPolicy: Never
           args: ["migrate-store", "-c", "/etc/hune/migrate.hcl"]
           securityContext:
@@ -3623,7 +3623,7 @@ spec:
               app.kubernetes.io/name: hune
       containers:
         - name: hune
-          image: hune:0.3.0
+          image: hune:0.3.1
           imagePullPolicy: Never
           args: ["serve", "-c", "/etc/hune/config.hcl"]
           ports:

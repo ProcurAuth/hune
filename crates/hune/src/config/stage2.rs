@@ -522,6 +522,7 @@ fn pep_inputs(checked: &Checked, stage: &Stage2) -> Option<PepInputs> {
         max_connections: usize::try_from(int_key(checked, "access.pdp.max_connections")?).ok()?,
         history: matches!(checked.get("server.history").map(|k| &k.value), Some(Value::Bool(true))),
         export: matches!(checked.get("server.export").map(|k| &k.value), Some(Value::Bool(true))),
+        writable: !matches!(checked.get("storage.read_only").map(|k| &k.value), Some(Value::Bool(true))),
         sources,
     })
 }

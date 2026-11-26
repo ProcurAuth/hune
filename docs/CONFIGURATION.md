@@ -38,7 +38,7 @@ A secret (a password or a token) accepts only `_env` and `_file`. A secret in cl
 | --- | --- |
 | `server` | The two listeners, the base path and the limits of the server. |
 | `log` and `telemetry` | The log level and the OTLP exporter of traces. |
-| `storage` | The stores: the blocks `volume "<id>"` and `postgres`. Exactly one store has `primary = true`. It is the only store that accepts writes and keeps a history. |
+| `storage` | The stores: the blocks `volume "<id>"` and `postgres`. Exactly one store has `primary = true`, or the key `read_only = true` says that no store is the primary store. The primary store is the only store that accepts writes and keeps a history. |
 | `access` | The mode `open` or `authzen`, with the blocks `identity` and `pdp` for `authzen`. |
 | `clickhouse "<id>"`, `postgres "<id>"`, `mongodb "<id>"` | One block for each data source. At most 64 blocks for each kind. |
 | `geomap` | An optional tile source for the map panel. The map is off without it. |

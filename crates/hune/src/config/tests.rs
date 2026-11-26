@@ -456,6 +456,10 @@ fn base_text_for(fx: &Fx, path: &str) -> String {
     if path == "storage.postgres.title" {
         text = stores_read_only_postgres(&text);
     }
+    // `storage.read_only` is in a file with no primary store.
+    if path == "storage.read_only" {
+        text = replace_once(&stores_read_only_main(&text), "storage {\n", "storage {\n  read_only = true\n");
+    }
     if path.starts_with("postgres.") {
         let authzen = path == "postgres.max_concurrent_per_subject";
         text = append(&if authzen { fx.distributed() } else { fx.local() }, &fx.substitute(&postgres::block(authzen)));

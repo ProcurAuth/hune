@@ -124,7 +124,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         None => {
             let write = true;
             FolderList {
-                access: ListAccess { create: write },
+                access: ListAccess { create: write && primary.is_some() },
                 root: root_item(write),
                 items: folders
                     .iter()

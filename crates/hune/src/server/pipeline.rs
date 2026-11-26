@@ -277,6 +277,24 @@ async fn process(
     {
         return fail(ApiError::new(Code::HistoryDisabled, "The history is off on this server."));
     }
+    // With `storage.read_only = true` no store accepts a write. A write route and the preview of a draft answer at
+    // once, with no question to the PDP: the action document holds neither `dashboard.write` nor `source.query`.
+    if state.config.storage.primary().is_none()
+        && matches!(
+            spec.id,
+            RouteId::FolderCreate
+                | RouteId::FolderRename
+                | RouteId::FolderDelete
+                | RouteId::DashboardCreate
+                | RouteId::DashboardSave
+                | RouteId::DashboardDelete
+                | RouteId::Restore
+                | RouteId::Move
+                | RouteId::SourcePreview
+        )
+    {
+        return fail(ApiError::new(Code::ReadOnlyStore, "This server has no store that accepts a write."));
+    }
     if spec.id == RouteId::DashboardGet {
         match query.flag("download") {
             Ok(true) if !state.config.server.export => {

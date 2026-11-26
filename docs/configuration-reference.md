@@ -84,6 +84,7 @@ The store of the dashboards (section 5).
 
 | Key | Type and range | Secret | Forms | Necessary when | Forbidden when | Reference value | Description |
 |---|---|---|---|---|---|---|---|
+| `storage.read_only` | a boolean | no | V | no store has `primary = true` | a store has `primary = true` | absent | The value `true` says that no store is the primary store: each store is read-only and Hune accepts no write, no history and no editor. The key is necessary when no store has `primary = true`. The value `false` is not valid (section 5). |
 
 ## Block `storage.volume "<id>"`
 
@@ -95,7 +96,7 @@ One volume store: one file for each dashboard. The label is the store id. The st
 | `storage.volume "<id>".title` | a text of 1 to 128 bytes with no control character | no | V | the store is not the primary | the store is the primary | `"Lab"` | The name of the root folder of the store in the page. A read-only store needs it, and the primary store has none (section 5). |
 | `storage.volume "<id>".primary` | a boolean | no | V | never (the key is optional) | another store has `primary = true` | `true` (local), absent (distributed) | The value `true` makes this store the primary store: the only store that accepts writes. At most one store has it. The key is optional (section 5). |
 | `storage.volume "<id>".rescan_interval` | a duration from 1s to 1h | no | V | always | never | `"5s"` (local), absent (distributed) | The period of the scan for changes made outside Hune. |
-| `storage.volume "<id>".history_keep` | an integer from 1 to 10000 | no | V | the store is the primary | the store is not the primary | `100` (local), absent (distributed) | The versions kept for each dashboard. Only the primary store has history. |
+| `storage.volume "<id>".history_keep` | an integer from 1 to 10000 | no | V | the store is the primary and `server.history` is `true` | the store is not the primary, or `server.history` is `false` | `100` (local), absent (distributed) | The versions kept for each dashboard. Only the primary store has history, and only when `server.history` is `true`. |
 
 ## Block `storage.postgres`
 
@@ -115,7 +116,7 @@ The PostgreSQL store: one row for each dashboard. The store with `primary = true
 | `storage.postgres.poll_interval` | a duration from 1s to 5m | no | V | always | never | absent (local), `"5s"` (distributed) | The period of the poll of the catalog (section 5). |
 | `storage.postgres.title` | a text of 1 to 128 bytes with no control character | no | V | the store is not the primary | the store is the primary | `"Archive"` | The name of the root folder of the store in the page. A read-only store needs it, and the primary store has none (section 5). |
 | `storage.postgres.primary` | a boolean | no | V | never (the key is optional) | another store has `primary = true` | absent (local), `true` (distributed) | The value `true` makes this store the primary store: the only store that accepts writes. At most one store has it. The key is optional (section 5). |
-| `storage.postgres.history_keep` | an integer from 1 to 10000 | no | V | the store is the primary | the store is not the primary | absent (local), `100` (distributed) | The versions kept for each dashboard. Only the primary store has history. |
+| `storage.postgres.history_keep` | an integer from 1 to 10000 | no | V | the store is the primary and `server.history` is `true` | the store is not the primary, or `server.history` is `false` | absent (local), `100` (distributed) | The versions kept for each dashboard. Only the primary store has history, and only when `server.history` is `true`. |
 
 ## Block `storage.postgres.tls`
 
