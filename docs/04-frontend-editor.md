@@ -2713,6 +2713,8 @@ The figures are the figures that Grafana 12.4.2 draws, measured on the local ins
 
 **6. The geometry.** The canvas fills the body of the panel, under the legend when the legend is at the bottom. The values are measured on Grafana 12.4.2 at a pixel ratio of 1.
 
+A text on the canvas is 12 CSS px high at each pixel ratio. The canvas has device pixels, so the page draws the text with the font size 12 times the pixel ratio. The page measures a width at 12 px, so the places do not depend on the pixel ratio.
+
 | Part | Rule |
 |---|---|
 | Plot top, right | 8 px. |
@@ -4050,7 +4052,7 @@ JavaScript.
 | `data-testid="annot-<id>-card"`, `"annot-<id>-keys"`, `"annot-<id>-status"` | The card, the element of the keys and the hidden status text of the time series `<id>` (9.19d). `<id>` is the key of the panel instance (9.8c). |
 | `data-testid="panel-<id>-annot-note"` | The note of the title bar (9.19d, rule 16). |
 | `data-testid="view-data-annotations"` | The second table of "View data" (9.11). |
-| `data-timeline` on `.panel__plot` | JSON that the page writes after each draw of a `state_timeline` or a `status_history`. It holds `kind`, `box` (`[left, top, width, height]`), `rows` (`name`, `y`, `h`, `n`), `segments` (`[row, x, w, state]` for each box), `states` (`[text, color]`), `texts` (`[text, x, y, color]`) and `cut`. The arrays hold 2,000 items at most, and `cut` is `true` when the page cut them. The lengths are in CSS pixels. |
+| `data-timeline` on `.panel__plot` | JSON that the page writes after each draw of a `state_timeline` or a `status_history`. It holds `kind`, `box` (`[left, top, width, height]`), `rows` (`name`, `y`, `h`, `n`), `segments` (`[row, x, w, state]` for each box), `states` (`[text, color]`), `texts` (`[text, x, y, color]`), `ticks` (`[time, x]` for each grid line), `labels` (`[text, x, left, right, top]` for each label of the time axis) and `cut`. The arrays `segments` and `texts` hold 2,000 items at most, and `cut` is `true` when the page cut them. The lengths are in CSS pixels. |
 | `data-testid="timeline-<id>"`, `"timeline-<id>-note"`, `"timeline-<id>-legend"`, `"timeline-<id>-tip"`, `"timeline-<id>-desc"` | The root of the picture, the message of the state `timeline-limit`, the legend, the card and the hidden description (9.19c). |
 | `data-heatmap` on `.panel__plot` | JSON that the page writes after each draw of a `heatmap`. It holds `shape` (`bucketed` or `raw`), `cols`, `rows`, `drawn` (the cells that the engine drew in the range of the time), `sx`, `sy` (the sizes, or `null`), `scale` (`linear`, `log2`, `log10` or `ordinal`), `min`, `max`, `steps`, `palette` (the first and the last colour), `legend` (`[first count, last count]` or `null`) and `cells` (`[column, row, count, level]` for the first 2,000 cells that have a count to draw). `level` is the index in the palette. `cut` is `true` when the page cut the list. |
 | `data-testid="heatmap-<id>"`, `"heatmap-<id>-note"`, `"heatmap-<id>-legend"`, `"heatmap-<id>-tip"`, `"heatmap-<id>-desc"`, `"heatmap-<id>-skip"` | The root of the picture, the message of the state `bucket-limit`, the colour bar, the card, the hidden description and the note of the values that a log scale skipped (9.19e). The dialog "View data" has the same note as `view-data-<id>-skip`. |

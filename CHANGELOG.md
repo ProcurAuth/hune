@@ -14,6 +14,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Added
 
+- The hook `data-timeline` of a `state_timeline` and of a `status_history` lists the ticks and the boxes of the labels of the time axis.
 - A dashboard can have no folder. The API writes `null` for its folder. The create body and the move body take `"folder": null`. `GET /api/dashboards?folder=` with an empty value selects these dashboards, and `GET /api/folders` has the new member `root`.
 - A volume reads a file `<uid>.json` at the root of its path as a dashboard without a folder. In PostgreSQL, the column `folder_id` can be null after migration 2.
 - The access tree names the place of these dashboards the node `folder:_root`. A grant on a real folder does not cover them. The options route lists `_root`, "Root (no folder)", as the first folder.
@@ -44,6 +45,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - A request of options that ended after a newer request of the same variable removed the cancel of the newer request. A cancel at the exit of the page then missed it.
 - The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
+- The texts of the canvas of a `state_timeline` and of a `status_history` were 6 CSS px high at the pixel ratio 2. They are now 12 CSS px high at each pixel ratio, as 9.19c says.
 
 ## 0.2.0 - 2026-11-25
 
