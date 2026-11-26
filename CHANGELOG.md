@@ -39,6 +39,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
 - The preview is now in the folder `web/js/preview/`: a registry (`index.js`), shared helpers (`common.js`) and one module for each of the 12 families. Each family module gives the neutral form for now: an empty body with the light and the dots. The module `panel_preview.js`, the function `previewOf` of `panel_wait.js` and the heuristic sizes are gone. The browser cases B280 to B282 are replaced by B320 and B321.
 - The measurement harness `tests/browser/lib/preview_measure.mjs` and the command `tests/browser/preview_measure.mjs` measure each preview and each loaded panel. They give the differences by tolerance class (9.11).
+- The previews of a stat, a gauge and a bar gauge draw the facts of the document. They draw the box of the loaded panel and the warning line of a draft. A gauge with one new number field also has its cell, title, canvas and empty arc. The number of tiles, gauges and items is data, so no other shape shows. The browser cases B340 to B347 test them.
 
 ### Fixed
 
