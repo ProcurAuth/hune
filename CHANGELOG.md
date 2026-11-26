@@ -49,6 +49,9 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Fixed
 
+- A logs panel with `wrap` made the time two rows high, and the gaps between the time, the level and the body were 0 px. The time now has one row of 23 characters, and each gap is 12 px, as without `wrap` (9.19h).
+- A line of the logs panel with no text in its cells was 6 px high. It is now 28 px high, as the other lines (9.19h).
+- The spec of the table (9.20) said that the header is 34 px high on any pointer. On a coarse pointer, a header with a filter button is 47 px high, because the button has a target of 40 px. The spec now says so. The code did not change.
 - A request of options that ended after a newer request of the same variable removed the cancel of the newer request. A cancel at the exit of the page then missed it.
 - The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
 - A table legend with `values` empty showed five columns. It now has the column "Name" only, as 4.26 says. This holds for the time series, the xy chart, the histogram and the bar chart.

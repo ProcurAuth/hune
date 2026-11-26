@@ -14,9 +14,9 @@ html[data-theme="light"] .logs { --logs-time: color-mix(in srgb, var(--text) 65%
 .logs:focus-visible { outline: 2px solid var(--focus-ring-color); outline-offset: -2px; }
 
 /* One line: the columns side by side with no wrap, so a long body scrolls the list to the side. The line is as wide as its text, and as
-   wide as the list at least, so that its hover fill goes to the end of the text. A line off the screen skips its layout. */
+   wide as the list at least, so that its hover fill goes to the end of the text. A line with no text is 28 px high as the others (min-height). A line off the screen skips its layout. */
 .logs__line {
-  display: flex; column-gap: 12px; box-sizing: border-box; width: max-content; min-width: 100%; padding: 0 0 6px;
+  display: flex; column-gap: 12px; box-sizing: border-box; width: max-content; min-width: 100%; min-height: 28px; padding: 0 0 6px;
   white-space: pre; content-visibility: auto; contain-intrinsic-block-size: auto 28px;
 }
 .logs__line[role="button"] { cursor: pointer; }
@@ -34,7 +34,8 @@ html[data-theme="light"] .logs { --logs-time: color-mix(in srgb, var(--text) 65%
 
 /* The option wrap: the line is a block of text, the time and the level stay on its first line, and the text breaks at any character. */
 .logs--wrap .logs__line { display: block; width: auto; white-space: pre-wrap; word-break: break-all; }
-.logs--wrap .logs__time, .logs--wrap .logs__level { display: inline-block; padding-right: 12px; vertical-align: top; }
+/* The padding is the gap of 12 px, so the box is content-box: the time keeps 23 characters on one row and the level keeps its width. */
+.logs--wrap .logs__time, .logs--wrap .logs__level { display: inline-block; box-sizing: content-box; padding-right: 12px; vertical-align: top; }
 
 /* The details row (Grafana: 8 px 16 px 12 px around a raised box with an edge). The text is the text of the page, not monospace. */
 .logs__details {

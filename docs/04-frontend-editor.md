@@ -3177,12 +3177,12 @@ A log line is untrusted text (threat T104). The page writes each time, level, bo
 **2. The lines.**
 
 1. The order. With `order` = `newest_first`, the line with the highest time is at the top. With `oldest_first`, the line with the lowest time is at the top. The sort is stable: lines with the same time keep the order of the frame. A line with no time comes last in both orders. Grafana shows "Invalid date" for such a line.
-2. The columns. A line has the time (only with `show_time` = `true`), the level and the body, in this order. The gap between two columns is 12 px.
-3. The text. The font is `--font-mono` at 14 px, on a line height of 22 px. Each line has 6 px of space under it, so one line is 28 px high. Grafana uses Roboto Mono. Hune has no copy of that font and uses the monospace font of the system.
+2. The columns. A line has the time (only with `show_time` = `true`), the level and the body, in this order. The gap between two columns is 12 px. It is the same gap with `wrap`.
+3. The text. The font is `--font-mono` at 14 px, on a line height of 22 px. Each line has 6 px of space under it, so one line is 28 px high. A line with no text in its cells is also 28 px high. Grafana uses Roboto Mono. Hune has no copy of that font and uses the monospace font of the system.
 4. The time. The time is the text `YYYY-MM-DD HH:mm:ss.SSS` in the zone of the dashboard (9.9). The column is 23 characters wide. Its colour is the text colour at 61 % in the dark theme and at 65 % in the light theme.
 5. The level. The level column shows the text of the table below, with the weight 500. The column is as wide as the longest level text of the panel, and 1 character wide at least. The colours are the colours of Grafana 12.4.2, in both themes.
 6. The body. The body has the text colour. An ANSI colour sequence (ESC, `[`, digits and `;`, then `m`) leaves the text, as in Grafana.
-7. Without `wrap`, the line ends (CR, LF) leave the body, and a line has one row of text. A long line makes the list scroll to the side. With `wrap` = `true`, the body keeps its line ends and wraps at any character. The time and the level stay on the first row of the line.
+7. Without `wrap`, the line ends (CR, LF) leave the body, and a line has one row of text. A long line makes the list scroll to the side. With `wrap` = `true`, the body keeps its line ends and wraps at any character. The time and the level stay on the first row of the line. The time has one row of 23 characters, and the level column keeps its width.
 8. A line under the pointer, and a line with an open details row, have the hover fill of a row.
 9. Each text of a line is isolated for the bidirectional order (CSS `unicode-bidi: isolate`). A control character of a body, such as U+202E, changes the order inside the body only.
 
@@ -3320,6 +3320,7 @@ These are the defaults of Grafana 12.4.2. The view is "(0°, 0°)" at zoom 1. Th
   equal parts, with 150 px at least. The text of the cells does not change a width. When the sum is wider than the view,
   the table scrolls on the x axis. The width of the view is the width without the vertical scroll bar.
 - Grid look: the table sits inside the padding of the panel (8 px). The header row is 34 px high and a body row is 36 px high. The 1 px rule is inside these heights. A cell has a padding of 6 px.
+- Coarse pointer: the filter button of a header has a target of 40 × 40 px. A header that shows one filter button or more is then 47 px high: 40 px, 6 px of padding and the rule of 1 px. A header with no filter button stays 34 px high. A body row stays 36 px high. With `show_header` = `false`, the header has no height.
 - Each cell has a rule of 1 px at its bottom, and at its right except in the last column. The rules have the grid line colour of the theme.
 - The header text is 14 px at weight 500 in the muted colour. The body text is 14 px at weight 400 in the text colour. A row has a grey hover fill, not a blue one.
 - The sort mark shows only on the sorted column. The column filter button shows at all times in a filterable column.
@@ -3363,7 +3364,7 @@ These are the defaults of Grafana 12.4.2. The view is "(0°, 0°)" at zoom 1. Th
 - "Apply" keeps the rows whose display text is selected, in each filtered column. The filter is page state: it is not
   in the URL and not in the document. A filtered column shows a marked filter button.
 - Virtual rows: from 500 rows, the DOM holds only the rows in view and 20 rows above and below. A row is 36 px high, and
-  the header is 34 px high. The header stays at the top when the table scrolls.
+  the header is 34 px high (47 px with a filter button on a coarse pointer). The header stays at the top when the table scrolls.
 - Keys: `Tab` goes into the table, and the arrows move the focus from cell to cell (the copied `app_ui_table.js`).
 - Wrap: with `options.wrap = false`, a cell text has one line, and an ellipsis ends a text that is too long. With `true`, the text wraps at spaces, and a word longer than the column breaks at any place. The row grows to the height of its tallest cell, with 36 px as the least height. A header text never wraps.
 - Wrap and virtual rows: from 500 rows, the page measures the rows that it draws, and it counts 36 px for the others. The scroll bar can then change its size while the viewer scrolls.
