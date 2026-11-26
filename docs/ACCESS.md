@@ -110,7 +110,7 @@ Hune builds each chain from its own catalog. It never uses a value of the reques
 |---|---|---|---|
 | `dashboard.read` | service, folder, dashboard | `max_rows`, `max_duration` | List and open dashboards. Run their saved queries. |
 | `dashboard.history` | service, folder, dashboard | none | List the versions of a dashboard of the primary store. Read a version. Compare two versions. With `dashboard.write`, restore a version. Published only when `server.history` is `true`. |
-| `dashboard.export` | service, folder, dashboard | none | Download the file of a dashboard and the file of one of its versions. Published only when `server.export` is `true`. |
+| `dashboard.export` | service, folder, dashboard | none | Download the file of the current document of a dashboard. Published only when `server.export` is `true`. |
 | `dashboard.write` | service, folder, dashboard | none | Create, change, move, restore and delete dashboards. Change folders. |
 | `source.query` | service, source | `max_rows`, `max_duration` | Run a query that is not saved. Save a dashboard whose query uses the source. |
 
@@ -138,7 +138,7 @@ Section 11.21 of the specification has the complete table. The questions are the
 
 - A read route asks `dashboard.read` on the dashboard.
 - A history route asks `dashboard.read`, then `dashboard.history` on the dashboard. A restore asks `dashboard.write` with `dashboard.history` as another permission.
-- A read with `download=true` asks `dashboard.read`, then `dashboard.export`. The download of one version asks `dashboard.read` and `dashboard.export`, then `dashboard.history`.
+- A read with `download=true` asks `dashboard.read`, then `dashboard.export`. The download of one version is part of the history: it asks `dashboard.read`, then `dashboard.history`.
 - A save, a restore or a create asks `source.query` on each source of the document, then `dashboard.write`. The check applies also when the SQL did not change.
 - A move asks `dashboard.write` on the dashboard, then `dashboard.write` on the target folder. The target of a move to the root is the node `_root`. A create without a folder asks `dashboard.write` on the node `_root`.
 - A query route asks `dashboard.read` and applies the ceilings of the answer.

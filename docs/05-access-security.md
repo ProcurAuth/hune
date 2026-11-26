@@ -503,7 +503,7 @@ The document for `audience = "dashboards"`, `server.history` and `server.export`
     { "name": "dashboard.history", "resource_types": ["service", "folder", "dashboard"],
       "description": "List the versions of a dashboard of the primary store, read one version and compare two versions. With dashboard.write, restore a version." },
     { "name": "dashboard.export", "resource_types": ["service", "folder", "dashboard"],
-      "description": "Download the file of a dashboard and the file of one of its versions." },
+      "description": "Download the file of the current document of a dashboard." },
     { "name": "dashboard.write", "resource_types": ["service", "folder", "dashboard"],
       "description": "Create, change, move, restore and delete dashboards. Create, rename and delete folders." },
     { "name": "source.query", "resource_types": ["service", "source"],
@@ -575,7 +575,7 @@ Each request on `server.listen` passes these steps in this order. A step that re
 2. Write guard, on each `POST`, `PUT` and `DELETE` (12.7). Refusal: 403 `cross_site_request` or 415.
 3. Token check, in the mode `authzen`, on each route except the action document (11.8). Refusal: 401.
 4. Process ceilings: a history route and the restore, when `server.history` is `false`, get `403 history_disabled`. A
-   request with `download=true`, when `server.export` is `false`, gets `403 export_disabled`. Neither answer asks a
+   read of a dashboard with `download=true`, when `server.export` is `false`, gets `403 export_disabled`. Neither answer asks a
    question, and neither depends on the uid (6.17, 6.14).
 5. Body read, within the limit of the route (12.16). A chunked body above the limit gets 413. A body that does not
    arrive within 30 s gets 408.
@@ -620,8 +620,7 @@ This table gives the permissions of each route of section 6 in the mode `authzen
 | `PUT /api/dashboards/{uid}?validate_only=true` | none | `dashboard.write` on N(uid) | none |
 | `DELETE /api/dashboards/{uid}` | none | `dashboard.write` on N(uid) | none |
 | `GET /api/dashboards/{uid}/history`, with the parameters `limit` and `after` | `dashboard.read` on N(uid) | `dashboard.history` on N(uid) | none |
-| `GET /api/dashboards/{uid}/history/{n}` | `dashboard.read` on N(uid) | `dashboard.history` on N(uid) | none |
-| `GET /api/dashboards/{uid}/history/{n}?download=true` | `dashboard.read` and `dashboard.export` on N(uid) | `dashboard.history` on N(uid) | none |
+| `GET /api/dashboards/{uid}/history/{n}`, also with `download=true` | `dashboard.read` on N(uid) | `dashboard.history` on N(uid) | none |
 | `POST /api/dashboards/{uid}/restore` | `dashboard.history` on N(uid), and `source.query` on S(s) for each source that the restored version names | `dashboard.write` on N(uid) | none |
 | `POST /api/dashboards/{uid}/move` (to the folder f2) | `dashboard.write` on N(uid) | `dashboard.write` on F(f2) | none |
 | `POST /api/dashboards/{uid}/panels/{id}/query` | none | `dashboard.read` on N(uid) | `max_rows`, `max_duration` of the use |
@@ -1045,7 +1044,7 @@ layer uses these codes:
 | 403 | `approval_cannot_wait` | A `false` answer to a question with a reason of 17.1 (`approval_required`, `approval_pending`, `approval_denied` or `approval_expired`). Hune has no approval flow. The body is `{"error": "approval_cannot_wait"}` and has no other member (P 17.7a). | `false` |
 | 403 | `ceiling_exceeded` | A query above an effective limit that a ceiling gave (11.24). The body also has `action`, `ceiling` and `limit`. | `false` |
 | 403 | `history_disabled` | A history route or the restore, with `server.history` equal to `false`. No question. | `false` |
-| 403 | `export_disabled` | A request with `download=true`, with `server.export` equal to `false`. No question. | `false` |
+| 403 | `export_disabled` | A read of a dashboard with `download=true`, with `server.export` equal to `false`. No question. | `false` |
 | 404 | `history_unavailable` | A history route for a dashboard of a read-only store, after `dashboard.read` (6.17). | `false` |
 | 403 | `read_only_store` | A write whose target is in a read-only store, after a `true` answer for `dashboard.read` (11.35). | `false` |
 | 404 | `not_found` | An unknown item after the rule of 11.23, or a ProcurAuth route in the mode `open`. | `false` |
