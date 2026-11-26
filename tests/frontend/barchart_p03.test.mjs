@@ -265,6 +265,18 @@ test("9.19: the value label of a horizontal bar is 10 px at least, as in the ver
   handle.destroy();
 });
 
+test("9.19: the value axis of horizontal bars has two ticks 60 px apart or more, also for the labels of a fine step", () => {
+  // The values 1 to 6 give the labels of a fine step ("0.25") when the gap is the width of a label of the highest value.
+  const keys = ["a", "b", "c", "d", "e", "f"];
+  const host = Object.assign(fakeElement(), { clientWidth: WIDTH, clientHeight: HEIGHT + 28 });
+  const fields = [field("k", "text", keys), field("v", "number", Float64Array.of(1, 2, 3, 4, 5, 6))];
+  const handle = render(host, { panel: { id: 1, title: "t", type: "barchart", options: { ...OPTIONS, orientation: "horizontal" } }, fields, names: ["k", "v"], zone: undefined });
+  const ticks = all(hbarOf(host), "hbar__tick");
+  // The track is 600 px less the label column (22 px and one name of 6.5 px) and 8 px: 563 px, so 9 slots of 60 px at most.
+  assert.ok(ticks.length >= 3 && ticks.length <= 10, `${ticks.length} ticks`);
+  handle.destroy();
+});
+
 test("E34: barInset true (E26) and no option keep their boxes: only the value \"box\" moves the sides", () => {
   const rectsOf = (extra) => {
     ops = [];

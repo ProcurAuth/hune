@@ -12,8 +12,7 @@ import { styleParts, thresholdShapes } from "./thresholds.js";
 import { formatNumber, joinParts } from "../units.js";
 
 const MIN_ROW_FOR_VALUE = 12; // px: a row that is lower than this shows no value in the mode `auto`
-const TICK_GAP = 60; // px between two ticks of the value axis when the width of a label is not known
-const TICK_ROOM = 11.5; // px of room around a label of the value axis (as the x axis of a chart, measured on Grafana 12.4.2)
+const TICK_GAP = 60; // px between two ticks of the value axis (9.19)
 const LABEL_MAX_PX = 180;
 const LABEL_PAD_PX = 22; // 6 px at the left of a category name, 16 px between the name and the bars
 const VALUE_MAX_PX = 28; // the largest value label (Grafana scales it with the bar)
@@ -258,10 +257,8 @@ export function renderHorizontalBars(host, model, panel) {
     const labelW = Math.min(LABEL_MAX_PX, Math.ceil(nameWidth()) + LABEL_PAD_PX);
     root.style.setProperty("--hbar-label", `${labelW}px`);
     const trackW = Math.max(40, width - labelW - 8);
-    // Two ticks keep the width of the widest label (a number as long as the highest value) and TICK_ROOM px apart.
-    const longest = bounds.reduce((m, v) => (Number.isFinite(v) ? Math.max(m, Math.abs(v)) : m), 0);
-    const labelPx = longest > 0 ? measureCtx.measureText(tickText(longest)).width : 0;
-    axis = percent ? PERCENT_AXIS : barAxis(bounds, trackW, unit === "bytes", labelPx > 0 ? labelPx + TICK_ROOM : TICK_GAP);
+    // Two ticks are TICK_GAP px apart or more (9.19). The width of a label of the highest value is less than a label of a fine step.
+    axis = percent ? PERCENT_AXIS : barAxis(bounds, trackW, unit === "bytes");
     const span = axis.max - axis.min || 1;
     const pos = (v) => ((v - axis.min) / span) * 100;
     const rowH = rowsEl.clientHeight / Math.max(1, n);

@@ -52,6 +52,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - A time series with every y axis hidden put all its series on the right scale, and the table legend marked each one "(right y-axis)". All series now go on the left scale, and no mark shows.
 - The legend of a horizontal bar chart ignored `legend.mode`, `legend.values`, `legend.sort_by`, `hide_from.legend` and the cap. It showed an empty legend with no series. It now follows the shared object `legend` as the vertical form does. It draws a list or a table with its sort, and a hidden series has no entry. It keeps a cap of 35 % of the height. It moves under the plot when the plot would be less than 220 px wide.
 - The value label of a horizontal bar was 8 px at least. It is now 10 px at least, as in 9.19 and in the vertical bars.
+- The value axis of a horizontal bar chart put two ticks 18 px apart for small values, so the labels ran together. Two ticks are now 60 px apart or more, as 9.19 says.
 
 ## 0.2.0 - 2026-11-25
 
