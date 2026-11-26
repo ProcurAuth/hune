@@ -1,8 +1,6 @@
 # Browser suite
 
-This suite runs the browser cases B01 to B384 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 241 cases.
-This suite runs the browser cases B01 to B392 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 239 cases.
-This suite runs the browser cases B01 to B321 and B395 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 237 cases.
+This suite runs the browser cases B01 to B404 of section 16.10. It uses the real `hune` binary and a real ClickHouse. The range has 265 cases.
 
 Three cases have a letter: B101p, B145a and B145b. These numbers are reserved and have no case: B119, B128 and B129, B138 and B139, B149, B154 to B159, and B178 and B179. Some cases also use a real PostgreSQL, a real MongoDB or the ProcurAuth tools (see "What you need").
 
@@ -158,6 +156,7 @@ The case B23 starts its own server in the mode `authzen` and its own `fake-pdp`.
 | `cases/viewer_a.mjs`, `cases/viewer_b.mjs` | The cases B01 to B13, B24 to B27 and B233: the viewer, the page of one panel without a scrollbar, the list (cards, tags, no search field) and the base path. |
 | `cases/list_cards.mjs` | The case B228: the cards of the list page, the threshold of the filters, the folder titles, the grid, the three dots and the menu of a card, and the read-only card (9.7). |
 | `cases/stores.mjs` | The cases B241 to B244: a read-only store (`makeLabVolume`), the lock, the warning of a file that is not valid after the start (`breakFile`), the header selector and the refusal of a write. |
+| `cases/loaded_pie.mjs` | The case B400: the circle of the loaded pie chart equals the real box with its fraction of a pixel, at five widths and zoom levels (9.19a, 9.29). |
 | `cases/panel_preview.mjs` | The cases B320 and B321: the loading preview of a panel (9.11). The queries are held, so the preview stays. B320 measures the preview of each of the 14 queried types with the harness, then measures the loaded panels. B321 tests the light, the reduced motion and the reload. They need the hold of a request, so they are `skip` with Firefox. |
 | `cases/charts_spec.mjs` | The cases B380 to B384: the chart panels against 4.26 and 9.19. The table legend with no value column, the hidden axes, a right legend that every entry leaves, the cap of the narrow fallback, the x axis of bars, and the legend of horizontal bars. |
 | `cases/loaded_panels.mjs` | The cases B390 to B392: the facts of the loaded `logs` and `table` panels that the loading preview copies. B390 and B391 measure the lines of the logs panel with `wrap` and with empty cells. B392 measures the header of a table on a fine and on a coarse pointer. |

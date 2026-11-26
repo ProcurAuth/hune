@@ -67,6 +67,9 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - A bar gauge in the mode `lcd` ignored `show_unfilled`. With `true`, it now draws the track of the other modes behind the cells, as the options form says. The browser case B385 tests it.
 - The grid of a stat covered the last 8 px of the warning line of a bad override pattern. It now starts under the line. The browser case B386 tests it.
 - The texts of the canvas of a `state_timeline` and of a `status_history` were 6 CSS px high at the pixel ratio 2. They are now 12 CSS px high at each pixel ratio, as 9.19c says.
+- The pie chart sizes its circle from the real box of its canvas, with the fraction of a pixel (9.19a). Before, it used the rounded client size, so the circle could be 0.5 px off its box and the bitmap was stretched.
+- The pie chart no longer draws a legend at the right for a panel with no `legend` member. The member is necessary (4.26), so the page has no default for it.
+- The canvas of a pie chart has the test hook `data-geometry` with the centre and the radii of the circle (9.29). The browser case B400 reads it.
 
 ## 0.2.0 - 2026-11-25
 
