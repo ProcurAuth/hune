@@ -88,6 +88,12 @@ export async function mount(ctx) {
     return { destroy() {} };
   }
   busy.end();
+  // A URL opened by hand for the history of a dashboard without the right shows the standard refusal page (9.8, 10.11). The server refuses the
+  // routes too: `history_disabled`, `forbidden` or `history_unavailable`.
+  if (parseSearch(window.location.search).editview === "history" && !(answer.access && answer.access.history === true)) {
+    errorPage(ctx, { status: 403, message: "" });
+    return { destroy() {} };
+  }
 
   // --- start state --------------------------------------------------------------------------------------
 
@@ -488,8 +494,10 @@ export async function mount(ctx) {
     }
     const editing = editHooks && editHooks.menuItems ? editHooks.menuItems() : [];
     if (editing.length) items.push(...editing, { separator: true });
-    items.push({ label: "History", icon: "history", testid: "history-button", onSelect: () => dispatch("open-history") });
-    items.push({ label: "Export", icon: "download", testid: "export-button", onSelect: () => exportDashboard(uid) });
+    // History and Export show only when the flags of the answer say so (6.14, 9.9): `access.history` is false in a read-only store, with the key
+    // `server.history` at false, and without `dashboard.history`; `access.export` follows `server.export` and `dashboard.export`.
+    if (loaded.access && loaded.access.history === true) items.push({ label: "History", icon: "history", testid: "history-button", onSelect: () => dispatch("open-history") });
+    if (loaded.access && loaded.access.export === true) items.push({ label: "Export", icon: "download", testid: "export-button", onSelect: () => exportDashboard(uid) });
     if (canEdit()) {
       const item = { uid, title: loaded.doc.title, etag: loaded.etag, folder: loaded.folder };
       items.push({ separator: true });
