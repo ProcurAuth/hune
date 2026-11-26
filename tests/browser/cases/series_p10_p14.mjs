@@ -105,6 +105,8 @@ async function open(t, d, ids, theme = null) {
   const r = await t.api.create("transit", d);
   t.assert(r.status === 201, `create: ${r.status} ${r.text.slice(0, 400)}`);
   const p = await t.page({ width: 1500, height: 1400 });
+  // The stops of a gradient are compared with the capture of Grafana: the plot of the capture has the height of a title bar of 40 px.
+  await p.pinPanelHead(40);
   if (theme) await p.emulateColorScheme(theme);
   await p.send("Page.addScriptToEvaluateOnNewDocument", { source: HOOK });
   await p.goto(t.url(`d/${d.uid}/x`));

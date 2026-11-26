@@ -469,6 +469,8 @@ export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passw
   if (mongoBlock) t = t.trimEnd() + "\n\n" + mongoBlock.trimEnd() + "\n";
   // A block `geomap` (B227, 13.12c): it goes at the end of the file.
   if (geomapBlock) t = t.trimEnd() + "\n\n" + geomapBlock.trimEnd() + "\n";
+  // With `server.history = false` the primary store keeps no earlier version and has no `history_keep` (C31).
+  if (!history) t = t.replace(/^\s*history_keep\s*=\s*\d+\n/gm, "");
   return t;
 }
 

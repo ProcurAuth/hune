@@ -491,6 +491,26 @@ export class Page {
   }
 
   /**
+   * Fix the height of the title bar of a panel for the next documents of this page. Call it before `goto`.
+   * The cases that compare a geometry with a capture of Grafana, or that need a panel of an exact size, use the
+   * 40 px of the capture. The product bar is 32 px high.
+   */
+  async pinPanelHead(px) {
+    await this.send("Page.addScriptToEvaluateOnNewDocument", {
+      source: `(() => {
+        const add = () => {
+          const s = document.createElement("style");
+          s.textContent = ":root { --panel-head-h: ${px}px !important; }";
+          document.documentElement.appendChild(s);
+        };
+        // The script runs before the parser makes the root element.
+        if (document.documentElement) add();
+        else new MutationObserver((_, o) => { if (document.documentElement) { o.disconnect(); add(); } }).observe(document, { childList: true });
+      })();`,
+    });
+  }
+
+  /**
    * Record the texts that the page draws on canvases (axis labels), for the next documents of this page.
    * Read them with `canvasTexts`. Call it before `goto`.
    */

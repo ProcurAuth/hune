@@ -79,6 +79,8 @@ async function themeChecks(t, scheme) {
   const dark = scheme === "dark";
   const p = await t.page({ width: 1600, height: 1400 });
   await p.emulateColorScheme(scheme);
+  // The box of a gauge panel is compared with the capture of Grafana (FE-84): the capture has a title bar of 40 px.
+  await p.pinPanelHead(40);
   await p.recordCanvasText();
   await p.goto(t.url(`d/${UID}/x`));
   await p.idle();

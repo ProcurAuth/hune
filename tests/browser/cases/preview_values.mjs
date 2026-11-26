@@ -273,6 +273,8 @@ export const cases = [
       ];
       await create(t, base);
       const p = await t.page({ width: 1440, height: 1100 });
+      // The sizes of the four panels are chosen for the title bar of 40 px: a bounded arc depends on the height of the body.
+      await p.pinPanelHead(40);
       const hold = p.holdWhen(HOLD_QUERIES);
       await p.goto(t.dash(uid));
       await p.waitFor(`[1, 2, 3, 4].every((id) => { const e = document.querySelector('[data-testid="panel-' + id + '"] .panel__skeleton'); return e && getComputedStyle(e).display !== "none" && e.firstElementChild && e.firstElementChild.childElementCount > 0; })`, { what: "the previews", timeout: 30000 });

@@ -48,6 +48,8 @@ async function measured(t, doc) {
   const r = await t.api.create("transit", doc);
   t.assert(r.status === 201, `create ${doc.uid}: ${r.status} ${r.text.slice(0, 400)}`);
   const page = await t.page({ width: 1440, height: HEIGHT });
+  // The short panels of these documents are sized for the title bar of 40 px: the cap of a legend depends on the height of the body.
+  await page.pinPanelHead(40);
   const result = await measureDashboard(page, t.dash(doc.uid), { width: 1440, height: HEIGHT });
   const hosts = await hostInfo(page, doc.sections.flatMap((s) => s.panels.map((p) => p.id)));
   if (DUMP) {
