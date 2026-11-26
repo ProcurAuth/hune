@@ -6,6 +6,8 @@
 //                the title, the scale, the markers, the labels, the neutral mark, the value size and the colour mode.
 //   gaugeNDoc    gauges whose count is data (no proof): the box only.
 //   statDoc      stat panels with the options that change the layout: the box only.
+//   statOneDoc   stat panels whose chain ends with one new number field (proof A): the box and the one tile.
+//   reuseDoc     panels that read the data of a source panel (`data.reuse`): the count follows the chain of the source.
 //   barGaugeDoc  bar gauges with the options that change the layout: the box only.
 import { SOURCE, doc, panel, section } from "./docs.mjs";
 
@@ -91,6 +93,49 @@ export const STAT_VARIANTS = [
 export function statDoc(uid = "values-stat", time = { from: "now-6h", to: "now", timezone: "utc", refresh: null }, source = SOURCE) {
   const panels = STAT_VARIANTS.map(([title, grid, options], i) => panel(i + 1, "stat", title, TOTAL, { grid, options: statOptions(options), source }));
   return doc(uid, "Preview of the stat panels", [section(null, panels)], { time });
+}
+
+/** The stat variants with proof A (the last transform replaces the fields with one new number field): the grid has one tile. */
+export const STAT_ONE_VARIANTS = [
+  ["auto", g(0, 0, 6, 4), {}],
+  ["vertical", g(6, 0, 6, 4), { orientation: "vertical" }],
+  ["horizontal, value and name", g(12, 0, 6, 4), { orientation: "horizontal", text_mode: "value_and_name" }],
+  ["background fixed colour, area graph", g(18, 0, 6, 4), { color_mode: "background", graph_mode: "area" }, { fields: { defaults: { color: { mode: "fixed", fixed: "purple" } }, overrides: [] } }],
+  ["value size 40, change", g(0, 4, 6, 7), { value_size: 40, percent_change: true }],
+  ["wide and low (grid height 2)", g(6, 4, 6, 2), { text_mode: "none" }],
+  ["a tall narrow box", g(12, 4, 4, 10), { orientation: "vertical" }],
+  ["values true: one tile for each row, no proof", g(16, 4, 8, 4), { reduce: reduce({ values: true }) }],
+  ["a pattern of fields: no proof", g(0, 11, 6, 4), { reduce: reduce({ fields: "/^Sum$/" }) }],
+  ["no transform: no proof", g(6, 11, 6, 4), {}, { transforms: [] }],
+];
+
+export function statOneDoc(uid = "values-stat-one", time = { from: "now-6h", to: "now", timezone: "utc", refresh: null }, source = SOURCE) {
+  const panels = STAT_ONE_VARIANTS.map(([title, grid, options, extra = {}], i) => panel(i + 1, "stat", title, TOTAL, { grid, options: statOptions(options), source, transforms: ONE, ...extra }));
+  return doc(uid, "Preview of the stat panels: one tile", [section(null, panels)], { time });
+}
+
+/**
+ * Panels that read the data of a source table (the panel 100, with the chain of the case B). The ids 1 to 6 are the stat, the gauge and the bar
+ * gauge with the transforms of the source (`with_transforms` true), and the same without (false).
+ */
+export const REUSE_PANELS = [
+  ["stat, the chain of the source", g(0, 0, 8, 4), "stat", true],
+  ["stat, own chain only", g(8, 0, 8, 4), "stat", false],
+  ["gauge, the chain of the source", g(0, 4, 8, 6), "gauge", true],
+  ["gauge, own chain only", g(8, 4, 8, 6), "gauge", false],
+  ["gauge, a vertical cell with a title, the chain of the source", g(16, 4, 8, 6), "gauge", true, { fields: { defaults: { min: 0, max: 400, display_name: "Source" }, overrides: [] }, options: { orientation: "vertical" } }],
+  ["bar gauge, the chain of the source", g(16, 0, 8, 4), "bargauge", true],
+];
+
+export function reuseDoc(uid = "values-reuse", time = { from: "now-6h", to: "now", timezone: "utc", refresh: null }, source = SOURCE) {
+  const sourcePanel = panel(100, "table", "Source", TOTAL, { grid: g(0, 10, 24, 5), transforms: ONE, source });
+  const panels = REUSE_PANELS.map(([title, grid, type, withTransforms, extra = {}], i) => {
+    const reuse = { panel: 100, with_transforms: withTransforms };
+    if (type === "gauge") return gauge(i + 1, title, grid, { ...extra, reuse, transforms: [] }, source);
+    if (type === "stat") return panel(i + 1, "stat", title, TOTAL, { grid, options: statOptions(), reuse, source });
+    return panel(i + 1, "bargauge", title, BARS, { grid, options: { orientation: "horizontal", display_mode: "gradient", show_unfilled: true }, reuse, source });
+  });
+  return doc(uid, "Preview of the panels that reuse data", [section(null, [...panels, sourcePanel])], { time });
 }
 
 // ---- bar gauge -------------------------------------------------------------------------------------------------------------------------

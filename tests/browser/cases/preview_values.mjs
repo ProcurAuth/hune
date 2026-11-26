@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
-// Browser cases B340 to B347 (9.11): the loading previews of the values families, `stat`, `gauge` and `bargauge`.
+// Browser cases B340 to B349 (9.11): the loading previews of the values families, `stat`, `gauge` and `bargauge`.
 // Each case holds the queries of the panels, so that the previews stay, reads them with the harness (lib/preview_measure.mjs), releases the queries and
 // reads the loaded panels. The harness compares each part that a preview claims with the loaded part by the tolerance class (exact: 0.5 px; least: the
 // preview takes at most the room of the loaded part). A part that the document does not decide is not claimed, so the cases also count the parts.
@@ -11,11 +11,13 @@
 //   B345  the warning line of a draft with a pattern that does not compile, in the three families
 //   B346  neutral tones in the light and the dark theme, and the captures of the loading state
 //   B347  the preview builds again when the box changes
+//   B348  stat with proof A (the chain ends with one new number field): the box and the one tile, ten variants, at three widths
+//   B349  panels that read the data of a source panel (`data.reuse`): the count follows the chain of the source, at two widths
 // HUNE_PREVIEW_SHOTS=<dir> writes the captures of B346 to <dir>. They need the hold of a request, so the cases are `skip` with Firefox.
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { HOLD_QUERIES, compare, formatTable, installRecorder, measureDashboard, readLoaded, readPreview, summarize } from "../lib/preview_measure.mjs";
-import { BARGAUGE_VARIANTS, GAUGE_N_VARIANTS, GAUGE_VARIANTS, STAT_VARIANTS, barGaugeDoc, gaugeDoc, gaugeNDoc, statDoc } from "../lib/values_fixtures.mjs";
+import { BARGAUGE_VARIANTS, GAUGE_N_VARIANTS, GAUGE_VARIANTS, REUSE_PANELS, STAT_ONE_VARIANTS, STAT_VARIANTS, barGaugeDoc, gaugeDoc, gaugeNDoc, reuseDoc, statDoc, statOneDoc } from "../lib/values_fixtures.mjs";
 import { sleep } from "../lib/h.mjs";
 
 const SKIP = process.env.HUNE_BROWSER === "firefox" ? "needs the hold of a request (Chrome)" : undefined;
@@ -307,7 +309,7 @@ export const cases = [
           }
         }
       }
-            const notes = await p.eval(`[1, 2, 3, 4].map((id) => document.querySelector('[data-testid="panel-' + id + '"] .panel__skeleton').firstElementChild.getAttribute("data-skel-notes"))`);
+      const notes = await p.eval(`[1, 2, 3, 4].map((id) => document.querySelector('[data-testid="panel-' + id + '"] .panel__skeleton').firstElementChild.getAttribute("data-skel-notes"))`);
       t.eq(notes, ["box", "one gauge, bounded arc", "box", "one gauge, exact arc"], "the notes: the box of a stat and of a bar gauge, a bounded arc with a band that the scale does not prove, an exact arc with a fixed colour");
       hold.release();
     },
@@ -341,6 +343,64 @@ export const cases = [
       for (const id of ids) rows.push(...compare(previews[id], await readLoaded(p, id, previews[id].type)));
       t.eq(failures(rows), [], `no claimed part differs after the resize\n${formatTable(rows.filter((r) => r.verdict === "fail"), { all: true })}`);
       t.assert(summarize(rows).ok >= 17 * 4, `${summarize(rows).ok} parts agree`);
+    },
+  },
+  {
+    id: "B348",
+    skip: SKIP,
+    timeout: 300000,
+    name: "stat with one tile (the chain ends with one new number field): the preview has the box of the grid and the one tile, and no fill, for ten variants and three widths (9.11)",
+    async run(t) {
+      const uid = "pv348";
+      await create(t, statOneDoc(uid, TIME));
+      const results = await measureAt(t, uid);
+      for (const [width, result] of Object.entries(results)) {
+        t.eq(failures(result.rows), [], `${width}: no claimed part differs from the loaded panel`);
+        STAT_ONE_VARIANTS.forEach(([title, , options, extra = {}], i) => {
+          const id = i + 1;
+          const proof = !(options.reduce || extra.transforms);
+          const parts = claimed(result, id);
+          t.eq(parts, proof ? ["holder:exact", "tile:exact"] : ["holder:exact"], `${width} ${title}: the claimed parts`);
+          const loadedTiles = result.loaded[id].parts.filter((x) => x.part === "tile");
+          if (proof) {
+            // One tile, whatever the option: the loaded grid has one item that has the box of the grid.
+            t.eq(loadedTiles.length, 1, `${width} ${title}: the loaded grid has one tile`);
+            const row = result.rows.find((r) => String(r.id) === String(id) && r.part === "tile");
+            t.eq(row.verdict, "ok", `${width} ${title}: the tile is the loaded tile (${JSON.stringify(row.preview)} and ${JSON.stringify(row.loaded)})`);
+            t.eq(result.previews[id].children, 2, `${width} ${title}: the holder and the tile, no gap, no text slot, no tint`);
+          } else {
+            // No proof: the loaded panel has other tiles than one, or none that the document fixes. The preview claims no tile.
+            t.eq(result.previews[id].children, 1, `${width} ${title}: the box only`);
+          }
+        });
+      }
+    },
+  },
+  {
+    id: "B349",
+    skip: SKIP,
+    timeout: 300000,
+    name: "panels that read the data of a source panel: a stat, a gauge and a bar gauge take the count from the chain of the source (9.11)",
+    async run(t) {
+      const uid = "pv349";
+      await create(t, reuseDoc(uid, TIME));
+      const results = await measureAt(t, uid, [1440, 700]);
+      for (const [width, result] of Object.entries(results)) {
+        t.eq(failures(result.rows), [], `${width}: no claimed part differs from the loaded panel`);
+        const by = (id) => claimed(result, id);
+        REUSE_PANELS.forEach(([title, , type, withTransforms], i) => {
+          const id = i + 1;
+          const one = type !== "bargauge" && withTransforms;
+          if (type === "stat") t.eq(by(id), one ? ["holder:exact", "tile:exact"] : ["holder:exact"], `${width} ${title}: the tile only with the chain of the source`);
+          if (type === "gauge") t.eq(by(id).includes("tile:exact"), one, `${width} ${title}: the cell only with the chain of the source`);
+          if (type === "bargauge") t.eq(by(id), ["holder:exact"], `${width} ${title}: the box only`);
+        });
+        // The gauge with the chain of the source has the cell, the canvas and the arc of the loaded gauge.
+        const arc = result.rows.find((r) => r.id == 3 && r.part === "arc");
+        t.assert(arc && arc.verdict === "ok", `${width}: the arc of the gauge that reads the chain of the source ${arc && JSON.stringify(arc.preview)}`);
+        // The source panel is a table: its preview is the neutral form of its family, and the harness finds nothing to compare.
+        t.eq(result.previews[100].family, "table", `${width}: the source is a table`);
+      }
     },
   },
 ];
