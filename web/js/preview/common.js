@@ -43,6 +43,10 @@ export const EXACT = "exact";
 export const LEAST = "least";
 export const MOST = "most";
 export const DATA = "data";
+//   CONTAIN  the document bounds the edges of a rectangle (the plot of a chart): the preview rectangle holds the loaded one. It is written
+//            `contain:<edges>`, with the letters l, t, r and b for the edges that the rule claims (left, top, right, bottom). Left and top: the
+//            preview edge is at the same place or before the loaded edge, and the top is the same. Right and bottom: the same place or further out.
+export const CONTAIN = "contain";
 
 export const TOLERANCE_PX = 0.5;
 // A bar that stands for a text of known width: 8 px high, rounded (the council files). Its width is the measured width of the text.

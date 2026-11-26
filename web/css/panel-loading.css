@@ -47,6 +47,19 @@
 .skel__line { stroke: var(--skel-grid); stroke-width: 1; vector-effect: non-scaling-stroke; }
 
 /* ==== family: timeseries (timeseries, xychart) ================================================================================ */
+/* The chart frame (web/js/preview/timeseries.js) uses the markup and the classes of the chart engine. The rules of panel-chart.css name the host
+   `skel__host` too, so the paddings, the line heights and the gutters of the legend are the ones of the loaded panel. These rules add what the
+   preview needs: the box of the host, the plot cell, the plot tint, the mark of an entry in a neutral tone, and an entry with no name. */
+.skel__host { position: absolute; inset: 0; }
+.skel__host .chartCore__plot { height: var(--c); }
+/* The plot is at (x, y) with the height h. Its right edge is `r` px before the right edge of the plot cell. It is never narrower than 40 px. */
+.skel__plot { width: max(40px, calc(100% - var(--x) - var(--r))); }
+.skel .chartCore__legendItem i { background: var(--skel-edge); }
+.skel .chartCore__legendItem i.skel__nopill { visibility: hidden; }
+/* An entry has no name, but it keeps the height of a line of text. */
+.skel .chartCore__legendItem > span:empty { height: 1.5714em; }
+/* A head text of the legend table, as a bar of the measured width. It is centred on the line, as the text is. */
+.skel__hb { display: inline-block; width: var(--w); height: 8px; border-radius: 4px; background: var(--skel-edge); vertical-align: top; margin-top: calc((1.5714em - 8px) / 2); }
 
 /* ==== family: barchart ======================================================================================================== */
 

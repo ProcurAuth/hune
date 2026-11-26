@@ -15,7 +15,7 @@
 import { skeletonKind } from "../../../web/js/preview/index.js";
 
 export const TOLERANCE_PX = 0.5;
-export const CLASSES = Object.freeze({ EXACT: "exact", LEAST: "least", MOST: "most", DATA: "data" });
+export const CLASSES = Object.freeze({ EXACT: "exact", LEAST: "least", MOST: "most", DATA: "data", CONTAIN: "contain" });
 export const HOLD_QUERIES = (req) => /\/panels\/[^/]+\/query/.test(req.url);
 
 // ---- The recorder of the texts of the canvases ---------------------------------------------------------------------------------------
@@ -164,7 +164,24 @@ function loadedProbe(id, family, extractors) {
     }
     return true;
   };
-  const h = { rel, add, all, union, textRects, visible, holder, chart };
+  // The head row of the table legend of the engine: the row, and the first and the last head text. A text gives a bar of 8 px at the middle of the
+  // line of its head cell (the line box, less the padding of the cell), and the x and the width of the text.
+  const legendHead = () => {
+    const thead = holder.querySelector(".chartCore__legendTable thead");
+    if (!thead || !visible(thead)) return;
+    add("head", rel(thead));
+    const cells = [...thead.querySelectorAll("th")];
+    for (const th of [cells[0], cells[cells.length - 1]]) {
+      const t = th && textRects(th)[0];
+      if (!t) continue;
+      const cs = getComputedStyle(th);
+      const box = rel(th);
+      const top = box[1] + parseFloat(cs.paddingTop);
+      const line = box[3] - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+      add("head-label", [t.rect[0], top + line / 2 - 4, t.rect[2], 8], t.text);
+    }
+  };
+  const h = { rel, add, all, union, textRects, visible, holder, chart, legendHead };
   if (extractors[family]) extractors[family](panel, h);
   // A type that draws its text in the DOM gives its labels from the text nodes. A type with an axis on a canvas has them already.
   if (!parts.some((p) => p.part === "label") && !holder.querySelector(".chartCore")) for (const t of textRects(holder)) add("label", t.rect, t.text);
@@ -175,13 +192,18 @@ function loadedProbe(id, family, extractors) {
 // panels have. An extractor is an arrow function with no outside name, because the harness sends its source text to the page. The family forks
 // add the parts of their own family here, and nothing else.
 export const EXTRACTORS = {
-  // `timeseries` and `xychart`: the engine of the charts.
+  // `timeseries` and `xychart`: the engine of the charts. The head row of a table legend and its first and last text (as a bar of 8 px at the
+  // middle of the text) are parts too.
   timeseries: (panel, h) => {
     h.chart();
+    h.legendHead();
   },
   // `barchart`: the engine of the charts for the vertical form, and the elements `hbar__*` for the horizontal form.
   barchart: (panel, h) => {
-    if (h.chart()) return;
+    if (h.chart()) {
+      h.legendHead();
+      return;
+    }
     const grid = h.holder.querySelector(".hbar__grid");
     if (grid) h.add("plot", h.rel(grid));
     const legend = h.holder.querySelector(".hbar__legend");
@@ -250,6 +272,17 @@ export function compareRect(cls, preview, loaded, tol = TOLERANCE_PX) {
   // A one-sided bound is a bound on the size. The preview takes at most (least) or at least (most) the room of the loaded panel.
   if (cls === CLASSES.LEAST) return { verdict: preview[2] <= loaded[2] + tol && preview[3] <= loaded[3] + tol ? "ok" : "fail", delta };
   if (cls === CLASSES.MOST) return { verdict: preview[2] >= loaded[2] - tol && preview[3] >= loaded[3] - tol ? "ok" : "fail", delta };
+  // contain:<edges>: the preview rectangle holds the loaded one on the edges that the letters name (l, t, r, b). The top is the same edge.
+  if (typeof cls === "string" && cls.startsWith(`${CLASSES.CONTAIN}:`)) {
+    const edges = cls.slice(CLASSES.CONTAIN.length + 1);
+    const checks = {
+      l: preview[0] <= loaded[0] + tol,
+      t: Math.abs(preview[1] - loaded[1]) <= tol,
+      r: preview[0] + preview[2] >= loaded[0] + loaded[2] - tol,
+      b: preview[1] + preview[3] >= loaded[1] + loaded[3] - tol,
+    };
+    return { verdict: [...edges].every((e) => checks[e] === true) ? "ok" : "fail", delta };
+  }
   return { verdict: "data", delta };
 }
 
