@@ -124,6 +124,19 @@ function loadedProbe(id, family, extractors) {
     return out;
   };
 
+  // The lines of the text nodes of an element, each as the bar that a preview draws for it: the width of the line and the middle of its height, 8 px high.
+  const textLines = (root) => {
+    const out = [];
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+      if (!n.nodeValue.trim() || !visible(n.parentElement)) continue;
+      const range = document.createRange();
+      range.selectNodeContents(n);
+      for (const r of range.getClientRects()) if (r.width > 0) out.push({ text: n.nodeValue.trim(), rect: [r.x - ox, r.y - oy + r.height / 2 - 4, r.width, 8] });
+    }
+    return out;
+  };
+
   add("box", [0, 0, b.width - 2 * pad, b.height - 2 * pad]);
   const warn = panel.querySelector(".panel__warning");
   if (warn && visible(warn)) add("warning", rel(warn));
@@ -164,7 +177,7 @@ function loadedProbe(id, family, extractors) {
     }
     return true;
   };
-  const h = { rel, add, all, union, textRects, visible, holder, chart };
+  const h = { rel, add, all, union, textRects, textLines, visible, holder, chart };
   if (extractors[family]) extractors[family](panel, h);
   // A type that draws its text in the DOM gives its labels from the text nodes. A type with an axis on a canvas has them already.
   if (!parts.some((p) => p.part === "label") && !holder.querySelector(".chartCore")) for (const t of textRects(holder)) add("label", t.rect, t.text);
@@ -194,17 +207,55 @@ export const EXTRACTORS = {
     const legend = h.holder.querySelector(".pie__legend");
     if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
   },
+  // `stat`: the grid (`holder`, over the padding of the body), the tiles and the lines of the warning text.
   stat: (panel, h) => {
+    const root = h.holder.querySelector(".stat");
+    if (root) h.add("holder", h.rel(root));
     for (const e of h.all(".stat__item", h.holder)) h.add("tile", h.rel(e));
+    const warn = h.holder.parentElement.querySelector(".panel__warning");
+    if (warn && h.visible(warn)) for (const t of h.textLines(warn)) h.add("label", t.rect, t.text);
   },
+  // `gauge`: the root, the cells, the canvas of each cell, the title box and its text, the empty arc and the band of the marks. The canvas is not
+  // in the DOM: the arc and the band come from `data-gauge` of the root (the record of the loaded panel) and the box of the canvas.
   gauge: (panel, h) => {
+    // The lines of the warning text come first: the preview lists its elements in this order.
+    const warn = h.holder.parentElement.querySelector(".panel__warning");
+    if (warn && h.visible(warn)) for (const t of h.textLines(warn)) h.add("label", t.rect, t.text);
+    const root = h.holder.querySelector(".gauge");
+    if (root) h.add("holder", h.rel(root));
     for (const e of h.all(".gauge__item", h.holder)) h.add("tile", h.rel(e));
-    const canvas = h.holder.querySelector(".gauge canvas");
-    if (canvas) h.add("plot", h.rel(canvas));
+    const canvases = [...h.holder.querySelectorAll(".gauge canvas")];
+    for (const c of canvases) h.add("plot", h.rel(c));
+    for (const t of h.all(".gauge__title", h.holder)) {
+      h.add("title", h.rel(t));
+      for (const l of h.textLines(t)) h.add("label", l.rect, l.text);
+    }
+    let records = [];
+    try {
+      records = JSON.parse((root && root.dataset.gauge) || "[]");
+    } catch (error) {
+      records = [];
+    }
+    const sin = Math.sin(0.1 * Math.PI);
+    canvases.forEach((c, i) => {
+      const g = records[i];
+      if (!g || !(g.radius >= 0) || !(g.radius - g.arcW >= 0)) return;
+      const [x, y] = h.rel(c);
+      h.add("arc", [x + g.cx - g.radius, y + g.cy - g.radius, 2 * g.radius, g.radius * (1 + sin)]);
+      if (g.bands && g.min < g.max) {
+        const r = g.radius + g.markW;
+        h.add("scale", [x + g.cx - r, y + g.cy - r, 2 * r, r * (1 + sin)]);
+      }
+    });
   },
+  // `bargauge`: the root, the items and the tracks, and the lines of the warning text.
   bargauge: (panel, h) => {
+    const root = h.holder.querySelector(".bargauge");
+    if (root) h.add("holder", h.rel(root));
     for (const e of h.all(".bargauge__item", h.holder)) h.add("tile", h.rel(e));
     for (const e of h.all(".bargauge__track", h.holder)) h.add("track", h.rel(e));
+    const warn = h.holder.parentElement.querySelector(".panel__warning");
+    if (warn && h.visible(warn)) for (const t of h.textLines(warn)) h.add("label", t.rect, t.text);
   },
   table: (panel, h) => {
     const head = h.holder.querySelector(".dataTable thead");
