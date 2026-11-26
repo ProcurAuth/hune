@@ -55,7 +55,6 @@ test("R1: no rows family module reads the text of a query, a regular expression 
 
 test("a panel with no environment (no page, no test value) gives the neutral form", () => {
   const out = table.build(tablePanel(), BOX, null, {});
-  assert.deepEqual(out.notes, ["neutral"].length ? out.notes : []);
   assert.equal(out.notes[0], "no environment");
   assert.deepEqual(out.elements, []);
   assert.equal(logs.build(logsPanel(), BOX, null, {}).notes[0], "no environment");
