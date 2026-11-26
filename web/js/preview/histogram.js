@@ -173,7 +173,9 @@ export function build(panel, box, doc, ctx) {
       elements.push(guideNode({ x: 0, y: y0, w: W, h: lhRaw }, PARTS.LEGEND, cls, "skel__g skel__legend"));
       if (table) {
         const head = fall ? 4 : 0;
-        elements.push(barNode(30, y0 + head + 2 + TEXT_CENTRE - BAR_HEIGHT / 2, domWidth("Name", { size: 12, weight: 500 }), "legend-head", LEAST));
+        // The first head has a gutter of 30 px for the sort arrow. The fallback and a phone (600 px or less) take it away: the cell has no padding.
+        const phone = fall || (typeof window !== "undefined" && typeof window.matchMedia === "function" && window.matchMedia("(max-width: 600px)").matches);
+        elements.push(barNode(phone ? 0 : 30, y0 + head + 2 + TEXT_CENTRE - BAR_HEIGHT / 2, domWidth("Name", { size: 12, weight: 500 }), "legend-head", LEAST));
       } else {
         elements.push(node("skel__pill", { "--x": px(4), "--y": px(y0 + pad + (LINE - 4) / 2) }, [], "div", partAttrs(PARTS.MARK, LEAST)));
         if (f.name !== null) elements.push(barNode(26, y0 + pad + TEXT_CENTRE - BAR_HEIGHT / 2, nameW, "legend-label", LEAST));

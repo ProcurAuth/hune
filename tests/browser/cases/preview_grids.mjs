@@ -7,11 +7,15 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { formatTable, measureDashboard } from "../lib/preview_measure.mjs";
-import { heatmapDoc, histogramDoc, timelineDoc } from "../lib/grids_fixtures.mjs";
+import { RANGE, heatmapDoc, histogramDoc, timelineDoc } from "../lib/grids_fixtures.mjs";
 import { sleep } from "../lib/h.mjs";
 
 const SKIP = process.env.HUNE_BROWSER === "firefox" ? "needs the hold of a request (Chrome)" : undefined;
 const TOL = 0.5;
+// The error that the page logs for a panel that the document proves to be never drawn.
+const NEVER_DRAWN = /The data has no (number column|field to draw|time column)/;
+// The page of a fixture dashboard in the range of its data (the helper t.dash gives the range of the seed table).
+const pageOf = (t, uid) => t.url(`d/${uid}?from=${RANGE.from}&to=${RANGE.to}&timezone=utc`);
 
 const create = async (t, d) => {
   if ((await t.api.dashboard(d.uid)).status === 200) return;
@@ -27,7 +31,9 @@ async function measure(t, name, build, { width = 1440, height = 4000 } = {}) {
   const d = build(`${name}-${width}`);
   await create(t, d);
   const p = await t.page({ width, height });
-  const result = await measureDashboard(p, t.dash(d.uid), { width, height });
+  // A panel that the document proves to be never drawn ends in a message: the page logs the error of the model for it.
+  t.allow(p, NEVER_DRAWN);
+  const result = await measureDashboard(p, pageOf(t, d.uid), { width, height });
   if (process.env.HUNE_PREVIEW_DUMP) {
     mkdirSync(process.env.HUNE_PREVIEW_DUMP, { recursive: true });
     writeFileSync(join(process.env.HUNE_PREVIEW_DUMP, `${name}-${width}.txt`), `${formatTable(result.rows, { all: true })}\n`);
@@ -152,7 +158,9 @@ export const cases = [
         const band = plot.rect[1] + plot.rect[3];
         for (const p of r.previews[id].parts) {
           if (p.part === "legend" || p.part === "scale" || p.part === "legend-label") continue;
-          t.assert(p.rect[1] + p.rect[3] <= band + TOL, `panel ${id}: the part ${p.part} is not in the x band`);
+          // A y label is centred on its tick, so its centre is above the base of the plot, and its bar can pass it by half its height.
+          const edge = p.part === "label" ? p.rect[1] + p.rect[3] / 2 : p.part === "grid" ? p.rect[1] : p.rect[1] + p.rect[3];
+          t.assert(edge <= band + TOL, `panel ${id}: the part ${p.part} is not in the x band`);
         }
       }
     },
@@ -364,13 +372,16 @@ export const cases = [
         await create(t, d);
         for (const theme of ["light", "dark"]) {
           const p = await t.page({ width: 1440, height: 2400 });
+          t.allow(p, NEVER_DRAWN);
           await p.emulateColorScheme(theme);
           const hold = p.holdWhen((req) => /\/panels\/[^/]+\/query/.test(req.url));
-          await p.goto(t.dash(d.uid));
+          await p.goto(pageOf(t, d.uid));
           await p.waitFor(`document.querySelectorAll('.panel__skeleton').length > 0 && [...document.querySelectorAll('.panel__skeleton')].some((e) => getComputedStyle(e).display !== "none" && e.firstElementChild && e.firstElementChild.childElementCount > 0)`, { what: "the previews", timeout: 30000 });
           await sleep(600);
-          await p.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-reduced-motion", value: "reduce" }] });
-          await sleep(200);
+          // One call sets both features: a second call would reset the colour scheme.
+          await p.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: theme }, { name: "prefers-reduced-motion", value: "reduce" }] });
+          await sleep(300);
+          t.eq(await p.eval(`document.documentElement.dataset.theme`), theme, `${name}: the ${theme} theme applies`);
           const shot = await p.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: true });
           writeFileSync(join(dir, `${name}-${theme}.png`), Buffer.from(shot.data, "base64"));
           hold.release();
