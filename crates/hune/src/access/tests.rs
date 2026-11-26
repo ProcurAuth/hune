@@ -185,7 +185,7 @@ fn the_largest_document_follows_the_bounds_of_11_19() {
     let bytes = doc.to_value().to_string();
     assert!(bytes.len() < 64 * 1024, "{} bytes", bytes.len());
     let v: Value = serde_json::from_str(&bytes).unwrap();
-    assert_eq!(v["actions"].as_array().unwrap().len(), 3);
+    assert_eq!(v["actions"].as_array().unwrap().len(), 5);
     assert_eq!(v["resource_types"].as_array().unwrap().len(), 3);
     assert_eq!(v["limits"].as_array().unwrap().len(), 2);
     assert_eq!(v["resources"].as_array().unwrap().len(), 64);

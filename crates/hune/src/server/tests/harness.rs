@@ -83,16 +83,6 @@ pub fn test_config(volume: &Path) -> Config {
     }
 }
 
-/// Makes the volume of the test a read-only store: no store is the primary store, so no edit is possible (13.10).
-/// The volume needs a dashboard before the start, because a read-only store with no dashboard stops the start.
-pub fn no_primary(c: &mut Config) {
-    for v in &mut c.storage.volumes {
-        v.primary = false;
-        v.title = Some("Main".to_owned());
-        v.history_keep = None;
-    }
-}
-
 /// Adds a read-only volume store `lab` with the title `Lab` at `path`. The directory must hold a dashboard before the
 /// start.
 pub fn add_read_only_volume(c: &mut Config, path: &Path) {

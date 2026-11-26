@@ -552,12 +552,12 @@ These rules make the document:
 | P 5.2: `server` equals the `aud` of the tokens. | `server` is `access.identity.audience`, and P 9.4 checks `aud` against the same key. |
 | P 5.2: a type name has 1 to 32 characters, `a` to `z` first, then `a` to `z`, `0` to `9` or `_`, not `service`. | `folder`, `dashboard`, `source`. |
 | P 5.2 and P 4.1: the parents have no cycle and a depth of 4 at most. | Depths 1, 2 and 1. |
-| P 5.2: an action name has parts of `a` to `z`, `0` to `9` and `_`, with `.` between them. No action `access`. | `dashboard.read`, `dashboard.write`, `source.query`. |
+| P 5.2: an action name has parts of `a` to `z`, `0` to `9` and `_`, with `.` between them. No action `access`. | `dashboard.read`, `dashboard.history`, `dashboard.export`, `dashboard.write`, `source.query`. |
 | P 5.2: `resource_types` of an action holds `service` or declared types, each one time. | Yes. |
 | P 5.2: each limit name of an action is declared, one time. | `max_rows` and `max_duration` are declared. |
 | P 5.2: a resource path is `<type>:<id>` segments, each id percent-encoded. | `source:<id>`. The id rule needs no encoding. |
-| P 5.2a: only the served actions. | `dashboard.write` and `source.query` need a primary store (13.10). |
-| P 5.3c: 64 KiB, 64 actions, 16 types, 256 resources, 16 limits, a label of 60 characters, a description of 300 characters, a unit of 20 characters. | At most 64 sources in all (13.7), 3 actions, 3 types, 2 limits. Labels have 60 characters at most (13.12, 13.12a). The largest document is less than 64 KiB. |
+| P 5.2a: only the served actions. | `dashboard.history` needs `server.history` equal to `true`, and `dashboard.export` needs `server.export` equal to `true` (13.8). |
+| P 5.3c: 64 KiB, 64 actions, 16 types, 256 resources, 16 limits, a label of 60 characters, a description of 300 characters, a unit of 20 characters. | At most 64 sources in all (13.7), 5 actions, 3 types, 2 limits. Labels have 60 characters at most (13.12, 13.12a). The largest document is less than 64 KiB. |
 | P 5.4: labels and descriptions in English. | Yes. |
 | P 6.1: a ceiling has `min` and `max`, whole numbers, `min` not above `max`. | `min` is 1. `max` is 1 or more, because each source limit is 1 or more. |
 | P 7.1: a ceiling name is `max_` and a noun. A lower value is stricter. A duration is in whole seconds. | `max_rows` (unit `row`) and `max_duration` (unit `second`). |

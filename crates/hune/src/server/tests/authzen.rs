@@ -32,7 +32,13 @@ fn grants(list: Vec<(&'static str, &'static str)>) -> impl Fn(&Q) -> Ans + Send 
 }
 
 fn allow_all() -> impl Fn(&Q) -> Ans + Send + Sync + 'static {
-    grants(vec![("dashboard.read", ""), ("dashboard.write", ""), ("source.query", "")])
+    grants(vec![
+        ("dashboard.read", ""),
+        ("dashboard.history", ""),
+        ("dashboard.export", ""),
+        ("dashboard.write", ""),
+        ("source.query", ""),
+    ])
 }
 
 fn fill_two(root: &Path) {
@@ -367,7 +373,7 @@ async fn u113_a_refusal_for_an_approval_gives_403_and_the_code_approval_cannot_w
         ("approval_expired", serde_json::json!({"error": "approval_cannot_wait"})),
         (
             "unknown_subject",
-            serde_json::json!({"error": {"action": "dashboard.read", "code": "forbidden",
+            serde_json::json!({"error": {"action": "dashboard.export", "code": "forbidden",
             "message": "You have no right for this operation.", "retryable": false}}),
         ),
     ] {
@@ -616,7 +622,7 @@ async fn a43_a_save_asks_source_query_on_each_source_of_the_document_with_no_usa
     assert_eq!(r.json()["error"]["action"], "dashboard.write");
     assert!(pdp.asked().iter().all(|q| q.action == "source.query"), "the use is not asked: {:?}", shorts(&pdp));
     // The check applies also when the SQL text did not change: a save of the same document.
-    pdp.set_rules(grants(vec![("dashboard.read", ""), ("dashboard.write", "")]));
+    pdp.set_rules(grants(vec![("dashboard.read", ""), ("dashboard.export", ""), ("dashboard.write", "")]));
     let current = rget(&h, "/api/dashboards/nodes?download=true", "user:alice").await.text();
     let e = etag_of(&rget(&h, "/api/dashboards/nodes", "user:alice").await);
     let r = req(
@@ -703,7 +709,7 @@ async fn a_create_a_move_and_a_restore_ask_their_questions_in_order() {
     pdp.clear();
     rget(&h, "/api/dashboards/fresh", "user:alice").await;
     assert_eq!(shorts(&pdp)[0], pair("dashboard.read", "folder:transit/dashboard:fresh"));
-    // A restore of a version that does not exist asks the use only, then 404 (11.23, rule 4).
+    // A restore of a version that does not exist asks the use with the history right, then 404 (11.23, rule 4).
     let e = etag_of(&rget(&h, "/api/dashboards/fresh", "user:alice").await);
     pdp.clear();
     let r = req(
@@ -716,12 +722,24 @@ async fn a_create_a_move_and_a_restore_ask_their_questions_in_order() {
     )
     .await;
     assert_eq!((r.status, r.code().as_str()), (404, "not_found"));
-    assert_eq!(shorts(&pdp), vec![pair("dashboard.write", "folder:transit/dashboard:fresh")]);
-    // A history of a version that does not exist: the use, then 404.
+    assert_eq!(
+        shorts(&pdp),
+        vec![
+            pair("dashboard.history", "folder:transit/dashboard:fresh"),
+            pair("dashboard.write", "folder:transit/dashboard:fresh")
+        ]
+    );
+    // A history of a version that does not exist: the read, the use, then 404.
     pdp.clear();
     let r = rget(&h, "/api/dashboards/fresh/history/99", "user:alice").await;
     assert_eq!(r.status, 404);
-    assert_eq!(shorts(&pdp), vec![pair("dashboard.read", "folder:transit/dashboard:fresh")]);
+    assert_eq!(
+        shorts(&pdp),
+        vec![
+            pair("dashboard.read", "folder:transit/dashboard:fresh"),
+            pair("dashboard.history", "folder:transit/dashboard:fresh")
+        ]
+    );
 }
 
 #[tokio::test]
@@ -786,8 +804,13 @@ async fn the_preview_asks_source_query_and_gives_its_ceilings() {
 
 #[tokio::test]
 async fn a44_the_lists_show_only_what_the_subject_can_see() {
-    let pdp =
-        Pdp::start(grants(vec![("dashboard.read", "folder:transit"), ("dashboard.write", "folder:transit")])).await;
+    let pdp = Pdp::start(grants(vec![
+        ("dashboard.read", "folder:transit"),
+        ("dashboard.write", "folder:transit"),
+        ("dashboard.history", "folder:transit"),
+        ("dashboard.export", "folder:transit"),
+    ]))
+    .await;
     let h = start(&pdp, Duration::ZERO).await;
     pdp.clear();
     let r = rget(&h, "/api/dashboards", "user:alice").await;
@@ -795,12 +818,12 @@ async fn a44_the_lists_show_only_what_the_subject_can_see() {
     let items = r.json()["items"].as_array().unwrap().clone();
     assert_eq!(items.len(), 1, "{items:?}");
     assert_eq!(items[0]["uid"], "nodes");
-    assert_eq!(items[0]["access"]["write"], true);
+    assert_eq!(items[0]["access"], json!({"write": true, "history": true, "export": true}));
     assert!(r.json()["next"].is_null());
-    // The questions: 2 folders (display), then read and write on the visible folder (11.25).
+    // The questions: 2 folders (display), then read, write, history and export on the visible folder (11.25).
     let asked = pdp.asked();
     assert_eq!(asked.iter().filter(|q| q.subtree).count(), 2);
-    assert_eq!(asked.len(), 4, "{:?}", shorts(&pdp));
+    assert_eq!(asked.len(), 6, "{:?}", shorts(&pdp));
     // The folders.
     pdp.clear();
     let r = rget(&h, "/api/folders", "user:alice").await;
@@ -817,7 +840,7 @@ async fn a44_the_lists_show_only_what_the_subject_can_see() {
     assert_eq!(items.len(), 1, "{items:?}");
     assert_eq!(items[0]["uid"], "dash2");
     assert_eq!(items[0]["folder"], "ops");
-    assert_eq!(items[0]["access"]["write"], false);
+    assert_eq!(items[0]["access"], json!({"write": false, "history": false, "export": false}));
     // A subject with no grant sees an empty list: not an error.
     pdp.set_rules(grants(vec![]));
     let r = rget(&h, "/api/dashboards", "user:nobody").await;
@@ -904,7 +927,8 @@ async fn the_action_document_has_the_same_bytes_at_each_read_and_asks_nothing() 
     assert_eq!(pdp.asked().len(), 0);
     let doc = a.json();
     assert_eq!(doc["server"], AUDIENCE);
-    assert_eq!(doc["actions"].as_array().unwrap().len(), 3);
+    let names: Vec<&str> = doc["actions"].as_array().unwrap().iter().map(|a| a["name"].as_str().unwrap()).collect();
+    assert_eq!(names, ["dashboard.read", "dashboard.history", "dashboard.export", "dashboard.write", "source.query"]);
     assert_eq!(
         doc["resources"],
         json!([
@@ -914,28 +938,124 @@ async fn the_action_document_has_the_same_bytes_at_each_read_and_asks_nothing() 
     );
 }
 
+/// A142: a key at `false` is a ceiling. The action is not published, the routes refuse without a question to the
+/// PDP, and the flags are `false` without a question.
 #[tokio::test]
-async fn with_editing_off_only_dashboard_read_is_published_and_no_question_comes_for_the_others() {
+async fn a142_the_keys_at_false_publish_no_action_and_ask_no_question() {
     let pdp = Pdp::start(allow_all()).await;
     let h = Harness::start_with(test_timing(), fill_two, |c| {
         authzen(c, &pdp.url(), Duration::ZERO);
-        super::harness::no_primary(c);
+        c.server.history = false;
+        c.server.export = false;
     })
     .await;
     let doc = get(h.addr, "/.well-known/procurauth/actions").await.json();
     let names: Vec<&str> = doc["actions"].as_array().unwrap().iter().map(|a| a["name"].as_str().unwrap()).collect();
-    assert_eq!(names, ["dashboard.read"]);
-    assert!(doc.get("resources").is_none(), "no published action takes the type source");
+    assert_eq!(names, ["dashboard.read", "dashboard.write", "source.query"]);
     pdp.clear();
-    let r = rget(&h, "/api/folders", "user:alice").await;
-    assert_eq!(r.json()["access"]["create"], false);
-    assert_eq!(r.json()["items"][0]["access"]["write"], false);
-    assert!(pdp.asked().iter().all(|q| q.action == "dashboard.read"));
-    let r = rget(&h, "/api/sources", "user:alice").await;
-    assert_eq!(r.json()["items"], json!([]));
-    let r = req(&h, "POST", "/api/folders", "user:alice", &[JSON], br#"{"id":"x","title":"X"}"#).await;
-    assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"));
-    assert!(pdp.asked().iter().all(|q| q.action == "dashboard.read"), "no question for a write route");
+    // The history routes and the restore: 403 history_disabled, for a uid that exists and for one that does not.
+    let ifm = ("If-Match", "\"0000000000000000000000000000000000000000000000000000000000000000\"");
+    let idem = ("Idempotency-Key", "0194b3c6-6f1e-7d2a-9b4c-00000000a142");
+    let mut seen = Vec::new();
+    for uid in ["nodes", "nothere"] {
+        for (method, path, body) in [
+            ("GET", format!("/api/dashboards/{uid}/history"), Vec::new()),
+            ("GET", format!("/api/dashboards/{uid}/history/1"), Vec::new()),
+            ("GET", format!("/api/dashboards/{uid}/history/1?download=true"), Vec::new()),
+            ("POST", format!("/api/dashboards/{uid}/restore"), br#"{"version":1}"#.to_vec()),
+        ] {
+            let r = req(&h, method, &path, "user:alice", &[JSON, ifm, idem], &body).await;
+            assert_eq!((r.status, r.code().as_str()), (403, "history_disabled"), "{method} {path}");
+            seen.push(r.text());
+        }
+    }
+    assert!(seen[..4] == seen[4..], "the same bytes for a uid that exists and for one that does not");
+    // The download: 403 export_disabled, with the same bytes for both uids.
+    let a = rget(&h, "/api/dashboards/nodes?download=true", "user:alice").await;
+    let b = rget(&h, "/api/dashboards/nothere?download=true", "user:alice").await;
+    assert_eq!((a.status, a.code().as_str()), (403, "export_disabled"));
+    assert_eq!(a.text(), b.text());
+    assert_eq!(pdp.asked().len(), 0, "no question for a route that a key refuses");
+    // A plain read works and has the flags false, with no question for the two actions.
+    let r = rget(&h, "/api/dashboards/nodes", "user:alice").await;
+    assert_eq!(r.status, 200, "{}", r.text());
+    assert_eq!(r.json()["access"], json!({"write": true, "history": false, "export": false}));
+    let r = rget(&h, "/api/dashboards", "user:alice").await;
+    assert_eq!(r.json()["items"][0]["access"], json!({"write": true, "history": false, "export": false}));
+    assert!(pdp.asked().iter().all(|q| q.action == "dashboard.read" || q.action == "dashboard.write"));
+}
+
+/// A144: the PDP restricts what a key allows. A subject without `dashboard.history` or `dashboard.export` gets a
+/// 403 with the action of the route, and the flags are `false`.
+#[tokio::test]
+async fn a144_the_pdp_restricts_the_history_and_the_export() {
+    let pdp = Pdp::start(grants(vec![("dashboard.read", ""), ("dashboard.write", ""), ("source.query", "")])).await;
+    let h = start(&pdp, Duration::ZERO).await;
+    let r = rget(&h, "/api/dashboards/nodes", "user:alice").await;
+    assert_eq!(r.json()["access"], json!({"write": true, "history": false, "export": false}));
+    // One save makes the version 2 (the version 1 is the file that was there first).
+    let e0 = etag_of(&r);
+    let r = req(
+        &h,
+        "PUT",
+        "/api/dashboards/nodes",
+        "user:alice",
+        &[JSON, ("If-Match", &format!("\"{e0}\"")), ("Idempotency-Key", &key())],
+        &put_body(&doc_text("nodes", "Two"), "m"),
+    )
+    .await;
+    assert_eq!(r.status, 200, "{}", r.text());
+    for (path, action) in [
+        ("/api/dashboards/nodes/history", "dashboard.history"),
+        ("/api/dashboards/nodes/history/1", "dashboard.history"),
+        ("/api/dashboards/nodes?download=true", "dashboard.export"),
+    ] {
+        pdp.clear();
+        let r = rget(&h, path, "user:alice").await;
+        assert_eq!((r.status, r.code().as_str()), (403, "forbidden"), "{path}");
+        assert_eq!(r.json()["error"]["action"], action, "{path}");
+    }
+    // The read is asked first, as the other permission of the use.
+    pdp.clear();
+    let _ = rget(&h, "/api/dashboards/nodes/history", "user:alice").await;
+    assert_eq!(
+        shorts(&pdp),
+        vec![
+            pair("dashboard.read", "folder:transit/dashboard:nodes"),
+            pair("dashboard.history", "folder:transit/dashboard:nodes")
+        ]
+    );
+    // A restore needs the history right and the write right: the write right alone is not enough.
+    let e = etag_of(&rget(&h, "/api/dashboards/nodes", "user:alice").await);
+    let r = req(
+        &h,
+        "POST",
+        "/api/dashboards/nodes/restore",
+        "user:alice",
+        &[JSON, ("If-Match", &format!("\"{e}\"")), ("Idempotency-Key", &key())],
+        br#"{"version":1}"#,
+    )
+    .await;
+    assert_eq!((r.status, r.code().as_str()), (403, "forbidden"));
+    assert_eq!(r.json()["error"]["action"], "dashboard.write");
+    // With the history right and no write right: the same refusal.
+    pdp.set_rules(grants(vec![("dashboard.read", ""), ("dashboard.history", "")]));
+    let r = rget(&h, "/api/dashboards/nodes/history", "user:alice").await;
+    assert_eq!(r.status, 200, "{}", r.text());
+    let r = rget(&h, "/api/dashboards/nodes/history/1?download=true", "user:alice").await;
+    assert_eq!(r.status, 200, "the download of a version needs the history right only: {}", r.text());
+    let r = req(
+        &h,
+        "POST",
+        "/api/dashboards/nodes/restore",
+        "user:alice",
+        &[JSON, ("If-Match", &format!("\"{e}\"")), ("Idempotency-Key", &key())],
+        br#"{"version":1}"#,
+    )
+    .await;
+    assert_eq!((r.status, r.code().as_str()), (403, "forbidden"));
+    let r = rget(&h, "/api/dashboards/nodes", "user:alice").await;
+    assert_eq!(r.json()["access"], json!({"write": false, "history": true, "export": false}));
 }
 
 // ---- The options route ---------------------------------------------------------------------------
