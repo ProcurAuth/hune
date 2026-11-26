@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { EXACT, LEAST, MOST, boundHolds, setMeasurer } from "../../web/js/preview/common.js";
+import { compareLabel } from "../browser/lib/preview_measure.mjs";
 import { matchClass, possible, setGutter, warningValues } from "../../web/js/preview/grids.js";
 import { axisCase, build as heat, fixedTicks, noPicture } from "../../web/js/preview/heatmap.js";
 import { build as hist, legendFacts } from "../../web/js/preview/histogram.js";
@@ -379,6 +380,16 @@ test("timeline: a panel that can never draw has an empty preview, and the draw m
   assert.deepEqual(a.elements, b.elements);
   const bad = { defaults: {}, overrides: [{ match: { by: "regex", value: "/(/" }, set: { unit: "ms" } }] };
   assert.deepEqual(build(ts("state_timeline", {}, bad), BOX).notes, ["warning"]);
+});
+
+test("the harness compares a bar with a text by width and vertical centre, and one-sided in x for a bound", () => {
+  const text = [20, 10, 30, 15]; // a text box of 15 px
+  assert.equal(compareLabel("exact", [20, 13.5, 30, 8], text).verdict, "ok", "the same centre, the same x");
+  assert.equal(compareLabel("exact", [20, 15, 30, 8], text).verdict, "fail", "1 px lower");
+  assert.equal(compareLabel("exact", [20, 13.5, 31, 8], text).verdict, "fail", "wider");
+  assert.equal(compareLabel("least", [7, 13.5, 30, 8], text).verdict, "ok", "at the left of the loaded text: the gutter can only grow");
+  assert.equal(compareLabel("least", [21, 13.5, 30, 8], text).verdict, "fail", "at the right of the loaded text");
+  assert.equal(compareLabel("data", [0, 0, 1, 1], text).verdict, "data");
 });
 
 // ---- the rules of the three files ---------------------------------------------------------------------------------------------------
