@@ -250,12 +250,22 @@ export function applyLegend(host, chart, legend) {
   // A legend that is off has no placement: the grid of the placement "right" would keep its gap and narrow the plot (10.3h, rule 15).
   host.dataset.legendPlacement = legend.show === false ? "bottom" : legend.placement || "bottom";
   if (legend.mode === "list" || legend.mode === "table") chart.setLegendMode(legend.mode);
+  // A table with no value column shows the column "Name" only (4.26). The engine falls back to its five columns: the CSS hides them.
+  const columns = (legend.values || []).filter((v) => CALC_COLUMNS.has(v));
+  if (legend.mode === "table" && !columns.length) host.dataset.legendColumns = "none";
+  else delete host.dataset.legendColumns;
   const legendEl = chart.root.querySelector(".chartCore__legend");
   if (!legendEl) return;
   let busy = false;
+  // A legend that the engine hides (every entry has `hide_from.legend`) takes no room: the placement "bottom" keeps no grid gap (9.19).
+  const sync = () => {
+    if (legend.show === false) return;
+    host.dataset.legendPlacement = legendEl.hidden ? "bottom" : legend.placement || "bottom";
+  };
   const place = () => {
     if (busy || legend.placement !== "right") return;
     busy = true;
+    sync();
     // Measure the legend beside the plot, then decide.
     const had = host.hasAttribute("data-legend-fallback");
     if (had) host.removeAttribute("data-legend-fallback");

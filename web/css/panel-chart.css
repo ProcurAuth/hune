@@ -69,6 +69,10 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 
 .panel__plot .chartCore__legendList { max-height: var(--legend-max, none); overflow-y: auto; }
 
+/* `legend.values` = [] (4.26): the table has the column "Name" only. The engine builds its five base columns for an empty list (common.js,
+   applyLegend sets data-legend-columns). The cells stay in the markup, so the engine can write them. */
+.panel__plot[data-legend-columns="none"] .chartCore__legendTable :is(th, td):not(:first-child) { display: none; }
+
 .panel__plot .chartCore__legendTable { font-size: var(--fs-sm); }
 
 .panel__plot .chartCore__legendTable th,
@@ -194,18 +198,20 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
   scrollbar-gutter: auto;
 }
 
+/* Under the plot the legend keeps the cap of 35 % of the height and scrolls beyond it, as with "bottom" (9.19). */
 .panel__plot[data-legend-fallback] .chartCore__legendList {
   flex: 1 1 auto;
   flex-direction: row;
   flex-wrap: wrap;
-  max-height: none;
-  overflow: visible;
+  max-height: var(--legend-max, none);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* The table fills the row, and the cells are tighter so that no column is cut at 390 px. */
 .panel__plot[data-legend-fallback] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
 
-.panel__plot[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: 8rem; overflow-y: auto; overflow-x: hidden; }
+.panel__plot[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: var(--legend-max, 8rem); overflow-y: auto; overflow-x: hidden; }
 
 .panel__plot[data-legend-fallback] .chartCore__legendTable th,
 .panel__plot[data-legend-fallback] .chartCore__legendTable td { padding-inline: var(--space-4); }
