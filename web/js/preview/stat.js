@@ -94,8 +94,9 @@ export function warningLines(sentences, width) {
   const words = sentences.join(" ").split(" ").filter((w) => w !== "");
   const lines = [];
   let first = true;
-  let line = { x: WARNING_ICON + space, w: 0, n: 0 };
-  let cursor = line.x;
+  // The text node of the loaded line starts with the space after the icon, so the first bar starts at the right edge of the icon.
+  let line = { x: WARNING_ICON, w: space, n: 0 };
+  let cursor = WARNING_ICON + space;
   for (const word of words) {
     const w = domTextWidth(word, WARNING_SIZE);
     const gap = line.n > 0 ? space : 0;

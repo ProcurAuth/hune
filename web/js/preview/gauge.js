@@ -26,8 +26,9 @@ import { interpolateDisplayName } from "../names.js";
 import { angleOf, bandEntries, cellParts, gaugeGeometry, gridCells, scaleOf, stackCells } from "../panels/gauge.js";
 import { floorUnit } from "../panels/box.js";
 
-const START = 0.9; // the angles of the arc, in units of pi (gauge.js)
-const END = 2.1;
+// The ends of the arc, in units of pi: the loaded gauge limits an angle to them, so a value outside the scale gives one end.
+const START = angleOf(-Infinity, 0, 1);
+const END = angleOf(Infinity, 0, 1);
 // The width that stands for a text of any width: the geometry of the lower bound of the radius (see `geometryOf`).
 const WIDE_TEXT = 1e9;
 // The members of the field configuration that an override can set and that a part of the preview reads.
