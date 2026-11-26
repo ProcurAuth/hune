@@ -47,6 +47,11 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
 - The preview is now in the folder `web/js/preview/`: a registry (`index.js`), shared helpers (`common.js`) and one module for each of the 12 families. Each family module gives the neutral form for now: an empty body with the light and the dots. The module `panel_preview.js`, the function `previewOf` of `panel_wait.js` and the heuristic sizes are gone. The browser cases B280 to B282 are replaced by B320 and B321.
 - The measurement harness `tests/browser/lib/preview_measure.mjs` and the command `tests/browser/preview_measure.mjs` measure each preview and each loaded panel. They give the differences by tolerance class (9.11).
+- The preview of a time series, an xy chart and a bar chart now draws the frame of the chart. It uses the markup and the classes of the loaded chart. The legend, the gutters and the band under the plot then have the loaded sizes. The legend is the least one that the document proves. The plot is exact when the document fixes it, and it holds the loaded plot in the other cases.
+- A time series with a fixed range, and a legend that is off or hidden, draws its y labels as bars at the exact places. The x labels of a time series come from the range of the request (`rt.rangeOf`), with the ticks and the layout of the chart engine. A series that draws bars keeps the span of the data, so it has no x label.
+- The plot of these charts has a decorative form in neutral tones. It is one line with the style of the document (interpolation, width, dash, fill, dots), or bars with heights that vary. The preview draws no colour of the document, no count and no value.
+- The horizontal bar chart in the preview follows the shared legend object. It has a list or a table, hidden entries, the cap of 35 % and the move under the plot. A percent stack draws the label "100%" at its place.
+- The preview builds again when a font loads. The harness part `label` of a chart is now `label-y` and `label-x`. The browser cases B330 to B339 and the files `preview_timeseries.test.mjs` and `preview_barchart.test.mjs` test the two families.
 
 ### Fixed
 
