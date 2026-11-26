@@ -57,7 +57,7 @@ The profile has these operations.
 
 | Operation | Request | Action and node |
 |---|---|---|
-| `use_plain` | `GET /api/dashboards/conf-dash?download=true` | `dashboard.read` on `dashboard:conf-dash` below `folder:conf` |
+| `use_plain` | `POST /api/dashboards/conf-dash/panels/1/query` | `dashboard.read` on `dashboard:conf-dash` below `folder:conf` |
 | `use_ceiling` | `POST /api/dashboards/conf-dash/panels/1/query` | `dashboard.read`, ceiling `max_rows`, value 1000 |
 | `use_multi` | `PUT /api/dashboards/conf-dash` | `dashboard.write` on `dashboard:conf-dash`, other `source.query` on `source:conf` |
 
@@ -65,9 +65,11 @@ The profile has no `use_budget`, no `use_service`, no `mcp` and no `approvals`. 
 
 ### A deviation from section 11.32
 
-Section 11.32 gives the request `GET /api/dashboards/conf-dash` for `use_plain`. This request asks two questions: `dashboard.read` for the use, and `dashboard.write` for the flag `access.write` (section 11.25). Cases such as U01 count the questions of the subject and expect one. With this request, 10 cases fail.
+Section 11.32 gives the request `GET /api/dashboards/conf-dash` for `use_plain`. This request asks four questions: `dashboard.read` for the use, and the flags `access.write`, `access.history` and `access.export` (section 11.25). Cases such as U01 count the questions of the subject and expect one. With this request, 10 cases fail.
 
-The run uses `GET /api/dashboards/conf-dash?download=true`. Section 11.21 says that this request asks the same use question. It gives no flag, so it asks one question. It is an open question if section 11.32 follows the run or the run follows section 11.32.
+The request `GET /api/dashboards/conf-dash?download=true` asks two questions: `dashboard.export` for the use, and `dashboard.read` as the other permission (section 11.21). It fails the same cases.
+
+The run uses `POST /api/dashboards/conf-dash/panels/1/query`, with the body of `use_ceiling`. This request asks one question, `dashboard.read` for the use, and the PDP gives no ceiling. It is an open question if section 11.32 follows the run or the run follows section 11.32.
 
 ## How to run
 

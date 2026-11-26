@@ -13,8 +13,8 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
 
-const LAB_UID: &str = "lab-one";
-const LAB_FOLDER: &str = "labops";
+pub(super) const LAB_UID: &str = "lab-one";
+pub(super) const LAB_FOLDER: &str = "labops";
 
 /// The folder file of a volume (5.10).
 fn folder_file(title: &str) -> String {
@@ -33,7 +33,7 @@ fn lab_volume() -> (tempfile::TempDir, PathBuf) {
 
 /// A server with the primary store `main` (the folders `transit` and `ops`, the dashboard `nodes`) and the read-only
 /// store `lab`.
-async fn start_two() -> (Harness, tempfile::TempDir, PathBuf) {
+pub(super) async fn start_two() -> (Harness, tempfile::TempDir, PathBuf) {
     let (dir, root) = lab_volume();
     let r = root.clone();
     let h = Harness::start_with(test_timing(), fill, move |c| add_read_only_volume(c, &r)).await;
@@ -80,6 +80,9 @@ async fn the_list_the_folders_and_the_read_tell_the_store_and_the_right_to_write
     );
     assert_eq!(lab["folder"], LAB_FOLDER);
     assert!(lab.get("stale").is_none());
+    // The history is for the primary store only. The export is the same for both stores.
+    assert_eq!(nodes["access"], json!({"write": true, "history": true, "export": true}));
+    assert_eq!(lab["access"], json!({"write": false, "history": false, "export": true}));
     let folders = get_json(&h, "/api/folders").await;
     let f = |id: &str| folders["items"].as_array().unwrap().iter().find(|i| i["id"] == id).cloned().unwrap();
     assert_eq!(
@@ -107,13 +110,33 @@ async fn the_list_the_folders_and_the_read_tell_the_store_and_the_right_to_write
     assert_eq!(dl.body, doc_text(LAB_UID, "Lab one").as_bytes());
 }
 
+/// A143: a dashboard of a read-only store has no history.
 #[tokio::test]
-async fn a_read_only_dashboard_has_no_history() {
+async fn a143_a_read_only_dashboard_has_no_history() {
     let (h, _d, _r) = start_two().await;
-    let j = get_json(&h, &format!("/api/dashboards/{LAB_UID}/history")).await;
-    assert_eq!(j["items"], json!([]));
-    let r = super::harness::get(h.addr, &format!("/api/dashboards/{LAB_UID}/history/1")).await;
-    assert_eq!((r.status, r.code().as_str()), (404, "not_found"));
+    for path in [
+        format!("/api/dashboards/{LAB_UID}/history"),
+        format!("/api/dashboards/{LAB_UID}/history/1"),
+        format!("/api/dashboards/{LAB_UID}/history/1?download=true"),
+    ] {
+        let r = super::harness::get(h.addr, &path).await;
+        assert_eq!((r.status, r.code().as_str()), (404, "history_unavailable"), "{path}");
+    }
+    // The primary store keeps its history, and the same route works there.
+    let r = super::harness::get(h.addr, "/api/dashboards/nodes/history").await;
+    assert_eq!(r.status, 200);
+    // A restore in a read-only store is a write into it: `read_only_store`.
+    let list = get_json(&h, "/api/dashboards").await;
+    let etag = item(&list, LAB_UID)["etag"].as_str().unwrap().to_owned();
+    let r = call(
+        h.addr,
+        "POST",
+        &format!("/api/dashboards/{LAB_UID}/restore"),
+        &[JSON, ("If-Match", &format!("\"{etag}\"")), ("Idempotency-Key", "0194b3c6-6f1e-7d2a-9b4c-00000000a143")],
+        br#"{"version":1}"#,
+    )
+    .await;
+    assert_eq!((r.status, r.code().as_str()), (403, "read_only_store"));
 }
 
 #[tokio::test]
@@ -277,27 +300,6 @@ async fn a_folder_id_a_folder_title_and_a_uid_of_another_store_are_refused_in_th
     let folders = get_json(&h, "/api/folders").await;
     let research = folders["items"].as_array().unwrap().iter().find(|i| i["id"] == "research").unwrap();
     assert_eq!((research["store"].as_str(), research["read_only"].as_bool()), (Some("main"), Some(false)));
-}
-
-#[tokio::test]
-async fn with_no_primary_store_the_write_routes_give_editing_disabled_and_the_reads_work() {
-    let (_dir, root) = lab_volume();
-    let r = root.clone();
-    let h = Harness::start_with(
-        test_timing(),
-        |_| {},
-        move |c| {
-            c.storage.volumes.clear();
-            add_read_only_volume(c, &r);
-        },
-    )
-    .await;
-    let j = get_json(&h, "/api/session").await;
-    assert_eq!(j["editing"], false);
-    let r = call(h.addr, "POST", "/api/folders", &[JSON], br#"{"id":"x","title":"X"}"#).await;
-    assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"));
-    let one = get_json(&h, &format!("/api/dashboards/{LAB_UID}")).await;
-    assert_eq!((one["read_only"].as_bool(), one["access"]["write"].as_bool()), (Some(true), Some(false)));
 }
 
 // ---- The start rules (5.43) ----

@@ -81,6 +81,10 @@ pub struct ServerConfig {
     pub ops_listen: std::net::SocketAddr,
     /// The prefix of the routes of `listen`.
     pub base_path: String,
+    /// True gives the history of a dashboard of the primary store (6.17). The key has no default.
+    pub history: bool,
+    /// True gives the file of the current document of a dashboard (6.14). The key has no default.
+    pub export: bool,
     /// True adds the expanded SQL to the answer of a panel query (6.20). The default is false.
     pub query_inspect: bool,
     /// The most copies of one panel that repeats (4.13a). The default is `MAX_REPEAT_PER_PANEL`.
@@ -156,8 +160,8 @@ pub struct TelemetryEnabled {
 
 /// The block `storage` (13.10): the stores of the dashboards.
 ///
-/// The store with `primary = true` is the only store that accepts writes. Editing exists if and only if a primary
-/// store exists. Each other store is read-only.
+/// Exactly one store has `primary = true`. It is the only store that accepts writes and has a history. Each other
+/// store is read-only.
 #[derive(Debug, Clone)]
 pub struct StorageConfig {
     /// The blocks `storage.volume "<id>"`, in file order.
@@ -185,11 +189,6 @@ impl StorageConfig {
             return Some(PrimaryRef::Volume(v));
         }
         self.postgres.as_ref().filter(|p| p.primary).map(PrimaryRef::Postgres)
-    }
-
-    /// True when edits are possible: a primary store exists (13.10).
-    pub fn editing(&self) -> bool {
-        self.primary().is_some()
     }
 
     /// The id of the primary store: the label of the volume, or `postgres`.
@@ -487,7 +486,7 @@ const HIDDEN_VALUE: &str = "<hidden>";
 /// `server.transform_max_cells` and `server.list_filters_min_dashboards` are constants of the key table, because the server never builds a frame.
 fn defaulted_keys() -> [(&'static str, String, &'static str); 7] {
     [
-        ("server.query_inspect", "false".to_string(), "server.base_path"),
+        ("server.query_inspect", "false".to_string(), "server.export"),
         ("server.repeat_max_per_panel", hune_core::limits::MAX_REPEAT_PER_PANEL.to_string(), "server.query_inspect"),
         (
             "server.repeat_max_per_section",

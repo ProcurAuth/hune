@@ -170,18 +170,6 @@ pub fn contradictions(c: &Checked, stage: &Stage2) -> Vec<ConfigError> {
     // C2, C10 and C30 to C34: the stores.
     store_rules(c, &mut errors);
 
-    // C21: server.query_inspect and the right to see the SQL in the mode authzen. The right needs
-    // `source.query` and `dashboard.write`, and a deployment with no primary store does not publish them (11.18).
-    if let (Some(true), Some("authzen")) = (boolean(c, "server.query_inspect"), text(c, "access.mode"))
-        && !super::stage2::has_primary(c)
-    {
-        errors.push(contradiction(
-            "server.query_inspect, access.mode, storage",
-            "`server.query_inspect` (true) in the mode `authzen` needs a primary store (`primary = true` on one store), because the right to see the SQL is `source.query` with `dashboard.write`; found no primary store"
-                .to_string(),
-        ));
-    }
-
     // C28 and C29: the repeat limits of the dashboard. A key that is absent has its default (13.7).
     let repeat = |key: &str, default: usize| match c.get(key).map(|k| &k.value) {
         Some(Value::Int(n)) => *n,
@@ -453,7 +441,7 @@ fn path_holds(outer: &str, inner: &str) -> bool {
     inner == outer || inner.strip_prefix(outer).is_some_and(|rest| rest.starts_with('/'))
 }
 
-/// C2, C10 and C30 to C34: at least one store, one primary store at most, the keys that follow the primary,
+/// C2, C10 and C30 to C34: at least one store, exactly one primary store, the keys that follow the primary,
 /// the paths and the titles of the stores (13.10).
 fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
     let stores = store_views(c);
@@ -466,14 +454,26 @@ fn store_rules(c: &Checked, errors: &mut Vec<ConfigError>) {
         ));
         return;
     }
-    // C10: at most one primary store. Each later primary store is an error that names the first one.
+    // C10: exactly one primary store. With none, the error lists the store blocks. With several, each later
+    // primary store is an error that names the first one.
     let primaries: Vec<&StoreView<'_>> = stores.iter().filter(|s| s.primary).collect();
+    if primaries.is_empty() {
+        let shown: Vec<String> = stores.iter().map(|s| format!("`{}`", s.shown)).collect();
+        let list = match shown.as_slice() {
+            [one] => one.clone(),
+            [first @ .., last] => format!("one of {} and {last}", first.join(", ")),
+            [] => String::new(),
+        };
+        let list = if stores.len() == 1 { list } else { format!("exactly {list}") };
+        errors
+            .push(contradiction("storage", format!("the file has no primary store; give `primary = true` to {list}")));
+    }
     for later in primaries.iter().skip(1) {
         let first = &primaries[0];
         errors.push(contradiction(
             &format!("{}.primary, {}.primary", first.shown, later.shown),
             format!(
-                "`{}.primary` (true) and `{}.primary` (true): at most one store has `primary = true`",
+                "`{}.primary` (true) and `{}.primary` (true): exactly one store has `primary = true`",
                 first.shown, later.shown
             ),
         ));

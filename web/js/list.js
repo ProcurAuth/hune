@@ -78,9 +78,10 @@ export function filtersShown(session, count) {
   return count > min;
 }
 
-// What a card offers to the user (9.7). The pencil and the bin share one condition: editing is on and the item has the write right.
+// What a card offers to the user (9.7). The pencil and the bin share one condition: editing is on and the item has the write right. Export
+// and Download have their own flag, `access.export` (6.12).
 export function cardRights(item, editing) {
-  return { write: editing === true && Boolean(item.access && item.access.write) };
+  return { write: editing === true && Boolean(item.access && item.access.write), export: Boolean(item.access && item.access.export === true) };
 }
 
 // The badge of the last change on a card (9.7): the short age and the full time, or null. Hune knows a change only when it records one: the
@@ -331,19 +332,22 @@ export async function mount(ctx) {
     card.append(el("div", { class: "card__tags" }, ...(item.tags || []).map((t) => tagCardButton(t, interactiveTags))));
     // The three dots are the one menu of the card, at the right end of the head row, after the badge. A card that the user can edit offers Edit,
     // Export, Move and Delete; a read-only card has no menu. The server decides: a 403 shows the refusal. Edit opens the dashboard in the edit mode.
+    // Export and Download need `access.export` (6.12): an item without it has no such entry.
+    const exportOk = cardRights(item, editing).export;
     let entries = null;
     if (valid && rights.write) {
       entries = [
         { label: "Edit", icon: "edit", href: `${dashboardPath(item.uid, item.title)}?edit=1`, testid: `card-edit-${item.uid}` },
-        { label: "Export", icon: "download", onSelect: () => exportDashboard(item.uid) },
+        ...(exportOk ? [{ label: "Export", icon: "download", onSelect: () => exportDashboard(item.uid) }] : []),
         { label: "Move", icon: "folder", onSelect: () => callEditor("folders", "moveDashboard", item) },
         { label: "Delete", icon: "trash", danger: true, testid: `card-delete-${item.uid}`, onSelect: () => callEditor("folders", "deleteDashboard", item) },
       ];
     } else if (!valid) {
-      entries = [{ label: "Download", icon: "download", onSelect: () => exportDashboard(item.uid) }];
+      entries = [];
+      if (exportOk) entries.push({ label: "Download", icon: "download", onSelect: () => exportDashboard(item.uid) });
       if (rights.write) entries.push({ label: "Replace", icon: "upload", onSelect: () => callEditor("import_export", "importDialog", { uid: item.uid, etag: item.etag }) });
     }
-    if (entries) {
+    if (entries && entries.length) {
       const more = cardButton(`Actions for ${valid ? item.title : item.uid}`, `row-menu-${item.uid}`, "more", { class: "btn btn--ghost btn--icon card__more", "aria-haspopup": "menu", "aria-expanded": "false" });
       more.addEventListener("click", () => openMenu(more, entries, { align: "end", gap: 4 }));
       card.querySelector(".card__top").append(more);

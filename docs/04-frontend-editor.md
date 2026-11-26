@@ -519,7 +519,7 @@ Marks on a card:
 - A card whose item has a `stale` code shows a warning mark. Its name and its tooltip are "The file is not valid. The last valid version is shown.". The hook is `data-testid="card-stale-<uid>"`.
 - A stale card is a valid card: it keeps its title, its link and its tags. The mark never shows a path or a message of the parser.
 - Each mark is a picture 20 px high, so a card has the same height with and without it. The mark of a file that is not valid uses the token `--warning`.
-- "New dashboard", "Move" and "Import" list only the folders of the primary: they list the folders with `access.write` set to `true`. A server with no primary store has no button "New".
+- "New dashboard", "Move" and "Import" list only the folders of the primary: they list the folders with `access.write` set to `true`.
 
 The grid:
 
@@ -531,7 +531,8 @@ The three dots of a card:
 - A card that the user can edit has one button, the three dots. It is at the right end of the first row, after the badge. It is 24 px high, and it keeps the height of the row, so a card with and without it has the same rows.
 - The button has no visible label. Its accessible name and its tooltip give the name.
 - The user can edit a card when `editing` is `true` (6.10) and the item has `access.write` (6.12). The three dots have this one condition. "Delete" needs `dashboard.write`, as the route `DELETE api/dashboards/<uid>` does.
-- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Delete" has the danger colour.
+- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Export" shows only when `access.export` is `true`.
+- "Delete" has the danger colour.
 - "Edit" is a link to `d/<uid>/<slug>?edit=1`. It opens the dashboard in edit mode.
 - The menu "More actions" of the dashboard page has "Export" but not "Move" (9.9). Thus the menu of the card is the way to "Move" (10.7).
 - "Delete" runs the delete flow of 10.13 and names the dashboard in its dialog. The server decides. A `403` shows the usual refusal.
@@ -541,7 +542,7 @@ An item that is not valid (6.12):
 
 - Its card shows the uid in place of the title, and the badge "Not valid". It has no link to the dashboard and no "Edit" or "Delete".
 - The button "Show errors" opens the errors in the card, each with its pointer and its message.
-- The three dots of the card open a menu with "Download", which reads `GET api/dashboards/<uid>?download=true` (6.14). With `editing = true` and `access.write`, it also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
+- The three dots of the card show only when the menu has an entry. The menu has "Download" only when `access.export` is `true`. "Download" reads `GET api/dashboards/<uid>?download=true` (6.14). With `access.write`, the menu also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
 
 The header (9.6):
 
@@ -965,8 +966,8 @@ The menu "More actions" has these items, in this order. An item shows only when 
 
 - Up to 900 px: "Shift the time range back", "Shift the time range forward" and "Zoom out", then a separator. The buttons of these actions hide at this width.
 - In edit mode: the actions of 10.2, then a separator. They are "Revert all changes" (`data-testid="discard-menu"`, up to 640 px only), "Dashboard JSON" and "Settings". The menu of the button "Add" has "Add panel" and "Add section" (10.2).
-- "History" (`data-testid="history-button"`). Each user who can read the dashboard sees it.
-- "Export" (`data-testid="export-button"`). Each user who can read the dashboard sees it.
+- "History" (`data-testid="history-button"`). It shows only when `access.history` is `true`. A dashboard of a read-only store has no history, so it never shows there.
+- "Export" (`data-testid="export-button"`). It shows only when `access.export` is `true`.
 - A separator, then "Delete" (`data-testid="delete-button"`). It shows with `editing` true and `access.write`. It opens the dialog of 10.13, so the delete always asks first.
 
 The time control has two groups, and its buttons touch. Only the outer corners are round. There is no second refresh button and no separate interval control.
@@ -5751,7 +5752,7 @@ The key is `hune.draft.v1.<uid>`. The value is:
 | `422 invalid_document` | It lists the errors with their pointers. A click opens the JSON tab at the member. The draft stays. |
 | `422 idempotency_key_reused` | It makes a new `save_id` and shows "Select Save again.". |
 | `503 storage_unavailable`, a network error, or no answer after 30 s | It shows "Saving is not possible now. Your draft is kept in this browser." with "Retry". "Retry" sends the same request with the same `save_id`. |
-| `403 forbidden`, `403 editing_disabled` | It shows the message. The draft stays. |
+| `403 forbidden` | It shows the message. The draft stays. |
 | `401 unauthenticated` | The full page of 9.6. |
 | `413 payload_too_large` | It shows "The dashboard is too large.". |
 | `507 storage_full` | It shows "The store is full. Tell the operator.". |
@@ -5809,15 +5810,15 @@ Two other cases of the same `409`:
 
 ### 10.11 History: list, view, diff and restore
 
-"History" in the menu "More actions" (9.9) opens `editview=history`. Each subject that can read the dashboard can read its history
-(`dashboard.read`, 11).
+"History" in the menu "More actions" (9.9) opens `editview=history`. The page exists only when `access.history` is `true` (6.17, 11).
+A URL that a user opens by hand, without this right, shows the page of `403` of 9.8 ("You have no access to this dashboard."). The page makes no request to the history routes. The routes refuse too: `history_disabled`, `forbidden` or `history_unavailable`.
 
 List (`data-testid="history-list"`):
 
 - The columns are "Version", "Kind", "Saved at" (in the zone of the dashboard), "Saved by", "Message" and "Size". The
   newest version is first, with the mark "current". Under 900 px the columns "Kind", "Saved by" and "Size" hide.
 - "Load more" reads the next page while `next` is not `null` (6.24).
-- Each row has "View" and "Compare with current".
+- Each row has "View" and "Compare with current". With `access.export` equal to `true`, the current text is `download=true` of 6.14. Without it, the text of the newest version of the list stands for the current text.
 - A row that is not current, not a deletion version and not an `external` version without bytes also has "Restore". This needs `editing = true` and
   `access.write` on the dashboard.
 - The user can select two rows with their check boxes. "Compare" then shows the diff from the older to the newer one.
@@ -5826,7 +5827,7 @@ View (`editview=history&version=<n>`):
 
 - The page shows version `n` as a read-only dashboard, with the banner "Version <n> of <time>, by <subject>. This view
   is read-only.".
-- The banner has "Restore this version" (when permitted), "Compare with current", "Export this version" and "Back to
+- The banner has "Restore this version" (when permitted), "Compare with current", "Export this version" (only when `access.export` is `true`) and "Back to
   the history".
 - Each panel shows the text "Data not shown".
 - The banner has one button "Show data" for the whole page, when the user can use the preview. This is true when `editing` is `true`
@@ -5856,7 +5857,8 @@ Restore:
 
 Export:
 
-- "Export" of the dashboard menu, of the menu of a card and of a version view reads `download=true` (6.14, 6.17).
+- "Export" of the dashboard menu and of the menu of a card reads `download=true` (6.14). Both need `access.export` equal to `true`.
+- "Export this version" of a version view reads `download=true` (6.17). It needs `access.history` and `access.export` equal to `true`.
 - The browser saves the canonical bytes as `<uid>.json`, or `<uid>-v<n>.json` for a version.
 
 Import (the list page, when `editing` is `true` and one folder has `access.write`):
@@ -5907,7 +5909,8 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 
 | State | The page |
 |---|---|
-| `editing = false` in the session (no store is the primary store) | No "Edit", "New dashboard", "New folder", "Import", "Move", "Delete", "Restore" or folder control. The history list, the views and the diffs stay. |
+| `access.history = false` (no history in the store, `server.history` is `false`, or the PDP refuses `dashboard.history`) | No "History" entry. The page of 10.11 shows the refusal page of 9.6 when a user opens its URL by hand. |
+| `access.export = false` (`server.export` is `false`, or the PDP refuses `dashboard.export`) | No "Export" entry and no "Download" entry on the card. No "Export this version" on a version view. |
 | `read_only = true` on a dashboard or a folder (the store is read-only, 5.42) | A lock on the card and in the header of the editor. The editor opens read-only. The page offers "New dashboard", "New folder" and "Move" only in the primary store. A write that the page sends gets `403 read_only_store`, and the page shows its message. |
 | `stale = "file_invalid"` on a dashboard (5.44) | A warning on the card and in the header of the dashboard: the page shows the last valid state, and the file of the volume is not valid now. The text never holds a path or a message of the parser. |
 | `access.write = false` for a dashboard or a folder, or `access.create = false` (mode `authzen`, 11.25) | The same controls are absent for this dashboard or this folder. "New folder" is absent without `access.create`. |
@@ -5915,7 +5918,7 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 | `503 storage_unavailable` on a write | The notice of 10.9. Edit mode stays. |
 | `503 pdp_unavailable` | The notice of 9.6. The controls stay. The server refuses the request (fail closed). |
 | A URL with `edit`, `editPanel` or `editview=json` or `settings`, and the user cannot edit (a deep link, "Back", "Forward" or a reload) | The page shows the state of 10.2a, rule 1, with no edit names. It shows the notice "You cannot edit this dashboard.". The draft stays in the browser. The page shows no "Resume". |
-| The user opens `editview=history` and cannot edit | The history shows (10.11). It has no "Restore". |
+| The user opens `editview=history`, has `access.history`, and cannot edit | The history shows (10.11). It has no "Restore". |
 
 The server checks each operation. The absence of a control is only a display rule (11).
 

@@ -104,7 +104,7 @@ const MONGO_DIRECT: &str = "`topology = \"direct\"`";
 const MONGO_REPLICA_SET: &str = "`topology = \"replica_set\"`";
 
 /// The keys, in table order.
-static KEYS: [KeyDesc; 114] = [
+static KEYS: [KeyDesc; 116] = [
     // 13.8: server
     KeyDesc::new(
         "server.listen",
@@ -124,6 +124,18 @@ static KEYS: [KeyDesc; 114] = [
         "The prefix of the routes of `server.listen`. Give `/`, or a path that starts and ends with `/`. A segment has 1 to 64 characters from `A-Z a-z 0-9 . _ ~ -`, and is not `.` or `..`.",
     )
     .both(Ref::Str("/")),
+    KeyDesc::new(
+        "server.history",
+        Kind::Bool,
+        "The value `true` gives the history of a dashboard of the primary store: the list of versions, one version, the diff of two versions and the restore (6.17, 6.18). The value `false` refuses these routes with `403 history_disabled`, and the page shows no History entry. The key has no default: the file always says it. In the mode `authzen`, the value `true` is the ceiling, and the PDP can only restrict it with the action `dashboard.history` (11.18).",
+    )
+    .both(Ref::Bool(true)),
+    KeyDesc::new(
+        "server.export",
+        Kind::Bool,
+        "The value `true` gives the file of the current document of a dashboard: `download=true` on the read of a dashboard (6.14). The value `false` refuses these requests with `403 export_disabled`, and the page shows no Export or Download entry. The key has no default: the file always says it. In the mode `authzen`, the value `true` is the ceiling, and the PDP can only restrict it with the action `dashboard.export` (11.18).",
+    )
+    .both(Ref::Bool(true)),
     KeyDesc::new(
         "server.query_inspect",
         Kind::Bool,

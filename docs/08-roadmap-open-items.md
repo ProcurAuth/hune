@@ -1297,9 +1297,9 @@ The owner set the shape of the blocks and the key `primary` on a block. The owne
 - The files that are not valid. A file of a volume that cannot be read, or that is not valid, stops the start. This holds for each volume, also the primary volume. The message has the label, the file and the reason. A foreign entry is still ignored, as before. A row of the PostgreSQL store that is not valid stays an invalid entry.
 - The last valid state. After the start, a file that becomes not valid keeps its last valid state. The dashboard has `stale = "file_invalid"` for each subject that can read it. The member never holds the path or the message of the parser. A new file that is not valid is ignored. The log line is `store.rescan_rejected`, and the gauge is `hune_store_invalid_files{store}`.
 - The period of the poll. Each store has its own period. The poller wakes at the shortest period.
-- The commands. They work on the primary store only. A file with no primary store gives an error, also for a dry run. `migrate-store` needs `storage.postgres` as the primary store.
+- The commands. They work on the primary store only. `migrate-store` needs `storage.postgres` as the primary store.
 - The replicas. A primary volume that more than one instance writes needs a shared volume and the lock. A read-only volume can be a copy for each instance. For the homelab, the PostgreSQL store is the primary store, and the volumes of the repository are read-only stores.
-- The loss. A replica cannot be made view-only on a shared PostgreSQL primary with the same file any more. It needs a file in which the PostgreSQL store has a `title` and no `primary`. Its folders then show below a root folder.
+- The loss. A replica cannot be made view-only on a shared PostgreSQL primary with the same file any more. Each file needs exactly one primary store (19.39).
 - The version. The change removes keys, so it is a minor version.
 
 Open question: are these choices right? Default today: the text of the sections above.
@@ -1321,6 +1321,23 @@ The owner set the form `null` in the API and the file at the root of a volume. T
 - The break for PostgreSQL. The schema version goes from 1 to 2. Run `hune migrate-store` before `serve`. The step is one way. A binary of schema version 1 refuses a database of schema version 2.
 - The importer of Grafana puts the dashboards of the root of Grafana in no folder. The id `general` is no more reserved: a folder map can name a folder `general`.
 - The version. This change moves the schema, so the release is a minor version.
+
+### 19.39 The primary store, the history and the export as explicit rights
+
+A file needs exactly one primary store. The history and the export are two explicit rights, with two mandatory keys and two actions of the PDP. The text of 5.42, 6.14, 6.17, 11.18, 11.21, 13.8 and 13.10 and of the file ACCESS.md gives the rules.
+
+The owner set three rules. A file has exactly one primary store. A store with no history gives no history. The history and the export are explicit rights. The owner set the form of the right: two mandatory keys and two actions. The owner MUST read again the defaults below, which the owner did not set.
+
+- The start. A file with no primary store, and a file with two or more, stop the start (C10). The mode "no primary store" is removed, and so are the contradiction C21 and the code `editing_disabled`. This is a break for each file that has no `primary`: add it to one store.
+- The keys `server.history` and `server.export`. Both are Booleans with no default. A key that is not in the file stops the start. The value `false` is a ceiling in all modes, also in the mode `open`.
+- The actions `dashboard.history` and `dashboard.export`. Hune publishes each one only when its key is `true`. A PDP can only restrict: it cannot give a right that the key refuses. A policy that grants neither action removes the history and the export for all subjects (fail closed).
+- The history. It covers the list, one version, the diff and the restore. The restore needs `dashboard.history` and `dashboard.write`. A dashboard of a read-only store has no history: the routes give `404 history_unavailable` after `dashboard.read`, and the page has no "History".
+- The export. It covers `download=true` on the read of a dashboard. The download of one version belongs to the history right, because the history page reads the stored text of a version this way. The page shows "Export this version" only with both rights. The commands of the command line are not concerned.
+- The flags. Each dashboard has `access` with `write`, `history` and `export`. The page hides each entry that its flag refuses. A user who opens the history URL by hand gets the standard refusal page.
+- The session. The member `editing` stays and is always `true`. Its removal is a follow-up.
+- The version. The change adds two mandatory keys and removes a mode, so each file of an installation must change. The release is a minor version.
+
+Open question: are these choices right? Default today: the text of the sections above.
 
 ## 20. Glossary and references
 

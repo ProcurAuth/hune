@@ -96,22 +96,14 @@ async fn session_gives_the_repeat_limits_of_the_configuration() {
 }
 
 #[tokio::test]
-async fn session_editing_follows_the_primary_store() {
-    // A primary store: editing is on.
+async fn session_editing_is_always_true_and_the_stores_are_listed() {
+    // A primary store always exists: editing is on.
     let h = Harness::start(|_| {}).await;
     let j = get(h.addr, "/api/session").await.json();
     assert_eq!(j["editing"], true);
     assert_eq!(
         j["stores"],
         serde_json::json!([{"id": "main", "kind": "volume", "title": null, "primary": true, "read_only": false}])
-    );
-    // No primary store: editing is off, and the store is a read-only store with its title.
-    let h = Harness::start_with(test_timing(), super::api::fill, super::harness::no_primary).await;
-    let j = get(h.addr, "/api/session").await.json();
-    assert_eq!(j["editing"], false);
-    assert_eq!(
-        j["stores"],
-        serde_json::json!([{"id": "main", "kind": "volume", "title": "Main", "primary": false, "read_only": true}])
     );
 }
 
@@ -335,32 +327,42 @@ async fn write_guard_matrix_over_http() {
 }
 
 #[tokio::test]
-async fn editing_disabled_on_write_routes_only() {
-    let h = Harness::start_with(test_timing(), super::api::fill, super::harness::no_primary).await;
+async fn the_keys_history_and_export_refuse_their_routes_before_any_lookup() {
+    let h = Harness::start_with(test_timing(), super::api::fill, |c| {
+        c.server.history = false;
+        c.server.export = false;
+    })
+    .await;
     let json = ("Content-Type", "application/json");
-    let writes: &[(&str, &str)] = &[
-        ("POST", "/api/folders"),
-        ("PUT", "/api/folders/x"),
-        ("DELETE", "/api/folders/x"),
-        ("POST", "/api/dashboards"),
-        ("PUT", "/api/dashboards/abc"),
-        ("DELETE", "/api/dashboards/abc"),
-        ("POST", "/api/dashboards/abc/restore"),
-        ("POST", "/api/dashboards/abc/move"),
-        ("POST", "/api/sources/prod/preview"),
+    let routes: &[(&str, &str)] = &[
+        ("GET", "/api/dashboards/nodes/history"),
+        ("GET", "/api/dashboards/nodes/history/1"),
+        ("GET", "/api/dashboards/nodes/history/1?download=true"),
+        ("POST", "/api/dashboards/nodes/restore"),
+        ("GET", "/api/dashboards/nodes/history/zz"),
     ];
-    for (m, p) in writes {
-        let r = call(h.addr, m, p, &[json], if *m == "DELETE" { b"" } else { b"{}" }).await;
-        assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"), "{m} {p}");
+    for (m, p) in routes {
+        let r = call(h.addr, m, p, &[json], if *m == "GET" { b"" } else { b"{}" }).await;
+        assert_eq!((r.status, r.code().as_str()), (403, "history_disabled"), "{m} {p}");
     }
-    // The query and options routes use POST but are reads: the route is reached (500, or an error of the route).
-    let r = call(h.addr, "POST", "/api/dashboards/abc/panels/1/query", &[json], b"{}").await;
-    assert_ne!(r.code(), "editing_disabled");
-    let r = call(h.addr, "POST", "/api/dashboards/abc/variables/v/options", &[json], b"{}").await;
-    assert_ne!(r.code(), "editing_disabled");
-    // The cross-site guard comes before the `server.editing` check (6.28 steps 4 and 6).
-    let r = call(h.addr, "POST", "/api/folders", &[("Sec-Fetch-Site", "cross-site"), json], b"{}").await;
+    let a = call(h.addr, "GET", "/api/dashboards/nodes?download=true", &[], b"").await;
+    let b = call(h.addr, "GET", "/api/dashboards/unknown?download=true", &[], b"").await;
+    assert_eq!((a.status, a.code().as_str()), (403, "export_disabled"));
+    assert_eq!(a.text(), b.text(), "the same bytes for a uid that exists and for one that does not");
+    // A plain read, a read with `download=false`, and the other routes are not concerned.
+    assert_eq!(call(h.addr, "GET", "/api/dashboards/nodes", &[], b"").await.status, 200);
+    assert_eq!(call(h.addr, "GET", "/api/dashboards/nodes?download=false", &[], b"").await.status, 200);
+    // A bad value of `download` is a 400 and not a refusal of the key.
+    let r = call(h.addr, "GET", "/api/dashboards/nodes?download=maybe", &[], b"").await;
+    assert_eq!((r.status, r.code().as_str()), (400, "bad_request"));
+    // The cross-site guard comes before the ceilings (6.28, steps 4 and 6).
+    let r =
+        call(h.addr, "POST", "/api/dashboards/nodes/restore", &[("Sec-Fetch-Site", "cross-site"), json], b"{}").await;
     assert_eq!(r.code(), "cross_site_request");
+    // With the keys true, the routes work.
+    let h = Harness::start_with(test_timing(), super::api::fill, |_| {}).await;
+    assert_eq!(call(h.addr, "GET", "/api/dashboards/nodes/history", &[], b"").await.status, 200);
+    assert_eq!(call(h.addr, "GET", "/api/dashboards/nodes?download=true", &[], b"").await.status, 200);
 }
 
 #[tokio::test]

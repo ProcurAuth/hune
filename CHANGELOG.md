@@ -8,12 +8,18 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Changed (breaking)
 
+- A file needs exactly one store with `primary = true`. A file with no primary store, and a file with two, stop the start. The mode with no primary store is removed. Add `primary = true` to one store of each file. This breaks the file of an installation that ran with a read-only volume only: it needs a second, empty primary volume.
+- The two keys `server.history` and `server.export` are mandatory. They are Booleans with no default. A file without them stops the start. The value `false` removes the right for each user, also in the mode `open`.
+- The PDP gets two new actions, `dashboard.history` and `dashboard.export`. Hune publishes each one only when its key is `true`. A policy that grants neither action removes the history and the export for each subject. Add the two actions to the policy before the update.
+- The error `editing_disabled` and the contradiction C21 are removed. The session keeps the member `editing`, always `true`. Its removal is planned.
 - The PostgreSQL schema goes to version 2. Run `hune migrate-store` before `serve`. The step is one way: a binary of schema version 1 refuses a database of schema version 2.
 - A file `<name>.json` at the root of a volume, with a name that fits the uid rule, was ignored. It is now a dashboard. A file that is not a valid dashboard, for example `package.json`, stops the start.
 - The importer of Grafana puts the dashboards of the root of Grafana in no folder. The id `general` is no more reserved for the root. The report shows `null` for their folder.
 
 ### Added
 
+- Each dashboard has `access: { write, history, export }`. The page hides "History", "Export" and "Download" when the flag is `false`. A dashboard of a read-only store has no history: the history routes give `404 history_unavailable`.
+- The errors `403 history_disabled`, `403 export_disabled` and `404 history_unavailable`.
 - A dashboard can have no folder. The API writes `null` for its folder. The create body and the move body take `"folder": null`. `GET /api/dashboards?folder=` with an empty value selects these dashboards, and `GET /api/folders` has the new member `root`.
 - A volume reads a file `<uid>.json` at the root of its path as a dashboard without a folder. In PostgreSQL, the column `folder_id` can be null after migration 2.
 - The access tree names the place of these dashboards the node `folder:_root`. A grant on a real folder does not cover them. The options route lists `_root`, "Root (no folder)", as the first folder.

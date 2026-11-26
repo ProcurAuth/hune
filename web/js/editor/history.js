@@ -77,7 +77,17 @@ export function createHistory(E) {
     button(toHistory ? "Back to the history" : "Back to the dashboard", { class: "btn btn--ghost", dataset: { testid: "history-back" }, on: { click: toHistory ? toList : back } }, "arrow-up"),
     el("h2", { class: "ebar__title", text: title }), ...extra);
 
-  const getText = async (r) => (r === "current" ? (await api.dashboardDownload(E.uid, controller.signal)).text : editorRoutes.versionDownload(E.uid, r, controller.signal));
+  // The text of the current document reads `download=true` when the user has `access.export` (6.14). Without it, the text of the newest version
+  // of the history stands for the current document (6.17, 10.11): the download of a version needs the history right only.
+  const canExport = Boolean(E.base.access && E.base.access.export === true);
+  async function currentText() {
+    if (canExport) return (await api.dashboardDownload(E.uid, controller.signal)).text;
+    const newest = await editorRoutes.history(E.uid, { limit: 1 }, controller.signal);
+    const head = newest.items.find((i) => i.kind !== "delete");
+    if (!head) throw new Error("This dashboard has no version to compare with.");
+    return editorRoutes.versionDownload(E.uid, head.version, controller.signal);
+  }
+  const getText = async (r) => (r === "current" ? currentText() : editorRoutes.versionDownload(E.uid, r, controller.signal));
 
   function restoreDialog(n) {
     const messageId = uniqueId("restore-message");
@@ -237,7 +247,7 @@ export function createHistory(E) {
       if (!isCurrent && canWrite) acts.append(button("Restore this version", { class: "btn btn--sm", on: { click: () => restoreDialog(n) } }));
       if (!isCurrent) {
         acts.append(button("Compare with current", { class: "btn btn--sm", on: { click: () => E.dispatch("history-nav", { base: String(n), version: "current" }) } }));
-        acts.append(button("Export this version", { class: "btn btn--sm", on: { click: async () => saveTextFile(`${E.uid}-v${n}.json`, await getText(n)) } }, "download"));
+        if (canExport) acts.append(button("Export this version", { class: "btn btn--sm", dataset: { testid: "version-export" }, on: { click: async () => saveTextFile(`${E.uid}-v${n}.json`, await getText(n)) } }, "download"));
       }
       // One page-level action loads the data of every panel that has a query (three at a time).
       if (canShow) {

@@ -124,16 +124,10 @@ pub async fn walk_options(
     children: Vec<OptionChild>,
 ) -> Result<OptionsWalk, ApiError> {
     let type_name = parsed.query.type_name.as_str();
-    let actions: Vec<&str> = match (type_name, access.editing()) {
-        ("source", false) => Vec::new(),
-        ("source", true) => vec!["source.query"],
-        (_, false) => vec!["dashboard.read"],
-        (_, true) => vec!["dashboard.read", "dashboard.write"],
+    let actions: Vec<&str> = match type_name {
+        "source" => vec!["source.query"],
+        _ => vec!["dashboard.read", "dashboard.write"],
     };
-    let empty = OptionsWalk { items: Vec::new(), next: None, questions: 0 };
-    if actions.is_empty() {
-        return Ok(empty);
-    }
     let q = parsed.query.q.as_deref().map(fold);
     let candidates: Vec<OptionChild> = children
         .into_iter()

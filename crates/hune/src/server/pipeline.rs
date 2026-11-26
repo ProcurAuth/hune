@@ -271,9 +271,20 @@ async fn process(
         }
     }
     let subject = subject_cell.lock().map_or_else(|_| "-".to_owned(), |g| g.clone());
-    // Step 6: the process ceiling.
-    if spec.write && !state.writes_enabled() {
-        return fail(ApiError::new(Code::EditingDisabled, "Editing is off on this server."));
+    // Step 6: the process ceilings of the history and of the export (11.20). They ask no question and do not depend
+    // on the uid.
+    if matches!(spec.id, RouteId::History | RouteId::HistoryVersion | RouteId::Restore) && !state.config.server.history
+    {
+        return fail(ApiError::new(Code::HistoryDisabled, "The history is off on this server."));
+    }
+    if spec.id == RouteId::DashboardGet {
+        match query.flag("download") {
+            Ok(true) if !state.config.server.export => {
+                return fail(ApiError::new(Code::ExportDisabled, "The export is off on this server."));
+            }
+            Ok(_) => {}
+            Err(e) => return fail(e),
+        }
     }
     // The headers of a write (6.3). `validate_only=true` needs none of them (6.15).
     let validate_only = matches!(spec.id, RouteId::DashboardCreate | RouteId::DashboardSave)
