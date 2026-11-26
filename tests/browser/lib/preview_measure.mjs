@@ -229,7 +229,9 @@ export const EXTRACTORS = {
     if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
   },
   logs: (panel, h) => {
-    for (const e of h.all(".logs__row, .logs__line", h.holder)) h.add("row", h.rel(e));
+    const list = h.holder.querySelector(".logs");
+    if (list) h.add("plot", h.rel(list));
+    for (const e of h.all(".logs__line", h.holder)) h.add("row", h.rel(e));
   },
   geomap: (panel, h) => {
     const canvas = h.holder.querySelector(".geo__canvas");

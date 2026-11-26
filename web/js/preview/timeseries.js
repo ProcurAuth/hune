@@ -1,4 +1,4 @@
-// The loading preview of the panel types timeseries, xychart (9.11).
+// The loading preview of the panel types `timeseries` and `xychart` (9.11).
 // The rules of this family are in the council file `timeseries-xychart.md` (scratchpad/council). The loaded panel is drawn by web/js/panels/timeseries.js, xychart.js and the chart engine web/js/vendor/chdash/app_chart_core.js.
 // The foundation draws the NEUTRAL form: the empty body with the sweep and the dots. The family implementation replaces `build` and follows the
 // rules of its council file: the preview uses only the JSON document, never a query, and draws the least proven form where the document is silent.
