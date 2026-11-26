@@ -281,7 +281,7 @@ fn print_config_shows_the_key_query_inspect_with_its_default_and_its_source() {
         "{}",
         text(&out.stderr)
     );
-    // No primary store: the PostgreSQL store is read-only and has a title.
+    // No primary store: the file stops the start (C10). The contradiction C21 is removed.
     let dist = s
         .config_text("distributed.hcl")
         .replace(
@@ -290,10 +290,15 @@ fn print_config_shows_the_key_query_inspect_with_its_default_and_its_source() {
         )
         .replace("    primary           = true\n", "    title             = \"Archive\"\n")
         .replace("    history_keep      = 100\n", "");
-    let config = s.write("c21.hcl", &dist);
+    let config = s.write("c10.hcl", &dist);
     let out = hune(&["check-config", "-c", config.to_str().unwrap()], &[]);
     assert_eq!(out.status.code(), Some(1));
-    assert!(text(&out.stderr).contains("server.query_inspect, access.mode, storage:"), "{}", text(&out.stderr));
+    assert!(
+        text(&out.stderr).contains("storage: the file has no primary store; give `primary = true` to `storage.postgres`"),
+        "{}",
+        text(&out.stderr)
+    );
+    assert!(!text(&out.stderr).contains("server.query_inspect, access.mode, storage"), "{}", text(&out.stderr));
 }
 
 #[test]
