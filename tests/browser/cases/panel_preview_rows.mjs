@@ -8,7 +8,8 @@
 //   B353  the table: the label, the sort mark and the filter of column 0, and the gauge track and the LCD cells.
 //   B354  the table on a touch screen: the header of 47 px with a filter button, and the header that the document does not decide.
 //   B355  the table and the logs panel with no scroll bar width (overlay bars).
-//   B356  the logs panel: the list, the first line, the time bar of 23ch and the track, on 6 option variants.
+//   B356  the logs panel: the list, the first line, the time bar of 23ch and the track, on 6 option variants, and no shape for a chain that proves no list.
+//   B358  the panels that reuse a source panel: the chain of the source counts with `with_transforms` true only.
 //   B357  the loading state in the light and the dark theme: neutral tones only. The captures go to HUNE_PREVIEW_CAPTURES when it is set.
 // A held request needs the interception of Chrome, so the cases are `skip` with Firefox.
 import { mkdirSync } from "node:fs";
@@ -16,7 +17,7 @@ import { join } from "node:path";
 import { Browser } from "../lib/cdp.mjs";
 import { WORK } from "../lib/env.mjs";
 import { sleep } from "../lib/h.mjs";
-import { LOGS_VARIANTS, SEED, TABLE_VARIANTS, logsVariantsDoc, tableVariantsDoc } from "../lib/preview_rows_docs.mjs";
+import { LOGS_VARIANTS, SEED, TABLE_VARIANTS, logsVariantsDoc, reuseDoc, tableVariantsDoc } from "../lib/preview_rows_docs.mjs";
 import { measureDashboard } from "../lib/preview_measure.mjs";
 
 const SKIP = process.env.HUNE_BROWSER === "firefox" ? "needs the hold of a request (Chrome)" : undefined;
@@ -54,6 +55,10 @@ const LOGS_CLAIMS = {
   4: ["plot", "track"],
   5: ["plot", "time", "track"],
   6: ["plot", "row", "time", "track"],
+  7: [],
+  8: [],
+  9: [],
+  10: ["plot", "row", "time", "track"],
 };
 
 const create = async (t, doc) => {
@@ -265,11 +270,18 @@ export const cases = [
     id: "B356",
     skip: SKIP,
     timeout: 240000,
-    name: "the logs preview is one line slot: the time bar of 23ch only with show_time, then one track from the level cell, on 6 option variants (9.11)",
+    name: "the logs preview is one line slot: the time bar of 23ch only with show_time, then one track from the level cell, on 6 option variants, and draws nothing for a chain that proves no list (9.11)",
     async run(t) {
       const result = await measure(t, logsVariantsDoc("pv356", SEED));
       checkClaims(t, result, LOGS_CLAIMS, "logs");
-      for (const v of LOGS_VARIANTS) {
+      // The cases N1 to N3: no shape, and the loaded panel has no list (no data, or a message).
+      for (const v of LOGS_VARIANTS.filter((x) => x.none)) {
+        t.eq(claimed(result, v.id), [], `${v.title}: no shape`);
+        const loaded = result.loaded[v.id];
+        t.assert(!loaded.parts.some((x) => x.part === "plot"), `${v.title}: the loaded panel has no list`);
+        t.assert(loaded.state === "empty" || loaded.parts.some((x) => x.text === "Cannot show log lines"), `${v.title}: the loaded panel says no data or "Cannot show log lines" (${loaded.state})`);
+      }
+      for (const v of LOGS_VARIANTS.filter((x) => !x.none)) {
         const plot = rowOf(result, v.id, "plot");
         t.eq(plot.delta, [0, 0, 0, 0], `${v.title}: the list is the loaded list`);
         const track = rowOf(result, v.id, "track");
@@ -282,10 +294,12 @@ export const cases = [
         }
         t.eq(result.loaded[v.id].state, "ready", `${v.title}: loaded`);
       }
-      // The gap of 12 px between the time bar and the track (without wrap), and 0 with wrap, as the loaded list draws it (the spec says 12).
+      // The gap of 12 px between the time bar and the track: a column gap without wrap, a padding of the time box with wrap (the box is 12 px wider).
       const gap = (id) => rowOf(result, id, "track").preview[0] - (rowOf(result, id, "time").preview[0] + rowOf(result, id, "time").preview[2]);
       t.assert(near(gap(2), 12, 0.6), `gap without wrap ${gap(2)}`);
       t.assert(near(gap(5), 0, 0.6), `gap with wrap ${gap(5)}`);
+      t.assert(near(rowOf(result, 5, "time").preview[2] - rowOf(result, 2, "time").preview[2], 12, 0.6), "the wrap time box holds the 12 px as a padding");
+      t.assert(near(rowOf(result, 5, "track").preview[0], rowOf(result, 2, "track").preview[0], 0.6), "the track starts at the same place with and without wrap");
       // The first line: 28 px high, at the top of the list.
       const row = rowOf(result, 1, "row");
       t.eq([row.preview[1], row.preview[3]], [0, 28], "slot 1");
@@ -336,6 +350,24 @@ export const cases = [
         }
         hold.release();
       }
+    },
+  },
+  {
+    id: "B358",
+    skip: SKIP,
+    timeout: 240000,
+    name: "a table and a logs panel that reuse a source panel read the transforms of the source only with with_transforms true (9.11)",
+    async run(t) {
+      const result = await measure(t, reuseDoc("pv358", SEED));
+      t.eq(failures(result), [], "no claimed part differs from the loaded part");
+      // The source reduces its rows: a logs panel that reuses it with the transforms has no list, and without them it has one.
+      t.eq(claimed(result, 2), [], "logs, with_transforms true: no shape");
+      t.assert(!result.loaded[2].parts.some((x) => x.part === "plot"), "the loaded panel has no list");
+      t.eq(names(claimed(result, 3)), ["plot", "row", "time", "track"], "logs, with_transforms false: the slot");
+      // The source keeps no row: a table that reuses it with the transforms is "No data", and without them it draws.
+      t.eq(claimed(result, 4), [], "table, with_transforms true: no shape");
+      t.eq(result.loaded[4].state, "empty", "the loaded table shows No data");
+      t.eq(names(claimed(result, 5)), ["head", "plot", "row"], "table, with_transforms false: the header and the slot");
     },
   },
 ];

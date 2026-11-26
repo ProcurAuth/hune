@@ -469,16 +469,17 @@ test("logs R6: the time bar comes only with show_time equal to true, and it is 2
   assert.equal(time({ show_time: true, wrap: true }) !== undefined, true, "wrap does not remove it");
 });
 
-test("logs R7: the track starts at the level cell: 23ch + 12 px after the time, 0 without it, and 23ch with wrap (the loaded code, D1)", () => {
+test("logs R7: the track starts at the level cell: 23ch + 12 px after the time, 0 without it, with and without wrap", () => {
   const left = (options) => lbuild(logsPanel({ options })).bounds.trackLeft.value;
   assert.equal(left({}), "0");
   assert.equal(left({ show_time: true }), "23ch+12px");
-  assert.equal(left({ show_time: true, wrap: true }), "23ch");
+  assert.equal(left({ show_time: true, wrap: true }), "23ch+12px");
   assert.equal(left({ wrap: true }), "0");
-  assert.ok(lbuild(logsPanel({ options: { show_time: true, wrap: true } })).elements[0].k[0].c.includes("skel__log--wrap"), "the gap of 12 px is inside the time box");
+  assert.ok(lbuild(logsPanel({ options: { show_time: true, wrap: true } })).elements[0].k[0].c.includes("skel__log--wrap"), "the gap of 12 px is a padding of the time box");
   const css = read("web/css/panel-loading.css");
   assert.match(css, /\.skel--logs \.skel__log \{[^}]*column-gap: 12px/, "the gap between the columns");
   assert.match(css, /\.skel--logs \.skel__log--wrap \{ column-gap: 0/);
+  assert.match(css, /\.skel--logs \.skel__log--wrap \.skel__ltime \{[^}]*box-sizing: content-box; padding-right: 12px/, "as the loaded wrap mode");
   assert.match(css, /\.skel--logs \.skel__ltime \{[^}]*width: 23ch/);
 });
 
@@ -526,10 +527,44 @@ test("logs R9 and R11: neutral tones only, no accent, and nothing else than the 
   for (const n of parts(out)) for (const [name, value] of Object.entries(n.v)) assert.match(value, /^-?[0-9.]+(px|%)?$/, name);
 });
 
-test("logs: the chain of transforms is not read: a limit of 0 still draws the slot (the council case N1 is left to the shared reader)", () => {
-  const out = lbuild(logsPanel({ transforms: [{ kind: "limit", count: 0, end: "first" }] }));
-  assert.ok(part(out, "row"));
-  assert.ok(!/transforms/.test(read("web/js/preview/logs.js").replace(/\/\/.*$/gm, "")), "the module has no chain reader");
+const lchain = (transforms, extra = {}) => lbuild(logsPanel({ transforms, ...extra }));
+const empty = (out) => out.elements.length === 0 && out.notes.some((n) => /^no list|neutral|no visible/.test(n));
+
+test("logs N1: a limit of 0 at the end of the chain proves no list, also behind keep kinds; a limit of 1 or an earlier limit does not", () => {
+  assert.ok(empty(lchain([{ kind: "limit", count: 0, end: "first" }])));
+  assert.ok(empty(lchain([{ kind: "limit", count: 0, end: "last" }, { kind: "sort_by", sort: [] }, { kind: "organize" }])));
+  assert.ok(part(lchain([{ kind: "limit", count: 1, end: "first" }]), "row"));
+  assert.ok(part(lchain([{ kind: "limit", count: 0, end: "first" }, { kind: "merge" }]), "row"), "a merge after the limit may add rows: not proven");
+  assert.ok(part(lchain([{ kind: "limit", count: 0, end: "first" }, { kind: "calculate_field", mode: "index" }]), "row"));
+  assert.ok(lchain([{ kind: "limit", count: 0 }]).notes[0].startsWith("no list"));
+});
+
+test("logs N2 and N3: a reduce, or a calculate_field that replaces the fields in the mode index or reduce_row, ends the chain with no list", () => {
+  assert.ok(empty(lchain([{ kind: "reduce", mode: "series_to_rows" }])));
+  assert.ok(empty(lchain([{ kind: "reduce", mode: "reduce_fields" }, { kind: "organize" }, { kind: "limit", count: 5 }])));
+  assert.ok(empty(lchain([{ kind: "calculate_field", mode: "index", replace_fields: true }])));
+  assert.ok(empty(lchain([{ kind: "calculate_field", mode: "reduce_row", replace_fields: true }, { kind: "sort_by", sort: [] }])));
+  for (const t of [
+    { kind: "calculate_field", mode: "index" }, { kind: "calculate_field", mode: "index", replace_fields: false },
+    { kind: "calculate_field", mode: "binary", replace_fields: true }, { kind: "calculate_field", mode: "unary", replace_fields: true },
+  ]) assert.ok(part(lchain([t]), "row"), JSON.stringify(t));
+  assert.ok(part(lchain([{ kind: "reduce", mode: "series_to_rows" }, { kind: "merge" }]), "row"), "a kind that is not a keep kind after the reduce: not proven");
+  assert.ok(part(lchain([{ kind: "limit", count: 3 }, { kind: "reduce", mode: "series_to_rows" }, { kind: "calculate_field", mode: "index" }]), "row"));
+});
+
+test("logs: the chain of the source panel counts first when data.reuse.with_transforms is true", () => {
+  const source = { id: 1, type: "table", data: { query: query({}) }, transforms: [{ kind: "reduce", mode: "series_to_rows" }] };
+  const doc = { sections: [{ panels: [source] }] };
+  const reuse = (with_transforms) => logsPanel({ id: 2, data: { reuse: { panel: 1, with_transforms } }, transforms: [{ kind: "organize" }] });
+  assert.ok(empty(logs.build(reuse(true), BOX, doc, { env: L })));
+  assert.ok(part(logs.build(reuse(false), BOX, doc, { env: L }), "row"));
+  assert.ok(part(logs.build(reuse(true), BOX, { sections: [] }, { env: L }), "row"), "a source that the document lacks proves nothing");
+});
+
+test("logs: a hidden query gives the neutral form", () => {
+  const out = lbuild(logsPanel({ data: { query: query({ format: "logs", hide: true }) } }));
+  assert.equal(out.elements.length, 0);
+  assert.ok(!/\.sql\b|\.queries\b|\.expr\b/.test(read("web/js/preview/logs.js")));
 });
 
 test("both modules draw through the registry: a table and a logs panel give their family", () => {

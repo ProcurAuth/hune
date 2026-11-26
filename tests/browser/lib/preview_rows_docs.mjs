@@ -69,14 +69,44 @@ export const LOGS_VARIANTS = [
   { id: 4, title: "wrap", options: { wrap: true } },
   { id: 5, title: "wrap and show_time", options: { wrap: true, show_time: true } },
   { id: 6, title: "oldest first, no details", options: { show_time: true, order: "oldest_first", details: false } },
+  // The chains of the cases N1 to N3 of logs.md: the document proves that no list comes, so the preview draws no shape.
+  { id: 7, title: "limit 0", options: { show_time: true }, transforms: [{ kind: "limit", count: 0, end: "first" }], none: true },
+  { id: 8, title: "reduce", options: { show_time: true }, transforms: [{ kind: "reduce", mode: "series_to_rows", reducers: ["max"] }], none: true },
+  { id: 9, title: "calculate_field index replaces the fields", options: { show_time: true }, transforms: [{ kind: "calculate_field", mode: "index", alias: null, replace_fields: true, index: { as_percentile: false } }], none: true },
+  // A control: the same kinds, but the chain does not prove "no list" (a limit of 1 and a calculate_field that keeps the fields).
+  { id: 10, title: "limit 1 and calculate_field", options: { show_time: true }, transforms: [{ kind: "calculate_field", mode: "index", alias: null, replace_fields: false, index: { as_percentile: false } }, { kind: "limit", count: 1, end: "first" }] },
 ];
 
 /** A dashboard with one logs panel for each variant of LOGS_VARIANTS. */
 export function logsVariantsDoc(uid, q = SEED) {
   const panels = LOGS_VARIANTS.map((v, i) => {
     const grid = { x: (i % 2) * 12, y: Math.floor(i / 2) * 10, w: 12, h: 8 };
-    const base = panel(v.id, "table", `${v.id} ${v.title}`, q.logs, { grid, format: "logs" });
+    const base = panel(v.id, "table", `${v.id} ${v.title}`, q.logs, { grid, format: "logs", transforms: v.transforms });
     return withSource({ ...base, type: "logs", fields: { defaults: {}, overrides: [] }, options: { ...v.options } }, q.source);
   });
   return doc(uid, "Previews of the logs", [section(null, panels)], { time: { from: "now-6h", to: "now", timezone: "utc", refresh: null } });
+}
+
+/**
+ * A dashboard with panels that reuse the query of a source panel (`data.reuse`). The source 1 reduces its rows (no time field: no list for the logs panel),
+ * and the source 6 keeps no row. A panel that reuses with `with_transforms` true reads these transforms; with false it does not.
+ */
+export function reuseDoc(uid, q = SEED) {
+  const grid = (x, y) => ({ x, y, w: 12, h: 8 });
+  const logsOf = (p) => withSource({ ...p, type: "logs", fields: { defaults: {}, overrides: [] }, options: { show_time: true } }, q.source);
+  const logsSource = (id, transforms, x) => logsOf(panel(id, "table", `${id} source`, q.logs, { grid: grid(x, 0), transforms, format: "logs" }));
+  const tableSource = (id, transforms, x) => withSource(panel(id, "table", `${id} source`, q.table, { grid: grid(x, 0), transforms }), q.source);
+  const reuse = (id, type, withTransforms, x, y, source) => {
+    const base = panel(id, "table", `${id} reuses ${source}`, q.table, { grid: grid(x, y), reuse: { panel: source, with_transforms: withTransforms } });
+    return type === "logs" ? { ...base, type: "logs", fields: { defaults: {}, overrides: [] }, options: { show_time: true } } : base;
+  };
+  const panels = [
+    logsSource(1, [{ kind: "reduce", mode: "series_to_rows", reducers: ["max"] }], 0),
+    tableSource(6, [{ kind: "limit", count: 0, end: "first" }], 12),
+    reuse(2, "logs", true, 0, 10, 1),
+    reuse(3, "logs", false, 12, 10, 1),
+    reuse(4, "table", true, 0, 20, 6),
+    reuse(5, "table", false, 12, 20, 6),
+  ];
+  return doc(uid, "Previews of the reuse", [section(null, panels)], { time: { from: "now-6h", to: "now", timezone: "utc", refresh: null } });
 }
