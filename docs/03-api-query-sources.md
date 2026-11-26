@@ -133,7 +133,7 @@ An error that `HEAD` gets has the same status and no body. A `304` has no body.
 ### 6.8 Error codes
 
 This table is the closed list of the error codes of Hune. The other parts use only these codes. A new code needs a
-change of this table.
+change of this table. The code `editing_disabled` is removed: a primary store always exists (13.10).
 
 | Code | Status | Retryable | Cause | Extra members |
 |---|---|---|---|---|
@@ -142,10 +142,12 @@ change of this table.
 | `unauthenticated` | 401 | false | Mode `authzen`: no identity token, or a token that is not valid (11). | none |
 | `forbidden` | 403 | false | The PDP answered `false`, the rule of 11.23 for an unknown uid, or a route with no rule (11.21). | `action` |
 | `ceiling_exceeded` | 403 | false | A query stopped at a limit that a ProcurAuth ceiling lowered (8.5, 11.24). | `action`, `ceiling`, `limit` |
-| `editing_disabled` | 403 | false | A write route when no store is the primary store (13.10). No PDP question. | none |
+| `history_disabled` | 403 | false | A history route (6.17, 6.18) when `server.history` is `false` (13.8). No PDP question, and the answer does not depend on the uid. | none |
+| `export_disabled` | 403 | false | A read with `download=true` (6.14) when `server.export` is `false` (13.8). No PDP question, and the answer does not depend on the uid. | none |
 | `read_only_store` | 403 | false | A write whose target is in a read-only store (5.42, 11.35). Hune asks `dashboard.read` of the target first, and it never asks `dashboard.write`. | none |
 | `cross_site_request` | 403 | false | The cross-site guard refused a `POST`, `PUT`, `PATCH` or `DELETE` (12.7, 6.28). | none |
 | `not_found` | 404 | false | An unknown path, uid, folder, version, panel, variable or source. | none |
+| `history_unavailable` | 404 | false | A history route for a dashboard of a read-only store. Only the primary store has history (5.18, 5.42). Hune asks `dashboard.read` first, so the answer tells nothing to a subject that cannot read the dashboard. | none |
 | `method_not_allowed` | 405 | false | The path does not take this method. The answer has `Allow`. | none |
 | `request_timeout` | 408 | false | The client did not send the whole body within 30 s (6.27). Hune then closes the connection. | none |
 | `conflict` | 409 | false | `If-Match` differs from the current etag, or the folder of the dashboard is not the folder of the access decision (`expected_folder`, 5.5 rule 2, 11.17). | `current_etag`, `current_version`, `current_folder`, `saved_at`, `saved_by` |
@@ -298,7 +300,7 @@ valid identity token (11). The page calls it one time at load (9.6).
 |---|---|
 | `mode` | `open` or `authzen`, the value of `access.mode`. |
 | `subject` | The `sub` of the identity token in mode `authzen`. The text `-` in mode `open`. |
-| `editing` | `true` when a store has `primary = true` (13.10). It does not give the grants of the subject: the `access` objects do (6.11, 6.12, 6.14). |
+| `editing` | Always `true`: the start stops unless exactly one store has `primary = true` (13.10). The member stays for the page, and a later version removes it. It does not give the grants of the subject: the `access` objects do (6.11, 6.12, 6.14). |
 | `stores` | The stores, the volumes in file order and then the PostgreSQL store. Each item has five members: `id` (the label of the volume, or `postgres`), `kind` (`volume` or `postgres`), `title` (the name of the root folder of a read-only store, or `null` for the primary store), `primary` and `read_only` (the opposite of `primary`). The values are public. The page shows the title of a read-only store as the name of a root folder, and it offers a new folder and a new dashboard only in the primary store (9.7). |
 | `query_inspect` | Boolean. The value of `server.query_inspect`. The page shows the menu item Inspect only when it is `true` (9.11). |
 | `repeat_limits` | An object with three integers: `panel`, `section` and `dashboard`. They are the values of `server.repeat_max_per_panel`, `server.repeat_max_per_section` and `server.repeat_max_per_dashboard` (13.8). The page checks the copies of a repeat with them (9.8c). The object has no other member. The server never trusts the page: it applies its own limits of 8.8 to each query. |
@@ -330,11 +332,10 @@ of 5.7 bounds the list.
 | `items[].access.write` | On each folder. `true` when the subject can write in this folder: the display answer for `dashboard.write` on the folder (11.25). It is `false` for a folder of a read-only store, with no question to the PDP. |
 | `items[].read_only` | `true` when the store of the folder is read-only (5.42). The page shows a lock and no edit control. |
 | `items[].store` | The id of the store of the folder: the label of a volume, or `postgres`. |
-| `root` | The place for the dashboards without a folder. It is not a folder: it is not in `items`, and it has no id and no title. `root.access.write` is `true` when the subject can create a dashboard without a folder in the primary store: the display answer for `dashboard.write` on the node `_root` (11.25). It is `false`, with no question to the PDP, when no primary store exists. `root.read_only` is `true` when no primary store exists. `root.store` is the id of the primary store, or `null` when no primary store exists. |
+| `root` | The place for the dashboards without a folder. It is not a folder: it is not in `items`, and it has no id and no title. `root.access.write` is `true` when the subject can create a dashboard without a folder in the primary store: the display answer for `dashboard.write` on the node `_root` (11.25). `root.read_only` is `false`, and `root.store` is the id of the primary store. |
 
 In mode `authzen`, the list holds only the folders that the display filter keeps (11.25). In mode `open`, the list
-holds every folder. `access.create` is `true` when a primary store exists. In mode `open`, `access.write` is `true` for
-each folder of the primary store when a primary store exists, and `false` for each other folder.
+holds every folder. In mode `open`, `access.create` is `true`, `access.write` is `true` for each folder of the primary store, and `false` for each other folder.
 
 `POST /api/folders` creates a folder in the primary store. The body is `{"id": "transit", "title": "Transit desk"}`. The id rule is in 4.3
 and the title rule in 4.41. The answer is `201` with the body `{"id", "title"}`. An id that another store holds, or a title that
@@ -346,7 +347,7 @@ a read-only store has as its `title`, gives `409 already_exists` (5.42, rule 7).
 `DELETE /api/folders/{id}` deletes an empty folder. It has no body. The answer is `204`. A folder that holds a dashboard
 gives `409 folder_not_empty`.
 
-Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 editing_disabled`,
+Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forbidden`,
 `403 read_only_store`, `403 cross_site_request`, `404 not_found`, `409 already_exists`, `409 folder_not_empty`, `413 payload_too_large`,
 `415 unsupported_media_type`, `503 pdp_unavailable`, `503 storage_unavailable`, `507 storage_full`.
 
@@ -366,14 +367,14 @@ Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forb
   "items": [
     { "uid": "nodes", "folder": "transit", "title": "Nodes", "tags": ["chain"],
       "etag": "1b4f0e9870cf6b5e3a5b8c2d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f", "version": 12,
-      "updated_at": "2026-11-09T10:15:03.120Z", "updated_by": "-", "state": "valid", "access": { "write": true },
+      "updated_at": "2026-11-09T10:15:03.120Z", "updated_by": "-", "state": "valid", "access": { "write": true, "history": true, "export": true },
       "read_only": false, "store": "main" },
     { "uid": "broken", "folder": "transit", "title": "broken", "tags": [],
       "etag": "7d1a9c3e5b2f4d6a8c0e1f3b5d7a9c2e4f6b8d0a1c3e5f7b9d2a4c6e8f0b1d3a", "version": 3,
       "updated_at": "2026-11-08T17:02:44.000Z", "updated_by": "external", "state": "invalid",
       "errors": [ { "pointer": "/sections/0/panels/2/type", "code": "bad_format",
                     "message": "type must be a panel type of 4.13; value heatmap", "line": null, "column": null } ],
-      "access": { "write": true }, "read_only": false, "store": "postgres" }
+      "access": { "write": false, "history": true, "export": true }, "read_only": false, "store": "postgres" }
   ],
   "next": null
 }
@@ -388,8 +389,15 @@ Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forb
 - `version` is the number of the head version (5.2). It is 0 when the uid has no version in the history, for example a
   file that came with `git pull` on a volume.
 - `updated_by` is the subject of the last version, `-` in mode `open`, or `external` for a change from outside (5.2).
-- `access.write` is on each dashboard. It is the `access.write` of its folder (11.25). In mode `open`, it is `true`
-  for each dashboard of the primary store when a primary store exists.
+- `access` is on each dashboard, with three members: `write`, `history` and `export`.
+  `access.write` is the `access.write` of its folder (11.25). In mode `open`, it is `true` for each dashboard of the
+  primary store.
+- `access.history` is `true` when `server.history` is `true` and the dashboard is in the primary store. In mode
+  `authzen`, the display answer for `dashboard.history` MUST be `true` too (11.25). It is `false` for a dashboard of a
+  read-only store, with no question to the PDP.
+- `access.export` is `true` when `server.export` is `true`. In mode `authzen`, the display answer for
+  `dashboard.export` MUST be `true` too. The page shows the History entry only when `access.history` is `true`. It shows
+  the Export entry only when `access.export` is `true` (9.8, 9.11).
 - `tag` is for the dashboard links of the kind `dashboards` (4.5a, 9.8a). It works with `folder` and `q`: a dashboard MUST pass all the parameters of the request. The route applies `tag` before the pagination of 6.24 and before the display filter of 11.25. The parameter occurs one time. A dashboard link with more than one tag sends the first tag. The page tests the other tags in the member `tags` of each item.
 
 ### 6.13 Create a dashboard
@@ -422,7 +430,7 @@ list holds at most `MAX_WARNINGS` items (4.35). When the checks find more warnin
 `{"pointer": "", "message": "the list stops here; it has 200 warnings at most"}`. The answer of 6.15 and of
 `validate_only` has the same cap. 7.18 gives the rules of the two lists.
 
-Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 editing_disabled`, `403 read_only_store`, `403 cross_site_request`,
+Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 read_only_store`, `403 cross_site_request`,
 `404 not_found` (folder), `409 already_exists`, `413 payload_too_large`, `415 unsupported_media_type`,
 `422 invalid_document`, `422 idempotency_key_reused`, `428 precondition_required`, `503 pdp_unavailable`,
 `503 storage_unavailable`, `507 storage_full`.
@@ -433,15 +441,21 @@ Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 editing_
 
 ```json
 { "uid": "nodes", "folder": "transit", "etag": "1b4f0e9870cf6b5e3a5b8c2d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f",
-  "version": 12, "updated_at": "2026-11-09T10:15:03.120Z", "updated_by": "user:bob", "access": { "write": true },
+  "version": 12, "updated_at": "2026-11-09T10:15:03.120Z", "updated_by": "user:bob", "access": { "write": true, "history": true, "export": true },
   "read_only": false, "store": "main",
   "document": { "format_version": 3, "uid": "nodes" },
   "names": { "panels": { "3": [["env", "host"], []] }, "variables": { "host": ["env"] }, "annotations": [["env"]] } }
 ```
 
 - `access.write` is the display answer for `dashboard.write` on `N(uid)` (11.25). In mode `open`, it is `true` when the
-  dashboard is in the primary store and a primary store exists. It is `false` for a dashboard of a read-only store, with
-  no question to the PDP.
+  dashboard is in the primary store. It is `false` for a dashboard of a read-only store, with no question to the PDP.
+  `access.history` and `access.export` are the members of 6.12, with the same rules.
+- `download=true` needs the export right. With `server.export` equal to `false`, the route gives `403 export_disabled`.
+  It does this before it reads anything and before any PDP question. Thus the answer is the same for a uid that exists
+  and for one that does not.
+- In mode `authzen`, a download asks `dashboard.read` first. Then it asks `dashboard.export` on `N(uid)`. A `false`
+  answer gives `403 forbidden` with the member `action` equal to `dashboard.export`.
+- The export rule holds for an `invalid` entry too. A request with no `download` is not concerned.
 - `read_only` and `store` are the members of 6.12. The page opens the editor read-only when `read_only` is `true`.
 - `stale` is the member of 6.12. It is present only when the dashboard shows its last valid state (5.44).
 - The member `document` is the document as a JSON value. Its member order is the canonical order, but the bytes of
@@ -542,7 +556,7 @@ request has no body. Hune writes a deletion version (5.4) and removes the dashbo
 After a delete, the routes of the uid answer as for an unknown uid (6.9), also a repeated delete (6.6). The store keeps
 the history. The subcommand `restore` brings the dashboard back (5.40, 10.13).
 
-Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 editing_disabled`, `403 read_only_store`, `403 cross_site_request`,
+Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 read_only_store`, `403 cross_site_request`,
 `404 not_found`, `409 conflict`, `422 idempotency_key_reused`, `428 precondition_required`, `503 pdp_unavailable`,
 `503 storage_unavailable`, `507 storage_full`.
 
@@ -558,6 +572,19 @@ Errors: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 editing_
 ```
 
 The example shows a page with one item (`limit=1`). Its `next` is `djEy`, the cursor of the version 12 (6.24).
+
+Order of the checks of both history routes and of the restore (6.18):
+
+1. `server.history` equal to `false` gives `403 history_disabled`. Hune asks no PDP question and reads nothing, so the
+   answer is the same for a uid that exists and for one that does not.
+2. In mode `authzen`, Hune asks `dashboard.read` on `N(uid)` (11.23). A `false` answer, and an unknown uid, give the same
+   `403 forbidden`.
+3. A dashboard of a read-only store gives `404 history_unavailable`: only the primary store has history (5.18).
+4. In mode `authzen`, Hune asks `dashboard.history` on `N(uid)`. A `false` answer gives `403 forbidden` with the member
+   `action` equal to `dashboard.history`.
+5. `download=true` on a version needs the history right only. The export right is not for a version, because the
+   history page reads the stored text of a version with it. The page shows the button
+   "Export this version" only when `access.history` and `access.export` are both `true`.
 
 - `kind` is one of the eight kinds of 5.2: `create`, `save`, `restore`, `move`, `delete`, `import`, `external` and
   `migrate`.
@@ -585,7 +612,7 @@ The example shows a page with one item (`limit=1`). Its `next` is `djEy`, the cu
   format 2 is an example (4.42). `download=true` still gives its stored bytes, so that the history shows it
   as text (4.42, item 10).
 
-Errors of both routes: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `404 not_found`,
+Errors of both routes: `400 bad_request`, `401 unauthenticated`, `403 forbidden`, `403 history_disabled`, `404 not_found`, `404 history_unavailable`,
 `422 stored_document_invalid`, `503 pdp_unavailable`, `503 storage_unavailable`. These routes read the store, not the
 catalog (5.5, rule 10).
 
@@ -595,7 +622,8 @@ catalog (5.5, rule 10).
 `If-Match` (the current etag) and `Idempotency-Key` are necessary. The body is
 `{"version": 7, "message": "Back to the version of Monday"}`, with the rule of 6.13 for `message`.
 
-- Hune first asks the use question, before it reads the version (11.21). A `false` answer gives `403`, and Hune
+- The checks of 1 to 3 of 6.17 come first. The restore needs the history right and the write right: Hune asks the use question
+  `dashboard.write` with `dashboard.history` as another permission (11.21). A `false` answer gives `403`, and Hune
   reads nothing. Then Hune reads the version and validates it in `spawn_blocking` (6.27). Then it asks the others
   and the use, because the others name the sources of the version (11.21).
 - This is the one validation of the version. The store gets the valid document (5.4, item 8). Under its lock, the
@@ -756,8 +784,7 @@ The members follow 6.21: `etag`, `from_ms`, `to_ms` and `variables` are necessar
 ```
 
 `kind` is `clickhouse`, `postgres` or `mongodb`. `state` is `unknown`, `up`, `down` or `misconfigured` (8.11, 8a.12, 8b.12). In mode `authzen`, the list holds only the sources that
-the display filter keeps for `source.query` (11.25). In mode `open`, it holds every source when a primary store exists.
-With no primary store, the list is empty in both modes, because the editor is off (11.25).
+the display filter keeps for `source.query` (11.25). In mode `open`, it holds every source.
 
 `POST /api/sources/{id}/preview` runs a draft panel or the options query of a draft variable. The editor uses it for
 SQL that is not saved (10.3).
@@ -793,12 +820,12 @@ The example cuts the variable and the panel: a real body holds each member of 4.
 - The access questions name `N(uid)` for a saved dashboard, and `folder:<folder>` for a new one (6.9, 11.21).
 - The preview reads the catalog only to find the folder of `uid`. It writes nothing. It uses the engine, the limits and
   the admission of 6.20 (7.2, 8.8).
-- A configuration with no primary store gives `403 editing_disabled`. Thus in mode `open` a viewer cannot run SQL that is not saved. A draft of a dashboard or of a folder of a read-only store gives `403 read_only_store`.
+- A draft of a dashboard or of a folder of a read-only store gives `403 read_only_store`.
 - A draft panel of the type `text` has no query. The request gives `400 bad_request`. The message is "This panel has no query." The editor never sends this request (10.3).
 - A draft panel with the member `data.extra_queries` gives `400 bad_request` with the message "A preview runs one query.". The editor sends the selected query as `data.query` of the draft panel, with the members of the panel (10.3). The route does not change, and the body keeps its limit of 512 KiB (6.27).
 
 With `panel`, the answer is the frame of 7.16 without `etag`. It can have the member `sql`, with the rules of 6.20. For a source of the kind `postgres`, the frame follows 7.16a, and the preview applies 7.16b to the format of the draft panel. For a source of the kind `mongodb`, the frame follows 7.16c and 7.16d. With `variable`, it is the answer of 6.21 without `etag`.
-Errors: the errors of 6.20 without `409 dashboard_changed`, and `403 editing_disabled`, `403 read_only_store`, `422 invalid_document`.
+Errors: the errors of 6.20 without `409 dashboard_changed`, and `403 read_only_store`, `422 invalid_document`.
 
 ### 6.23 ProcurAuth routes
 
@@ -915,8 +942,7 @@ follows it.
 4. For `POST`, `PUT`, `PATCH` and `DELETE`, it applies the cross-site guard of 12.7 (`403 cross_site_request`). Then
    it checks `Content-Type` (`415`).
 5. In mode `authzen`, it checks the identity token (11.8). A failure gives `401 unauthenticated`.
-6. For a write route (6.9), a configuration with no primary store gives `403 editing_disabled`, with no PDP
-   question. A write whose target is in a read-only store gives `403 read_only_store` at step 8 (11.35).
+6. For a write route (6.9), a write whose target is in a read-only store gives `403 read_only_store` at step 8 (11.35).
 7. It takes a place for a body in flight (6.27, `503 server_busy`). In mode `authzen`, a document body first takes
    a place of its subject (12.16). It reads the body within the limit of the route (`413`, `408`), and checks its
    JSON syntax and its shape (`400`). The document of a create, a save or a `validate_only` request stays bytes.

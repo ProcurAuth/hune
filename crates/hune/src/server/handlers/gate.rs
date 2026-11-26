@@ -20,13 +20,15 @@ use std::sync::Arc;
 
 const READ: &str = "dashboard.read";
 const WRITE: &str = "dashboard.write";
+const HISTORY: &str = "dashboard.history";
+const EXPORT: &str = "dashboard.export";
 const QUERY: &str = "source.query";
 
 /// The most questions of one page of a list (11.25).
 const PAGE_QUESTIONS: usize = 200;
-/// The most folders that one page of `GET /api/dashboards` examines. Each folder costs 3 questions
+/// The most folders that one page of `GET /api/dashboards` examines. Each folder costs 5 questions
 /// at most before its dashboards, so the page stays within `PAGE_QUESTIONS`.
-const FOLDERS_PER_PAGE: usize = 60;
+const FOLDERS_PER_PAGE: usize = 36;
 
 /// The ceilings of the use of a granted operation (11.24). They are empty in the mode `open`.
 #[derive(Debug, Clone, Default)]
@@ -42,15 +44,13 @@ fn parts(ctx: &Ctx) -> Result<Option<(Arc<Access>, Who)>, ApiError> {
     Ok(Some((access, Who { identity, request_id: ctx.request_id.clone(), trace: ctx.trace.clone() })))
 }
 
-/// The action of the use of a route of 11.21, or `None` for a route that asks no decision of its own.
-fn route_use(id: RouteId) -> Option<&'static str> {
+/// The action of the use of a route of 11.21, or `None` for a route that asks no decision of its own. A read with
+/// `download=true` has the use `dashboard.export`.
+fn route_use(id: RouteId, download: bool) -> Option<&'static str> {
     match id {
-        RouteId::DashboardGet
-        | RouteId::History
-        | RouteId::HistoryVersion
-        | RouteId::PanelQuery
-        | RouteId::VariableOptions
-        | RouteId::AnnotationQuery => Some(READ),
+        RouteId::DashboardGet if download => Some(EXPORT),
+        RouteId::History | RouteId::HistoryVersion => Some(HISTORY),
+        RouteId::DashboardGet | RouteId::PanelQuery | RouteId::VariableOptions | RouteId::AnnotationQuery => Some(READ),
         RouteId::FolderCreate
         | RouteId::FolderRename
         | RouteId::FolderDelete
@@ -80,7 +80,8 @@ fn same_refusal(ctx: &Ctx, e: ApiError) -> ApiError {
     if e.plain.is_some() {
         return e;
     }
-    match (e.code, route_use(ctx.route.id)) {
+    let download = ctx.route.id == RouteId::DashboardGet && ctx.query.flag("download").unwrap_or(false);
+    match (e.code, route_use(ctx.route.id, download)) {
         (Code::Forbidden, Some(action)) => crate::access::forbidden(action),
         _ => e,
     }
@@ -89,7 +90,7 @@ fn same_refusal(ctx: &Ctx, e: ApiError) -> ApiError {
 /// True for a route whose questions never use a kept answer: each write route, the preview included (11.27). Thus a
 /// uid or a folder that exists and one that does not exist cost the same PDP requests (11.23, rule 6).
 fn fresh_route(id: RouteId) -> bool {
-    matches!(route_use(id), Some(WRITE | QUERY))
+    matches!(route_use(id, false), Some(WRITE | QUERY))
 }
 
 /// Asks for one operation of a route (11.21), with the refusal of `same_refusal`. `fresh` asks with no kept answer
@@ -213,6 +214,30 @@ pub async fn dashboard_read(ctx: &Ctx, folder: &str, uid: &str) -> Result<Grant,
     Ok(Grant { ceilings: allowed.ceilings().clone() })
 }
 
+/// `dashboard.export` on `N(uid)` as the use, with `dashboard.read` as the other permission: a read with
+/// `download=true` (11.21).
+pub async fn dashboard_export(ctx: &Ctx, folder: &str, uid: &str) -> Result<(), ApiError> {
+    let Some((access, who)) = parts(ctx)? else { return Ok(()) };
+    let node = access.tree().dashboard(folder, uid);
+    decide(ctx, &access, &who, Operation::new(EXPORT, node.clone()).also(READ, node)).await.map(|_| ())
+}
+
+/// The questions of the two history routes (11.21, 6.17). The key `server.history` is checked before this call. A
+/// dashboard of a read-only store has no history: after `dashboard.read` alone, the answer is
+/// `404 history_unavailable`. Else `dashboard.history` is the use and `dashboard.read` the other permission.
+pub async fn history_access(ctx: &Ctx, folder: &str, uid: &str, read_only: bool) -> Result<(), ApiError> {
+    let unavailable = || ApiError::new(Code::HistoryUnavailable, "This dashboard has no history.");
+    let Some((access, who)) = parts(ctx)? else {
+        return if read_only { Err(unavailable()) } else { Ok(()) };
+    };
+    let node = access.tree().dashboard(folder, uid);
+    if read_only {
+        decide(ctx, &access, &who, Operation::new(READ, node)).await?;
+        return Err(unavailable());
+    }
+    decide(ctx, &access, &who, Operation::new(HISTORY, node.clone()).also(READ, node)).await.map(|_| ())
+}
+
 /// `dashboard.write` on `N(uid)`, with `source.query` on each source of the new document (11.21).
 pub async fn dashboard_write(ctx: &Ctx, folder: &str, uid: &str, sources: &[String]) -> Result<(), ApiError> {
     let Some((access, who)) = parts(ctx)? else { return Ok(()) };
@@ -224,6 +249,16 @@ pub async fn dashboard_write(ctx: &Ctx, folder: &str, uid: &str, sources: &[Stri
 /// an error that comes before the sources are known.
 pub async fn dashboard_write_use(ctx: &Ctx, folder: &str, uid: &str) -> Result<(), ApiError> {
     dashboard_write(ctx, folder, uid, &[]).await
+}
+
+/// A restore: `dashboard.write` on `N(uid)` as the use, with `dashboard.history` on `N(uid)` as another permission and
+/// `source.query` on each source of the restored version (11.21). The first call has no source: Hune has not read the
+/// version yet.
+pub async fn dashboard_restore(ctx: &Ctx, folder: &str, uid: &str, sources: &[String]) -> Result<(), ApiError> {
+    let Some((access, who)) = parts(ctx)? else { return Ok(()) };
+    let node = access.tree().dashboard(folder, uid);
+    let op = with_sources(Operation::new(WRITE, node.clone()).also(HISTORY, node), &access, sources);
+    decide(ctx, &access, &who, op).await.map(|_| ())
 }
 
 /// `dashboard.write` on `F(folder)`, with `source.query` on each source: a create (11.21).
@@ -272,8 +307,7 @@ pub async fn preview(ctx: &Ctx, source: &str, draft: Draft<'_>) -> Result<Grant,
 /// `open` asks nothing: the key is the control. In the mode `authzen`, the subject needs the same two
 /// permissions as the preview of a saved dashboard: `source.query` on `S(source)` and
 /// `dashboard.write` on `N(uid)`. This is stricter than `dashboard.read`: a viewer gets the data, and
-/// an author gets the SQL too. `server.editing = false` publishes neither permission, so nobody gets
-/// the SQL. A `false` answer, a failure of the PDP and a failure of a ceiling check all give `false`:
+/// an author gets the SQL too. A `false` answer, a failure of the PDP and a failure of a ceiling check all give `false`:
 /// the SQL is left out and the query answer stays valid.
 pub async fn query_inspect(ctx: &Ctx, folder: &str, uid: &str, source: &str) -> bool {
     if !ctx.state.config.server.query_inspect {
@@ -281,9 +315,6 @@ pub async fn query_inspect(ctx: &Ctx, folder: &str, uid: &str, source: &str) -> 
     }
     let Ok(parts) = parts(ctx) else { return false };
     let Some((access, who)) = parts else { return true };
-    if !access.editing() {
-        return false;
-    }
     // A dashboard of a read-only store has no `dashboard.write` question (5.42), so nobody gets its SQL here.
     let in_read_only_store = ctx
         .state
@@ -304,22 +335,50 @@ pub enum Draft<'a> {
     New { folder: &'a str },
 }
 
-/// `dashboard.write` on `N(uid)` for the flag `access.write` (11.25). `server.editing = false`
-/// asks no question.
-pub async fn write_flag(ctx: &Ctx, folder: &str, uid: &str) -> Result<bool, ApiError> {
-    let Some((access, who)) = parts(ctx)? else { return Ok(ctx.state.writes_enabled()) };
-    if !access.editing() {
-        return Ok(false);
+/// The three flags of the member `access` of a dashboard (6.12, 11.25).
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Flags {
+    /// `dashboard.write`.
+    pub write: bool,
+    /// `dashboard.history`.
+    pub history: bool,
+    /// `dashboard.export`.
+    pub export: bool,
+}
+
+impl Flags {
+    /// The flags of an item of a read-only store: no write and no history (5.42, 5.18).
+    pub fn of_read_only_store(self) -> Flags {
+        Flags { write: false, history: false, export: self.export }
     }
-    access.check(&who, Operation::new(WRITE, access.tree().dashboard(folder, uid))).await
+}
+
+/// The flags of one dashboard (11.25): `dashboard.write`, `dashboard.history` and `dashboard.export` on `N(uid)`,
+/// each with one call of `Pep::check`, in one batch. A question that the keys or the store exclude is not asked and
+/// its flag is `false`. In the mode `open`, the flags are the process ceilings.
+pub async fn flags(ctx: &Ctx, folder: &str, uid: &str, read_only: bool) -> Result<Flags, ApiError> {
+    let server = &ctx.state.config.server;
+    let (history, export) = (server.history && !read_only, server.export);
+    let Some((access, who)) = parts(ctx)? else { return Ok(Flags { write: !read_only, history, export }) };
+    let node = access.tree().dashboard(folder, uid);
+    let mut ops = Vec::new();
+    if !read_only {
+        ops.push(Operation::new(WRITE, node.clone()));
+    }
+    if history {
+        ops.push(Operation::new(HISTORY, node.clone()));
+    }
+    if export {
+        ops.push(Operation::new(EXPORT, node));
+    }
+    let mut answers = access.check_many(&who, ops).await?.into_iter();
+    let mut next = |asked: bool| asked && answers.next().unwrap_or(false);
+    Ok(Flags { write: next(!read_only), history: next(history), export: next(export) })
 }
 
 /// The sources of the list: `source.query` on `S(s)` in one display call (11.25).
 pub async fn visible_sources(ctx: &Ctx, ids: &[String]) -> Result<Option<Vec<bool>>, ApiError> {
     let Some((access, who)) = parts(ctx)? else { return Ok(None) };
-    if !access.editing() {
-        return Ok(Some(vec![false; ids.len()]));
-    }
     let perms = ids.iter().map(|s| Permission::new(QUERY, access.tree().source(s))).collect();
     access.display(&who, perms).await.map(Some)
 }
@@ -343,25 +402,22 @@ pub async fn filter_folders(
     let perms = ids.iter().map(|f| Permission::new(READ, access.tree().folder(f))).collect();
     let seen = access.display(&who, perms).await?;
     let mut folders: Vec<Option<bool>> = seen.iter().map(|v| v.then_some(false)).collect();
-    let mut create = false;
-    if access.editing() {
-        let visible: Vec<usize> = (0..ids.len()).filter(|&i| seen[i] && !read_only(&ids[i])).collect();
-        let mut ops: Vec<Operation> =
-            visible.iter().map(|&i| Operation::new(WRITE, access.tree().folder(&ids[i]))).collect();
-        ops.push(Operation::new(WRITE, access.tree().service()));
-        let mut answers = access.check_many(&who, ops).await?;
-        create = answers.pop().unwrap_or(false);
-        for (i, a) in visible.into_iter().zip(answers) {
-            folders[i] = Some(a);
-        }
+    let visible: Vec<usize> = (0..ids.len()).filter(|&i| seen[i] && !read_only(&ids[i])).collect();
+    let mut ops: Vec<Operation> =
+        visible.iter().map(|&i| Operation::new(WRITE, access.tree().folder(&ids[i]))).collect();
+    ops.push(Operation::new(WRITE, access.tree().service()));
+    let mut answers = access.check_many(&who, ops).await?;
+    let create = answers.pop().unwrap_or(false);
+    for (i, a) in visible.into_iter().zip(answers) {
+        folders[i] = Some(a);
     }
     Ok(Some(FolderFilter { folders, create }))
 }
 
 /// The result of the filter of the list of dashboards.
 pub struct DashboardFilter {
-    /// The index of each visible row, with the flag `access.write` of its folder.
-    pub picked: Vec<(usize, bool)>,
+    /// The index of each visible row, with the flags of its folder.
+    pub picked: Vec<(usize, Flags)>,
     /// The number of rows that the filter examined, from the start of the rows.
     pub examined: usize,
 }
@@ -370,17 +426,18 @@ enum FolderState {
     Hidden,
     /// The grant on the folder covers each dashboard below it (P 4.3).
     All {
-        write: bool,
+        flags: Flags,
     },
     /// Only some dashboards show: each one needs its own question.
     Some {
-        write: bool,
+        flags: Flags,
     },
 }
 
 /// The display filter of one page of dashboards (11.25). `rows` are the `(folder, uid)` of the rows
 /// in the order of the list. The filter asks at most 200 questions and stops when it holds `limit`
-/// items. A folder of a read-only store (`read_only(folder)`) has no question for `dashboard.write` (5.42).
+/// items. A folder of a read-only store (`read_only(folder)`) has no question for `dashboard.write` and
+/// `dashboard.history` (5.42). A key that is `false` removes the question of its action (11.25).
 pub async fn filter_dashboards(
     ctx: &Ctx,
     rows: &[(String, String)],
@@ -401,14 +458,25 @@ pub async fn filter_dashboards(
     let perms = groups.iter().map(|(f, _)| Permission::new(READ, access.tree().folder(f))).collect();
     let seen = access.display(&who, perms).await?;
     used += groups.len();
-    // Step 3: `dashboard.read` and `dashboard.write` on each visible folder, with `check`.
+    // Step 3: `dashboard.read`, `dashboard.write`, `dashboard.history` and `dashboard.export` on each visible
+    // folder, with `check`.
     let visible: Vec<usize> = (0..groups.len()).filter(|&i| seen[i]).collect();
     let mut ops = Vec::new();
-    let asks_write = |g: usize| access.editing() && !read_only(&groups[g].0);
+    let server = &ctx.state.config.server;
+    let asks_write = |g: usize| !read_only(&groups[g].0);
+    let asks_history = |g: usize| server.history && !read_only(&groups[g].0);
+    let asks_export = server.export;
     for &g in &visible {
-        ops.push(Operation::new(READ, access.tree().folder(&groups[g].0)));
+        let folder = access.tree().folder(&groups[g].0);
+        ops.push(Operation::new(READ, folder.clone()));
         if asks_write(g) {
-            ops.push(Operation::new(WRITE, access.tree().folder(&groups[g].0)));
+            ops.push(Operation::new(WRITE, folder.clone()));
+        }
+        if asks_history(g) {
+            ops.push(Operation::new(HISTORY, folder.clone()));
+        }
+        if asks_export {
+            ops.push(Operation::new(EXPORT, folder));
         }
     }
     let answers = access.check_many(&who, ops).await?;
@@ -417,11 +485,14 @@ pub async fn filter_dashboards(
     let mut it = answers.into_iter();
     for &g in &visible {
         let read = it.next().unwrap_or(false);
-        let write = if asks_write(g) { it.next().unwrap_or(false) } else { false };
-        states[g] = if read { FolderState::All { write } } else { FolderState::Some { write } };
+        let write = asks_write(g) && it.next().unwrap_or(false);
+        let history = asks_history(g) && it.next().unwrap_or(false);
+        let export = asks_export && it.next().unwrap_or(false);
+        let flags = Flags { write, history, export };
+        states[g] = if read { FolderState::All { flags } } else { FolderState::Some { flags } };
     }
     // Steps 4 and 5: the rows, in order.
-    let mut picked: Vec<(usize, bool)> = Vec::new();
+    let mut picked: Vec<(usize, Flags)> = Vec::new();
     let mut examined = 0usize;
     'groups: for (g, (folder, range)) in groups.iter().enumerate() {
         if picked.len() >= limit {
@@ -429,16 +500,16 @@ pub async fn filter_dashboards(
         }
         match &states[g] {
             FolderState::Hidden => examined = range.end,
-            FolderState::All { write } => {
+            FolderState::All { flags } => {
                 for i in range.clone() {
                     if picked.len() >= limit {
                         break 'groups;
                     }
-                    picked.push((i, *write));
+                    picked.push((i, *flags));
                     examined = i + 1;
                 }
             }
-            FolderState::Some { write } => {
+            FolderState::Some { flags } => {
                 let mut i = range.start;
                 while i < range.end && picked.len() < limit && used < PAGE_QUESTIONS {
                     let take = (range.end - i).min(limit - picked.len()).min(PAGE_QUESTIONS - used);
@@ -449,7 +520,7 @@ pub async fn filter_dashboards(
                     used += take;
                     for (k, seen) in (i..i + take).zip(answers) {
                         if seen {
-                            picked.push((k, *write));
+                            picked.push((k, *flags));
                         }
                         examined = k + 1;
                     }

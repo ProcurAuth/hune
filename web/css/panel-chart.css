@@ -69,6 +69,10 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 
 .panel__plot .chartCore__legendList { max-height: var(--legend-max, none); overflow-y: auto; }
 
+/* `legend.values` = [] (4.26): the table has the column "Name" only. The engine builds its five base columns for an empty list (common.js,
+   applyLegend sets data-legend-columns). The cells stay in the markup, so the engine can write them. */
+.panel__plot[data-legend-columns="none"] .chartCore__legendTable :is(th, td):not(:first-child) { display: none; }
+
 .panel__plot .chartCore__legendTable { font-size: var(--fs-sm); }
 
 .panel__plot .chartCore__legendTable th,
@@ -194,18 +198,20 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
   scrollbar-gutter: auto;
 }
 
+/* Under the plot the legend keeps the cap of 35 % of the height and scrolls beyond it, as with "bottom" (9.19). */
 .panel__plot[data-legend-fallback] .chartCore__legendList {
   flex: 1 1 auto;
   flex-direction: row;
   flex-wrap: wrap;
-  max-height: none;
-  overflow: visible;
+  max-height: var(--legend-max, none);
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* The table fills the row, and the cells are tighter so that no column is cut at 390 px. */
 .panel__plot[data-legend-fallback] > .chartCore > .chartCore__legend { flex-wrap: wrap; }
 
-.panel__plot[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: 8rem; overflow-y: auto; overflow-x: hidden; }
+.panel__plot[data-legend-fallback] .chartCore__legendTableWrap { flex: 1 1 100%; max-height: var(--legend-max, 8rem); overflow-y: auto; overflow-x: hidden; }
 
 .panel__plot[data-legend-fallback] .chartCore__legendTable th,
 .panel__plot[data-legend-fallback] .chartCore__legendTable td { padding-inline: var(--space-4); }
@@ -389,6 +395,21 @@ html[data-theme="light"] .panel__plot { --legend-head: var(--primary); }
 .hbar__legendItem { display: inline-flex; align-items: center; gap: var(--space-8); padding: 0 var(--space-10) 0 0; min-width: 0; line-height: 1.5714; }
 .hbar__legendItem > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .hbar__legendItem > i { flex: 0 0 auto; width: 14px; height: 4px; border-radius: var(--r-pill); }
+
+/* The legend follows the shared object (9.19): a list or a table, as the vertical form. It keeps at most 35 % of the height of the panel
+   (barchart_h.js sets --legend-max in px) and scrolls beyond it. The list has the padding of 8 px and 4 px, so its box is 12 px more. */
+.hbar__legend { flex: 0 0 auto; max-height: calc(var(--legend-max) + 12px); overflow-y: auto; }
+.hbar__legend[data-mode="table"] { display: block; padding: 0; max-height: var(--legend-max); scrollbar-gutter: stable; }
+.hbar__legend[data-mode="table"] .chartCore__legendTableWrap { max-height: none; overflow: visible; }
+.hbar__legend .chartCore__legendTable .hbar__legendItem { padding-right: 0; }
+.hbar__legend .chartCore__legendTable tbody th .hbar__legendItem { display: flex; vertical-align: top; }
+.hbar[data-legend-placement="right"] .hbar__legend { flex-wrap: nowrap; min-height: 0; max-height: none; scrollbar-gutter: stable; }
+.hbar[data-legend-placement="right"] .hbar__legend[data-mode="table"] { max-width: none; }
+
+/* Too narrow for the legend and a plot of 220 px (barchart_h.js sets data-legend-fallback): the legend goes under the plot, with the cap of "bottom". */
+.hbar[data-legend-fallback] { flex-direction: column; }
+.hbar[data-legend-fallback] .hbar__legend { flex-direction: row; flex-wrap: wrap; max-width: none; max-height: calc(var(--legend-max) + 12px); scrollbar-gutter: auto; }
+.hbar[data-legend-fallback] .hbar__legend[data-mode="table"] { max-height: var(--legend-max); }
 
 /* The tooltip: the card of the time series (head band, rule, rows). */
 .hbar__tip {

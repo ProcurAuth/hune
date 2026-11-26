@@ -254,7 +254,7 @@ export const cases = [
 
   {
     id: "B52",
-    name: "header bar: a viewer (editing off) has the filters of the list and the buttons of a dashboard, and no edit control, in the header; the menu has History and Export",
+    name: "header bar: a viewer of a read-only store has the filters of the list and the buttons of a dashboard, and no edit control, in the header; the menu has Export and no History",
     server: "noedit",
     async run(t) {
       const p = await t.page();
@@ -267,7 +267,7 @@ export const cases = [
         const w = await where(p, kept);
         t.eq([w.header, w.main, w.missing], [kept, [], []], `${width}: the filters of the list are in the header`);
         t.eq((await where(p, ["new-folder", "import", "new-dashboard"])).missing, ["new-folder", "import", "new-dashboard"], `${width}: no action of an editor`);
-        t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').hidden`), true, `${width}: the button New stays hidden: it has no item`);
+        t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').hidden`), false, `${width}: the button New shows: the primary store takes new dashboards`);
         t.eq(await noOverflow(p), true, `${width}: no horizontal scroll`);
         await p.goto(t.dash("nodes"));
         await p.idle();
@@ -277,7 +277,7 @@ export const cases = [
         t.eq([d.header, d.main, d.missing], [ids, [], ["edit-toggle"]], `${width}: the buttons of a dashboard, with no Edit`);
         t.eq(await insideHeader(p, ids), true, `${width}: each control is in the box of the header`);
         await p.click(p.tid("dashboard-menu"));
-        t.eq(await p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent.trim()).filter((x) => !/time range|Zoom/.test(x))`), ["History", "Export"], `${width}: the menu More actions has History and Export only`);
+        t.eq(await p.eval(`[...document.querySelectorAll('.menu [role="menuitem"]')].map((e) => e.textContent.trim()).filter((x) => !/time range|Zoom/.test(x))`), ["Export"], `${width}: the menu More actions has Export only: a read-only store has no history`);
         await p.press("Escape");
         t.eq(await noOverflow(p), true, `${width}: no horizontal scroll on a dashboard`);
       }

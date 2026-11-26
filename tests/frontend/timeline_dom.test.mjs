@@ -382,3 +382,64 @@ test("a timeline that returns to the page draws in the task of the event hune-sh
     uninstall();
   }
 });
+
+// A context that records the font of each `fillText` and measures a text in proportion to the font size: 0.5 unit for each character and each pixel.
+function recordFills(fills) {
+  const proto = FNode.prototype;
+  const original = proto.getContext;
+  proto.getContext = function getContext() {
+    const ctx = new Proxy({ calls: [], font: "10px sans-serif" }, {
+      get: (t, k) => (k === "measureText" ? (s) => ({ width: String(s).length * 0.5 * parseFloat(/(\d+(?:\.\d+)?)px/.exec(t.font)[1]) }) : k === "fillText" ? (text) => fills.push([text, t.font]) : k in t ? t[k] : () => {}),
+      set: (t, k, v) => { t[k] = v; return true; },
+    });
+    this.ctx = ctx;
+    return ctx;
+  };
+  return () => { proto.getContext = original; };
+}
+
+// 9.19c, section 6: the texts are 12 CSS px high. The canvas has device pixels and no transform, so the font is 12 * dpr px.
+// The places stay the same at each pixel ratio, because the widths are measured at 12 units.
+test("9.19c the texts of the canvas are 12 CSS px high at every pixel ratio, and the places do not change", async () => {
+  const seen = {};
+  for (const dpr of [1, 1.25, 2]) {
+    install();
+    window.devicePixelRatio = dpr;
+    const fills = [];
+    const restore = recordFills(fills);
+    try {
+      const { host } = await draw({ texts: ["up", "down", "up"], name: "a row name", options: { show_values: "always" } });
+      const sizes = new Set(fills.map(([, font]) => parseFloat(/(\d+(?:\.\d+)?)px/.exec(font)[1])));
+      assert.deepEqual([...sizes], [12 * dpr], `dpr ${dpr}: every text has the size 12 * dpr`);
+      assert.ok(fills.some(([text]) => text === "a row name") && fills.some(([, font]) => font.startsWith("500 ")), "the row name and a box text are drawn");
+      seen[dpr] = JSON.parse(host.dataset.timeline).box;
+    } finally {
+      restore();
+      uninstall();
+    }
+  }
+  assert.deepEqual(seen[2], seen[1], "the plot box is the same at dpr 2");
+  assert.deepEqual(seen[1.25], seen[1], "the plot box is the same at dpr 1.25");
+  assert.equal(seen[1][0], Math.round(10 * 0.5 * 12 + 20.5), "the left edge is the width of the name at 12 px plus 20.5");
+});
+
+// 9.19c, section 6 and 9.29: the hook lists the ticks with a grid line and the boxes of the axis labels.
+test("9.29 the hook data-timeline holds the ticks and the boxes of the labels of the time axis", async () => {
+  install();
+  try {
+    const { host } = await draw({ texts: ["up", "down", "up"] });
+    const hook = JSON.parse(host.dataset.timeline);
+    const [L, top, plotW, plotH] = hook.box;
+    assert.ok(hook.ticks.length > 0 && hook.labels.length > 0, "the range of three minutes has ticks and labels");
+    for (const [v, x] of hook.ticks) {
+      assert.ok(Number.isFinite(v) && x >= L - 0.5 && x <= L + plotW + 0.5, `the tick ${v} is in the plot`);
+    }
+    for (const [text, x, left, right, y] of hook.labels) {
+      assert.equal(typeof text, "string");
+      assert.ok(left < x && x < right, "the label has a box around x");
+      assert.equal(y, top + plotH + 9, "the top of the glyph is 9 px under the plot");
+    }
+  } finally {
+    uninstall();
+  }
+});

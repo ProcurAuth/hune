@@ -38,7 +38,7 @@ A secret (a password or a token) accepts only `_env` and `_file`. A secret in cl
 | --- | --- |
 | `server` | The two listeners, the base path and the limits of the server. |
 | `log` and `telemetry` | The log level and the OTLP exporter of traces. |
-| `storage` | The stores: the blocks `volume "<id>"` and `postgres`. The store with `primary = true` is the only store that accepts writes. |
+| `storage` | The stores: the blocks `volume "<id>"` and `postgres`. Exactly one store has `primary = true`. It is the only store that accepts writes and keeps a history. |
 | `access` | The mode `open` or `authzen`, with the blocks `identity` and `pdp` for `authzen`. |
 | `clickhouse "<id>"`, `postgres "<id>"`, `mongodb "<id>"` | One block for each data source. At most 64 blocks for each kind. |
 | `geomap` | An optional tile source for the map panel. The map is off without it. |
@@ -46,6 +46,7 @@ A secret (a password or a token) accepts only `_env` and `_file`. A secret in cl
 ## A small example
 
 This file runs Hune with a volume store, no access control and one ClickHouse source.
+The keys `history` and `export` have no default. Each file MUST set both. The value `false` removes the right for each user.
 
 ```hcl
 server {
@@ -57,6 +58,8 @@ server {
   shutdown_grace          = "30s"
   max_request_bytes       = 8388608
   max_result_memory_bytes = 536870912
+  history                 = true
+  export                  = true
 }
 
 log { level = "info" }

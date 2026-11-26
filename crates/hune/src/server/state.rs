@@ -315,11 +315,6 @@ impl AppState {
         }
     }
 
-    /// True when the process accepts writes: a store has `primary = true` (6.10).
-    pub fn writes_enabled(&self) -> bool {
-        self.config.storage.editing()
-    }
-
     /// The name of the backend of the primary store: `volume` or `postgres`. It is `none` when no store is the
     /// primary store.
     pub fn backend_name(&self) -> &'static str {

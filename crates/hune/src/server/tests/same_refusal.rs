@@ -180,6 +180,8 @@ pub(super) fn pairs() -> Vec<Pair> {
 pub(super) fn use_of(p: &Pair) -> &'static str {
     match (p.method, p.known.0.as_str()) {
         (_, "/api/sources/prod/preview") => "source.query",
+        ("GET", path) if path.contains("/history") => "dashboard.history",
+        ("GET", path) if path.contains("download=true") => "dashboard.export",
         ("GET", _) => "dashboard.read",
         (_, path) if path.contains("/query") || path.contains("/options") => "dashboard.read",
         _ => "dashboard.write",

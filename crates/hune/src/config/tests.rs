@@ -335,7 +335,7 @@ fn the_typed_config_holds_the_values_of_the_local_file() {
     assert_eq!(c.server.listen.to_string(), "0.0.0.0:8080");
     assert_eq!(c.server.ops_listen.port(), 9090);
     assert_eq!(c.server.base_path, "/");
-    assert!(c.storage.editing());
+    assert!(c.storage.primary().is_some());
     assert_eq!(c.server.max_connections, 1024);
     assert_eq!(c.server.idle_timeout, Duration::from_secs(75));
     assert_eq!(c.server.shutdown_grace, Duration::from_secs(30));
@@ -1791,6 +1791,7 @@ mod mongodb;
 mod pep;
 mod postgres;
 mod repeat;
+mod rights;
 mod static_gzip;
 mod stores;
 mod transform_cells;

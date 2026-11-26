@@ -75,20 +75,21 @@ pub async fn history(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     Ok(json_response(StatusCode::OK, &HistoryPage { items: versions.iter().map(item).collect(), next }))
 }
 
-/// The question of a read route on the history (11.21). A uid that the catalog does not hold follows
-/// the rule of 11.23. In the mode `open`, it asks nothing and the store answers as before.
+/// The questions of a read route on the history (6.17, 11.21). The key `server.history` is checked at step 6 of
+/// 6.28. A uid that the catalog does not hold follows the rule of 11.23. A dashboard of a read-only store has no
+/// history (`404 history_unavailable`). In the mode `open`, the store answers for a uid that the catalog lacks: the
+/// history of a deleted dashboard stays readable.
 async fn read_gate(
     ctx: &Ctx,
     services: &crate::server::state::Services,
     uid: &hune_core::ids::Uid,
 ) -> Result<(), ApiError> {
-    if ctx.state.access.is_none() {
-        return Ok(());
-    }
-    let Some(entry) = services.catalog.get(uid) else {
-        return Err(gate::unknown(ctx, "No such dashboard.").await);
+    let folder = match services.catalog.get(uid) {
+        Some(entry) => entry.folder().as_str().to_owned(),
+        None if ctx.state.access.is_none() => String::new(),
+        None => return Err(gate::unknown(ctx, "No such dashboard.").await),
     };
-    gate::dashboard_read(ctx, entry.folder().as_str(), uid.as_str()).await.map(|_| ())
+    gate::history_access(ctx, &folder, uid.as_str(), services.store.uid_is_read_only(uid)).await
 }
 
 fn trim_end(bytes: &[u8]) -> &[u8] {
@@ -207,8 +208,9 @@ pub async fn restore(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     if services.store.uid_is_read_only(&uid) {
         return Err(gate::read_only_refusal(&ctx, &folder_text, Some(uid.as_str())).await);
     }
-    // The use alone first: the others name the sources of the version, which Hune has not read yet (11.21).
-    gate::dashboard_write_use(&ctx, &folder_text, uid.as_str()).await?;
+    // The use with the history right first: the others name the sources of the version, which Hune has not read
+    // yet (11.21).
+    gate::dashboard_restore(&ctx, &folder_text, uid.as_str(), &[]).await?;
     // The permit comes before the store read, so that a restore that waits holds no bytes of a version (6.27).
     let permit = check_permit(&ctx.state, &ctx.subject).await?;
     let op = StoreOp::begin(&ctx, "version");
@@ -237,7 +239,7 @@ pub async fn restore(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
         Restorable::Yes { version, warnings, sources } => {
             // The others in one batch, then the use (11.21). The use goes to the PDP a second time: a write route
             // never uses a kept answer (11.27).
-            gate::dashboard_write(&ctx, &folder_text, uid.as_str(), &sources).await?;
+            gate::dashboard_restore(&ctx, &folder_text, uid.as_str(), &sources).await?;
             (version, warnings)
         }
         Restorable::No => return Err(not_restorable()),

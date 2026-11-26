@@ -27,8 +27,18 @@
     "options_type": "folder",
     "operations": {
       "use_plain": {
-        "method": "GET",
-        "path": "/api/dashboards/conf-dash?download=true",
+        "method": "POST",
+        "path": "/api/dashboards/conf-dash/panels/1/query",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "etag": "c8f63fa5fc031ee11b1bb05089805128c2baac9017d476476888a7e86ba18f5f",
+          "from_ms": 1794211200000,
+          "to_ms": 1794232800000,
+          "max_data_points": 100,
+          "variables": {}
+        },
         "action": "dashboard.read",
         "resource_type": "dashboard",
         "resource_id": "conf-dash",

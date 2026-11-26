@@ -8,12 +8,19 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Changed (breaking)
 
+- A file needs exactly one store with `primary = true`. A file with no primary store, and a file with two, stop the start. The mode with no primary store is removed. Add `primary = true` to one store of each file. This breaks the file of an installation that ran with a read-only volume only: it needs a second, empty primary volume.
+- The two keys `server.history` and `server.export` are mandatory. They are Booleans with no default. A file without them stops the start. The value `false` removes the right for each user, also in the mode `open`.
+- The PDP gets two new actions, `dashboard.history` and `dashboard.export`. Hune publishes each one only when its key is `true`. A policy that grants neither action removes the history and the export for each subject. Add the two actions to the policy before the update.
+- The error `editing_disabled` and the contradiction C21 are removed. The session keeps the member `editing`, always `true`. Its removal is planned.
 - The PostgreSQL schema goes to version 2. Run `hune migrate-store` before `serve`. The step is one way: a binary of schema version 1 refuses a database of schema version 2.
 - A file `<name>.json` at the root of a volume, with a name that fits the uid rule, was ignored. It is now a dashboard. A file that is not a valid dashboard, for example `package.json`, stops the start.
 - The importer of Grafana puts the dashboards of the root of Grafana in no folder. The id `general` is no more reserved for the root. The report shows `null` for their folder.
 
 ### Added
 
+- Each dashboard has `access: { write, history, export }`. The page hides "History", "Export" and "Download" when the flag is `false`. A dashboard of a read-only store has no history: the history routes give `404 history_unavailable`.
+- The errors `403 history_disabled`, `403 export_disabled` and `404 history_unavailable`.
+- The hook `data-timeline` of a `state_timeline` and of a `status_history` lists the ticks and the boxes of the labels of the time axis.
 - A dashboard can have no folder. The API writes `null` for its folder. The create body and the move body take `"folder": null`. `GET /api/dashboards?folder=` with an empty value selects these dashboards, and `GET /api/folders` has the new member `root`.
 - A volume reads a file `<uid>.json` at the root of its path as a dashboard without a folder. In PostgreSQL, the column `folder_id` can be null after migration 2.
 - The access tree names the place of these dashboards the node `folder:_root`. A grant on a real folder does not cover them. The options route lists `_root`, "Root (no folder)", as the first folder.
@@ -26,6 +33,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 - The page keeps the answers of the options requests for 60 s (relative range) or 5 minutes (absolute range). A refresh sends no request of options when the answer is valid. A "Retry" ignores the cache.
 - The control of a `multi` variable shows chips. A click on a chip opens the selector, and the cross removes the value. "All" is one chip. The chip "+<n>" shows the chips that do not fit. `Backspace` in the field of an open variable removes the last value.
 - The browser cases B290 to B296.
+- The browser cases B380 to B384 and the unit tests `charts_spec.test.mjs`. They test the chart panels against 4.26 and 9.19.
 - The modules `var_errors.js`, `options_cache.js` and `var_chips.js`, and the style `var-select.css`.
 
 
@@ -33,7 +41,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - A refresh or a change of the range asks again only for the variables whose key changed. A `query` variable below a `time_change` variable asks again when the values of its parents changed, and not at each change of the range.
 - The page cancels the options requests that are in flight when the person leaves the dashboard. It also cancels them when a newer request of the same variable starts.
-- The page budget of the front is 1116 KB (9.30). The new modules and styles use the room.
+- The page budget of the front is 1126 KB (9.30). The new modules and styles use the room.
 
 - The preview of a panel that loads for the first time uses the JSON document of the dashboard only. It never reads the text of a query, and it has no heuristic. Where the document gives no fact, the preview draws the least form that the document proves, drawn empty. A text that the document fixes shows as a bar of its measured width. The preview uses neutral tones and never a colour of the document.
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.
@@ -43,8 +51,26 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Fixed
 
+- A logs panel with `wrap` made the time two rows high, and the gaps between the time, the level and the body were 0 px. The time now has one row of 23 characters, and each gap is 12 px, as without `wrap` (9.19h).
+- A line of the logs panel with no text in its cells was 6 px high. It is now 28 px high, as the other lines (9.19h).
+- The spec of the table (9.20) said that the header is 34 px high on any pointer. On a coarse pointer, a header with a filter button is 47 px high, because the button has a target of 40 px. The spec now says so. The code did not change.
 - A request of options that ended after a newer request of the same variable removed the cancel of the newer request. A cancel at the exit of the page then missed it.
 - The comment of the SQL editor has 4.5:1 over the band of the current block in the light theme. Before, it had 4.36:1.
+- A table legend with `values` empty showed five columns. It now has the column "Name" only, as 4.26 says. This holds for the time series, the xy chart, the histogram and the bar chart.
+- A legend at the right that every entry leaves (`hide_from.legend`) kept the gap of 8 px, so the plot was 8 px too narrow. The plot now has the whole width.
+- A legend at the right can move under the plot in a narrow panel. It had no cap for a list and a cap of 112 px for a table. It now scrolls beyond 35 % of the height, as the legend at the bottom does.
+- The x axis of a time series with `draw` = `bars` covered the requested range. It now keeps the span of the data, as 9.19 says. A line, an area and points keep the requested range.
+- A time series with every y axis hidden put all its series on the right scale, and the table legend marked each one "(right y-axis)". All series now go on the left scale, and no mark shows.
+- The legend of a horizontal bar chart ignored `legend.mode`, `legend.values`, `legend.sort_by`, `hide_from.legend` and the cap. It showed an empty legend with no series. It now follows the shared object `legend` as the vertical form does. It draws a list or a table with its sort, and a hidden series has no entry. It keeps a cap of 35 % of the height. It moves under the plot when the plot would be less than 220 px wide.
+- The value label of a horizontal bar was 8 px at least. It is now 10 px at least, as in 9.19 and in the vertical bars.
+- The value axis of a horizontal bar chart put two ticks 18 px apart for small values, so the labels ran together. Two ticks are now 60 px apart or more, as 9.19 says.
+- A stat, a bar gauge and a gauge in the colour mode `palette` took the slot of the place among the kept fields. They now take the slot of the place among the number fields (9.16). A pattern in `reduce.fields` no longer changes the colour of a field that stays.
+- A bar gauge in the mode `lcd` ignored `show_unfilled`. With `true`, it now draws the track of the other modes behind the cells, as the options form says. The browser case B385 tests it.
+- The grid of a stat covered the last 8 px of the warning line of a bad override pattern. It now starts under the line. The browser case B386 tests it.
+- The texts of the canvas of a `state_timeline` and of a `status_history` were 6 CSS px high at the pixel ratio 2. They are now 12 CSS px high at each pixel ratio, as 9.19c says.
+- The pie chart sizes its circle from the real box of its canvas, with the fraction of a pixel (9.19a). Before, it used the rounded client size, so the circle could be 0.5 px off its box and the bitmap was stretched.
+- The pie chart no longer draws a legend at the right for a panel with no `legend` member. The member is necessary (4.26), so the page has no default for it.
+- The canvas of a pie chart has the test hook `data-geometry` with the centre and the radii of the circle (9.29). The browser case B400 reads it.
 
 ## 0.2.0 - 2026-11-25
 

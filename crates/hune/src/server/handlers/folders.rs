@@ -122,7 +122,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                 .collect(),
         },
         None => {
-            let write = ctx.state.writes_enabled();
+            let write = true;
             FolderList {
                 access: ListAccess { create: write },
                 root: root_item(write),

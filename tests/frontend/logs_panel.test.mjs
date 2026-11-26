@@ -354,3 +354,25 @@ test("time: one body of 32 MiB full of ANSI codes builds in 20 ms or less", () =
   assert.equal(line.body.length, MAX_LOG_LINE_CHARS + 1);
   assert.equal(line.level, "error");
 });
+
+// --- the layout rules of the style (9.19h, section 2) ------------------------------------------------------------------------------
+
+const css = readFileSync(here("../../web/css/panel-logs.css"), "utf8");
+const ruleOf = (selector) => {
+  const at = css.indexOf(`${selector} {`);
+  assert.ok(at >= 0, `the rule ${selector} exists`);
+  return css.slice(at, css.indexOf("}", at));
+};
+
+test("style: with wrap the padding of the time and the level cells is a gap outside their width (9.19h, rules 2 and 7)", () => {
+  // The global reset gives border-box. Without content-box, the 12 px of padding lie inside 23ch, and the time breaks into two rows.
+  const rule = ruleOf(".logs--wrap .logs__time, .logs--wrap .logs__level");
+  assert.match(rule, /box-sizing:\s*content-box/);
+  assert.match(rule, /padding-right:\s*12px/);
+  assert.match(ruleOf(".logs__time"), /width:\s*23ch/);
+});
+
+test("style: a line with no text in its cells keeps the height of 28 px (9.19h, rule 3)", () => {
+  // An empty flex item makes no line box, so only a minimum height gives 22 px of text and 6 px of space.
+  assert.match(ruleOf(".logs__line"), /min-height:\s*28px/);
+});

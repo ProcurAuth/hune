@@ -38,6 +38,14 @@ static SAVE_SHAPE: Shape = Shape::Object(&SAVE_MEMBERS);
 #[derive(Serialize)]
 struct Access {
     write: bool,
+    history: bool,
+    export: bool,
+}
+
+impl From<gate::Flags> for Access {
+    fn from(f: gate::Flags) -> Access {
+        Access { write: f.write, history: f.history, export: f.export }
+    }
 }
 
 #[derive(Serialize)]
@@ -54,7 +62,7 @@ struct ListItem {
     #[serde(skip_serializing_if = "Option::is_none")]
     errors: Option<Vec<ValidationError>>,
     access: Access,
-    /// True when the store of the dashboard is read-only (5.42). Then `access.write` is false.
+    /// True when the store of the dashboard is read-only (5.42). Then `access.write` and `access.history` are false.
     read_only: bool,
     /// The id of the store of the dashboard.
     store: String,
@@ -180,7 +188,9 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
             } else {
                 None
             };
-            let writes = vec![ctx.state.writes_enabled(); rows.len()];
+            let server = &ctx.state.config.server;
+            let open = gate::Flags { write: true, history: server.history, export: server.export };
+            let writes = vec![open; rows.len()];
             (rows, next, writes)
         }
         Some(filtered) => {
@@ -210,9 +220,9 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         }
     };
     let mut items = Vec::with_capacity(rows.len());
-    for (row, write) in rows.iter().zip(writes.iter().copied()) {
+    for (row, flags) in rows.iter().zip(writes.iter().copied()) {
         let (store, read_only) = store_facts(services, row.entry.uid());
-        let write = write && !read_only;
+        let flags = if read_only { flags.of_read_only_store() } else { flags };
         let stale = services.store.is_stale(row.entry.uid()).then_some(STALE_CODE);
         items.push(match &*row.entry {
             CatalogEntry::Valid { current, doc } => ListItem {
@@ -226,7 +236,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                 updated_by: current.saved_by.as_str().to_owned(),
                 state: "valid",
                 errors: None,
-                access: Access { write },
+                access: flags.into(),
                 read_only,
                 store,
                 stale,
@@ -245,7 +255,7 @@ pub async fn list(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
                     updated_by: head.as_ref().map_or_else(|| "external".to_owned(), |h| h.saved_by.as_str().to_owned()),
                     state: "invalid",
                     errors: Some(errors.iter().take(20).cloned().collect()),
-                    access: Access { write },
+                    access: flags.into(),
                     read_only,
                     store,
                     stale: None,
@@ -288,7 +298,11 @@ pub async fn get(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
     let Some(entry) = services.catalog.get(&uid) else {
         return Err(gate::unknown(&ctx, "No such dashboard.").await);
     };
-    gate::dashboard_read(&ctx, entry.folder().as_str(), uid.as_str()).await?;
+    if download {
+        gate::dashboard_export(&ctx, entry.folder().as_str(), uid.as_str()).await?;
+    } else {
+        gate::dashboard_read(&ctx, entry.folder().as_str(), uid.as_str()).await?;
+    }
     let CatalogEntry::Valid { current, doc } = &*entry else {
         let CatalogEntry::Invalid { errors, folder, .. } = &*entry else { return Err(ApiError::internal()) };
         if !download {
@@ -310,18 +324,20 @@ pub async fn get(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
         return Ok(download_response(&uid, Bytes::copy_from_slice(doc.bytes()), &current.etag));
     }
     let (store, read_only) = store_facts(services, &uid);
-    let write = !read_only && gate::write_flag(&ctx, current.folder.as_str(), uid.as_str()).await?;
+    let flags = gate::flags(&ctx, current.folder.as_str(), uid.as_str(), read_only).await?;
     let stale = if services.store.is_stale(&uid) { format!(",\"stale\":\"{STALE_CODE}\"") } else { String::new() };
     let q = |s: &str| Value::String(s.to_owned()).to_string();
     let head = format!(
-        "{{\"uid\":{},\"folder\":{},\"etag\":{},\"version\":{},\"updated_at\":{},\"updated_by\":{},\"access\":{{\"write\":{}}},\"read_only\":{},\"store\":{}{},\"document\":",
+        "{{\"uid\":{},\"folder\":{},\"etag\":{},\"version\":{},\"updated_at\":{},\"updated_by\":{},\"access\":{{\"write\":{},\"history\":{},\"export\":{}}},\"read_only\":{},\"store\":{}{},\"document\":",
         q(current.uid.as_str()),
         folder_json(&current.folder),
         q(&current.etag.to_hex()),
         current.version,
         q(&current.saved_at.to_rfc3339()),
         q(current.saved_by.as_str()),
-        write,
+        flags.write,
+        flags.history,
+        flags.export,
         read_only,
         q(&store),
         stale
