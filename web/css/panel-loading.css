@@ -90,8 +90,9 @@
 .skel--logs .skel__twarn { color: transparent; }
 .skel--logs .skel__logs { flex: 1 1 auto; min-height: 0; min-width: 0; padding: 0; overflow: hidden; font-family: var(--font-mono); font-size: var(--fs-md); line-height: 22px; letter-spacing: 0; }
 .skel--logs .skel__log { display: flex; column-gap: 12px; width: calc(100% - var(--sb, 0px)); height: 28px; align-items: flex-start; }
-/* With `wrap` the loaded list puts the 12 px of the gap inside the time box (the spec says outside), so the preview has no gap. */
+/* With `wrap` the loaded list puts the gap of 12 px as a padding on the right of the time box (outside the 23ch). The bar keeps the 23ch only. */
 .skel--logs .skel__log--wrap { column-gap: 0; }
+.skel--logs .skel__log--wrap .skel__ltime { box-sizing: content-box; padding-right: 12px; background-clip: content-box; }
 .skel--logs .skel__ltime { flex: none; width: 23ch; height: 8px; margin-top: 7px; border-radius: 4px; background: var(--skel-edge); }
 .skel--logs .skel__ltrack { flex: 1 1 auto; min-width: 0; height: 8px; margin-top: 7px; border-radius: 4px; background: var(--skel-fill); }
 
