@@ -41,7 +41,7 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 - A refresh or a change of the range asks again only for the variables whose key changed. A `query` variable below a `time_change` variable asks again when the values of its parents changed, and not at each change of the range.
 - The page cancels the options requests that are in flight when the person leaves the dashboard. It also cancels them when a newer request of the same variable starts.
-- The page budget of the front is 1126 KB (9.30). The new modules and styles use the room.
+- The page budget of the front is 1274 KB (9.30). The previews of all families use the room.
 
 - The preview of a panel that loads for the first time uses the JSON document of the dashboard only. It never reads the text of a query, and it has no heuristic. Where the document gives no fact, the preview draws the least form that the document proves, drawn empty. A text that the document fixes shows as a bar of its measured width. The preview uses neutral tones and never a colour of the document.
 - One light crosses the preview in 2 s. It moves with a transform only. With reduced motion, the preview is still.

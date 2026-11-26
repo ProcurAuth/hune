@@ -332,8 +332,7 @@ test("map R5: the tree has no marker, no line, no tile, no note, no attribution 
   assert.deepEqual(all, ["skel__map", "skel__zooms", "skel__zoom", "skel__zoom"]);
 });
 
-test("each family gives a note that names the rule, and a type that is not drawn by this lot keeps its neutral form", () => {
+test("each family gives a note that names the rule", () => {
   assert.ok(build(pie()).notes.includes("piechart"));
   assert.ok(build(map()).notes.includes("geomap"));
-  assert.deepEqual(build({ id: 1, type: "stat", options: {}, fields: {} }).notes, ["neutral"]);
 });
