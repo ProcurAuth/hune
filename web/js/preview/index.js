@@ -18,7 +18,7 @@ import * as logs from "./logs.js";
 import * as geomap from "./geomap.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
-const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g"]);
+const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g", "use"]);
 
 // The family of each panel type. A panel type that draws no queried data (a text) has no family and no preview.
 const FAMILY_OF_TYPE = {
@@ -60,8 +60,9 @@ export function previewOf(panel, box, doc = null, ctx = null) {
 }
 
 // Makes the element of one node and its children. The custom properties are set with the CSSOM: the page never writes a style attribute in its
-// markup (9.29). SVG nodes use the SVG namespace.
+// markup (9.29). SVG nodes use the SVG namespace. A child that is a string is a text node.
 export function drawNode(n) {
+  if (typeof n === "string") return document.createTextNode(n);
   const e = SVG_TAGS.has(n.t) ? document.createElementNS(SVG_NS, n.t) : document.createElement(n.t);
   if (n.c) e.setAttribute("class", n.c);
   for (const [name, value] of Object.entries(n.v || {})) e.style.setProperty(name, value);
@@ -101,5 +102,16 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
   };
   const observer = new ResizeObserver(paint);
   observer.observe(skeleton);
-  return () => observer.disconnect();
+  // A text that the document fixes is measured with the font of the page. A font that loads after the first paint changes the width, so the preview
+  // builds again when a font has loaded.
+  const fonts = typeof document !== "undefined" ? document.fonts : null;
+  const again = () => {
+    last = "";
+    paint();
+  };
+  if (fonts && typeof fonts.addEventListener === "function") fonts.addEventListener("loadingdone", again);
+  return () => {
+    observer.disconnect();
+    if (fonts && typeof fonts.removeEventListener === "function") fonts.removeEventListener("loadingdone", again);
+  };
 }

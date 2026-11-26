@@ -52,6 +52,34 @@
 
 /* ==== family: piechart ======================================================================================================== */
 
+/* The pie takes its sizes from the same rules as the loaded pie (panel-stat.css `.pie`), so the browser gives the same boxes after a resize or a late
+   font. The root is a column: the warning line (hidden, it reserves the room) and the holder, which is the place of `.panel__plot`. */
+.skel--piechart { display: flex; flex-direction: column; }
+.skel--piechart .skel__warning { margin: 0; visibility: hidden; }
+.skel--piechart .skel__holder { position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; }
+.skel--piechart .skel__pie { position: absolute; inset: 0; display: flex; gap: var(--space-12); }
+.skel--piechart .skel__pie--bottom { flex-direction: column; gap: var(--space-4); }
+/* The chart box clips the silhouette, as the canvas does. The circle is the loaded circle: a diameter of the least side less 16 px, and not under 20 px. */
+.skel--piechart .skel__plot { position: relative; flex: 1; min-width: 0; min-height: 0; overflow: hidden; container-type: size; }
+.skel--piechart .skel__ring {
+  --d: max(20px, calc(min(100cqw, 100cqh) - 16px));
+  position: absolute; left: calc(50% - var(--d) / 2); top: calc(50% - var(--d) / 2); width: var(--d); height: var(--d); border-radius: 50%; background: var(--skel-fill);
+}
+/* The hole of a donut is 0.55 of the radius. The gradient has a hard stop, so the hole is clear. */
+.skel--piechart .skel__ring--donut { background: radial-gradient(circle closest-side, transparent 55%, var(--skel-fill) 55%); }
+/* The legend box has no visible mark. It holds the room of the least legend: one line at the bottom, one row at the right. */
+.skel--piechart .skel__legend { visibility: hidden; margin: 0; padding: 0; overflow: hidden; font-size: var(--fs-sm); }
+.skel--piechart .skel__legend--bottom { flex: 0 0 auto; height: calc(var(--fs-sm) * var(--lh-base)); max-height: 42%; }
+.skel--piechart .skel__legend--right {
+  align-self: center; flex: 0 1 auto; min-width: 72px; max-width: 52%; max-height: 100%;
+  display: grid; grid-template-columns: var(--swatch) minmax(0, 1fr); column-gap: var(--space-8); row-gap: var(--space-4); align-items: center;
+}
+.skel--piechart .skel__legend--c1 { grid-template-columns: var(--swatch) minmax(0, 1fr) auto; }
+.skel--piechart .skel__legend--c2 { grid-template-columns: var(--swatch) minmax(0, 1fr) auto auto; }
+.skel--piechart .skel__sw { width: var(--swatch); height: var(--swatch); }
+.skel--piechart .skel__name { width: var(--w, 0px); min-width: 0; height: calc(var(--fs-sm) * var(--lh-base)); }
+.skel--piechart .skel__val { width: 0; height: calc(var(--fs-sm) * var(--lh-base)); }
+
 /* ==== family: stat ============================================================================================================ */
 
 /* ==== family: gauge =========================================================================================================== */
@@ -69,6 +97,16 @@
 /* ==== family: logs ============================================================================================================ */
 
 /* ==== family: geomap ========================================================================================================== */
+
+/* The root is a column: the warning line (hidden, it reserves the room) and the map node, which is the place of `.geo`. The map node has no fill, as the
+   loaded map has none of its own. The two squares are the zoom column of panel-geomap.css (19.25 px, 8 px from the corner) in the neutral tone, with no glyph. */
+.skel--geomap { display: flex; flex-direction: column; }
+.skel--geomap .skel__warning { margin: 0; visibility: hidden; }
+.skel--geomap .skel__map { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+.skel--geomap .skel__zooms { position: absolute; top: 8px; left: 8px; display: flex; flex-direction: column; }
+.skel--geomap .skel__zoom { width: 19.25px; height: 19.25px; background: var(--skel-fill); }
+.skel--geomap .skel__zoom:first-child { border-radius: 2px 2px 0 0; }
+.skel--geomap .skel__zoom:last-child { border-radius: 0 0 2px 2px; }
 
 /* ==== end of the families ===================================================================================================== */
 
