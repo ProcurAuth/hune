@@ -408,7 +408,7 @@ export const cases = [
               const check = (sel, prop) => { for (const e of root.querySelectorAll(sel)) { const c = getComputedStyle(e)[prop]; out.checked += 1; if (!tones.has(c)) out.bad.push(sel + " " + prop + " " + c); } };
               check(".skel__plot, .chartCore__legendItem i, .skel__hb, .hbar__grid, .hbar__legendItem > i, .skel__dot, .skel__tick, .skel__b", "backgroundColor");
               check(".skel__bar, .skel__area", "fill");
-              for (const e of root.querySelectorAll(".skel__fade")) { out.checked += 1; if (!/^url\(/.test(getComputedStyle(e).fill)) out.bad.push("fade " + getComputedStyle(e).fill); }
+              for (const e of root.querySelectorAll(".skel__fade")) { out.checked += 1; if (!getComputedStyle(e).fill.startsWith("url(")) out.bad.push("fade " + getComputedStyle(e).fill); }
               check(".skel__series, .skel__line", "stroke");
               check(".skel__stop", "stopColor");
             }

@@ -98,6 +98,7 @@ export const domWidth = (text, weight = 400) => textWidth(text, { weight }) + [.
 // to it, as it does to the drawing (the recorder of the harness reads the same width). A probe canvas in the page gives the same measure. Without a
 // page (a test), the measurer of common.js gives it.
 let probeCtx = null;
+let probeCanvas = null;
 export function canvasWidth(text, weight = 400) {
   if (typeof document === "undefined" || !document.body) return textWidth(text, { weight });
   if (!probeCtx) {
@@ -109,6 +110,7 @@ export function canvasWidth(text, weight = 400) {
     canvas.setAttribute("height", "1");
     canvas.setAttribute("aria-hidden", "true");
     document.body.append(canvas);
+    probeCanvas = canvas;
     probeCtx = canvas.getContext("2d");
   }
   probeCtx.font = fontOf(12, weight);
@@ -136,6 +138,8 @@ export function textHeight() {
 }
 /** The fonts changed (the page font arrived): the measures are read again. */
 export function resetMeasures() {
+  if (probeCanvas) probeCanvas.remove();
+  probeCanvas = null;
   probeCtx = null;
   gutterCache = null;
   spacingCache = null;
