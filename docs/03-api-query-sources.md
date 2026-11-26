@@ -374,7 +374,7 @@ Errors of the folder routes: `400 bad_request`, `401 unauthenticated`, `403 forb
       "updated_at": "2026-11-08T17:02:44.000Z", "updated_by": "external", "state": "invalid",
       "errors": [ { "pointer": "/sections/0/panels/2/type", "code": "bad_format",
                     "message": "type must be a panel type of 4.13; value heatmap", "line": null, "column": null } ],
-      "access": { "write": false, "history": false, "export": true }, "read_only": false, "store": "postgres" }
+      "access": { "write": false, "history": true, "export": true }, "read_only": false, "store": "postgres" }
   ],
   "next": null
 }
