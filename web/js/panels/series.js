@@ -208,7 +208,7 @@ function drawnEnds(c) {
  * The scales and the axes of a chart (9.19, decision F16, paper 10.8 V1 and V2). `fields` are the fields of the series in field order.
  * `configs` are their axis settings (default: `axisSettings` of each field).
  * - `U_L` is the unit of the first series whose placement is `auto` or `left`. `left` and `right` are fixed. A series with `auto` or `hidden`
- *   goes left when its unit equals `U_L`, else right.
+ *   goes left when its unit equals `U_L`, else right. When every series is `hidden`, all go left (no axis shows, so none is on the right).
  * - A scale has its first series, the `label`, the hard ends `min` and `max`, and the soft ends of its first series that set each of them.
  *   The ends that a series with `negative_y` sets swap and change sign, because the axis shows the drawn values (paper 10.8, V3).
  *   It shows its axis unless every series of the scale is `hidden`.
@@ -219,9 +219,11 @@ export function axisPlan(fields, configs) {
   const cfgs = fields.map((f, i) => drawnEnds((configs && configs[i]) || axisSettings(f)));
   const leader = cfgs.find((c) => c.placement === "auto" || c.placement === "left");
   const unitLeft = leader ? leader.unit : null;
+  // Every series `hidden`: no axis shows, so no series is on the right (the legend writes no "(right y-axis)"): all go on the left scale.
+  const allHidden = cfgs.length > 0 && cfgs.every((c) => c.placement === "hidden");
   const sides = cfgs.map((c) => {
     if (c.placement === "left" || c.placement === "right") return c.placement;
-    return leader && c.unit === unitLeft ? "left" : "right";
+    return allHidden || (leader && c.unit === unitLeft) ? "left" : "right";
   });
   const build = (side) => {
     const series = [];

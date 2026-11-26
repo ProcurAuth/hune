@@ -142,7 +142,7 @@ export function legendCalc(series, name) {
 }
 
 // Total, min, max, mean and last of the finite values of a series, NaN when it has none.
-function reduceValues(values) {
+export function reduceValues(values) {
   let min = Infinity, max = -Infinity, total = 0, count = 0, last = NaN;
   for (let i = 0; i < values.length; i++) {
     const v = values[i];
@@ -208,7 +208,15 @@ export function overlapFill(opacity) {
   return opacity;
 }
 
-const CALC_COLUMNS = new Set([...LEGEND_COLUMNS, "last_not_null", "first", "first_not_null", "count", "median", "std_dev", "variance", "range", "diff", "diff_percent", "delta", "distinct_count", "change_count"]);
+export const CALC_COLUMNS = new Set([...LEGEND_COLUMNS, "last_not_null", "first", "first_not_null", "count", "median", "std_dev", "variance", "range", "diff", "diff_percent", "delta", "distinct_count", "change_count"]);
+
+// The heads of the legend table (the names of Grafana, as the copied engine writes them: `LEGEND_HEADS` of app_chart_core.js).
+export const LEGEND_HEADS = Object.freeze({
+  total: "Total", min: "Min", max: "Max", mean: "Mean", last: "Last",
+  last_not_null: "Last *", first: "First", first_not_null: "First *", count: "Count", median: "Median", std_dev: "Std Dev",
+  variance: "Variance", range: "Range", diff: "Difference", diff_percent: "Difference %", delta: "Delta",
+  distinct_count: "Distinct count", change_count: "Change count",
+});
 
 // The flags of a series from the property `hide_from` of its field (9.19, F03): `viz` is not drawn (the engine hides it, and the legend
 // shows it as off), `legend` has no entry in the legend, `tooltip` has no row and no dot. Returns the fields to merge into the series.
@@ -250,12 +258,22 @@ export function applyLegend(host, chart, legend) {
   // A legend that is off has no placement: the grid of the placement "right" would keep its gap and narrow the plot (10.3h, rule 15).
   host.dataset.legendPlacement = legend.show === false ? "bottom" : legend.placement || "bottom";
   if (legend.mode === "list" || legend.mode === "table") chart.setLegendMode(legend.mode);
+  // A table with no value column shows the column "Name" only (4.26). The engine falls back to its five columns: the CSS hides them.
+  const columns = (legend.values || []).filter((v) => CALC_COLUMNS.has(v));
+  if (legend.mode === "table" && !columns.length) host.dataset.legendColumns = "none";
+  else delete host.dataset.legendColumns;
   const legendEl = chart.root.querySelector(".chartCore__legend");
   if (!legendEl) return;
   let busy = false;
+  // A legend that the engine hides (every entry has `hide_from.legend`) takes no room: the placement "bottom" keeps no grid gap (9.19).
+  const sync = () => {
+    if (legend.show === false) return;
+    host.dataset.legendPlacement = legendEl.hidden ? "bottom" : legend.placement || "bottom";
+  };
   const place = () => {
     if (busy || legend.placement !== "right") return;
     busy = true;
+    sync();
     // Measure the legend beside the plot, then decide.
     const had = host.hasAttribute("data-legend-fallback");
     if (had) host.removeAttribute("data-legend-fallback");

@@ -83,13 +83,17 @@ test("the filters show only above the threshold of the session; a missing or inv
 });
 
 test("a card has its buttons only with editing on and the write right; the pencil and the bin share the condition", () => {
-  assert.deepEqual(cardRights({ access: { write: true } }, true), { write: true });
-  assert.deepEqual(cardRights({ access: { write: false } }, true), { write: false });
-  assert.deepEqual(cardRights({ access: { write: true } }, false), { write: false }, "editing off");
-  assert.deepEqual(cardRights({ access: {} }, true), { write: false });
-  assert.deepEqual(cardRights({}, true), { write: false });
-  assert.deepEqual(cardRights({ access: { write: true } }, undefined), { write: false });
-  assert.deepEqual(cardRights({ access: { write: true } }, "true"), { write: false }, "a text is not true");
+  assert.deepEqual(cardRights({ access: { write: true } }, true), { write: true, export: false });
+  assert.deepEqual(cardRights({ access: { write: false } }, true), { write: false, export: false });
+  assert.deepEqual(cardRights({ access: { write: true } }, false), { write: false, export: false }, "editing off");
+  assert.deepEqual(cardRights({ access: {} }, true), { write: false, export: false });
+  assert.deepEqual(cardRights({}, true), { write: false, export: false });
+  // The flag `access.export` is its own condition (6.12): it does not depend on the write right or on editing.
+  assert.deepEqual(cardRights({ access: { write: false, export: true } }, true), { write: false, export: true });
+  assert.deepEqual(cardRights({ access: { export: true } }, false), { write: false, export: true });
+  assert.deepEqual(cardRights({ access: { export: "true" } }, true), { write: false, export: false }, "a text is not true");
+  assert.deepEqual(cardRights({ access: { write: true } }, undefined), { write: false, export: false });
+  assert.deepEqual(cardRights({ access: { write: true } }, "true"), { write: false, export: false }, "a text is not true");
 });
 
 test("the page has no search field, no view control, no collapse and no table; it keeps the sort in one key", () => {
@@ -152,7 +156,7 @@ test("the badge and the three dots are at the top right of the card, the dots af
 // entry that is not valid; no button for a read-only card. The condition is the one of cardRights.
 test("the menu of a card has Edit, Export, Move and Delete, in this order, for the right to write only", () => {
   const js = read("js/list.js");
-  const menu = js.slice(js.indexOf("let entries = null;"), js.indexOf("if (entries) {"));
+  const menu = js.slice(js.indexOf("let entries = null;"), js.indexOf("if (entries && entries.length) {"));
   const labels = [...menu.matchAll(/label: "([A-Za-z]+)"/g)].map((m) => m[1]);
   assert.deepEqual(labels, ["Edit", "Export", "Move", "Delete", "Download", "Replace"]);
   assert.match(menu, /if \(valid && rights\.write\)/, "a valid card has the four entries for the right to write only");
@@ -162,7 +166,11 @@ test("the menu of a card has Edit, Export, Move and Delete, in this order, for t
   assert.match(menu, /label: "Delete", icon: "trash", danger: true, testid: `card-delete-\$\{item\.uid\}`/);
   assert.match(js, /`row-menu-\$\{item\.uid\}`/, "the button of the menu keeps its hook");
   // A read-only card gets no button: the button is made only when there are entries.
-  assert.match(js, /if \(entries\) \{\s*const more = cardButton/);
+  assert.match(js, /if \(entries && entries\.length\) \{\s*const more = cardButton/);
+  // Export and Download need `access.export`; the entry is not made without it.
+  assert.match(js, /const exportOk = cardRights\(item, editing\)\.export;/);
+  assert.match(menu, /\.\.\.\(exportOk \? \[\{ label: "Export"/);
+  assert.match(menu, /if \(exportOk\) entries\.push\(\{ label: "Download"/);
   assert.equal(cardRights({ access: { write: true } }, true).write, true);
   assert.equal(cardRights({ access: { write: true } }, false).write, false, "editing off: no menu entry that changes the dashboard");
   assert.equal(cardRights({ access: { write: false } }, true).write, false);

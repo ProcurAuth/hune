@@ -173,6 +173,8 @@ fn build_inner(checked: &Checked, stage: &Stage2, partial: bool) -> Result<Confi
         listen: r.socket("server.listen")?,
         ops_listen: r.socket("server.ops_listen")?,
         base_path: r.text("server.base_path")?,
+        history: r.boolean("server.history")?,
+        export: r.boolean("server.export")?,
         query_inspect: r.opt_boolean("server.query_inspect")?.unwrap_or(false),
         repeat_max_per_panel: r
             .opt_int32("server.repeat_max_per_panel")?

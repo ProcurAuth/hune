@@ -163,14 +163,14 @@ export const cases = [
 
   {
     id: "B305",
-    name: "a server with no primary store: the root is read-only, the root dashboards show in the block of the store, and no New button shows",
+    name: "a read-only store with root dashboards: its root dashboards show in its block with a lock and no menu, the root of the page belongs to the primary store, and the button New shows",
     async run(t) {
       const own = await t.ownServer("root-readonly", { editing: false, prepare });
       const folders = (await api(own).get("api/folders")).json;
-      t.eq(folders.root, { access: { write: false }, read_only: true, store: null }, "no primary store: the root is read-only and belongs to no store");
+      t.eq(folders.root, { access: { write: true }, read_only: false, store: "scratch" }, "the root of the page belongs to the primary store");
       const p = await t.open(own.url);
       await p.waitSel(p.tid("row-root-one"));
-      t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').hidden`), true, "no New button: nothing can be made");
+      t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').hidden`), false, "the button New shows: the primary store takes the new dashboards");
       t.eq(await p.exists(p.tid("row-menu-root-one")), false, "no three dots on a root dashboard");
       t.eq(await p.exists(p.tid("card-lock-root-one")), true, "a lock on the root dashboard");
     },

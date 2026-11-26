@@ -136,7 +136,6 @@ pub struct Access {
     in_use: AtomicI64,
     logger: Arc<Logger>,
     metrics: Arc<Metrics>,
-    editing: bool,
     tree: Tree,
     /// The host of `access.pdp.url`, for the attribute `server.address` of the span `pdp.evaluate`.
     pdp_host: String,
@@ -235,7 +234,6 @@ impl Access {
             in_use: AtomicI64::new(0),
             logger,
             metrics,
-            editing: inputs.editing,
             tree: Tree::new(&inputs.audience),
             pdp_host: crate::config::parse_http_url(&inputs.pdp_url, true).map(|(u, _)| u.host).unwrap_or_default(),
         })
@@ -259,11 +257,6 @@ impl Access {
     /// The tree of nodes (11.15).
     pub fn tree(&self) -> &Tree {
         &self.tree
-    }
-
-    /// True when `dashboard.write` and `source.query` are published (11.18).
-    pub fn editing(&self) -> bool {
-        self.editing
     }
 
     /// The most connections to the PDP, and the size of the pool (11.13).

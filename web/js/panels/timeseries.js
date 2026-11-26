@@ -35,6 +35,12 @@ export function scaleAxis({ ends, binary, tickText, plainTick, percent, log, cen
   };
 }
 
+/** The `xDomain` option of the engine (9.19): the requested range, but none for bars (the span of the data) and none without a range. */
+export function xDomainOf(type, range) {
+  if (type === "bar") return undefined;
+  return range && Number.isFinite(range.from) && Number.isFinite(range.to) && range.to > range.from ? [range.from, range.to] : undefined;
+}
+
 export function render(host, ctx) {
   const { panel, names } = ctx;
   let { fields } = ctx;
@@ -131,10 +137,10 @@ export function render(host, ctx) {
   const rightScale = plan.right ? { sc: plan.right, ...hookOf(plan.right) } : null;
   const firstScale = plan.sides[0] === "right" ? plan.right : plan.left;
   const firstSides = plan.sides[0] || "left";
-  // The x axis covers the requested time range, as in Grafana, not only the span of the data. A page without a range
-  // (the preview of the editor gives 0 and 0) keeps the span of the data.
+  // The x axis covers the requested time range, as in Grafana, not only the span of the data. The exception is `draw` = `bars`: its x axis
+  // keeps the span of the data (9.19). A page without a range (the preview of the editor gives 0 and 0) also keeps the span of the data.
   const range = typeof ctx.linkContext === "function" ? ctx.linkContext() : null;
-  const xDomain = range && Number.isFinite(range.from) && Number.isFinite(range.to) && range.to > range.from ? [range.from, range.to] : undefined;
+  const xDomain = xDomainOf(type, range);
   const styleReport = () => series.map((s, k) => ({
     name: s.label,
     draw: styles[k].draw,

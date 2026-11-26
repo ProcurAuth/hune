@@ -164,6 +164,8 @@ The tables of 13.8 to 13.12c are the complete key table. These rules apply to ea
 | `server.listen` | IP address and port, canonical form, such as `"0.0.0.0:8080"`. The main listener (14.2). | no | V | always | never | `"0.0.0.0:8080"` |
 | `server.ops_listen` | IP address and port, canonical form. The listener of the probes and the metrics (14.2). | no | V | always | never | `"0.0.0.0:9090"` |
 | `server.base_path` | Text of 1 to 128 bytes: `/`, or a path that starts and ends with `/`, with segments of 1 to 64 characters from `A-Z a-z 0-9 . _ ~ -`, not `.` or `..`. The prefix of the routes of `server.listen` (section 6). | no | V | always | never | `"/"` |
+| `server.history` | Boolean. The value `true` gives the history of a dashboard of the primary store: the list of versions, one version, the diff of two versions and the restore (6.17, 6.18). The value `false` refuses these routes with `403 history_disabled`, and the page shows no History entry. The key has no default: the file always says it. In the mode `authzen`, the value `true` is the ceiling: the PDP can only restrict it with the action `dashboard.history` (11.18). A dashboard of a store that is not the primary store has no history, whatever the value (5.18). | no | V | always | never | `true` |
+| `server.export` | Boolean. The value `true` gives the file of the current document of a dashboard: `download=true` on the read of a dashboard (6.14). The value `false` refuses these requests with `403 export_disabled`, and the page shows no Export or Download entry. The key has no default: the file always says it. In the mode `authzen`, the value `true` is the ceiling: the PDP can only restrict it with the action `dashboard.export` (11.18). The download of one version of the history is part of the history (6.17), and the commands of the command line are not concerned. | no | V | always | never | `true` |
 | `server.query_inspect` | Boolean. The value `true` adds the expanded SQL to the answer of a panel query. The page shows the menu item Inspect. In the mode `authzen`, only a subject with `source.query` and `dashboard.write` gets the SQL (11.21). Make sure that you accept this exposure: the SQL holds the values of the variables. | no | V | optional, default `false` | never | `false` |
 | `server.repeat_max_per_panel` | Integer, 1 to 200. The most copies of one panel that repeats by a variable (4.13a, 9.8c). Above it, the page shows a message and no copy. The upper bound is `MAX_PANELS` (4.35). | no | V | optional, default `24` | never | `24` |
 | `server.repeat_max_per_section` | Integer, 1 to 50. The most copies of one section that repeats by a variable. The upper bound is `MAX_SECTIONS` (4.35). | no | V | optional, default `12` | never | `12` |
@@ -200,7 +202,7 @@ values of the example of 14.9.
 
 The block `storage` holds the stores. A volume store is a block `storage.volume "<id>"`: the label is the id of the store. The PostgreSQL store is the block `storage.postgres`, and its id is `postgres`. The file has one store at least (C2).
 
-The primary store is the store with `primary = true`. At most one store has it (C10). It is the only store that accepts a write (section 5). A file with no primary store has no edit. Each write route answers `403 editing_disabled`, the page shows no edit control, and Hune publishes no `dashboard.write` and no `source.query` (11.18).
+The primary store is the store with `primary = true`. Exactly one store has it (C10): a file with no primary store, and a file with two, stop the start. The primary store is the only store that accepts a write (section 5), and the only store that has history (5.18). It can hold no dashboard. Thus a write is always possible, and the session member `editing` is always `true`.
 
 Each other store is read-only, and its `title` is the name of its root folder in the page. The primary store has no `title` (C30) and it is the only store with `history_keep` (C31).
 
@@ -208,7 +210,7 @@ Each other store is read-only, and its `title` is the name of its root folder in
 |---|---|---|---|---|---|---|
 | `storage.volume "<id>".path` | Absolute and canonical path of a directory, 1 to 4096 bytes (section 5). The paths of two volumes are different, and no path holds another one (C32). | no | V | always | never | `"/var/lib/hune/dashboards"` (local), absent (distributed) |
 | `storage.volume "<id>".title` | Text of 1 to 128 bytes, no control character. The name of the root folder of the store in the page (C30, C34). | no | V | the store is not the primary store | the store is the primary store | `"Lab"` (shown in the reference document only) |
-| `storage.volume "<id>".primary` | Boolean. `true` makes this store the primary store (C10). | no | V | never (the key is optional) | another store has `primary = true` | `true` (local), absent (distributed) |
+| `storage.volume "<id>".primary` | Boolean. `true` makes this store the primary store. Exactly one store has it (C10). | no | V | never (the key is optional) | another store has `primary = true` | `true` (local), absent (distributed) |
 | `storage.volume "<id>".rescan_interval` | Duration, 1s to 1h. The period of the scan for changes made outside Hune. | no | V | always | never | `"5s"` (local), absent (distributed) |
 | `storage.volume "<id>".history_keep` | Integer, 1 to 10000. The versions kept for each dashboard (C31). | no | V | the store is the primary store | the store is not the primary store | `100` (local), absent (distributed) |
 | `storage.postgres.host` | A DNS name of 1 to 253 bytes, or an IP address. | no | V | always | never | `"hune-pg-rw"` |
@@ -224,7 +226,7 @@ Each other store is read-only, and its `title` is the name of its root folder in
 | `storage.postgres.statement_timeout` | Duration, 100ms to 60s. Also `idle_in_transaction_session_timeout` (section 5). | no | V | always | never | `"10s"` |
 | `storage.postgres.poll_interval` | Duration, 1s to 5m. The period of the poll of the catalog (section 5). | no | V | always | never | `"5s"` |
 | `storage.postgres.title` | Text of 1 to 128 bytes, no control character. The name of the root folder of the store in the page (C30, C34). | no | V | the store is not the primary store | the store is the primary store | `"Archive"` (shown in the reference document only) |
-| `storage.postgres.primary` | Boolean. `true` makes this store the primary store (C10). | no | V | never (the key is optional) | another store has `primary = true` | `true` (distributed), absent (local) |
+| `storage.postgres.primary` | Boolean. `true` makes this store the primary store. Exactly one store has it (C10). | no | V | never (the key is optional) | another store has `primary = true` | `true` (distributed), absent (local) |
 | `storage.postgres.history_keep` | Integer, 1 to 10000. The versions kept for each dashboard (C31). | no | V | the store is the primary store | the store is not the primary store | `100` (distributed), absent (local) |
 
 The label of a volume matches `^[a-z0-9][a-z0-9-]{0,39}$`, and it is not `postgres` (C33). A file has 16 volumes at most. Each value of a store that is not a key of 13.2, rule 7 has no default.
@@ -509,7 +511,7 @@ The contradiction checks of Hune. In the message, `` `key` (value) `` stands for
 | C7 | `clickhouse "<id>".url`, `clickhouse "<id>".tls` | An `https` URL needs the block `tls`, and an `http` URL forbids it. | ``clickhouse "prod".url, clickhouse "prod".tls: `clickhouse "prod".url` ("https://clickhouse:8443") needs the block tls`` |
 | C8 | `telemetry.otlp_endpoint`, `telemetry.ca_file` | An `https` endpoint needs `ca_file`, and an `http` endpoint forbids it. | ``telemetry.otlp_endpoint, telemetry.ca_file: `telemetry.otlp_endpoint` ("http://otel-collector:4318") has the scheme http and forbids `telemetry.ca_file` ("/run/ca.pem")`` |
 | C9 | `server.listen`, `server.ops_listen` | The two addresses have different ports, or two different hosts that are not wildcards. | ``server.listen, server.ops_listen: `server.listen` ("0.0.0.0:8080") and `server.ops_listen` ("127.0.0.1:8080") use the same port on overlapping hosts`` |
-| C10 | `storage.volume "<id>".primary`, `storage.postgres.primary` | At most one store has `primary = true`. The error names the first store and each later store. | ``storage.volume "lab".primary, storage.volume "main".primary: `storage.volume "lab".primary` (true) and `storage.volume "main".primary` (true): at most one store has `primary = true` `` |
+| C10 | `storage.volume "<id>".primary`, `storage.postgres.primary` | Exactly one store has `primary = true`. With no primary store, the error names `storage` and lists the store blocks: one block gives `give `primary = true` to <block>`, and two or more give `exactly one of <block>, <block> and <block>`. With two or more, the error names the first store and each later store. | ``storage: the file has no primary store; give `primary = true` to exactly one of `storage.volume "lab"` and `storage.volume "main"` `` and ``storage.volume "lab".primary, storage.volume "main".primary: `storage.volume "lab".primary` (true) and `storage.volume "main".primary` (true): exactly one store has `primary = true` `` |
 | C11 | `server.max_result_memory_bytes`, `clickhouse "<id>".max_result_bytes` | The budget is at least 2 times the `max_result_bytes` of each source. | ``server.max_result_memory_bytes, clickhouse "prod".max_result_bytes: `server.max_result_memory_bytes` (33554432) is less than 2 x `clickhouse "prod".max_result_bytes` (33554432)`` |
 | C12 | `clickhouse "<id>".max_concurrent_per_subject`, `clickhouse "<id>".max_concurrent` | The value for each subject is at most `max_concurrent`. | ``clickhouse "prod".max_concurrent_per_subject, clickhouse "prod".max_concurrent: `clickhouse "prod".max_concurrent_per_subject` (20) is more than `clickhouse "prod".max_concurrent` (16)`` |
 | C13 | `access.mode`, `clickhouse "<id>".max_concurrent_per_subject` | The key exists only in the mode `authzen`. | The mode errors of the engine. |
@@ -520,7 +522,7 @@ The contradiction checks of Hune. In the message, `` `key` (value) `` stands for
 | C18 | `postgres "<id>".max_concurrent_per_subject`, `postgres "<id>".max_concurrent` | The value for each subject is at most `max_concurrent`. | ``postgres "metrics".max_concurrent_per_subject, postgres "metrics".max_concurrent: `postgres "metrics".max_concurrent_per_subject` (20) is more than `postgres "metrics".max_concurrent` (16)`` |
 | C19 | `access.mode`, `postgres "<id>".max_concurrent_per_subject` | The key exists only in the mode `authzen`. | The mode errors of the engine. |
 | C20 | `postgres "<id>".user`, `storage.postgres.user` | When the block `storage.postgres` exists and the host and the port of the source equal those of `storage.postgres`, the two users differ. | ``postgres "metrics".user, storage.postgres.user: `postgres "metrics".user` ("app") equals `storage.postgres.user` on the same host and port; a source needs its own read-only role`` |
-| C21 | `server.query_inspect`, `access.mode`, `storage` | In the mode `authzen`, the value `true` needs a primary store, because the right to see the SQL is `source.query` with `dashboard.write`. | ``server.query_inspect, access.mode, storage: `server.query_inspect` (true) in the mode `authzen` needs a primary store (`primary = true` on one store), because the right to see the SQL is `source.query` with `dashboard.write`; found no primary store`` |
+| C21 | none | The check is removed. In the mode `authzen`, `server.query_inspect` no longer needs a check, because a primary store always exists. The number C21 is not used again. | none |
 | C22 | `mongodb "<id>".tls_mode`, `mongodb "<id>".tls` | The block `tls` exists only with `verify-full`. | ``mongodb "x".tls: missing block; expected when `mongodb "x".tls_mode` is "verify-full"`` and ``mongodb "x".tls: not permitted when `mongodb "x".tls_mode` is "disable"; the key is only for `mongodb "x".tls_mode` = "verify-full"``. |
 | C23 | `server.max_result_memory_bytes`, `mongodb "<id>".max_result_bytes` | The budget is at least 2 times the `max_result_bytes` of each source. | ``server.max_result_memory_bytes, mongodb "events".max_result_bytes: `server.max_result_memory_bytes` (33554432) is less than 2 x `mongodb "events".max_result_bytes` (33554432)`` |
 | C24 | `mongodb "<id>".max_concurrent_per_subject`, `mongodb "<id>".max_concurrent` | The value for each subject is at most `max_concurrent`. | ``mongodb "events".max_concurrent_per_subject, mongodb "events".max_concurrent: `mongodb "events".max_concurrent_per_subject` (20) is more than `mongodb "events".max_concurrent` (16)`` |
@@ -535,7 +537,7 @@ The contradiction checks of Hune. In the message, `` `key` (value) `` stands for
 | C33 | `storage.volume "<id>"` | The label is not `postgres`: this id is the id of the PostgreSQL store. | ``storage.volume "postgres": the label "postgres" is the id of the PostgreSQL store; give another label`` |
 | C34 | `storage.volume "<id>".title`, `storage.postgres.title` | The titles of two stores that are not the primary store are different. | ``storage.volume "a".title, storage.volume "b".title: `storage.volume "a".title` ("Lab") and `storage.volume "b".title` ("Lab") name the same root folder`` |
 
-The checks C26 and C27 are in stage 3 of 13.19. The checks C2, C10, C21 and C30 to C34 are in stage 3 too. They use the values of the file only, and no read mode skips them. A key that the topology needs and that the block lacks gives `missing attribute; expected <type and range>`, with the line of the block. A key of the other topology gives the mode error, with the line of the key. C27 gives one error for each refused name, with the line of the key `databases`.
+The checks C26 and C27 are in stage 3 of 13.19. The checks C2, C10 and C30 to C34 are in stage 3 too. They use the values of the file only, and no read mode skips them. A key that the topology needs and that the block lacks gives `missing attribute; expected <type and range>`, with the line of the block. A key of the other topology gives the mode error, with the line of the key. C27 gives one error for each refused name, with the line of the key `databases`.
 
 The checks C17, C20 and C23 need the values of `user`, `password` and the memory budget. C20 skips a read mode that does not read the values of `user` (13.18).
 
@@ -582,6 +584,8 @@ server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
+  history                 = true
+  export                  = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "30s"
@@ -646,6 +650,8 @@ server {
   listen                  = "0.0.0.0:8080"
   ops_listen              = "0.0.0.0:9090"
   base_path               = "/"
+  history                 = true
+  export                  = true
   max_connections         = 1024
   idle_timeout            = "75s"
   shutdown_grace          = "30s"

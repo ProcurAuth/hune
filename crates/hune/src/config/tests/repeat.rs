@@ -80,7 +80,9 @@ fn the_keys_are_in_the_table_the_reference_and_the_effective_order() {
     let fx = Fx::new();
     let order: Vec<String> = fx.load(&fx.local()).unwrap().effective.iter().map(|e| e.key.clone()).collect();
     let position = |name: &str| order.iter().position(|k| k == name).unwrap();
-    assert_eq!(position("server.query_inspect"), position("server.base_path") + 1);
+    assert_eq!(position("server.query_inspect"), position("server.export") + 1);
+    assert_eq!(position("server.history"), position("server.base_path") + 1);
+    assert_eq!(position("server.export"), position("server.history") + 1);
     let mut previous = "server.query_inspect";
     for (key, _, default, bound) in KEYS {
         assert_eq!(position(key), position(previous) + 1, "{key}");

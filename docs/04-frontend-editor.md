@@ -519,7 +519,7 @@ Marks on a card:
 - A card whose item has a `stale` code shows a warning mark. Its name and its tooltip are "The file is not valid. The last valid version is shown.". The hook is `data-testid="card-stale-<uid>"`.
 - A stale card is a valid card: it keeps its title, its link and its tags. The mark never shows a path or a message of the parser.
 - Each mark is a picture 20 px high, so a card has the same height with and without it. The mark of a file that is not valid uses the token `--warning`.
-- "New dashboard", "Move" and "Import" list only the folders of the primary: they list the folders with `access.write` set to `true`. A server with no primary store has no button "New".
+- "New dashboard", "Move" and "Import" list only the folders of the primary: they list the folders with `access.write` set to `true`.
 
 The grid:
 
@@ -531,7 +531,8 @@ The three dots of a card:
 - A card that the user can edit has one button, the three dots. It is at the right end of the first row, after the badge. It is 24 px high, and it keeps the height of the row, so a card with and without it has the same rows.
 - The button has no visible label. Its accessible name and its tooltip give the name.
 - The user can edit a card when `editing` is `true` (6.10) and the item has `access.write` (6.12). The three dots have this one condition. "Delete" needs `dashboard.write`, as the route `DELETE api/dashboards/<uid>` does.
-- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Delete" has the danger colour.
+- The menu of a card has "Edit", "Export", "Move" and "Delete", in this order. "Export" shows only when `access.export` is `true`.
+- "Delete" has the danger colour.
 - "Edit" is a link to `d/<uid>/<slug>?edit=1`. It opens the dashboard in edit mode.
 - The menu "More actions" of the dashboard page has "Export" but not "Move" (9.9). Thus the menu of the card is the way to "Move" (10.7).
 - "Delete" runs the delete flow of 10.13 and names the dashboard in its dialog. The server decides. A `403` shows the usual refusal.
@@ -541,7 +542,7 @@ An item that is not valid (6.12):
 
 - Its card shows the uid in place of the title, and the badge "Not valid". It has no link to the dashboard and no "Edit" or "Delete".
 - The button "Show errors" opens the errors in the card, each with its pointer and its message.
-- The three dots of the card open a menu with "Download", which reads `GET api/dashboards/<uid>?download=true` (6.14). With `editing = true` and `access.write`, it also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
+- The three dots of the card show only when the menu has an entry. The menu has "Download" only when `access.export` is `true`. "Download" reads `GET api/dashboards/<uid>?download=true` (6.14). With `access.write`, the menu also has "Replace": the import of 10.12 with this uid and the `etag` of the item.
 
 The header (9.6):
 
@@ -965,8 +966,8 @@ The menu "More actions" has these items, in this order. An item shows only when 
 
 - Up to 900 px: "Shift the time range back", "Shift the time range forward" and "Zoom out", then a separator. The buttons of these actions hide at this width.
 - In edit mode: the actions of 10.2, then a separator. They are "Revert all changes" (`data-testid="discard-menu"`, up to 640 px only), "Dashboard JSON" and "Settings". The menu of the button "Add" has "Add panel" and "Add section" (10.2).
-- "History" (`data-testid="history-button"`). Each user who can read the dashboard sees it.
-- "Export" (`data-testid="export-button"`). Each user who can read the dashboard sees it.
+- "History" (`data-testid="history-button"`). It shows only when `access.history` is `true`. A dashboard of a read-only store has no history, so it never shows there.
+- "Export" (`data-testid="export-button"`). It shows only when `access.export` is `true`.
 - A separator, then "Delete" (`data-testid="delete-button"`). It shows with `editing` true and `access.write`. It opens the dialog of 10.13, so the delete always asks first.
 
 The time control has two groups, and its buttons touch. Only the outer corners are round. There is no second refresh button and no separate interval control.
@@ -2241,7 +2242,7 @@ Y axes (`axis_placement`, `axis_label`, `soft_min`, `soft_max`). A chart has two
 
 1. The placement of a series is `axis_placement`. It is `auto` when the member is not set.
 2. `left` puts the series on the left scale. `right` puts it on the right scale.
-3. `U_L` is the unit (9.15) of the first series, in field order, whose placement is `auto` or `left`. A series with `hidden` never gives `U_L`. A series with `auto` or `hidden` goes on the left scale when its unit equals `U_L`. Else it goes on the right scale. This is the Grafana rule for the first two axes: `auto` goes left when no earlier series has a left axis, and goes right after that (paper, V1).
+3. `U_L` is the unit (9.15) of the first series, in field order, whose placement is `auto` or `left`. A series with `hidden` never gives `U_L`. A series with `auto` or `hidden` goes on the left scale when its unit equals `U_L`, else on the right scale. When every series is `hidden`, no axis shows, and all series go on the left scale. This is the Grafana rule for the first two axes: `auto` goes left when no earlier series has a left axis, and goes right after that (paper, V1).
 4. A chart with no series on the right scale has no right scale. A third unit shares the right scale. Grafana makes one scale and one axis for each set of unit, placement, `min`, `max`, soft ends and scale type. So it draws a third axis. It also draws two left axes for a `left` series and an `auto` series of another unit. These are known differences (19.20a).
 5. Each scale has its own range. The range follows the automatic rule of this paragraph (steps 1 to 7) on the series of the scale.
 6. The `min` and `max` of the first series of the scale that sets them are hard ends. A hard end on a side with no soft end is the end of the axis on that side. It also replaces the data end of that side (`lo` or `hi`) in steps 1 to 5. With a soft end on the same side, the hard end is a limit: the end of the axis does not go past it. For example, `min` = 0 with the data 5 to 95 gives 0 to 105.
@@ -2324,14 +2325,16 @@ Look of the charts (`timeseries`, `barchart`, `xychart`):
 - The axes have no base line, no zero line and no tick marks. The grid lines are the only lines. The exception is a y axis with `axis_border` = `true` (P14, below).
 - The x axis has one row of labels, with no row for the date. Two ticks are the width of a label (in the format of its step) plus 11.5 px apart. The steps are those of Grafana: there is no step of 2 minutes, and there are steps of 4 and 8 hours. A day step starts at the first midnight in the range. A step of 1 minute writes the seconds.
 - A range of more than 24 hours writes `MM/DD HH:mm`. A shorter range writes no date, also at midnight.
-- The plot has a margin of 8 px at the top and at the right. It has a band of 21 px at the bottom. The margin at the left is the width of the widest y label plus 11 px. A y label ends 6 px before the plot.
+- The plot has a margin of 8 px at the top and at the right. It has a band of 21 px at the bottom. The margin at the left is the width of the widest y label plus 9 px, rounded up. A y label ends 5 px before the plot.
 - When no y axis shows on either side, the plot has no margin at the top (E27, 9.24). This is the rule of Grafana 12.4.2 for a time series whose y axes are all hidden. In that case Grafana also hides the time axis, because the defaults of the panel apply to the time field too. Then its plot fills the canvas. Hune keeps the time axis with its band and its side margins. This is a known difference.
 - A fill keeps the opacity of `fill_opacity`, also where fills of series that do not stack overlap. The fills add up there.
-- The legend text is 12 px at weight 400 in the text colour. The mark of a series is a pill of 14 x 4 px, 8 px before the name. The items are 10 px apart. The legend, in the mode `table` or `list`, scrolls when it is more than 35 % of the inner height of the panel.
+- The legend text is 12 px at weight 400 in the text colour. The mark of a series is a pill of 14 x 4 px, 8 px before the name. The items are 10 px apart. The legend, in the mode `table` or `list`, scrolls when it is more than 35 % of the inner height of the panel. This holds under the plot, also when a legend at the right has moved there (below).
 - The legend has no "Values" or "List" button. The option `legend.mode` still sets the mode.
 - The legend table has the column "Name" first. The columns of `legend.values` follow in the document order. A head is a button that sorts the table in three steps: up, down, series order. The head has `aria-sort` and the link colour. A row is 23.8 px high, with a rule of 1 px.
 - A legend column has one precision for all the series of one unit. The precision is the most decimals that a field sets or that 9.15 gives for a value of the column. The total of a `percent` or `percentunit` series shows as a plain number with no `%`.
 - A legend at the right keeps the plot at least 220 px wide. When the panel is too narrow for that, the legend goes under the plot.
+- A legend that has no entry takes no room. This is the case when `hide_from.legend` is `true` for every series. At the right, it leaves no gap, and the plot has the whole width.
+- A legend in the mode `table` with `values` empty has the column "Name" only.
 - The tooltip is a card. It has the surface, the border and the radius (6 px) of a menu, and a shadow. The head band of the card is 30 px high. It shows the time (12 px, weight 500, full text colour) with a rule of 1 px under it.
 - A row has a mark, a name and a value. The mark is a pill of 14 x 4 px. The name is 12 px and muted. The value has weight 500. No row is highlighted. The head shows the milliseconds only when the median step of the x axis is below 1 s.
 - The card sits 10 px to the right of the cursor and 10 px under it. It flips to the other side at an edge of the plot.
@@ -2359,7 +2362,7 @@ Look of the charts (`timeseries`, `barchart`, `xychart`):
 - The value has the font of the page, weight 500 and a line height of 1.2. A tile has a padding of 12 px, or 8 px when its height is 100 px or less. The unit is 0.9 of the value size below 20 px, 0.8 below 30 px and 0.6 from 30 px up.
 - A tile is wide when its width is more than 2.5 times its height. A wide tile shows the name at the left and the value at the right. Another tile shows the name above the value. In a wide tile the name is 0.7 of the value size.
 - The page measures the text with its unit at 100 px, and scales it. The text uses 0.985 of the room in the width, and all the room in the height. The size is 6 px at least. The value has no upper limit, so a stat in the view of one panel is very large, as in Grafana.
-- In a tile that is not wide, the name takes 0.15 of the room in the height at most. Its size is 30 px at most. The grid of tiles reaches the four edges of the panel content. Thus a background colour fills the whole panel.
+- In a tile that is not wide, the name takes 0.15 of the room in the height at most. Its size is 30 px at most. The grid of tiles reaches the four edges of the panel content. Thus a background colour fills the whole panel. When a warning line shows above the panel (9.14), the grid starts under the line. It still reaches the three other edges.
 - A stat with no value, and a stat with zero rows, show `no_value`, else "No data". The text has the size and the weight of a value (9.14).
 - With `color_mode = "value"`, a colour with a contrast below 4.5:1 with the panel moves toward the text colour, up to 4.5:1. A value text of 24 px or more is a large text: its least contrast is 3:1.
 - A named colour uses the table "Light fills" in the light theme (9.16).
@@ -2423,7 +2426,7 @@ The options `title_size` and `value_size` (same item) set the font sizes of the 
   - The line has the plain colour of the series and the width `line_width`. With 0, the page draws no line, as Grafana.
   - The line stays inside the box of the bar on its four sides. The box of the path loses half the line width w at each side. Thus the box is x + w/2, y + w/2, the width less w and the height less w. Grafana drew the boxes 22, 352 (width 0), 23, 351 (width 1) and 24, 348 (width 4) for one bar. The page gives the engine `barInset: "box"` (E34, 9.24).
 - `axis_grid` (4.18) of the first field that sets it. `false` removes the grid lines of the value axis. The labels of the axis stay. `true` and an absent member draw the grid lines, because a bar chart has one value axis (Grafana: Auto and On). The page gives the engine `gridScale: "none"` (E13).
-- `orientation = "auto"` draws horizontal bars when the plot is narrower than it is high, else vertical bars. This is the rule of Grafana 12.4.2 (`width < height`, with the size of the plot area of the panel). Equal sizes give vertical bars. A resize that crosses the rule draws the chart again in the other orientation. The rotation of the labels has an effect only while the bars are vertical.
+- `orientation = "auto"` draws horizontal bars when the plot is narrower than it is high, else vertical bars. This is the rule of Grafana 12.4.2 (`width < height`). The size is the size of the box of the chart, with its legend. Equal sizes give vertical bars. A resize that crosses the rule draws the chart again in the other orientation. The rotation of the labels has an effect only while the bars are vertical.
 - On a time axis, the bars cover the range. The first bar can be partial.
 - `x_tick_rotation` turns the labels of the x axis (edit E25 of 9.24). The value is in degrees. It has an effect only when the bars are vertical: `orientation` is `vertical`, or `auto` in a plot that is not narrower than it is high. The value 0 gives flat labels, as before.
 - A positive value turns the text clockwise, and the start of the text is at its tick. A negative value turns the text counter-clockwise, and the end of the text is at its tick. The value 90 gives text that reads downward, and -90 gives text that reads upward.
@@ -2432,7 +2435,7 @@ The options `title_size` and `value_size` (same item) set the font sizes of the 
 - The page shows a label only when it keeps 6 px from the label before it. The room of a label is its turned width, w cos(a) + 12 sin(a). When the labels lie side by side, the room is 12 px / sin(a) if that value is less.
 - A label never leaves the canvas. The page moves the anchor of a label that would leave it. A label that would leave less than 40 px of plot ends with an ellipsis.
 - `orientation = "horizontal"` is drawn by code of Hune (`panels/barchart_h.js`), because the engine has no horizontal bars (9.24). It has one row for each category and one bar for each series in a row. It has a value axis at the bottom. The value of each bar shows at its end.
-- A horizontal bar has the fill and the line of `fill_opacity` and `line_width`, inside its box (CSS `box-sizing: border-box`). With `axis_grid` = `false`, the value axis has its ticks and no grid line. The category labels are 12 px, right-aligned, in the full text colour. The legend has no mode button.
+- A horizontal bar has the fill and the line of `fill_opacity` and `line_width`, inside its box (CSS `box-sizing: border-box`). With `axis_grid` = `false`, the value axis has its ticks and no grid line. The category labels are 12 px, right-aligned, in the full text colour. The legend has no mode button. It follows the shared object `legend` as the vertical form does, with the mode, the columns, the sort, `hide_from.legend` and the cap of 35 %. At the right, it has no gap, and under 220 px of plot it goes under the plot.
 - A value label has a font of two thirds of the bar thickness, 10 to 28 px, weight 500. The label is 8 px after the end of the bar. With `show_values = "auto"`, a row of less than 12 px shows no value.
 - The value axis starts at 0, or at the lowest negative value. It ends at the highest value plus 10 % of room. The tick step is 1, 2, 2.5 or 5 times a power of ten. Two ticks are 60 px apart or more. The mode `percent` has the axis 0 to 100 with the step 20.
 
@@ -2453,6 +2456,8 @@ The options `title_size` and `value_size` (same item) set the font sizes of the 
 - The percent of a slice has the decimals of the field, or 0 decimals when the field sets none.
 - A slice has a colour with a contrast of 3:1 or more with the panel. A colour that fails moves toward black on a light panel, or toward white on a dark panel. It moves in steps of 5 % up to the first step that passes.
 - A label shows only when its whole box is inside its slice. The box is 4 px or more from the straight edges. The page tries all the parts of the label, then fewer parts. It tries one line, then one line for each part, at 12, 11 and 10 px. A label that fits nowhere does not show.
+- The page sizes the circle from the real box of the canvas, with the fraction of a pixel (9.19a). The centre is the middle of the box. The radius is half of the shorter side less 8 px, and 10 px at the least. A `donut` has a hole with 0.55 of the radius at the same centre.
+- The member `legend` is necessary (4.26). The page has no default value for it.
 - The text of a label is `#000000` when the slice colour has a WCAG luminance of 0.179 or more. Else it is `#ffffff` (`FE-07`).
 
 `xychart` (4.32):
@@ -2486,6 +2491,10 @@ The options `title_size` and `value_size` (same item) set the font sizes of the 
 - The value text has the colour of the item and weight 400. Its box is at most 0.2 of the item width wide, and 150 px at most.
 - With `reduce.values = true`, an item has the name of its row (the first `text` field). When the data has several numeric fields, the name is `<row> <field>`.
 - A vertical bar gauge shows the value on top and the name below. When `show_unfilled` is `false`, the value sits on top of the filled part.
+- With `display_mode = "lcd"`, the bar is a row of cells. A cell is 10 px long, and two cells are 2 px apart. The cells start at the foot of a vertical bar and at the left of a horizontal bar. A track holds `max(1, floor((L + 2) / 12))` cells, where `L` is its length in px. An unlit cell has the colour of the step at 18 % opacity.
+- In the mode `lcd`, `show_unfilled = true` draws the track of the other modes behind the cells: the colour `--bar-off` with a radius of 4 px. With `false`, the track has no colour. The unlit cells show in both cases.
+- Two items are 10 px apart in a horizontal bar gauge, and 2 px apart in a vertical one. An item is 10 px high at least in a horizontal gauge, and 16 px wide at least in a vertical one. The name of a vertical item is a line of 22 px.
+- The value of a vertical item has the size `max(6, min(0.1 × H, 0.975 × W × 100 / w100))`. `H` is the height of the gauge. `W` is the width of the item. `w100` is the width of the text at 100 px.
 
 #### 9.19a No scroll bar of less than one pixel
 
@@ -2713,6 +2722,8 @@ The figures are the figures that Grafana 12.4.2 draws, measured on the local ins
 
 **6. The geometry.** The canvas fills the body of the panel, under the legend when the legend is at the bottom. The values are measured on Grafana 12.4.2 at a pixel ratio of 1.
 
+A text on the canvas is 12 CSS px high at each pixel ratio. The canvas has device pixels, so the page draws the text with the font size 12 times the pixel ratio. The page measures a width at 12 px, so the places do not depend on the pixel ratio.
+
 | Part | Rule |
 |---|---|
 | Plot top, right | 8 px. |
@@ -2932,9 +2943,9 @@ The figures are the figures that Grafana 12.4.2 draws, measured on the local ins
 5. The mode `opacity`. The colour is `color.fill`, as the theme draws a colour of that kind (9.16). Colour `j` has the opacity `j / (steps - 1)` for the scale `linear`, and `(j / (steps - 1)) ^ exponent` for the scale `exponential`. The opacity is rounded to 8 bits, as in a colour `#rrggbbaa`. The cells with the lowest count are then fully transparent. The mode `opacity` has no inversion and no `reverse`.
 6. The page makes the palette again when the theme changes.
 7. The legend shows when `show_legend` is `true` and the panel has a drawn cell. It is a canvas of 300 by 9 px. It draws the `steps` colours from the left to the right, so the lowest count is at the left.
-   - The bar is 25 px from the left edge of the body and 10 px under the top of the legend. Two labels in 11 px text are under the bar: the first count at the left end and the last count at the right end.
+   - The bar is 25 px from the left edge of the content box and 10 px under the top of the legend. The content box is the box of the picture, 8 px inside the body of the panel. Two labels in 11 px text are under the bar: the first count at the left end and the last count at the right end.
    - The legend takes 46 px under the plot. The plot is 46 px lower. The label colour is the text colour at 61 % of its alpha.
-   - The counts are the `min` and the `max` of section 4, written in the short number form of 9.19 (`4.91 K`). A body narrower than 350 px gets a bar of the width of the body less 50 px (a rule of Hune, not measured).
+   - The counts are the `min` and the `max` of section 4, written in the short number form of 9.19 (`4.91 K`). A content box under 350 px gets a bar of its width less 50 px, 10 px at least. This is a rule of Hune, not measured.
    - A click on the legend does nothing.
 
 **6. The axes.**
@@ -3104,7 +3115,7 @@ A gauge draws each value on an arc (4.33e). It is the classic gauge of Grafana 1
 2. A field with the unit `percent` has the scale 0 to 100 when the property set has no `min` or `max`. A field with the unit `percentunit` has the scale 0 to 1.
 3. When the threshold markers show, the minimum and the maximum are rounded to `decimals` (2 when `decimals` is absent).
 4. With the thresholds in the mode `percentage`, the scale is 0 to 100. The value is its share of the scale of the field, times 100.
-5. An empty scale (the maximum equals the minimum, for example one value with no `min` and no `max`) gives no angle. The gauge then draws the empty arc and the text only, as Grafana does. With no row, the scale is `min` to `max` of the defaults, else 0 to 0.
+5. An empty scale (the maximum equals the minimum, for example one value with no `min` and no `max`) gives no angle. The gauge then draws the empty arc and the text, as Grafana does. It draws no filled arc, no neutral mark and no part of the band, and the band keeps its room. With `show_threshold_labels`, the labels of the minimum and of the maximum still show. With no row, the scale is `min` to `max` of the defaults, else 0 to 0.
 
 **3. The cells.**
 
@@ -3116,15 +3127,15 @@ A gauge draws each value on an arc (4.33e). It is the classic gauge of Grafana 1
 **4. One gauge in its cell.**
 
 1. A gauge has a title when the panel has two items or more, or when the defaults of the fields have `display_name`. The title is the display name of the item, under the gauge.
-2. The title size is `min(0.1 × w, 20)` px, where `w` is the cell width. With `vertical` it is `min(0.1 × h, 20)` px, where `h` is the cell height. `title_size` replaces it. The line of the title is `title size × 22 / 14` px high. It is centred, it cuts a long name with an ellipsis, and it moves up by 4 px.
-3. The gauge is `min(h - 1.5 × title size, w)` px high, or `min(h, w)` px with no title. With `vertical`, the box of the gauge is as wide as it is high, at the left of the cell. Else it is as wide as the cell.
+2. The title size is `min(0.1 × w, 20)` px, where `w` is the cell width. With `vertical` it is `min(0.1 × h, 20)` px, where `h` is the cell height. `title_size` replaces it in the line of the title only. The line of the title is `title size × 22 / 14` px high. It is centred, it cuts a long name with an ellipsis, and it moves up by 4 px.
+3. The gauge is `min(h - 1.5 × title size, w)` px high, or `min(h, w)` px with no title. Here the title size is the automatic size of rule 2, also when `title_size` is set. With `vertical`, the box of the gauge is as wide as it is high, at the left of the cell. Else it is as wide as the cell.
 4. When the gauge and the title are higher than the cell, both get smaller in the ratio of their heights. When they are lower, they are in the middle of the cell.
 
 **5. The geometry of the arc.** The size `T` is the smaller of the box width and the height of the gauge. With `vertical`, the size reads the cell width for the title size, as Grafana does.
 
 1. The arc goes from 0.9 π to 2.1 π, clockwise: from the lower left, over the top, to the lower right. It has 216 degrees.
 2. The width of the arc is `min(T / 5.5, 40)` px. With `show_threshold_labels` it is that width divided by 1.5. The band of the threshold markers is one fifth of the arc width.
-3. The value text fits a width of `0.9 × min(box width, 1.3 × T)` less `2 × (arc width + band + 10 with labels) + 10`. Its size is the smallest of `T`, the width at which the text fits, and `1.7 ×` the arc width. The page measures the text at 14 px in the font Inter. `value_size` replaces the size.
+3. The value text fits a width of `0.9 × min(box width, 1.3 × T)` less `2 × (arc width + marker room + 10 with labels) + 10`. The marker room is the band width when `show_threshold_markers` is not `false`, else 0. It stays when the colour mode draws no band. Its size is the smallest of `T`, the width at which the text fits, and `1.7 ×` the arc width. The page measures the text at 14 px in the font Inter. `value_size` replaces the size.
 4. A threshold label has the size `max(value size / 2.5, 12)` px.
 5. The radius is the smaller of two values. The first is the half width of the box less 5 px, the band and the room of the labels. The second comes from the height of the box less 10 px, divided by `1 + sin(0.1 π)`, less the band and the room of the labels. The value text can need more room under the centre. Then the second value is the height less 10 px, a margin of `max(1, box width / 30)` and half the value size.
 6. The arc is in the middle of the box, vertically. When the arc width is not below the radius, the arc width is `max(3, radius / 3)`.
@@ -3134,7 +3145,7 @@ A gauge draws each value on an arc (4.33e). It is the classic gauge of Grafana 1
 1. The empty arc: the full arc, in the colour of the text at 6 % over the panel, as the track of a bar gauge.
 2. The filled arc goes from the start of the arc to the angle of the value. It is 1 px inside the empty arc on each side, with a line of 1 px in its colour. With `neutral`, it goes from the angle of the neutral value to the angle of the value. A value below the minimum or above the maximum stops at the end of the arc.
 3. The neutral mark is a short part of the arc at the neutral value: the scale divided by 300. It has a line of 2 px in the colour of the value and the fill of the empty arc.
-4. The threshold band, when `show_threshold_markers` is `true` and the colour mode is `thresholds`. It is outside the arc, with a gap of 2 px. Each part has the colour of its step. The parts start at the minimum and end at the maximum. A step outside the scale has no part.
+4. The threshold band, when `show_threshold_markers` is `true`, the colour mode is `thresholds` and the band has two entries or more. The entries are the minimum, each step inside the scale and the maximum. It is outside the arc, with a gap of 2 px. Each part has the colour of its step. The parts start at the minimum and end at the maximum. A step outside the scale has no part.
 5. The labels, when `show_threshold_labels` is `true`: the minimum, the maximum, each step value inside the scale and the neutral value inside the scale. The text is the number as JavaScript writes it, with no unit. Each label turns with the arc and stays outside it, in the colour of the text.
 6. The value text, in the middle of the arc, with the unit, in the colour of the value.
 
@@ -3170,12 +3181,12 @@ A log line is untrusted text (threat T104). The page writes each time, level, bo
 **2. The lines.**
 
 1. The order. With `order` = `newest_first`, the line with the highest time is at the top. With `oldest_first`, the line with the lowest time is at the top. The sort is stable: lines with the same time keep the order of the frame. A line with no time comes last in both orders. Grafana shows "Invalid date" for such a line.
-2. The columns. A line has the time (only with `show_time` = `true`), the level and the body, in this order. The gap between two columns is 12 px.
-3. The text. The font is `--font-mono` at 14 px, on a line height of 22 px. Each line has 6 px of space under it, so one line is 28 px high. Grafana uses Roboto Mono. Hune has no copy of that font and uses the monospace font of the system.
+2. The columns. A line has the time (only with `show_time` = `true`), the level and the body, in this order. The gap between two columns is 12 px. It is the same gap with `wrap`.
+3. The text. The font is `--font-mono` at 14 px, on a line height of 22 px. Each line has 6 px of space under it, so one line is 28 px high. A line with no text in its cells is also 28 px high. Grafana uses Roboto Mono. Hune has no copy of that font and uses the monospace font of the system.
 4. The time. The time is the text `YYYY-MM-DD HH:mm:ss.SSS` in the zone of the dashboard (9.9). The column is 23 characters wide. Its colour is the text colour at 61 % in the dark theme and at 65 % in the light theme.
 5. The level. The level column shows the text of the table below, with the weight 500. The column is as wide as the longest level text of the panel, and 1 character wide at least. The colours are the colours of Grafana 12.4.2, in both themes.
 6. The body. The body has the text colour. An ANSI colour sequence (ESC, `[`, digits and `;`, then `m`) leaves the text, as in Grafana.
-7. Without `wrap`, the line ends (CR, LF) leave the body, and a line has one row of text. A long line makes the list scroll to the side. With `wrap` = `true`, the body keeps its line ends and wraps at any character. The time and the level stay on the first row of the line.
+7. Without `wrap`, the line ends (CR, LF) leave the body, and a line has one row of text. A long line makes the list scroll to the side. With `wrap` = `true`, the body keeps its line ends and wraps at any character. The time and the level stay on the first row of the line. The time has one row of 23 characters, and the level column keeps its width.
 8. A line under the pointer, and a line with an open details row, have the hover fill of a row.
 9. Each text of a line is isolated for the bidirectional order (CSS `unicode-bidi: isolate`). A control character of a body, such as U+202E, changes the order inside the body only.
 
@@ -3313,6 +3324,7 @@ These are the defaults of Grafana 12.4.2. The view is "(0°, 0°)" at zoom 1. Th
   equal parts, with 150 px at least. The text of the cells does not change a width. When the sum is wider than the view,
   the table scrolls on the x axis. The width of the view is the width without the vertical scroll bar.
 - Grid look: the table sits inside the padding of the panel (8 px). The header row is 34 px high and a body row is 36 px high. The 1 px rule is inside these heights. A cell has a padding of 6 px.
+- Coarse pointer: the filter button of a header has a target of 40 × 40 px. A header that shows one filter button or more is then 47 px high: 40 px, 6 px of padding and the rule of 1 px. A header with no filter button stays 34 px high. A body row stays 36 px high. With `show_header` = `false`, the header has no height.
 - Each cell has a rule of 1 px at its bottom, and at its right except in the last column. The rules have the grid line colour of the theme.
 - The header text is 14 px at weight 500 in the muted colour. The body text is 14 px at weight 400 in the text colour. A row has a grey hover fill, not a blue one.
 - The sort mark shows only on the sorted column. The column filter button shows at all times in a filterable column.
@@ -3356,7 +3368,7 @@ These are the defaults of Grafana 12.4.2. The view is "(0°, 0°)" at zoom 1. Th
 - "Apply" keeps the rows whose display text is selected, in each filtered column. The filter is page state: it is not
   in the URL and not in the document. A filtered column shows a marked filter button.
 - Virtual rows: from 500 rows, the DOM holds only the rows in view and 20 rows above and below. A row is 36 px high, and
-  the header is 34 px high. The header stays at the top when the table scrolls.
+  the header is 34 px high (47 px with a filter button on a coarse pointer). The header stays at the top when the table scrolls.
 - Keys: `Tab` goes into the table, and the arrows move the focus from cell to cell (the copied `app_ui_table.js`).
 - Wrap: with `options.wrap = false`, a cell text has one line, and an ellipsis ends a text that is too long. With `true`, the text wraps at spaces, and a word longer than the column breaks at any place. The row grows to the height of its tallest cell, with 36 px as the least height. A header text never wraps.
 - Wrap and virtual rows: from 500 rows, the page measures the rows that it draws, and it counts 36 px for the others. The scroll bar can then change its size while the viewer scrolls.
@@ -4050,7 +4062,7 @@ JavaScript.
 | `data-testid="annot-<id>-card"`, `"annot-<id>-keys"`, `"annot-<id>-status"` | The card, the element of the keys and the hidden status text of the time series `<id>` (9.19d). `<id>` is the key of the panel instance (9.8c). |
 | `data-testid="panel-<id>-annot-note"` | The note of the title bar (9.19d, rule 16). |
 | `data-testid="view-data-annotations"` | The second table of "View data" (9.11). |
-| `data-timeline` on `.panel__plot` | JSON that the page writes after each draw of a `state_timeline` or a `status_history`. It holds `kind`, `box` (`[left, top, width, height]`), `rows` (`name`, `y`, `h`, `n`), `segments` (`[row, x, w, state]` for each box), `states` (`[text, color]`), `texts` (`[text, x, y, color]`) and `cut`. The arrays hold 2,000 items at most, and `cut` is `true` when the page cut them. The lengths are in CSS pixels. |
+| `data-timeline` on `.panel__plot` | JSON that the page writes after each draw of a `state_timeline` or a `status_history`. It holds `kind`, `box` (`[left, top, width, height]`), `rows` (`name`, `y`, `h`, `n`), `segments` (`[row, x, w, state]` for each box), `states` (`[text, color]`), `texts` (`[text, x, y, color]`), `ticks` (`[time, x]` for each grid line), `labels` (`[text, x, left, right, top]` for each label of the time axis) and `cut`. The arrays `segments` and `texts` hold 2,000 items at most, and `cut` is `true` when the page cut them. The lengths are in CSS pixels. |
 | `data-testid="timeline-<id>"`, `"timeline-<id>-note"`, `"timeline-<id>-legend"`, `"timeline-<id>-tip"`, `"timeline-<id>-desc"` | The root of the picture, the message of the state `timeline-limit`, the legend, the card and the hidden description (9.19c). |
 | `data-heatmap` on `.panel__plot` | JSON that the page writes after each draw of a `heatmap`. It holds `shape` (`bucketed` or `raw`), `cols`, `rows`, `drawn` (the cells that the engine drew in the range of the time), `sx`, `sy` (the sizes, or `null`), `scale` (`linear`, `log2`, `log10` or `ordinal`), `min`, `max`, `steps`, `palette` (the first and the last colour), `legend` (`[first count, last count]` or `null`) and `cells` (`[column, row, count, level]` for the first 2,000 cells that have a count to draw). `level` is the index in the palette. `cut` is `true` when the page cut the list. |
 | `data-testid="heatmap-<id>"`, `"heatmap-<id>-note"`, `"heatmap-<id>-legend"`, `"heatmap-<id>-tip"`, `"heatmap-<id>-desc"`, `"heatmap-<id>-skip"` | The root of the picture, the message of the state `bucket-limit`, the colour bar, the card, the hidden description and the note of the values that a log scale skipped (9.19e). The dialog "View data" has the same note as `view-data-<id>-skip`. |
@@ -4059,6 +4071,7 @@ JavaScript.
 | `data-geomap` on `.panel__plot` | JSON that the page writes after each draw of a `geomap` and after each tile result. It holds `points` (the rows with a valid position), `skipped`, `drawn` (the markers in the view), `mode` (`tiles` or `plain`), `zoom`, `lat` and `lon` (the centre), and `tiles`. `tiles` is `null` with no tile source. Else it holds `needed`, `over`, `drawn`, `requested`, `failed`, `loaded` and `peak` (the most requests in flight on the page). Above `MAX_GEO_POINTS` it holds `points` 0, `skipped` 0 and `limit`. The test ids are `geomap-<id>`, `geomap-<id>-tip`, `geomap-<id>-zoom-in`, `geomap-<id>-zoom-out`, `geomap-<id>-attribution`, `geomap-<id>-skip`, `geomap-<id>-tiles-note` and `geomap-<id>-note`. |
 | `data-logs` on `.logs` | JSON that the page writes after each draw of a `logs` panel: `lines` (the lines drawn), `total` (the rows of the frame) and `cut` (`null`, `lines` or `chars`) (9.19h). |
 | `data-testid="logs-<key>"`, `"logs-<key>-details"`, `"logs-<key>-shape"` | The list of the lines, each open details row, and the message of a frame with no time or no text column (9.19h). The class `logs__line` is a line, and `logs__note` is the note of a cap. |
+| `data-geometry` on `.pie__canvas` | The circle of the last draw of a `piechart`: four numbers with a space between them. They are `cx`, `cy`, the outer radius and the inner radius, in CSS pixels of the canvas box. A slice under the pointer does not change them. The inner radius is 0 for a `pie` (9.19). |
 | `data-gauge` on the root `gauge-<id>` | JSON that the page writes after each draw of a `gauge`: one object for each gauge with its cell (`x`, `y`, `w`, `h`), `canvasW`, `canvasH`, `titleSize`, `cx`, `cy`, `radius`, `arcW`, `markW`, `valueSize`, `labelSize`, `min`, `max`, `bands` and `text` (9.19g). |
 | `data-testid="gauge-<id>"`, `"gauge-item-<id>"`, `"gauge-<id>-desc"` | The root of the gauges, each cell and the hidden description (9.19g). |
 | `data-testid="dash-links"`, `"dash-link-<n>"`, `"dash-link-<n>-button"`, `"dash-link-<n>-item-<uid>"` | The group of the dashboard links, each link, its dropdown button and each dashboard item (9.8a). |
@@ -4085,7 +4098,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,116 KB at most (1,142,784 bytes), before compression. The limit is the measure (1,138,613 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,171 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,126 KB at most (1,153,024 bytes), before compression. The limit is the measure (1,148,036 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,988 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;
@@ -5751,7 +5764,7 @@ The key is `hune.draft.v1.<uid>`. The value is:
 | `422 invalid_document` | It lists the errors with their pointers. A click opens the JSON tab at the member. The draft stays. |
 | `422 idempotency_key_reused` | It makes a new `save_id` and shows "Select Save again.". |
 | `503 storage_unavailable`, a network error, or no answer after 30 s | It shows "Saving is not possible now. Your draft is kept in this browser." with "Retry". "Retry" sends the same request with the same `save_id`. |
-| `403 forbidden`, `403 editing_disabled` | It shows the message. The draft stays. |
+| `403 forbidden` | It shows the message. The draft stays. |
 | `401 unauthenticated` | The full page of 9.6. |
 | `413 payload_too_large` | It shows "The dashboard is too large.". |
 | `507 storage_full` | It shows "The store is full. Tell the operator.". |
@@ -5809,15 +5822,15 @@ Two other cases of the same `409`:
 
 ### 10.11 History: list, view, diff and restore
 
-"History" in the menu "More actions" (9.9) opens `editview=history`. Each subject that can read the dashboard can read its history
-(`dashboard.read`, 11).
+"History" in the menu "More actions" (9.9) opens `editview=history`. The page exists only when `access.history` is `true` (6.17, 11).
+A URL that a user opens by hand, without this right, shows the page of `403` of 9.8 ("You have no access to this dashboard."). The page makes no request to the history routes. The routes refuse too: `history_disabled`, `forbidden` or `history_unavailable`.
 
 List (`data-testid="history-list"`):
 
 - The columns are "Version", "Kind", "Saved at" (in the zone of the dashboard), "Saved by", "Message" and "Size". The
   newest version is first, with the mark "current". Under 900 px the columns "Kind", "Saved by" and "Size" hide.
 - "Load more" reads the next page while `next` is not `null` (6.24).
-- Each row has "View" and "Compare with current".
+- Each row has "View" and "Compare with current". With `access.export` equal to `true`, the current text is `download=true` of 6.14. Without it, the text of the newest version of the list stands for the current text.
 - A row that is not current, not a deletion version and not an `external` version without bytes also has "Restore". This needs `editing = true` and
   `access.write` on the dashboard.
 - The user can select two rows with their check boxes. "Compare" then shows the diff from the older to the newer one.
@@ -5826,7 +5839,7 @@ View (`editview=history&version=<n>`):
 
 - The page shows version `n` as a read-only dashboard, with the banner "Version <n> of <time>, by <subject>. This view
   is read-only.".
-- The banner has "Restore this version" (when permitted), "Compare with current", "Export this version" and "Back to
+- The banner has "Restore this version" (when permitted), "Compare with current", "Export this version" (only when `access.export` is `true`) and "Back to
   the history".
 - Each panel shows the text "Data not shown".
 - The banner has one button "Show data" for the whole page, when the user can use the preview. This is true when `editing` is `true`
@@ -5856,7 +5869,8 @@ Restore:
 
 Export:
 
-- "Export" of the dashboard menu, of the menu of a card and of a version view reads `download=true` (6.14, 6.17).
+- "Export" of the dashboard menu and of the menu of a card reads `download=true` (6.14). Both need `access.export` equal to `true`.
+- "Export this version" of a version view reads `download=true` (6.17). It needs `access.history` and `access.export` equal to `true`.
 - The browser saves the canonical bytes as `<uid>.json`, or `<uid>-v<n>.json` for a version.
 
 Import (the list page, when `editing` is `true` and one folder has `access.write`):
@@ -5907,7 +5921,8 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 
 | State | The page |
 |---|---|
-| `editing = false` in the session (no store is the primary store) | No "Edit", "New dashboard", "New folder", "Import", "Move", "Delete", "Restore" or folder control. The history list, the views and the diffs stay. |
+| `access.history = false` (no history in the store, `server.history` is `false`, or the PDP refuses `dashboard.history`) | No "History" entry. The page of 10.11 shows the refusal page of 9.6 when a user opens its URL by hand. |
+| `access.export = false` (`server.export` is `false`, or the PDP refuses `dashboard.export`) | No "Export" entry and no "Download" entry on the card. No "Export this version" on a version view. |
 | `read_only = true` on a dashboard or a folder (the store is read-only, 5.42) | A lock on the card and in the header of the editor. The editor opens read-only. The page offers "New dashboard", "New folder" and "Move" only in the primary store. A write that the page sends gets `403 read_only_store`, and the page shows its message. |
 | `stale = "file_invalid"` on a dashboard (5.44) | A warning on the card and in the header of the dashboard: the page shows the last valid state, and the file of the volume is not valid now. The text never holds a path or a message of the parser. |
 | `access.write = false` for a dashboard or a folder, or `access.create = false` (mode `authzen`, 11.25) | The same controls are absent for this dashboard or this folder. "New folder" is absent without `access.create`. |
@@ -5915,7 +5930,7 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 | `503 storage_unavailable` on a write | The notice of 10.9. Edit mode stays. |
 | `503 pdp_unavailable` | The notice of 9.6. The controls stay. The server refuses the request (fail closed). |
 | A URL with `edit`, `editPanel` or `editview=json` or `settings`, and the user cannot edit (a deep link, "Back", "Forward" or a reload) | The page shows the state of 10.2a, rule 1, with no edit names. It shows the notice "You cannot edit this dashboard.". The draft stays in the browser. The page shows no "Resume". |
-| The user opens `editview=history` and cannot edit | The history shows (10.11). It has no "Restore". |
+| The user opens `editview=history`, has `access.history`, and cannot edit | The history shows (10.11). It has no "Restore". |
 
 The server checks each operation. The absence of a control is only a display rule (11).
 

@@ -543,7 +543,7 @@ export const cases = [
   },
   {
     id: "B79",
-    name: "rights: edit names without the right give the view with a notice and no Resume, the draft stays, History has no Restore, a 403 on Save keeps the mode (10.2a, 10.14)",
+    name: "rights: edit names without the right give the view with a notice and no Resume, the draft stays, a history URL by hand gives the page of 403 (10.2a, 10.11, 10.14)",
     server: "noedit",
     async run(t) {
       const vectors = ["edit=1", "edit=1&editPanel=2", "edit=1&editview=json", "edit=1&editview=settings", "viewPanel=2&editPanel=2"];
@@ -564,11 +564,10 @@ export const cases = [
         t.eq(await first.eval(`[...document.querySelectorAll("#app-notices .notice .btn")].some((b) => /Resume/.test(b.textContent))`), false, `${query}: no Resume`);
         t.assert((await first.eval(`localStorage.getItem("hune.draft.v1.${uid}")`)) !== null, `${query}: the draft stays`);
       }
-      // The history shows with no Restore.
+      // The history of a dashboard of a read-only store does not exist: a URL by hand shows the page of 403 (10.11).
       await first.goto(t.dash(uid, "editview=history"));
-      await first.waitSel(first.tid("history-list"));
-      await first.idle();
-      t.eq(await first.eval(`[...document.querySelectorAll("button")].some((b) => /Restore/.test(b.textContent))`), false, "no Restore");
+      await first.waitSel(first.tid("dashboard-forbidden"));
+      t.eq(await first.exists(first.tid("history-list")), false, "no history list");
     },
   },
   {

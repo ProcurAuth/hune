@@ -915,9 +915,6 @@ async fn a23_sources_list_has_ids_and_labels_only() {
     for secret in ["127.0.0.1", "8123", "hune", "secret-password", "analytics"] {
         assert!(!text.contains(secret), "{secret}");
     }
-    // With `server.editing` false the list is empty (6.22).
-    let h = Harness::start_with(test_timing(), fill, super::harness::no_primary).await;
-    assert_eq!(get(h.addr, "/api/sources").await.json(), json!({"items": []}));
 }
 
 #[tokio::test]
@@ -928,41 +925,43 @@ async fn a25_session_has_mode_subject_and_editing() {
         (j["mode"].as_str(), j["subject"].as_str(), j["editing"].as_bool()),
         (Some("open"), Some("-"), Some(true))
     );
-    let h = Harness::start_with(test_timing(), fill, super::harness::no_primary).await;
-    assert_eq!(get(h.addr, "/api/session").await.json()["editing"], false);
 }
 
 #[tokio::test]
-async fn a26_with_editing_off_each_write_route_is_refused_and_each_read_route_works() {
-    let h = Harness::start_with(test_timing(), fill, super::harness::no_primary).await;
-    let e0 = etag_of(&current(&h, "nodes").await);
-    let ifm = format!("\"{e0}\"");
+async fn a26_each_write_into_a_read_only_store_is_refused_and_each_read_route_of_it_works() {
+    let (h, _d, _r) = super::stores::start_two().await;
+    let uid = super::stores::LAB_UID;
+    let list = get(h.addr, "/api/dashboards").await.json();
+    let lab = list["items"].as_array().unwrap().iter().find(|i| i["uid"] == uid).unwrap().clone();
+    let ifm = format!("\"{}\"", lab["etag"].as_str().unwrap());
     type WriteCase = (&'static str, String, Vec<(&'static str, String)>, Vec<u8>);
     let writes: Vec<WriteCase> = vec![
-        ("POST", "/api/folders".into(), vec![], br#"{"id":"x","title":"X"}"#.to_vec()),
-        ("PUT", "/api/folders/ops".into(), vec![], br#"{"title":"X"}"#.to_vec()),
-        ("DELETE", "/api/folders/ops".into(), vec![], vec![]),
-        ("POST", "/api/dashboards".into(), vec![("Idempotency-Key", key())], post_body("ops", &doc_text("n", "N"))),
         (
             "PUT",
-            "/api/dashboards/nodes".into(),
+            format!("/api/dashboards/{uid}"),
             vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())],
-            put_body(NODES, ""),
+            put_body(&doc_text(uid, "Changed"), ""),
         ),
-        ("DELETE", "/api/dashboards/nodes".into(), vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())], vec![]),
+        (
+            "DELETE",
+            format!("/api/dashboards/{uid}"),
+            vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())],
+            vec![],
+        ),
         (
             "POST",
-            "/api/dashboards/nodes/restore".into(),
+            format!("/api/dashboards/{uid}/restore"),
             vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())],
             br#"{"version":1}"#.to_vec(),
         ),
         (
             "POST",
-            "/api/dashboards/nodes/move".into(),
+            format!("/api/dashboards/{uid}/move"),
             vec![("Idempotency-Key", key()), ("If-Match", ifm.clone())],
             br#"{"folder":"ops"}"#.to_vec(),
         ),
-        ("POST", "/api/sources/prod/preview".into(), vec![], b"{}".to_vec()),
+        ("PUT", format!("/api/folders/{}", super::stores::LAB_FOLDER), vec![], br#"{"title":"X"}"#.to_vec()),
+        ("DELETE", format!("/api/folders/{}", super::stores::LAB_FOLDER), vec![], vec![]),
     ];
     for (m, p, hs, body) in &writes {
         let mut headers: Vec<(&str, &str)> = vec![JSON];
@@ -970,26 +969,14 @@ async fn a26_with_editing_off_each_write_route_is_refused_and_each_read_route_wo
             headers.push((k, v));
         }
         let r = call(h.addr, m, p, &headers, body).await;
-        assert_eq!((r.status, r.code().as_str()), (403, "editing_disabled"), "{m} {p}");
+        assert_eq!((r.status, r.code().as_str()), (403, "read_only_store"), "{m} {p}");
     }
-    for path in [
-        "/api/session",
-        "/api/folders",
-        "/api/dashboards",
-        "/api/dashboards/nodes",
-        "/api/dashboards/nodes/history",
-        "/api/dashboards/nodes/history/1",
-        "/api/sources",
-        "/",
-    ] {
-        let r = get(h.addr, path).await;
-        assert!(r.status == 200 || r.status == 404, "{path} {}", r.status);
-        if r.header("content-type") == Some("application/json") && r.status != 200 {
-            assert_ne!(r.code(), "editing_disabled");
-        }
+    for path in ["/api/session", "/api/folders", "/api/dashboards", &format!("/api/dashboards/{uid}"), "/api/sources"] {
+        assert_eq!(get(h.addr, path).await.status, 200, "{path}");
     }
-    assert_eq!(get(h.addr, "/api/dashboards/nodes").await.status, 200);
-    assert_eq!(etag_of(&current(&h, "nodes").await), e0);
+    let list = get(h.addr, "/api/dashboards").await.json();
+    let after = list["items"].as_array().unwrap().iter().find(|i| i["uid"] == uid).unwrap().clone();
+    assert_eq!(after["etag"], lab["etag"], "no write happened");
 }
 
 #[tokio::test]
