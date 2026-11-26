@@ -45,7 +45,6 @@ export function render(host, ctx) {
   const desc = el("p", { class: "visually-hidden", id: descId, dataset: { testid: `timeline-${id}-desc` }, text: [...model.rows.slice(0, 50).map(sentence), ...(model.rows.length > 50 ? [`${model.rows.length - 50} more rows.`] : [])].join(" ") });
   const root = el("div", { class: `timeline timeline--${legend.placement || "bottom"}`, dataset: { testid: `timeline-${id}` } }, main, legendEl, note, desc);
   host.append(root);
-  const gauge = document.createElement("canvas").getContext("2d"); // measures a text at 12 units, in CSS pixels
   let view = null; // the geometry of the last draw
   let hover = new Map(); // row -> box under the pointer
   let cursor = null; // the keyboard cursor: { row, j }
@@ -100,11 +99,16 @@ export function render(host, ctx) {
     const bg = colorOf("var(--panel)");
     const rgba = (p, a) => `rgba(${p.r}, ${p.g}, ${p.b}, ${a})`;
     // The canvas has device pixels and no transform, so the drawn text has the size 12 * dpr (9.19c, section 6: 12 CSS px).
-    // The widths and the places are in CSS pixels: `gauge` measures at 12 units, as the engine does.
+    // The widths and the places are in CSS pixels: `measure` takes a width at 12 units on the same context, as the engine does.
     const fontOf = (weight) => `${weight} ${12 * dpr}px ${family}`;
     c.font = fontOf(400);
-    gauge.font = `400 12px ${family}`;
-    const measure = (s) => gauge.measureText(s).width;
+    const measure = (s) => {
+      const drawing = c.font;
+      c.font = `400 12px ${family}`;
+      const w = c.measureText(s).width;
+      c.font = drawing;
+      return w;
+    };
     const nameW = Math.max(0, ...model.rows.map((r) => measure(r.name)));
     const L = gutterOf(nameW, o.show_labels !== false);
     const plotW = Math.max(1, W - PAD - L);
