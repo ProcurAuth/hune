@@ -263,10 +263,25 @@ export const EXTRACTORS = {
     const legend = h.holder.querySelector(".timeline__legend");
     if (legend && h.visible(legend)) h.add("legend", h.rel(legend));
   },
+  // `logs`: the list, the lines, and the bars of the first line. The time bar is the time box of the first line and the track is the region from the level
+  // cell to the end of the line. Each one is 8 px high, centred in the text band of 22 px at the top of the line (the line may be higher with `wrap`).
   logs: (panel, h) => {
     const list = h.holder.querySelector(".logs");
     if (list) h.add("plot", h.rel(list));
     for (const e of h.all(".logs__line", h.holder)) h.add("row", h.rel(e));
+    const line = h.all(".logs__line", h.holder)[0];
+    if (!line) return;
+    const ln = h.rel(line);
+    const time = line.querySelector(".logs__time");
+    if (time) {
+      const t = h.rel(time);
+      h.add("time", [t[0], ln[1] + 7, t[2], 8]);
+    }
+    const level = line.querySelector(".logs__level");
+    if (level) {
+      const lv = h.rel(level);
+      h.add("track", [lv[0], ln[1] + 7, ln[0] + ln[2] - lv[0], 8]);
+    }
   },
   geomap: (panel, h) => {
     const canvas = h.holder.querySelector(".geo__canvas");

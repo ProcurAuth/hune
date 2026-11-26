@@ -13,7 +13,7 @@ export const SEED = {
 export const DEMO = {
   source: "demo",
   table: ["SELECT host, region, role, cpu_pct, mem_pct, disk_pct, uptime_days, state", "FROM demo.servers", "ORDER BY host"],
-  logs: ["SELECT ts AS timestamp, message AS body, level", "FROM demo.logs", "ORDER BY ts DESC", "LIMIT 40"],
+  logs: ["SELECT ts AS time, message, level", "FROM demo.logs", "ORDER BY ts DESC", "LIMIT 40"],
 };
 
 const withSource = (p, source) => {
