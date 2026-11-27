@@ -4,18 +4,9 @@ import * as api from "./api.js";
 import { loadEditorModule } from "./editor_loader.js";
 import { dashboardPath, listSearch, parseSearch } from "./url_state.js";
 import { absoluteTime, bindMenu, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
-import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, groupByStore, rootGroupCount, rootWritable } from "./stores.js";
+import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, compareText, fold, groupByStore, rootGroupCount, rootWritable } from "./stores.js";
 
 const SORT_KEY = "hune.list.sort";
-
-// ASCII-only lower case (9.7): non-ASCII letters keep their case.
-const fold = (text) => String(text ?? "").replace(/[A-Z]/g, (c) => c.toLowerCase());
-
-const compareText = (a, b) => {
-  const x = fold(a);
-  const y = fold(b);
-  return x < y ? -1 : x > y ? 1 : 0;
-};
 
 // Groups the dashboards by folder: the root groups first, then the folders in title order, dashboards in title order (9.7).
 // A dashboard with no folder (`folder` null) is in a ROOT group. There is one root group for each store (the store of the dashboard), so the root of

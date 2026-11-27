@@ -29,8 +29,10 @@ export function storeTable(session) {
   return table;
 }
 
-const fold = (text) => String(text ?? "").replace(/[A-Z]/g, (c) => c.toLowerCase());
-const compare = (a, b) => {
+// ASCII-only lower case (9.7): non-ASCII letters keep their case.
+export const fold = (text) => String(text ?? "").replace(/[A-Z]/g, (c) => c.toLowerCase());
+
+export const compareText = (a, b) => {
   const x = fold(a);
   const y = fold(b);
   return x < y ? -1 : x > y ? 1 : 0;
@@ -57,7 +59,7 @@ export function groupByStore(groups, session, { descending = false } = {}) {
     }
     blocks.get(id).groups.push(group);
   }
-  const stores = [...blocks.values()].sort((a, b) => compare(a.store.title, b.store.title) || compare(a.store.id, b.store.id));
+  const stores = [...blocks.values()].sort((a, b) => compareText(a.store.title, b.store.title) || compareText(a.store.id, b.store.id));
   if (descending) stores.reverse();
   return { primary, stores };
 }
