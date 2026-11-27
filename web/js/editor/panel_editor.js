@@ -1167,13 +1167,17 @@ export function createPanelEditor(E, id) {
     destroy() {
       scope.flush();
       // The last text of the SQL area goes to the draft first. This change redraws the preview, so the frame is destroyed after it.
-      if (sqlEditor) sqlEditor.flush();
-      ended = true;
-      E.api.undockToolbar();
-      controller.abort();
-      offPanel();
-      if (topFrame) topFrame.destroy();
-      releasePopovers();
+      // An error of the flush does not stop the end of the editor.
+      try {
+        if (sqlEditor) sqlEditor.flush();
+      } finally {
+        ended = true;
+        E.api.undockToolbar();
+        controller.abort();
+        offPanel();
+        if (topFrame) topFrame.destroy();
+        releasePopovers();
+      }
     },
     // The text fields apply their last change at once (a save asks for it).
     flush: () => scope.flush(),

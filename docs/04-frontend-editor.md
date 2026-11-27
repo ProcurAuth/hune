@@ -4651,7 +4651,7 @@ Each control of the options pane changes the draft, and the preview draws the dr
 
 A few controls change the draft and not the picture of the preview. Each one is in the closed list of 10.3h (rule 14), with a class and a written cause. The list has 30 entries at most. A control in the list that does change the preview makes B153 fail. An entry that no control matches makes it fail too.
 
-When the panel editor ends, the draft first gets the last text of the SQL area. The preview frame is destroyed after that. A change that comes later does not make a new preview frame.
+When the panel editor ends, the draft first gets the last text of the shown SQL area. The panel editor then destroys the preview frame. A change that comes later does not make a new preview frame.
 
 The forms for the options of each type are in 10.3h. The tab "JSON" stays. It edits the whole panel, with the same members as the forms. A change in a form shows in the tab, and a valid change in the tab shows in the forms.
 
