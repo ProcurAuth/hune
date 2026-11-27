@@ -115,12 +115,17 @@ export function syncLayer(canvas, host, items) {
     forwardHover(layer, canvas);
     canvas.__huneTextLayer = layer;
   }
+  // The four reads come before the first write, so they share one layout. A read after a write would force the layout again.
+  const left = canvas.offsetLeft;
+  const top = canvas.offsetTop;
+  const width = canvas.clientWidth;
+  const height = canvas.clientHeight;
   // The layer is the last child of the host, so it is over the overlay that takes the pointer of a chart.
   if (host.lastElementChild !== layer) host.appendChild(layer);
-  layer.style.left = `${canvas.offsetLeft}px`;
-  layer.style.top = `${canvas.offsetTop}px`;
-  layer.style.width = `${canvas.clientWidth}px`;
-  layer.style.height = `${canvas.clientHeight}px`;
+  layer.style.left = `${left}px`;
+  layer.style.top = `${top}px`;
+  layer.style.width = `${width}px`;
+  layer.style.height = `${height}px`;
   const spans = [];
   for (const t of items) {
     const span = doc.createElement("span");
@@ -188,7 +193,8 @@ export function installTextLayer({ win = globalThis, schedule = queueMicrotask, 
       }
     }
     if (st.host === null) return;
-    const ratio = canvas.clientWidth ? canvas.width / canvas.clientWidth : 1;
+    const shown = canvas.clientWidth;
+    const ratio = shown ? canvas.width / shown : 1;
     const items = textItems(st.list, ratio || 1);
     const sig = signature(items, canvas.width, canvas.height);
     if (sig === st.sig && canvas.__huneTextLayer && canvas.__huneTextLayer.isConnected) return;
