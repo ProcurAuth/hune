@@ -41,3 +41,12 @@ test("the module main.js stays a module script of the shell, and the preloads co
   assert.ok(first < shell.indexOf("js/boot_theme.js"));
   assert.match(shell, /<script type="module" src="static\/\{\{build\}\}\/js\/main\.js"><\/script>/);
 });
+
+test("the shell preloads the sprite as a fetch with the same mode as main.js (credentials same-origin), once", () => {
+  const links = [...shell.matchAll(/<link rel="preload"[^>]*icons\.svg[^>]*>/g)].map((m) => m[0]);
+  assert.deepEqual(links, ['<link rel="preload" href="static/{{build}}/icons.svg" as="fetch" crossorigin>']);
+  // `crossorigin` without a value is the mode "anonymous": credentials "same-origin". The fetch of main.js must use the same mode and the same URL.
+  const main = readFileSync(join(JS, "main.js"), "utf8");
+  assert.match(main, /fetch\(assetUrl\("icons\.svg"\), \{ credentials: "same-origin" \}\)/);
+  assert.equal(readFileSync(join(JS, "config.js"), "utf8").match(/return `static\/\$\{boot\.build\}\/\$\{path\}`/)?.length, 1);
+});

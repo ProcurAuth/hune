@@ -355,6 +355,7 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/panel-text.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-timeline.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-bucket.css">
+  <link rel="preload" href="static/{{build}}/icons.svg" as="fetch" crossorigin>
   <link rel="modulepreload" href="static/{{build}}/js/api.js">
   <link rel="modulepreload" href="static/{{build}}/js/busy.js">
   <link rel="modulepreload" href="static/{{build}}/js/config.js">
@@ -381,6 +382,8 @@ The name `timezone`:
 The files `chart.css`, `stat.css` and `table.css` of the copied engine have their own links, before `dashboard.css`. No style sheet of the page uses `@import`, so the browser asks for all of them at the same time. The editor adds `sql.css` and then `editor.css` with two links, and its view waits for both for 1.5 s at most.
 
 The shell has one `modulepreload` link for each module in the static closure of `main.js`, except `main.js`. The closure follows `import ... from` and `export ... from` only. The links are in the order in which the browser finds the modules. The browser thus fetches these modules at the same time, and not level by level. A front unit test checks that the links are exactly this closure.
+
+The shell also preloads the file `icons.svg` with `as="fetch"` and `crossorigin`. `main.js` reads this file with `fetch` and the credentials mode `same-origin`, which is the mode of `crossorigin`. The browser thus uses the preloaded answer, and the page makes one request for the file.
 
 The marker `{{preload}}` is a line of its own. The server replaces it with more `modulepreload` links for the page of the route. The route `/` adds the static closure of `list.js`. The route `/d/{uid}[/{slug}]` adds the static closure of `dashboard.js`. Each list leaves out the modules that the links of `main.js` already name.
 
