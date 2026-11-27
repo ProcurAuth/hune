@@ -165,7 +165,6 @@ export async function mount(ctx) {
   let query = parseSearch(window.location.search).q || "";
   let sort = readPref(SORT_KEY, ["az", "za"], null);
   let loadedOnce = false;
-  let reads = ctx.ahead || null; // the first load takes the reads that started before the session answer (9.6)
 
   header.clear();
   document.title = "Dashboards - Hune";
@@ -444,9 +443,7 @@ export async function mount(ctx) {
   // (ctx.afterLoad, the entry redirect). The function returns true when it did. A later load (import, delete) never asks again.
   async function load() {
     try {
-      const taken = reads;
-      reads = null;
-      const [folderAnswer, list] = await (taken ? taken.use(controller.signal) : Promise.all([api.folders(controller.signal), api.dashboards(controller.signal)]));
+      const [folderAnswer, list] = await Promise.all([api.folders(controller.signal), api.dashboards(controller.signal)]);
       folders = folderAnswer.items || [];
       folderAccess = folderAnswer.access || { create: false };
       folderRoot = folderAnswer.root;

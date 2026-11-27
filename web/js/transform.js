@@ -1,6 +1,6 @@
 // Transformations, long-to-wide and panel reuse (9.21 to 9.23, FE-12 to FE-15). Pure module: no DOM access.
 import { cloneField, framesToFields, grafanaValue, rowCount, selectRows } from "./frame.js";
-import { regexTest } from "./fields.js";
+import { parseGrafanaPattern, regexTest } from "./fields.js";
 import { displayNames } from "./names.js";
 import { combine, tagFields, visibleQueries } from "./queries.js";
 import { applyMore, checkShape, copyCell } from "./transform_more.js";

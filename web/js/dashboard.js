@@ -12,7 +12,7 @@ import { gridDoc } from "./var_layout.js";
 import { maxQuery, STEPS, timeInMenu } from "./header_layout.js";
 import { createTimeControl } from "./pickers.js";
 import { Runtime } from "./runtime.js";
-import { REFRESH_CHOICES, cut, effectiveZone, isKnownZone, refreshToMs, resolveRange, shiftRange, zoomOut } from "./time.js";
+import { REFRESH_CHOICES, cut, effectiveZone, isKnownZone, refreshToMs, resolveRange, shiftRange, zoneName, zoomOut } from "./time.js";
 import { buildSearch, dashboardPath, parseSearch, shortQuery } from "./url_state.js";
 import { sameSelection, selectionToUrl } from "./var_options.js";
 import { createVarsBar } from "./vars.js";
@@ -79,8 +79,7 @@ export async function mount(ctx) {
   busy.begin();
   let answer;
   try {
-    // The request can start before the session answer (9.6): `ctx.ahead` is that read, for this uid.
-    answer = await (ctx.ahead ? ctx.ahead.use(controller.signal) : api.dashboard(uid, controller.signal));
+    answer = await api.dashboard(uid, controller.signal);
   } catch (error) {
     busy.end();
     if (api.isAbort(error)) return { destroy() {} };

@@ -368,7 +368,7 @@ The name `timezone`:
 The page starts in this order:
 
 1. `boot_theme.js` sets `data-theme` (9.25). The attribute `data-hune-hold` holds the first paint until step 5 ends.
-2. `main.js` reads the boot block and builds the header with the version line. It starts to load the font Inter (weights 400 and 500), the file `icons.svg` and the module of the route. It starts the reads of the route (see below). It calls `GET api/session` (6.10).
+2. `main.js` reads the boot block and builds the header with the version line. It starts to load the font Inter (weights 400 and 500), the file `icons.svg` and the module of the route. It calls `GET api/session` (6.10).
 3. `401` gives the full page "You are not signed in, or your session ended. Reload the page.". The edge does the
    login, not Hune.
 4. Another failure gives the full page "Hune does not answer." with a "Retry" button.
@@ -459,13 +459,6 @@ The first paint is held. A reload then shows one stable render:
 - `data-theme` is set before the first paint (9.25). Thus the first frame has the right colours and the right icon in the theme button.
 - `main.js` reads `icons.svg` and puts its symbols in one hidden `<svg id="hune-sprite">` at the start of `<body>`. Each symbol has the id prefix `hune-icon-`. The function `icon()` writes `<use href="#hune-icon-<name>">`. An icon thus shows with its element. A reference to the file would draw the icon after its element.
 - The page starts to load the module of the route (`dashboard.js` or `list.js`) while `GET api/session` runs.
-- The reads of the first route start at the same time as `GET api/session`. A dashboard route sends `GET api/dashboards/<uid>`. The list route sends `GET api/folders` and `GET api/dashboards` (9.7). The requests are the same as the requests that the page sends later.
-- The answers of these reads wait. The router gives them to the page of the first route, when it shows that page (step 5). The page has no other effect from them before that time.
-  - An error shows only then. A `401` gives the full page of step 3 one time, and the page of a `403` or a `404` is the page of 9.8. The notice of a new build and the notice of the access service also wait.
-  - The state `data-hune-state` stays `busy` until the same time as it does without the reads (9.29).
-  - A change of the route before the page takes the reads ends them. A route with a different uid never takes them. A failed `GET api/session` ends them too.
-  - The page that takes a read cancels it with its own abort signal, as it does for a request that it sends itself.
-  - A later route, and a reload of the document, send their own requests.
 - After the first frame, nothing of the page moves or goes away. The header, its buttons, the row of the variables and each panel frame keep their place and their size. The browser case B58 checks this.
 - The same holds for a change of the state between the view and the edit mode (10.2a, rule 17). Each chart stays painted with its data, and the browser case B207 checks this.
 
@@ -484,7 +477,7 @@ The notice area shows one line for each notice, with a close button. A notice ha
 
 The list page is a set of cards on the page background. It has no title, no search field and no table.
 
-- The page reads all the pages of `GET api/dashboards` (`limit=500`, then each `next`) and `GET api/folders`. For the first route of the page, these reads start earlier (9.6).
+- The page reads all the pages of `GET api/dashboards` (`limit=500`, then each `next`) and `GET api/folders`.
 - The page shows one card for each dashboard. A folder has no box around its cards. The folders are in the order of their titles. The comparison folds ASCII letters to lower case. In a folder, the cards are in title order.
 - A card has two parts. The first is a row with the title at the left, then the badge of the last change and the three dots at the right. The second is the tags.
 - The title is on one line. It ends with an ellipsis when it is too long. Its `title` attribute holds the whole name.
@@ -611,7 +604,7 @@ The entry redirect:
 
 The page loads in this order:
 
-1. It calls `GET api/dashboards/<uid>`. For the first route of the page, this request starts earlier (9.6). `404` gives "This dashboard does not exist." with a link to the list. `403`
+1. It calls `GET api/dashboards/<uid>`. `404` gives "This dashboard does not exist." with a link to the list. `403`
    gives "You have no access to this dashboard.". `422 stored_document_invalid` gives the list of errors.
 2. It computes the time range, the refresh and the variable selections from the URL and the document (9.9, 9.10).
 3. It shows the header with its controls (9.9), the row with the variables bar (9.10), and the grid, with no data.
