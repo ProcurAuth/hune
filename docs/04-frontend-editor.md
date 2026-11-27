@@ -339,6 +339,9 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/components.css">
   <link rel="stylesheet" href="static/{{build}}/css/picker.css">
   <link rel="stylesheet" href="static/{{build}}/css/var-select.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/chart.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/stat.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/table.css">
   <link rel="stylesheet" href="static/{{build}}/css/dashboard.css">
   <link rel="stylesheet" href="static/{{build}}/css/list.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-table.css">
@@ -362,6 +365,8 @@ The name `timezone`:
 </body>
 </html>
 ```
+
+The files `chart.css`, `stat.css` and `table.css` of the copied engine have their own links, before `dashboard.css`. No style sheet of the page uses `@import`, so the browser asks for all of them at the same time. The editor adds `sql.css` and then `editor.css` with two links, and its view waits for both for 1.5 s at most.
 
 The page starts in this order:
 

@@ -1,7 +1,6 @@
 /* Edit mode, panel editor, JSON tabs, history, diff and conflict screen (9.2, section 10). Loaded on demand.
    Every rule names tokens of tokens.css. The sizes of the panel editor layout are local
    properties of .peditor. */
-@import url("vendor/chdash/sql.css");
 
 .editor-host:empty { display: none; }
 
