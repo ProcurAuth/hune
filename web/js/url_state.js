@@ -3,7 +3,8 @@
 import { viewKeyFromParam } from "./repeat.js";
 import { urlTimeText } from "./time.js";
 
-const VIEW_NAMES = ["viewPanel", "edit", "editPanel", "editview", "version", "base"];
+// The names of the URL that choose a view (9.5). Each state uses a part of them.
+export const VIEW_NAMES = ["viewPanel", "edit", "editPanel", "editview", "version", "base"];
 
 // The slug of a title: ASCII letters to lower case, each run of other characters to one "-",
 // no "-" at the start or the end, at most 64 characters (9.5).

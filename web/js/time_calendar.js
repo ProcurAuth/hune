@@ -1,7 +1,8 @@
 // The pure parts of the time picker (9.9): the days of a month, a typed duration and the recent ranges. No DOM access.
 // A day is the number `year * 10000 + month * 100 + day`. It has no zone: the picker reads it in the zone of the dashboard.
 
-const WORDS = { s: "second", m: "minute", h: "hour", d: "day", w: "week", M: "month", y: "year" };
+import { WORDS } from "./panel_time.js";
+
 const TYPED = /^(?:last\s*|now-)?([1-9][0-9]{0,8})\s*([smhdwMy])$/;
 const split = (key) => [Math.floor(key / 10000), Math.floor(key / 100) % 100, key % 100];
 const pad = (n) => String(n).padStart(2, "0");

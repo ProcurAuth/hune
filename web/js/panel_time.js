@@ -10,7 +10,7 @@ export const RANGE_ERROR = "The time override of this panel gives a range that H
 const FROM_RE = /^now(?:-([1-9][0-9]{0,8})([smhdwMy])(?:\/([smhdwMy]))?|\/([smhdwMy]))$/;
 const SHIFT_RE = /^([1-9][0-9]{0,8})([smhdwMy])$/;
 
-const WORDS = { s: "second", m: "minute", h: "hour", d: "day", w: "week", M: "month", y: "year" };
+export const WORDS = { s: "second", m: "minute", h: "hour", d: "day", w: "week", M: "month", y: "year" };
 const SO_FAR = { d: "Today so far", w: "This week so far", M: "This month so far", y: "This year so far" };
 
 const hasText = (value) => typeof value === "string" && value !== "";
