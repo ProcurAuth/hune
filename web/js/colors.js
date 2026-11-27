@@ -237,7 +237,8 @@ export function readableTextOn(css) {
   return l >= 0.179 ? "#000000" : "#ffffff";
 }
 
-function rgbToHsl(r, g, b) {
+// The hue `h` is in sixths of a turn (0 to 6). A caller turns it to degrees in its own order of operations, to keep its result exact.
+export function rgbToHsl(r, g, b) {
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
@@ -250,12 +251,11 @@ function rgbToHsl(r, g, b) {
     if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
     else if (max === g) h = (b - r) / d + 2;
     else h = (r - g) / d + 4;
-    h /= 6;
   }
-  return { h: h * 360, s, l };
+  return { h, s, l };
 }
 
-function hslToRgb(h, s, l) {
+export function hslToRgb(h, s, l) {
   h = (((h % 360) + 360) % 360) / 360;
   if (s === 0) {
     const v = Math.round(l * 255);
@@ -287,7 +287,7 @@ export function darkenSpin(css, dark = true) {
   if (!p) return null;
   const hsl = rgbToHsl(p.r, p.g, p.b);
   const l = Math.min(1, Math.max(0, hsl.l + (dark ? -0.1 : 0.07)));
-  const rgb = hslToRgb(hsl.h + 5, hsl.s, l);
+  const rgb = hslToRgb(hsl.h / 6 * 360 + 5, hsl.s, l);
   return p.a < 1 ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${p.a})` : `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 }
 

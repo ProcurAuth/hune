@@ -1,7 +1,7 @@
 // The items of a stat, a bar gauge or a pie chart: one for each field (reduced) or one for each row (9.19).
 // No DOM access.
 
-import { parseCss, relativeLuminance, readableTextOn } from "../colors.js";
+import { hslToRgb, parseCss, readableTextOn, relativeLuminance, rgbToHsl } from "../colors.js";
 import { makeDisplay } from "../display.js";
 import { sharedRange } from "./series.js";
 import { grafanaValue } from "../frame.js";
@@ -120,40 +120,6 @@ export const INK_DARK = "#202226"; // the text on a light fill
 const LIGHT_SCALE = 0.7; // light theme: the lightness is raised by 0.7 of the dark theme amounts (0.105 and 0.035)
 const AA_LARGE = 3; // the least contrast of a large text (WCAG 1.4.3)
 
-function rgbToHsl({ r, g, b }) {
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-  if (max === min) return { h: 0, s: 0, l };
-  const d = max - min;
-  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-  let h;
-  if (max === r) h = (g - b) / d + (g < b ? 6 : 0);
-  else if (max === g) h = (b - r) / d + 2;
-  else h = (r - g) / d + 4;
-  return { h: h * 60, s, l };
-}
-
-function hslToRgb({ h, s, l }) {
-  const hh = (((h % 360) + 360) % 360) / 360;
-  if (s === 0) {
-    const v = Math.round(l * 255);
-    return { r: v, g: v, b: v };
-  }
-  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  const p = 2 * l - q;
-  const chan = (t) => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
-  return { r: Math.round(chan(hh + 1 / 3) * 255), g: Math.round(chan(hh) * 255), b: Math.round(chan(hh - 1 / 3) * 255) };
-}
-
 const rgbText = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 
 /**
@@ -167,8 +133,8 @@ const rgbText = ({ r, g, b }) => `rgb(${r}, ${g}, ${b})`;
 export function statFill(color, dark = true) {
   const p = parseCss(color);
   if (!p || p.a < 1) return null;
-  const hsl = rgbToHsl(p);
-  const shade = (dl, spin) => hslToRgb({ h: hsl.h + spin, s: hsl.s, l: Math.min(1, Math.max(0, hsl.l + (dark ? -dl : dl * LIGHT_SCALE))) });
+  const hsl = rgbToHsl(p.r, p.g, p.b);
+  const shade = (dl, spin) => hslToRgb(hsl.h * 60 + spin, hsl.s, Math.min(1, Math.max(0, hsl.l + (dark ? -dl : dl * LIGHT_SCALE))));
   const a = shade(0.15, 8);
   const b = shade(0.05, -8);
   const brightness = (299 * p.r + 587 * p.g + 114 * p.b) / 1000;
