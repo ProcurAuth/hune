@@ -21,7 +21,6 @@ export const EXTENT = "extent";
 export const LOGS_PARTS = Object.freeze({ ...PARTS, TIME: "time" });
 // The sizes of the loaded list (web/css/panel-logs.css): the line height of the text band, the padding under a line, the gap between the columns.
 export const LINE_BAND = 22;
-export const LINE_PAD = 6;
 export const GAP = 12;
 // The least proven form: the bar has the thickness of the glyphs of a line, centred in the text band (`margin-top` 7 px).
 export const BAR_TOP = (LINE_BAND - BAR_HEIGHT) / 2;

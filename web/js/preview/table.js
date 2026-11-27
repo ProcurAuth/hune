@@ -35,7 +35,6 @@ export const MARK_PX = 18; // the sort mark (panel-table.css `.dataTable__sort::
 export const GROUP_H = 22; // the group of the label and the sort mark
 export const FILTER_GAP = 4; // the margin before the filter button
 export const FOOT_LINE = 22; // one line of the footer
-export const FOOT_BASE = 13; // the rule above, and 6 px of padding above and below the lines
 export const GAUGE_H = 22; // the gauge of a cell
 export const LCD_CELL = 12; // an LCD cell and its gap (table.js GAUGE_CELL)
 

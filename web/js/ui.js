@@ -503,28 +503,6 @@ export async function copyText(text) {
 
 // --- time texts -----------------------------------------------------------------------------------
 
-const RELATIVE_UNITS = [
-  ["year", 31536000000],
-  ["month", 2592000000],
-  ["day", 86400000],
-  ["hour", 3600000],
-  ["minute", 60000],
-];
-
-// "3 hours ago" (9.7). A time in the future or below one minute gives "just now".
-export function relativeTime(iso, now = Date.now()) {
-  const then = Date.parse(iso);
-  if (!Number.isFinite(then)) return "";
-  const diff = now - then;
-  for (const [name, size] of RELATIVE_UNITS) {
-    if (diff >= size) {
-      const count = Math.floor(diff / size);
-      return `${count} ${name}${count === 1 ? "" : "s"} ago`;
-    }
-  }
-  return "just now";
-}
-
 // The absolute time in the browser zone, for a title attribute.
 export function absoluteTime(iso) {
   const ms = Date.parse(iso);

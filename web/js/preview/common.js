@@ -54,7 +54,6 @@ export const CONTAIN = "contain";
 export const TOLERANCE_PX = 0.5;
 // A bar that stands for a text of known width: 8 px high, rounded (the council files). Its width is the measured width of the text.
 export const BAR_HEIGHT = 8;
-export const BAR_RADIUS = 4;
 // The size of the text of the charts and of the tables: the engine draws at 12 px (app_chart_core.js FONT_SIZE).
 export const FONT_SIZE = 12;
 
@@ -81,9 +80,7 @@ export const lineNode = (x1, y1, x2, y2, c = "skel__line") => node(c, {}, [], "l
 
 // ---- Numbers -----------------------------------------------------------------------------------------------------------------------
 // The engine of the charts reads integers (offsetHeight, floor, ceil). The preview rounds in the same way.
-export const floorInt = (n) => Math.floor(n);
 export const ceilInt = (n) => Math.ceil(n);
-export const clampInt = (n, lo, hi) => Math.min(hi, Math.max(lo, Math.floor(n)));
 
 // ---- Rectangles --------------------------------------------------------------------------------------------------------------------
 export const rect = (x, y, w, h) => ({ x, y, w, h });

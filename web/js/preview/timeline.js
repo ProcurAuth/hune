@@ -24,7 +24,6 @@ const LEAST_GUTTER = 21; // gutterOf(0, true): the gutter of the row names when 
 const BESIDE = 0.34; // the legend at the right keeps 34 % of the width at most
 const FALLBACK_ROOM = 228; // the plot needs 228 px beside the legend, else the legend moves under it
 const ITEM = 14 + 8 + 10; // the pill, the gap and the space after the text
-const SIDE = 8; // the padding of the legend at the right, on both sides
 
 const isThresholds = (c) => (c && c.mode ? c.mode : "thresholds") === "thresholds";
 const builtinColor = (type) => ({ mode: type === "state_timeline" ? "continuous_gr_yl_rd" : "thresholds", fixed: null });
