@@ -346,10 +346,9 @@ export const cases = [
       t.eq(Object.fromEntries(sess.json.stores.map((x) => [x.id, x.read_only])), { main: true, scratch: false }, "the seed volume is read-only and the scratch volume is the primary store");
       const p = await t.open(t.url(""));
       t.eq(await p.exists(p.tid("row-menu-nodes")), false, "a card that cannot be edited has no three dots");
-      // The volume is a read-only store: each card has the lock and no three dots.
+      // The volume is a read-only store: each card has no lock and no three dots.
       t.eq(await p.exists(p.tid("row-menu-stale-one")), false, "a card of a read-only store has no three dots");
-      t.eq(await p.count('[data-testid^="card-lock-"]'), 2, "each card of the read-only store has the lock");
-      t.eq(await p.attr(p.tid("card-lock-nodes"), "aria-label"), "Read-only store", "the name of the lock");
+      t.eq(await p.count('[data-testid^="card-lock-"], .card__mark--lock'), 0, "a card of a read-only store has no lock");
       // The flags of the answer: no write and no history in a read-only store, the export follows the key.
       const one = await t.api.dashboard("nodes");
       t.eq(one.json.access, { write: false, history: false, export: true }, "the flags of a dashboard of a read-only store");
@@ -357,7 +356,7 @@ export const cases = [
       const d = await t.open(t.dash("nodes"));
       await waitPanelsReady(d, [1, 2, 3]);
       t.eq(await d.exists(d.tid("edit-toggle")), false, "no edit toggle");
-      t.eq(await d.attr(d.tid("read-only-lock"), "aria-label"), "Read-only store", "the lock of a read-only store stands where the switch would be");
+      t.eq(await d.exists(d.tid("read-only-lock")), false, "a dashboard of a read-only store shows no lock");
       const e = await t.open(t.dash("nodes", "edit=1"));
       await waitPanelsReady(e, [1, 2, 3]);
       const forbidden = await e.eval(`["edit-toggle", "edit-bar", "save-button", "add-panel", "add-section", "json-tab", "discard-button", "edit-grid"].filter((id) => document.querySelector('[data-testid="' + id + '"]'))`);

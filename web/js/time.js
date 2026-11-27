@@ -22,7 +22,36 @@ export function zoneName(zone = "browser") {
 export function zoneLabel(zone) {
   if (zone === "utc") return "UTC";
   if (zone === "browser" || !zone) return "Browser time";
+  const fixed = /^Etc\/GMT([+-])(\d{1,2})$/.exec(String(zone));
+  if (fixed) return `UTC${fixed[1] === "-" ? "+" : "-"}${fixed[2].padStart(2, "0")}:00`;
   return String(zone);
+}
+
+/**
+ * The zones that the time picker offers, in groups: the default zones, the fixed offsets (UTC-12:00 to UTC+14:00, as the IANA names `Etc/GMT-n`),
+ * then each zone name that the browser lists, with its offset now. The list of names is built on the first call (about 400 names).
+ * Result: [{ group, items: [{ value, label }] }].
+ */
+let zoneGroups = null;
+export function zoneChoices(now = Date.now()) {
+  if (zoneGroups) return zoneGroups;
+  const offsets = [];
+  for (let h = -12; h <= 14; h += 1) {
+    if (h === 0) continue;
+    offsets.push({ value: `Etc/GMT${h > 0 ? "-" : "+"}${Math.abs(h)}`, label: `UTC${h > 0 ? "+" : "-"}${String(Math.abs(h)).padStart(2, "0")}:00` });
+  }
+  let names = [];
+  try {
+    names = Intl.supportedValuesOf("timeZone").filter((n) => !/^Etc\//.test(n) && n !== "UTC");
+  } catch {
+    names = [];
+  }
+  zoneGroups = [
+    { group: "Default", items: [{ value: "browser", label: `Browser time (${zoneName("browser")}, ${zoneOffsetLabel(now, "browser")})` }, { value: "utc", label: "UTC" }] },
+    { group: "UTC offsets", items: offsets },
+    ...(names.length ? [{ group: "Time zones", items: names.map((n) => ({ value: n, label: `${n} (${zoneOffsetLabel(now, n)})` })) }] : []),
+  ];
+  return zoneGroups;
 }
 
 /**

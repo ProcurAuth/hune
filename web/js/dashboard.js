@@ -20,7 +20,7 @@ import { button, clear, closeMenu, dismissNotice, el, icon, notify, openMenu } f
 import { baseState, isEditorState, kindOf, nextState, normalSearch, originValue, parseView, readOrigin, sameState, viewNames } from "./view_state.js";
 import { exportDashboard } from "./list.js";
 import { locationNodes } from "./switcher.js";
-import { READ_ONLY_TEXT, STALE_PAGE_TEXT, isStale } from "./stores.js";
+import { STALE_PAGE_TEXT, isStale } from "./stores.js";
 
 function errorPage(ctx, error) {
   const { fullPage } = ctx;
@@ -330,7 +330,7 @@ export async function mount(ctx) {
   }
 
   function buildPage(initialRange, urlVars, keepSelections) {
-    loaded = { doc: answer.document, etag: answer.etag, version: answer.version, folder: answer.folder, access: answer.access || { write: false }, readOnly: answer.read_only === true, stale: isStale(answer) };
+    loaded = { doc: answer.document, etag: answer.etag, version: answer.version, folder: answer.folder, access: answer.access || { write: false }, stale: isStale(answer) };
     const doc = loaded.doc;
     document.title = `${doc.title} - Hune`;
     rt = new Runtime({
@@ -401,7 +401,8 @@ export async function mount(ctx) {
       time: {
         zone: rt.zone,
         getRange: currentRange,
-        apply: (fromText, toText) => {
+        apply: (fromText, toText, nextZone) => {
+          if (nextZone && nextZone !== rt.zone) return changeZone(nextZone, fromText, toText);
           const result = rt.setRange(fromText, toText);
           if (!result.error) {
             timePicker.update();
@@ -518,12 +519,8 @@ export async function mount(ctx) {
       editSwitch = buildEditSwitch();
       paintEditSwitch();
     }
-    // A dashboard of a read-only store has no switch "Edit" (its access.write is false: the path of a user with no right to write). A lock stands
-    // where the switch would be, with its name for assistive technology and a tooltip.
-    const lock = loaded.readOnly
-      ? el("span", { class: "header-lock", role: "img", tabindex: "0", "aria-label": READ_ONLY_TEXT, "data-tooltip": READ_ONLY_TEXT, "data-tooltip-align": "end", dataset: { testid: "read-only-lock" } }, icon("lock", 18))
-      : null;
-    header.setActions(timeControl.el, lock, editSwitch);
+    // A dashboard of a read-only store has no switch "Edit" (its access.write is false), and it shows no mark: the missing switch is the sign.
+    header.setActions(timeControl.el, editSwitch);
     // The button has a place only when its menu has an item (9.9): a control with nothing to do does not show. The items depend on the width
     // (the time shift and the zoom out move into the menu), so the button follows the width.
     const placeMore = () => header.setMore(moreItems().some((item) => !item.separator) ? more : null);
@@ -897,12 +894,28 @@ export async function mount(ctx) {
   let reloading = false;
   // Reads the document and builds the page again. `to` is the state that the new page shows (after a save: the end of edit mode); `before` runs in the
   // same step as the new page, so no frame shows the old page and the new page. `op` is the history action of `to` (10.2a).
-  async function reloadDocument({ notice = true, to = null, op = "none", before = null } = {}) {
+  // The viewer chooses another zone in the time picker (9.9): the zone of the page changes, with the range that the picker gives. The page builds again
+  // with the zone, as it does for a new version of the document, and the address names the zone (9.5). It gives the error of the range, or nothing.
+  function changeZone(nextZone, fromText, toText) {
+    const check = resolveRange(fromText, toText, Date.now(), nextZone);
+    if (check.error) return { error: check.error };
+    const before = urlZone;
+    urlZone = nextZone;
+    dismissNotice("zone");
+    dismissNotice("zone-url");
+    // A reload that fails keeps the page as it is, so the zone of the address goes back.
+    reloadDocument({ notice: false, range: { fromText, toText } }).then(() => {
+      if (!rt || rt.zone !== nextZone) urlZone = before;
+    });
+    return {};
+  }
+
+  async function reloadDocument({ notice = true, to = null, op = "none", before = null, range: nextRange = null } = {}) {
     if (reloading || destroyed) return;
     reloading = true;
     try {
       const keep = selectionsOf(rt);
-      const range = currentRange();
+      const range = nextRange || currentRange();
       const fresh = await api.dashboard(uid, controller.signal);
       if (destroyed) return;
       if (before) before();

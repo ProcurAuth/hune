@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0
 // Browser cases B241 to B244 (9.6, 9.7, 9.8): a server with a primary volume `main` (folder `transit`) and a read-only volume `lab` with the title "Lab"
 // (folders `lab-ops` and `lab-archive`). The lab volume has no edit, whatever the page does.
-// B241: the list shows the read-only store as one root group with a lock, its folders under it, a lock on each of its cards and no three dots; the
+// B241: the list shows the read-only store as one root group, its folders under it, no lock on its cards and no three dots; the
 //       dialogs of New dashboard offer only the folders of the primary.
-// B242: a file of the read-only store that is not valid after the start: the card, the page and the API show the warning; the lock and the warning
+// B242: a file of the read-only store that is not valid after the start: the card, the page and the API show the warning; the warning
 //       text are the ones of the specification.
-// B243: the header selector shows the store as a row with a lock that opens its folders and its dashboards.
+// B243: the header selector shows the store as a row that opens its folders and its dashboards.
 // B244: the server refuses a write to the read-only store with the code `read_only_store`, and the page of its dashboard has no edit control.
 import { api, seedDocument } from "../lib/env.mjs";
 import { breakFile, sleep } from "../lib/h.mjs";
@@ -18,7 +18,7 @@ const STALE_PAGE = "The file of this dashboard is not valid. The last valid vers
 export const cases = [
   {
     id: "B241",
-    name: "a read-only store: one root group with a lock, a lock on each card, no three dots, and no folder of the store in the dialogs",
+    name: "a read-only store: one root group, no lock on a card, no three dots, and no folder of the store in the dialogs",
     async run(t) {
       const own = await t.ownServer("stores", OWN);
       const session = (await api(own).session()).json;
@@ -27,12 +27,12 @@ export const cases = [
       await p.waitSel(p.tid("row-lab-traffic"));
       // Two root groups: the folder of the primary and the store. Each has a title, and the folders of the store are under its title.
       t.eq(await p.text(`${p.tid("store-lab")} .group__title`), "Lab", "the title of the store");
-      t.eq(await p.exists(`${p.tid("store-lab")} .icon`), true, "the lock of the store");
+      t.eq(await p.exists(`${p.tid("store-lab")} .icon`), true, "the icon of the store title");
       t.eq(await p.eval(`[...document.querySelectorAll(".group__head--nested .group__title")].map((e) => e.textContent).sort()`), ["Lab archive", "Lab operations"], "the folders of the store, under its title");
       t.eq(await p.exists(`${p.tid("folder-transit")} .group__head`), true, "the folder of the primary has its title: two root groups");
       // The lock and the three dots.
       for (const uid of ["lab-traffic", "lab-inventory"]) {
-        t.eq(await p.attr(p.tid(`card-lock-${uid}`), "aria-label"), "Read-only store", `the lock of ${uid}`);
+        t.eq(await p.exists(p.tid(`card-lock-${uid}`)), false, `no lock on ${uid}`);
         t.eq(await p.exists(p.tid(`row-menu-${uid}`)), false, `no three dots on ${uid}`);
         t.eq(await p.eval(`document.querySelector('[data-testid="row-${uid}"]').querySelectorAll("button:not(.list-tag)").length`), 0, `no button on ${uid}`);
       }
@@ -63,11 +63,11 @@ export const cases = [
       const p = await t.open(own.url);
       await p.waitSel(p.tid("card-stale-lab-traffic"));
       t.eq(await p.attr(p.tid("card-stale-lab-traffic"), "aria-label"), STALE_CARD, "the name of the mark of the card");
-      t.eq(await p.exists(p.tid("card-lock-lab-traffic")), true, "the lock stays beside the mark");
+      t.eq(await p.exists(p.tid("card-lock-lab-traffic")), false, "no lock beside the mark");
       const d = await t.open(`${own.url}d/lab-traffic`);
       await d.waitSel('[data-notice="stale"]');
       t.eq(await d.eval(`document.querySelector('[data-notice="stale"]').textContent`), STALE_PAGE, "the text of the warning of the page");
-      t.eq(await d.attr(d.tid("read-only-lock"), "aria-label"), "Read-only store", "the lock of the header");
+      t.eq(await d.exists(d.tid("read-only-lock")), false, "no lock in the header");
       t.eq(await d.exists(d.tid("edit-toggle")), false, "no switch Edit");
       await restore();
       const again = await t.open(own.url);
@@ -78,7 +78,7 @@ export const cases = [
 
   {
     id: "B243",
-    name: "the header selector shows the read-only store as a row with a lock that opens its folders and its dashboards",
+    name: "the header selector shows the read-only store as a row that opens its folders and its dashboards",
     async run(t) {
       const own = await t.ownServer("selector-lab", OWN);
       const p = await t.open(`${own.url}d/nodes`);
@@ -95,8 +95,9 @@ export const cases = [
       await p.clickText(`${menu} .menu__group`, "Lab operations");
       await p.click(p.tid("switcher-item-lab-traffic"));
       await p.waitFor(`location.pathname.endsWith("/d/lab-traffic/lab-traffic")`, { what: "the dashboard of the store opens" });
-      await p.waitSel(p.tid("read-only-lock"));
-      t.eq(await p.exists(p.tid("read-only-lock")), true, "the lock in the header of the dashboard of the store");
+      await p.waitSel(p.tid("time-control"));
+      t.eq(await p.exists(p.tid("read-only-lock")), false, "no lock in the header of the dashboard of the store");
+      t.eq(await p.exists(p.tid("edit-toggle")), false, "no switch Edit");
     },
   },
 
@@ -118,10 +119,10 @@ export const cases = [
       const made = await a.create("transit", seedDocument("new-in-main", "New in main"));
       t.eq(made.status, 201, "the primary accepts a write");
       const e = await t.open(`${own.url}d/lab-traffic?edit=1`);
-      await e.waitSel(e.tid("read-only-lock"));
+      await e.waitSel(e.tid("time-control"));
       await sleep(300);
       t.eq(await e.eval(`["edit-toggle", "edit-bar", "save-button", "add-panel", "json-tab", "edit-grid"].filter((id) => document.querySelector('[data-testid="' + id + '"]'))`), [], "no edit control with edit=1");
-      t.eq(await e.exists(e.tid("read-only-lock")), true, "the lock");
+      t.eq(await e.exists(e.tid("read-only-lock")), false, "no lock");
     },
   },
 ];

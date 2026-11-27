@@ -49,7 +49,7 @@ export const cases = [
       t.eq(await p.exists(`${p.tid("root-lab")} .group__head`), false, "the root group of the store has no title of its own");
       t.eq(await p.exists(`${p.tid("folder-transit")} .group__head`), true, "the folder keeps its title: the root group counts as a group");
       t.eq(await p.eval(`[...document.querySelectorAll('${p.tid("root-main")} article[data-testid^="row-"]')].map((e) => e.dataset.testid)`), ["row-root-one", "row-root-two"], "the dashboards of the root group are in title order");
-      t.eq(await p.exists(p.tid("card-lock-lab-root")), true, "a lock on the root dashboard of the read-only store");
+      t.eq(await p.exists(p.tid("card-lock-lab-root")), false, "no lock on the root dashboard of the read-only store");
       t.eq(await p.exists(p.tid("row-menu-lab-root")), false, "no three dots on it");
       t.eq(await p.exists(p.tid("row-menu-root-one")), true, "the three dots on a root dashboard of the primary");
       t.eq(await p.eval(`document.body.textContent.includes("_root")`), false, "the page never shows the reserved word");
@@ -172,7 +172,7 @@ export const cases = [
       await p.waitSel(p.tid("row-root-one"));
       t.eq(await p.eval(`document.querySelector('[data-testid="list-new-menu"]').hidden`), false, "the button New shows: the primary store takes the new dashboards");
       t.eq(await p.exists(p.tid("row-menu-root-one")), false, "no three dots on a root dashboard");
-      t.eq(await p.exists(p.tid("card-lock-root-one")), true, "a lock on the root dashboard");
+      t.eq(await p.exists(p.tid("card-lock-root-one")), false, "no lock on the root dashboard");
     },
   },
 ];

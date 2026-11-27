@@ -2,7 +2,6 @@
 // read-only. Each read-only store shows as one root group with its title; the primary shows at the root with no title. The functions here are pure,
 // so a test runs them without a browser. The texts are the one place of the words that the page says about a read-only store and a stale file.
 
-export const READ_ONLY_TEXT = "Read-only store";
 export const STALE_CARD_TEXT = "The file is not valid. The last valid version is shown.";
 export const STALE_PAGE_TEXT = "The file of this dashboard is not valid. The last valid version is shown.";
 export const READ_ONLY_ERROR_TEXT = "This dashboard is in a read-only store. It cannot be changed.";
@@ -68,7 +67,7 @@ export function rootGroupCount(split) {
   return split.primary.length + split.stores.length;
 }
 
-// What a card shows beside the badge of the last change: the lock of a read-only store and the mark of a file that is not valid.
+// What a card shows beside the badge of the last change: the mark of a file that is not valid. A read-only store has no mark.
 export function cardMarks(item) {
-  return { readOnly: isReadOnly(item), stale: isStale(item) };
+  return { stale: isStale(item) };
 }
