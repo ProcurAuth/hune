@@ -657,6 +657,9 @@ When a panel queries:
 - Or it is the source of a reuse panel that queries (9.23). The source then queries also out of view or in a collapsed
   section.
 - A panel keeps its result until the next trigger. A panel that leaves the viewport does not stop its query.
+- The page loads the module of the panel type (`panels/<type>.js`) at the same time. It starts when the panel is near the viewport, or when its query starts.
+  - The draw takes the same module after the answer. A panel that is not near the viewport, and a panel of a collapsed section, load no module.
+  - The module has no effect when it loads. The load changes no state, no request and no look.
 
 These rules apply to each copy of a repeat. A copy is a panel for the scheduler (9.8c).
 

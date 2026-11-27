@@ -29,7 +29,11 @@ export function createGrid({ doc, rt, makeFrame, sectionExtras = null }) {
   const groups = []; // for each section of the document: { anchor, sig, keys, copyKeys, nodes }
   const observer = new IntersectionObserver(
     (entries) => {
-      for (const entry of entries) rt.setVisible(keyFromText(entry.target.dataset.panelKey), entry.isIntersecting);
+      for (const entry of entries) {
+        const key = keyFromText(entry.target.dataset.panelKey);
+        if (entry.isIntersecting && frames.has(key) && frames.get(key).warm) frames.get(key).warm();
+        rt.setVisible(key, entry.isIntersecting);
+      }
     },
     // The root is the scroll container under the header (9.6), so the margin of one window height counts from its edges.
     { root: document.getElementById("app-main"), rootMargin: "100% 0px" },

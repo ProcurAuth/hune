@@ -55,17 +55,17 @@ function checkBuild(response) {
 }
 
 // A read that starts ahead (`startAhead`) keeps its effects (the build notice, the hook of a 401, the notice of the access service)
-// in a list under its signal. `use` runs them when the page takes the answer.
+// under its signal until `use` runs them.
 const waiting = new WeakMap();
 
 function effect(signal, run) {
-  const list = signal ? waiting.get(signal) : undefined;
+  const list = waiting.get(signal);
   if (list) list.push(run);
   else run();
 }
 
-// Starts reads before the page needs them (9.6). `make(signal)` sends the requests and gives a promise. A read that nobody takes ends
-// with `abort()` and has no effect. `use(signal)` gives the promise for one page: an error shows when the page takes it, never before.
+// Starts reads before the page needs them (9.6). `make(signal)` sends the requests and gives a promise. `abort()` ends a read that nobody
+// takes, with no effect. `use(signal)` gives the promise to the page: an error shows then, never before.
 export function startAhead(make) {
   const controller = new AbortController();
   const effects = [];
@@ -75,7 +75,7 @@ export function startAhead(make) {
   return {
     abort: () => controller.abort(),
     use(signal) {
-      signal.addEventListener("abort", () => controller.abort(), { once: true });
+      signal.addEventListener("abort", () => controller.abort());
       waiting.delete(controller.signal);
       for (const run of effects.splice(0)) run();
       return promise;

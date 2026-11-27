@@ -2,7 +2,7 @@
 // The reads of the first route start before the session answer (9.6, 9.8). Their effects wait until the page takes the answer.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as api from "../../web/js/api.js";
@@ -128,4 +128,36 @@ test("the pages take the reads one time, and send their own request without them
   const list = code("web/js/list.js");
   assert.match(list, /const taken = reads;\s*reads = null;/);
   assert.match(list, /taken \? taken\.use\(controller\.signal\) : Promise\.all\(\[api\.folders\(controller\.signal\), api\.dashboards\(controller\.signal\)\]\)/);
+});
+
+test("a panel asks for the module of its type when it is wanted or queried, and the draw takes the same import (9.8, 9.11)", () => {
+  const frame = code("web/js/panel_frame.js");
+  assert.match(frame, /const warm = \(\) => Object\.hasOwn\(LOADERS, panel\.type\) && LOADERS\[panel\.type\]\(\)\.catch\(\(\) => \{\}\);/);
+  assert.match(frame, /if \(info\.state === "loading" \|\| info\.state === "queued"\) \{\s*warm\(\);/);
+  assert.match(frame, /mod = await LOADERS\[panel\.type\]\(\);/, "the draw still awaits the import");
+  assert.match(frame, /\n    warm,\n/, "the frame gives warm to the grid");
+  // The grid calls it for a frame that comes near the viewport, never for one that leaves.
+  assert.match(code("web/js/grid.js"), /if \(entry\.isIntersecting && frames\.has\(key\) && frames\.get\(key\)\.warm\) frames\.get\(key\)\.warm\(\);\s*rt\.setVisible\(key, entry\.isIntersecting\);/);
+});
+
+test("the panel modules have no work at load: no listener, no DOM write, no request at the top level", () => {
+  const seen = new Set();
+  const visit = (file) => {
+    if (seen.has(file) || file.includes("/editor/")) return;
+    seen.add(file);
+    for (const m of readFileSync(file, "utf8").matchAll(/(?:from|import\()\s*["'](\.[^"']+)["']/g)) visit(join(dirname(file), m[1]));
+  };
+  for (const name of readdirSync(join(ROOT, "web/js/panels"))) visit(join(ROOT, "web/js/panels", name));
+  assert.ok(seen.size > 20);
+  const offenders = [];
+  for (const file of seen) {
+    let depth = 0;
+    readFileSync(file, "utf8").split("\n").forEach((line, i) => {
+      // A statement at the top level that is not a declaration, an import or an export: the only ones that are permitted fill a table or reset a counter.
+      if (depth === 0 && /^(document|window|navigator|localStorage|addEventListener|queueMicrotask|setTimeout|fetch|new )/.test(line)) offenders.push(`${file}:${i + 1}`);
+      depth += (line.match(/[{(\[]/g) || []).length - (line.match(/[})\]]/g) || []).length;
+      if (depth < 0) depth = 0;
+    });
+  }
+  assert.deepEqual(offenders, []);
 });

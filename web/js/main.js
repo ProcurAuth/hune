@@ -379,7 +379,7 @@ function dropAhead() {
   ahead = null;
 }
 
-// The first view takes the reads, if its route and its uid are the same. Else they end, and the page sends its own.
+// The first view takes the reads for its own route and uid. Else they end.
 function takeAhead(route) {
   const held = ahead;
   ahead = null;

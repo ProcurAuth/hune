@@ -4,6 +4,9 @@
 //       first paint stays held and the page shows nothing. After the release the dashboard shows, and the page sent no second request.
 // B411: the same hold with a 401 as the answer of the dashboard. The page of the 401 does not show while the session is held. After the release it
 //       shows one time. The list route starts `GET api/folders` and `GET api/dashboards` in the same way (B410 checks it with the list).
+// B412: the module of a panel type loads before the answer of its query (9.11). A panel near the viewport asks for its module while its query is
+//       held. A panel far below the viewport, and a panel in a collapsed section, ask for none.
+import { SQL, doc, panel, section } from "../lib/docs.mjs";
 import { sleep } from "../lib/h.mjs";
 
 const isSession = (r) => r.method === "GET" && /\/api\/session$/.test(r.url);
@@ -82,6 +85,33 @@ export const cases = [
       t.eq(await p.count(p.tid("unauthorized")), 1, "the page of the 401 shows one time");
       t.eq((await held(p)).hold, false, "the page of the 401 releases the first paint");
       refuse();
+    },
+  },
+  {
+    id: "B412",
+    name: "the module of a panel type loads while the query is held; a far panel and a collapsed section load none",
+    async run(t) {
+      const near = panel(1, "timeseries", "Near", SQL.series, { grid: { x: 0, y: 0, w: 24, h: 8 } });
+      const far = panel(2, "barchart", "Far", SQL.bars, { grid: { x: 0, y: 0, w: 24, h: 8 } });
+      const hidden = panel(3, "piechart", "Hidden", SQL.bars, { grid: { x: 0, y: 0, w: 24, h: 8 }, format: "table" });
+      const filler = Array.from({ length: 12 }, (_, i) => panel(10 + i, "stat", `Filler ${i}`, SQL.total, { grid: { x: 0, y: i * 8, w: 24, h: 8 } }));
+      const body = doc("ahead412", "Ahead reads", [section(null, [near]), section("Filler", filler), section("Far", [far]), section("Hidden", [hidden], true)]);
+      const made = await t.api.create("transit", body);
+      t.assert(made.status === 201, `create: ${made.status} ${made.text.slice(0, 300)}`);
+      const p = await t.page({ width: 1280, height: 900 });
+      const hold = p.holdWhen((r) => /\/panels\/[^/]+\/query/.test(r.url));
+      await p.goto(t.dash("ahead412"));
+      const module = (name) => (r) => r.method === "GET" && new RegExp(`/js/panels/${name}\\.js$`).test(r.url);
+      await until(p, (rs) => rs.some((r) => /\/panels\/1\/query/.test(r.url)), "the query of the near panel (held)");
+      await until(p, (rs) => rs.some((r) => module("timeseries")(r) && r.status === 200), "the module of the near panel while its query is held");
+      await sleep(300);
+      t.eq(p.requests.some(module("barchart")), false, "no module for the panel far below the viewport");
+      t.eq(p.requests.some(module("piechart")), false, "no module for the panel of a collapsed section");
+      hold.release();
+      await p.waitFor(`document.querySelector('[data-testid="panel-1"]').dataset.state === "ready"`, { what: "the near panel", timeout: 30000 });
+      t.eq(p.requests.filter(module("timeseries")).length, 1, "one request for the module");
+      t.eq(p.requests.some(module("barchart")), false, "still no module for the far panel");
+      t.eq(p.requests.some(module("piechart")), false, "still no module for the collapsed section");
     },
   },
 ];
