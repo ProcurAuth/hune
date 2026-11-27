@@ -197,3 +197,12 @@ export const resultOf = (elements = [], bounds = {}, notes = []) => ({ elements,
 
 // The neutral form: the empty body with the sweep and the dots, and nothing else. The preview claims nothing.
 export const neutral = (note = "neutral") => resultOf([], {}, [note]);
+
+export const finite = (v) => typeof v === "number" && Number.isFinite(v);
+
+// The heads of the legend table (app_chart_core.js LEGEND_HEADS).
+export const HEADS = {
+  total: "Total", min: "Min", max: "Max", mean: "Mean", last: "Last", last_not_null: "Last *", first: "First", first_not_null: "First *", count: "Count",
+  median: "Median", std_dev: "Std Dev", variance: "Variance", range: "Range", diff: "Difference", diff_percent: "Difference %", delta: "Delta",
+  distinct_count: "Distinct count", change_count: "Change count",
+};

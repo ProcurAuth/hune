@@ -12,7 +12,7 @@
 
 import { clip } from "../bucket_model.js";
 import { histYAxis } from "../panels/series.js";
-import { BAR_HEIGHT, EXACT, LEAST, MOST, PARTS, barNode, ceilInt, exact, least, most, neutral, node, partAttrs, px, resultOf } from "./common.js";
+import { BAR_HEIGHT, EXACT, HEADS, LEAST, MOST, PARTS, barNode, ceilInt, exact, least, most, neutral, node, partAttrs, px, resultOf } from "./common.js";
 import { FROM_DATA, LINE, domWidth, guideNode, hidesLegend, measureText, neverDrawn, pixelRatio, possible, scrollGutter, warningValues } from "./grids.js";
 
 const TOP = 8;
@@ -31,11 +31,6 @@ const ITEM_MAX = 308; // 22rem
 const HEAD_ROW = 2 + LINE + 2.5; // a head of the legend table (the Hune rule)
 const BODY_ROW = 2 + LINE + 2 + 1; // a row of the legend table and its rule
 const TEXT_CENTRE = 8.5; // the centre of the text box of a 12 px text, from the top of its line of 18.857 px (the font of the page)
-const HEADS = {
-  total: "Total", min: "Min", max: "Max", mean: "Mean", last: "Last", last_not_null: "Last *", first: "First", first_not_null: "First *", count: "Count",
-  median: "Median", std_dev: "Std Dev", variance: "Variance", range: "Range", diff: "Difference", diff_percent: "Difference %", delta: "Delta",
-  distinct_count: "Distinct count", change_count: "Change count",
-};
 
 // A display name that the document writes in full: no template, no variable.
 const lit = (v) => typeof v === "string" && v !== "" && !v.includes("$") && !v.includes("[[");

@@ -97,7 +97,7 @@ export function environment(ctx) {
 }
 
 // ---- Reading the panel ------------------------------------------------------------------------------------------------------------------
-const obj = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
+export const obj = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
 const list = (v) => (Array.isArray(v) ? v : []);
 
 /** The panel `id` of the document, or null. */

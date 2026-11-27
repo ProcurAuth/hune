@@ -15,7 +15,7 @@
 
 import { BAR_HEIGHT, EXACT, PARTS, neutral, node, partAttrs, resultOf } from "./common.js";
 import { parseGrafanaPattern } from "../fields.js";
-import { chainOf, walkChain } from "./table.js";
+import { chainOf, obj, walkChain } from "./table.js";
 
 export const EXTENT = "extent";
 export const LOGS_PARTS = Object.freeze({ ...PARTS, TIME: "time" });
@@ -25,8 +25,6 @@ export const LINE_PAD = 6;
 export const GAP = 12;
 // The least proven form: the bar has the thickness of the glyphs of a line, centred in the text band (`margin-top` 7 px).
 export const BAR_TOP = (LINE_BAND - BAR_HEIGHT) / 2;
-
-const obj = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
 
 // The environment: the thickness of the classic vertical scroll bar of the list. A probe with the real class measures it. A test gives `ctx.env`.
 export function environment(ctx) {
