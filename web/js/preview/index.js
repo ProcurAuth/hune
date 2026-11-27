@@ -3,7 +3,7 @@
 // module of its family, and draws the tree of nodes. panel_frame.js uses `buildPreview` and `observePreview`.
 
 import { el } from "../ui.js";
-import { HOOKS } from "./common.js";
+import { HOOKS, PROBES } from "./common.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g", "use", "defs", "linearGradient", "stop"]);
@@ -119,6 +119,7 @@ function schedule(job) {
     frame = 0;
     const jobs = [...QUEUE];
     QUEUE.clear();
+    for (const name of Object.keys(PROBES)) delete PROBES[name];
     const sizes = jobs.map((j) => j.read());
     jobs.forEach((j, i) => sizes[i] && j.write(sizes[i]));
   });

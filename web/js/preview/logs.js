@@ -13,7 +13,7 @@
 // A chain of transforms that proves that no list comes (the cases N1 to N3 of the council file) gives no shape: `noList` reads the JSON document only.
 // A hidden query gives the neutral form, as in the table. The rules that the council leaves to the owner are in the final report of the family.
 
-import { BAR_HEIGHT, EXACT, PARTS, neutral, node, partAttrs, resultOf } from "./common.js";
+import { BAR_HEIGHT, EXACT, PARTS, PROBES, neutral, node, partAttrs, resultOf } from "./common.js";
 import { parseGrafanaPattern } from "../fields.js";
 import { chainOf, walkChain } from "./table.js";
 
@@ -31,6 +31,7 @@ const obj = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
 export function environment(ctx) {
   if (ctx && ctx.env) return { sb: 0, ...ctx.env };
   if (typeof document === "undefined" || !document.body) return null;
+  if (PROBES.logs) return PROBES.logs;
   const probe = document.createElement("div");
   probe.className = "logs";
   for (const [name, value] of [["position", "absolute"], ["visibility", "hidden"], ["pointer-events", "none"], ["left", "0px"], ["top", "0px"], ["width", "200px"], ["height", "100px"]]) probe.style.setProperty(name, value);
@@ -39,7 +40,7 @@ export function environment(ctx) {
   probe.append(tall);
   document.body.append(probe);
   try {
-    return { sb: probe.offsetWidth - probe.clientWidth };
+    return PROBES.logs = { sb: probe.offsetWidth - probe.clientWidth };
   } finally {
     probe.remove();
   }
