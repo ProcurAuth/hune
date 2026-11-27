@@ -166,6 +166,8 @@ file of `web/` stays in one of the directories of this layout.
 - The `build.rs` of the crate `hune` reads each file of `web/`, in byte order of the path. It embeds each file with
   `include_bytes!` and computes its SHA-256.
 - A symbolic link, or an extension outside the table below, stops the build.
+- The build also makes the file `css/page.css` (9.6). It is the text of the style sheets that `shell.html` links, in the order of the links. It is a file of the build list, with its own hash, and it gets a gzip copy like each other file. A file of `web/` with the same path stops the build.
+- Each `url()` of a joined sheet keeps the file that it named in its own sheet, with a path that is right for `css/page.css`. A sheet with an `@import`, an `@charset` or braces that are not balanced stops the build.
 - The build list is a text with one line `<path> <sha256>` for each file, in path order. Each line ends with LF. The
   build hash is the first 16 hexadecimal characters of the SHA-256 of the build list.
 - A static file has the URL `static/<build-hash>/<path>`, relative to the `<base href>` of the shell (9.6). A relative
@@ -191,6 +193,8 @@ file of `web/` stays in one of the directories of this layout.
   and `{{version_title}}` with the version line of the header and its title (9.6). These two texts have only the
   characters `A-Z`, `a-z`, `0-9`, space and `.,:;+()_-`, so they are safe in the JSON string. The result does not change
   while the process runs.
+- The marker `{{preload}}` becomes the links `modulepreload` of the route (9.6). The server makes three shells at start.
+  One is for `/`, one is for `/d/{uid}[/{slug}]`, and one is for the status 404.
 
 | Extension | `Content-Type` |
 |---|---|
@@ -341,6 +345,9 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/components.css">
   <link rel="stylesheet" href="static/{{build}}/css/picker.css">
   <link rel="stylesheet" href="static/{{build}}/css/var-select.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/chart.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/stat.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/table.css">
   <link rel="stylesheet" href="static/{{build}}/css/dashboard.css">
   <link rel="stylesheet" href="static/{{build}}/css/list.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-table.css">
@@ -352,9 +359,20 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/panel-text.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-timeline.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-bucket.css">
+  <link rel="preload" href="static/{{build}}/icons.svg" as="fetch" crossorigin>
   <script src="static/{{build}}/js/boot_theme.js"></script>
   <script type="application/json" id="hune-boot">{"build":"{{build}}","version":"{{version_text}}","version_title":"{{version_title}}"}</script>
   <script type="module" src="static/{{build}}/js/main.js"></script>
+  <link rel="modulepreload" href="static/{{build}}/js/api.js">
+  <link rel="modulepreload" href="static/{{build}}/js/busy.js">
+  <link rel="modulepreload" href="static/{{build}}/js/config.js">
+  <link rel="modulepreload" href="static/{{build}}/js/entry.js">
+  <link rel="modulepreload" href="static/{{build}}/js/theme.js">
+  <link rel="modulepreload" href="static/{{build}}/js/ui.js">
+  <link rel="modulepreload" href="static/{{build}}/js/url_state.js">
+  <link rel="modulepreload" href="static/{{build}}/js/repeat.js">
+  <link rel="modulepreload" href="static/{{build}}/js/time.js">
+{{preload}}
 </head>
 <body>
   <header id="app-header" data-testid="app-header"></header>
@@ -364,6 +382,18 @@ The name `timezone`:
 </body>
 </html>
 ```
+
+The template lists the style sheets one by one, in the order of the cascade. The server does not send these links. It replaces them with one link to `css/page.css` at the place of the first link (9.3). The page thus asks for one style sheet in place of 25. The source sheets stay in `web/css/`, and the tests read them.
+
+The files `chart.css`, `stat.css` and `table.css` of the copied engine have their own links, before `dashboard.css`. No style sheet of the page uses `@import`, so the browser asks for all of them at the same time. The editor adds `sql.css` and then `editor.css` with two links, and its view waits for both for 1.5 s at most.
+
+The shell has one `modulepreload` link for each module in the static closure of `main.js`, except `main.js`. The closure follows `import ... from` and `export ... from` only. The links come after the script of `main.js`, so the request for `main.js` is not behind them. They are in the order in which the browser finds the modules. The browser thus fetches these modules at the same time, and not level by level. A front unit test checks that the links are exactly this closure.
+
+The shell also preloads the file `icons.svg` with `as="fetch"` and `crossorigin`. `main.js` reads this file with `fetch` and the credentials mode `same-origin`, which is the mode of `crossorigin`. The browser thus uses the preloaded answer, and the page makes one request for the file.
+
+The marker `{{preload}}` is a line of its own. The server replaces it with more `modulepreload` links for the page of the route. The route `/` adds the static closure of `list.js`. The route `/d/{uid}[/{slug}]` adds the static closure of `dashboard.js`. Each list leaves out the modules that the links of `main.js` already name.
+
+The page never preloads a module that it loads with `import()`: the panel modules and the editor load on demand. `build.rs` makes the two lists from the files of `web/`, with the import rule above. The marker becomes nothing in the shell with the status 404, so that a wrong address preloads no module of a page. A Rust test checks the lists against the files.
 
 The page starts in this order:
 

@@ -858,6 +858,7 @@ options route. Section 11 gives their content, their questions and their errors.
 
 - `GET /`, `GET /d/{uid}` and `GET /d/{uid}/{slug}` answer the shell (9.6) with `200`,
   `Content-Type: text/html; charset=utf-8` and `Cache-Control: no-cache`.
+- The shell of `/` and the shell of `/d/{uid}[/{slug}]` differ by their links `modulepreload` only (9.6). The shell with the status 404 has the links of `main.js` only. The three shells have the same headers.
 - The page route does not read the store: the page asks the API (9.8). Hune ignores `{slug}`: any text of 1 to 256
   bytes without `/` is accepted.
 - Some paths are not under `api/`, `static/` or `.well-known/`, and are not a page route. A `GET` of such a path

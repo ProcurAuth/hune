@@ -6,16 +6,24 @@ import { assetUrl } from "../config.js";
 import { clear, el, icon, uniqueId } from "../ui.js";
 
 let cssLoaded = null;
-// Loads css/editor.css once. The dialogs of the list page need it too (fields, file input, spacing).
-// The promise ends when the style sheet has loaded (or fails, or after 1.5 s): an editor view shows only after it (10.2a, rule 2).
+// The style sheets of the editor, in the order of the cascade: the copied SQL styles come before editor.css, as the old @import did.
+const EDITOR_CSS = ["css/vendor/chdash/sql.css", "css/editor.css"];
+// Loads css/editor.css and its SQL styles once. The dialogs of the list page need them too (fields, file input, spacing).
+// The promise ends when both style sheets have loaded (or fail, or after 1.5 s): an editor view shows only after it (10.2a, rule 2).
 export function loadEditorCss() {
   if (cssLoaded) return cssLoaded;
   cssLoaded = new Promise((resolve) => {
-    const link = el("link", { rel: "stylesheet", href: assetUrl("css/editor.css") });
-    link.addEventListener("load", resolve);
-    link.addEventListener("error", resolve);
+    let waiting = EDITOR_CSS.length;
+    for (const path of EDITOR_CSS) {
+      const link = el("link", { rel: "stylesheet", href: assetUrl(path) });
+      const done = () => {
+        if (--waiting === 0) resolve();
+      };
+      link.addEventListener("load", done, { once: true });
+      link.addEventListener("error", done, { once: true });
+      document.head.append(link);
+    }
     setTimeout(resolve, 1500);
-    document.head.append(link);
   });
   return cssLoaded;
 }

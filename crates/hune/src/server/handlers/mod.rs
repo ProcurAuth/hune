@@ -60,9 +60,9 @@ pub async fn dispatch(ctx: Ctx, req: Request) -> Result<Response, ApiError> {
     }
 }
 
-/// Makes the shell answer with a status. The shell is the same for each page route (6.25).
-pub(super) fn shell_response(ctx: &Ctx, status: http::StatusCode) -> Response {
-    let mut r = super::response::bytes_response(status, "text/html; charset=utf-8", ctx.state.shell.clone());
+/// Makes an answer with a shell page and a status (6.25). The pages differ by their links `modulepreload` only (9.6).
+pub(super) fn shell_response(status: http::StatusCode, shell: bytes::Bytes) -> Response {
+    let mut r = super::response::bytes_response(status, "text/html; charset=utf-8", shell);
     r.headers_mut().insert(http::header::CACHE_CONTROL, http::HeaderValue::from_static("no-cache"));
     r
 }

@@ -17,6 +17,9 @@
   <link rel="stylesheet" href="static/{{build}}/css/components.css">
   <link rel="stylesheet" href="static/{{build}}/css/picker.css">
   <link rel="stylesheet" href="static/{{build}}/css/var-select.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/chart.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/stat.css">
+  <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/table.css">
   <link rel="stylesheet" href="static/{{build}}/css/dashboard.css">
   <link rel="stylesheet" href="static/{{build}}/css/list.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-table.css">
@@ -31,9 +34,20 @@
   <link rel="stylesheet" href="static/{{build}}/css/panel-logs.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-geomap.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-select.css">
+  <link rel="preload" href="static/{{build}}/icons.svg" as="fetch" crossorigin>
   <script src="static/{{build}}/js/boot_theme.js"></script>
   <script type="application/json" id="hune-boot">{"build":"{{build}}","version":"{{version_text}}","version_title":"{{version_title}}"}</script>
   <script type="module" src="static/{{build}}/js/main.js"></script>
+  <link rel="modulepreload" href="static/{{build}}/js/api.js">
+  <link rel="modulepreload" href="static/{{build}}/js/busy.js">
+  <link rel="modulepreload" href="static/{{build}}/js/config.js">
+  <link rel="modulepreload" href="static/{{build}}/js/entry.js">
+  <link rel="modulepreload" href="static/{{build}}/js/theme.js">
+  <link rel="modulepreload" href="static/{{build}}/js/ui.js">
+  <link rel="modulepreload" href="static/{{build}}/js/url_state.js">
+  <link rel="modulepreload" href="static/{{build}}/js/repeat.js">
+  <link rel="modulepreload" href="static/{{build}}/js/time.js">
+{{preload}}
 </head>
 <body>
   <a id="skip-link" class="skip-link" href="#app-main" data-testid="skip-link">Skip to content</a>

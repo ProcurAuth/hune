@@ -118,7 +118,7 @@ where
     H: FnOnce(Arc<AppState>) -> Fut,
     Fut: Future<Output = Result<Services, StartError>>,
 {
-    let shell = web_assets::build_shell(&config.server.base_path)
+    let shell = web_assets::build_shells(&config.server.base_path)
         .ok_or_else(|| StartError::new("shell", "the build has no web/shell.html"))?;
     // The gzip copies of the static files: one time at start, never for a request (9.3, 13.8).
     if config.server.compress_static {

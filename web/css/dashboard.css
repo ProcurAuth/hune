@@ -1,7 +1,4 @@
 /* Grid, sections, panel frames and the colour tokens of 9.16 (9.2). The panel types have their own files: panel-chart.css, panel-stat.css, panel-table.css. */
-@import url("vendor/chdash/chart.css");
-@import url("vendor/chdash/stat.css");
-@import url("vendor/chdash/table.css");
 
 :root {
   /* The named colours of Grafana (9.16). A token has the same value in both themes. */

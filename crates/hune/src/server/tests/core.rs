@@ -142,6 +142,49 @@ async fn shell_pages_have_markers_replaced() {
     assert_eq!(head.header("cache-control"), Some("no-cache"));
 }
 
+/// The links `modulepreload` of a shell body (9.6).
+fn preload_count(text: &str) -> usize {
+    text.matches("rel=\"modulepreload\"").count()
+}
+
+#[tokio::test]
+async fn each_page_route_has_its_own_preload_links() {
+    let h = Harness::start(|_| {}).await;
+    let main = web_assets::PRELOAD_MAIN.len();
+    let link = |path: &str| format!("<link rel=\"modulepreload\" href=\"static/{BUILD_HASH}/{path}\">");
+    // The list: the links of main.js and the modules of the list page.
+    let list = get(h.addr, "/").await;
+    let text = list.text();
+    assert_eq!(preload_count(&text), main + web_assets::PRELOAD_LIST.len());
+    assert!(text.contains(&link("js/list.js")) && !text.contains(&link("js/dashboard.js")));
+    // A dashboard, with a slug or not: the links of main.js and the modules of the dashboard page.
+    for path in ["/d/nodes", "/d/nodes/my-slug"] {
+        let text = get(h.addr, path).await.text();
+        assert_eq!(preload_count(&text), main + web_assets::PRELOAD_DASHBOARD.len(), "{path}");
+        assert!(text.contains(&link("js/dashboard.js")) && text.contains(&link("js/panel_frame.js")), "{path}");
+        assert!(!text.contains("/editor/"), "{path}");
+    }
+    // A page with the status 404 has the links of main.js only: no module of a page.
+    for path in ["/nothing", "/d/BAD_UID", "/d/abc/x/y", &format!("/d/abc/{}", "s".repeat(257))] {
+        let r = get(h.addr, path).await;
+        assert_eq!(r.status, 404, "{path}");
+        let text = r.text();
+        assert_eq!(preload_count(&text), main, "{path}");
+        assert!(!text.contains(&link("js/dashboard.js")) && !text.contains(&link("js/list.js")), "{path}");
+    }
+    // The headers of the three shells are the same.
+    let ok_headers =
+        |r: &Resp| (r.header("content-type").map(str::to_owned), r.header("cache-control").map(str::to_owned));
+    let dash = get(h.addr, "/d/nodes").await;
+    let missing = get(h.addr, "/nothing").await;
+    assert_eq!(ok_headers(&list), ok_headers(&dash));
+    assert_eq!(ok_headers(&list), ok_headers(&missing));
+    // A HEAD of a dashboard gives the length of the body of its GET, not the length of the list shell.
+    let head = call(h.addr, "HEAD", "/d/nodes", &[], b"").await;
+    assert_eq!(head.header("content-length"), dash.header("content-length"));
+    assert_ne!(head.header("content-length"), list.header("content-length"));
+}
+
 #[tokio::test]
 async fn shell_with_a_base_path_and_escape() {
     let h = Harness::start(|c| c.server.base_path = "/dash&board/".to_owned()).await;
