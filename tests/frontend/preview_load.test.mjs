@@ -35,14 +35,15 @@ test("previewOf gives null until the module of the family is loaded, then it dra
 installFakeDom();
 const WEB = new URL("../../web/js/", import.meta.url);
 const pie = { id: 1, type: "piechart", options: {}, fields: {} };
-const tick = () => new Promise((resolve) => setImmediate(resolve));
+// The drawing runs in an animation frame. Node has none, so the registry uses a timer of 0 ms.
+const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
 let fresh = 0;
 // A new copy of the registry has no loaded family, and it shares the family modules with the registry of the page.
 const registry = (tag) => import(`../../web/js/preview/index.js?${tag}-${fresh++}`);
 // A skeleton with a box that has a size. The fake node has no layout, so the test gives the size.
 const sized = (skeleton) => {
   Object.defineProperty(skeleton, "firstElementChild", { get: () => skeleton.children[0] });
-  Object.defineProperty(skeleton, "clientWidth", { value: 100 });
+  Object.defineProperty(skeleton, "clientWidth", { value: 100, configurable: true });
   Object.defineProperty(skeleton, "clientHeight", { value: 40 });
   return skeleton;
 };
@@ -124,4 +125,41 @@ test("the loader of the bar chart also loads the module of the timeseries family
   await reg.loadFamily("barchart");
   // The font handler resets the measures of the module `timeseries` only when the registry holds it: `previewOf` of a time series shows that it does.
   assert.equal(reg.previewOf({ id: 3, type: "timeseries", options: {}, fields: {} }, { w: 300, h: 200 }, {}, {}).family, "timeseries");
+});
+
+test("the drawings of one frame read all the sizes first, then write all the previews", async () => {
+  const reg = await registry("frame");
+  await reg.loadPreviewFamilies();
+  const log = [];
+  const make = (name) => {
+    const skeleton = sized(reg.buildPreview(pie));
+    Object.defineProperty(skeleton, "clientWidth", { get: () => (log.push(`read ${name}`), 100) });
+    const root = skeleton.children[0];
+    const replace = root.replaceChildren.bind(root);
+    root.replaceChildren = (...nodes) => (log.push(`write ${name}`), replace(...nodes));
+    return skeleton;
+  };
+  const a = make("a");
+  const b = make("b");
+  const stopA = reg.observePreview(a, pie, {}, {});
+  const stopB = reg.observePreview(b, pie, {}, {});
+  stopA.measure();
+  stopB.measure();
+  stopA.measure();
+  assert.deepEqual(log, [], "nothing runs before the frame");
+  await tick();
+  assert.deepEqual(log, ["read a", "read b", "write a", "write b"]);
+  stopA();
+  stopB();
+});
+
+test("stop drops a preview that waits for the frame", async () => {
+  const reg = await registry("drop");
+  await reg.loadPreviewFamilies();
+  const skeleton = sized(reg.buildPreview(pie));
+  const stop = reg.observePreview(skeleton, pie, {}, {});
+  stop.measure();
+  stop();
+  await tick();
+  assert.equal(skeleton._preview, undefined);
 });
