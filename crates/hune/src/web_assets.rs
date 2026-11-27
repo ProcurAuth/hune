@@ -311,10 +311,10 @@ mod tests {
             assert!(path.starts_with("js/") && path.ends_with(".js"), "{path}");
             assert!(!path.starts_with("js/editor/"), "the editor loads on demand: {path}");
         }
-        // The routes share nothing that main.js has, and the dashboard list holds the list modules that it imports.
+        // The routes share nothing that main.js has, and the dashboard page does not load the module of the list page.
         assert!(PRELOAD_LIST.iter().all(|p| !PRELOAD_MAIN.contains(p)));
         assert!(PRELOAD_DASHBOARD.iter().all(|p| !PRELOAD_MAIN.contains(p)));
-        assert!(PRELOAD_DASHBOARD.contains(&"js/list.js"));
+        assert!(!PRELOAD_DASHBOARD.contains(&"js/list.js"));
     }
 
     #[test]
@@ -415,7 +415,8 @@ mod tests {
             at = start + source.len().min(css.len() - start);
         }
         // Each url() names the file that it named in its own sheet: the sheets of the folder css/vendor/chdash/ get a longer path.
-        assert!(css.contains("src: url(\"../fonts/inter/InterVariable.woff2\")"));
+        assert!(css.contains("src: url(\"../fonts/inter/InterVariable-main.woff2\")"));
+        assert!(css.contains("src: url(\"../fonts/inter/InterVariable-rare.woff2\")"));
         assert!(css.contains("src: url(\"vendor/chdash/fonts/IBMPlexSans-Regular-Latin1.woff2\")"));
         assert!(!css.contains("url(\"fonts/IBMPlex"));
         // The sources stay in the build: the tests and the editor read them.
