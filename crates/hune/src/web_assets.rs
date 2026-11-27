@@ -336,6 +336,13 @@ mod tests {
                 text.contains(&format!("<script type=\"module\" src=\"static/{BUILD_HASH}/js/main.js\"></script>"))
             );
         }
+        // The links come after the script of `main.js`, so the request for `main.js` is not queued behind them.
+        for page in [&shells.base, &shells.list, &shells.dashboard] {
+            let text = std::str::from_utf8(page).unwrap();
+            let script = text.find("js/main.js\"></script>").unwrap();
+            assert!(text.find("rel=\"modulepreload\"").unwrap() > script);
+            assert!(text.find("js/boot_theme.js").unwrap() < script);
+        }
         // The bodies differ by the links only.
         let strip = |page: &Bytes| -> String {
             std::str::from_utf8(page)

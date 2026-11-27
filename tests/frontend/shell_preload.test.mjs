@@ -35,11 +35,15 @@ test("the shell preloads exactly the static closure of main.js, in the order of 
   assert.equal([...shell.matchAll(/rel="modulepreload"/g)].length, links.length);
 });
 
-test("the module main.js stays a module script of the shell, and the preloads come before the scripts", () => {
+test("the preloads come after the module script of main.js, so the request for main.js is not queued behind them", () => {
   const first = shell.indexOf('rel="modulepreload"');
-  assert.ok(first > shell.lastIndexOf('rel="stylesheet"'), "the preloads follow the style sheets");
-  assert.ok(first < shell.indexOf("js/boot_theme.js"));
-  assert.match(shell, /<script type="module" src="static\/\{\{build\}\}\/js\/main\.js"><\/script>/);
+  const mainScript = shell.indexOf('<script type="module" src="static/{{build}}/js/main.js"></script>');
+  assert.ok(mainScript > shell.lastIndexOf('rel="stylesheet"'), "main.js comes after the style sheets");
+  assert.ok(shell.indexOf("js/boot_theme.js") < mainScript, "boot_theme.js comes before main.js");
+  assert.ok(first > mainScript, "the preloads follow the script of main.js");
+  // The marker of the route links follows the links of main.js, and nothing comes after it but the end of the head.
+  assert.ok(shell.indexOf("{{preload}}") > shell.lastIndexOf('rel="modulepreload"'));
+  assert.ok(shell.indexOf("</head>") > shell.indexOf("{{preload}}"));
 });
 
 test("the shell preloads the sprite as a fetch with the same mode as main.js (credentials same-origin), once", () => {

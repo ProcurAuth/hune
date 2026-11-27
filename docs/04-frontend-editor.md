@@ -358,6 +358,9 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/panel-timeline.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-bucket.css">
   <link rel="preload" href="static/{{build}}/icons.svg" as="fetch" crossorigin>
+  <script src="static/{{build}}/js/boot_theme.js"></script>
+  <script type="application/json" id="hune-boot">{"build":"{{build}}","version":"{{version_text}}","version_title":"{{version_title}}"}</script>
+  <script type="module" src="static/{{build}}/js/main.js"></script>
   <link rel="modulepreload" href="static/{{build}}/js/api.js">
   <link rel="modulepreload" href="static/{{build}}/js/busy.js">
   <link rel="modulepreload" href="static/{{build}}/js/config.js">
@@ -368,9 +371,6 @@ The name `timezone`:
   <link rel="modulepreload" href="static/{{build}}/js/repeat.js">
   <link rel="modulepreload" href="static/{{build}}/js/time.js">
 {{preload}}
-  <script src="static/{{build}}/js/boot_theme.js"></script>
-  <script type="application/json" id="hune-boot">{"build":"{{build}}","version":"{{version_text}}","version_title":"{{version_title}}"}</script>
-  <script type="module" src="static/{{build}}/js/main.js"></script>
 </head>
 <body>
   <header id="app-header" data-testid="app-header"></header>
@@ -385,7 +385,7 @@ The template lists the style sheets one by one, in the order of the cascade. The
 
 The files `chart.css`, `stat.css` and `table.css` of the copied engine have their own links, before `dashboard.css`. No style sheet of the page uses `@import`, so the browser asks for all of them at the same time. The editor adds `sql.css` and then `editor.css` with two links, and its view waits for both for 1.5 s at most.
 
-The shell has one `modulepreload` link for each module in the static closure of `main.js`, except `main.js`. The closure follows `import ... from` and `export ... from` only. The links are in the order in which the browser finds the modules. The browser thus fetches these modules at the same time, and not level by level. A front unit test checks that the links are exactly this closure.
+The shell has one `modulepreload` link for each module in the static closure of `main.js`, except `main.js`. The closure follows `import ... from` and `export ... from` only. The links come after the script of `main.js`, so the request for `main.js` is not behind them. They are in the order in which the browser finds the modules. The browser thus fetches these modules at the same time, and not level by level. A front unit test checks that the links are exactly this closure.
 
 The shell also preloads the file `icons.svg` with `as="fetch"` and `crossorigin`. `main.js` reads this file with `fetch` and the credentials mode `same-origin`, which is the mode of `crossorigin`. The browser thus uses the preloaded answer, and the page makes one request for the file.
 
