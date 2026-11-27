@@ -110,13 +110,14 @@ export function buildPreview(panel) {
 // The previews that wait for a drawing. The drawings of one frame run together: the page reads the sizes of all the boxes, then it writes all the
 // previews. A read after a write of another panel would force a layout of the page for each panel.
 const QUEUE = new Set();
-let frame = 0;
+let frame = false;
 function schedule(job) {
   QUEUE.add(job);
   if (frame) return;
   const request = globalThis.requestAnimationFrame || ((fn) => setTimeout(fn, 0));
-  frame = request(() => {
-    frame = 0;
+  frame = true;
+  request(() => {
+    frame = false;
     const jobs = [...QUEUE];
     QUEUE.clear();
     for (const name of Object.keys(PROBES)) delete PROBES[name];
