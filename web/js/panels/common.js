@@ -38,12 +38,22 @@ function legendBeside(chart) {
 
 const LEGEND_MAX_SHARE = 0.35;
 
+// The height of the first draw of a chart, before its legend exists. A legend of one row at the bottom takes 31 px.
+// A chart with no legend takes the whole host. A guess that is wrong costs one more draw, never a wrong picture: fitHeight corrects it.
+// The 31 px come from the CSS of Hune (panel-chart.css and the legend rows of the engine copy): change them together.
+const LEGEND_ROW = 31;
+export function firstHeight(host, legend = true) {
+  return Math.max(60, host.clientHeight - (legend ? LEGEND_ROW : 0));
+}
+
 // Keeps the plot height equal to the host height minus the legend. The engine draws the width by itself.
 // A legend beside the plot (placement "right") takes no height: the plot uses the whole host.
-export function fitHeight(host, chart, minHeight = 60) {
+// `drawn` is the height of the first draw (the option `height`): a height that is the same does not draw the chart again.
+// A legend at the right narrows the plot after the first draw: the update then draws in this frame, as it did before.
+export function fitHeight(host, chart, minHeight = 60, drawn = 0) {
   const legend = chart.root.querySelector(".chartCore__legend");
   const plot = chart.root.querySelector(".chartCore__plot");
-  let last = 0;
+  let last = host.dataset && host.dataset.legendPlacement === "right" ? 0 : drawn;
   let gone = false; // the host had no width: its frame was out of the page
   const fit = () => {
     // The legend at the bottom keeps at most 35 % of the height of the panel and scrolls beyond it (Grafana). The CSS reads --legend-max.

@@ -2,7 +2,7 @@
 
 import { grafanaValue } from "../frame.js";
 import { formatTime } from "../units.js";
-import { applyLegend, canvasColor, chartColor, createChart, explicitBounds, fitHeight, hiddenIds, hideFlags, isDarkTheme, joinPartsOf, labelChart, legendFormatter, legendOptions, numbersOf, tooltipFormat, yTickLabeller } from "./common.js";
+import { applyLegend, canvasColor, chartColor, createChart, explicitBounds, fitHeight, firstHeight, hiddenIds, hideFlags, isDarkTheme, joinPartsOf, labelChart, legendFormatter, legendOptions, numbersOf, tooltipFormat, yTickLabeller } from "./common.js";
 import { thresholdsHook } from "./thresholds.js";
 import { renderHorizontalBars } from "./barchart_h.js";
 import { autoYRange, axisSettings, boundedYAxis, lastFinite, sharedRange } from "./series.js";
@@ -119,7 +119,7 @@ function draw(host, ctx, horizontal) {
   const tickText = yTickLabeller(first);
   const [lo, hi] = first ? explicitBounds(first) : [null, null];
   const options = {
-    height: Math.max(60, host.clientHeight - 28),
+    height: firstHeight(host, legend.legend !== false),
     xKind: "category",
     xs,
     categories,
@@ -168,7 +168,7 @@ function draw(host, ctx, horizontal) {
   const chart = createChart(host, options);
   applyLegend(host, chart, o.legend);
   labelChart(chart, panel);
-  const unfit = fitHeight(host, chart);
+  const unfit = fitHeight(host, chart, 60, options.height);
   return {
     destroy() {
       unfit();

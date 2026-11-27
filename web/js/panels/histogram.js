@@ -1,7 +1,7 @@
 // The histogram panel (9.19f): the chart engine draws the bars on a number axis. The buckets come from `bucket_model.js`.
 import { buildHistogram, histDescription, histTicks } from "../bucket_model.js";
 import { el, uniqueId } from "../ui.js";
-import { applyLegend, chartColor, createChart, fitHeight, labelChart, legendFormatter, legendOptions, tooltipFormat, valueFormatter, yTickLabeller } from "./common.js";
+import { applyLegend, chartColor, createChart, fitHeight, firstHeight, labelChart, legendFormatter, legendOptions, tooltipFormat, valueFormatter, yTickLabeller } from "./common.js";
 import { histYAxis, lastFinite, sharedRange } from "./series.js";
 
 // The hook `data-histogram` (9.29) lists 2,000 bars at most. Then it sets `cut`.
@@ -57,8 +57,9 @@ export function render(host, ctx) {
   const desc = el("p", { class: "visually-hidden", id: descId, dataset: { testid: `histogram-${id}-desc` }, text: histDescription(m, edge) });
   host.append(desc);
   let chart = null;
+  const chartHeight = firstHeight(host, legend.legend !== false);
   chart = createChart(host, {
-    height: Math.max(60, host.clientHeight - 28),
+    height: chartHeight,
     xKind: "number",
     xs: Float64Array.from(m.lows, (v, j) => (v + m.highs[j]) / 2),
     // The edges of the first and the last bucket are the ends of the plot. A bar is its slot (the bucket size) less 1 px, and the bars overlap (9.24).
@@ -99,7 +100,7 @@ export function render(host, ctx) {
   chart.root.dataset.testid = `histogram-${id}`;
   const overlay = chart.root.querySelector(".chartCore__overlay");
   if (overlay) overlay.setAttribute("aria-describedby", descId);
-  const unfit = fitHeight(host, chart);
+  const unfit = fitHeight(host, chart, 60, chartHeight);
   return {
     destroy() {
       unfit();

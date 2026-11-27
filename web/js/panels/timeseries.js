@@ -2,7 +2,7 @@
 
 import { selectRows } from "../frame.js";
 import { zoneClock } from "../zone.js";
-import { applyLegend, canvasColor, chartColor, createChart, fitHeight, hiddenIds, hideFlags, isDarkTheme, labelChart, legendFormatter, legendOptions, numbersOf, overlapFill, timeFractionDigits, tooltipFormat, yTickLabeller } from "./common.js";
+import { applyLegend, canvasColor, chartColor, createChart, fitHeight, firstHeight, hiddenIds, hideFlags, isDarkTheme, labelChart, legendFormatter, legendOptions, numbersOf, overlapFill, timeFractionDigits, tooltipFormat, yTickLabeller } from "./common.js";
 import { attach } from "./annotate.js";
 import { thresholdsHook } from "./thresholds.js";
 import { autoYRange, axisPlan, boundedYAxis, lastFinite, seriesStyle, sharedRange, tickLabel } from "./series.js";
@@ -168,7 +168,7 @@ export function render(host, ctx) {
     : null;
   let marksLayer = null; // the marks of the annotations (9.19d), made after the chart
   const options = {
-    height: Math.max(60, host.clientHeight - 28),
+    height: firstHeight(host, legend.legend !== false),
     xKind: "time",
     zone: zoneClock(ctx.zone),
     xs,
@@ -237,7 +237,7 @@ export function render(host, ctx) {
   host.dataset.chart = "timeseries";
   applyLegend(host, chart, o.legend);
   labelChart(chart, panel);
-  const unfit = fitHeight(host, chart);
+  const unfit = fitHeight(host, chart, 60, options.height);
   // The marks draw on their own canvas after each draw of the chart (9.19d). A panel that no annotation applies to has no layer.
   if (typeof ctx.annotationsOf === "function" && ctx.annotationsOf().length) {
     marksLayer = attach(host, chart, ctx);
