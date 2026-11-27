@@ -54,6 +54,35 @@ function checkBuild(response) {
   if (build && boot.build && build !== boot.build) showBuildNotice();
 }
 
+// A read that starts ahead (`startAhead`) keeps its effects (the build notice, the hook of a 401, the notice of the access service)
+// in a list under its signal. `use` runs them when the page takes the answer.
+const waiting = new WeakMap();
+
+function effect(signal, run) {
+  const list = signal ? waiting.get(signal) : undefined;
+  if (list) list.push(run);
+  else run();
+}
+
+// Starts reads before the page needs them (9.6). `make(signal)` sends the requests and gives a promise. A read that nobody takes ends
+// with `abort()` and has no effect. `use(signal)` gives the promise for one page: an error shows when the page takes it, never before.
+export function startAhead(make) {
+  const controller = new AbortController();
+  const effects = [];
+  waiting.set(controller.signal, effects);
+  const promise = make(controller.signal);
+  promise.catch(() => {});
+  return {
+    abort: () => controller.abort(),
+    use(signal) {
+      signal.addEventListener("abort", () => controller.abort(), { once: true });
+      waiting.delete(controller.signal);
+      for (const run of effects.splice(0)) run();
+      return promise;
+    },
+  };
+}
+
 async function readError(response) {
   const requestId = response.headers.get("X-Request-Id");
   let body = null;
@@ -119,13 +148,17 @@ async function send(method, path, { body, signal, headers, raw }) {
     if (isAbort(error)) throw new ApiError({ status: 0, code: "aborted", message: "The request was cancelled." });
     throw new ApiError({ status: 0, code: "network_error", message: "Hune does not answer.", retryable: true });
   }
-  checkBuild(response);
+  effect(signal, () => checkBuild(response));
   if (response.status === 304) return { notModified: true };
   if (!response.ok) {
     const error = await readError(response);
-    if (response.status === 401 && hooks.onUnauthorized) hooks.onUnauthorized(error);
+    if (response.status === 401) {
+      effect(signal, () => {
+        if (hooks.onUnauthorized) hooks.onUnauthorized(error);
+      });
+    }
     if (error.code === "pdp_unavailable") {
-      notify({ level: "error", key: "pdp", text: "The access decision service does not answer. Try again later." });
+      effect(signal, () => notify({ level: "error", key: "pdp", text: "The access decision service does not answer. Try again later." }));
     }
     throw error;
   }

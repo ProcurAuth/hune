@@ -79,7 +79,8 @@ export async function mount(ctx) {
   busy.begin();
   let answer;
   try {
-    answer = await api.dashboard(uid, controller.signal);
+    // The request can start before the session answer (9.6): `ctx.ahead` is that read, for this uid.
+    answer = await (ctx.ahead ? ctx.ahead.use(controller.signal) : api.dashboard(uid, controller.signal));
   } catch (error) {
     busy.end();
     if (api.isAbort(error)) return { destroy() {} };
