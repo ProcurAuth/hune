@@ -1437,6 +1437,11 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 - The page sets the custom properties with the CSSOM and writes no `style` attribute (9.29). The SVG nodes use the SVG namespace.
 - The preview builds when its box has a size. It builds again when the window changes size, when the state of the wait changes, or when a font loads. The page reads the size of the box at these times, and the font set with the event `loadingdone`. The preview has no `ResizeObserver`. An observer forces a layout of the page at each key, in the page of a big text that a person types (B176). A panel that never waits for a first load builds nothing.
 - A module that throws gives the neutral form. A preview never breaks a panel.
+- The module of a family loads on demand, with `import()`. The registry keeps one promise for each family. The import starts when the page builds the frame of the panel, so the module is in the page before the preview shows.
+  - A page with no panel of a family never loads its module. A panel that waits shows its preview 300 ms after the request starts, as before.
+  - If the module is not in the page when the box has a size, the preview draws as soon as the module arrives. It draws only when the preview is still in the page and still shown.
+  - `previewOf` is synchronous and gives `null` while its module is not loaded. A test calls `loadPreviewFamilies()` and waits for it before it calls `previewOf`.
+  - A failed import leaves the panel with no preview. The next call of the registry tries the import again.
 - The families and their modules:
 
   | Family | Panel types | Module |
@@ -4261,6 +4266,9 @@ listeners (16).
   - a minifier.
 - The measure counts the bytes before compression, and it stays so. With `server.compress_static = true` (9.3), the browser gets fewer bytes. On 2026-11-15, the 997,047 bytes of the measure gave 333,765 bytes with the gzip of Hune (33.5 %).
 - The measure counts each module that the page can load, also with `import()`, except the editor. The modules of section 10 load only on demand.
+- The registry of the previews (9.11) loads each family module with `import()` and a quoted path, so the measure counts the 12 modules. The load on demand does not lower the measure.
+  - It takes the families out of the static closure of `dashboard.js`. The closure has 62 files and 805,982 bytes, in place of 82 files and 1,036,040 bytes.
+  - A page now loads only the families of its panels, with the chart engine of `timeseries.js` and `grids.js` only when a panel needs it.
 - The module `view_state.js` and the driver of the states (10.2a) add about 21 KB.
 - The repeat adds the module `repeat.js` and small changes in `runtime.js`, `grid.js`, `dashboard.js`, `view_state.js`, `url_state.js` and `panel_frame.js`. The forms of the repeat are in the editor (10.3, 10.6), which is not in the measure.
 - The text panel adds the modules `markdown.js` (15,673 bytes) and `panels/text.js` (4,469 bytes). It also makes small changes in `panel_frame.js` and `runtime.js`.
