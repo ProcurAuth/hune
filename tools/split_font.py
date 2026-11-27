@@ -27,24 +27,13 @@ SOURCE = ROOT / "tools/font/InterVariable-source.woff2"
 OUT = ROOT / "web/fonts/inter"
 CSS = ROOT / "web/css/fonts.css"
 
-# The ranges of the first file. The font keeps only the code points that it has: a range can name more.
+# The ranges of the first file: every code point of the font except the private use area and the planes above U+FFFF.
+# The font keeps only the code points that it has: a range can name more.
 # A string that mixes characters of the two files is shaped in two runs, and the kerning between the runs is lost.
-# So the first file holds each script and each symbol that a title or a text of a viewer can mix with Latin text.
-FIRST_RANGES = (
-    # The range "latin" of Google Fonts.
-    "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, "
-    "U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, "
-    # Latin script: Latin Extended-A and -B, modifier letters, combining marks, Latin Extended Additional, -C and -D.
-    "U+0100-024F, U+02B0-02FF, U+0300-036F, U+1E00-1EFF, U+2C60-2C7F, U+A720-A7FF, "
-    # Cyrillic and Greek.
-    "U+0400-052F, U+1C80-1C8F, U+2DE0-2DFF, U+A640-A69F, U+0370-03FF, U+1F00-1FFF, "
-    # Superscripts, currency signs, marks for symbols, letter-like signs and number forms.
-    "U+2070-209F, U+20A0-20CF, U+20D0-20FF, U+2100-214F, U+2150-218F, "
-    # Arrows and mathematical operators. The arrow of a time range (app_format.js) and the infinity sign
-    # (units.js, stat_percent.js) are in them.
-    "U+2190-21FF, U+2200-22FF"
-)
-# The second file holds the rest: the IPA and phonetic blocks, symbols of other kinds and the private use area.
+# The page also shows no text of the second file until its file arrives. So the first file holds each character
+# that a title, a series name or a text of a viewer can use. The second file holds only the private use area
+# (the alternate glyphs of the font) and the emoji of the planes above U+FFFF.
+FIRST_RANGES = "U+0000-DFFF, U+F900-FFFF"
 
 
 def parse_ranges(text):
