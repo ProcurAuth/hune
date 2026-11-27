@@ -59,6 +59,7 @@ export function createPanelEditor(E, id) {
   let topFrame = null;
   let ended = false; // true after `destroy()`: the preview stays as it is
   let sqlEditor = null;
+  let popovers = []; // the close functions of the popovers "Query options" of the tab
   let optForm = null; // the option form of the type (10.3h), or null
   let runButton = null;
   let statusLine = null;
@@ -429,6 +430,7 @@ export function createPanelEditor(E, id) {
       trigger.setAttribute("aria-expanded", "false");
       if (focus) trigger.focus();
     }
+    popovers.push(() => close(false));
     trigger.addEventListener("click", () => {
       if (!pop.hidden) return close(true);
       pop.hidden = false;
@@ -1101,8 +1103,15 @@ export function createPanelEditor(E, id) {
 
   const TABS = [["query", "Query"], ["panel", "Panel"], ["json", "JSON"]];
 
+  // An open popover of the tab that leaves removes its listeners of the window and of the document.
+  function releasePopovers() {
+    for (const close of popovers) close();
+    popovers = [];
+  }
+
   // The tab "Panel" has no lower area: the preview is large and the options pane stays on the right.
   function renderTab() {
+    releasePopovers();
     sqlEditor = null;
     runButton = null;
     statusLine = null;
@@ -1164,6 +1173,7 @@ export function createPanelEditor(E, id) {
       controller.abort();
       offPanel();
       if (topFrame) topFrame.destroy();
+      releasePopovers();
     },
     // The text fields apply their last change at once (a save asks for it).
     flush: () => scope.flush(),
