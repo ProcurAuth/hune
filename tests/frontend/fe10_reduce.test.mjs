@@ -3,7 +3,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { reduceField, selectReduceFields, CALCS } from "../../web/js/reduce.js";
+import { reduceField, selectReduceFields } from "../../web/js/reduce.js";
+import { CALCS } from "../../web/js/editor/forms/transform_more_model.js";
 import { baseDisplayNames } from "../../web/js/names.js";
 import { toFields } from "./helpers.mjs";
 

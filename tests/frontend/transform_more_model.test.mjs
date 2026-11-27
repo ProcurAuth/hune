@@ -3,9 +3,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { MORE_KIND_TEXT, MORE_LIMITS, calcOfMode, moreFaults, newMoreTransform, nameError, operandsError, patternError } from "../../web/js/editor/forms/transform_more_model.js";
+import { CALCS, MORE_KIND_TEXT, MORE_LIMITS, calcOfMode, moreFaults, newMoreTransform, nameError, operandsError, patternError } from "../../web/js/editor/forms/transform_more_model.js";
 import { applyMore } from "../../web/js/transform_more.js";
-import { CALCS } from "../../web/js/reduce.js";
 import { framesOf } from "./more_helpers.mjs";
 
 const dir = new URL("../fixtures/dashboards/", import.meta.url);
