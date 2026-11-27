@@ -38,7 +38,7 @@ function legendBeside(chart) {
 
 const LEGEND_MAX_SHARE = 0.35;
 
-// The height of the first draw of a chart, before its legend exists. A legend of one row at the bottom takes 31 px (the CSS of the engine).
+// The height of the first draw of a chart, before its legend exists. A legend of one row at the bottom takes 31 px.
 // A chart with no legend takes the whole host. A guess that is wrong costs one more draw, never a wrong picture: fitHeight corrects it.
 // The 31 px come from the CSS of Hune (panel-chart.css and the legend rows of the engine copy): change them together.
 const LEGEND_ROW = 31;
