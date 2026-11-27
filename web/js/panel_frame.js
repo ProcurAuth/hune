@@ -514,6 +514,9 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     setRootState(note.state);
   }
 
+  // The import of the module of the type starts when the panel is wanted or queried. `draw` takes the same import (9.11).
+  const warm = () => Object.hasOwn(LOADERS, panel.type) && LOADERS[panel.type]().catch(() => {});
+
   function update(force = false) {
     if (destroyed) return;
     if (suspended) {
@@ -566,6 +569,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
     }
     // idle, queued or loading: the earlier content stays until the new result comes.
     if (info.state === "loading" || info.state === "queued") {
+      warm();
       if (root.dataset.state === "error" || overlay.dataset.kind === "hint") showOverlay("none", null);
       setRootState(info.state);
     } else if (!info.items.length) {
@@ -736,6 +740,7 @@ export function createPanelFrame({ panel, page, instance: instArg = null, key: k
   return {
     el: root,
     update,
+    warm,
     paintTexts,
     // New results of the annotations: the note and the marks (9.19d). A suspended frame draws again at its resume.
     annotationsChanged() {

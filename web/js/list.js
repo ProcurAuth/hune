@@ -4,46 +4,12 @@ import * as api from "./api.js";
 import { loadEditorModule } from "./editor_loader.js";
 import { dashboardPath, listSearch, parseSearch } from "./url_state.js";
 import { absoluteTime, bindMenu, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
-import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, groupByStore, rootGroupCount, rootWritable } from "./stores.js";
+import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, compareText, fold, groupByStore, groupDashboards, rootGroupCount, rootWritable } from "./stores.js";
+import { exportDashboard } from "./export_file.js";
+
+export { groupDashboards };
 
 const SORT_KEY = "hune.list.sort";
-
-// ASCII-only lower case (9.7): non-ASCII letters keep their case.
-const fold = (text) => String(text ?? "").replace(/[A-Z]/g, (c) => c.toLowerCase());
-
-const compareText = (a, b) => {
-  const x = fold(a);
-  const y = fold(b);
-  return x < y ? -1 : x > y ? 1 : 0;
-};
-
-// Groups the dashboards by folder: the root groups first, then the folders in title order, dashboards in title order (9.7).
-// A dashboard with no folder (`folder` null) is in a ROOT group. There is one root group for each store (the store of the dashboard), so the root of
-// the primary store and the root of a read-only store stay apart. A root group is { folder: { id: null, root: true, title: "Root", access: { write: false },
-// read_only, store }, items }; its title never shows. { descending: true } is the viewer preference "Z-A": the folders and the dashboards in the reverse
-// order; the root groups stay first.
-export function groupDashboards(folders, items, { descending = false } = {}) {
-  const byFolder = new Map(folders.map((f) => [f.id, { folder: f, items: [] }]));
-  const roots = new Map();
-  for (const item of items) {
-    if (item.folder === null) {
-      const store = typeof item.store === "string" ? item.store : "";
-      if (!roots.has(store)) roots.set(store, { folder: { id: null, root: true, title: "Root", access: { write: false }, read_only: item.read_only, store: item.store }, items: [] });
-      roots.get(store).items.push(item);
-      continue;
-    }
-    if (!byFolder.has(item.folder)) byFolder.set(item.folder, { folder: { id: item.folder, title: item.folder, access: { write: false }, read_only: item.read_only, store: item.store }, items: [] });
-    byFolder.get(item.folder).items.push(item);
-  }
-  const rootGroups = [...roots.values()].sort((a, b) => compareText(a.folder.store ?? "", b.folder.store ?? ""));
-  const groups = [...byFolder.values()].sort((a, b) => compareText(a.folder.title, b.folder.title) || compareText(a.folder.id, b.folder.id));
-  for (const group of [...rootGroups, ...groups]) group.items.sort((a, b) => compareText(a.title, b.title) || compareText(a.uid, b.uid));
-  if (descending) {
-    groups.reverse();
-    for (const group of [...rootGroups, ...groups]) group.items.reverse();
-  }
-  return [...rootGroups, ...groups];
-}
 
 // The tag filter (9.7): the text q is one tag name. A dashboard matches when one of its tags is this name, with ASCII letters folded.
 // An empty text matches every dashboard.
@@ -96,24 +62,6 @@ export function lastChange(item, editing, now = Date.now()) {
   return age ? { age, title: absoluteTime(item.updated_at) } : null;
 }
 
-// Saves a text as a file in the browser.
-export function saveTextFile(name, text) {
-  const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
-  const link = el("a", { href: url, download: name });
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-export async function exportDashboard(uid) {
-  try {
-    const { text } = await api.dashboardDownload(uid);
-    saveTextFile(`${uid}.json`, text);
-  } catch (error) {
-    notify({ level: "error", text: error.message });
-  }
-}
 
 
 const SVG_NS = "http://www.w3.org/2000/svg";
@@ -217,6 +165,7 @@ export async function mount(ctx) {
   let query = parseSearch(window.location.search).q || "";
   let sort = readPref(SORT_KEY, ["az", "za"], null);
   let loadedOnce = false;
+  let reads = ctx.ahead || null; // the first load takes the reads that started before the session answer (9.6)
 
   header.clear();
   document.title = "Dashboards - Hune";
@@ -495,7 +444,9 @@ export async function mount(ctx) {
   // (ctx.afterLoad, the entry redirect). The function returns true when it did. A later load (import, delete) never asks again.
   async function load() {
     try {
-      const [folderAnswer, list] = await Promise.all([api.folders(controller.signal), api.dashboards(controller.signal)]);
+      const taken = reads;
+      reads = null;
+      const [folderAnswer, list] = await (taken ? taken.use(controller.signal) : Promise.all([api.folders(controller.signal), api.dashboards(controller.signal)]));
       folders = folderAnswer.items || [];
       folderAccess = folderAnswer.access || { create: false };
       folderRoot = folderAnswer.root;

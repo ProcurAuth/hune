@@ -50,6 +50,13 @@ export function currentEditor() {
   return current ? current.editor : null;
 }
 
+// The module of each view that has one. `import()` needs a literal path here, so each view has its own line.
+const VIEW_MODULES = {
+  panel: () => import("./panel_editor.js"),
+  json: () => import("./json_editor.js"),
+  settings: () => import("./forms/settings.js"),
+  history: () => import("./history.js"),
+};
 const KINDS = { edit: "grid", "panel-edit": "panel", json: "json", settings: "settings", history: "history" };
 const REGION_LABELS = { grid: "Dashboard edit", panel: "Panel editor", json: "Dashboard JSON", settings: "Dashboard settings", history: "History" };
 
@@ -124,30 +131,38 @@ class Editor {
     this.swap(target, plan);
   }
 
-  async prepare(target) {
-    await loadEditorCss();
-    if (!this.started && this.sources.length === 0) {
-      try {
-        const answer = await editorRoutes.sources();
-        this.sources = [...(answer.items || [])].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-      } catch (error) {
-        this.sources = [];
-      }
+  // The list of the sources for the forms. A failed read gives an empty list (10.2).
+  async loadSources() {
+    try {
+      const answer = await editorRoutes.sources();
+      this.sources = [...(answer.items || [])].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+    } catch (error) {
+      this.sources = [];
     }
+  }
+
+  // The style sheet, the list of the sources and the module of the view start at the same time. The view shows after all three (10.2a, rule 2).
+  async prepare(target) {
     const kind = KINDS[target.page];
+    const css = loadEditorCss();
+    const sources = !this.started && this.sources.length === 0 ? this.loadSources() : null;
+    const load = VIEW_MODULES[kind] ? VIEW_MODULES[kind]() : null;
+    if (load) load.catch(() => {}); // The failure shows below, where the page awaits the module.
+    await css;
+    await sources;
     const key = `${kind}:${target.panel ?? ""}:${target.version ?? ""}:${target.base ?? ""}`;
     let create;
     if (kind === "panel") {
-      const m = await import("./panel_editor.js");
+      const m = await load;
       create = () => m.createPanelEditor(this, target.panel);
     } else if (kind === "json") {
-      const m = await import("./json_editor.js");
+      const m = await load;
       create = () => m.createJsonEditor(this);
     } else if (kind === "settings") {
-      const m = await import("./forms/settings.js");
+      const m = await load;
       create = () => m.createSettings(this);
     } else if (kind === "history") {
-      const m = await import("./history.js");
+      const m = await load;
       create = () => m.createHistory(this);
     } else create = () => this.createGridView();
     return { kind, key, create };

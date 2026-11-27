@@ -12,6 +12,7 @@ const headerEl = document.getElementById("app-header");
 
 let current = null; // { kind, uid, destroy(), locationChanged() }
 let routeToken = 0;
+let ahead = null; // { kind, uid, read }: the reads of the route that start before the session answer; the first view takes them
 let shownOnce = false; // true after the first route of this page load started (the entry route, 9.7)
 let headerMeasure = null; // the synchronous measure of the header layout (header_layout.js)
 let revealed = false; // true when the first paint is released (reveal)
@@ -268,6 +269,7 @@ async function show({ entry = null } = {}) {
   }
   if (shownPath !== null) scrollMemory.set(shownPath, main.scrollTop);
   shownPath = window.location.pathname;
+  const reads = takeAhead(route);
   stopCurrent();
   // The hook of the state of the page (9.29) is absent while a view loads and on the pages of an error.
   document.documentElement.removeAttribute("data-hune-view");
@@ -281,11 +283,11 @@ async function show({ entry = null } = {}) {
     let page = null;
     if (route.kind === "list") {
       const mod = await import("./list.js");
-      page = await mod.mount({ ...ctx, afterLoad: entryHook(isEntry) });
+      page = await mod.mount({ ...ctx, afterLoad: entryHook(isEntry), ahead: reads });
       if (page && token === routeToken && !main.classList.contains("app-main--full")) document.documentElement.setAttribute("data-hune-view", "list");
     } else if (route.kind === "dashboard") {
       const mod = await import("./dashboard.js");
-      page = await mod.mount({ ...ctx, uid: route.uid, slug: route.slug });
+      page = await mod.mount({ ...ctx, uid: route.uid, slug: route.slug, ahead: reads });
     } else {
       notFoundPage();
     }
@@ -295,6 +297,7 @@ async function show({ entry = null } = {}) {
     }
     current = page ? { kind: route.kind, uid: route.uid, ...page } : null;
   } catch (error) {
+    if (reads) reads.abort(); // The module did not load: nobody takes the reads.
     if (token === routeToken && !api.isAbort(error)) {
       if (error && error.name === "ApiError" && error.status === 401) return; // The 401 hook shows the page.
       console.error(error);
@@ -361,11 +364,29 @@ function fontsReady() {
 }
 const FONT_WAIT_MS = 1000;
 
-// The module of the page of the route loads while the session request is in flight, not after it.
+// The module of the page of the route loads while the session request is in flight, not after it. The reads of the page start then too.
 function preloadRoute() {
+  dropAhead();
   const route = parseRoute();
   const load = route.kind === "dashboard" ? import("./dashboard.js") : route.kind === "list" ? import("./list.js") : null;
   if (load) load.catch(() => {});
+  if (route.kind === "dashboard") ahead = { kind: "dashboard", uid: route.uid, read: api.startAhead((signal) => api.dashboard(route.uid, signal)) };
+  else if (route.kind === "list") ahead = { kind: "list", uid: undefined, read: api.startAhead((signal) => Promise.all([api.folders(signal), api.dashboards(signal)])) };
+}
+
+function dropAhead() {
+  if (ahead) ahead.read.abort();
+  ahead = null;
+}
+
+// The first view takes the reads for its own route and uid. Else they end.
+function takeAhead(route) {
+  const held = ahead;
+  ahead = null;
+  if (!held) return null;
+  if (held.kind === route.kind && held.uid === route.uid) return held.read;
+  held.read.abort();
+  return null;
 }
 
 async function start() {
@@ -386,6 +407,7 @@ async function start() {
   try {
     app.session = await api.session();
   } catch (error) {
+    dropAhead();
     if (error && error.status === 401) return; // The hook shows the page of step 3.
     noAnswerPage(() => {
       busy.begin();

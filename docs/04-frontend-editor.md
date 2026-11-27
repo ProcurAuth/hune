@@ -138,6 +138,8 @@ web/
                              geomap.js: the tiles, the plain background, the markers and the card of the type `geomap` (9.19i)
                              annotate.js: the canvas of the marks, the card, the keys and the note of the annotations of a time series (9.19d)
     list.js                  list page (9.7)
+    stores.js                the stores of the page, the groups of the dashboards by folder and by store, and the order of the titles (9.7, 9.8)
+    export_file.js           the download of a text as a file, and the export of a dashboard (10.12). The dashboard page loads it, not `list.js`.
     editor/                  modules of section 10, loaded only on demand
       edit_mode.js  panel_editor.js  json_editor.js  layout.js  draft.js  save.js
       conflict.js  diff.js  history.js  import_export.js  folders.js  drag.js  text_check.js
@@ -366,7 +368,7 @@ The name `timezone`:
 The page starts in this order:
 
 1. `boot_theme.js` sets `data-theme` (9.25). The attribute `data-hune-hold` holds the first paint until step 5 ends.
-2. `main.js` reads the boot block and builds the header with the version line. It starts to load the font Inter (weights 400 and 500), the file `icons.svg` and the module of the route. It calls `GET api/session` (6.10).
+2. `main.js` reads the boot block and builds the header with the version line. It starts to load the font Inter (weights 400 and 500), the file `icons.svg` and the module of the route. It starts the reads of the route (see below). It calls `GET api/session` (6.10).
 3. `401` gives the full page "You are not signed in, or your session ended. Reload the page.". The edge does the
    login, not Hune.
 4. Another failure gives the full page "Hune does not answer." with a "Retry" button.
@@ -457,6 +459,13 @@ The first paint is held. A reload then shows one stable render:
 - `data-theme` is set before the first paint (9.25). Thus the first frame has the right colours and the right icon in the theme button.
 - `main.js` reads `icons.svg` and puts its symbols in one hidden `<svg id="hune-sprite">` at the start of `<body>`. Each symbol has the id prefix `hune-icon-`. The function `icon()` writes `<use href="#hune-icon-<name>">`. An icon thus shows with its element. A reference to the file would draw the icon after its element.
 - The page starts to load the module of the route (`dashboard.js` or `list.js`) while `GET api/session` runs.
+- The reads of the first route start at the same time as `GET api/session`. A dashboard route sends `GET api/dashboards/<uid>`. The list route sends `GET api/folders` and `GET api/dashboards` (9.7). The requests are the same as the requests that the page sends later.
+- The answers of these reads wait. The router gives them to the page of the first route, when it shows that page (step 5). The page has no other effect from them before that time.
+  - An error shows only then. A `401` gives the full page of step 3 one time, and the page of a `403` or a `404` is the page of 9.8. The notice of a new build and the notice of the access service also wait.
+  - The state `data-hune-state` stays `busy` until the same time as it does without the reads (9.29).
+  - A change of the route before the page takes the reads ends them. A route with a different uid never takes them. A failed `GET api/session` ends them too.
+  - The page that takes a read cancels it with its own abort signal, as it does for a request that it sends itself.
+  - A later route, and a reload of the document, send their own requests.
 - After the first frame, nothing of the page moves or goes away. The header, its buttons, the row of the variables and each panel frame keep their place and their size. The browser case B58 checks this.
 - The same holds for a change of the state between the view and the edit mode (10.2a, rule 17). Each chart stays painted with its data, and the browser case B207 checks this.
 
@@ -475,7 +484,7 @@ The notice area shows one line for each notice, with a close button. A notice ha
 
 The list page is a set of cards on the page background. It has no title, no search field and no table.
 
-- The page reads all the pages of `GET api/dashboards` (`limit=500`, then each `next`) and `GET api/folders`.
+- The page reads all the pages of `GET api/dashboards` (`limit=500`, then each `next`) and `GET api/folders`. For the first route of the page, these reads start earlier (9.6).
 - The page shows one card for each dashboard. A folder has no box around its cards. The folders are in the order of their titles. The comparison folds ASCII letters to lower case. In a folder, the cards are in title order.
 - A card has two parts. The first is a row with the title at the left, then the badge of the last change and the three dots at the right. The second is the tags.
 - The title is on one line. It ends with an ellipsis when it is too long. Its `title` attribute holds the whole name.
@@ -602,7 +611,7 @@ The entry redirect:
 
 The page loads in this order:
 
-1. It calls `GET api/dashboards/<uid>`. `404` gives "This dashboard does not exist." with a link to the list. `403`
+1. It calls `GET api/dashboards/<uid>`. For the first route of the page, this request starts earlier (9.6). `404` gives "This dashboard does not exist." with a link to the list. `403`
    gives "You have no access to this dashboard.". `422 stored_document_invalid` gives the list of errors.
 2. It computes the time range, the refresh and the variable selections from the URL and the document (9.9, 9.10).
 3. It shows the header with its controls (9.9), the row with the variables bar (9.10), and the grid, with no data.
@@ -648,6 +657,9 @@ When a panel queries:
 - Or it is the source of a reuse panel that queries (9.23). The source then queries also out of view or in a collapsed
   section.
 - A panel keeps its result until the next trigger. A panel that leaves the viewport does not stop its query.
+- The page loads the module of the panel type (`panels/<type>.js`) at the same time. It starts when the panel is near the viewport, or when its query starts.
+  - The draw takes the same module after the answer. A panel that is not near the viewport, and a panel of a collapsed section, load no module.
+  - The module has no effect when it loads. The load changes no state, no request and no look.
 
 These rules apply to each copy of a repeat. A copy is a panel for the scheduler (9.8c).
 
@@ -4306,6 +4318,8 @@ listeners (16).
 - The option forms of the data types (F43) are editor code. They are in `js/editor/forms/` and `js/editor/forms/options/`. The editor loads them on demand, so the measure above does not count them. The test `static_rules.test.mjs` already checks that no file of the measure imports a file of `js/editor/`. The estimate is 50 KB for these files (31 KB of tables, 14 KB of renderer and helpers, and 5 KB of other changes). The test FE-79 fails when the new files of the forms have more than 102,400 bytes.
 - The closed or free value of a variable makes changes in `var_options.js`, `vars.js`, `runtime.js` and `dashboard.js`. It adds no module to the page. The form, the SQL examples and the preview of the options are in the editor, which is not in the measure.
 - The feature adds 10,407 bytes with its comments, so the page has 955,718 bytes after it.
+- The dashboard page did not need `list.js` (29,715 bytes), but it imported it for two functions. `groupDashboards` is now in `stores.js`, and `exportDashboard` with `saveTextFile` are in `export_file.js`. The dashboard page loads `export_file.js` (783 bytes). It does not load `list.js`.
+- The functions `fold` and `compareText` of the order of titles are now in `stores.js` only, so the two copies are one. `list.js` still exports `groupDashboards` for its tests. The test of the budget still counts `list.js`, because the list is a page of its own. The total of the budget goes up by 131 bytes.
 
 | Module | Bytes added | Bytes now | What it holds |
 |---|---|---|---|
@@ -4383,6 +4397,10 @@ The forms of 10.3a and 10.3b edit the overrides, the mappings, the data links, t
 - The switch is a button with `role="switch"` and `aria-checked`. It is `false` in the view and `true` while the editor holds a draft: the grid, the panel editor, the JSON tab and the settings. The key Space or Enter changes it, as a click does. Its focus is visible. Its name is "Edit".
 - The switch turns the editor on or off. The event `edit-on` adds `edit=1` to the URL and loads the modules of `js/editor/` with `import()`. In the state `panel-view`, it opens the editor of the panel that the view shows (10.2a). Off with no change leaves the edit mode at once. Off with changes opens the dialog "Exit edit mode" (see below).
 - The draft starts as a copy of the loaded document, with its etag and version as the base (10.8).
+- The editor starts three loads at the same time: the style sheet `editor.css`, `GET api/sources` and the module of the view (for example `panel_editor.js`). The view shows after all three.
+  - The old view stays in the page until then, so the page never shows an editor view with no style. The style sheet gives up after 1.5 s, as before.
+  - A failed `GET api/sources` gives an empty list.
+  - The editor reads `GET api/sources` at each entry of the edit mode. It keeps no list from an earlier entry, so a change of the rights shows at the next entry.
 - The edit mode has no row of its own. The header stays one row of 44 px (9.6). It has a group of controls for the edit mode (`data-testid="edit-bar"`) just before the time control. The group has no reserved room. It is in the page in edit mode only, and no button of the view moves. In this order, it has "Add" (`data-testid="add-button"`, with its menu part `add-menu`), "Save" (`data-testid="save-button"`) and "Revert" (`data-testid="discard-button"`).
 - "Add" is a split button. The main part has the icon and the label "Add". Its name and its tooltip are "Add panel". One click on it adds a panel to the last section and opens the panel editor (10.6). The menu part is a chevron with the name "Add menu". It opens a menu with these items, in this order:
   - "Add panel" (`add-panel`). It does the same as the main part.

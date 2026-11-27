@@ -8,7 +8,7 @@ import { createPanelFrame } from "../panel_frame.js";
 import { gridDoc } from "../var_layout.js";
 import { formatTime } from "../units.js";
 import { buildOptions, optionsOf, requestValue, resolveSelection } from "../var_options.js";
-import { saveTextFile } from "../list.js";
+import { saveTextFile } from "../export_file.js";
 import { badge, button, clear, el, notify, openDialog, uniqueId } from "../ui.js";
 import { renderDiff } from "./diff_view.js";
 import { makeSaveId } from "./draft.js";

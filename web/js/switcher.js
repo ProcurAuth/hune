@@ -4,8 +4,7 @@
 // again, the menu shows the last answer at once, and the new answer replaces it when it comes. The page never waits for it to draw.
 
 import * as api from "./api.js";
-import { groupDashboards } from "./list.js";
-import { groupByStore, isRootGroup, rootGroupCount } from "./stores.js";
+import { groupByStore, groupDashboards, isRootGroup, rootGroupCount } from "./stores.js";
 import { dashboardPath } from "./url_state.js";
 import { bindMenu, el, icon } from "./ui.js";
 
