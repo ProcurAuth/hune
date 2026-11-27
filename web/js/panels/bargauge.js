@@ -228,8 +228,8 @@ export function render(host, ctx) {
     if (!(w > 0) || !(h > 0)) return;
     const key = inputKey(w, h);
     if (key !== sized) {
-      sized = key;
       measureItems(w, h);
+      sized = key;
     }
     // The fill is a length in px: a part of the scale length of the item.
     const bs = new Map(bars.map((b) => [b.bar, b]));
