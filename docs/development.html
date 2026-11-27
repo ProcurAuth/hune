@@ -65,7 +65,7 @@
 <h2 id="the-font-files"><a class="self" href="#the-font-files">The font files</a></h2>
 <p>The page serves the font Inter as two files in <code>web/fonts/inter/</code>, split by unicode range. The script <code>tools/split_font.py</code> makes them from <code>tools/font/InterVariable-source.woff2</code>, the unchanged font. The script needs Python 3, <code>fontTools</code> and <code>brotli</code>, and no network.</p>
 <p>Run <code>python3 tools/split_font.py</code> to write the two files. It prints the two <code>unicode-range</code> values for <code>web/css/fonts.css</code>. Copy them into the file by hand. Run <code>python3 tools/split_font.py --check</code> to make sure that the two files and the values in <code>web/css/fonts.css</code> are the ones of the script.</p>
-<p>To move a range to the first file, add it to <code>FIRST_RANGES</code> in the script and run the script again. A text that mixes the two files loses the <code>kerning</code> between them. So keep in the first file each script and each symbol that a title can mix with Latin text. The font file is a Modified Version under the SIL Open Font License: see <a href="https://github.com/ProcurAuth/hune/blob/main/THIRD-PARTY-NOTICES.md">THIRD-PARTY-NOTICES.md</a>.</p></article></div>
+<p>To change what the first file holds, edit <code>FIRST_RANGES</code> in the script and run the script again. A text that mixes the two files loses the <code>kerning</code> between them. So keep in the first file each character that a title can use. The font file is a Modified Version under the SIL Open Font License: see <a href="https://github.com/ProcurAuth/hune/blob/main/THIRD-PARTY-NOTICES.md">THIRD-PARTY-NOTICES.md</a>.</p></article></div>
 </main>
 <footer class="site-footer">
   <div class="wrap">
