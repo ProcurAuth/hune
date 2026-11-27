@@ -223,6 +223,9 @@ export function render(host, ctx) {
     root.dataset.orientation = grid.dir;
     root.style.flexDirection = grid.dir;
     root.classList.add("stat--measure");
+    // The reads of one kind run together after the writes of that kind: one layout for all tiles, not one for each tile.
+    // A tile has its own box, so another tile does not change what a tile reads. The order in a tile stays the same:
+    // the value, then the name (with the value at 100 px), then the change (with both at 100 px).
     tiles.forEach((t, index) => {
       const last = index === tiles.length - 1;
       t.box.style.width = `${grid.tileW}px`;
@@ -232,18 +235,15 @@ export function render(host, ctx) {
       t.box.style.marginBottom = !last && grid.dir === "column" ? `${GAP}px` : "";
       // The widths of the texts at 100 px: the value with its unit at the full size, and the name.
       t.valueEl.style.fontSize = "100px";
-      const w100 = t.valueEl.hidden ? 0 : t.textEl.offsetWidth;
-      let t100 = 0;
-      if (t.hasTitle) {
-        t.titleEl.style.fontSize = "100px";
-        t100 = t.titleEl.firstChild.offsetWidth;
-      }
-      let p100 = 0;
-      if (t.pctEl && mode === "none" && !t.pctEl.hidden) {
-        t.pctEl.style.fontSize = "100px";
-        p100 = t.pctEl.lastChild.offsetWidth;
-      }
-      const lay = tileLayout({ w: grid.tileW, h: grid.tileH, w100, t100, chart: !!t.line, justify, pct: !!t.pctEl, titleFix: o.title_size ?? null, valueFix: o.value_size ?? null, p100 });
+    });
+    const w100 = tiles.map((t) => (t.valueEl.hidden ? 0 : t.textEl.offsetWidth));
+    for (const t of tiles) if (t.hasTitle) t.titleEl.style.fontSize = "100px";
+    const t100 = tiles.map((t) => (t.hasTitle ? t.titleEl.firstChild.offsetWidth : 0));
+    const withPct = (t) => t.pctEl && mode === "none" && !t.pctEl.hidden;
+    for (const t of tiles) if (withPct(t)) t.pctEl.style.fontSize = "100px";
+    const p100 = tiles.map((t) => (withPct(t) ? t.pctEl.lastChild.offsetWidth : 0));
+    tiles.forEach((t, i) => {
+      const lay = tileLayout({ w: grid.tileW, h: grid.tileH, w100: w100[i], t100: t100[i], chart: !!t.line, justify, pct: !!t.pctEl, titleFix: o.title_size ?? null, valueFix: o.value_size ?? null, p100: p100[i] });
       if (lay.pct) {
         const s = lay.pct;
         t.pctEl.style.fontSize = `${s.size.toFixed(4)}px`;

@@ -6,7 +6,7 @@ import { fillOf, resolveFill, thresholdColor } from "../colors.js";
 import { el } from "../ui.js";
 import { canvasColor } from "./common.js";
 import { legibleOn, reduceItems, stepPercent, unitSizeOf } from "./items.js";
-import { floorUnit, innerSize } from "./box.js";
+import { floorUnit, innerSize, inputKey } from "./box.js";
 
 const SOFT = 6; // percent of the scale
 const CELL = 10; // the size of an LCD cell (px), and the gap between two cells
@@ -186,11 +186,13 @@ export function render(host, ctx) {
   // above the value are the same colours at a low opacity.
   function buildCells(force = false) {
     const dark = document.documentElement.dataset.theme !== "light";
-    for (const c of lcd) {
-      const length = vertical ? c.track.clientHeight : c.track.clientWidth;
-      if (!(length > 0)) continue;
+    // All reads first, then all writes: the layout runs once, and the cells of a track do not change the size of another track.
+    const lengths = lcd.map((c) => (vertical ? c.track.clientHeight : c.track.clientWidth));
+    lcd.forEach((c, i) => {
+      const length = lengths[i];
+      if (!(length > 0)) return;
       const n = Math.max(1, Math.floor((length + CELL_GAP) / (CELL + CELL_GAP)));
-      if (!force && c.track.childElementCount === n && c.track.dataset.cells === String(n)) continue;
+      if (!force && c.track.childElementCount === n && c.track.dataset.cells === String(n)) return;
       c.track.dataset.cells = String(n);
       const cells = [];
       for (let k = 0; k < n; k++) {
@@ -203,25 +205,46 @@ export function render(host, ctx) {
         cells.push(cell);
       }
       c.track.replaceChildren(...cells);
-    }
+    });
   }
 
-  // The width of the value text (with its unit at the full size) and of the name at a font size of 100 px.
-  const valueW100 = (e) => {
-    e.valueEl.style.fontSize = "100px";
-    e.valueEl.style.maxWidth = "none";
-    return e.inner.getBoundingClientRect().width;
-  };
-  const nameW100 = (e) => {
-    e.probe.style.fontSize = "100px";
-    return e.probe.getBoundingClientRect().width;
+  // The width of the value text (with its unit at the full size) and, with `name`, of the name at a font size of 100 px. The size of a text
+  // does not depend on the other items, so all items write, then all items read (one layout), then all items write the result.
+  const measure100 = (name) => {
+    for (const e of entries) {
+      e.valueEl.style.fontSize = "100px";
+      e.valueEl.style.maxWidth = "none";
+      if (name) e.probe.style.fontSize = "100px";
+    }
+    return entries.map((e) => [e.inner.getBoundingClientRect().width, name ? e.probe.getBoundingClientRect().width : 0]);
   };
 
-  // Size: the box of each item, then the texts.
+  // Size: the box of each item, then the texts. The measure reads only the box and the widths of the texts at 100 px, so the same inputs
+  // give the same result: skip it when they are the same as at the last measure.
+  let sized = null;
   function layout() {
     // The real box, not the rounded clientWidth: a rounded-up size makes a scroll bar of less than 1 px (9.19a).
     const { w, h } = innerSize(root);
     if (!(w > 0) || !(h > 0)) return;
+    const key = inputKey(w, h);
+    if (key !== sized) {
+      sized = key;
+      measureItems(w, h);
+    }
+    // The fill is a length in px: a part of the scale length of the item.
+    const bs = new Map(bars.map((b) => [b.bar, b]));
+    entries.forEach((e) => {
+      const bar = e.track.firstElementChild;
+      const b = bs.get(bar);
+      if (!b) return;
+      if (vertical) bar.style.height = `${b.pct.toFixed(3)}%`;
+      else bar.style.width = `${(e.scaleLen * b.fill).toFixed(3)}px`;
+    });
+    paintValues();
+    buildCells();
+  }
+
+  function measureItems(w, h) {
     const n = Math.max(1, entries.length);
     const gaps = SPACING[orient] * (n - 1);
     root.classList.add("bargauge--measure");
@@ -230,7 +253,10 @@ export function render(host, ctx) {
       entries.forEach((e, i) => {
         e.itemEl.style.height = `${itemH}px`;
         e.itemEl.style.marginBottom = i < n - 1 ? `${SPACING.horizontal}px` : "";
-        const lay = horizontalLayout({ w, h: itemH, w100: valueW100(e), nameW100: nameW100(e) });
+      });
+      const w100 = measure100(true);
+      entries.forEach((e, i) => {
+        const lay = horizontalLayout({ w, h: itemH, w100: w100[i][0], nameW100: w100[i][1] });
         e.itemEl.dataset.place = lay.place;
         e.label.style.fontSize = `${lay.nameSize}px`;
         e.label.style.height = lay.place === "top" ? `${lay.nameBoxH}px` : "";
@@ -246,24 +272,16 @@ export function render(host, ctx) {
       entries.forEach((e, i) => {
         e.itemEl.style.width = `${itemW}px`;
         e.itemEl.style.marginRight = i < n - 1 ? `${SPACING.vertical}px` : "";
-        const size = Math.max(6, Math.min(h * 0.1, (itemW * 100 * FILL_WIDTH) / (valueW100(e) || 1)));
+      });
+      const w100 = measure100(false);
+      entries.forEach((e, i) => {
+        const size = Math.max(6, Math.min(h * 0.1, (itemW * 100 * FILL_WIDTH) / (w100[i][0] || 1)));
         e.valueEl.style.maxWidth = "";
         e.valueEl.style.fontSize = `${size.toFixed(4)}px`;
         e.valueEl.style.setProperty("--bargauge-unit", `${unitSizeOf(size).toFixed(4)}px`);
       });
     }
     root.classList.remove("bargauge--measure");
-    // The fill is a length in px: a part of the scale length of the item.
-    const bs = new Map(bars.map((b) => [b.bar, b]));
-    entries.forEach((e) => {
-      const bar = e.track.firstElementChild;
-      const b = bs.get(bar);
-      if (!b) return;
-      if (vertical) bar.style.height = `${b.pct.toFixed(3)}%`;
-      else bar.style.width = `${(e.scaleLen * b.fill).toFixed(3)}px`;
-    });
-    paintValues();
-    buildCells();
   }
 
   paintBars();

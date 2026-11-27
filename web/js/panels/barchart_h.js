@@ -253,6 +253,8 @@ export function renderHorizontalBars(host, model, panel) {
   let axis = null;
   function layout() {
     const width = Math.max(1, plot.clientWidth);
+    // The height of the rows does not depend on the width of the labels: read it before the write of `--hbar-label`.
+    const rowH = rowsEl.clientHeight / Math.max(1, n);
     const labelW = Math.min(LABEL_MAX_PX, Math.ceil(nameWidth()) + LABEL_PAD_PX);
     root.style.setProperty("--hbar-label", `${labelW}px`);
     const trackW = Math.max(40, width - labelW - 8);
@@ -260,13 +262,13 @@ export function renderHorizontalBars(host, model, panel) {
     axis = percent ? PERCENT_AXIS : barAxis(bounds, trackW, unit === "bytes");
     const span = axis.max - axis.min || 1;
     const pos = (v) => ((v - axis.min) / span) * 100;
-    const rowH = rowsEl.clientHeight / Math.max(1, n);
     // Bars in one group: the group takes `group_width` of the row, and each bar takes `bar_width` of its share of the group, centred in it.
     // A single bar, or a stack, takes `bar_width` of the row (Grafana).
     const grouped = series.length > 1 && !stacked;
     const thickness = grouped ? gw : bw;
     const slot = grouped ? thickness / series.length : thickness;
     const barShare = grouped ? slot * bw : thickness;
+    const placed = []; // the labels to place, after all the writes of the loop (one layout, not one for each label)
     for (const r of rows) {
       let acc = 0;
       let accNeg = 0;
@@ -313,12 +315,16 @@ export function renderHorizontalBars(host, model, panel) {
           label.style.fontSize = `${size}px`;
           label.style.marginLeft = `${gap}px`;
           label.style.left = `${right.toFixed(3)}%`;
-          const inside = (right / 100) * trackW + gap + label.offsetWidth > trackW;
-          label.classList.toggle("is-inside", inside);
-          if (inside) label.style.marginLeft = `${-gap}px`;
+          placed.push({ label, right, gap });
         }
       }
     }
+    const widths = placed.map((p) => p.label.offsetWidth);
+    placed.forEach(({ label, right, gap }, i) => {
+      const inside = (right / 100) * trackW + gap + widths[i] > trackW;
+      label.classList.toggle("is-inside", inside);
+      if (inside) label.style.marginLeft = `${-gap}px`;
+    });
     // Gridlines and the ticks of the axis.
     const lines = [];
     const ticks = [];

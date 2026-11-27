@@ -40,3 +40,10 @@ export function innerSize(el) {
     h: floorUnit(rect.height - by - padY - barX),
   };
 }
+
+/** The text of the inputs of a measure or a draw: `parts`, the pixel ratio, the theme and the number of fonts that have loaded. */
+export function inputKey(...parts) {
+  let fonts = 0;
+  if (document.fonts) for (const f of document.fonts) if (f.status === "loaded") fonts++;
+  return [...parts, window.devicePixelRatio, document.documentElement.dataset.theme, fonts].join("|");
+}
