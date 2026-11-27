@@ -4651,6 +4651,8 @@ Each control of the options pane changes the draft, and the preview draws the dr
 
 A few controls change the draft and not the picture of the preview. Each one is in the closed list of 10.3h (rule 14), with a class and a written cause. The list has 30 entries at most. A control in the list that does change the preview makes B153 fail. An entry that no control matches makes it fail too.
 
+When the panel editor ends, the draft first gets the last text of the SQL area. The preview frame is destroyed after that. A change that comes later does not make a new preview frame.
+
 The forms for the options of each type are in 10.3h. The tab "JSON" stays. It edits the whole panel, with the same members as the forms. A change in a form shows in the tab, and a valid change in the tab shows in the forms.
 
 The way back of the panel editor is the arrow after the selector in the header. These rules apply:
@@ -4701,7 +4703,7 @@ The tab "Query" has one row for the settings of the query. The rules of the row 
 - The button "Options" (`query-options`) has the name "Query options", `aria-expanded` and `aria-controls`. A click on it opens the popover (`query-options-pop`, `role="group"`, name "Query options").
 - The popover holds the choice "Data", the fields "Relative time" and "Time shift", and the box "Hide time info". It is 300 px wide at most. It opens under the button, with its right edge on the right edge of the button, inside the window.
 - The popover follows its button in the DOM, so the Tab key goes from the button into the popover and then to "Run". The key Escape closes it and gives the focus back to the button. The editor stays open.
-- A click outside the popover, or a focus that leaves it, closes it. A redraw of the tab also closes it.
+- A click outside the popover, or a focus that leaves it, closes it. A redraw of the tab also closes it. The end of the panel editor closes it too. A closed popover has no listener on the window or on the document.
 - The button has a dot (`query-options-dot`, 8 px) when a setting of the popover is not at its default. The settings are a reuse, a `time_from`, a `time_shift` and `hide_time_override` = `true`. The button then has `data-set="true"` and the hidden text ", some options are set".
 - A panel with "Reuse a panel" has a row with the select "Source panel", the box "Apply its transformations" and the button "Options". The popover holds the choice "Data" only. The dot is on.
 - The row has one line at 1280 px. At a smaller width the items wrap in their order. The row has 2 lines at 768 px at most, and 4 lines at 390 px at most. It never gives a horizontal scroll.
