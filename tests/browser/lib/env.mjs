@@ -393,7 +393,7 @@ export function addRootDashboard(dir, uid, title, tags = []) {
 }
 
 /** Build the configuration text from `print-reference` with the values of this run. */
-export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passwordFile, editing = true, scratchVolume = null, history = true, export: exportKey = true, basePath = "/", accessBlock = null, pgBlock = null, mongoBlock = null, queryInspect = null, serverLines = [], geomapBlock = null, chLines = [] }) {
+export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passwordFile, editing = true, scratchVolume = null, readOnlyStore = false, history = true, export: exportKey = true, basePath = "/", accessBlock = null, pgBlock = null, mongoBlock = null, queryInspect = null, serverLines = [], geomapBlock = null, chLines = [] }) {
   const ref = sh(BINARY, ["print-reference", "--format", "hcl", "--profile", "local"]);
   if (ref.status !== 0) throw new Error("print-reference failed: " + ref.stderr);
   let t = ref.stdout;
@@ -418,6 +418,15 @@ export function makeConfig({ listen, ops, volume, labVolume = null, chUrl, passw
     t = t.replace(/^\s*history_keep\s*=\s*\d+\n/m, "");
     const re = /^(storage \{[\s\S]*?)^\}/m;
     t = t.replace(re, (m, body) => `${body}\n  volume "scratch" {\n    path            = ${JSON.stringify(scratchVolume)}\n    primary         = true\n    rescan_interval = "1s"\n    history_keep    = 100\n  }\n}`);
+  }
+  // `readOnlyStore` makes a file with no primary store: the one volume is read-only, `storage.read_only = true` says it, and nothing is recorded
+  // (`server.history = false`, C35), so the volume has no `history_keep` (C31).
+  if (readOnlyStore) {
+    if (!editing) throw new Error("readOnlyStore and editing = false exclude each other");
+    t = t.replace(/^(\s*)primary\s*=\s*true\n/m, (m, a) => `${a}title           = "Transit"\n`);
+    t = t.replace(/^\s*history_keep\s*=\s*\d+\n/m, "");
+    t = t.replace(/^storage \{\n/m, "storage {\n  read_only = true\n\n");
+    t = t.replace(/^(\s*history\s*=\s*).*$/m, "$1false");
   }
   // `server.query_inspect` has no line in the reference (its default is `false`): the line is added after `base_path` (B46).
   if (queryInspect !== null) {
@@ -505,7 +514,8 @@ export async function startServer(name, ch, opts = {}) {
     passwordFile,
     editing: opts.editing ?? true,
     scratchVolume,
-    history: opts.history ?? true,
+    readOnlyStore: opts.readOnlyStore ?? false,
+    history: opts.readOnlyStore ? false : opts.history ?? true,
     export: opts.export ?? true,
     basePath: opts.basePath ?? "/",
     accessBlock: opts.accessBlock ?? null,

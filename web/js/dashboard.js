@@ -9,7 +9,7 @@ import { createPanelFrame } from "./panel_frame.js";
 import { app } from "./config.js";
 import { copyKeyOf, limitsOf, repeatLimits, splitKey } from "./repeat.js";
 import { gridDoc } from "./var_layout.js";
-import { timeInMenu } from "./header_layout.js";
+import { maxQuery, STEPS, timeInMenu } from "./header_layout.js";
 import { createTimeControl } from "./pickers.js";
 import { Runtime } from "./runtime.js";
 import { REFRESH_CHOICES, cut, effectiveZone, isKnownZone, refreshToMs, resolveRange, shiftRange, zoneName, zoomOut } from "./time.js";
@@ -524,7 +524,17 @@ export async function mount(ctx) {
       ? el("span", { class: "header-lock", role: "img", tabindex: "0", "aria-label": READ_ONLY_TEXT, "data-tooltip": READ_ONLY_TEXT, "data-tooltip-align": "end", dataset: { testid: "read-only-lock" } }, icon("lock", 18))
       : null;
     header.setActions(timeControl.el, lock, editSwitch);
-    header.setMore(more);
+    // The button has a place only when its menu has an item (9.9): a control with nothing to do does not show. The items depend on the width
+    // (the time shift and the zoom out move into the menu), so the button follows the width.
+    const placeMore = () => header.setMore(moreItems().some((item) => !item.separator) ? more : null);
+    placeMore();
+    try {
+      const narrow = window.matchMedia(maxQuery(STEPS.menuTimeMax));
+      narrow.addEventListener("change", placeMore);
+      unlisten.push(() => narrow.removeEventListener("change", placeMore));
+    } catch (error) {
+      // A window with no media query keeps the button as placed.
+    }
     linksBar = buildLinks();
     toolbar = el("div", { class: "dash-toolbar", dataset: { testid: "dashboard-toolbar" } }, bar.el, ...(linksBar ? [linksBar.el] : []));
     if (typeof ResizeObserver === "function") {

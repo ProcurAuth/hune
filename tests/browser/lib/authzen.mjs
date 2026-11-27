@@ -35,6 +35,7 @@ function grants(spec) {
  * The policy of the case. Folders: transit (the seed), desk, secret, lab.
  * - admin: all three actions on the service.
  * - reader: read on the folder transit, and on the dashboard desk-open only.
+ * - auditor: like reader on the folder transit, with the history and the export of it (the menu "More actions" has two items).
  * - author: read and write on transit and lab. No `source.query`.
  * - sqlauthor: like author, with `source.query` on the source prod.
  * - mover: like sqlauthor, but with `dashboard.write` on transit only.
@@ -47,6 +48,7 @@ export function policy(actionDocument) {
     subjects: [
       { id: "admin", grants: grants({ "dashboard.read": [""], "dashboard.write": [""], "source.query": [""] }) },
       { id: "reader", grants: grants({ "dashboard.read": ["folder:transit", "folder:desk/dashboard:desk-open"] }) },
+      { id: "auditor", grants: grants({ "dashboard.read": ["folder:transit"], "dashboard.history": ["folder:transit"], "dashboard.export": ["folder:transit"] }) },
       { id: "author", grants: grants({ "dashboard.read": ["folder:transit", "folder:lab"], "dashboard.write": ["folder:transit", "folder:lab"] }) },
       {
         id: "sqlauthor",

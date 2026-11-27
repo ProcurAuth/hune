@@ -6,6 +6,12 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+## 0.3.3 - 2026-11-27
+
+### Fixed
+
+- The dashboard page showed the button "More actions" when its menu had no item. This happened in a file with `storage.read_only = true`, `server.history = false` and `server.export = false`, above 900 px. The button now shows only when the menu has an item. It follows the width of the window: at 900 px or less the time actions are in the menu, so the button shows.
+
 ## 0.3.2 - 2026-11-26
 
 ### Fixed

@@ -342,7 +342,7 @@ fn a_query_variable_of_a_mongodb_source_is_not_imported() {
 #[test]
 fn the_report_equals_its_golden_file() {
     let meta = ReportMeta {
-        hune_version: "0.3.2".to_owned(),
+        hune_version: "0.3.3".to_owned(),
         created_at: "2026-11-20T09:12:44Z".to_owned(),
         input_dir: "/private/grafana-export-mongo".to_owned(),
         source_map: without_config("").source_map.clone(),

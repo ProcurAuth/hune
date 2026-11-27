@@ -379,7 +379,7 @@ The header is one bar. It is opaque, and it has a line of 1 px below it. The bar
 3. The place of the page. On a dashboard it holds the selector of the dashboards (see below). In the view of one panel and in the panel editor, a way back comes after the selector. These views have no name in the header. The list page leaves the place empty.
 4. The controls of the page. The list page and the dashboard page put their controls here (9.7, 9.9). A full page of an error has none.
 5. The theme button (9.25).
-6. The button "More actions" (9.9). Only the dashboard page has it. It is the last control of the header.
+6. The button "More actions" (9.9). Only the dashboard page has it, and only when its menu has an item. It is the last control of the header.
 
 The controls have fixed sizes (9.9), and they do not depend on the state of the page. The header never has a second row.
 
@@ -963,6 +963,8 @@ The controls come in this order, from the left:
 The first three are in the controls part of the header. The theme button and "More actions" follow them. Each control keeps its `data-testid` and its accessible name. The order of the keyboard focus is the same as this visual order.
 
 The menu "More actions" has these items, in this order. An item shows only when the user has the right for it:
+
+The button shows only when the menu has at least one item. A control with nothing to do does not show. The slot of the button is empty then, and the theme button is the last control. The button follows the width of the window with no reload: above 900 px, the time actions are not in the menu. A dashboard of a file with `storage.read_only = true`, with `server.history = false` and `server.export = false`, has no item above 900 px, so it has no button there.
 
 - Up to 900 px: "Shift the time range back", "Shift the time range forward" and "Zoom out", then a separator. The buttons of these actions hide at this width.
 - In edit mode: the actions of 10.2, then a separator. They are "Revert all changes" (`data-testid="discard-menu"`, up to 640 px only), "Dashboard JSON" and "Settings". The menu of the button "Add" has "Add panel" and "Add section" (10.2).
@@ -3999,7 +4001,7 @@ The lock file is `web/js/vendor/chdash/chdash.lock.json`:
 - The choice is in `localStorage` key `hune.theme`: `system` (the default), `light` or `dark`. `system` follows `prefers-color-scheme` and changes when it changes. Another tab that changes the key changes the theme of this page (the `storage` event).
 - `boot_theme.js` is a classic script in `<head>`. It sets `data-theme` before the first paint, so the page does not
   change colour after it shows. It reads `localStorage` once, and it does not wait for any request. The shell holds its first paint (9.6): the first frame has the final theme, also on a reload with a cold cache.
-- The theme button is in the header (9.6), on every page: the list, the dashboard, the editor and the pages of an error. Its size and its height are the same on each page. On the dashboard page the button "More actions" (9.9) follows it. Its distance from the right edge is then larger by the width of that button and one gap.
+- The theme button is in the header (9.6), on every page: the list, the dashboard, the editor and the pages of an error. Its size and its height are the same on each page. On a dashboard page whose menu "More actions" (9.9) has an item, the button follows it. Its distance from the right edge is then larger by the width of that button and one gap.
 - The button is one icon button of 36 px by 32 px (32 px by 32 px at 480 px or less). It shows the icon of the choice: a screen for "System", a moon for "Dark" and a sun for "Light". The accessible name and the tooltip are `Theme: System`, `Theme: Dark` or `Theme: Light`. The three icons are in the button, and the CSS shows the one of `data-theme-choice`. Thus the first paint has the right icon.
 - A click on the button sets the next choice, in this order: "System", "Dark", "Light", then "System" again. A stored value that is not a choice counts as "System", and the next one is "Dark". The function `nextChoice` gives the next choice.
 - The button opens no menu and no popup. It has no `aria-haspopup`, no `aria-expanded` and no options. The keys Enter and Space click it, and the focus stays on it. This differs from ClickHouse Dash on purpose: Hune has one button and no menu.

@@ -2,7 +2,7 @@
 
 This document uses ASD-STE100 Simplified Technical English.
 
-This document is not normative. It gives the state of the code at version 0.3.2 against the specification 0.1.
+This document is not normative. It gives the state of the code at version 0.3.3 against the specification 0.1.
 The specification stays the reference. Where the code differs from a paragraph, the table "Differences from the specification" names the paragraph.
 Section 18 of the specification (`08-roadmap-open-items.md`) gives the milestones and their exit criteria.
 
@@ -61,7 +61,7 @@ The table lists the features that the code has in addition to the milestones, an
 | Panel loader | A panel that waits shows three dots in the middle of the body, 300 ms after the request starts (9.11, 9.26). A refresh still dims the earlier content to 60 %. Reduced motion gives three still, dimmed dots. A print has no dots. | Nothing known. |
 | Security reviews | Independent reviews of the server, the page, the importer, the format and the SQL properties P, PG, PM and PQ. Each finding was verified by a second reviewer. All high and medium findings are fixed with tests. Examples: a quadratic name scan, lists with no cap, allocations before the caps, and a ClickHouse lexer that did not know the comments that start with `//`, the line ends of ClickHouse and the heredoc tags that start with a digit. | Low and info findings stay open: the display of hidden characters in the ad hoc chips, tiles that two large maps push out of the cache, and a `$__conditionalAll` condition with an open end beside `$__adhocFilters`. |
 | Other browsers | Firefox ESR 153 runs 14 cases through WebDriver BiDi (`HUNE_BROWSER=firefox`). | B170 and B171 are manual checks in Firefox. WebKit is a manual check (16.19). |
-| Releases | Version 0.3.2 is in `Cargo.toml`, `Cargo.lock`, `fuzz/Cargo.lock`, `hune version`, the page, the session and the deployment examples. Each image of `tests/images.lock` has a digest. Two release builds of `x86_64` give the same archive, byte for byte. The release workflow has the input `arm64` (17.3). | No `aarch64` build was made. GitHub Actions did not verify version 0.3.2: the jobs of `tests/ci/all.sh` ran on a local machine. |
+| Releases | Version 0.3.3 is in `Cargo.toml`, `Cargo.lock`, `fuzz/Cargo.lock`, `hune version`, the page, the session and the deployment examples. Each image of `tests/images.lock` has a digest. Two release builds of `x86_64` give the same archive, byte for byte. The release workflow has the input `arm64` (17.3). | No `aarch64` build was made. GitHub Actions did not verify version 0.3.3: the jobs of `tests/ci/all.sh` ran on a local machine. |
 
 ## Open points
 

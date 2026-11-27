@@ -545,6 +545,6 @@ fn version_prints_the_version_and_reads_no_file() {
     let out = hune(&["version"], &[]);
     assert_eq!(out.status.code(), Some(0));
     let line = text(&out.stdout);
-    assert!(line.starts_with("hune 0.3.2 "), "{line}");
+    assert!(line.starts_with("hune 0.3.3 "), "{line}");
     assert_eq!(line.lines().count(), 1);
 }

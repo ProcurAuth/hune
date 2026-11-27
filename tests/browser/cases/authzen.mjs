@@ -94,15 +94,20 @@ export const cases = [
         await d.click(d.tid("panel-2-menu"));
         t.eq(await menuItems(d), ["View", "View data", "Download CSV"], "panel menu has no edit entry");
         await d.press("Escape");
-        await d.click(d.tid("dashboard-menu"));
-        // A reader has History (dashboard.read reads the history, 05) and Export in the menu "More actions"; no Delete.
-        t.eq(await menuItems(d), ["History", "Export"], "dashboard menu of a reader: History and Export");
-        await d.press("Escape");
-        // The history shows (dashboard.read), with no Restore.
-        await moreItem(d, "history-button");
-        await d.waitSel(d.tid("history-list"));
-        await d.idle();
-        t.eq(await d.eval(`[...document.querySelectorAll("button")].some((b) => /Restore/.test(b.textContent))`), false, "no Restore for the reader");
+        // A reader with `dashboard.read` only has no History and no Export (they are the actions `dashboard.history` and `dashboard.export`), so the
+        // menu "More actions" has no item and its button does not show (9.9).
+        t.eq(await d.eval(`(() => { const e = document.querySelector('[data-testid="dashboard-menu"]'); return !!e && e.offsetParent !== null; })()`), false, "a reader with dashboard.read only has no button More actions");
+        // An auditor has the two actions on the folder: the button shows with History and Export, and no Delete.
+        const au = await openAs(t, a, "auditor", "d/nodes?" + t.range);
+        await waitPanelsReady(au, [1, 2, 3]);
+        await au.click(au.tid("dashboard-menu"));
+        t.eq(await menuItems(au), ["History", "Export"], "dashboard menu of an auditor: History and Export");
+        await au.press("Escape");
+        // The history shows (dashboard.history), with no Restore.
+        await moreItem(au, "history-button");
+        await au.waitSel(au.tid("history-list"));
+        await au.idle();
+        t.eq(await au.eval(`[...document.querySelectorAll("button")].some((b) => /Restore/.test(b.textContent))`), false, "no Restore for the auditor");
         // The dashboard of a dashboard grant opens.
         const o = await openAs(t, a, "reader", "d/desk-open?" + t.range);
         await waitPanelsReady(o, [1, 2, 3]);
@@ -113,7 +118,7 @@ export const cases = [
           headers: { "Idempotency-Key": crypto.randomUUID() },
         });
         t.eq([w.status, w.json.error.code], [403, "forbidden"], "a create by the reader is refused");
-        t.note("2 reader: list filtered, no controls, history without Restore, create refused by the server");
+        t.note("2 reader: list filtered, no controls, no button More actions, auditor history without Restore, create refused by the server");
       }
 
       // ---- 3. A refused read: the 403 page. An unknown uid gives the same page to a subject without the right.
