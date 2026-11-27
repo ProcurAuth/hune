@@ -48,7 +48,7 @@ SOFTWARE.
 
 ### Inter
 
-The font files are `InterVariable-latin.woff2` and `InterVariable-rest.woff2`. They are a Font Software under the SIL Open Font License, Version 1.1.
+The font files are `InterVariable-main.woff2` and `InterVariable-rare.woff2`. They are a Font Software under the SIL Open Font License, Version 1.1.
 Hune does not sell the font by itself.
 
 The two files are Modified Versions of the file `InterVariable.woff2` of Inter 4.1. The script `tools/split_font.py` splits the glyphs

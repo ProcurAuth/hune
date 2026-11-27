@@ -7,8 +7,8 @@ Use:
     python3 tools/split_font.py --check    make no change; exit 1 when a file or web/css/fonts.css differs
 
 The input is tools/font/InterVariable-source.woff2, the unchanged variable font Inter 4.1 (git blob
-5a8d3e72ad7ffb62af3b146e1b1f54ab5813a212). The output is InterVariable-latin.woff2 (Latin, Cyrillic and Greek
-text, and the usual symbols) and InterVariable-rest.woff2 (all other characters of the font). The two files
+5a8d3e72ad7ffb62af3b146e1b1f54ab5813a212). The output is InterVariable-main.woff2 (Latin, Cyrillic and Greek
+text, and the usual symbols) and InterVariable-rare.woff2 (all other characters of the font). The two files
 together have the cmap of the input, and no character is in both files.
 
 Each file keeps all layout features, all variation axes, all names, the hinting and the outline of .notdef.
@@ -94,17 +94,17 @@ def plan():
     """Return the source bytes, the code points of each file and the two files."""
     data = SOURCE.read_bytes()
     cmap = set(TTFont(BytesIO(data)).getBestCmap())
-    latin = parse_ranges(FIRST_RANGES) & cmap
-    rest = cmap - latin
+    main = parse_ranges(FIRST_RANGES) & cmap
+    rare = cmap - main
     files = {
-        "InterVariable-latin.woff2": (latin, build(data, latin)),
-        "InterVariable-rest.woff2": (rest, build(data, rest)),
+        "InterVariable-main.woff2": (main, build(data, main)),
+        "InterVariable-rare.woff2": (rare, build(data, rare)),
     }
     for name, (points, blob) in files.items():
         got = set(TTFont(BytesIO(blob)).getBestCmap())
         if got != points:
             raise SystemExit("split_font: the cmap of %s is not the planned set" % name)
-    if latin & rest or latin | rest != cmap:
+    if main & rare or main | rare != cmap:
         raise SystemExit("split_font: the two files do not cover the cmap of the source")
     return files
 

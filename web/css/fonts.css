@@ -14,7 +14,7 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: block;
-  src: url("../fonts/inter/InterVariable-latin.woff2") format("woff2");
+  src: url("../fonts/inter/InterVariable-main.woff2") format("woff2");
   unicode-range:
     U+0000, U+0020-007E, U+00A0-00AC, U+00AE-0148, U+014A-01C3, U+01C5-024F, U+02B0-0304, U+0306-030A,
     U+030C, U+030F, U+0313, U+0315, U+031B, U+0323, U+0326-0328, U+032C, U+0337-0338, U+0342-0343,
@@ -35,7 +35,7 @@
   font-style: normal;
   font-weight: 100 900;
   font-display: block;
-  src: url("../fonts/inter/InterVariable-rest.woff2") format("woff2");
+  src: url("../fonts/inter/InterVariable-rare.woff2") format("woff2");
   unicode-range:
     U+0250-0254, U+0256-027B, U+027E-0284, U+0286-0290, U+0292-02A4, U+02A6-02AF, U+0E3F, U+1D00, U+1D0D,
     U+1D1B, U+1D43, U+1D47-1D49, U+1D4D, U+1D4F-1D50, U+1D52, U+1D56-1D58, U+1D5B, U+1D62-1D65, U+1D9C,

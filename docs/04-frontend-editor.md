@@ -53,7 +53,7 @@ web/
   favicon.svg                the icon of the browser tab
   icons.svg                  the sprite of the icons (main.js puts its symbols in the page, 9.6)
   fonts/
-    inter/                   InterVariable-latin.woff2, InterVariable-rest.woff2 and the LICENSE of Inter (9.25)
+    inter/                   InterVariable-main.woff2, InterVariable-rare.woff2 and the LICENSE of Inter (9.25)
   css/
     fonts.css                the two font faces of Inter, with their unicode ranges (9.25)
     tokens.css               tokens of Hune on top of the copied tokens: type, geometry, roles, series colours (9.25)
@@ -200,7 +200,7 @@ file of `web/` stays in one of the directories of this layout.
 | `.woff2` | `font/woff2` |
 | `.png` | `image/png` |
 
-The files `fonts/inter/InterVariable-latin.woff2` and `fonts/inter/InterVariable-rest.woff2` and the file `fonts/inter/LICENSE` ship in `web/` and have the same URL form. The extension rule of `build.rs` accepts the file named exactly `LICENSE` (9.24).
+The files `fonts/inter/InterVariable-main.woff2` and `fonts/inter/InterVariable-rare.woff2` and the file `fonts/inter/LICENSE` ship in `web/` and have the same URL form. The extension rule of `build.rs` accepts the file named exactly `LICENSE` (9.24).
 
 After an upgrade, an open page asks files with the old build hash and gets `404`. The page then shows the notice of 9.6.
 
@@ -330,7 +330,7 @@ The name `timezone`:
   <base href="{{base_path}}">
   <title>Hune</title>
   <link rel="icon" href="static/{{build}}/favicon.svg" type="image/svg+xml">
-  <link rel="preload" href="static/{{build}}/fonts/inter/InterVariable-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="static/{{build}}/fonts/inter/InterVariable-main.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="static/{{build}}/css/vendor/chdash/00-tokens.css">
   <link rel="stylesheet" href="static/{{build}}/css/fonts.css">
   <link rel="stylesheet" href="static/{{build}}/css/tokens.css">
@@ -4012,13 +4012,13 @@ The lock file is `web/js/vendor/chdash/chdash.lock.json`:
 Fonts and type:
 
 - Hune ships the font Inter 4.1 as two variable files with its licence (SIL Open Font License 1.1). `css/fonts.css` has one font face for each file, with the weights 100 to 900, `font-display: block` and a `unicode-range`. The text then never shows in the system font and moves after it. The stack is Inter, then the system fonts.
-- The file `fonts/inter/InterVariable-latin.woff2` (about 280 KB) has the Latin, Cyrillic and Greek characters of the font. It has also the usual symbols: arrows, mathematical operators, currency signs, letter-like signs and number forms. The shell preloads this file. Its name is historic.
+- The file `fonts/inter/InterVariable-main.woff2` (about 280 KB) has the Latin, Cyrillic and Greek characters of the font. It has also the usual symbols: arrows, mathematical operators, currency signs, letter-like signs and number forms. The shell preloads this file.
 - A text that mixes two font files loses the `kerning` between the two runs, and its glyphs move by about 1 px. So the first file holds each script and each symbol that a title can mix with Latin text.
-- The file `fonts/inter/InterVariable-rest.woff2` (about 166 KB) has all other characters of the font, for example the IPA letters and the private use area. The browser loads it only when a text shows one of these characters. A page with common text never loads it.
+- The file `fonts/inter/InterVariable-rare.woff2` (about 166 KB) has all other characters of the font, for example the IPA letters and the private use area. The browser loads it only when a text shows one of these characters. A page with common text never loads it.
 - The script `tools/split_font.py` makes the two files from the unchanged font `tools/font/InterVariable-source.woff2`. Each file keeps all layout features, all variation axes, the names and the `hinting` data. The two files together have the characters of the original, and no character is in both. The script checks this, and `python3 tools/split_font.py --check` checks that the files and the `unicode-range` values of `css/fonts.css` are the ones of the script.
 - The body text is 14 px, with a line height of 22 px and `letter-spacing` 0.0107 em. The type scale has 12 px (the smallest text), 14 px and 16 px. The 16 px size is for the titles of sections, dialogs and pages. The weights are 400, 500 and 600.
 - `font-optical-sizing` is `none`. Else the variable font draws large text with its narrow display cut. The digits of a stat are then 7 % narrower than in Grafana.
-- The page waits for the font before its first render (9.6), and it holds its first paint until the file `InterVariable-latin.woff2` is ready. Thus the text of the canvas and the measures of text use Inter, and no text moves when the font arrives.
+- The page waits for the font before its first render (9.6), and it holds its first paint until the file `InterVariable-main.woff2` is ready. Thus the text of the canvas and the measures of text use Inter, and no text moves when the font arrives.
 
 Colours of the chrome:
 
