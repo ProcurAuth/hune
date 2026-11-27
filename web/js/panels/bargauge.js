@@ -6,7 +6,7 @@ import { fillOf, resolveFill, thresholdColor } from "../colors.js";
 import { el } from "../ui.js";
 import { canvasColor } from "./common.js";
 import { legibleOn, reduceItems, stepPercent, unitSizeOf } from "./items.js";
-import { floorUnit, innerSize } from "./box.js";
+import { floorUnit, innerSize, inputKey } from "./box.js";
 
 const SOFT = 6; // percent of the scale
 const CELL = 10; // the size of an LCD cell (px), and the gap between two cells
@@ -219,11 +219,32 @@ export function render(host, ctx) {
     return entries.map((e) => [e.inner.getBoundingClientRect().width, name ? e.probe.getBoundingClientRect().width : 0]);
   };
 
-  // Size: the box of each item, then the texts.
+  // Size: the box of each item, then the texts. The measure reads only the box and the widths of the texts at 100 px, so the same inputs
+  // give the same result: skip it when they are the same as at the last measure.
+  let sized = null;
   function layout() {
     // The real box, not the rounded clientWidth: a rounded-up size makes a scroll bar of less than 1 px (9.19a).
     const { w, h } = innerSize(root);
     if (!(w > 0) || !(h > 0)) return;
+    const key = inputKey(w, h);
+    if (key !== sized) {
+      sized = key;
+      measureItems(w, h);
+    }
+    // The fill is a length in px: a part of the scale length of the item.
+    const bs = new Map(bars.map((b) => [b.bar, b]));
+    entries.forEach((e) => {
+      const bar = e.track.firstElementChild;
+      const b = bs.get(bar);
+      if (!b) return;
+      if (vertical) bar.style.height = `${b.pct.toFixed(3)}%`;
+      else bar.style.width = `${(e.scaleLen * b.fill).toFixed(3)}px`;
+    });
+    paintValues();
+    buildCells();
+  }
+
+  function measureItems(w, h) {
     const n = Math.max(1, entries.length);
     const gaps = SPACING[orient] * (n - 1);
     root.classList.add("bargauge--measure");
@@ -261,17 +282,6 @@ export function render(host, ctx) {
       });
     }
     root.classList.remove("bargauge--measure");
-    // The fill is a length in px: a part of the scale length of the item.
-    const bs = new Map(bars.map((b) => [b.bar, b]));
-    entries.forEach((e) => {
-      const bar = e.track.firstElementChild;
-      const b = bs.get(bar);
-      if (!b) return;
-      if (vertical) bar.style.height = `${b.pct.toFixed(3)}%`;
-      else bar.style.width = `${(e.scaleLen * b.fill).toFixed(3)}px`;
-    });
-    paintValues();
-    buildCells();
   }
 
   paintBars();
