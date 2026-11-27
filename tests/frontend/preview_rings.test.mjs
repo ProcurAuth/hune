@@ -5,8 +5,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { EXACT, LEAST, MOST, TOLERANCE_PX, boundHolds, setMeasurer } from "../../web/js/preview/common.js";
-import { previewOf } from "../../web/js/preview/index.js";
+import { loadPreviewFamilies, previewOf } from "../../web/js/preview/index.js";
 import { LINE, extraColumns, geometry, literalName } from "../../web/js/preview/piechart.js";
+
+// The families load on demand: `previewOf` needs their modules.
+await loadPreviewFamilies();
 
 // A measurer with a fixed width for each character, so that a width is easy to compute: 6 px for a character.
 setMeasurer((text) => text.length * 6);

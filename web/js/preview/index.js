@@ -4,18 +4,6 @@
 
 import { el } from "../ui.js";
 import { HOOKS } from "./common.js";
-import * as timeseries from "./timeseries.js";
-import * as barchart from "./barchart.js";
-import * as piechart from "./piechart.js";
-import * as stat from "./stat.js";
-import * as gauge from "./gauge.js";
-import * as bargauge from "./bargauge.js";
-import * as table from "./table.js";
-import * as heatmap from "./heatmap.js";
-import * as histogram from "./histogram.js";
-import * as timeline from "./timeline.js";
-import * as logs from "./logs.js";
-import * as geomap from "./geomap.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g", "use", "defs", "linearGradient", "stop"]);
@@ -38,7 +26,40 @@ const FAMILY_OF_TYPE = {
   geomap: "geomap",
 };
 
-const MODULES = { timeseries, barchart, piechart, stat, gauge, bargauge, table, heatmap, histogram, timeline, logs, geomap };
+// The module of each family loads on demand, so a page that has no panel of a family never loads its module. Each path is a quoted literal, so the
+// measure of the page budget counts the module (9.30).
+const FAMILY_IMPORTS = {
+  timeseries: () => import("./timeseries.js"),
+  barchart: () => import("./barchart.js"),
+  piechart: () => import("./piechart.js"),
+  stat: () => import("./stat.js"),
+  gauge: () => import("./gauge.js"),
+  bargauge: () => import("./bargauge.js"),
+  table: () => import("./table.js"),
+  heatmap: () => import("./heatmap.js"),
+  histogram: () => import("./histogram.js"),
+  timeline: () => import("./timeline.js"),
+  logs: () => import("./logs.js"),
+  geomap: () => import("./geomap.js"),
+};
+const LOADED = {};
+const PENDING = {};
+
+// The promise of the module of a family. One import runs for each family. A failed import is forgotten, so the next call tries again.
+export function loadFamily(family) {
+  if (!PENDING[family]) {
+    PENDING[family] = FAMILY_IMPORTS[family]().then((mod) => (LOADED[family] = mod), (error) => {
+      delete PENDING[family];
+      throw error;
+    });
+  }
+  return PENDING[family];
+}
+
+// Loads the modules of all the families. `previewOf` needs the module of the family: a test waits for this promise before it calls `previewOf`.
+export function loadPreviewFamilies() {
+  return Promise.all(Object.keys(FAMILY_IMPORTS).map(loadFamily));
+}
 
 // The family of a panel type, or "" when the type has no preview.
 export function skeletonKind(type) {
@@ -47,12 +68,12 @@ export function skeletonKind(type) {
 
 // The preview of a panel for a box: { family, elements, bounds, notes }, or null for a type that has none. `box` is { w, h } in px, the content
 // box of the body (the size of the loaded plot). `doc` is the dashboard document and `ctx` is { rt, page }. A family that throws gives the
-// neutral form: a preview never breaks a panel.
+// neutral form: a preview never breaks a panel. It is synchronous, so it gives null while the module of the family is not loaded.
 export function previewOf(panel, box, doc = null, ctx = null) {
   const family = panel ? skeletonKind(panel.type) : "";
-  if (!family) return null;
+  if (!family || !LOADED[family]) return null;
   try {
-    const out = MODULES[family].build(panel, box, doc, ctx);
+    const out = LOADED[family].build(panel, box, doc, ctx);
     return { family, elements: out.elements || [], bounds: out.bounds || {}, notes: out.notes || [] };
   } catch (error) {
     return { family, elements: [], bounds: {}, notes: ["error"] };
@@ -74,10 +95,12 @@ export function drawNode(n) {
 }
 
 // The element `panel__skeleton` of a panel, or null for a panel type that has no preview. It is out of the flow and hidden from assistive
-// technology. The CSS shows it for a first load only. It starts empty: `observePreview` fills it when the box has a size.
+// technology. The CSS shows it for a first load only. It starts empty: `observePreview` fills it when the box has a size. The import of the
+// module of the family starts here, so the module is there when the preview shows. A failed import leaves the panel with no preview.
 export function buildPreview(panel) {
   const family = panel ? skeletonKind(panel.type) : "";
   if (!family) return null;
+  loadFamily(family).catch(() => {});
   const root = el("div", { class: `skel skel--${family}`, [HOOKS.ROOT]: family });
   return el("div", { class: "panel__skeleton", "aria-hidden": "true", dataset: { kind: family } }, root);
 }
@@ -88,12 +111,28 @@ export function buildPreview(panel) {
 export function observePreview(skeleton, panel, doc, ctx, done = null) {
   if (!skeleton) return () => {};
   let last = "";
+  let waiting = false;
+  let stopped = false;
+  const family = skeletonKind(panel.type);
+  // The module of the family is not there yet: the preview draws when it comes, with the size that the box has then.
+  const paintWhenLoaded = () => {
+    if (waiting) return;
+    waiting = true;
+    const end = () => {
+      waiting = false;
+    };
+    loadFamily(family).then(() => {
+      end();
+      if (!stopped) paint();
+    }, end);
+  };
   const paint = () => {
     const root = skeleton.firstElementChild;
     if (!root) return;
     const w = skeleton.clientWidth;
     const h = skeleton.clientHeight;
     if (!w || !h || `${w}x${h}` === last) return;
+    if (!LOADED[family]) return paintWhenLoaded();
     last = `${w}x${h}`;
     // `fw` and `fh` are the size with its fraction, rounded down to the layout unit (1/64 px): a gauge reads the real size of the box.
     const r = skeleton.getBoundingClientRect();
@@ -113,12 +152,13 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
   // again and the preview builds again when a font has loaded (9.11).
   const fonts = typeof document !== "undefined" ? document.fonts : null;
   const again = () => {
-    timeseries.resetMeasures();
+    if (LOADED.timeseries) LOADED.timeseries.resetMeasures();
     last = "";
     paint();
   };
   if (fonts && typeof fonts.addEventListener === "function") fonts.addEventListener("loadingdone", again);
   const stop = () => {
+    stopped = true;
     if (host) host.removeEventListener("resize", measure);
     if (fonts && typeof fonts.removeEventListener === "function") fonts.removeEventListener("loadingdone", again);
   };

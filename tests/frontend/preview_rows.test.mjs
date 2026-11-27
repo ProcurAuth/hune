@@ -6,9 +6,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { boundHolds, setMeasurer } from "../../web/js/preview/common.js";
-import { previewOf } from "../../web/js/preview/index.js";
+import { loadPreviewFamilies, previewOf } from "../../web/js/preview/index.js";
 import * as table from "../../web/js/preview/table.js";
 import * as logs from "../../web/js/preview/logs.js";
+
+// The families load on demand: `previewOf` needs their modules.
+await loadPreviewFamilies();
 
 // A measurer of fixed width: 7 px for each character, whatever the font.
 setMeasurer((text) => text.length * 7);

@@ -7,7 +7,10 @@ import {
   BAR_HEIGHT, DATA, EXACT, HOOKS, LEAST, MOST, PARTS, TOLERANCE_PX, barNode, boundHolds, contentBox, exact, inset, intersect, least, lineNode, most, neutral,
   partAttrs, pathNode, px, regionNode, resultOf, setMeasurer, svgNode, textWidth, union, unknown,
 } from "../../web/js/preview/common.js";
-import { previewOf, skeletonKind } from "../../web/js/preview/index.js";
+import { loadPreviewFamilies, previewOf, skeletonKind } from "../../web/js/preview/index.js";
+
+// The families load on demand: `previewOf` needs their modules.
+await loadPreviewFamilies();
 
 const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), "utf8");
 
