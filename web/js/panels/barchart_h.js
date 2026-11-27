@@ -6,7 +6,7 @@
 import { el } from "../ui.js";
 import { CALC_COLUMNS, LEGEND_HEADS, canvasColor, chartLabel, explicitBounds, isDarkTheme, legendCalc, legendFormatter, reduceValues, yTickLabeller } from "./common.js";
 import { cssGradient, partGradient } from "./gradient.js";
-import { niceStepAtLeast } from "./series.js";
+import { niceStepAtLeast, stepDecimals } from "./series.js";
 import { markCss, parseCss } from "../colors.js";
 import { styleParts, thresholdShapes } from "./thresholds.js";
 import { formatNumber, joinParts } from "../units.js";
@@ -17,6 +17,7 @@ const LABEL_MAX_PX = 180;
 const LABEL_PAD_PX = 22; // 6 px at the left of a category name, 16 px between the name and the bars
 const VALUE_MAX_PX = 28; // the largest value label (Grafana scales it with the bar)
 const VALUE_MIN_PX = 10; // as the value labels of the vertical bars (9.19)
+const VALUE_GAP_PX = 8; // between the end of a bar and its value
 const PERCENT_AXIS = Object.freeze({ min: 0, max: 100, step: 20, values: [0, 20, 40, 60, 80, 100] });
 
 /** The text of a number for the field `field`: its unit and decimals. */
