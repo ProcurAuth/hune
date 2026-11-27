@@ -32,7 +32,7 @@ test("the time control is one joined control: the time group and the refresh gro
 test("the header has, in order: the group of the edit mode, the time control, the switch Edit, the theme and More actions", () => {
   const dash = code("web/js/dashboard.js");
   assert.match(dash, /header\.setActions\(timeControl\.el, lock, editSwitch\)/);
-  assert.match(dash, /header\.setMore\(more\)/);
+  assert.match(dash, /header\.setMore\(moreItems\(\)\.some\([^;]*\? more : null\)/);
   // The group of the edit mode goes before the time control, and only in edit mode: the page has no slot for it.
   assert.match(dash, /setEditBar\(node\) \{[^}]*timeControl\.el\.before\(node\)/s);
   assert.ok(!/editSlot|header-edit-slot/.test(dash));
