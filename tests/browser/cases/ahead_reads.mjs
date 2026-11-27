@@ -6,6 +6,8 @@
 //       shows one time. The list route starts `GET api/folders` and `GET api/dashboards` in the same way (B410 checks it with the list).
 // B412: the module of a panel type loads before the answer of its query (9.11). A panel near the viewport asks for its module while its query is
 //       held. A panel far below the viewport, and a panel in a collapsed section, ask for none.
+// B413: the editor starts its style sheet, `GET api/sources` and the module of its view at the same time (10.2). While the answer of the sources is
+//       held, the page has asked for the style sheet and the module of the panel editor. The first paint stays held, and the editor shows after the release.
 import { SQL, doc, panel, section } from "../lib/docs.mjs";
 import { sleep } from "../lib/h.mjs";
 
@@ -112,6 +114,27 @@ export const cases = [
       t.eq(p.requests.filter(module("timeseries")).length, 1, "one request for the module");
       t.eq(p.requests.some(module("barchart")), false, "still no module for the far panel");
       t.eq(p.requests.some(module("piechart")), false, "still no module for the collapsed section");
+    },
+  },
+  {
+    id: "B413",
+    name: "the style sheet, the sources and the module of the panel editor load at the same time, and the editor shows after all three",
+    async run(t) {
+      const p = await t.page({ width: 1280, height: 900 });
+      const hold = p.holdWhen((r) => r.method === "GET" && /\/api\/sources$/.test(r.url));
+      await p.send("Page.navigate", { url: t.dash("nodes", "refresh=off&edit=1&editPanel=1") });
+      const seen = (re) => (rs) => rs.some((r) => r.method === "GET" && re.test(r.url) && r.status === 200);
+      await until(p, (rs) => rs.some((r) => /\/api\/sources$/.test(r.url)), "the request of the sources (held)");
+      await until(p, seen(/\/css\/editor\.css$/), "the style sheet of the editor while the sources are held");
+      await until(p, seen(/\/js\/editor\/panel_editor\.js$/), "the module of the panel editor while the sources are held");
+      await sleep(200);
+      t.eq(await p.exists(".peditor"), false, "the panel editor is not in the page before the sources answer");
+      t.eq((await held(p)).hold, true, "the first paint stays held");
+      hold.release();
+      await p.waitSel(".peditor");
+      await p.idle();
+      t.eq(p.requests.filter((r) => /\/api\/sources$/.test(r.url)).length, 1, "one request for the sources");
+      t.eq((await held(p)).hold, false, "the first paint is released with the editor in the page");
     },
   },
 ];

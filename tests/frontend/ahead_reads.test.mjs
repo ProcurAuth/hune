@@ -161,3 +161,18 @@ test("the panel modules have no work at load: no listener, no DOM write, no requ
   }
   assert.deepEqual(offenders, []);
 });
+
+test("the editor starts the style sheet, the sources and the module of the view together, and shows the view after all three (10.2)", () => {
+  const edit = code("web/js/editor/edit_mode.js");
+  const body = edit.slice(edit.indexOf("async prepare(target)"), edit.indexOf("// The first view: the runtime"));
+  // The three loads start before the first await.
+  const first = body.indexOf("await ");
+  for (const start of ["loadEditorCss()", "this.loadSources()", "VIEW_MODULES[kind]()"]) assert.ok(body.indexOf(start) >= 0 && body.indexOf(start) < first, `${start} starts before the first await`);
+  assert.match(body, /await css;\s*await sources;/);
+  // The list of the sources is read at each entry of the edit mode, as before: the condition is the same.
+  assert.match(body, /!this\.started && this\.sources\.length === 0 \? this\.loadSources\(\) : null/);
+  // A failed module still fails where the page awaits it. The early failure has no unhandled rejection.
+  assert.match(body, /load\.catch\(\(\) => \{\}\);/);
+  assert.equal((body.match(/await load;/g) || []).length, 4);
+  assert.match(edit, /panel: \(\) => import\("\.\/panel_editor\.js"\)/);
+});
