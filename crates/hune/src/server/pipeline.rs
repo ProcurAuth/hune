@@ -371,7 +371,7 @@ async fn process(
 }
 
 fn shell_not_found(state: &AppState) -> Response {
-    let mut r = bytes_response(StatusCode::NOT_FOUND, "text/html; charset=utf-8", state.shell.clone());
+    let mut r = bytes_response(StatusCode::NOT_FOUND, "text/html; charset=utf-8", state.shells.base.clone());
     r.headers_mut().insert(CACHE_CONTROL, HeaderValue::from_static("no-cache"));
     r
 }

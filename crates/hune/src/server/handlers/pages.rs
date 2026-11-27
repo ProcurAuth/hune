@@ -18,15 +18,20 @@ const MAX_SLUG_BYTES: usize = 256;
 
 /// `GET /`, `GET /d/{uid}` and `GET /d/{uid}/{slug}`: the shell. A uid that breaks the rule of
 /// 4.3, or a slug that is not 1 to 256 bytes, gets the shell with the status 404.
+///
+/// The shell of the list and the shell of a dashboard preload the modules of their page (9.6). The shell with the
+/// status 404 is the base shell, as for each other path that is not a page: it preloads no module of a page.
 pub async fn page(ctx: Ctx, _req: Request) -> Result<Response, ApiError> {
+    let shells = &ctx.state.shells;
     if ctx.route.id == RouteId::PageDashboard {
         let uid_ok = ctx.params.get("uid").is_some_and(is_valid_id);
         let slug_ok = ctx.params.get("slug").is_none_or(|s| !s.is_empty() && s.len() <= MAX_SLUG_BYTES);
         if !(uid_ok && slug_ok) {
-            return Ok(shell_response(&ctx, StatusCode::NOT_FOUND));
+            return Ok(shell_response(StatusCode::NOT_FOUND, shells.base.clone()));
         }
+        return Ok(shell_response(StatusCode::OK, shells.dashboard.clone()));
     }
-    Ok(shell_response(&ctx, StatusCode::OK))
+    Ok(shell_response(StatusCode::OK, shells.list.clone()))
 }
 
 /// `GET /static/{build-hash}/{path}`: an embedded file. A wrong hash or an unknown path gives `404 not_found`.

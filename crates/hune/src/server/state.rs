@@ -7,7 +7,6 @@ use crate::config::{AccessConfig, Config, PrimaryRef};
 use crate::log::Logger;
 use crate::metrics::Metrics;
 use crate::telemetry::Telemetry;
-use bytes::Bytes;
 use hune_source::AnySource;
 use hune_store::{Catalog, Stores};
 use std::collections::{BTreeMap, HashMap};
@@ -165,8 +164,8 @@ pub struct AppState {
     pub logger: Arc<Logger>,
     /// The metrics.
     pub metrics: Arc<Metrics>,
-    /// The shell page, made one time at start (9.3).
-    pub shell: Bytes,
+    /// The shell pages, made one time at start (9.3, 9.6).
+    pub shells: crate::web_assets::Shells,
     /// The value of `Content-Security-Policy` of each answer of the main listener (12.8), built one time at start from the
     /// block `geomap` (13.12c). Without the block it is the policy of 12.8, byte for byte.
     pub csp: http::HeaderValue,
@@ -209,7 +208,7 @@ impl AppState {
         config: Arc<Config>,
         logger: Arc<Logger>,
         metrics: Arc<Metrics>,
-        shell: Bytes,
+        shells: crate::web_assets::Shells,
         sources: Vec<AnySource>,
         access: Option<Arc<Access>>,
         telemetry: Telemetry,
@@ -222,7 +221,7 @@ impl AppState {
             config,
             logger,
             metrics,
-            shell,
+            shells,
             csp,
             sources,
             access,
