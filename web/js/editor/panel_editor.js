@@ -57,6 +57,7 @@ export function createPanelEditor(E, id) {
   let badgeSetters = [];
   const open = new Map([["panel", true], ["viz", false], ["text", true], ["standard", true], ["position", true], ["repeat", true], ["timeline", true], ["legend", true], ["tooltip", true]]);
   let topFrame = null;
+  let ended = false; // true after `destroy()`: the preview stays as it is
   let sqlEditor = null;
   let optForm = null; // the option form of the type (10.3h), or null
   let runButton = null;
@@ -91,7 +92,8 @@ export function createPanelEditor(E, id) {
 
   function drawTop() {
     const p = panel();
-    if (!p) return;
+    // A change that comes after the end of the editor (a late timer) must not make a new frame: nothing would destroy it.
+    if (!p || ended) return;
     if (topFrame) topFrame.destroy();
     // A type that the page cannot draw (for example from the JSON tab) gets a stub, never an exception.
     // The preview is one panel with the selection of the draft, also for a panel that repeats: it reads the plain record (9.8c, 10.3).
@@ -1155,11 +1157,13 @@ export function createPanelEditor(E, id) {
     el: root,
     destroy() {
       scope.flush();
+      // The last text of the SQL area goes to the draft first. This change redraws the preview, so the frame is destroyed after it.
+      if (sqlEditor) sqlEditor.flush();
+      ended = true;
       E.api.undockToolbar();
       controller.abort();
       offPanel();
       if (topFrame) topFrame.destroy();
-      if (sqlEditor) sqlEditor.flush();
     },
     // The text fields apply their last change at once (a save asks for it).
     flush: () => scope.flush(),
