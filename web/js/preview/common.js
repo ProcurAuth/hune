@@ -18,6 +18,10 @@ import { SPRITE_PREFIX } from "../ui.js";
 //   data-skel-class  on the same element: how exact the place and the size are (EXACT, LEAST, MOST or DATA).
 export const HOOKS = Object.freeze({ ROOT: "data-skel", PART: "data-skel-part", CLASS: "data-skel-class" });
 
+// The probes of the page (table.js, logs.js). A probe forces a layout, and the page state does not change inside a frame, so one probe serves all
+// the previews of a frame. The queue of index.js clears the probes at the start of each frame.
+export const PROBES = {};
+
 // The names of the measured parts. A family uses the names that fit and may add its own, listed in its file header and in docs/04 9.11.
 export const PARTS = Object.freeze({
   BOX: "box", // the body of the panel that the preview covers

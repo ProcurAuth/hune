@@ -20,7 +20,7 @@
 // The class `extent` is for a shape whose right edge is a lower bound (the table is at least as wide): the harness checks left, top and height
 // within 0.5 px and the width as a least bound.
 
-import { BAR_HEIGHT, EXACT, LEAST, MOST, PARTS, barNode, boundHolds, exact, least, neutral, node, partAttrs, regionNode, resultOf, textWidth } from "./common.js";
+import { BAR_HEIGHT, EXACT, LEAST, MOST, PARTS, PROBES, barNode, boundHolds, exact, least, neutral, node, partAttrs, regionNode, resultOf, textWidth } from "./common.js";
 import { parseGrafanaPattern } from "../fields.js";
 import { visibleQueries } from "../queries.js";
 import { footerName } from "../table_model.js";
@@ -47,6 +47,7 @@ export const DEFAULT_ENV = Object.freeze({ coarse: false, sb: 0, head: 34, row: 
 export function environment(ctx) {
   if (ctx && ctx.env) return { ...DEFAULT_ENV, ...ctx.env };
   if (typeof document === "undefined" || !document.body) return null;
+  if (PROBES.table) return PROBES.table;
   const probe = document.createElement("div");
   probe.className = "panel__body";
   for (const [name, value] of [["position", "absolute"], ["visibility", "hidden"], ["pointer-events", "none"], ["left", "0px"], ["top", "0px"], ["width", "300px"], ["height", "300px"]]) probe.style.setProperty(name, value);
@@ -76,7 +77,7 @@ export function environment(ctx) {
     const style = getComputedStyle(scroll);
     const px = (v, fallback) => (Number.isFinite(parseFloat(v)) ? parseFloat(v) : fallback);
     const label = getComputedStyle(frames);
-    return {
+    return PROBES.table = {
       coarse: typeof matchMedia === "function" && matchMedia("(pointer: coarse)").matches,
       sb: scroll.offsetWidth - scroll.clientWidth,
       head: px(style.getPropertyValue("--vt-head"), DEFAULT_ENV.head),

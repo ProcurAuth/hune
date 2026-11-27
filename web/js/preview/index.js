@@ -3,7 +3,7 @@
 // module of its family, and draws the tree of nodes. panel_frame.js uses `buildPreview` and `observePreview`.
 
 import { el } from "../ui.js";
-import { HOOKS } from "./common.js";
+import { HOOKS, PROBES } from "./common.js";
 
 const SVG_NS = "http://www.w3.org/2000/svg";
 const SVG_TAGS = new Set(["svg", "path", "line", "rect", "g", "use", "defs", "linearGradient", "stop"]);
@@ -107,7 +107,36 @@ export function buildPreview(panel) {
   return el("div", { class: "panel__skeleton", "aria-hidden": "true", dataset: LOADED[family] ? { kind: family } : { kind: family, unpainted: "" } }, root);
 }
 
-// Fills the preview when its box has a size, and again when the window changes size. The panel calls `measure` when the preview shows. The preview is hidden (display none) when the panel does not
+// The previews that wait for a drawing. The drawings of one frame run together: the page reads the sizes of all the boxes, then it writes all the
+// previews. A read after a write of another panel would force a layout of the page for each panel.
+const QUEUE = new Set();
+let frame = 0;
+function schedule(job) {
+  QUEUE.add(job);
+  if (frame) return;
+  const request = globalThis.requestAnimationFrame || ((fn) => setTimeout(fn, 0));
+  frame = request(() => {
+    frame = 0;
+    const jobs = [...QUEUE];
+    QUEUE.clear();
+    for (const name of Object.keys(PROBES)) delete PROBES[name];
+    // An error of one preview does not stop the others, and it still shows as an uncaught error, as it did in its own task.
+    const run = (fn) => {
+      try {
+        return fn();
+      } catch (error) {
+        setTimeout(() => {
+          throw error;
+        });
+      }
+    };
+    const sizes = jobs.map((j) => run(() => j.read()));
+    jobs.forEach((j, i) => sizes[i] && run(() => j.write(sizes[i])));
+  });
+}
+
+// Fills the preview when its box has a size, and again when the window changes size. The panel calls `measure` when the preview shows. The drawing
+// runs in the next animation frame, before the style and the layout of that frame. The preview is hidden (display none) when the panel does not
 // wait for a first load, so a panel that never waits builds nothing. The callback `done(result)` is for the tests. `ctx` is { rt, page, key }: `key` is
 // the key of the panel instance, for the range of the request (`rt.rangeOf(key)`). Returns a function that stops the observation.
 export function observePreview(skeleton, panel, doc, ctx, done = null) {
@@ -128,24 +157,30 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
       if (!stopped) paint();
     }, end);
   };
-  const paint = () => {
-    const root = skeleton.firstElementChild;
-    if (!root) return;
+  // The read of the frame gives the box of the preview, or null when nothing draws. It writes nothing.
+  const read = () => {
+    if (stopped || !skeleton.firstElementChild) return null;
     const w = skeleton.clientWidth;
     const h = skeleton.clientHeight;
-    if (!w || !h || `${w}x${h}` === last) return;
+    if (!w || !h || `${w}x${h}` === last) return null;
     if (!LOADED[family]) return paintWhenLoaded();
     last = `${w}x${h}`;
     // `fw` and `fh` are the size with its fraction, rounded down to the layout unit (1/64 px): a gauge reads the real size of the box.
     const r = skeleton.getBoundingClientRect();
-    const result = previewOf(panel, { w, h, fw: Math.floor(r.width * 64 + 1e-6) / 64, fh: Math.floor(r.height * 64 + 1e-6) / 64 }, doc, ctx);
+    return { w, h, fw: Math.floor(r.width * 64 + 1e-6) / 64, fh: Math.floor(r.height * 64 + 1e-6) / 64 };
+  };
+  const write = (box) => {
+    if (stopped) return;
+    const result = previewOf(panel, box, doc, ctx);
     if (!result) return;
-    root.replaceChildren(...result.elements.map(drawNode));
+    skeleton.firstElementChild.replaceChildren(...result.elements.map(drawNode));
     delete skeleton.dataset.unpainted;
-    root.dataset.skelNotes = result.notes.join(" ");
+    skeleton.firstElementChild.dataset.skelNotes = result.notes.join(" ");
     skeleton._preview = result;
     if (done) done(result);
   };
+  const job = { read, write };
+  const paint = () => schedule(job);
   // The page reads the size when the preview shows and when the window changes size. It has no ResizeObserver here: an observer on the page of a big
   // text that a person types forces a layout of the page at each key (B176).
   const measure = () => paint();
@@ -162,6 +197,7 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
   if (fonts && typeof fonts.addEventListener === "function") fonts.addEventListener("loadingdone", again);
   const stop = () => {
     stopped = true;
+    QUEUE.delete(job);
     if (host) host.removeEventListener("resize", measure);
     if (fonts && typeof fonts.removeEventListener === "function") fonts.removeEventListener("loadingdone", again);
   };

@@ -358,7 +358,8 @@ export const cases = [
       t.assert(after.box < before.box, `the box got narrower: ${before.box} then ${after.box}`);
       t.eq([after.x, after.x + after.w + 8], [8, after.box], "the plot follows the box: left gutter 8, right gutter 8");
       // A font that arrives late (the event loadingdone of document.fonts) builds the preview again with new measures (R13).
-      const rebuilt = await p.eval(`(() => { const sk = document.querySelector('[data-testid="panel-${TS.axesHidden}"] .panel__skeleton'); const old = sk._preview; document.fonts.dispatchEvent(new Event("loadingdone")); return !!sk._preview && sk._preview !== old; })()`);
+      // The preview draws in the next animation frame (9.11): the case waits for two frames before it reads the new preview.
+      const rebuilt = await p.eval(`(async () => { const sk = document.querySelector('[data-testid="panel-${TS.axesHidden}"] .panel__skeleton'); const old = sk._preview; document.fonts.dispatchEvent(new Event("loadingdone")); await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))); return !!sk._preview && sk._preview !== old; })()`);
       t.eq(rebuilt, true, "a font load builds the preview again");
       hold.release();
       await p.waitFor(`document.querySelector('[data-testid="panel-${TS.axesHidden}"]').dataset.state === "ready"`, { what: "the panel", timeout: 60000 });
