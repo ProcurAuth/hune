@@ -50,3 +50,11 @@ A release holds binaries and sources. It holds no container image, and no script
 ## Documents
 
 The Markdown files are the source of the website. After a change to a file in `docs/`, run `python3 -I scripts/build-site.py`. The page `docs/configuration-reference.md` comes from the code: run `hune print-reference --format markdown > docs/configuration-reference.md`. Write in ASD-STE100: `python3 -I tools/ste_lint.py <file>` checks the rules that a tool can check.
+
+## The font files
+
+The page serves the font Inter as two files in `web/fonts/inter/`, split by unicode range. The script `tools/split_font.py` makes them from `tools/font/InterVariable-source.woff2`, the unchanged font. The script needs Python 3, `fontTools` and `brotli`, and no network.
+
+Run `python3 tools/split_font.py` to write the two files. It prints the two `unicode-range` values for `web/css/fonts.css`. Copy them into the file by hand. Run `python3 tools/split_font.py --check` to make sure that the two files and the values in `web/css/fonts.css` are the ones of the script.
+
+To add a character to the first file, add it to `HUNE_EXTRA` in the script and run the script again. Do this when the interface of Hune writes a new character outside the Latin range. The font file is a Modified Version under the SIL Open Font License: see [THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md).

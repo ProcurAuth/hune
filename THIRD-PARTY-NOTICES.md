@@ -13,7 +13,7 @@ These files are in `web/`. The binary embeds them. The page never loads them fro
 | Component | Version | Licence | Where |
 | --- | --- | --- | --- |
 | Chart engine and colour tokens of ClickHouse Dash | tag v1.3.1, commit `e970694e5e0b17b07cf187f3128af93fa1a82b76` | MIT | `web/js/vendor/chdash/`, `web/css/vendor/chdash/`, with its `LICENSE` |
-| Font Inter | 4.1 | SIL OFL-1.1 | `web/fonts/inter/`, with its `LICENSE` |
+| Font Inter | 4.1 | SIL OFL-1.1 | `web/fonts/inter/`, with its `LICENSE` (the original is in `tools/font/`) |
 | Icons: the paths of `chevron-down`, `chevron-right`, `chevron-up` and the spinner | see the file | MIT (Tabler Icons) | `web/icons.svg` |
 
 ### ClickHouse Dash chart engine
@@ -48,8 +48,12 @@ SOFTWARE.
 
 ### Inter
 
-The font file is `InterVariable.woff2`. It is a Font Software under the SIL Open Font License, Version 1.1. Hune does not sell
-the font by itself and does not change it.
+The font files are `InterVariable-latin.woff2` and `InterVariable-rest.woff2`. They are a Font Software under the SIL Open Font License, Version 1.1.
+Hune does not sell the font by itself.
+
+The two files are Modified Versions of the file `InterVariable.woff2` of Inter 4.1. The script `tools/split_font.py` splits the glyphs
+by unicode range and changes nothing else. The font keeps its name, its copyright notice and its license text in the name table. The copyright notice of Inter
+does not name a Reserved Font Name, so the license permits the two files under the same name. The script reads the unchanged original, `tools/font/InterVariable-source.woff2`.
 
 ```text
 Copyright (c) 2016 The Inter Project Authors (https://github.com/rsms/inter)

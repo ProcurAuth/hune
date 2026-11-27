@@ -33,7 +33,9 @@ done <"$tmp/web-notices.txt"
 for f in $web_notices; do
     [ -f "$f" ] || { echo "third-party.sh: $f does not exist" >&2; exit 1; }
 done
-[ -f web/fonts/inter/InterVariable.woff2 ] || { echo "third-party.sh: web/fonts/inter/InterVariable.woff2 does not exist" >&2; exit 1; }
+for f in web/fonts/inter/InterVariable-latin.woff2 web/fonts/inter/InterVariable-rest.woff2; do
+    [ -f "$f" ] || { echo "third-party.sh: $f does not exist" >&2; exit 1; }
+done
 grep -q 'SIL Open Font License, Version 1.1' web/fonts/inter/LICENSE ||
     { echo "third-party.sh: web/fonts/inter/LICENSE does not hold the SIL Open Font License, Version 1.1" >&2; exit 1; }
 for t in x86_64-unknown-linux-musl aarch64-unknown-linux-musl; do
@@ -88,7 +90,8 @@ PY
     cat web/js/vendor/chdash/LICENSE
     echo
     echo "=============================================================================="
-    echo "Font Inter 4.1 (web/fonts/inter/InterVariable.woff2, embedded in the binary)"
+    echo "Font Inter 4.1 (web/fonts/inter/InterVariable-latin.woff2 and InterVariable-rest.woff2, embedded in the binary)"
+    echo "The two files are Modified Versions of InterVariable.woff2: tools/split_font.py splits it by unicode range. Inter has no Reserved Font Name."
     echo "Licence: OFL-1.1 (SIL Open Font License, Version 1.1)"
     echo "=============================================================================="
     cat web/fonts/inter/LICENSE
