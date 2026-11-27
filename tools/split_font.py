@@ -7,8 +7,8 @@ Use:
     python3 tools/split_font.py --check    make no change; exit 1 when a file or web/css/fonts.css differs
 
 The input is tools/font/InterVariable-source.woff2, the unchanged variable font Inter 4.1 (git blob
-5a8d3e72ad7ffb62af3b146e1b1f54ab5813a212). The output is InterVariable-latin.woff2 (the characters that the
-interface of Hune writes) and InterVariable-rest.woff2 (all other characters of the font). The two files
+5a8d3e72ad7ffb62af3b146e1b1f54ab5813a212). The output is InterVariable-latin.woff2 (Latin, Cyrillic and Greek
+text, and the usual symbols) and InterVariable-rest.woff2 (all other characters of the font). The two files
 together have the cmap of the input, and no character is in both files.
 
 Each file keeps all layout features, all variation axes, all names, the hinting and the outline of .notdef.
@@ -27,15 +27,24 @@ SOURCE = ROOT / "tools/font/InterVariable-source.woff2"
 OUT = ROOT / "web/fonts/inter"
 CSS = ROOT / "web/css/fonts.css"
 
-# The range "latin" of Google Fonts.
-GOOGLE_LATIN = (
+# The ranges of the first file. The font keeps only the code points that it has: a range can name more.
+# A string that mixes characters of the two files is shaped in two runs, and the kerning between the runs is lost.
+# So the first file holds each script and each symbol that a title or a text of a viewer can mix with Latin text.
+FIRST_RANGES = (
+    # The range "latin" of Google Fonts.
     "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, "
-    "U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+    "U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD, "
+    # Latin script: Latin Extended-A and -B, modifier letters, combining marks, Latin Extended Additional, -C and -D.
+    "U+0100-024F, U+02B0-02FF, U+0300-036F, U+1E00-1EFF, U+2C60-2C7F, U+A720-A7FF, "
+    # Cyrillic and Greek.
+    "U+0400-052F, U+1C80-1C8F, U+2DE0-2DFF, U+A640-A69F, U+0370-03FF, U+1F00-1FFF, "
+    # Superscripts, currency signs, marks for symbols, letter-like signs and number forms.
+    "U+2070-209F, U+20A0-20CF, U+20D0-20FF, U+2100-214F, U+2150-218F, "
+    # Arrows and mathematical operators. The arrow of a time range (app_format.js) and the infinity sign
+    # (units.js, stat_percent.js) are in them.
+    "U+2190-21FF, U+2200-22FF"
 )
-# The characters outside that range that the files web/js, web/css and web/shell.html write themselves.
-# U+2192 is the arrow of a time range (app_format.js). U+221E is the sign of an infinite value (units.js, stat_percent.js).
-HUNE_EXTRA = (0x2192, 0x221E)
-# The characters that the font has and that the interface never writes go to the second file.
+# The second file holds the rest: the IPA and phonetic blocks, symbols of other kinds and the private use area.
 
 
 def parse_ranges(text):
@@ -85,7 +94,7 @@ def plan():
     """Return the source bytes, the code points of each file and the two files."""
     data = SOURCE.read_bytes()
     cmap = set(TTFont(BytesIO(data)).getBestCmap())
-    latin = (parse_ranges(GOOGLE_LATIN) | set(HUNE_EXTRA)) & cmap
+    latin = parse_ranges(FIRST_RANGES) & cmap
     rest = cmap - latin
     files = {
         "InterVariable-latin.woff2": (latin, build(data, latin)),

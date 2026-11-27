@@ -57,4 +57,4 @@ The page serves the font Inter as two files in `web/fonts/inter/`, split by unic
 
 Run `python3 tools/split_font.py` to write the two files. It prints the two `unicode-range` values for `web/css/fonts.css`. Copy them into the file by hand. Run `python3 tools/split_font.py --check` to make sure that the two files and the values in `web/css/fonts.css` are the ones of the script.
 
-To add a character to the first file, add it to `HUNE_EXTRA` in the script and run the script again. Do this when the interface of Hune writes a new character outside the Latin range. The font file is a Modified Version under the SIL Open Font License: see [THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md).
+To move a range to the first file, add it to `FIRST_RANGES` in the script and run the script again. A text that mixes the two files loses the `kerning` between them. So keep in the first file each script and each symbol that a title can mix with Latin text. The font file is a Modified Version under the SIL Open Font License: see [THIRD-PARTY-NOTICES.md](../THIRD-PARTY-NOTICES.md).
