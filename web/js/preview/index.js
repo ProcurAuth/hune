@@ -120,8 +120,18 @@ function schedule(job) {
     const jobs = [...QUEUE];
     QUEUE.clear();
     for (const name of Object.keys(PROBES)) delete PROBES[name];
-    const sizes = jobs.map((j) => j.read());
-    jobs.forEach((j, i) => sizes[i] && j.write(sizes[i]));
+    // An error of one preview does not stop the others, and it still shows as an uncaught error, as it did in its own task.
+    const run = (fn) => {
+      try {
+        return fn();
+      } catch (error) {
+        setTimeout(() => {
+          throw error;
+        });
+      }
+    };
+    const sizes = jobs.map((j) => run(() => j.read()));
+    jobs.forEach((j, i) => sizes[i] && run(() => j.write(sizes[i])));
   });
 }
 
