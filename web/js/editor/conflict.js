@@ -4,7 +4,7 @@ import * as api from "../api.js";
 import * as editorRoutes from "./api_editor.js";
 import { formatTime } from "../units.js";
 import { button, clear, copyText, el, icon, notify, openDialog } from "../ui.js";
-import { saveTextFile } from "../list.js";
+import { saveTextFile } from "../export_file.js";
 import { renderDiff } from "./diff_view.js";
 import { prettyJson } from "./json_check.js";
 import { announceSaved, sendSave } from "./save.js";

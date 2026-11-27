@@ -138,6 +138,8 @@ web/
                              geomap.js: the tiles, the plain background, the markers and the card of the type `geomap` (9.19i)
                              annotate.js: the canvas of the marks, the card, the keys and the note of the annotations of a time series (9.19d)
     list.js                  list page (9.7)
+    stores.js                the stores of the page, the groups of the dashboards by folder and by store, and the order of the titles (9.7, 9.8)
+    export_file.js           the download of a text as a file, and the export of a dashboard (10.12). The dashboard page loads it, not `list.js`.
     editor/                  modules of section 10, loaded only on demand
       edit_mode.js  panel_editor.js  json_editor.js  layout.js  draft.js  save.js
       conflict.js  diff.js  history.js  import_export.js  folders.js  drag.js  text_check.js
@@ -4304,6 +4306,8 @@ listeners (16).
 - The option forms of the data types (F43) are editor code. They are in `js/editor/forms/` and `js/editor/forms/options/`. The editor loads them on demand, so the measure above does not count them. The test `static_rules.test.mjs` already checks that no file of the measure imports a file of `js/editor/`. The estimate is 50 KB for these files (31 KB of tables, 14 KB of renderer and helpers, and 5 KB of other changes). The test FE-79 fails when the new files of the forms have more than 102,400 bytes.
 - The closed or free value of a variable makes changes in `var_options.js`, `vars.js`, `runtime.js` and `dashboard.js`. It adds no module to the page. The form, the SQL examples and the preview of the options are in the editor, which is not in the measure.
 - The feature adds 10,407 bytes with its comments, so the page has 955,718 bytes after it.
+- The dashboard page did not need `list.js` (29,915 bytes), but it imported it for two functions. `groupDashboards` is now in `stores.js`, and `exportDashboard` with `saveTextFile` are in `export_file.js`. The dashboard page loads `export_file.js` (783 bytes). It does not load `list.js`.
+- The functions `fold` and `compareText` of the order of titles are now in `stores.js` only, so the two copies are one. `list.js` still exports `groupDashboards` for its tests. The test of the budget still counts `list.js`, because the list is a page of its own. The total of the budget goes up by 131 bytes.
 
 | Module | Bytes added | Bytes now | What it holds |
 |---|---|---|---|

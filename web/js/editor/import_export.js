@@ -1,4 +1,4 @@
-// Import of one document (10.12). Export is a download of `download=true` (list.js, history.js).
+// Import of one document (10.12). Export is a download of `download=true` (export_file.js, history.js).
 
 import * as api from "../api.js";
 import * as editorRoutes from "./api_editor.js";

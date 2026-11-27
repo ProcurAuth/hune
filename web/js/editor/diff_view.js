@@ -2,7 +2,7 @@
 
 import { badge, button, el } from "../ui.js";
 import { diffLines } from "./diff.js";
-import { saveTextFile } from "../list.js";
+import { saveTextFile } from "../export_file.js";
 
 // A header row for the screen readers: the columns of a diff line (9.26).
 const head = () => el("thead", { class: "visually-hidden" }, el("tr", {}, ...["Old line", "New line", "Change", "Text"].map((t) => el("th", { scope: "col", text: t }))));

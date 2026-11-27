@@ -11,7 +11,7 @@ export const READ_ONLY_ERROR_TEXT = "This dashboard is in a read-only store. It 
 // has no member `root`: false. The right never comes from a folder.
 export const rootWritable = (root) => Boolean(root) && Boolean(root.access) && root.access.write === true;
 
-// True for the group of the dashboards with no folder (list.js groupDashboards). Its title never shows.
+// True for the group of the dashboards with no folder (groupDashboards below). Its title never shows.
 export const isRootGroup = (group) => Boolean(group) && Boolean(group.folder) && group.folder.root === true;
 
 // True for an item or a folder that the server marks as part of a read-only store.
@@ -29,12 +29,42 @@ export function storeTable(session) {
   return table;
 }
 
-const fold = (text) => String(text ?? "").replace(/[A-Z]/g, (c) => c.toLowerCase());
-const compare = (a, b) => {
+// ASCII-only lower case (9.7): non-ASCII letters keep their case.
+export const fold = (text) => String(text ?? "").replace(/[A-Z]/g, (c) => c.toLowerCase());
+
+export const compareText = (a, b) => {
   const x = fold(a);
   const y = fold(b);
   return x < y ? -1 : x > y ? 1 : 0;
 };
+
+// Groups the dashboards by folder: the root groups first, then the folders in title order, dashboards in title order (9.7).
+// A dashboard with no folder (`folder` null) is in a ROOT group. There is one root group for each store (the store of the dashboard), so the root of
+// the primary store and the root of a read-only store stay apart. A root group is { folder: { id: null, root: true, title: "Root", access: { write: false },
+// read_only, store }, items }; its title never shows. { descending: true } is the viewer preference "Z-A": the folders and the dashboards in the reverse
+// order; the root groups stay first.
+export function groupDashboards(folders, items, { descending = false } = {}) {
+  const byFolder = new Map(folders.map((f) => [f.id, { folder: f, items: [] }]));
+  const roots = new Map();
+  for (const item of items) {
+    if (item.folder === null) {
+      const store = typeof item.store === "string" ? item.store : "";
+      if (!roots.has(store)) roots.set(store, { folder: { id: null, root: true, title: "Root", access: { write: false }, read_only: item.read_only, store: item.store }, items: [] });
+      roots.get(store).items.push(item);
+      continue;
+    }
+    if (!byFolder.has(item.folder)) byFolder.set(item.folder, { folder: { id: item.folder, title: item.folder, access: { write: false }, read_only: item.read_only, store: item.store }, items: [] });
+    byFolder.get(item.folder).items.push(item);
+  }
+  const rootGroups = [...roots.values()].sort((a, b) => compareText(a.folder.store ?? "", b.folder.store ?? ""));
+  const groups = [...byFolder.values()].sort((a, b) => compareText(a.folder.title, b.folder.title) || compareText(a.folder.id, b.folder.id));
+  for (const group of [...rootGroups, ...groups]) group.items.sort((a, b) => compareText(a.title, b.title) || compareText(a.uid, b.uid));
+  if (descending) {
+    groups.reverse();
+    for (const group of [...rootGroups, ...groups]) group.items.reverse();
+  }
+  return [...rootGroups, ...groups];
+}
 
 // Splits the folder groups of the list (groupDashboards) by store. `groups` are { folder, items } in the order of the page. The result is
 // { primary: groups, stores: [{ store: { id, title }, groups }] }: the groups of the primary at the root, then one block for each read-only store
@@ -57,7 +87,7 @@ export function groupByStore(groups, session, { descending = false } = {}) {
     }
     blocks.get(id).groups.push(group);
   }
-  const stores = [...blocks.values()].sort((a, b) => compare(a.store.title, b.store.title) || compare(a.store.id, b.store.id));
+  const stores = [...blocks.values()].sort((a, b) => compareText(a.store.title, b.store.title) || compareText(a.store.id, b.store.id));
   if (descending) stores.reverse();
   return { primary, stores };
 }

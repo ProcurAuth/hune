@@ -18,7 +18,7 @@ import { sameSelection, selectionToUrl } from "./var_options.js";
 import { createVarsBar } from "./vars.js";
 import { button, clear, closeMenu, dismissNotice, el, icon, notify, openMenu } from "./ui.js";
 import { baseState, isEditorState, kindOf, nextState, normalSearch, originValue, parseView, readOrigin, sameState, viewNames } from "./view_state.js";
-import { exportDashboard } from "./list.js";
+import { exportDashboard } from "./export_file.js";
 import { locationNodes } from "./switcher.js";
 import { READ_ONLY_TEXT, STALE_PAGE_TEXT, isStale } from "./stores.js";
 
