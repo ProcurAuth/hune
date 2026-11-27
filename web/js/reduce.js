@@ -2,11 +2,6 @@
 import { parseGrafanaPattern, regexTest } from "./fields.js";
 import { compareNumericForSort } from "./vendor/chdash/app_results_sort.js";
 
-export const CALCS = Object.freeze([
-  "last_not_null", "last", "first", "first_not_null", "min", "max", "mean", "total", "count",
-  "median", "std_dev", "variance", "range", "diff", "diff_percent", "delta", "distinct_count", "change_count",
-]);
-
 // The cell i as { isNull, num, exact }: isNull for NULL; num is the double (maybe NaN); exact is the exact text or null.
 function cell(field, i) {
   switch (field.kind) {

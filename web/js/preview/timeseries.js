@@ -22,7 +22,7 @@ import { boundedYAxis, tickLabel } from "../panels/series.js";
 import { formatNumber, joinParts } from "../units.js";
 import { chartCore } from "../vendor/chdash/app_chart_core.js";
 import { zoneClock } from "../zone.js";
-import { BAR_HEIGHT, CONTAIN, EXACT, LEAST, PARTS, barNode, fontOf, exact, least, lineNode, most, neutral, node, partAttrs, pathNode, px, resultOf, svgNode, textWidth, unknown } from "./common.js";
+import { BAR_HEIGHT, CONTAIN, EXACT, HEADS, LEAST, PARTS, barNode, finite, fontOf, exact, least, lineNode, most, neutral, node, partAttrs, pathNode, px, resultOf, svgNode, textWidth, unknown } from "./common.js";
 
 // ---- The sizes that the CSS of the legend gives (panel-chart.css, tokens.css) ---------------------------------------------------------
 export const LINE = 12 * 1.5714; // the line of the legend: 12 px text, line height 1.5714
@@ -43,15 +43,7 @@ const BAND = 21;
 const X_TITLE = 20;
 const X_LABEL_TOP = 9; // an x label has its top 9 px under the plot
 
-// The heads of the legend table (app_chart_core.js LEGEND_HEADS).
-const HEADS = {
-  total: "Total", min: "Min", max: "Max", mean: "Mean", last: "Last", last_not_null: "Last *", first: "First", first_not_null: "First *", count: "Count",
-  median: "Median", std_dev: "Std Dev", variance: "Variance", range: "Range", diff: "Difference", diff_percent: "Difference %", delta: "Delta",
-  distinct_count: "Distinct count", change_count: "Change count",
-};
-
 const own = (o, k) => o !== null && typeof o === "object" && Object.prototype.hasOwnProperty.call(o, k);
-const finite = (v) => typeof v === "number" && Number.isFinite(v);
 const num = (n) => Number(Number(n).toFixed(2));
 
 // ---- The platform ----------------------------------------------------------------------------------------------------------------------

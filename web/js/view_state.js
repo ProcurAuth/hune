@@ -9,12 +9,10 @@
 //   version, base  the names of the history (10.11), else null
 
 import { copyKeyOf, parseViewKey, splitKey } from "./repeat.js";
-import { buildSearch, panelIdFromParam, parseSearch } from "./url_state.js";
+import { VIEW_NAMES, buildSearch, panelIdFromParam, parseSearch } from "./url_state.js";
 
 export const PAGES = ["view", "panel-view", "edit", "panel-edit", "json", "settings", "history"];
 export const EVENTS = ["view-panel", "close-view", "edit-on", "edit-off", "panel-edit", "open-json", "open-settings", "open-history", "history-nav", "up", "leave", "save", "discard"];
-// The names of the URL that choose a view (9.5). Each state uses a part of them.
-export const VIEW_NAMES = ["viewPanel", "edit", "editPanel", "editview", "version", "base"];
 
 export const baseState = () => ({ page: "view", panel: null, editing: false, version: null, base: null });
 

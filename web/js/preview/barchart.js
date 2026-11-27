@@ -10,7 +10,7 @@
 // The parts: `plot` (the plot of the engine, or `.hbar__grid`), `legend`, `head` and `head-label` (a table legend), and `tick` (the label "100%" of a
 // percent stack of the horizontal form, as a bar).
 
-import { CONTAIN, EXACT, LEAST, PARTS, exact, least, most, neutral, node, partAttrs, px, resultOf, svgNode, unknown } from "./common.js";
+import { CONTAIN, EXACT, LEAST, PARTS, exact, finite, least, most, neutral, node, partAttrs, px, resultOf, svgNode, unknown } from "./common.js";
 import { BODY_ROW, CAP_SHARE, HEAD_ROW, LINE, LIST_PAD, chartFrame, domWidth, gutterOf, gutterWidth, leastBeside, legendNode, legendOf, marksOf, rulesOf, tick0OfBars, titleProven, zeroLabel } from "./timeseries.js";
 
 const PAD_TOP = 8;
@@ -27,7 +27,6 @@ const H_LENGTHS = [78, 54, 66, 40, 58, 30, 70, 48];
 const H_TICK_TOP = 7; // the label "100%" has its line 7 px under the top of the band (11 px with a border)
 const H_TICK_LINE = 14;
 
-const finite = (v) => typeof v === "number" && Number.isFinite(v);
 
 /** The renderer that draws the panel: `horizontal` gives H, `auto` gives H when the box is higher than wide (a tie gives V). */
 export function orientationOf(panel, box) {

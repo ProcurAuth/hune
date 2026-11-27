@@ -14,6 +14,7 @@ import {
   fillAlpha, fitView, numberAt, positionFields, project, readPositions, sizeScale, tileRange, tileSource, tilesOf, tileUrl, unproject,
 } from "../geo_model.js";
 import { el, emptyState, uniqueId } from "../ui.js";
+import { maxRows } from "../queries.js";
 import { canvasColor, isDarkTheme } from "./common.js";
 
 // One queue and one cache for the whole page: the caps of 4.35 count the requests and the tiles of all the maps together. The cache keeps
@@ -28,8 +29,6 @@ const CARD_ROWS = 32;
 // The arrow keys move the view by 64 CSS pixels.
 const KEY_STEP = 64;
 const KEYS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
-
-const maxRows = (fields) => fields.reduce((n, f) => Math.max(n, f.values.length), 0);
 
 // Draws a panel of type `geomap` in `host` (9.19i). An error of the data goes to the frame as an exception. The cap of the points gives the
 // state `geo-limit` and a message, with no picture. The return value is the handle of the frame: `destroy` and `note` (the skipped rows).

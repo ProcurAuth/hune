@@ -16,7 +16,7 @@ import { shortText } from "../bucket_model.js";
 import { MAX_HEAT_CELLS, niceTime } from "../heat_model.js";
 import { niceStepAtLeast, tickLabel } from "../panels/series.js";
 import { formatNumber, joinParts } from "../units.js";
-import { BAR_HEIGHT, EXACT, LEAST, MOST, PARTS, barNode, ceilInt, exact, least, most, neutral, node, partAttrs, px, resultOf } from "./common.js";
+import { BAR_HEIGHT, EXACT, LEAST, MOST, PARTS, barNode, ceilInt, exact, finite as isNumber, least, most, neutral, node, partAttrs, px, resultOf } from "./common.js";
 import { domWidth, guideNode, measureText, neverDrawn, pixelRatio, possible, rangeOf, textBoxHeight, timeAxis, vlineNode, warningValues } from "./grids.js";
 
 // The sizes of the loaded heatmap (9.19e, 4.33c).
@@ -37,7 +37,6 @@ const LABEL_GAP = 5; // the y labels end 5 px before the plot
 const GUTTER = 9; // the gutter is the widest y label plus 9 px
 const COUNT_MAX = 500000; // a count of the shape raw: rows x value fields at most
 
-const isNumber = (v) => typeof v === "number" && Number.isFinite(v);
 
 // The certain no-picture cases (the council file, E1 to E4): the loaded body ends in a message, never in a picture. Gives the name of the case or "".
 // `range` is the range of the request, or null. E1 needs it: the columns of a computed grid are the steps of the time range.

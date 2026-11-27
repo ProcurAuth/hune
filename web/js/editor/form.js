@@ -3,7 +3,7 @@
 
 import { PANEL_TYPES } from "./draft.js";
 import { assetUrl } from "../config.js";
-import { clear, el, icon, segmented, uniqueId } from "../ui.js";
+import { clear, el, icon, uniqueId } from "../ui.js";
 
 let cssLoaded = null;
 // Loads css/editor.css once. The dialogs of the list page need it too (fields, file input, spacing).
@@ -75,6 +75,35 @@ export function selectOf(options, value) {
   for (const [v, text] of options) s.append(el("option", { value: v, text }));
   s.value = value;
   return s;
+}
+
+// A segmented control: one pressed button in a group. Returns { el, set(value), value() }.
+// segmented({ label, items: [{ value, label, icon, testid }], value, onChange(value) })
+export function segmented({ label, items, value = null, onChange = null }) {
+  let current = value;
+  const nodes = new Map();
+  const group = el("div", { class: "seg", role: "group", "aria-label": label || null });
+  const paint = () => nodes.forEach((node, key) => node.setAttribute("aria-pressed", String(key === current)));
+  for (const item of items) {
+    const node = el("button", {
+      type: "button",
+      class: "seg__item",
+      dataset: item.testid ? { testid: item.testid } : {},
+      on: {
+        click: () => {
+          if (current === item.value) return;
+          current = item.value;
+          paint();
+          if (onChange) onChange(current);
+        },
+      },
+    }, item.icon ? icon(item.icon, 14) : null, item.label ? el("span", { text: item.label }) : null);
+    if (!item.label) node.setAttribute("aria-label", item.title || String(item.value));
+    nodes.set(item.value, node);
+    group.append(node);
+  }
+  paint();
+  return { el: group, set(next) { current = next; paint(); }, value: () => current };
 }
 
 // A labelled segmented control (a group of two to four exclusive choices). The group has the name, not a `for`.

@@ -2,10 +2,14 @@
 // A new transform is valid at once and changes no data. Every function returns new objects and never changes its input.
 // The members come in the order of 4.38 with `kind` first. `moreFaults` is the check of 4.25a and 4.34 that the page can make before the save.
 
-import { CALCS } from "../../reduce.js";
 import { TITLES } from "../../transform_more.js";
 import { parseGrafanaPattern } from "../../fields.js";
 import { checkPattern, charLength, byteLength } from "./rules.js";
+
+export const CALCS = Object.freeze([
+  "last_not_null", "last", "first", "first_not_null", "min", "max", "mean", "total", "count",
+  "median", "std_dev", "variance", "range", "diff", "diff_percent", "delta", "distinct_count", "change_count",
+]);
 
 // The bounds of 4.25a and 4.35 that a form shows.
 export const MORE_LIMITS = Object.freeze({ items: 64, sort: 8, reducers: 18, partition: 4, conversions: 16, count: 1000000, nameChars: 256, nameBytes: 1024 });
