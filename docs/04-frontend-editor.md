@@ -353,6 +353,15 @@ The name `timezone`:
   <link rel="stylesheet" href="static/{{build}}/css/panel-text.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-timeline.css">
   <link rel="stylesheet" href="static/{{build}}/css/panel-bucket.css">
+  <link rel="modulepreload" href="static/{{build}}/js/api.js">
+  <link rel="modulepreload" href="static/{{build}}/js/busy.js">
+  <link rel="modulepreload" href="static/{{build}}/js/config.js">
+  <link rel="modulepreload" href="static/{{build}}/js/entry.js">
+  <link rel="modulepreload" href="static/{{build}}/js/theme.js">
+  <link rel="modulepreload" href="static/{{build}}/js/ui.js">
+  <link rel="modulepreload" href="static/{{build}}/js/url_state.js">
+  <link rel="modulepreload" href="static/{{build}}/js/repeat.js">
+  <link rel="modulepreload" href="static/{{build}}/js/time.js">
   <script src="static/{{build}}/js/boot_theme.js"></script>
   <script type="application/json" id="hune-boot">{"build":"{{build}}","version":"{{version_text}}","version_title":"{{version_title}}"}</script>
   <script type="module" src="static/{{build}}/js/main.js"></script>
@@ -367,6 +376,8 @@ The name `timezone`:
 ```
 
 The files `chart.css`, `stat.css` and `table.css` of the copied engine have their own links, before `dashboard.css`. No style sheet of the page uses `@import`, so the browser asks for all of them at the same time. The editor adds `sql.css` and then `editor.css` with two links, and its view waits for both for 1.5 s at most.
+
+The shell has one `modulepreload` link for each module in the static closure of `main.js`, except `main.js`. The closure follows `import ... from` and `export ... from` only. The links are in the order in which the browser finds the modules. The browser thus fetches these modules at the same time, and not level by level. A front unit test checks that the links are exactly this closure.
 
 The page starts in this order:
 

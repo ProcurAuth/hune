@@ -1,0 +1,43 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+// The shell preloads the static closure of main.js (9.6), so the browser does not find the modules level by level.
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { dirname, join, normalize, relative } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const WEB = join(dirname(fileURLToPath(import.meta.url)), "../../web");
+const JS = join(WEB, "js");
+
+// The files that a module imports with a static `import ... from`, `export ... from` or `import "..."`. A dynamic `import()` is not a static import.
+export function staticImports(file) {
+  const src = readFileSync(file, "utf8");
+  const out = [];
+  for (const m of src.matchAll(/\bfrom\s*["'](\.[^"']+)["']|^import\s*["'](\.[^"']+)["']/gm)) out.push(normalize(join(dirname(file), m[1] || m[2])));
+  return out;
+}
+
+// The static closure of a module in the order of discovery: breadth first, the imports of a module in source order. The entry comes first.
+export function staticClosure(entry) {
+  const seen = [join(JS, entry)];
+  for (let i = 0; i < seen.length; i++) for (const dep of staticImports(seen[i])) if (!seen.includes(dep)) seen.push(dep);
+  return seen.map((f) => relative(JS, f));
+}
+
+const shell = readFileSync(join(WEB, "shell.html"), "utf8");
+
+test("the shell preloads exactly the static closure of main.js, in the order of discovery", () => {
+  const closure = staticClosure("main.js");
+  assert.equal(closure[0], "main.js");
+  const links = [...shell.matchAll(/<link rel="modulepreload" href="static\/\{\{build\}\}\/js\/([^"]+)">/g)].map((m) => m[1]);
+  assert.deepEqual(links, closure.slice(1));
+  // The count of the tags is the count of the matches: no other form of modulepreload hides in the shell.
+  assert.equal([...shell.matchAll(/rel="modulepreload"/g)].length, links.length);
+});
+
+test("the module main.js stays a module script of the shell, and the preloads come before the scripts", () => {
+  const first = shell.indexOf('rel="modulepreload"');
+  assert.ok(first > shell.lastIndexOf('rel="stylesheet"'), "the preloads follow the style sheets");
+  assert.ok(first < shell.indexOf("js/boot_theme.js"));
+  assert.match(shell, /<script type="module" src="static\/\{\{build\}\}\/js\/main\.js"><\/script>/);
+});
