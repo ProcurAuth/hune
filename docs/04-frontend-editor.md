@@ -381,15 +381,15 @@ The name `timezone`:
 </html>
 ```
 
-The template lists the style sheets one by one, in the order of the cascade. The server does not send these links. It replaces them with one link to `css/page.css` at the place of the first link (9.3). The page thus asks for one style sheet in place of 25. The source sheets stay in `web/css/`, and the tests read them.
+The template lists the style sheets one by one, in the order of the cascade. The server does not send these links. It replaces them with one link to `css/page.css` at the place of the first link (9.3). The page asks for one style sheet, not 25. The source sheets stay in `web/css/`, and the tests read them.
 
 The files `chart.css`, `stat.css` and `table.css` of the copied engine have their own links, before `dashboard.css`. No style sheet of the page uses `@import`, so the browser asks for all of them at the same time. The editor adds `sql.css` and then `editor.css` with two links, and its view waits for both for 1.5 s at most.
 
-The shell has one `modulepreload` link for each module in the static closure of `main.js`, except `main.js`. The closure follows `import ... from` and `export ... from` only. The links come after the script of `main.js`, so the request for `main.js` is not behind them. They are in the order in which the browser finds the modules. The browser thus fetches these modules at the same time, and not level by level. A front unit test checks that the links are exactly this closure.
+The shell has one `modulepreload` link for each module in the static closure of `main.js`, except `main.js`. The closure follows `import ... from` and `export ... from` only. The links come after the script of `main.js`, so the request for `main.js` is not behind them. They are in the order in which the browser finds the modules. The browser fetches these modules at the same time, and not level by level. A front unit test checks that the links are exactly this closure.
 
-The shell also preloads the file `icons.svg` with `as="fetch"` and `crossorigin`. `main.js` reads this file with `fetch` and the credentials mode `same-origin`, which is the mode of `crossorigin`. The browser thus uses the preloaded answer, and the page makes one request for the file.
+The shell also preloads the file `icons.svg` with `as="fetch"` and `crossorigin`. `main.js` reads this file with `fetch` and the credentials mode `same-origin`, which is the mode of `crossorigin`. The browser uses the preloaded answer, so the page makes one request for the file.
 
-The marker `{{preload}}` is a line of its own. The server replaces it with more `modulepreload` links for the page of the route. The route `/` adds the static closure of `list.js`. The route `/d/{uid}[/{slug}]` adds the static closure of `dashboard.js`. Each list leaves out the modules that the links of `main.js` already name.
+The marker `{{preload}}` is a line of its own. The server replaces it with more `modulepreload` links for the page of the route. The route `/` adds the static closure of `list.js`. The route `/d/{uid}[/{slug}]` adds the static closure of `dashboard.js`. Each list omits the modules that the links of `main.js` already name.
 
 The page never preloads a module that it loads with `import()`: the panel modules and the editor load on demand. `build.rs` makes the two lists from the files of `web/`, with the import rule above. The marker becomes nothing in the shell with the status 404, so that a wrong address preloads no module of a page. A Rust test checks the lists against the files.
 

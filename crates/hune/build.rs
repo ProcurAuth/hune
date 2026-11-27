@@ -193,6 +193,41 @@ fn rust_list(name: &str, doc: &str, paths: &[String]) -> String {
 /// The path of the style sheet that the build makes from the style sheets of the shell (9.6).
 const PAGE_CSS: &str = "css/page.css";
 
+/// Stops the build when the shell template breaks a rule that the build and the server need (9.6):
+///
+/// - The marker `{{preload}}` is on one line of its own, and it is in the template one time.
+/// - Each link of a style sheet has the exact form of [`shell_sheets`], so the server can replace it.
+/// - These links follow one another with no other line between them, so the one link of `css/page.css` keeps the
+///   order of the cascade.
+fn check_shell_template(template: &str) {
+    let marker_lines = template.lines().filter(|l| *l == "{{preload}}").count();
+    if marker_lines != 1 || template.matches("{{preload}}").count() != 1 {
+        fail("web/shell.html must have the marker {{preload}} one time, alone on its line, with no indent");
+    }
+    let lines: Vec<&str> = template.lines().collect();
+    let mut sheet_lines = Vec::new();
+    for (i, line) in lines.iter().enumerate() {
+        let exact = shell_sheets(line).len() == 1;
+        if line.contains("stylesheet") && !exact {
+            fail(&format!(
+                "web/shell.html line {}: a style sheet link must be exactly <link rel=\"stylesheet\" href=\"static/{{{{build}}}}/PATH\">; the build cannot join this one: {}",
+                i + 1,
+                line.trim()
+            ));
+        }
+        if exact {
+            sheet_lines.push(i);
+        }
+    }
+    if let (Some(first), Some(last)) = (sheet_lines.first(), sheet_lines.last())
+        && last - first + 1 != sheet_lines.len()
+    {
+        fail(
+            "web/shell.html has a line between its style sheet links; the one link of css/page.css would change the order",
+        );
+    }
+}
+
 /// The paths of the style sheets that a shell template links, in order. A link has the form
 /// `<link rel="stylesheet" href="static/{{build}}/<path>">` on a line of its own.
 fn shell_sheets(template: &str) -> Vec<String> {
@@ -326,6 +361,7 @@ fn make_page_css(entries: &[Entry]) -> String {
         entries.iter().find(|e| e.path == "shell.html").unwrap_or_else(|| fail("web/shell.html does not exist"));
     let template =
         fs::read_to_string(&shell.absolute).unwrap_or_else(|e| fail(&format!("cannot read shell.html: {e}")));
+    check_shell_template(&template);
     let sheets = shell_sheets(&template);
     if sheets.is_empty() {
         fail("web/shell.html links no style sheet");
