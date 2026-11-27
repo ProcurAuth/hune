@@ -25,6 +25,8 @@
   position: absolute; inset: var(--panel-pad); display: none; overflow: hidden; pointer-events: none;
 }
 .panel--wait[data-wait="first"] .panel__skeleton { display: block; }
+/* The preview of a chart panel follows the loaded panel: no padding above the plot (dashboard.css). */
+.panel:is([data-type="timeseries"], [data-type="barchart"], [data-type="xychart"], [data-type="timeline"], [data-type="heatmap"], [data-type="histogram"]) > .panel__body > .panel__skeleton { top: var(--panel-plot-top); }
 /* The module of the family is not in the page yet: the preview has no shape, so it and its light stay invisible until the first drawing. */
 .panel__skeleton[data-unpainted] { opacity: 0; }
 /* The light: one band that crosses the preview from the left to the right, with a transform only (no repaint of the shapes). */

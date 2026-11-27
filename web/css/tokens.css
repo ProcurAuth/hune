@@ -39,6 +39,7 @@
   --grid-row: 30px;            /* the height of one row unit of the grid */
   --panel-head-h: 32px;        /* the title bar of a panel: the 22 px title has 5 px above and below */
   --panel-pad: var(--space-8);
+  --panel-plot-top: 0px;       /* the space between the title bar and the top of a chart panel (the engine adds 8 px for the label of the top tick) */
   --panel-radius: var(--r-md);
   --toolbar-gap: var(--space-6);
   --field-w: 280px;            /* the default width of a search or text field in a toolbar */

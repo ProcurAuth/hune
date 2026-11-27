@@ -815,7 +815,7 @@ export class Page {
       source: `(() => {
         const add = () => {
           const s = document.createElement("style");
-          s.textContent = ":root { --panel-head-h: ${px}px !important; }";
+          s.textContent = ":root { --panel-head-h: ${px}px !important; --panel-plot-top: 8px !important; }";
           document.documentElement.appendChild(s);
         };
         // The script runs before the parser makes the root element.

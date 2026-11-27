@@ -2,9 +2,9 @@
 
 This file follows the layout of [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and uses ASD-STE100 Simplified Technical English. The versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). Before 1.0, a minor version can change a key, a route or the format of a document.
 
-Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is first. The release scripts read the section of the version as the notes of the release. The section `## Unreleased` holds the changes that no release has yet.
+Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is first. The release scripts read the section of the version as the notes of the release. The section `## Unreleased
 
-## Unreleased
+## 0.3.4 - 2026-11-27
 
 ### Added
 
@@ -13,7 +13,22 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ### Changed
 
+- A chart panel has no padding above its plot. The plot is 8 px nearer to the title, and the chart is 8 px taller. The types are `timeseries`, `barchart`, `xychart`, `timeline`, `heatmap` and `histogram`.
 - A read-only store shows no lock. The list, the header of a dashboard and the title of a store have none. A card has no three dots and a dashboard has no switch "Edit", and this is the sign. The title of a store and its row in the selector have a folder icon.
+- The shell gives its style sheets as one file, `css/page.css`, that the build makes from the sheets of `web/css/`. A page sends 24 fewer requests.
+- The shell preloads the modules of `main.js` and the icon sprite. The shell of `/` also preloads the modules of the list page, and the shell of `/d/{uid}` preloads the modules of the dashboard page. The headers do not change.
+- The font Inter comes in two files. The first file has every character that the page usually shows, and the shell preloads it. The browser loads the second file only for a rare character, such as a character of the private use area.
+- A dashboard page loads the module of a preview family only for the types of its panels. It also no longer loads the module of the list page.
+- A panel loads its module when it comes near the view. It no longer waits for the answer of its query.
+- The panel editor loads its style sheet, its module and the list of sources at the same time.
+- The stat, bar gauge and horizontal bar chart panels read the sizes of all their items in one layout. A chart draws one time at its creation when its first height is correct. The text layer of a chart reads its sizes before it writes.
+- The previews of the panels that wait read all their sizes in one animation frame, and then they draw.
+- On a test dashboard of 60 panels in Chrome, the page has 87 % fewer layouts and is ready 38 % to 51 % sooner. A cold page of the list sends 23 requests in place of 46.
+
+### Fixed
+
+- Each exit from the panel editor kept the preview panel, its chart, its observers and its listeners in memory. The panel editor now removes them.
+- The open popover "Query options" kept its listeners on the window and the document after the panel editor ended. The panel editor now closes it.
 
 ## 0.3.3 - 2026-11-27
 

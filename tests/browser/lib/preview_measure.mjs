@@ -124,9 +124,11 @@ function loadedProbe(id, family, extractors) {
   const body = panel.querySelector(".panel__body");
   if (!body) return { id, type, state, parts: [] };
   const pad = sk ? parseFloat(getComputedStyle(sk).left) || 0 : 8;
+  // A chart panel has no padding above its plot (`--panel-plot-top`): the top of the preview box is the `top` of the skeleton.
+  const padTop = sk ? parseFloat(getComputedStyle(sk).top) || 0 : 8;
   const b = body.getBoundingClientRect();
   const ox = b.x + pad;
-  const oy = b.y + pad;
+  const oy = b.y + padTop;
   const rel = (e) => {
     const r = e.getBoundingClientRect();
     return [r.x - ox, r.y - oy, r.width, r.height];
@@ -171,7 +173,7 @@ function loadedProbe(id, family, extractors) {
     return out;
   };
 
-  add("box", [0, 0, b.width - 2 * pad, b.height - 2 * pad]);
+  add("box", [0, 0, b.width - 2 * pad, b.height - padTop - pad]);
   const warn = panel.querySelector(".panel__warning");
   if (warn && visible(warn)) add("warning", rel(warn));
   const holder = panel.querySelector(".panel__plot");

@@ -1422,6 +1422,10 @@ The request (7.7a). The member of the variable in `variables` is `{"filters": [{
 ### 9.11 Panel frame
 
 - The frame is a box with a border of 1 px and a radius of 6 px. Its title bar is 32 px high. The bar has the title (14 px, weight 500), the description icon with its tooltip and the time note of 9.8b. It also has the menu of the panel links (9.18) and the panel menu. An empty title shows no text. A time series with annotations can also have the annotation note of 9.19d, after the time note.
+- The body of a chart panel has no padding above the plot. These panels are the types `timeseries`, `barchart`, `xychart`, `timeline`, `heatmap` and `histogram`. The token `--panel-plot-top` is `0px`. The plot is then 33 px under the top of the panel.
+  - The engine keeps 8 px above the first grid line, for the label of the top tick.
+  - The preview of a panel that waits for data follows the same rule.
+  - The other types keep the padding of 8 px on the four sides.
 - The title and the description show after the replacement of the variables (9.13). The text of a panel link shows in the same way.
 - The icon of the description is 16 px, and it follows the title at 8 px. The title gets an ellipsis when it is too long. The menu button has 16 px of room before it, and this room comes from the title. In a title bar of 184 px, the title next to the icon of the description has 88 px.
 - The button of the panel menu is 20 x 24 px. It shows on hover, on keyboard focus inside the panel and while its menu is open. On a touch screen it always shows.

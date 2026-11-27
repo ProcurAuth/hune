@@ -25,10 +25,10 @@ The script `init.sql` makes the database `demo` with synthetic tables. It also m
 The release has a static binary for Linux amd64. Check the archive against `SHA256SUMS`.
 
 ```sh
-curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.3.3/hune_0.3.3_linux_amd64.tar.gz
-curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.3.3/SHA256SUMS
+curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.3.4/hune_0.3.4_linux_amd64.tar.gz
+curl -fsSLO https://github.com/ProcurAuth/hune/releases/download/v0.3.4/SHA256SUMS
 sha256sum --check --ignore-missing SHA256SUMS
-tar -xzf hune_0.3.3_linux_amd64.tar.gz
+tar -xzf hune_0.3.4_linux_amd64.tar.gz
 ```
 
 The archive also holds `config.reference.hcl` (a complete configuration file), the folder `deploy/` and a `Dockerfile` for a local image.
@@ -40,8 +40,8 @@ The demo configuration uses the volume store in `/tmp/hune-demo/dashboards`. Cop
 ```sh
 mkdir -p /tmp/hune-demo && cp -R hune/examples/demo/dashboards /tmp/hune-demo/dashboards
 export HUNE_DEMO_CH_PASSWORD=hune-demo-password
-hune_0.3.3_linux_amd64/hune check-config -c hune/examples/demo/hune.hcl
-hune_0.3.3_linux_amd64/hune print-config -c hune/examples/demo/hune.hcl
+hune_0.3.4_linux_amd64/hune check-config -c hune/examples/demo/hune.hcl
+hune_0.3.4_linux_amd64/hune print-config -c hune/examples/demo/hune.hcl
 ```
 
 `check-config` finds each error and sends nothing on the network. `print-config` shows the value that applies for each key and the source of the value. A secret shows as `<hidden>`.
@@ -49,7 +49,7 @@ hune_0.3.3_linux_amd64/hune print-config -c hune/examples/demo/hune.hcl
 ## 5. Run Hune
 
 ```sh
-hune_0.3.3_linux_amd64/hune serve -c hune/examples/demo/hune.hcl
+hune_0.3.4_linux_amd64/hune serve -c hune/examples/demo/hune.hcl
 ```
 
 Open `http://127.0.0.1:8080/`. The list shows the demo folders. Open a dashboard and change the time range. Pick a value of a variable. Open the inspect view of a panel to see the SQL that the server sent. The page can write: the switch Edit opens the editor.

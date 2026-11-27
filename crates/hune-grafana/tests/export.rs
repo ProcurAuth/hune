@@ -311,7 +311,7 @@ fn links_and_the_nginx_map() {
 fn report_meta() -> ReportMeta {
     let o = options("");
     ReportMeta {
-        hune_version: "0.3.3".to_owned(),
+        hune_version: "0.3.4".to_owned(),
         created_at: "2026-11-20T09:12:44Z".to_owned(),
         input_dir: "/private/grafana-export-20261120T090000Z".to_owned(),
         source_map: o.source_map.clone(),

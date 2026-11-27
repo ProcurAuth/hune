@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
   migrate:
-    image: hune:0.3.3
+    image: hune:0.3.4
     pull_policy: never
     user: "65532:65532"
     read_only: true
@@ -54,7 +54,7 @@ services:
     restart: "no"
 
   hune-a: &hune
-    image: hune:0.3.3
+    image: hune:0.3.4
     pull_policy: never
     user: "65532:65532"
     read_only: true
