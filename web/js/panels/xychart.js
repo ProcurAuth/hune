@@ -1,7 +1,7 @@
 // The xy chart panel (9.19, 4.32): the copied chart engine draws it (xKind "number").
 
 import { selectRows } from "../frame.js";
-import { applyLegend, chartColor, createChart, fitHeight, hiddenIds, hideFlags, labelChart, legendFormatter, legendOptions, numbersOf, tooltipFormat, valueFormatter, yTickLabeller } from "./common.js";
+import { applyLegend, chartColor, createChart, fitHeight, firstHeight, hiddenIds, hideFlags, labelChart, legendFormatter, legendOptions, numbersOf, tooltipFormat, valueFormatter, yTickLabeller } from "./common.js";
 import { autoYAxis, autoYRange, lastFinite, numberTicks, sharedRange } from "./series.js";
 
 const isNum = (f) => f.kind === "number" || f.kind === "number_text";
@@ -53,7 +53,7 @@ export function render(host, ctx) {
   const xLabel = yTickLabeller(fields[xIndex]);
   const yLabel = yTickLabeller(first);
   const options = {
-    height: Math.max(60, host.clientHeight - 28),
+    height: firstHeight(host, legend.legend !== false),
     xKind: "number",
     xs,
     series,
@@ -86,7 +86,7 @@ export function render(host, ctx) {
   const chart = createChart(host, options);
   applyLegend(host, chart, o.legend);
   labelChart(chart, panel);
-  const unfit = fitHeight(host, chart);
+  const unfit = fitHeight(host, chart, 60, options.height);
   return {
     destroy() {
       unfit();
