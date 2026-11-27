@@ -164,6 +164,8 @@ file of `web/` stays in one of the directories of this layout.
 - The `build.rs` of the crate `hune` reads each file of `web/`, in byte order of the path. It embeds each file with
   `include_bytes!` and computes its SHA-256.
 - A symbolic link, or an extension outside the table below, stops the build.
+- The build also makes the file `css/page.css` (9.6). It is the text of the style sheets that `shell.html` links, in the order of the links. It is a file of the build list, with its own hash, and it gets a gzip copy like each other file. A file of `web/` with the same path stops the build.
+- Each `url()` of a joined sheet keeps the file that it named in its own sheet, with a path that is right for `css/page.css`. A sheet with an `@import`, an `@charset` or braces that are not balanced stops the build.
 - The build list is a text with one line `<path> <sha256>` for each file, in path order. Each line ends with LF. The
   build hash is the first 16 hexadecimal characters of the SHA-256 of the build list.
 - A static file has the URL `static/<build-hash>/<path>`, relative to the `<base href>` of the shell (9.6). A relative
@@ -378,6 +380,8 @@ The name `timezone`:
 </body>
 </html>
 ```
+
+The template lists the style sheets one by one, in the order of the cascade. The server does not send these links. It replaces them with one link to `css/page.css` at the place of the first link (9.3). The page thus asks for one style sheet in place of 25. The source sheets stay in `web/css/`, and the tests read them.
 
 The files `chart.css`, `stat.css` and `table.css` of the copied engine have their own links, before `dashboard.css`. No style sheet of the page uses `@import`, so the browser asks for all of them at the same time. The editor adds `sql.css` and then `editor.css` with two links, and its view waits for both for 1.5 s at most.
 

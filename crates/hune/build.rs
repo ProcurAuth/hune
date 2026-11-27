@@ -2,8 +2,8 @@
 //! Build script of the crate `hune`.
 //!
 //! It embeds each file of the directory `web/` (9.3). It makes the build list, the build hash and a
-//! Rust table of the files. It also makes the preload lists of the shell (9.6) and gives the commit and
-//! the target to `hune version` (17.2).
+//! Rust table of the files. It also makes the preload lists of the shell (9.6), the one style sheet of the
+//! shell (9.6) and gives the commit and the target to `hune version` (17.2).
 //! This script reads the environment: a build script is not product code (R2).
 
 use sha2::{Digest, Sha256};
@@ -190,6 +190,163 @@ fn rust_list(name: &str, doc: &str, paths: &[String]) -> String {
     text
 }
 
+/// The path of the style sheet that the build makes from the style sheets of the shell (9.6).
+const PAGE_CSS: &str = "css/page.css";
+
+/// The paths of the style sheets that a shell template links, in order. A link has the form
+/// `<link rel="stylesheet" href="static/{{build}}/<path>">` on a line of its own.
+fn shell_sheets(template: &str) -> Vec<String> {
+    template
+        .lines()
+        .filter_map(|l| {
+            let path =
+                l.trim().strip_prefix("<link rel=\"stylesheet\" href=\"static/{{build}}/")?.strip_suffix("\">")?;
+            Some(path.to_owned())
+        })
+        .collect()
+}
+
+/// The path of `target` (a path of `web/`) as a relative reference from the folder `dir`.
+fn relative_from(dir: &str, target: &str) -> String {
+    let dir_parts: Vec<&str> = dir.split('/').filter(|p| !p.is_empty()).collect();
+    let target_parts: Vec<&str> = target.split('/').collect();
+    let common = dir_parts.iter().zip(&target_parts).take_while(|(a, b)| a == b).count();
+    let mut out = String::new();
+    for _ in common..dir_parts.len() {
+        out.push_str("../");
+    }
+    out.push_str(&target_parts[common..].join("/"));
+    out
+}
+
+/// Gives the style sheet `css` of the file `file` for a sheet that lives in the folder `to_dir`.
+///
+/// A relative `url()` gets a new text that names the same file. `url(data:...)`, `url(#...)`, a path with a
+/// scheme and a path from the root stay as they are. The function stops the build when the sheet has an
+/// `@import` or an `@charset`, or when its braces are not balanced: such a sheet would change the next sheet.
+fn rewrite_css(css: &str, file: &str, to_dir: &str) -> String {
+    let b = css.as_bytes();
+    let mut out = String::with_capacity(css.len());
+    let mut depth: i64 = 0;
+    let mut i = 0;
+    let mut copied = 0; // the bytes of `css` before `copied` are in `out`
+    while i < b.len() {
+        match b[i] {
+            b'/' if b.get(i + 1) == Some(&b'*') => {
+                let end = css[i + 2..].find("*/").map_or(b.len(), |e| i + 2 + e + 2);
+                i = end;
+            }
+            q @ (b'"' | b'\'') => {
+                i += 1;
+                while i < b.len() && b[i] != q {
+                    i += if b[i] == b'\\' { 2 } else { 1 };
+                }
+                i += 1;
+            }
+            b'{' => {
+                depth += 1;
+                i += 1;
+            }
+            b'}' => {
+                depth -= 1;
+                if depth < 0 {
+                    fail(&format!("web/{file} has a closing brace with no opening brace"));
+                }
+                i += 1;
+            }
+            b'@' => {
+                let word: String = css[i + 1..].chars().take_while(|c| c.is_ascii_alphabetic()).collect();
+                if word.eq_ignore_ascii_case("import") || word.eq_ignore_ascii_case("charset") {
+                    fail(&format!("web/{file} has an @{word}; the style sheet of the shell cannot join it"));
+                }
+                i += 1;
+            }
+            b'u' | b'U'
+                if css.get(i..i + 4).is_some_and(|w| w.eq_ignore_ascii_case("url("))
+                    && (i == 0 || !(b[i - 1].is_ascii_alphanumeric() || b[i - 1] == b'-' || b[i - 1] == b'_')) =>
+            {
+                let open = i + 4;
+                let mut at = open;
+                while at < b.len() && b[at].is_ascii_whitespace() {
+                    at += 1;
+                }
+                let (value, after) = if at < b.len() && (b[at] == b'"' || b[at] == b'\'') {
+                    let q = b[at];
+                    let start = at + 1;
+                    let mut end = start;
+                    while end < b.len() && b[end] != q {
+                        end += if b[end] == b'\\' { 2 } else { 1 };
+                    }
+                    (&css[start..end.min(b.len())], end + 1)
+                } else {
+                    let start = at;
+                    let mut end = start;
+                    while end < b.len() && b[end] != b')' && !b[end].is_ascii_whitespace() {
+                        end += 1;
+                    }
+                    (&css[start..end], end)
+                };
+                let mut close = after;
+                while close < b.len() && b[close].is_ascii_whitespace() {
+                    close += 1;
+                }
+                if close >= b.len() || b[close] != b')' {
+                    fail(&format!("web/{file} has a url( that does not end"));
+                }
+                let keep = value.is_empty()
+                    || value.starts_with('#')
+                    || value.starts_with('/')
+                    || value.contains(':')
+                    || value.contains('\\');
+                if !keep {
+                    let split = value.find(['?', '#']).unwrap_or(value.len());
+                    let target = join_module(file, &value[..split])
+                        .unwrap_or_else(|| fail(&format!("web/{file} has the url {value}, which is outside web/")));
+                    let text = format!("url(\"{}{}\")", relative_from(to_dir, &target), &value[split..]);
+                    out.push_str(&css[copied..i]);
+                    out.push_str(&text);
+                    copied = close + 1;
+                }
+                i = close + 1;
+            }
+            _ => i += 1,
+        }
+    }
+    if depth != 0 {
+        fail(&format!("web/{file} has {depth} opening brace(s) with no closing brace"));
+    }
+    out.push_str(&css[copied..]);
+    out
+}
+
+/// Makes the style sheet of the shell: the style sheets of the shell template, in the order of the template, each
+/// one after a comment with its path. Each `url()` still names the same file. The sheets stay in `web/`.
+fn make_page_css(entries: &[Entry]) -> String {
+    let shell =
+        entries.iter().find(|e| e.path == "shell.html").unwrap_or_else(|| fail("web/shell.html does not exist"));
+    let template =
+        fs::read_to_string(&shell.absolute).unwrap_or_else(|e| fail(&format!("cannot read shell.html: {e}")));
+    let sheets = shell_sheets(&template);
+    if sheets.is_empty() {
+        fail("web/shell.html links no style sheet");
+    }
+    let to_dir = PAGE_CSS.rsplit_once('/').map_or("", |(d, _)| d);
+    let mut out = String::new();
+    for path in &sheets {
+        let item = entries
+            .iter()
+            .find(|e| &e.path == path)
+            .unwrap_or_else(|| fail(&format!("web/shell.html links web/{path}, which does not exist")));
+        let css = fs::read_to_string(&item.absolute).unwrap_or_else(|e| fail(&format!("cannot read web/{path}: {e}")));
+        let _ = writeln!(out, "/* {path} */");
+        out.push_str(&rewrite_css(&css, path, to_dir));
+        if !out.ends_with('\n') {
+            out.push('\n');
+        }
+    }
+    out
+}
+
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
     println!("cargo:rerun-if-env-changed=HUNE_BUILD_COMMIT");
@@ -204,6 +361,20 @@ fn main() {
 
     let mut entries = Vec::new();
     walk(&web, &web, &mut entries);
+    // The style sheet of the shell (9.6) is a file of the build: it has a path, a hash and a gzip copy as the others.
+    if entries.iter().any(|e| e.path == PAGE_CSS) {
+        fail(&format!("web/{PAGE_CSS} exists, but the build makes this file"));
+    }
+    let page_css = make_page_css(&entries);
+    let page_path = out_dir.join("page.css");
+    fs::write(&page_path, &page_css)
+        .unwrap_or_else(|e| fail(&format!("cannot write the style sheet of the shell: {e}")));
+    entries.push(Entry {
+        path: PAGE_CSS.to_owned(),
+        absolute: page_path,
+        content_type: "text/css; charset=utf-8",
+        sha256: hex(&Sha256::digest(page_css.as_bytes())),
+    });
     entries.sort_by(|a, b| a.path.as_bytes().cmp(b.path.as_bytes()));
 
     // The build list (9.3): one line "<path> <sha256>" for each file, each line ends with LF.
@@ -250,6 +421,14 @@ fn main() {
         "PRELOAD_DASHBOARD",
         "The modules that the dashboard page needs and that `PRELOAD_MAIN` does not have (9.6).",
         &route_files("js/dashboard.js"),
+    ));
+    let sheets = shell_sheets(&fs::read_to_string(web.join("shell.html")).unwrap_or_default());
+    let _ = writeln!(table, "/// The path of the style sheet that the build makes for the shell (9.6).");
+    let _ = writeln!(table, "pub const PAGE_CSS: &str = {PAGE_CSS:?};");
+    table.push_str(&rust_list(
+        "SHELL_SHEETS",
+        "The style sheets that `PAGE_CSS` joins, in the order of the shell template (9.6).",
+        &sheets,
     ));
     fs::write(out_dir.join("web_table.rs"), table).unwrap_or_else(|e| fail(&format!("cannot write the table: {e}")));
 

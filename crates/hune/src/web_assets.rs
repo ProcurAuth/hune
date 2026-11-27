@@ -107,15 +107,38 @@ fn preload_links(build: &str, paths: &[&str]) -> String {
     out
 }
 
+/// The path of a style sheet that a line of the shell template links, or `None` for another line.
+fn sheet_of_line(line: &str) -> Option<&str> {
+    line.trim().strip_prefix("<link rel=\"stylesheet\" href=\"static/{{build}}/")?.strip_suffix("\">")
+}
+
+/// Replaces the links of the style sheets that `PAGE_CSS` joins by one link to `PAGE_CSS`, at the place of the first one (9.6).
+fn join_sheets(template: &str) -> String {
+    let mut out = String::with_capacity(template.len());
+    let mut done = false;
+    for line in template.split_inclusive('\n') {
+        if sheet_of_line(line).is_some_and(|p| SHELL_SHEETS.contains(&p)) {
+            if !done {
+                out.push_str(&format!("  <link rel=\"stylesheet\" href=\"static/{{{{build}}}}/{PAGE_CSS}\">\n"));
+                done = true;
+            }
+        } else {
+            out.push_str(line);
+        }
+    }
+    out
+}
+
 /// Makes the shell page from a template (9.3, 9.6).
 ///
 /// The marker `{{base_path}}` becomes the HTML-escaped base path. The marker `{{build}}` becomes
 /// the build hash. The markers `{{version_text}}` and `{{version_title}}` become the version line of
 /// the header and its title (9.6). Their characters are safe in a JSON string, so no escape applies.
+/// The links of the style sheets of `SHELL_SHEETS` become one link to `PAGE_CSS`.
 /// The marker `{{preload}}` is a line of its own. It becomes one link `modulepreload` for each path of
 /// `preload`, or nothing when the list is empty.
 pub fn render_shell(template: &str, base_path: &str, build: &str, version: &UiVersion, preload: &[&str]) -> Bytes {
-    let text = template
+    let text = join_sheets(template)
         .replace("{{preload}}\n", &preload_links(build, preload))
         .replace("{{preload}}", "")
         .replace("{{base_path}}", &html_escape(base_path))
@@ -337,5 +360,58 @@ mod tests {
             .collect();
         assert_eq!(links, PRELOAD_MAIN);
         assert_eq!(template.matches("{{preload}}").count(), 1);
+    }
+
+    /// The paths of the links of style sheets in a text, in order.
+    fn sheet_links(text: &str) -> Vec<String> {
+        text.lines().filter_map(|l| sheet_of_line(l).map(str::to_owned)).collect()
+    }
+
+    #[test]
+    fn the_shell_has_one_style_sheet_and_the_template_keeps_the_sources_in_order() {
+        let template = std::str::from_utf8(find(SHELL_PATH).unwrap().bytes).unwrap();
+        let sources = sheet_links(template);
+        assert_eq!(sources, SHELL_SHEETS);
+        assert!(sources.len() > 20, "the template links the style sheets one by one");
+        let shells = build_shells("/").expect("shell.html is in web/");
+        for page in [&shells.base, &shells.list, &shells.dashboard] {
+            let text = std::str::from_utf8(page).unwrap();
+            let rendered = text.lines().filter(|l| l.contains("rel=\"stylesheet\"")).count();
+            assert_eq!(rendered, 1);
+            assert!(text.contains(&format!("<link rel=\"stylesheet\" href=\"static/{BUILD_HASH}/{PAGE_CSS}\">")));
+            // The font preload and the first script keep their order around the one link.
+            let link = text.find(PAGE_CSS).unwrap();
+            assert!(text.find("rel=\"preload\" href=\"static/").unwrap() < link);
+            assert!(link < text.find("js/boot_theme.js").unwrap());
+        }
+    }
+
+    #[test]
+    fn page_css_is_a_file_of_the_build_that_joins_the_sheets_in_order() {
+        let file = find_static(BUILD_HASH, PAGE_CSS).expect("the build makes the style sheet of the shell");
+        assert_eq!(file.content_type, "text/css; charset=utf-8");
+        assert!(gzip_copy(file).is_some(), "the style sheet has a gzip copy");
+        let css = std::str::from_utf8(file.bytes).unwrap();
+        assert!(!css.contains("@import") && !css.contains("@charset"));
+        // Each source sheet is in the file, after the comment with its path, in the order of the template.
+        let mut at = 0;
+        for path in SHELL_SHEETS {
+            let source = std::str::from_utf8(find(path).unwrap().bytes).unwrap();
+            let marker = format!("/* {path} */\n");
+            let start = css[at..].find(&marker).unwrap_or_else(|| panic!("{path} is missing or out of order"))
+                + at
+                + marker.len();
+            // The sheets without a url() are copied byte for byte.
+            if !source.contains("url(") {
+                assert!(css[start..].starts_with(source), "{path} is not copied as it is");
+            }
+            at = start + source.len().min(css.len() - start);
+        }
+        // Each url() names the file that it named in its own sheet: the sheets of the folder css/vendor/chdash/ get a longer path.
+        assert!(css.contains("src: url(\"../fonts/inter/InterVariable.woff2\")"));
+        assert!(css.contains("src: url(\"vendor/chdash/fonts/IBMPlexSans-Regular-Latin1.woff2\")"));
+        assert!(!css.contains("url(\"fonts/IBMPlex"));
+        // The sources stay in the build: the tests and the editor read them.
+        assert!(find("css/dashboard.css").is_some() && find("css/vendor/chdash/00-tokens.css").is_some());
     }
 }
