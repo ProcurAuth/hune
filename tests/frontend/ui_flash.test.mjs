@@ -54,7 +54,7 @@ test("the font does not swap after the first paint", () => {
   const css = read("web/css/fonts.css");
   assert.match(css, /font-display: block;/);
   assert.ok(!/font-display: swap/.test(css));
-  assert.match(read("web/shell.html"), /rel="preload" href="static\/\{\{build\}\}\/fonts\/inter\/InterVariable\.woff2"/);
+  assert.match(read("web/shell.html"), /rel="preload" href="static\/\{\{build\}\}\/fonts\/inter\/InterVariable-main\.woff2"/);
 });
 
 test("the controls of the header have fixed widths in every state (9.9)", () => {
