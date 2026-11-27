@@ -1,7 +1,7 @@
 // The time picker (9.9): the range button and its popup. The popup has the absolute range at the left (From, To, a calendar, "Apply time
 // range") and the search and the lists at the right. Its look, keys and labels follow the range picker of ClickHouse Dash.
 
-import { QUICK_RANGES, formatRangeText, parseAbsoluteInput, wallClock, zoneLabel, zoneName, zoneOffsetLabel } from "./time.js";
+import { QUICK_RANGES, formatRangeText, parseAbsoluteInput, wallClock, zoneChoices, zoneLabel, zoneName, zoneOffsetLabel } from "./time.js";
 import { addDays, addMonths, dayText, keyOf, monthGrid, parseRecent, pushRecent, typedRange, weekday } from "./time_calendar.js";
 import { anchorPopup, button, el, icon, uniqueId } from "./ui.js";
 import { formatTime } from "./zone.js";
@@ -9,7 +9,9 @@ import { formatTime } from "./zone.js";
 const RECENT_KEY = "hune.timeRanges";
 const same = (a, b) => a.from === b.from && a.to === b.to;
 
-// time: { zone, getRange(): { fromText, toText }, apply(fromText, toText): { error? }, onZoomOut(): void, onShift(dir): void }
+// time: { zone, getRange(): { fromText, toText }, apply(fromText, toText, zone): { error? }, onZoomOut(): void, onShift(dir): void }
+// `zone` is the zone of the page. The popup lets the viewer choose another zone: the fields and the calendar then use it, and Apply (or a quick range) gives it
+// to `apply` as the third argument.
 // dir is -1 (back) or 1 (forward): the page moves the range by half of its span (time.js shiftRange).
 export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = () => {} }) {
   const label = el("span", { class: "picker__text" });
@@ -66,20 +68,22 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
     if (popup) return close();
     if (leaving) leaving.remove();
     leaving = null;
+    // The zone of the popup: the zone of the page until the viewer chooses another one. Apply gives it to the page.
+    let zoneNow = zone;
     const cur = getRange();
     const current = { from: cur.fromText, to: cur.toText };
     const id = uniqueId("tr");
     const monthFormat = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
     const dayFormat = new Intl.DateTimeFormat("en-US", { dateStyle: "full", timeZone: "UTC" });
     const dayOf = (ms) => {
-      const w = wallClock(ms, zone);
+      const w = wallClock(ms, zoneNow);
       return keyOf(w.year, w.month, w.day);
     };
 
     // The fields From and To. An absolute time is epoch milliseconds in the page, and the field shows it in the zone.
     const makeField = (edge, text, example) => {
       const input = el("input", {
-        class: "input", id: `${id}-${edge}`, type: "text", value: /^[0-9]+$/.test(text) ? formatTime(Number(text), zone) : text, autocomplete: "off", spellcheck: "false",
+        class: "input", id: `${id}-${edge}`, type: "text", value: /^[0-9]+$/.test(text) ? formatTime(Number(text), zoneNow) : text, autocomplete: "off", spellcheck: "false",
         placeholder: `YYYY-MM-DD HH:mm:ss or ${example}`, "aria-describedby": `${id}-${edge}-err`, dataset: { testid: `time-${edge}` },
       });
       const err = el("p", { class: "field__error field-error", id: `${id}-${edge}-err`, role: "alert", hidden: true });
@@ -89,7 +93,7 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
     const [fromIn, toIn] = fields.map((f) => f.input);
     const generalErr = el("p", { class: "field__error field-error picker__error", role: "alert", hidden: true });
     const timeOf = (f) => {
-      const r = parseAbsoluteInput(f.input.value, zone, { now: Date.now(), edge: f.edge });
+      const r = parseAbsoluteInput(f.input.value, zoneNow, { now: Date.now(), edge: f.edge });
       return r.error ? NaN : r.ms;
     };
     const clearError = (f) => {
@@ -210,7 +214,7 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
 
     // A range from the form or from the recent list goes to the recent list. A quick range does not: it is always in the list.
     function choose(range, remember) {
-      const result = apply(range.from, range.to);
+      const result = apply(range.from, range.to, zoneNow);
       if (result && result.error) {
         generalErr.textContent = result.error;
         generalErr.hidden = false;
@@ -224,7 +228,7 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
 
     function submit() {
       fields.forEach(clearError);
-      const results = fields.map((f) => parseAbsoluteInput(f.input.value, zone, { now: Date.now(), edge: f.edge }));
+      const results = fields.map((f) => parseAbsoluteInput(f.input.value, zoneNow, { now: Date.now(), edge: f.edge }));
       let first = null;
       fields.forEach((f, i) => {
         if (!results[i].error) return;
@@ -239,9 +243,41 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
       choose({ from, to }, true);
     }
 
+    // The zone of the range: a list next to "Apply time range". Its options are built when the viewer first uses it (about 400 names).
+    const zoneSelect = el("select", { class: "input picker__zone-select", "aria-label": "Time zone", "data-tooltip": "Time zone", dataset: { testid: "time-zone" } });
+    const zoneOption = (value) => el("option", { value, text: value === "browser" || value === "utc" ? zoneLabel(value) : `${zoneLabel(value)}` });
+    zoneSelect.append(zoneOption(zoneNow));
+    zoneSelect.value = zoneNow;
+    let zoneFilled = false;
+    function fillZones() {
+      if (zoneFilled) return;
+      zoneFilled = true;
+      const groups = zoneChoices();
+      const known = groups.some((g) => g.items.some((i) => i.value === zoneNow));
+      zoneSelect.replaceChildren(...(known ? [] : [zoneOption(zoneNow)]), ...groups.map((g) => el("optgroup", { label: g.group }, ...g.items.map((i) => el("option", { value: i.value, text: i.label })))));
+      zoneSelect.value = zoneNow;
+    }
+    for (const type of ["pointerdown", "focus", "keydown"]) zoneSelect.addEventListener(type, fillZones, { once: true });
+    zoneSelect.addEventListener("change", () => {
+      const before = zoneNow;
+      zoneNow = zoneSelect.value;
+      // An absolute time keeps its instant: the field shows it in the new zone. A date math text stays as it is.
+      fields.forEach((f) => {
+        clearError(f);
+        const text = f.input.value.trim();
+        if (/^now/.test(text)) return;
+        const r = parseAbsoluteInput(text, before, { now: Date.now(), edge: f.edge });
+        if (!r.error) f.input.value = formatTime(r.ms, zoneNow);
+      });
+      const fromMs = timeOf(fields[0]);
+      view(dayOf(Number.isFinite(fromMs) ? fromMs : Date.now()));
+      renderLists();
+      paintZone();
+    });
     const applyButton = el("button", { type: "submit", class: "btn btn--tb btn--tb-primary picker__apply", text: "Apply time range", dataset: { testid: "time-apply" } });
     const form = el("form", { class: "picker__abs", novalidate: true, on: { submit: (e) => { e.preventDefault(); submit(); } } },
-      el("p", { class: "picker__heading", text: "Absolute time range" }), fields[0].box, fields[1].box, hint, calendar, generalErr, applyButton);
+      el("p", { class: "picker__heading", text: "Absolute time range" }), fields[0].box, fields[1].box, hint, calendar, generalErr,
+      el("div", { class: "picker__apply-row" }, zoneSelect, applyButton));
 
     // The search, "Recently used" (up to two ranges) and "Quick ranges". A text such as 45m or last 2d makes a range.
     const search = el("input", { type: "search", class: "input picker__search-input", placeholder: "Search quick ranges", autocomplete: "off", spellcheck: "false", "aria-label": "Search quick ranges", dataset: { testid: "time-quick-search" } });
@@ -254,7 +290,7 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
       let quick = QUICK_RANGES.filter((r) => fits(r.label, r));
       const typed = typedRange(text);
       if (typed && !quick.some((r) => same(r, typed))) quick = [typed, ...quick];
-      const saved = recent().map((r) => ({ ...r, label: formatRangeText(r.from, r.to, zone) })).filter((r) => fits(r.label, r));
+      const saved = recent().map((r) => ({ ...r, label: formatRangeText(r.from, r.to, zoneNow) })).filter((r) => fits(r.label, r));
       const group = (name, kind, list, empty) => [
         el("div", { class: "picker__heading", id: `${id}-${kind}`, text: name }),
         list.length
@@ -285,6 +321,12 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
       else all[Math.max(0, Math.min(all.length - 1, at + (event.key === "ArrowDown" ? 1 : -1)))].focus({ preventScroll: true });
     });
 
+    // The footer says the zone of the popup.
+    const zoneSpan = el("span", { class: "picker__zone", dataset: { testid: "time-zone-text" } });
+    function paintZone() {
+      zoneSpan.textContent = `${zoneLabel(zoneNow)}${zoneNow === "browser" ? ` · ${zoneName(zoneNow)}` : ""} (${zoneOffsetLabel(Date.now(), zoneNow)})`;
+    }
+    paintZone();
     popup = el("div", {
       class: "picker__popup", role: "dialog", "aria-label": "Time range",
       on: {
@@ -299,7 +341,7 @@ export function createTimePicker({ zone, getRange, apply, onZoomOut, onShift = (
       },
     },
     el("div", { class: "picker__body" }, form, el("section", { class: "picker__col", "aria-label": "Quick ranges" }, el("div", { class: "picker__col-in" }, el("div", { class: "picker__search" }, icon("search", 16), search), lists))),
-    el("footer", { class: "picker__footer" }, el("span", { class: "picker__zone", text: `${zoneLabel(zone)}${zone === "browser" ? ` · ${zoneName(zone)}` : ""} (${zoneOffsetLabel(Date.now(), zone)})` })));
+    el("footer", { class: "picker__footer" }, zoneSpan));
     const fromMs = timeOf(fields[0]);
     view(dayOf(Number.isFinite(fromMs) ? fromMs : Date.now()));
     setMode("from");

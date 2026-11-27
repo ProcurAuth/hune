@@ -389,8 +389,9 @@ export const cases = [
         if (!asEditor["edit-toggle"]) found.push(`${width}: the editor has no Edit button`);
         if (asViewer.bar) found.push(`${width}: the viewer has an edit bar`);
         found.push(...moved(asEditor, asViewer, ["dashboard-menu", "theme"]).map((m) => `${width} viewer: ${m}`));
-        // A dashboard of a read-only store has a lock where the switch Edit would be (9.8): the lock is then the last control of the page.
-        found.push(...judgeNoBlank(asViewer, asViewer.lock ? "lock" : "refresh-interval", `${width} viewer`));
+        // A dashboard of a read-only store has no lock and no switch Edit: the time control is the last control of the page.
+        if (asViewer.lock) found.push(`${width}: the viewer has a lock`);
+        found.push(...judgeNoBlank(asViewer, "refresh-interval", `${width} viewer`));
         if (asViewer.header[0] !== asEditor.header[0]) found.push(`${width}: the header height differs for a viewer (${asViewer.header[0]}, ${asEditor.header[0]})`);
       }
 

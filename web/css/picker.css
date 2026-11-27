@@ -34,7 +34,7 @@
 
 /* The absolute range: the title, the two fields side by side, the hint, the calendar, the error and the button. */
 .picker__abs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: var(--space-8); padding: var(--space-12); }
-.picker__abs > :is(.picker__heading, .picker__hint, .picker__cal, .picker__error, .picker__apply) { grid-column: 1 / -1; }
+.picker__abs > :is(.picker__heading, .picker__hint, .picker__cal, .picker__error, .picker__apply, .picker__apply-row) { grid-column: 1 / -1; }
 .picker__field { display: grid; align-content: start; gap: var(--space-4); min-width: 0; }
 .picker__field > label { color: var(--muted); font-size: var(--fs-sm); font-weight: var(--fw-medium); }
 .picker__field.is-active > label { color: var(--text); }
@@ -45,6 +45,9 @@
 .picker__error[hidden], .picker__field .field-error[hidden] { display: none; }
 .picker__hint { margin: var(--space-2) 0 0; color: var(--muted); font-size: var(--fs-xs); }
 .picker__apply { justify-self: end; }
+/* The zone list and "Apply time range" are one row: the list takes the room that the button leaves. */
+.picker__apply-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-8); min-width: 0; }
+.picker__zone-select { flex: 1 1 auto; min-width: 0; max-width: 60%; font-size: var(--fs-xs); }
 
 /* The calendar: a header with four navigation buttons (year, month), the weekdays, and 6 weeks of 7 days. The days of the range are tinted,
    its first and last day have the accent fill. The week starts on Monday. */

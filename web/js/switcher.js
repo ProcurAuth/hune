@@ -24,7 +24,7 @@ async function readTree() {
 }
 
 // The items of the menu for an answer. The root rows are the dashboards with no folder, the folders of the primary store and the read-only stores
-// (stores.js). One root group and it is the primary: the dashboards alone, as the list page shows no folder title for one folder (9.7). A read-only store is a row with a lock
+// (stores.js). One root group and it is the primary: the dashboards alone, as the list page shows no folder title for one folder (9.7). A read-only store is a row with a folder icon
 // that opens its folders (its dashboards, for one folder). An entry that is not valid has no page to open: it is not in the menu. The row of the
 // current dashboard is open until the person closes it.
 export function switcherItems(data, uid, navigate) {
@@ -51,7 +51,7 @@ export function switcherItems(data, uid, navigate) {
     ...split.stores.map((block) => {
       const key = `store:${block.store.id}`;
       const all = block.groups.flatMap((group) => group.items);
-      return { group: true, key, label: block.store.title, icon: "lock", open: isOpen(key, all), onToggle: (open) => folderOpen.set(key, open), children: storeChildren(block) };
+      return { group: true, key, label: block.store.title, icon: "folder", open: isOpen(key, all), onToggle: (open) => folderOpen.set(key, open), children: storeChildren(block) };
     }),
   ];
 }

@@ -245,6 +245,24 @@ button.cell-link { display: inline-block; max-width: 100%; }
 .vtable--wrap > tbody > tr > td { overflow-wrap: anywhere; text-overflow: clip; white-space: normal; vertical-align: top; }
 .vtable--wrap .cell-gauge__text { white-space: normal; }
 
+/* The whole text of a cut cell (table.js): over the cell, wrapped, with the colours of the cell, as Grafana 12.4.2 shows it. The box is placed by
+   table.js in the scroll area of the table. */
+.cell-expand {
+  position: absolute;
+  z-index: calc(var(--z-sticky, 2) + 1);
+  box-sizing: border-box;
+  padding: var(--vt-pad);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-xs);
+  box-shadow: var(--shadow-overlay);
+  font-weight: var(--fw-regular);
+  line-height: 24px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+  cursor: text;
+}
+
 /* The footer: one line of 22 px for each calculation, 6 px of padding above and below, at the bottom of the view. */
 .vtable > tfoot > tr > td {
   position: sticky;

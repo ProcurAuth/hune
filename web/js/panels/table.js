@@ -596,13 +596,70 @@ export function render(host, ctx) {
     });
   });
   tbody.addEventListener("keydown", (e) => {
-    const b = e.key === "Enter" && e.target.matches("td") && e.target.querySelector(".cell-inspect");
-    if (!b) return;
+    if (e.key !== "Enter" || !e.target.matches("td")) return;
+    const b = e.target.querySelector(".cell-inspect");
     e.preventDefault();
-    b.click();
+    if (b) b.click();
+    else toggleExpanded(e.target);
+  });
+  // The whole text of a cell that is cut (as in Grafana 12.4.2, which shows it over the cell): a click on the cell, or Enter on it, puts the text over
+  // the cell, wrapped, with the width of the cell and the colours of the cell. A second click, Escape, a scroll or a click elsewhere closes it.
+  let expanded = null;
+  function closeExpanded(refocus = false) {
+    if (!expanded) return;
+    const { node, td } = expanded;
+    expanded = null;
+    node.remove();
+    document.removeEventListener("pointerdown", outside, true);
+    if (refocus && td.isConnected) td.focus({ preventScroll: true });
+  }
+  function outside(e) {
+    if (expanded && !expanded.node.contains(e.target)) closeExpanded();
+  }
+  const isCut = (td) => {
+    if (td.scrollWidth > td.clientWidth + 1) return true;
+    const inner = td.querySelector(".cell-link, .cell-gauge__text");
+    return Boolean(inner) && inner.scrollWidth > inner.clientWidth + 1;
+  };
+  function openExpanded(td) {
+    const text = td.title;
+    if (!text) return;
+    const box = td.getBoundingClientRect();
+    const host = scroll.getBoundingClientRect();
+    const style = getComputedStyle(td);
+    const node = el("div", { class: "cell-expand", role: "group", "aria-label": "Full text of the cell", tabIndex: -1, dataset: { testid: "cell-expand" }, text });
+    // The fill of the cell can be a translucent tint (the hover of the row): it lies over the colour of the panel, so the cells below do not show through.
+    const tint = style.backgroundColor === "rgba(0, 0, 0, 0)" ? null : style.backgroundColor;
+    const solid = tint ? `linear-gradient(${tint}, ${tint}), var(--panel)` : "var(--panel)";
+    node.style.cssText = `left:${box.left - host.left + scroll.scrollLeft}px;top:${box.top - host.top + scroll.scrollTop}px;min-width:${box.width}px;max-width:${Math.max(box.width, Math.min(scroll.clientWidth, 560))}px;min-height:${box.height}px;background:${solid};color:${style.color};text-align:${style.textAlign};`;
+    // A click on the box closes it, unless the user selects text in it.
+    node.addEventListener("click", () => {
+      if (String(window.getSelection && window.getSelection()).length === 0) closeExpanded(true);
+    });
+    scroll.append(node);
+    expanded = { node, td };
+    document.addEventListener("pointerdown", outside, true);
+  }
+  function toggleExpanded(td) {
+    const same = expanded && expanded.td === td;
+    closeExpanded();
+    if (!same && isCut(td)) openExpanded(td);
+  }
+  tbody.addEventListener("click", (e) => {
+    const td = e.target.closest("td");
+    if (!td || e.target.closest(".cell-inspect, a, button")) return;
+    if (String(window.getSelection && window.getSelection()).length > 0) return;
+    toggleExpanded(td);
+  });
+  scroll.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && expanded) {
+      e.stopPropagation();
+      closeExpanded(true);
+    }
   });
   let frame = 0;
   scroll.addEventListener("scroll", () => {
+    closeExpanded();
     if (frame) return;
     frame = requestAnimationFrame(() => {
       frame = 0;
@@ -610,6 +667,7 @@ export function render(host, ctx) {
     });
   });
   const observer = new ResizeObserver(() => {
+    closeExpanded();
     layoutColumns();
     paintRows(true);
   });
@@ -626,6 +684,7 @@ export function render(host, ctx) {
 
   return {
     destroy() {
+      closeExpanded();
       observer.disconnect();
       roving.destroy();
       closeFilter(false);

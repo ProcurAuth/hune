@@ -63,7 +63,7 @@ export const cases = [
         await waitDashboard(p);
         if (await moreShown(p)) found.push(`${width}: the button More actions shows with no action`);
         if (await p.exists(p.tid("edit-toggle"))) found.push(`${width}: the switch Edit shows`);
-        if (!(await p.exists(p.tid("read-only-lock")))) found.push(`${width}: the lock of a read-only store is missing`);
+        if (await p.exists(p.tid("read-only-lock"))) found.push(`${width}: a lock shows for a read-only store`);
         const l = await openAt(t, s.url, width);
         await waitList(l);
         if (await newShown(l)) found.push(`${width}: the list has the button New`);

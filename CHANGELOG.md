@@ -6,6 +6,15 @@ Each version has a section `## <version> - <YYYY-MM-DD>`. The newest version is 
 
 ## Unreleased
 
+### Added
+
+- The time picker has a list of time zones next to "Apply time range". It offers the browser time, UTC, the fixed offsets `UTC-12:00` to `UTC+14:00` and each zone name of the browser. The fields show the same instants in the chosen zone. "Apply time range" sets the zone of the page and of the address (`timezone=<zone>`).
+- A click on a table cell whose text is cut shows the whole text over the cell, as Grafana does on hover. A second click, the key `Escape` or a scroll closes it.
+
+### Changed
+
+- A read-only store shows no lock. The list, the header of a dashboard and the title of a store have none. A card has no three dots and a dashboard has no switch "Edit", and this is the sign. The title of a store and its row in the selector have a folder icon.
+
 ## 0.3.3 - 2026-11-27
 
 ### Fixed

@@ -441,7 +441,7 @@ The selector of the dashboards follows the host selector of ClickHouse Dash and 
 - The folder of the current dashboard is open at the first open of the menu. The page keeps the choice of the person until the page loads again.
 - When the user sees one folder, the menu lists the dashboards with no folder row. This is the rule of the list page for the folder title (9.7).
 - A dashboard with no folder (`folder` is `null`, 6.12) is a line of the menu on its own, with no row. These lines come first, in title order, before the folder rows. With a dashboard with no folder and one folder, the folder keeps its row, so the two are not mixed.
-- A read-only store is a row with a lock icon and its title. A click opens or closes the list under it. The list holds the dashboards of the store with no folder first, then its folders as rows, or its dashboards for one folder.
+- A read-only store is a row with a folder icon and its title. A click opens or closes the list under it. The list holds the dashboards of the store with no folder first, then its folders as rows, or its dashboards for one folder.
 - The rows at the root are the folders of the primary and the read-only stores. With one root group that is a store, the menu lists its folders, or its dashboards for one folder.
 - The store of the current dashboard is open at the first open of the menu, as its folder is.
 - The current dashboard has the selected fill, its edge and a check mark. A choice of another dashboard opens it as a link of the page does. The leave warning of 10.2a applies.
@@ -537,7 +537,7 @@ Folders:
 Stores:
 
 - The server has one primary store and read-only stores (6.10). The member `stores` of the session lists them. The folders of the primary show at the root, as above.
-- A read-only store is one root group. Its title is the `title` of the store, with a lock icon, in small capitals. The hook is `data-testid="store-<id>"`.
+- A read-only store is one root group. Its title is the `title` of the store, with a folder icon, in small capitals. The hook is `data-testid="store-<id>"`.
 - The root group of a read-only store is the first group under its title, before its folders. The folders of a read-only store show under its title. They have an indent of 16 px, and their title is smaller. Their hooks are the same as for the folders of the primary.
 - The groups at the root are the root group of the primary, the folders of the primary and the read-only stores. The title of a folder or of a store shows only when there are two groups or more.
 - When the title of the only root group is a store, its folders show their titles for two groups or more. Its own root group counts as one group.
@@ -546,7 +546,7 @@ Stores:
 
 Marks on a card:
 
-- A card whose item has `read_only` set to `true` shows a lock after the badge. Its name and its tooltip are "Read-only store". The hook is `data-testid="card-lock-<uid>"`.
+- A card whose item has `read_only` set to `true` has no lock and no other mark. It has no three dots, and this is the sign.
 - A card that is read-only has no three dots and no button. Its `access.write` is `false` (6.12).
 - A card whose item has a `stale` code shows a warning mark. Its name and its tooltip are "The file is not valid. The last valid version is shown.". The hook is `data-testid="card-stale-<uid>"`.
 - A stale card is a valid card: it keeps its title, its link and its tags. The mark never shows a path or a message of the parser.
@@ -643,7 +643,7 @@ The page loads in this order:
 Stores:
 
 - The answer of step 1 has `read_only` and, for a file that is not valid now, `stale` (6.14). These members come from the store of the dashboard.
-- A dashboard with `read_only` set to `true` has a lock in the header, where the switch "Edit" would be. Its name and its tooltip are "Read-only store". The hook is `data-testid="read-only-lock"`.
+- A dashboard with `read_only` set to `true` shows no lock and no other mark in the header. It has no switch "Edit". The time control is then the last control of the page, before the theme button.
 - A read-only dashboard has no switch "Edit", because its `access.write` is `false`. It is the path of a user who has no right to write. A link with `edit=1` opens no editor.
 - A dashboard with `stale` shows one warning notice after the load. Its text is "The file of this dashboard is not valid. The last valid version is shown.". The hook is `data-notice="stale"`.
 - The notice shows once for each page load, and it moves no part of the page. The views JSON and Inspect stay readable.
@@ -1105,14 +1105,23 @@ Quick ranges of the picker:
 
 The range button opens a popup. The popup is the range picker of ClickHouse Dash. It is 604 px wide, or the width of the window less 16 px when this is smaller. It has a border of 1 px (`--border-strong`) and a radius of 8 px. Its right edge is the right edge of the time group, 5 px below it. It has two columns and a footer:
 
-- The left column is the absolute range. It has the title "Absolute time range" and the fields "From" and "To" side by side. It has a hint, a calendar, an error text and the button "Apply time range".
+- The left column is the absolute range. It has the title "Absolute time range" and the fields "From" and "To" side by side. It has a hint, a calendar, an error text and one row with the list of the time zones and the button "Apply time range".
+- The list of the time zones (`data-testid="time-zone"`) is a native list, at the left of the button "Apply time range". It shows the zone of the page.
+  - The group "Default" holds the browser time and UTC.
+  - The group "UTC offsets" holds `UTC-12:00` to `UTC+14:00` in whole hours. They are the IANA names `Etc/GMT-n`.
+  - The group "Time zones" holds each name from `Intl.supportedValuesOf("timeZone")`, with its offset now.
+  - The page builds the options at the first use of the list.
+- A choice in the list changes the zone of the popup only. The fields show the same instants in the new zone. The calendar and the footer follow. A text in date math stays as it is.
+- "Apply time range" and a quick range give the zone of the popup to the page. The range keeps its instants.
+  - When this zone differs from the zone of the page, the page builds again with it.
+  - The address gets `timezone=<zone>` (9.5).
 - A field accepts `YYYY-MM-DD HH:mm:ss` in `Z`, or date math. A field with an error shows the error under it, and the first field with an error gets the focus. A range that the page refuses, for example `From` after `To`, shows one error text above the button. The earlier range stays.
 - The calendar shows six weeks of the month of the range. A week starts on Monday. The days are the days of `Z`. The buttons "Previous year", "Previous month", "Next month" and "Next year" move it. The first and the last day of the range have the accent fill, and the days between them have a tint.
 - The hint reads "Pick the start date" or "Pick the end date". A first click on a day sets `From` to that day at 00:00:00 and moves the focus to `To`. A second click sets `To` to that day at 23:59:59 and moves the focus to the button. A click on a day before the start makes a new start. While the end is open, the days between the start and the pointer have a lighter tint. A change in a field moves the calendar to the day of the field.
 - The right column is 216 px wide. It has the field "Search quick ranges", the list "Recently used" when it has items, and the list "Quick ranges" of the table above. An item is 27 px high. The item of the current range has the fill of a selection and `aria-current="true"`.
 - The search keeps the items whose text holds the search text, or whose `from` is the search text. A search text such as `45m`, `last 2d` or `now-3h` adds the item "Last 45 minutes" (`now-45m` to `now`) at the top of the list. The grammar is the one of 4.4. When no item matches, the list shows "No quick range matches “<text>”."
 - "Recently used" holds the last two ranges that the user applied with the form or from this list. A quick range is never in it. The browser keeps the list in `localStorage` under the key `hune.timeRanges`, and all dashboards share it. A browser with no store has no list.
-- The footer shows the zone and its offset at the time of the popup, for example `Browser time · Europe/Paris (UTC+01:00)`, `UTC (UTC+00:00)` or `Europe/Paris (UTC+01:00)`.
+- The footer shows the zone of the popup and its offset at the time of the popup, for example `Browser time · Europe/Paris (UTC+01:00)`, `UTC (UTC+00:00)` or `Europe/Paris (UTC+01:00)`.
 - Up to 768 px the popup is one column: the absolute range, then the search and the lists. The lists are 280 px high and they scroll. On a touch screen, each button and each item is 40 px high at least.
 - The popup opens and closes with a fade of 160 ms: the opacity, a move of 6 px and a vertical scale of 0.98. It leaves the page when the fade ends. With `prefers-reduced-motion: reduce` there is no fade, and the popup leaves at once. A press on the range button during the fade opens a new popup.
 
@@ -3543,6 +3552,12 @@ These are the defaults of Grafana 12.4.2. The view is "(0°, 0°)" at zoom 1. Th
 - Inspect (measured on Grafana 12.4.2): a column with `inspect = true` (4.18) has the button "Inspect value" in each cell, with each cell type. The button has the eye icon and a target of 24 × 24 px.
   - The button shows when the pointer is on the cell and when the focus is in the cell. Grafana shows it on hover only. It sits at the right edge of the cell, on a fill of the panel colour at 70 %. A cell with the alignment `right` has it at the left edge, as in Grafana.
   - The key `Tab` on a focused cell moves the focus to the button. The key `Enter` on a focused cell opens the drawer, as a click on the button does.
+- A cell whose text is cut (the ellipsis shows) opens its whole text on a click (`data-testid="cell-expand"`). Grafana 12.4.2 does the same on hover. A click is the rule in Hune, so a touch screen works.
+  - The box lies over the cell and over the rows below it. It has the left edge and the top edge of the cell, and the colours of the cell. It is as wide as the cell at least, and 560 px at most. The text wraps, and the user can select it.
+  - A click on the box closes it. So do a second click on the cell, the key `Escape` and a click on another cell.
+  - A scroll of the table and a change of its size close it too.
+  - The key `Enter` on a focused cell opens the box when the cell has no button "Inspect value".
+  - A click on a link, on a button or on the button "Inspect value" does its own action. A click that ends a text selection opens nothing. A cell that is not cut opens nothing.
   - The drawer is the form `drawer` of `openDialog`. Its title is "Inspect value", and its subtitle is the name of the column. The body has one block with the value as text. The page writes it with `textContent` only.
   - The value is the raw value of the cell, not the display text. An exact decimal keeps its digits, a time is its number of milliseconds, and `null` gives an empty text. The page removes the blanks at the two ends of the text, as Grafana does.
   - A text that starts with `{` or `[` and that `JSON.parse` accepts shows with an indent of 2 spaces. The indent comes from the tokens of the text, so a number keeps its digits and a string keeps its escapes. When the indent comes to a 65th level of objects and arrays, the text stays as it is.
@@ -4298,7 +4313,7 @@ listeners (16).
 
 - The dashboard of 45 panels shows its grid within 300 ms after the shell loads. The queries are not in this time.
 - While its 45 panels draw, no task of the main thread is longer than 200 ms.
-- The JavaScript of the dashboard page in view mode is 1,274 KB at most (1,304,576 bytes), before compression. The limit is the measure (1,300,297 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 4,279 bytes of room are for fixes that a test finds, not for a new feature.
+- The JavaScript of the dashboard page in view mode is 1,283 KB at most (1,313,792 bytes), before compression. The limit is the measure (1,308,658 bytes) plus 4,096 bytes, rounded up to a whole KiB. The 5,134 bytes of room are for fixes that a test finds, not for a new feature.
 - The page budget is a measured limit with 4 KiB of room, rounded up to a whole KiB. A new feature raises the limit in a reviewed change. When the feature is complete, the limit goes back to the measure plus 4 KiB. A guard stops the work when the page goes above the limit minus 4,096 bytes before the feature is complete.
 - These ways to stay under the limit are not permitted:
   - a shorter name;
@@ -6132,7 +6147,7 @@ The store keeps the canonical bytes of the imported document (4.38), not the byt
 |---|---|
 | `access.history = false` (no history in the store, `server.history` is `false`, or the PDP refuses `dashboard.history`) | No "History" entry. The page of 10.11 shows the refusal page of 9.6 when a user opens its URL by hand. |
 | `access.export = false` (`server.export` is `false`, or the PDP refuses `dashboard.export`) | No "Export" entry and no "Download" entry on the card. No "Export this version" on a version view. |
-| `read_only = true` on a dashboard or a folder (the store is read-only, 5.42) | A lock on the card and in the header of the editor. The editor opens read-only. The page offers "New dashboard", "New folder" and "Move" only in the primary store. A write that the page sends gets `403 read_only_store`, and the page shows its message. |
+| `read_only = true` on a dashboard or a folder (the store is read-only, 5.42) | No lock. The card has no three dots, and the header has no switch "Edit". The editor opens read-only. The page offers "New dashboard", "New folder" and "Move" only in the primary store. A write that the page sends gets `403 read_only_store`, and the page shows its message. |
 | `stale = "file_invalid"` on a dashboard (5.44) | A warning on the card and in the header of the dashboard: the page shows the last valid state, and the file of the volume is not valid now. The text never holds a path or a message of the parser. |
 | `access.write = false` for a dashboard or a folder, or `access.create = false` (mode `authzen`, 11.25) | The same controls are absent for this dashboard or this folder. "New folder" is absent without `access.create`. |
 | A source of the dashboard is not in `GET api/sources` | Edit mode opens, with the notice "A save needs the query right on the source <id>." (6.9). "Run" is absent for this source. |

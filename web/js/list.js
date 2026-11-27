@@ -4,7 +4,7 @@ import * as api from "./api.js";
 import { loadEditorModule } from "./editor_loader.js";
 import { dashboardPath, listSearch, parseSearch } from "./url_state.js";
 import { absoluteTime, bindMenu, button, clear, closeMenu, el, icon, notify, openMenu, uniqueId } from "./ui.js";
-import { READ_ONLY_TEXT, STALE_CARD_TEXT, cardMarks, compareText, fold, groupByStore, groupDashboards, rootGroupCount, rootWritable } from "./stores.js";
+import { STALE_CARD_TEXT, cardMarks, compareText, fold, groupByStore, groupDashboards, rootGroupCount, rootWritable } from "./stores.js";
 import { exportDashboard } from "./export_file.js";
 
 export { groupDashboards };
@@ -256,12 +256,11 @@ export async function mount(ctx) {
     // The head row: the title at the left, then the badge of the last change (only when Hune recorded a change), then the three dots.
     const change = lastChange(item, editing);
     const badge = change ? el("span", { class: "card__badge", title: change.title, dataset: { testid: `card-change-${item.uid}` } }, icon("clock", 12), el("span", { text: `Last change ${change.age}` })) : null;
-    // The marks at the right of the head row: the mark of a file that is not valid now, and the lock of a read-only store. Each is a picture with a name for
+    // The marks at the right of the head row: the mark of a file that is not valid now. It is a picture with a name for
     // assistive technology and a tooltip. A card has the same height with and without them.
     const marks = cardMarks(item);
     const markNodes = [];
     if (marks.stale) markNodes.push(el("span", { class: "card__mark card__mark--stale", role: "img", "aria-label": STALE_CARD_TEXT, "data-tooltip": STALE_CARD_TEXT, "data-tooltip-align": "end", dataset: { testid: `card-stale-${item.uid}` } }, icon("warning", 16)));
-    if (marks.readOnly) markNodes.push(el("span", { class: "card__mark card__mark--lock", role: "img", "aria-label": READ_ONLY_TEXT, "data-tooltip": READ_ONLY_TEXT, "data-tooltip-align": "end", dataset: { testid: `card-lock-${item.uid}` } }, icon("lock", 16)));
     if (valid) {
       card.append(el("div", { class: "card__top" }, el("h3", { class: "card__title" }, el("a", { class: "card__link", href: dashboardPath(item.uid, item.title), title: item.title, text: item.title })), badge, ...markNodes));
     } else {
@@ -432,7 +431,7 @@ export async function mount(ctx) {
     for (const block of split.stores) {
       const folderCount = block.groups.filter((g) => g.items.length || !active).length;
       if (!folderCount) continue;
-      if (showRoots) stack.append(el("h2", { class: "group__head group__head--store", dataset: { testid: `store-${block.store.id}` } }, icon("lock", 14), el("span", { class: "group__title", text: block.store.title })));
+      if (showRoots) stack.append(el("h2", { class: "group__head group__head--store", dataset: { testid: `store-${block.store.id}` } }, icon("folder", 14), el("span", { class: "group__title", text: block.store.title })));
       const showFolderTitles = showRoots || folderCount >= 2;
       for (const group of block.groups) addGroup(group, showFolderTitles, showRoots);
     }

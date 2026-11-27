@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { groupDashboards } from "../../web/js/list.js";
 import { switcherItems } from "../../web/js/switcher.js";
-import { READ_ONLY_ERROR_TEXT, READ_ONLY_TEXT, STALE_CARD_TEXT, STALE_PAGE_TEXT, cardMarks, groupByStore, isReadOnly, isStale, rootGroupCount, storeTable } from "../../web/js/stores.js";
+import { READ_ONLY_ERROR_TEXT, STALE_CARD_TEXT, STALE_PAGE_TEXT, cardMarks, groupByStore, isReadOnly, isStale, rootGroupCount, storeTable } from "../../web/js/stores.js";
 import { classifySaveError } from "../../web/js/editor/save_logic.js";
 
 const read = (p) => readFileSync(new URL(`../../web/${p}`, import.meta.url), "utf8");
@@ -64,17 +64,16 @@ test("an item that names a folder that the list does not hold keeps its store", 
   assert.equal(split.stores[0].store.id, "lab");
 });
 
-test("a card shows the lock for a read-only item and the mark for a file that is not valid", () => {
-  assert.deepEqual(cardMarks({ read_only: true }), { readOnly: true, stale: false });
-  assert.deepEqual(cardMarks({ read_only: false, stale: "file_invalid" }), { readOnly: false, stale: true });
-  assert.deepEqual(cardMarks({ read_only: true, stale: "file_invalid" }), { readOnly: true, stale: true });
-  assert.deepEqual(cardMarks({}), { readOnly: false, stale: false });
+test("a card shows the mark for a file that is not valid and no mark for a read-only item", () => {
+  assert.deepEqual(cardMarks({ read_only: true }), { stale: false });
+  assert.deepEqual(cardMarks({ read_only: false, stale: "file_invalid" }), { stale: true });
+  assert.deepEqual(cardMarks({ read_only: true, stale: "file_invalid" }), { stale: true });
+  assert.deepEqual(cardMarks({}), { stale: false });
   assert.ok(isReadOnly({ read_only: true }) && !isReadOnly({ read_only: "yes" }) && !isReadOnly(null));
   assert.ok(isStale({ stale: "file_invalid" }) && !isStale({ stale: "" }) && !isStale({}) && !isStale(null));
 });
 
 test("the texts are the ones of the specification", () => {
-  assert.equal(READ_ONLY_TEXT, "Read-only store");
   assert.equal(STALE_CARD_TEXT, "The file is not valid. The last valid version is shown.");
   assert.equal(STALE_PAGE_TEXT, "The file of this dashboard is not valid. The last valid version is shown.");
   assert.equal(READ_ONLY_ERROR_TEXT, "This dashboard is in a read-only store. It cannot be changed.");
@@ -86,13 +85,13 @@ test("a refused write to a read-only store gives the plain message and is shown,
   assert.equal(classifySaveError({ code: "editing_disabled", status: 403, message: "Editing is off." }).text, "Editing is off.");
 });
 
-test("the selector shows each read-only store as a row with a lock; one folder opens its dashboards at once", () => {
+test("the selector shows each read-only store as a row with a folder icon; one folder opens its dashboards at once", () => {
   const data = { folders, items, session };
   const rows = switcherItems(data, "b", () => {});
   assert.deepEqual(rows.map((r) => [r.key, r.label, r.icon]), [
     ["folder:ops", "Operations", "folder"],
-    ["store:archive", "Archive", "lock"],
-    ["store:lab", "Lab", "lock"],
+    ["store:archive", "Archive", "folder"],
+    ["store:lab", "Lab", "folder"],
   ]);
   const lab = rows[2];
   assert.equal(lab.open, true, "the store of the current dashboard is open");
@@ -110,11 +109,10 @@ test("the selector lists the dashboards alone for one root group, also when it i
   assert.deepEqual(switcherItems({ folders: [], items: [], session }, "x", () => {}), []);
 });
 
-test("the list page shows the lock and the mark on a card, a title for each store and no menu for a read-only card", () => {
+test("the list page shows the mark on a card, no lock, a title for each store and no menu for a read-only card", () => {
   const list = read("js/list.js");
   assert.match(list, /markNodes\.push\(el\("span", \{ class: "card__mark card__mark--stale"/);
-  assert.match(list, /markNodes\.push\(el\("span", \{ class: "card__mark card__mark--lock"/);
-  assert.match(list, /testid: `card-lock-\$\{item\.uid\}`/);
+  assert.ok(!/card__mark--lock|card-lock-/.test(list), "a card of a read-only store has no lock");
   assert.match(list, /testid: `card-stale-\$\{item\.uid\}`/);
   assert.match(list, /class: "group__head group__head--store"/);
   assert.match(list, /const showRoots = rootGroupCount\(split\) >= 2;/);
@@ -124,11 +122,11 @@ test("the list page shows the lock and the mark on a card, a title for each stor
   assert.ok(!/#[0-9a-fA-F]{3,8}\b/.test(css.slice(css.indexOf(".card__mark"), css.indexOf(".card__mark") + 400)), "no colour literal in the mark rules");
 });
 
-test("the dashboard page has the lock where the switch Edit would be, and says once that the file is not valid", () => {
+test("the dashboard page has no lock for a read-only store, and says once that the file is not valid", () => {
   const dash = read("js/dashboard.js");
-  assert.match(dash, /readOnly: answer\.read_only === true, stale: isStale\(answer\)/);
-  assert.match(dash, /header\.setActions\(timeControl\.el, lock, editSwitch\);/);
-  assert.match(dash, /dataset: \{ testid: "read-only-lock" \}/);
+  assert.match(dash, /stale: isStale\(answer\)/);
+  assert.match(dash, /header\.setActions\(timeControl\.el, editSwitch\);/);
+  assert.ok(!/read-only-lock|header-lock/.test(dash), "the page shows no lock");
   assert.match(dash, /key: "stale", text: STALE_PAGE_TEXT/);
   assert.match(dash, /if \(!loaded\.stale \|\| staleNoticed\) return;/);
   assert.match(dash, /function canEdit\(\) \{\s*return session\.editing === true && loaded\.access && loaded\.access\.write === true;/, "the switch follows access.write, false for a read-only store");
