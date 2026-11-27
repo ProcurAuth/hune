@@ -30,7 +30,8 @@ const FAMILY_OF_TYPE = {
 // measure of the page budget counts the module (9.30).
 const FAMILY_IMPORTS = {
   timeseries: () => import("./timeseries.js"),
-  barchart: () => import("./barchart.js"),
+  // `barchart.js` uses the caches of `timeseries.js`, so the font handler needs the module of that family too.
+  barchart: () => Promise.all([import("./barchart.js"), loadFamily("timeseries")]).then(([mod]) => mod),
   piechart: () => import("./piechart.js"),
   stat: () => import("./stat.js"),
   gauge: () => import("./gauge.js"),
@@ -97,12 +98,13 @@ export function drawNode(n) {
 // The element `panel__skeleton` of a panel, or null for a panel type that has no preview. It is out of the flow and hidden from assistive
 // technology. The CSS shows it for a first load only. It starts empty: `observePreview` fills it when the box has a size. The import of the
 // module of the family starts here, so the module is there when the preview shows. A failed import leaves the panel with no preview.
+// While the module is not there, the attribute `data-unpainted` hides the empty preview and its light: the CSS shows no empty form (9.11).
 export function buildPreview(panel) {
   const family = panel ? skeletonKind(panel.type) : "";
   if (!family) return null;
   loadFamily(family).catch(() => {});
   const root = el("div", { class: `skel skel--${family}`, [HOOKS.ROOT]: family });
-  return el("div", { class: "panel__skeleton", "aria-hidden": "true", dataset: { kind: family } }, root);
+  return el("div", { class: "panel__skeleton", "aria-hidden": "true", dataset: LOADED[family] ? { kind: family } : { kind: family, unpainted: "" } }, root);
 }
 
 // Fills the preview when its box has a size, and again when the window changes size. The panel calls `measure` when the preview shows. The preview is hidden (display none) when the panel does not
@@ -139,6 +141,7 @@ export function observePreview(skeleton, panel, doc, ctx, done = null) {
     const result = previewOf(panel, { w, h, fw: Math.floor(r.width * 64 + 1e-6) / 64, fh: Math.floor(r.height * 64 + 1e-6) / 64 }, doc, ctx);
     if (!result) return;
     root.replaceChildren(...result.elements.map(drawNode));
+    delete skeleton.dataset.unpainted;
     root.dataset.skelNotes = result.notes.join(" ");
     skeleton._preview = result;
     if (done) done(result);
