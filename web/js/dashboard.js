@@ -12,7 +12,7 @@ import { gridDoc } from "./var_layout.js";
 import { maxQuery, STEPS, timeInMenu } from "./header_layout.js";
 import { createTimeControl } from "./pickers.js";
 import { Runtime } from "./runtime.js";
-import { REFRESH_CHOICES, cut, effectiveZone, isKnownZone, refreshToMs, resolveRange, shiftRange, zoneName, zoomOut } from "./time.js";
+import { REFRESH_CHOICES, cut, effectiveZone, isKnownZone, refreshToMs, resolveRange, shiftRange, zoomOut } from "./time.js";
 import { buildSearch, dashboardPath, parseSearch, shortQuery } from "./url_state.js";
 import { sameSelection, selectionToUrl } from "./var_options.js";
 import { createVarsBar } from "./vars.js";

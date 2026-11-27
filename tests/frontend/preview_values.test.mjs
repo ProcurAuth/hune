@@ -6,11 +6,14 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { DATA, EXACT, LEAST, boundHolds, setMeasurer } from "../../web/js/preview/common.js";
-import { previewOf } from "../../web/js/preview/index.js";
+import { loadPreviewFamilies, previewOf } from "../../web/js/preview/index.js";
 import { gaugeLayout, configOf, ringPath, titleText } from "../../web/js/preview/gauge.js";
 import { computeFieldConfig } from "../../web/js/fields.js";
 import { angleOf, bandEntries, cellParts, gaugeGeometry, gridCells, stackCells } from "../../web/js/panels/gauge.js";
 import { chainOf, itemCount, warningLines, warningSentences } from "../../web/js/preview/stat.js";
+
+// The families load on demand: `previewOf` needs their modules.
+await loadPreviewFamilies();
 
 const read = (path) => readFileSync(new URL(`../../${path}`, import.meta.url), "utf8");
 // A measurer: 6 px for each character, whatever the font.
